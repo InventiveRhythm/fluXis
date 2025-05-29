@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
@@ -12,18 +11,20 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Overlay.Settings;
 
-public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    protected override bool PlaySamples => false;
+    protected override float OverlayPadding => 96;
+    protected override ColourInfo BackgroundColor => FluXisColors.Background1;
+    protected override IconUsage Icon => FontAwesome6.Solid.Gear;
 
     private Bindable<SettingsSection> currentSection { get; } = new();
 
@@ -42,139 +43,73 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
         new ExperimentsSection()
     };
 
-    private ClickableContainer content;
     private SettingsCategorySelector categorySelector;
     private FluXisScrollContainer scrollContainer;
 
-    private Container gearContainer;
-    private Container settingsContainer;
-
-    private Sample open;
-    private Sample close;
     private Sample tabSwitch;
-
-    private bool initial = true;
 
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        RelativeSizeAxes = Axes.Both;
-        Alpha = 0;
-
-        open = samples.Get("UI/Settings/open");
-        close = samples.Get("UI/Settings/close");
+        OpenSample = samples.Get("UI/Settings/open");
+        CloseSample = samples.Get("UI/Settings/close");
         tabSwitch = samples.Get("UI/Settings/change-tab");
+    }
 
-        InternalChildren = new Drawable[]
+    protected override Drawable[] CreateContent() => new Drawable[]
+    {
+        new GridContainer
         {
-            new ClickableContainer
+            RelativeSizeAxes = Axes.Both,
+            RowDimensions = new Dimension[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Action = Hide,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.Black,
-                    Alpha = .5f
-                }
+                new(GridSizeMode.AutoSize),
+                new()
             },
-            new Container
+            Content = new[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Padding = new MarginPadding(100),
-                Child = content = new ClickableContainer
+                new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    CornerRadius = 20,
-                    Masking = true,
-                    EdgeEffect = FluXisStyles.ShadowLarge,
-                    Children = new Drawable[]
+                    categorySelector = new SettingsCategorySelector(sections, currentSection) { CloseAction = Hide }
+                },
+                new Drawable[]
+                {
+                    new GridContainer
                     {
-                        new Box
+                        RelativeSizeAxes = Axes.Both,
+                        ColumnDimensions = new Dimension[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background1
+                            new(GridSizeMode.Absolute, 300),
+                            new()
                         },
-                        gearContainer = new Container
+                        Content = new[]
                         {
-                            Size = new Vector2(200),
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Child = new FluXisSpriteIcon
+                            new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                Size = new Vector2(.5f),
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Icon = FontAwesome6.Solid.Gear
-                            }
-                        },
-                        settingsContainer = new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Child = new GridContainer
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                RowDimensions = new Dimension[]
+                                new SettingsSidebar(currentSection)
                                 {
-                                    new(GridSizeMode.AutoSize),
-                                    new()
+                                    ScrollToSection = s => scrollContainer.ScrollTo(s)
                                 },
-                                Content = new[]
+                                new Container
                                 {
-                                    new Drawable[]
+                                    RelativeSizeAxes = Axes.Both,
+                                    Padding = new MarginPadding(48)
                                     {
-                                        categorySelector = new SettingsCategorySelector(sections, currentSection) { CloseAction = Hide }
+                                        Top = 20,
+                                        Right = 32
                                     },
-                                    new Drawable[]
+                                    Masking = true,
+                                    Child = scrollContainer = new FluXisScrollContainer
                                     {
-                                        new GridContainer
+                                        RelativeSizeAxes = Axes.Both,
+                                        ScrollbarAnchor = Anchor.TopRight,
+                                        Masking = false,
+                                        Child = new Container<SettingsSection>
                                         {
-                                            RelativeSizeAxes = Axes.Both,
-                                            ColumnDimensions = new Dimension[]
-                                            {
-                                                new(GridSizeMode.Absolute, 300),
-                                                new()
-                                            },
-                                            Content = new[]
-                                            {
-                                                new Drawable[]
-                                                {
-                                                    new SettingsSidebar(currentSection)
-                                                    {
-                                                        ScrollToSection = s => scrollContainer.ScrollTo(s)
-                                                    },
-                                                    new Container
-                                                    {
-                                                        RelativeSizeAxes = Axes.Both,
-                                                        Padding = new MarginPadding(50)
-                                                        {
-                                                            Top = 20,
-                                                            Right = 30
-                                                        },
-                                                        Masking = true,
-                                                        Child = scrollContainer = new FluXisScrollContainer
-                                                        {
-                                                            RelativeSizeAxes = Axes.Both,
-                                                            ScrollbarAnchor = Anchor.TopRight,
-                                                            Masking = false,
-                                                            Child = new Container<SettingsSection>
-                                                            {
-                                                                RelativeSizeAxes = Axes.X,
-                                                                AutoSizeAxes = Axes.Y,
-                                                                Padding = new MarginPadding { Right = 20 },
-                                                                ChildrenEnumerable = sections
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Padding = new MarginPadding { Right = 20 },
+                                            ChildrenEnumerable = sections
                                         }
                                     }
                                 }
@@ -182,21 +117,19 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
                         }
                     }
                 }
-            },
-            new CheatCodeHandler(showExperiments, Key.W, Key.S, Key.D, Key.A, Key.W)
-        };
-    }
+            }
+        },
+        new CheatCodeHandler(showExperiments, Key.W, Key.S, Key.D, Key.A, Key.W)
+    };
 
     protected override void LoadComplete()
     {
-        base.LoadComplete();
-
         currentSection.BindValueChanged(sectionChanged);
 
         if (sections.Count > 0)
             currentSection.Value = sections[0];
 
-        initial = false;
+        base.LoadComplete();
     }
 
     private void showExperiments()
@@ -239,43 +172,8 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
 
         next.MoveToX(0, 400, Easing.OutQuint).FadeIn(200);
 
-        if (prev != null && !initial)
+        if (prev != null && !InitialAnimation)
             tabSwitch?.Play();
-    }
-
-    protected override void PopIn()
-    {
-        if (!initial)
-            open?.Play();
-
-        const int size = 200;
-        const int scale_duration = 400;
-
-        var widthFactor = size / DrawSize.X;
-        var heightFactor = size / DrawSize.Y;
-
-        content.ScaleTo(.8f)
-               .ResizeTo(new Vector2(widthFactor, heightFactor))
-               .ScaleTo(1, scale_duration, Easing.OutQuint)
-               .Delay(scale_duration)
-               .ResizeTo(1, 600, Easing.OutQuint);
-
-        gearContainer.FadeIn().RotateTo(-80)
-                     .RotateTo(0, scale_duration, Easing.OutQuint)
-                     .Delay(scale_duration)
-                     .FadeOut(200).RotateTo(80, scale_duration, Easing.OutQuint);
-
-        settingsContainer.FadeOut().Then(scale_duration + 400).FadeIn(200);
-        this.FadeInFromZero(200);
-    }
-
-    protected override void PopOut()
-    {
-        if (!initial)
-            close?.Play();
-
-        this.FadeOut(200);
-        content.ScaleTo(.95f, 400, Easing.OutQuint);
     }
 
     protected override bool OnDragStart(DragStartEvent e) => true;

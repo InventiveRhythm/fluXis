@@ -1,10 +1,10 @@
+using System;
 using System.Linq;
-using fluXis.Database;
-using fluXis.Database.Input;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Utils;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,27 +15,32 @@ using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Overlay.Settings.UI;
+namespace fluXis.Overlay.Settings.UI.Keybind;
 
-public partial class SettingsKeybind : SettingsItem
+public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
+    where T : Enum
 {
+    public override bool AcceptsFocus => true;
+
     [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
-    [Resolved]
-    private FluXisRealm realm { get; set; }
-
-    public override bool AcceptsFocus => true;
-
-    public object[] Keybinds;
+    public T[] Keybinds { get; init; }
 
     private FillFlowContainer<KeybindContainer> flow;
     private int index = -1;
+    private Sample menuScroll;
 
-    public SettingsKeybind()
+    protected SettingsAbstractKeybind()
     {
         Padded = true;
         HideWhenDisabled = true;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        menuScroll = samples.Get("UI/scroll");
     }
 
     protected override Drawable CreateContent() => flow = new FillFlowContainer<KeybindContainer>
@@ -44,7 +49,7 @@ public partial class SettingsKeybind : SettingsItem
         Anchor = Anchor.CentreRight,
         Origin = Anchor.CentreRight,
         Direction = FillDirection.Horizontal,
-        Spacing = new Vector2(4, 0)
+        Spacing = new Vector2(6, 0)
     };
 
     protected override void LoadComplete()
@@ -52,10 +57,9 @@ public partial class SettingsKeybind : SettingsItem
         // we need this here because else the keybinds will be empty on first start
         foreach (var keybind in Keybinds)
         {
-            flow.Add(new KeybindContainer
+            flow.Add(new KeybindContainer(keybind, this)
             {
-                Keybind = keyCombinationProvider.GetReadableString(InputUtils.GetBindingFor(keybind.ToString(), realm).KeyCombination),
-                SettingsKeybind = this
+                KeybindText = keyCombinationProvider.GetReadableString(GetComboFor(keybind).KeyCombination)
             });
         }
     }
@@ -66,13 +70,12 @@ public partial class SettingsKeybind : SettingsItem
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (e.Button == MouseButton.Left)
-        {
-            index = 0;
-            return true;
-        }
+        if (e.Button != MouseButton.Left)
+            return false;
 
-        return false;
+        index = 0;
+        menuScroll?.Play();
+        return true;
     }
 
     protected override void OnFocusLost(FocusLostEvent e) => index = -1;
@@ -81,8 +84,8 @@ public partial class SettingsKeybind : SettingsItem
     {
         for (var i = 0; i < flow.Children.Count; i++)
         {
-            var child = flow.Children.ElementAt(i);
-            bool isCurrent = i == index;
+            var child = flow[i];
+            var isCurrent = i == index;
 
             if (child.IsCurrent.Value != isCurrent)
                 child.IsCurrent.Value = isCurrent;
@@ -132,47 +135,49 @@ public partial class SettingsKeybind : SettingsItem
         if (index < Keybinds.Length)
         {
             var keybind = Keybinds[index];
+            UpdateBinding(keybind, combination);
 
-            realm.RunWrite(r =>
-            {
-                var bind = r.All<RealmKeybind>().FirstOrDefault(x => x.Action == keybind.ToString());
+            var bind = GetComboFor(keybind);
+            flow[index].KeybindText = keyCombinationProvider.GetReadableString(bind.KeyCombination);
 
-                if (bind == null)
-                {
-                    bind = new RealmKeybind
-                    {
-                        Action = keybind.ToString(),
-                        Key = combination.ToString()
-                    };
-
-                    r.Add(bind);
-                }
-                else bind.Key = combination.ToString();
-            });
-
-            var bind = InputUtils.GetBindingFor(keybind.ToString(), realm);
-            flow.Children.ElementAt(index).Keybind = keyCombinationProvider.GetReadableString(bind.KeyCombination);
             index++;
+            menuScroll?.Play();
         }
         else index = -1;
     }
 
+    private void select(T bind)
+    {
+        index = Array.IndexOf(Keybinds, bind);
+        menuScroll?.Play();
+    }
+
+    protected abstract KeyBinding GetComboFor(T bind);
+    protected abstract void UpdateBinding(T bind, KeyCombination combo);
+
     private partial class KeybindContainer : Container
     {
-        public string Keybind { set => text.Text = value; }
-        public SettingsKeybind SettingsKeybind { get; init; }
+        public string KeybindText { set => text.Text = value; }
 
         public BindableBool IsCurrent { get; } = new();
 
-        private readonly FluXisSpriteText text;
-        private readonly Box box;
+        private T bind { get; }
+        private SettingsAbstractKeybind<T> parent { get; }
 
-        public KeybindContainer()
+        private Box box { get; }
+        private FluXisSpriteText text { get; }
+
+        public KeybindContainer(T bind, SettingsAbstractKeybind<T> parent)
         {
-            Height = 32;
+            this.bind = bind;
+            this.parent = parent;
+
             AutoSizeAxes = Axes.X;
-            CornerRadius = 8;
+            Height = 36;
+            CornerRadius = 6;
             Masking = true;
+
+            BorderColour = FluXisColors.Highlight;
 
             Children = new Drawable[]
             {
@@ -180,16 +185,16 @@ public partial class SettingsKeybind : SettingsItem
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colour4.Black,
-                    Alpha = 0.2f
+                    Alpha = .25f
                 },
                 new Container
                 {
                     RelativeSizeAxes = Axes.Y,
                     AutoSizeAxes = Axes.X,
-                    Padding = new MarginPadding { Horizontal = 10 },
+                    Padding = new MarginPadding { Horizontal = 12 },
                     Child = text = new FluXisSpriteText
                     {
-                        FontSize = 24,
+                        WebFontSize = 16,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     }
@@ -199,12 +204,12 @@ public partial class SettingsKeybind : SettingsItem
             IsCurrent.BindValueChanged(updateState, true);
         }
 
-        private void updateState(ValueChangedEvent<bool> e) => box.FadeColour(e.NewValue ? FluXisColors.Text : Colour4.Black, 200);
+        private void updateState(ValueChangedEvent<bool> e) => this.BorderTo(e.NewValue ? 3 : 0, 300, Easing.OutQuint);
 
         protected override bool OnClick(ClickEvent e)
         {
-            SettingsKeybind.index = SettingsKeybind.flow.Children.ToList().IndexOf(this);
-            return base.OnClick(e);
+            parent.select(bind);
+            return true;
         }
     }
 }

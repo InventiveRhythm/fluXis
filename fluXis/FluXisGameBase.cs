@@ -31,7 +31,6 @@ using fluXis.Overlay.Notifications;
 using fluXis.Plugins;
 using fluXis.Resources;
 using fluXis.Scoring;
-using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Menu;
 using fluXis.Skinning;
@@ -244,7 +243,6 @@ public partial class FluXisGameBase : osu.Framework.Game
             keybindStore = new KeybindStore(Realm);
             keybindStore.AssignDefaults(keybinds);
             keybindStore.AssignDefaults(new GameplayKeybindContainer(Realm, 0, true));
-            keybindStore.AssignDefaults(new EditorKeybindingContainer(null, Realm));
 
             cacheComponent(keybinds);
             MenuSplashes.Load(Host.CacheStorage);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Audio;
-using fluXis.Database;
+using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
@@ -42,6 +42,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -103,11 +104,11 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     }
 
     [BackgroundDependencyLoader]
-    private void load(FluXisRealm realm)
+    private void load(GameHost host, FluXisConfig config)
     {
         dependencies.CacheAs(this);
 
-        InternalChild = new EditorKeybindingContainer(this, realm)
+        InternalChild = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host)
         {
             RelativeSizeAxes = Axes.Both,
             Children = new Drawable[]

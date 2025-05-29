@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Database;
+using fluXis.Configuration;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
@@ -23,6 +23,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -43,9 +44,6 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     [Resolved]
     private NotificationManager notifications { get; set; }
 
-    [Resolved]
-    private FluXisRealm realm { get; set; }
-
     private SkinJson skinJson { get; set; }
     private Bindable<int> keyMode { get; } = new(4);
 
@@ -60,7 +58,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private PointSettingsTextBox receptorsPositionTextBox;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(GameHost host, FluXisConfig config)
     {
         skinJson = skinManager.SkinJson.JsonCopy();
 
@@ -77,7 +75,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             receptorsPositionTextBox.TextBox.Text = mode.ReceptorOffset.ToString();
         });
 
-        InternalChild = new EditorKeybindingContainer(this, realm)
+        InternalChild = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host)
         {
             Children = new Drawable[]
             {

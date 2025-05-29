@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using fluXis.Configuration;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Input;
@@ -31,7 +30,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     protected EditorSettings Settings { get; private set; }
 
     [Resolved]
-    protected FluXisConfig Config { get; private set; }
+    protected EditorKeybindingContainer Keybindings { get; private set; }
 
     [Resolved]
     public EditorActionStack ActionStack { get; private set; }
@@ -132,16 +131,16 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
         var scroll = e.ShiftPressed ? e.ScrollDelta.X : e.ScrollDelta.Y;
         int direction = scroll > 0 ? 1 : -1;
 
-        var setting = e.ControlPressed switch
+        var map = Keybindings.Keymap.Scroll;
+
+        EditorScrollAction action = e.ControlPressed switch
         {
-            true when e.ShiftPressed => FluXisSetting.EditorControlShiftScrollAction,
-            true => FluXisSetting.EditorControlScrollAction,
-            _ => e.ShiftPressed ? FluXisSetting.EditorShiftScrollAction : FluXisSetting.EditorScrollAction
+            true when e.ShiftPressed => map.ControlShift,
+            true => map.Control,
+            _ => e.ShiftPressed ? map.Shift : map.Normal
         };
 
-        var action = Config.Get<EditorScrollAction>(setting);
         onScroll(action, direction, direction);
-
         return true;
     }
 

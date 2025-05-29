@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace fluXis.Configuration;
+namespace fluXis.Screens.Edit.Input;
 
 public enum EditorScrollAction
 {
