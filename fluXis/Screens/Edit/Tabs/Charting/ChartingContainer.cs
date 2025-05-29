@@ -6,6 +6,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Overlay.Notifications;
+using fluXis.Screens.Edit.Actions.Events;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Actions.Notes.Shortcuts;
 using fluXis.Screens.Edit.Input;
@@ -260,6 +261,23 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             case EditorKeybinding.DeleteSelection:
                 BlueprintContainer.SelectionHandler.DeleteSelected();
                 return true;
+
+            case EditorKeybinding.AddTiming:
+            {
+                var current = Map.MapInfo.GetTimingPoint(EditorClock.CurrentTime);
+
+                var point = new TimingPoint()
+                {
+                    Time = EditorClock.CurrentTime,
+                    BPM = current.BPM,
+                    Signature = current.Signature,
+                    HideLines = current.HideLines
+                };
+
+                ActionStack.Add(new EventPlaceAction(point));
+                sidebar.ShowPoint(point);
+                return true;
+            }
         }
 
         return base.OnPressed(e);

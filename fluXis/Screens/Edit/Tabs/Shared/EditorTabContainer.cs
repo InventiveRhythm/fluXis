@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Actions;
+using fluXis.Screens.Edit.Actions.Events;
 using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
@@ -223,6 +225,14 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
             case EditorKeybinding.Redo:
                 ActionStack.Redo();
                 return true;
+
+            case EditorKeybinding.AddNote:
+            {
+                var note = new NoteEvent { Time = EditorClock.CurrentTime };
+                ActionStack.Add(new EventPlaceAction(note));
+                sidebar.ShowPoint(note);
+                return true;
+            }
         }
 
         return false;

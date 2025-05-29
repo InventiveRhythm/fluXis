@@ -29,6 +29,12 @@ public enum EditorKeybinding
     [Description("Toggle sidebar")]
     ToggleSidebar,
 
+    [Description("Create timing point at current position")]
+    AddTiming,
+
+    [Description("Create note/bookmark at current position")]
+    AddNote,
+
     [Description("Seek to previous note/bookmark")]
     PreviousNote,
 
