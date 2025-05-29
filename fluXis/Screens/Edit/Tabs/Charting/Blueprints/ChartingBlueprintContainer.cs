@@ -15,6 +15,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints;
 
@@ -132,6 +133,18 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         currentPlacement?.FinishPlacement(false);
         currentPlacement?.Expire();
         currentPlacement = null;
+    }
+
+    protected override bool OnMouseMove(MouseMoveEvent e)
+    {
+        if (currentPlacement is null
+            || !currentPlacement.AllowPainting
+            || !InputManager.CurrentState.Keyboard.ShiftPressed
+            || !InputManager.CurrentState.Mouse.Buttons.Contains(MouseButton.Left))
+            return base.OnMouseMove(e);
+
+        currentPlacement.FinishPlacement(true);
+        return true;
     }
 
     protected override SelectionBlueprint<ITimedObject> CreateBlueprint(ITimedObject obj)

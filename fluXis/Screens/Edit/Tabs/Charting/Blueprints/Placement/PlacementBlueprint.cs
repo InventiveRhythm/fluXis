@@ -23,6 +23,8 @@ public partial class PlacementBlueprint : Container
 
     protected virtual ITimePositionProvider PositionProvider => ChartingContainer.Playfields[0];
 
+    public virtual bool AllowPainting => false;
+
     public PlacementState State { get; set; }
     public ITimedObject Object { get; }
 

@@ -5,7 +5,6 @@ using fluXis.Screens.Edit.Tabs.Verify;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Input;
-using osu.Framework.Logging;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 
@@ -59,9 +58,6 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
                 clone.Lane -= Map.RealmMap.KeyCount;
             else
                 clone.Lane += Map.RealmMap.KeyCount;
-
-            Logger.Log(Hit.Serialize());
-            Logger.Log(clone.Serialize());
 
             Actions.Add(new NoteMultiPlaceAction(new[] { Hit, clone }));
             return;
