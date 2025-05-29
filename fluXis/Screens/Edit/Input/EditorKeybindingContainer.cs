@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using fluXis.Utils;
@@ -44,10 +43,11 @@ public partial class EditorKeybindingContainer : KeyBindingContainer<EditorKeybi
         new(new KeyCombination(InputKey.Control, InputKey.Y), EditorKeybinding.Redo),
         new(new KeyCombination(InputKey.Control, InputKey.F), EditorKeybinding.FlipSelection),
         new(new KeyCombination(InputKey.Control, InputKey.Q), EditorKeybinding.ShuffleSelection),
+        new(new KeyCombination(InputKey.Control, InputKey.D), EditorKeybinding.CloneSelection),
+        new(new KeyCombination(InputKey.BackSpace), EditorKeybinding.DeleteSelection),
         new(new KeyCombination(InputKey.Tab), EditorKeybinding.ToggleSidebar),
         new(new KeyCombination(InputKey.Shift, InputKey.Left), EditorKeybinding.PreviousNote),
         new(new KeyCombination(InputKey.Shift, InputKey.Right), EditorKeybinding.NextNote),
-        new(new KeyCombination(InputKey.BackSpace), EditorKeybinding.DeleteSelection),
     };
 
     private void loadKeymap()
@@ -125,35 +125,4 @@ public partial class EditorKeybindingContainer : KeyBindingContainer<EditorKeybi
 
     public bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e) => parent?.OnPressed(e) ?? false;
     public void OnReleased(KeyBindingReleaseEvent<EditorKeybinding> e) => parent?.OnReleased(e);
-}
-
-public enum EditorKeybinding
-{
-    Undo,
-    Redo,
-    Save,
-
-    [Description("Open help/wiki")]
-    OpenHelp,
-
-    [Description("Open folder")]
-    OpenFolder,
-
-    [Description("Flip current selection")]
-    FlipSelection,
-
-    [Description("Shuffle current selection")]
-    ShuffleSelection,
-
-    [Description("Toggle sidebar")]
-    ToggleSidebar,
-
-    [Description("Seek to previous note/bookmark")]
-    PreviousNote,
-
-    [Description("Seek to next note/bookmark")]
-    NextNote,
-
-    [Description("Delete current selection")]
-    DeleteSelection
 }

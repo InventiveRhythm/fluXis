@@ -252,6 +252,14 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             case EditorKeybinding.ShuffleSelection:
                 ShuffleSelection();
                 return true;
+
+            case EditorKeybinding.CloneSelection:
+                CloneSelection();
+                return true;
+
+            case EditorKeybinding.DeleteSelection:
+                BlueprintContainer.SelectionHandler.DeleteSelected();
+                return true;
         }
 
         return base.OnPressed(e);
@@ -311,6 +319,33 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         }
 
         ActionStack.Add(new NoteShuffleAction(objects, Map.RealmMap.KeyCount));
+    }
+
+    public void CloneSelection()
+    {
+        var objects = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().ToList();
+
+        if (!objects.Any())
+        {
+            notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+            return;
+        }
+
+        var start = objects.MinBy(x => x.Time).Time;
+        var end = objects.MaxBy(x => x.Time).Time;
+        end += Map.MapInfo.GetTimingPoint(end).MsPerBeat;
+
+        var snapped = snaps.SnapTime(end, 1);
+
+        var added = objects.Select(x =>
+        {
+            var clone = x.JsonCopy();
+            var offset = clone.Time - start;
+            clone.Time = snapped + offset;
+            return clone;
+        });
+
+        ActionStack.Add(new NoteMultiPlaceAction(added.ToArray()));
     }
 
     public void ReSnapAll()

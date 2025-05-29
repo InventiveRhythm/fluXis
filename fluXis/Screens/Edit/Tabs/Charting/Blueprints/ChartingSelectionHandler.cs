@@ -2,7 +2,6 @@
 using System.Linq;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
-using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Blueprints.Selection;
@@ -14,9 +13,6 @@ public partial class ChartingSelectionHandler : SelectionHandler<ITimedObject>
 {
     [Resolved]
     private EditorActionStack actions { get; set; }
-
-    [Resolved]
-    private EditorMap map { get; set; }
 
     public override void Delete(IEnumerable<ITimedObject> objects)
     {
@@ -30,17 +26,6 @@ public partial class ChartingSelectionHandler : SelectionHandler<ITimedObject>
 
             if (hits.Length > 0)
                 actions.Add(new NoteRemoveAction(hits));
-        }
-
-        // todo: maybe should move this one into the NoteRemoveAction?
-        foreach (ITimedObject obj in objs)
-        {
-            switch (obj)
-            {
-                case FlashEvent flash:
-                    map.Remove(flash);
-                    break;
-            }
         }
     }
 }

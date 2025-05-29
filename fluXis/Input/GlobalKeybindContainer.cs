@@ -10,19 +10,22 @@ namespace fluXis.Input;
 
 public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlobalKeybind>, IHandleGlobalKeyboardInput, IKeyBindingHandler<FluXisGlobalKeybind>
 {
+    protected override bool Prioritised => game.PrioritizeGlobalKeybindings;
+
     private readonly IKeyBindingHandler<FluXisGlobalKeybind> handler;
+    private FluXisGameBase game { get; }
 
     public GlobalKeybindContainer(FluXisGameBase game, FluXisRealm realm)
         : base(realm, SimultaneousBindingMode.None, KeyCombinationMatchingMode.Modifiers)
     {
+        this.game = game;
+
         if (game is IKeyBindingHandler<FluXisGlobalKeybind> keyBindingHandler)
             handler = keyBindingHandler;
     }
 
     public override IEnumerable<IKeyBinding> DefaultKeyBindings => GlobalKeyBindings
         .Concat(InGameKeyBindings);
-
-    protected override bool Prioritised => true;
 
     public IEnumerable<KeyBinding> GlobalKeyBindings = new[]
     {

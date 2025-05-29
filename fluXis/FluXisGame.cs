@@ -33,6 +33,7 @@ using fluXis.Overlay.Volume;
 using fluXis.Overlay.Wiki;
 using fluXis.Scoring;
 using fluXis.Screens;
+using fluXis.Screens.Edit;
 using fluXis.Screens.Intro;
 using fluXis.Screens.Layout;
 using fluXis.Screens.Loading;
@@ -68,6 +69,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     public static readonly string[] VIDEO_EXTENSIONS = { ".mp4", ".mov", ".avi", ".flv", ".mpg", ".wmv", ".m4v" };
 
     protected override bool LoadComponentsLazy => true;
+    public override bool PrioritizeGlobalKeybindings => screenStack.CurrentScreen is not Editor || overlayContainer.Any(x => x.State.Value == Visibility.Visible);
 
     private BufferedContainer buffer;
     private GlobalClock globalClock;

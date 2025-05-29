@@ -16,16 +16,19 @@ public class EditorSnapProvider
     }
 
     public double SnapTime(double time) => SnapTime(time, false);
+    public double SnapTime(double time, int snap) => SnapTime(time, false, snap);
 
-    public double SnapTime(double time, bool allowNext)
+    public double SnapTime(double time, bool allowNext, int snap = -1)
     {
         // fix for a weird bug that tries to snap a 17-digit number
         if (time >= clock.TrackLength)
             return time;
 
+        if (snap <= 0) snap = settings.SnapDivisor;
+
         var tp = map.MapInfo.GetTimingPoint(time);
         double t = tp.Time;
-        double increase = tp.Signature * tp.MsPerBeat / (4 * settings.SnapDivisor);
+        double increase = tp.Signature * tp.MsPerBeat / (4 * snap);
         if (increase == 0) return time; // no snapping, the game will just freeze because it loops infinitely
 
         if (time < t)

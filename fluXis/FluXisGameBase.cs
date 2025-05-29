@@ -61,6 +61,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public Vector2 ContentSize => content.DrawSize;
 
     protected bool LoadFailed { get; set; }
+    public virtual bool PrioritizeGlobalKeybindings => false;
 
     protected virtual bool LoadComponentsLazy => false;
     protected virtual bool RequiresSteam => false;
