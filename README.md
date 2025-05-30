@@ -8,20 +8,7 @@
 </p>
 
 ## Downloading and playing the game
-### Windows 8.1+
-1. Download and install the .NET 8.0 desktop runtime from [here](https://dotnet.microsoft.com/download/dotnet/8.0/runtime).
-2. Download `install.exe` from [the latest release](https://github.com/InventiveRhythm/fluXis/releases/latest) or the download button on the website.
-3. Run the installer.
-
-*Make sure to report any issues with the installer to the [discord server](https://discord.gg/29hMftpNq9).*
-
-### Linux
-1. Download and install the .NET 8.0 desktop runtime.
-2. Download `fluXis.AppImage` from [the latest release](https://github.com/InventiveRhythm/fluXis/releases/latest).
-3. Run the AppImage.
-
-### macOS
-macOS releases soon™
+- Download the game on [steam](https://store.steampowered.com/app/3440100/fluXis/).
 
 ## Building and Developing
 ### Requirements
