@@ -329,12 +329,12 @@ public partial class MultiLobby : MultiSubScreen
         {
             mapStore.CurrentMap = localMap;
             clock.VolumeOut(); // because it sets itself to 1
+            clock.Seek(Math.Max(localMap?.Metadata.PreviewTime ?? 0, 0));
         }
 
         clock.RestartPoint = 0;
         backgrounds.AddBackgroundFromMap(localMap);
         startClockMusic();
-        clock.Seek(Math.Max(localMap?.Metadata.PreviewTime ?? 0, 0));
         clock.RestartPoint = 0;
         clock.AllowLimitedLoop = false;
 
