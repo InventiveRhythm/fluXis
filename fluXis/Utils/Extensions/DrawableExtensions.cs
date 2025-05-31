@@ -86,14 +86,6 @@ public static class DrawableExtensions
         seq.Loop();
     }
 
-    public static void RunOnUpdate(this Drawable _, Scheduler scheduler, Action action)
-    {
-        if (ThreadSafety.IsUpdateThread)
-            action.Invoke();
-        else
-            scheduler.Add(action.Invoke);
-    }
-
     public static void ScheduleIfNeeded(this Scheduler scheduler, Action action)
     {
         if (ThreadSafety.IsUpdateThread)

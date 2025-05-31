@@ -157,11 +157,13 @@ public partial class DrawableAvatar : CompositeDrawable, IHasCustomTooltip<APIUs
     public void UpdateUser(APIUser? newUser)
     {
         unregisterCallback();
-
         user = newUser;
-        setTexture();
 
-        registerCallback();
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            setTexture();
+            registerCallback();
+        });
     }
 
     protected override bool OnClick(ClickEvent e)
