@@ -10,7 +10,7 @@ using fluXis.Database.Maps;
 using fluXis.Database.Score;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Context;
 using fluXis.Graphics.UserInterface.Panel;

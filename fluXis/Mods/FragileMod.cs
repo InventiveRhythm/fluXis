@@ -1,5 +1,5 @@
 using System;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
 using osu.Framework.Graphics.Sprites;

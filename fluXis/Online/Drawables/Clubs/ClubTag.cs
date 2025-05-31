@@ -1,5 +1,4 @@
-using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface.Text;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;

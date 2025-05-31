@@ -1,5 +1,5 @@
 using fluXis.Configuration.Experiments;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

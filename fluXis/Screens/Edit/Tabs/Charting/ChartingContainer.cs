@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Overlay.Notifications;

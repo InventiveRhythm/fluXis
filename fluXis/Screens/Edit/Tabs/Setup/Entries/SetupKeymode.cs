@@ -1,9 +1,9 @@
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Drawables;
-using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Interaction;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

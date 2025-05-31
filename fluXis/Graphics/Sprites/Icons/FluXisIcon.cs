@@ -3,7 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
-namespace fluXis.Graphics.Sprites;
+namespace fluXis.Graphics.Sprites.Icons;
 
 public partial class FluXisIcon : Sprite
 {

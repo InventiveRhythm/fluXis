@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Tabs;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Overlay.Club.Tabs.Members;

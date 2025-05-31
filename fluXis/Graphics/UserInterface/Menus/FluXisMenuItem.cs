@@ -1,5 +1,5 @@
 using System;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;

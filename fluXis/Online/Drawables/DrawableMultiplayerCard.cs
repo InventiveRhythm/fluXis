@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Online.Drawables.Images;
 using JetBrains.Annotations;

@@ -1,7 +1,8 @@
 using fluXis.Graphics.Shaders.Bloom;
 using fluXis.Graphics.Shaders.Chromatic;
 using fluXis.Graphics.Shaders.Glitch;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;

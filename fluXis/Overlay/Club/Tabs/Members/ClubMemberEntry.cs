@@ -1,5 +1,6 @@
 ﻿using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Images;

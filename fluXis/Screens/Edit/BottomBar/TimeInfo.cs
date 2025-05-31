@@ -1,6 +1,6 @@
 using fluXis.Audio;
-using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Overlay.Notifications;
 using fluXis.Utils;
 using osu.Framework.Allocation;

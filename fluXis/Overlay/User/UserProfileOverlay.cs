@@ -1,6 +1,6 @@
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Tabs;
 using fluXis.Input;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;

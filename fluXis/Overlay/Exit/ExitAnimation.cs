@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;

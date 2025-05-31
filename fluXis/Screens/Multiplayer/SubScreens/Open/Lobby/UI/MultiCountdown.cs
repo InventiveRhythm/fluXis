@@ -1,5 +1,6 @@
 ﻿using System;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Outline;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.Multiplayer;
 using fluXis.Utils.Extensions;

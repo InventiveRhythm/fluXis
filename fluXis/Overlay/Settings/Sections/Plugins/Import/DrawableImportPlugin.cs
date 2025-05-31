@@ -1,6 +1,6 @@
 using System.Linq;
 using fluXis.Database;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Import;
 using fluXis.Overlay.Settings.UI;

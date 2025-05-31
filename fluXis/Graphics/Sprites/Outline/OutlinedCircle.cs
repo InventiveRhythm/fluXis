@@ -3,11 +3,11 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Graphics.Sprites;
+namespace fluXis.Graphics.Sprites.Outline;
 
-public partial class OutlinedSquare : Container
+public partial class OutlinedCircle : CircularContainer
 {
-    public OutlinedSquare()
+    public OutlinedCircle()
     {
         BorderColour = FluXisColors.Text;
         BorderThickness = 20;

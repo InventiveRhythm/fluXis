@@ -1,8 +1,7 @@
 using System;
-using fluXis.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
-namespace fluXis.Graphics.UserInterface.Text;
+namespace fluXis.Graphics.Sprites.Text;
 
 public partial class ClickableFluXisSpriteText : FluXisSpriteText
 {

@@ -6,7 +6,7 @@ using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Input;

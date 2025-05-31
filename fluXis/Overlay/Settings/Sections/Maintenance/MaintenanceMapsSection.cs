@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Localization.Categories.Settings;
 using fluXis.Map;

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;

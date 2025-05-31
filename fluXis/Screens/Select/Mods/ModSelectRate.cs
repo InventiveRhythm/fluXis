@@ -1,7 +1,7 @@
 using System;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Localization;

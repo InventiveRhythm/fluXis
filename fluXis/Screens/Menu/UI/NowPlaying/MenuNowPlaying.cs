@@ -1,6 +1,6 @@
 ﻿using fluXis.Database.Maps;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Utils.Extensions;

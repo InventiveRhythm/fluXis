@@ -1,4 +1,4 @@
-﻿using fluXis.Graphics.Sprites;
+﻿using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Tabs;
 using osu.Framework.Graphics.Sprites;
 

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Storyboards;

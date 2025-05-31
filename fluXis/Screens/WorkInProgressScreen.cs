@@ -1,5 +1,5 @@
 using fluXis.Audio;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Input;
 using osu.Framework.Allocation;

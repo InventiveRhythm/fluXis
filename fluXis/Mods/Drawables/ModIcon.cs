@@ -1,5 +1,6 @@
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Localization;
 using osu.Framework.Allocation;

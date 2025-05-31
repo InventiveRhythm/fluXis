@@ -1,4 +1,4 @@
-﻿using fluXis.Graphics.Sprites;
+﻿using fluXis.Graphics.Sprites.Text;
 using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using JetBrains.Annotations;

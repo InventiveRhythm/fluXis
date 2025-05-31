@@ -1,5 +1,6 @@
 using fluXis.Audio;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens;
 using fluXis.Utils.Extensions;

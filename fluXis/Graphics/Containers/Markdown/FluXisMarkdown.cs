@@ -1,5 +1,5 @@
 ﻿using System;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using Markdig.Extensions.Tables;
 using Markdig.Syntax;
 using osu.Framework.Graphics;

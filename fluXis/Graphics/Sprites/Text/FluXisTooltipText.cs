@@ -1,9 +1,8 @@
-using fluXis.Graphics.Sprites;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 
-namespace fluXis.Graphics.UserInterface.Text;
+namespace fluXis.Graphics.Sprites.Text;
 
 /// <summary>
 /// FluXisSpriteText with a tooltip.

@@ -1,7 +1,7 @@
 ﻿using fluXis.Audio;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Graphics.UserInterface.Text;
 using fluXis.Skinning;
 using fluXis.Skinning.Json;
 using fluXis.Utils.Extensions;

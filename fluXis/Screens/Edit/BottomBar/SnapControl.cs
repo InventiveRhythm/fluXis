@@ -1,8 +1,8 @@
 ﻿using System;
 using fluXis.Audio;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Screens.Edit.BottomBar.Snap;
 using fluXis.Skinning;
 using fluXis.Utils;

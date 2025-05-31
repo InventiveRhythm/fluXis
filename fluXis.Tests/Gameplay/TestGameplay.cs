@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Screens;

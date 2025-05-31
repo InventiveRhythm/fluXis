@@ -1,4 +1,4 @@
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;

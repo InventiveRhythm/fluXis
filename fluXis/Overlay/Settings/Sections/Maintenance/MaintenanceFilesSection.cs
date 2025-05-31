@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Localization.Categories.Settings;
 using fluXis.Map;

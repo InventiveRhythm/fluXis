@@ -5,6 +5,7 @@ using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;

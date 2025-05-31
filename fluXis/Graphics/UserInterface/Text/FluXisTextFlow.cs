@@ -1,5 +1,5 @@
 using System;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

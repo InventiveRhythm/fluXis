@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Overlay.Settings.UI;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

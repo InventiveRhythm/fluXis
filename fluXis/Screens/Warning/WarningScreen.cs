@@ -1,5 +1,5 @@
 using fluXis.Graphics.Background;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Screens.Intro;
 using osu.Framework.Allocation;

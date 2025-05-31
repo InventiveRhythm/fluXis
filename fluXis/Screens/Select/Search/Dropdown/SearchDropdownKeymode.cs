@@ -1,5 +1,5 @@
 using System.Linq;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Utils;
 using osu.Framework.Allocation;

@@ -1,4 +1,4 @@
-﻿using fluXis.Graphics.UserInterface.Text;
+﻿using fluXis.Graphics.Sprites.Text;
 using fluXis.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

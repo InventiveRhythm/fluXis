@@ -1,4 +1,4 @@
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 using osu.Framework.Graphics;
 

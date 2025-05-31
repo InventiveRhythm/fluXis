@@ -1,7 +1,7 @@
 using System;
 using fluXis.Audio;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using fluXis.Database;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Files;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Utils;

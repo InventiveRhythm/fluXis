@@ -2,7 +2,7 @@ using System;
 using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Graphics.Sprites;
+namespace fluXis.Graphics.Sprites.Text;
 
 public partial class FluXisSpriteText : SpriteText
 {

@@ -1,10 +1,9 @@
 ﻿using System;
 using fluXis.Database.Maps;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Footer;
-using fluXis.Graphics.UserInterface.Text;
 using fluXis.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

@@ -1,7 +1,8 @@
 using fluXis.Audio;
-using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Online.Chat;
 using osu.Framework.Allocation;

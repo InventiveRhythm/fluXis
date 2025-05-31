@@ -1,5 +1,5 @@
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Screens.Edit.Tabs.Design;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

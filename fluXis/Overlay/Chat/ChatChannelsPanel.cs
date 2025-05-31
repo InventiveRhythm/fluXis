@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Online.API;

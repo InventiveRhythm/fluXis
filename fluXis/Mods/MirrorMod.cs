@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map;
 using osu.Framework.Graphics.Sprites;
 

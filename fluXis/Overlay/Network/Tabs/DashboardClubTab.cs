@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Models.Users;

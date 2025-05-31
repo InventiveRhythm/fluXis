@@ -1,5 +1,5 @@
 ﻿using System;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using JetBrains.Annotations;
 using Markdig.Syntax.Inlines;

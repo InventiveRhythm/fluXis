@@ -8,7 +8,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
-namespace fluXis.Graphics.UserInterface;
+namespace fluXis.Graphics.Sprites;
 
 public partial class LoadingIcon : Container
 {

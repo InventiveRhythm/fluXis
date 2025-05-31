@@ -2,9 +2,10 @@
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Localization;
 using fluXis.Utils;
 using fluXis.Utils.Attributes;

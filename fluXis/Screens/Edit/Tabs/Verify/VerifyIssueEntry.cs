@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

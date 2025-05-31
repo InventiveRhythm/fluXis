@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using fluXis.Database.Maps;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
 using fluXis.Online.API.Models.Maps;

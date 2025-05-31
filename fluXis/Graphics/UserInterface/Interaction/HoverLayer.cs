@@ -3,7 +3,7 @@ using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Graphics.UserInterface;
+namespace fluXis.Graphics.UserInterface.Interaction;
 
 public partial class HoverLayer : Box
 {

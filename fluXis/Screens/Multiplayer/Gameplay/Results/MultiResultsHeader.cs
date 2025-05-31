@@ -1,5 +1,5 @@
 using fluXis.Database.Maps;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Map.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

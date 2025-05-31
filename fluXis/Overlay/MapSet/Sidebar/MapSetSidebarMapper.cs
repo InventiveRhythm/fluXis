@@ -1,5 +1,5 @@
 ﻿using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.Drawables.Images;

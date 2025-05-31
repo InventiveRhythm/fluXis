@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Map.Drawables.Card;
 using fluXis.Online.API.Models.Maps;
 using osu.Framework.Graphics;

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Overlay.Notifications;
 using JetBrains.Annotations;
 

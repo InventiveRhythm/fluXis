@@ -10,7 +10,7 @@ using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Background.Cropped;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Panel;

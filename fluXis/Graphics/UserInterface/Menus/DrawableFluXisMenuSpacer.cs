@@ -18,17 +18,14 @@ public partial class DrawableFluXisMenuSpacer : Menu.DrawableMenuItem
         Foreground.RelativeSizeAxes = Axes.X;
     }
 
-    protected override Drawable CreateContent()
+    protected override Drawable CreateContent() => new Container
     {
-        return new Container
+        RelativeSizeAxes = Axes.X,
+        Height = 2,
+        Child = new Box
         {
-            RelativeSizeAxes = Axes.X,
-            Height = 2,
-            Child = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background6
-            }
-        };
-    }
+            RelativeSizeAxes = Axes.Both,
+            Colour = FluXisColors.Background6
+        }
+    };
 }

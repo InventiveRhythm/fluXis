@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Utils.Attributes;

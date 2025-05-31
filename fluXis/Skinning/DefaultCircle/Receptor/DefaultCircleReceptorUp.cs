@@ -1,5 +1,5 @@
 ﻿using fluXis.Audio;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Outline;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Json;
 using fluXis.Utils.Extensions;

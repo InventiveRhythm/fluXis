@@ -1,7 +1,8 @@
 using fluXis.Audio;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Map;

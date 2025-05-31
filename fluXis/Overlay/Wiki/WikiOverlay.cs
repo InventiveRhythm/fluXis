@@ -2,9 +2,9 @@
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Containers.Markdown;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Graphics.UserInterface.Text;
 using fluXis.Input;
 using fluXis.Online.API.Requests.Wiki;
 using fluXis.Online.Drawables;

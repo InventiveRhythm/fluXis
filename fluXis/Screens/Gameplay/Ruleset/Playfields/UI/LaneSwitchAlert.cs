@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Configuration;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

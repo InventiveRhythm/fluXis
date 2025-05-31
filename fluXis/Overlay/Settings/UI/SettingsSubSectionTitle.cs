@@ -1,4 +1,4 @@
-﻿using fluXis.Graphics.Sprites;
+﻿using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Bindables;
 using osu.Framework.Localisation;
 

@@ -1,5 +1,4 @@
 using System;
-using fluXis.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -8,7 +7,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 using osuTK;
 
-namespace fluXis.Graphics.UserInterface.Text;
+namespace fluXis.Graphics.Sprites.Text;
 
 /// <summary>
 /// A container that displays text with a proper gradient.

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Localization.Categories.Settings;
 using fluXis.Overlay.Settings.UI;

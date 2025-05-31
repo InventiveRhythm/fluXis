@@ -1,5 +1,6 @@
 using fluXis.Configuration;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Files;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Localization;

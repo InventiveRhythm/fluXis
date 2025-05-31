@@ -1,7 +1,7 @@
 ﻿using System;
 using fluXis.Configuration;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Images;

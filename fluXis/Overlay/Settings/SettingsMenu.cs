@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Overlay.Settings.Sections;

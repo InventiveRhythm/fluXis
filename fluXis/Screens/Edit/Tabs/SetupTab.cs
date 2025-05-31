@@ -1,6 +1,6 @@
 using System.Linq;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Edit.Tabs.Setup;
 using fluXis.Screens.Edit.Tabs.Setup.Entries;

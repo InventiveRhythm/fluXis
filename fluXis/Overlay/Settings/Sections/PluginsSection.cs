@@ -1,4 +1,4 @@
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Overlay.Settings.Sections.Plugins;
 using osu.Framework.Allocation;

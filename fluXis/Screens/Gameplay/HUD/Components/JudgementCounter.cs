@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;

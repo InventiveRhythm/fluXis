@@ -1,6 +1,7 @@
 ﻿using System;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Tabs;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Users;

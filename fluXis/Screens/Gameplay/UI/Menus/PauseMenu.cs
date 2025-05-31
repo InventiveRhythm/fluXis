@@ -1,7 +1,8 @@
 using fluXis.Audio.Transforms;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Screens.Gameplay.Audio;

@@ -1,4 +1,4 @@
-﻿using fluXis.Graphics.Sprites;
+﻿using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using Markdig.Syntax.Inlines;
 using osu.Framework.Graphics;

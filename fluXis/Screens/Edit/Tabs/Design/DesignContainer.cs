@@ -18,7 +18,6 @@ using fluXis.Graphics.Shaders.SplitScreen;
 using fluXis.Graphics.Shaders.FishEye;
 using fluXis.Graphics.Shaders.Reflections;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
 using fluXis.Map.Structures.Events;
 using fluXis.Mods;
 using fluXis.Replays;

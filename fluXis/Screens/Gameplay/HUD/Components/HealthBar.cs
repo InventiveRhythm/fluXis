@@ -1,6 +1,6 @@
 using System;
 using fluXis.Audio;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Skinning;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;

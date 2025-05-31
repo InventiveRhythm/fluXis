@@ -1,4 +1,4 @@
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Online;
 using fluXis.Replays;
 using fluXis.Utils.Extensions;

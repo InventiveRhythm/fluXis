@@ -2,12 +2,11 @@ using System;
 using fluXis.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
-namespace fluXis.Graphics.Sprites;
+namespace fluXis.Graphics.Sprites.Icons;
 
-public partial class ClickableSpriteIcon : SpriteIcon
+public partial class ClickableSpriteIcon : FluXisSpriteIcon
 {
     private Action action;
 

@@ -1,5 +1,5 @@
 ﻿using fluXis.Database.Maps;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Utils;

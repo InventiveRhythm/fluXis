@@ -1,6 +1,6 @@
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Intro;
 using fluXis.Screens.Warning;

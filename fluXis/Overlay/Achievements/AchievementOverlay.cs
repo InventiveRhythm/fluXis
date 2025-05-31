@@ -1,6 +1,6 @@
 using System.Linq;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Online.API.Models.Other;

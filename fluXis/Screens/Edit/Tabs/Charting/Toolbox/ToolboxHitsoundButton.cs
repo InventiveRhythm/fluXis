@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes.Hitsound;

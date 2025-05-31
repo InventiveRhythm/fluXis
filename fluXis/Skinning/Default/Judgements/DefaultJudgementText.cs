@@ -1,5 +1,5 @@
 using System;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Scoring.Enums;
 using fluXis.Skinning.Bases.Judgements;
 using osu.Framework.Allocation;

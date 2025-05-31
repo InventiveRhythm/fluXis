@@ -2,7 +2,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 
-namespace fluXis.Graphics.Sprites;
+namespace fluXis.Graphics.Sprites.Text;
 
 public partial class TruncatingText : FluXisSpriteText, IHasTooltip
 {

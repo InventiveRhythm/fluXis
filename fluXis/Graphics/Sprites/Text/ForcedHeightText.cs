@@ -1,10 +1,9 @@
-﻿using fluXis.Graphics.Sprites;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;
 
-namespace fluXis.Graphics.UserInterface.Text;
+namespace fluXis.Graphics.Sprites.Text;
 
 public partial class ForcedHeightText : CompositeDrawable
 {

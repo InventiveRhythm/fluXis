@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Configuration;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Online.Activity;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Chat;

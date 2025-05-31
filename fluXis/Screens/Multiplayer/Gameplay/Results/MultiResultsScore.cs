@@ -1,5 +1,5 @@
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Images;
 using fluXis.Scoring;
