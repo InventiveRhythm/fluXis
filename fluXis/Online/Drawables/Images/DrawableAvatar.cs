@@ -1,10 +1,8 @@
 using System;
-using System.IO;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Animated;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Users;
-using fluXis.Online.Fluxel;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -14,13 +12,8 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
-using osu.Framework.IO.Network;
 using osu.Framework.Logging;
-using osu.Framework.Platform;
 using osuTK;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using Image = SixLabors.ImageSharp.Image;
 
 namespace fluXis.Online.Drawables.Images;
 
@@ -39,10 +32,7 @@ public partial class DrawableAvatar : CompositeDrawable, IHasCustomTooltip<APIUs
     private UserCache? users { get; set; }
 
     [Resolved]
-    private IAPIClient api { get; set; } = null!;
-
-    [Resolved]
-    private GameHost host { get; set; } = null!;
+    private AnimatedSpriteStore animations { get; set; } = null!;
 
     public Action? ClickAction { get; init; }
 
@@ -90,40 +80,22 @@ public partial class DrawableAvatar : CompositeDrawable, IHasCustomTooltip<APIUs
 
         try
         {
-            var path = host.CacheStorage.GetFullPath($"animations/{user.AvatarHash}.gif", true);
-
-            if (!host.CacheStorage.Exists(path))
-            {
-                var req = new WebRequest($"{api.Endpoint.AssetUrl}/avatar/{user.AvatarHash}_a.gif");
-                req.AllowInsecureRequests = true;
-                req.Perform();
-
-                var data = req.GetResponseData();
-                if (data is null) return false;
-
-                File.WriteAllBytes(path, data);
-            }
-
-            using var stream = File.OpenRead(path);
-            using var image = Image.Load<Rgba32>(stream);
+            var frames = animations.Get(user.AvatarHash, OnlineTextureStore.AssetType.Avatar);
+            if (frames is null || frames.Length <= 0) return false;
 
             var spr = new DrawableAnimation { RelativeSizeAxes = Axes.Both };
 
-            for (var i = 0; i < image.Frames.Count; i++)
+            foreach (var frame in frames)
             {
-                var frame = image.Frames[i];
-                var meta = frame.Metadata.GetGifMetadata();
-
-                var clone = image.Frames.CloneFrame(i);
-                var upload = new TextureUpload(clone);
-                spr.AddFrame(new CustomTextureSprite(upload)
+                spr.AddFrame(new Sprite
                 {
+                    Texture = frame.Texture,
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     FillMode = FillMode.Fill,
                     Size = new Vector2(1)
-                }, meta.FrameDelay * 10);
+                }, frame.Duration);
             }
 
             InternalChild = spr;

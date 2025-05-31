@@ -15,6 +15,7 @@ using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Background.Cropped;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Animated;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Import;
 using fluXis.Input;
@@ -197,6 +198,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(new BackgroundTextureStore(Host, mapStorage));
             cacheComponent(new CroppedBackgroundStore(Host, mapStorage));
             cacheComponent(new OnlineTextureStore(Host, endpoint));
+            cacheComponent(new AnimatedSpriteStore(Host, APIClient));
 
             cacheComponent(MapStore = new MapStore(), true, true);
             cacheComponent(new ScoreManager(), true, true);

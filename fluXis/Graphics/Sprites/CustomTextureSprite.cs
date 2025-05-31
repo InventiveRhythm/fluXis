@@ -7,17 +7,19 @@ namespace fluXis.Graphics.Sprites;
 
 public partial class CustomTextureSprite : Sprite
 {
+    private TextureAtlas atlas { get; }
     private TextureUpload upload { get; }
 
-    public CustomTextureSprite(TextureUpload upload)
+    public CustomTextureSprite(TextureAtlas atlas, TextureUpload upload)
     {
+        this.atlas = atlas;
         this.upload = upload;
     }
 
     [BackgroundDependencyLoader]
     private void load(IRenderer renderer)
     {
-        var texture = renderer.CreateTexture(upload.Width, upload.Height);
+        var texture = atlas.Add(upload.Width, upload.Height) ?? renderer.CreateTexture(upload.Width, upload.Height);
         texture.SetData(upload);
         Texture = texture;
     }

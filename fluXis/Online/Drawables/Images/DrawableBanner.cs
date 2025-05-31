@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Animated;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.Fluxel;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,13 +9,8 @@ using osu.Framework.Graphics.Animations;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.IO.Network;
 using osu.Framework.Logging;
-using osu.Framework.Platform;
 using osuTK;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using Image = SixLabors.ImageSharp.Image;
 
 namespace fluXis.Online.Drawables.Images;
 
@@ -36,10 +29,7 @@ public partial class DrawableBanner : CompositeDrawable
     private UserCache? users { get; set; }
 
     [Resolved]
-    private IAPIClient api { get; set; } = null!;
-
-    [Resolved]
-    private GameHost host { get; set; } = null!;
+    private AnimatedSpriteStore animations { get; set; } = null!;
 
     private APIUser? user;
 
@@ -85,40 +75,22 @@ public partial class DrawableBanner : CompositeDrawable
 
         try
         {
-            var path = host.CacheStorage.GetFullPath($"animations/{user.BannerHash}.gif", true);
-
-            if (!host.CacheStorage.Exists(path))
-            {
-                var req = new WebRequest($"{api.Endpoint.AssetUrl}/banner/{user.BannerHash}_a.gif");
-                req.AllowInsecureRequests = true;
-                req.Perform();
-
-                var data = req.GetResponseData();
-                if (data is null) return false;
-
-                File.WriteAllBytes(path, data);
-            }
-
-            using var stream = File.OpenRead(path);
-            using var image = Image.Load<Rgba32>(stream);
+            var frames = animations.Get(user.BannerHash, OnlineTextureStore.AssetType.Banner);
+            if (frames is null || frames.Length <= 0) return false;
 
             var spr = new DrawableAnimation { RelativeSizeAxes = Axes.Both };
 
-            for (var i = 0; i < image.Frames.Count; i++)
+            foreach (var frame in frames)
             {
-                var frame = image.Frames[i];
-                var meta = frame.Metadata.GetGifMetadata();
-
-                var clone = image.Frames.CloneFrame(i);
-                var upload = new TextureUpload(clone);
-                spr.AddFrame(new CustomTextureSprite(upload)
+                spr.AddFrame(new Sprite
                 {
+                    Texture = frame.Texture,
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     FillMode = FillMode.Fill,
                     Size = new Vector2(1)
-                }, meta.FrameDelay * 10);
+                }, frame.Duration);
             }
 
             InternalChild = spr;
