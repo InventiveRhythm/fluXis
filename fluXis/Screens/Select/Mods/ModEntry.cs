@@ -42,15 +42,16 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
     private ForcedHeightText description { get; }
     private FluXisSpriteText scoreMultiplier { get; }
 
-    private IMod mod { get; }
+    public IMod Mod { get; }
+
     private ModsOverlay overlay { get; }
     private Colour4 accent { get; }
 
-    private bool selected => overlay.SelectedMods.Any(x => x.GetType() == mod.GetType());
+    private bool selected => overlay.SelectedMods.Any(x => x.GetType() == Mod.GetType());
 
     public ModEntry(IMod mod, ModsOverlay overlay)
     {
-        this.mod = mod;
+        this.Mod = mod;
         this.overlay = overlay;
         accent = FluXisColors.GetModTypeColor(mod.Type);
 
@@ -176,8 +177,8 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
         flash.Show();
         samples.Click();
 
-        if (selected) overlay.Deselect(mod);
-        else overlay.Select(mod);
+        if (selected) overlay.Deselect(Mod);
+        else overlay.Select(Mod);
 
         return true;
     }
@@ -291,7 +292,7 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
 
         public override void SetContent(ModEntry content)
         {
-            var mod = content.mod;
+            var mod = content.Mod;
 
             this.TransformTo(nameof(BackgroundColor), (ColourInfo)FluXisColors.GetModTypeColor(mod.Type), 50);
             type.Text = mod.Type switch

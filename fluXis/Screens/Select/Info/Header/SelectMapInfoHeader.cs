@@ -14,6 +14,7 @@ using fluXis.Mods;
 using fluXis.Scoring;
 using fluXis.Screens.Select.Mods;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -31,7 +32,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     [Resolved]
     private MapStore maps { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private ModsOverlay mods { get; set; }
 
     private SpriteStack<MapBackground> backgrounds;
@@ -202,6 +204,9 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         base.LoadComplete();
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
+
+        if (mods is null) return;
+
         mods.SelectedMods.BindCollectionChanged((_, _) => updateDifficultyValues(maps.MapBindable.Value, mods.SelectedMods));
         mods.RateMod.RateBindable.BindValueChanged(rateChanged, true);
     }
@@ -211,6 +216,9 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         base.Dispose(isDisposing);
 
         maps.MapBindable.ValueChanged -= mapChanged;
+
+        if (mods is null) return;
+
         mods.RateMod.RateBindable.ValueChanged -= rateChanged;
     }
 
@@ -240,12 +248,12 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         difficultyText.Text = map.Difficulty;
         mapper.Text = $"mapped by {map.Metadata.Mapper}";
 
-        updateValues(map, mods.RateMod.RateBindable.Value);
+        updateValues(map, mods?.RateMod.RateBindable.Value ?? 1);
 
         longNotePercentage.SetValue(map.Filters.LongNotePercentage * 100);
         longNotePercentage.TooltipText = $"{map.Filters.NoteCount} / {map.Filters.LongNoteCount}";
 
-        updateDifficultyValues(map, mods.SelectedMods);
+        updateDifficultyValues(map, mods?.SelectedMods ?? new BindableList<IMod>());
 
         var background = new MapBackground(map);
         backgrounds.Add(background);

@@ -343,8 +343,14 @@ public partial class ModsOverlay : VisibilityContainer
         this.TransformTo(nameof(scoreMultiplier), multiplier, 400, Easing.OutQuint);
 
         var map = maps.CurrentMap;
-        var combo = map.Filters.NoteCount + (map.Filters.LongNoteCount * 2);
-        var pr = ScoreProcessor.CalculatePerformance(map.Rating, 100, combo, 0, 0, 0, 0, 0, SelectedMods.ToList());
+        var pr = 0d;
+
+        if (map is not null)
+        {
+            var combo = map.Filters.NoteCount + (map.Filters.LongNoteCount * 2);
+            pr = ScoreProcessor.CalculatePerformance(map.Rating, 100, combo, 0, 0, 0, 0, 0, SelectedMods.ToList());
+        }
+
         this.TransformTo(nameof(maxPerformance), pr, 400, Easing.OutQuint);
     }
 
