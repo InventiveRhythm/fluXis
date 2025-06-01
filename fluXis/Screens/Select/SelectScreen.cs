@@ -244,6 +244,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
             {
                 Maps.MapSetAdded += addMapSet;
                 Maps.MapSetUpdated += replaceMapSet;
+                Maps.MapSetRemoved += removeMapSet;
                 Maps.MapSetBindable.BindValueChanged(mapSetBindableChanged, true);
                 Maps.MapBindable.BindValueChanged(mapBindableChanged, true);
 
@@ -259,6 +260,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     {
         Maps.MapSetAdded -= addMapSet;
         Maps.MapSetUpdated -= replaceMapSet;
+        Maps.MapSetRemoved -= removeMapSet;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
         Maps.MapSetBindable.ValueChanged -= mapSetBindableChanged;
@@ -655,6 +657,28 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     }
 
     private void sortItems() => Items.Sort();
+
+    private void removeMapSet(RealmMapSet set) => Schedule(() =>
+    {
+        var results = Items.Where(i => i.Matches(set)).ToList();
+
+        foreach (var item in results)
+        {
+            var idx = Items.IndexOf(item);
+
+            if (Items.Count > results.Count)
+            {
+                while (Items[idx].Matches(set) && idx < 200)
+                    idx++;
+
+                Items[idx].Select();
+            }
+
+            mapList.Remove(item);
+            Items.Remove(item);
+            item.Unbind();
+        }
+    });
 
     private void replaceMapSet(RealmMapSet oldSet, RealmMapSet newSet)
     {

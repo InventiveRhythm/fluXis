@@ -148,7 +148,7 @@ public class FluXisImport : MapImporter
             original = original.Detach();
         });
 
-        MapStore.UpdateMapSet(MapStore.GetFromGuid(original.ID), original);
+        MapStore.UpdateMapSet(original, original);
     }
 
     private RealmMapSet getRealmMaps(string path, Guid? id = null)

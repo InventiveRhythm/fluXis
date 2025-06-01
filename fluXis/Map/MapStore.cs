@@ -156,6 +156,7 @@ public partial class MapStore : Component
 
     public Action<RealmMapSet> MapSetAdded;
     public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
+    public Action<RealmMapSet> MapSetRemoved;
     public Action CollectionUpdated;
 
     public void AddMapSet(RealmMapSet set, bool notify = true)
@@ -174,9 +175,14 @@ public partial class MapStore : Component
     {
         Scheduler.ScheduleIfNeeded(() =>
         {
-            MapSets.Remove(oldMapSet);
+            var contains = MapSets.Remove(oldMapSet);
             newMapSet.Resources = oldMapSet.Resources; // keep the resources
-            MapSets.Add(newMapSet);
+
+            if (contains)
+                MapSets.Add(newMapSet);
+            else
+                AddMapSet(newMapSet);
+
             MapSetUpdated?.Invoke(oldMapSet, newMapSet);
 
             if (Equals(CurrentMapSet, oldMapSet))
@@ -220,6 +226,7 @@ public partial class MapStore : Component
     public void RemoveMapSet(RealmMapSet set)
     {
         MapSets.Remove(set);
+        MapSetRemoved?.Invoke(set);
         CollectionUpdated?.Invoke();
     }
 
@@ -457,6 +464,8 @@ public partial class MapStore : Component
 
         Logger.Log($"Updating mapset: {set.Metadata.SortingTitle} - {set.Metadata.SortingArtist}", LoggingTarget.Network);
 
+        RemoveMapSet(set);
+
         var status = new DownloadStatus(set.OnlineID);
 
         var req = new MapSetDownloadRequest(set.OnlineID);
@@ -467,6 +476,8 @@ public partial class MapStore : Component
             notification.State = LoadingState.Failed;
             status.State = DownloadState.Failed;
             finishDownload(status);
+
+            AddMapSet(set);
         };
         req.Success += () =>
         {
