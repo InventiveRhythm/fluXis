@@ -47,9 +47,9 @@ public partial class TimingPointEntry : PointListEntry
 
     protected override void OnValueUpdate()
     {
-        if (timeBox is not null)
+        if (timeBox is not null && !timeBox.TextBox.HasFocus)
             timeBox.TextBox.Text = timing.Time.ToStringInvariant("0");
-        if (bpmBox is not null)
+        if (bpmBox is not null && !bpmBox.TextBox.HasFocus)
             bpmBox.TextBox.Text = timing.BPM.ToStringInvariant("0.##");
     }
 
