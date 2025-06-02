@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
-namespace fluXis.Screens.Edit.MenuBar;
+namespace fluXis.Screens.Edit.UI.MenuBar;
 
 public partial class EditorMenuBar : FluXisMenu
 {

@@ -3,7 +3,7 @@ using fluXis.Audio;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Interaction;
-using fluXis.Screens.Edit.BottomBar.Snap;
+using fluXis.Screens.Edit.UI.BottomBar.Snap;
 using fluXis.Skinning;
 using fluXis.Utils;
 using osu.Framework.Allocation;
@@ -15,7 +15,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 
-namespace fluXis.Screens.Edit.BottomBar;
+namespace fluXis.Screens.Edit.UI.BottomBar;
 
 public partial class SnapControl : CompositeDrawable, IHasPopover, IHasTooltip
 {

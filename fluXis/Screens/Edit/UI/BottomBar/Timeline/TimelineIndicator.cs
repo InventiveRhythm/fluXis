@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Screens.Edit.BottomBar.Timeline;
+namespace fluXis.Screens.Edit.UI.BottomBar.Timeline;
 
 public partial class TimelineIndicator : Container
 {

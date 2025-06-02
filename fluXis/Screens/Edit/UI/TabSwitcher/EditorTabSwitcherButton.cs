@@ -10,7 +10,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Screens.Edit.TabSwitcher;
+namespace fluXis.Screens.Edit.UI.TabSwitcher;
 
 public partial class EditorTabSwitcherButton : ClickableContainer
 {

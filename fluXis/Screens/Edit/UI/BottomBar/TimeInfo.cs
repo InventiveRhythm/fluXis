@@ -10,7 +10,7 @@ using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osuTK;
 
-namespace fluXis.Screens.Edit.BottomBar;
+namespace fluXis.Screens.Edit.UI.BottomBar;
 
 public partial class TimeInfo : Container
 {

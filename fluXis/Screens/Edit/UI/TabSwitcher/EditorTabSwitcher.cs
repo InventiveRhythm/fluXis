@@ -2,7 +2,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Screens.Edit.TabSwitcher;
+namespace fluXis.Screens.Edit.UI.TabSwitcher;
 
 public partial class EditorTabSwitcher : FillFlowContainer
 {

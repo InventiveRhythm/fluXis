@@ -13,7 +13,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Screens.Edit.BottomBar.Snap;
+namespace fluXis.Screens.Edit.UI.BottomBar.Snap;
 
 public partial class SnapControlPopover : CompositeDrawable
 {

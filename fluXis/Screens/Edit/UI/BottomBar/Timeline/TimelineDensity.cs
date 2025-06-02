@@ -8,7 +8,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Screens.Edit.BottomBar.Timeline;
+namespace fluXis.Screens.Edit.UI.BottomBar.Timeline;
 
 public partial class TimelineDensity : FillFlowContainer
 {

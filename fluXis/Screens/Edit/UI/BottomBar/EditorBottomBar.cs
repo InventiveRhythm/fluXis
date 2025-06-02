@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Mods;
 using fluXis.Overlay.Notifications;
-using fluXis.Screens.Edit.BottomBar.Timeline;
 using fluXis.Screens.Edit.Playtest;
+using fluXis.Screens.Edit.UI.BottomBar.Timeline;
 using fluXis.Screens.Gameplay;
 using fluXis.UI;
 using osu.Framework.Allocation;
@@ -15,7 +15,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Screens;
 
-namespace fluXis.Screens.Edit.BottomBar;
+namespace fluXis.Screens.Edit.UI.BottomBar;
 
 public partial class EditorBottomBar : Container
 {

@@ -11,7 +11,7 @@ using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Screens.Edit.BottomBar;
+namespace fluXis.Screens.Edit.UI.BottomBar;
 
 public partial class VariableControl : FillFlowContainer
 {

@@ -22,7 +22,7 @@ using fluXis.Scoring;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Edit.Input;
-using fluXis.Screens.Edit.MenuBar;
+using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Replays;

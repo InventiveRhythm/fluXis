@@ -3,7 +3,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.MenuBar;
+namespace fluXis.Screens.Edit.UI.MenuBar;
 
 public partial class EditorSubMenu : FluXisMenu
 {
