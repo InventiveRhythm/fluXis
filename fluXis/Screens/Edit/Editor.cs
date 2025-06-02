@@ -111,10 +111,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private Container<EditorTab> tabs;
     private int currentTab;
 
-    private EditorMenuBar menuBar;
-    private EditorTabSwitcher tabSwitcher;
-    private EditorBottomBar bottomBar;
-
     public Bindable<Waveform> Waveform { get; private set; }
     private EditorMap editorMap { get; }
 
@@ -277,7 +273,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 Children = tabList
                             }
                         },
-                        menuBar = new EditorMenuBar
+                        new EditorMenuBar
                         {
                             Items = new FluXisMenuItem[]
                             {
@@ -407,11 +403,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 new("Wiki", FontAwesome6.Solid.Book, openHelp)
                             }
                         },
-                        tabSwitcher = new EditorTabSwitcher
+                        new EditorTabSwitcher
                         {
                             ChildrenEnumerable = tabs.Select(x => new EditorTabSwitcherButton(x.Icon, x.TabName, () => changeTab(tabs.IndexOf(x))))
                         },
-                        bottomBar = new EditorBottomBar()
+                        new EditorBottomBar()
                     }
                 }
             },
