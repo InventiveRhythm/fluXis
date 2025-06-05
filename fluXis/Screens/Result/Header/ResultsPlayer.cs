@@ -4,11 +4,14 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
+using fluXis.Overlay.User;
 using fluXis.Scoring;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Result.Header;
@@ -20,6 +23,10 @@ public partial class ResultsPlayer : CompositeDrawable
 
     [Resolved]
     private APIUser user { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private UserProfileOverlay overlay { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -47,7 +54,8 @@ public partial class ResultsPlayer : CompositeDrawable
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
+                        Origin = Anchor.Centre,
+                        ShowTooltip = true
                     }
                 },
                 new FillFlowContainer
@@ -96,5 +104,11 @@ public partial class ResultsPlayer : CompositeDrawable
                 }
             }
         };
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        overlay?.ShowUser(user.ID);
+        return true;
     }
 }
