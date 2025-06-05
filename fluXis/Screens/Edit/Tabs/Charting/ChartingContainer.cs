@@ -12,6 +12,7 @@ using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Actions.Notes.Shortcuts;
 using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints;
+using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Charting.Points;
 using fluXis.Screens.Edit.Tabs.Charting.Toolbox;
@@ -104,6 +105,12 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         inputManager = GetContainingInputManager();
 
+        Modding.OnDisable += () =>
+        {
+            if (BlueprintContainer.CurrentTool is EditorChangeRequestTool)
+                BlueprintContainer.CurrentTool = Tools[0];
+        };
+
         Map.BackgroundChanged += updateBackground;
         Editor.BindableBackgroundDim.BindValueChanged(e => backgroundDim.FadeTo(e.NewValue, 300), true);
         Editor.BindableBackgroundBlur.BindValueChanged(_ => updateBackground(), true);
@@ -143,7 +150,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
                 Icon = FontAwesome6.Solid.WandMagicSparkles,
                 Tools = EffectTools
             },
-            toolboxHitsounds = new ToolboxHitsoundCategory()
+            toolboxHitsounds = new ToolboxHitsoundCategory(),
+            new EditorModdingToolbox(Modding)
         }
     };
 

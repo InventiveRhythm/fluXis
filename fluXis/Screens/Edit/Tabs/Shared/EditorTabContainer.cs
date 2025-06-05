@@ -5,6 +5,7 @@ using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Events;
 using fluXis.Screens.Edit.Input;
+using fluXis.Screens.Edit.Modding;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using osu.Framework.Allocation;
@@ -36,6 +37,9 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
 
     [Resolved]
     public EditorActionStack ActionStack { get; private set; }
+
+    [Resolved]
+    protected EditorModding Modding { get; private set; }
 
     protected virtual MarginPadding ContentPadding => new() { Vertical = 16 };
 

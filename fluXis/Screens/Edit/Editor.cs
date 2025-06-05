@@ -33,6 +33,7 @@ using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Overlay.Wiki;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Input;
+using fluXis.Screens.Edit.Modding;
 using fluXis.Screens.Edit.Tabs;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
@@ -158,6 +159,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private EditorKeybindingContainer keybinds;
     private EditorKeymapOverlay keymapOverlay;
+    private EditorModding modding;
 
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
@@ -206,6 +208,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs<ICustomColorProvider>(editorMap.MapInfo.Colors);
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
         dependencies.CacheAs(actionStack = new EditorActionStack(editorMap) { NotificationManager = notifications });
+        dependencies.CacheAs(modding = new EditorModding());
         dependencies.CacheAs(settings = new EditorSettings
         {
             ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)
@@ -248,6 +251,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             lowPass = new AudioFilter(audioManager.TrackMixer),
             highPass = new AudioFilter(audioManager.TrackMixer, BQFType.HighPass),
             clock,
+            modding,
             dependencies.CacheAsAndReturn(new Hitsounding(editorMap.RealmMap.MapSet, editorMap.MapInfo.HitSoundFades, clock.RateBindable)
             {
                 DirectVolume = true,
@@ -273,6 +277,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 Children = tabList
                             }
                         },
+                        new EditorModdingOverlay(),
                         new EditorMenuBar
                         {
                             Items = new FluXisMenuItem[]
@@ -347,31 +352,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                         new("Editor Keymap...", FontAwesome6.Solid.Keyboard, () => keymapOverlay.Show())
                                     }
                                 },
-                                new("View", FontAwesome6.Solid.Eye)
-                                {
-                                    Items = new FluXisMenuItem[]
-                                    {
-                                        new("Background Dim", FontAwesome6.Solid.Image)
-                                        {
-                                            Items = createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)
-                                        },
-                                        new("Background Blur", FontAwesome6.Solid.Aperture)
-                                        {
-                                            Items = createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)
-                                        },
-                                        new FluXisMenuSpacer(),
-                                        new("Waveform opacity", FontAwesome6.Solid.WaveformLines)
-                                        {
-                                            Items = createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)
-                                        },
-                                        new FluXisMenuSpacer(),
-                                        new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value)
-                                            { IsActive = () => settings.ShowSamples.Value },
-                                        new FluXisMenuSpacer(),
-                                        new("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, () => settings.ForceAspectRatio.Toggle())
-                                            { IsActive = () => settings.ForceAspectRatio.Value },
-                                    }
-                                },
+                                new("View", FontAwesome6.Solid.Eye) { Items = createView() },
                                 new("Timing", FontAwesome6.Solid.Clock)
                                 {
                                     Items = new FluXisMenuItem[]
@@ -413,6 +394,39 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             },
             keymapOverlay = new EditorKeymapOverlay(keybinds)
         });
+
+        return;
+
+        FluXisMenuItem[] createView()
+        {
+            var list = new List<FluXisMenuItem>
+            {
+                new("Background Dim", FontAwesome6.Solid.Image)
+                {
+                    Items = createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)
+                },
+                new("Background Blur", FontAwesome6.Solid.Aperture)
+                {
+                    Items = createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)
+                },
+                new FluXisMenuSpacer(),
+                new("Waveform opacity", FontAwesome6.Solid.WaveformLines)
+                {
+                    Items = createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)
+                },
+                new FluXisMenuSpacer(),
+                new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value)
+                    { IsActive = () => settings.ShowSamples.Value },
+                new FluXisMenuSpacer(),
+                new("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, () => settings.ForceAspectRatio.Toggle())
+                    { IsActive = () => settings.ForceAspectRatio.Value }
+            };
+
+            if (experiments.Get<bool>(ExperimentConfig.ModView))
+                list.Add(new FluXisMenuItem("Toggle ModView", FontAwesome6.Solid.Pen, () => modding.Toggle()) { IsActive = () => modding.IsActive });
+
+            return list.ToArray();
+        }
     }
 
     private FluXisMenuItem[] createPercentItems(Func<float> get, Action<float> set)

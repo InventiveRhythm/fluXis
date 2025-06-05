@@ -14,15 +14,13 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
 
     protected override void InitialiseDefaults()
     {
-#if CLOSED_TESTING
-        SetDefault(ExperimentConfig.StoryboardTab, true);
-#else
         SetDefault(ExperimentConfig.StoryboardTab, false);
-#endif
+        SetDefault(ExperimentConfig.ModView, false);
     }
 }
 
 public enum ExperimentConfig
 {
-    StoryboardTab
+    StoryboardTab,
+    ModView
 }

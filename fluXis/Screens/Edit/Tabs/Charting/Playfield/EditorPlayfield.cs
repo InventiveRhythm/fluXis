@@ -2,6 +2,7 @@ using System;
 using fluXis.Configuration;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting.Effect;
+using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Screens.Edit.Tabs.Shared.Lines;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
@@ -39,7 +40,9 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     public event Action<string> HitSoundPlayed;
 
     public bool CursorInPlacementArea => ReceivePositionalInputAt(inputManager.CurrentState.Mouse.Position);
+
     public int Index { get; }
+    public bool MainPlayfield => Index == 0;
 
     private DependencyContainer dependencies;
     private InputManager inputManager;
@@ -67,6 +70,15 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
         hitSound = samples.Get("Gameplay/hitsound.mp3");
 
+        var modHighlight = new Container { RelativeSizeAxes = Axes.Both };
+        var modComments = new Container
+        {
+            AutoSizeAxes = Axes.X,
+            RelativeSizeAxes = Axes.Y,
+            Anchor = Anchor.BottomRight,
+            Origin = Anchor.BottomLeft
+        };
+
         InternalChildren = new Drawable[]
         {
             new Stage(),
@@ -78,6 +90,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
                 Rotation = -90,
             },
             Effects = new EditorEffectContainer(),
+            modHighlight,
             new EditorTimingLines(),
             HitObjectContainer,
             new Box
@@ -89,7 +102,9 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
                 Y = -EditorHitObjectContainer.HITPOSITION
             },
             new TimingTagContainer(),
-            new EffectTagContainer()
+            new EffectTagContainer(),
+            modComments,
+            new EditorPlayfieldModding(modHighlight, modComments)
         };
 
         map.KeyModeChanged += count =>
