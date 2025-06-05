@@ -39,8 +39,8 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
         {
             List<MenuItem> items = new();
 
-            if (!Equals(maps.CurrentMapSet, mapset))
-                items.Add(new FluXisMenuItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => maps.Select(mapset.LowestDifficulty, true)));
+            if (!Equals(selection.CurrentMapSet, mapset))
+                items.Add(new FluXisMenuItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => selection.Select(mapset.LowestDifficulty)));
 
             if (mapset.OnlineID > 0)
                 items.Add(new FluXisMenuItem("View Online", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)));
@@ -68,7 +68,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
     private Clipboard clipboard { get; set; }
 
     [Resolved]
-    private MapStore maps { get; set; }
+    private ISelectionManager selection { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]

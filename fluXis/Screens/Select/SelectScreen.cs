@@ -134,6 +134,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         dependencies.CacheAs(this);
         dependencies.CacheAs(Filters = new SearchFilters());
         dependencies.CacheAs(modsOverlay = new ModsOverlay());
+        dependencies.CacheAs<ISelectionManager>(mapList = new MapList(sortMode));
 
         InternalChildren = new Drawable[]
         {
@@ -192,7 +193,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         Padding = new MarginPadding(10) { Top = 140, Bottom = 40 },
-                        Child = mapList = new MapList(sortMode)
+                        Child = mapList
                     },
                     filterControl = new SearchFilterControls(),
                     searchBar = new SearchBar(),

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Database.Maps;
 using fluXis.Graphics.Containers;
 using fluXis.Map;
 using fluXis.Screens.Select.List.Items;
@@ -12,7 +13,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Screens.Select.List;
 
-public partial class MapList : FluXisScrollContainer
+public partial class MapList : FluXisScrollContainer, ISelectionManager
 {
     public new Container Content { get; private set; }
 
@@ -48,6 +49,25 @@ public partial class MapList : FluXisScrollContainer
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        maps.MapBindable.BindValueChanged(mapChanged, true);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        maps.MapBindable.ValueChanged -= mapChanged;
+        base.Dispose(isDisposing);
+    }
+
+    private void mapChanged(ValueChangedEvent<RealmMap> v)
+    {
+        MapBindable.Value = v.NewValue;
+        MapSetBindable.Value = CurrentMap.MapSet;
+    }
+
     public void StartBulkInsert() => bulkInserting = true;
 
     public void EndBulkInsert()
@@ -59,7 +79,7 @@ public partial class MapList : FluXisScrollContainer
     public void Insert(IListItem item)
     {
         item.Screen = screen;
-        item.Store = maps;
+        item.Selection = this;
         item.Sorting = sorting;
         item.Bind();
 
@@ -88,6 +108,11 @@ public partial class MapList : FluXisScrollContainer
     protected override void Update()
     {
         base.Update();
+
+        debounce -= Time.Elapsed;
+
+        if (!Equals(maps.CurrentMap, CurrentMap) && debounce <= 0)
+            selectCurrent();
 
         var pos = 0f;
 
@@ -149,5 +174,31 @@ public partial class MapList : FluXisScrollContainer
             ScrollToEnd(smooth);
         else
             ScrollTo(center - DisplayableContent / 2, smooth);
+    }
+
+    public RealmMap CurrentMap => MapBindable.Value;
+    public RealmMapSet CurrentMapSet => MapSetBindable.Value;
+    public Bindable<RealmMap> MapBindable { get; set; } = new();
+    public Bindable<RealmMapSet> MapSetBindable { get; set; } = new();
+
+    private double debounce;
+
+    public void Select(RealmMap map)
+    {
+        MapBindable.Value = map;
+        MapSetBindable.Value = map.MapSet;
+
+        var item = items.FirstOrDefault(i => i.Matches(map));
+        ScrollToItem(item);
+
+        if (debounce <= 0)
+            selectCurrent();
+
+        debounce = 120;
+    }
+
+    private void selectCurrent()
+    {
+        maps.Select(CurrentMap, true);
     }
 }

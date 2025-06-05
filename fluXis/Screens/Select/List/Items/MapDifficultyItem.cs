@@ -1,5 +1,4 @@
 ﻿using fluXis.Database.Maps;
-using fluXis.Map;
 using fluXis.Screens.Select.List.Drawables.Difficulty;
 using fluXis.UI;
 using fluXis.Utils;
@@ -14,7 +13,7 @@ public class MapDifficultyItem : IListItem
     public Bindable<SelectedState> State { get; } = new();
 
     public SelectScreen Screen { get; set; }
-    public MapStore Store { get; set; }
+    public ISelectionManager Selection { get; set; }
 
     public RealmMapMetadata Metadata => map.Metadata;
 
@@ -44,15 +43,15 @@ public class MapDifficultyItem : IListItem
 
     public void Bind()
     {
-        Store.MapBindable.BindValueChanged(mapChanged, true);
+        Selection.MapBindable.BindValueChanged(mapChanged, true);
     }
 
     public void Unbind()
     {
-        Store.MapBindable.ValueChanged -= mapChanged;
+        Selection.MapBindable.ValueChanged -= mapChanged;
     }
 
-    public void Select(bool last = false) => Store.Select(map, true);
+    public void Select(bool last = false) => Selection.Select(map);
 
     public bool Matches(object obj)
     {

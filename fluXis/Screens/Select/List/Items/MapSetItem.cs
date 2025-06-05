@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using fluXis.Database.Maps;
-using fluXis.Map;
 using fluXis.Screens.Select.List.Drawables.MapSet;
 using fluXis.UI;
 using fluXis.Utils;
@@ -16,7 +15,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     public Bindable<SelectedState> State { get; } = new();
 
     public SelectScreen Screen { get; set; }
-    public MapStore Store { get; set; }
+    public ISelectionManager Selection { get; set; }
 
     public RealmMapMetadata Metadata => set.Metadata;
 
@@ -41,7 +40,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
         get
         {
             var sorted = set.MapsSorted;
-            var current = sorted.IndexOf(Store.CurrentMap);
+            var current = sorted.IndexOf(Selection.CurrentMap);
 
             if (current < 0 || current >= sorted.Count)
                 return Position;
@@ -69,13 +68,13 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
         ExportAction = Screen.ExportMapSet
     };
 
-    public void Bind() => Store.MapSetBindable.BindValueChanged(mapSetChanged, true);
-    public void Unbind() => Store.MapSetBindable.ValueChanged -= mapSetChanged;
+    public void Bind() => Selection.MapSetBindable.BindValueChanged(mapSetChanged, true);
+    public void Unbind() => Selection.MapSetBindable.ValueChanged -= mapSetChanged;
 
     public void Select(bool last = false)
     {
         var map = last ? set.HighestDifficulty : set.LowestDifficulty;
-        Store.Select(map, true);
+        Selection.Select(map);
     }
 
     public bool Matches(object obj)
@@ -99,7 +98,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     {
         var maps = set.MapsSorted;
 
-        int current = maps.IndexOf(Store.CurrentMap);
+        int current = maps.IndexOf(Selection.CurrentMap);
         current += by;
 
         if (current < 0)
@@ -108,7 +107,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
         if (current >= maps.Count)
             return true;
 
-        Store.Select(maps[current], true);
+        Selection.Select(maps[current]);
         return false;
     }
 

@@ -9,7 +9,6 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Localization;
-using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Scoring;
@@ -42,7 +41,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
             {
                 new FluXisMenuItem(LocalizationStrings.General.Play, FontAwesome6.Solid.Play, MenuItemType.Highlighted, () =>
                 {
-                    maps.Select(map, true);
+                    selection.Select(map);
                     item.SelectAction?.Invoke();
                 }),
                 new FluXisMenuItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => item.EditAction?.Invoke(map))
@@ -61,7 +60,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     }
 
     [Resolved]
-    private MapStore maps { get; set; }
+    private ISelectionManager selection { get; set; }
 
     [Resolved]
     private ScoreManager scores { get; set; }
@@ -250,7 +249,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
             }
         };
 
-        maps.MapBindable.BindValueChanged(updateSelected, true);
+        selection.MapBindable.BindValueChanged(updateSelected, true);
     }
 
     protected override void LoadComplete()
@@ -274,7 +273,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
 
     protected override void Dispose(bool isDisposing)
     {
-        maps.MapBindable.ValueChanged -= updateSelected;
+        selection.MapBindable.ValueChanged -= updateSelected;
         scores.TopScoreUpdated -= updateTopScore;
         map.RatingChanged -= updateRating;
 
@@ -298,10 +297,10 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (Equals(maps.CurrentMap, map))
+        if (Equals(selection.CurrentMap, map))
             item.SelectAction?.Invoke();
         else
-            maps.Select(map, true);
+            selection.Select(map);
 
         return true;
     }

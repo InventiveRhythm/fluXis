@@ -1,6 +1,5 @@
 ﻿using System;
 using fluXis.Database.Maps;
-using fluXis.Map;
 using fluXis.UI;
 using fluXis.Utils;
 using osu.Framework.Bindables;
@@ -14,7 +13,7 @@ public interface IListItem : IComparable<IListItem>
     Bindable<SelectedState> State { get; }
 
     SelectScreen Screen { get; set; }
-    MapStore Store { get; set; }
+    ISelectionManager Selection { get; set; }
 
     RealmMapMetadata Metadata { get; }
 

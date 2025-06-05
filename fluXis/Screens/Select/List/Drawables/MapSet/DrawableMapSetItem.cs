@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using fluXis.Database.Maps;
-using fluXis.Map;
 using fluXis.Screens.Select.List.Items;
 using fluXis.UI;
 using osu.Framework.Allocation;
@@ -15,9 +14,6 @@ namespace fluXis.Screens.Select.List.Drawables.MapSet;
 
 public partial class DrawableMapSetItem : CompositeDrawable
 {
-    [Resolved]
-    private MapStore maps { get; set; }
-
     public Action SelectAction;
     public Action<RealmMap> EditAction;
     public Action<RealmMapSet> ExportAction;
@@ -27,8 +23,6 @@ public partial class DrawableMapSetItem : CompositeDrawable
     public RealmMapSet MapSet { get; private set; }
 
     private SelectedState selectedState = SelectedState.Deselected;
-
-    public bool Selected => MapSet.ID == maps.MapSetBindable.Value?.ID;
 
     private DrawableMapSetHeader header;
     private Container<DrawableMapSetDifficulty> difficultyFlow;
@@ -75,7 +69,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
     protected override void LoadComplete()
     {
-        maps.MapSetBindable.BindValueChanged(updateSelected, true);
+        item.State.BindValueChanged(updateSelected, true);
 
         base.LoadComplete();
     }
@@ -89,7 +83,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
         else
             Y = (float)Interpolation.Lerp(item.Position, Y, Math.Exp(-0.01 * Time.Elapsed));
 
-        var selected = Selected;
+        var selected = item.State.Value == SelectedState.Selected;
         var pos = selected ? 85f : 20;
 
         foreach (var difficulty in difficultyFlow)
@@ -106,8 +100,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
     {
         base.Dispose(isDisposing);
 
-        if (maps is not null)
-            maps.MapSetBindable.ValueChanged -= updateSelected;
+        item.State.ValueChanged -= updateSelected;
 
         SelectAction = null;
         EditAction = null;
@@ -117,9 +110,9 @@ public partial class DrawableMapSetItem : CompositeDrawable
         MapSet = null;
     }
 
-    private void updateSelected(ValueChangedEvent<RealmMapSet> set)
+    private void updateSelected(ValueChangedEvent<SelectedState> v)
     {
-        if (Selected)
+        if (v.NewValue == SelectedState.Selected)
             select();
         else
             deselect();
@@ -145,10 +138,10 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (Selected)
+        if (item.State.Value == SelectedState.Selected)
             return false; // dont handle clicks when we already selected this mapset
 
-        maps.Select(MapSet.LowestDifficulty, true);
+        item.Select();
         return true;
     }
 }
