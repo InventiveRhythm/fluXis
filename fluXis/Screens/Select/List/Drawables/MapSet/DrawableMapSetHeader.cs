@@ -74,6 +74,10 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
     [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private IBeatSyncProvider beatSync { get; set; }
+
     private readonly DrawableMapSetItem parent;
     private readonly RealmMapSet mapset;
 
@@ -92,6 +96,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
     private FillFlowContainer diffsContainer;
     private RoundedOutline outlineBrighten;
     private Container arrowContainer;
+    private Drawable arrow;
 
     public DrawableMapSetHeader(DrawableMapSetItem parent, RealmMapSet mapset)
     {
@@ -175,7 +180,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Child = new FluXisSpriteIcon
+                Child = arrow = new FluXisSpriteIcon
                 {
                     X = -2,
                     Icon = FontAwesome6.Solid.AngleLeft,
@@ -198,6 +203,9 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
         Hide();
         FinishTransforms();
 
+        if (beatSync is not null)
+            beatSync.OnBeat += beat;
+
         foreach (var map in mapset.Maps)
             map.RatingChanged += updateRating;
     }
@@ -208,6 +216,15 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
         foreach (var map in mapset.Maps)
             map.RatingChanged -= updateRating;
+
+        if (beatSync is not null)
+            beatSync.OnBeat -= beat;
+    }
+
+    private void beat(int idx)
+    {
+        var dur = beatSync!.BeatTime;
+        arrow?.ScaleTo(1.2f, dur * .05f).Then().ScaleTo(1, dur * .95f);
     }
 
     private void updateRating() => Scheduler.ScheduleIfNeeded(() =>
