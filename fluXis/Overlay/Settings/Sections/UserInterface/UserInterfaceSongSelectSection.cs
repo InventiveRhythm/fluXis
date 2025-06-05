@@ -35,6 +35,14 @@ public partial class UserInterfaceSongSelectSection : SettingsSubSection
                 Description = strings.LoopModeDescription,
                 Items = Enum.GetValues<LoopMode>(),
                 Bindable = Config.GetBindable<LoopMode>(FluXisSetting.LoopMode)
+            },
+            new SettingsSlider<float>
+            {
+                Label = strings.HeaderHeight,
+                Description = strings.HeaderHeightDescription,
+                Bindable = Config.GetBindable<float>(FluXisSetting.InfoHeaderSize),
+                ValueLabel = "{value}px",
+                Step = 1
             }
         });
     }

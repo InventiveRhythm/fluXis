@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
@@ -53,9 +54,16 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     private StatDisplay accuracy;
     private StatDisplay health;
 
+    private Container headerTop;
+    private FillFlowContainer topFlow;
+    private Container coversContainer;
+    private Bindable<float> sizeBind;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        sizeBind = config.GetBindable<float>(FluXisSetting.InfoHeaderSize);
+
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         CornerRadius = 20;
@@ -77,10 +85,10 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                 Padding = new MarginPadding { Bottom = 10 },
                 Children = new Drawable[]
                 {
-                    new Container
+                    headerTop = new Container
                     {
                         RelativeSizeAxes = Axes.X,
-                        Height = 180,
+                        Height = sizeBind.Value,
                         CornerRadius = 20,
                         Masking = true,
                         Children = new Drawable[]
@@ -110,14 +118,14 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                                 {
                                     new Drawable[]
                                     {
-                                        new Container
+                                        coversContainer = new Container
                                         {
-                                            Size = new Vector2(180),
+                                            Size = new Vector2(sizeBind.Value),
                                             CornerRadius = 20,
                                             Masking = true,
                                             Child = covers = new SpriteStack<MapCover>()
                                         },
-                                        new FillFlowContainer
+                                        topFlow = new FillFlowContainer
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
@@ -204,6 +212,29 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         base.LoadComplete();
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
+        sizeBind.BindValueChanged(v =>
+        {
+            const float dur = 400;
+            const Easing ease = Easing.OutQuint;
+
+            switch (v.NewValue)
+            {
+                case <= 132:
+                    title.WebFontSize = 24;
+                    artist.WebFontSize = 16;
+                    topFlow.Padding = new MarginPadding { Left = 12 };
+                    break;
+
+                default:
+                    title.WebFontSize = 36;
+                    artist.WebFontSize = 24;
+                    topFlow.Padding = new MarginPadding { Left = 20 };
+                    break;
+            }
+
+            headerTop.ResizeHeightTo(v.NewValue, dur, ease);
+            coversContainer.ResizeTo(new Vector2(v.NewValue), dur, ease);
+        }, true);
 
         if (mods is null) return;
 

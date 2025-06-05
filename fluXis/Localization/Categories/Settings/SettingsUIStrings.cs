@@ -54,5 +54,8 @@ public class SettingsUIStrings : LocalizationCategory
     public TranslatableString LoopMode => Get("loop-mode", "Loop Mode");
     public TranslatableString LoopModeDescription => Get("loop-mode-description", "How the song select music should loop.");
 
+    public TranslatableString HeaderHeight => Get("header-height", "Header Height");
+    public TranslatableString HeaderHeightDescription => Get("header-height-description", "Changes the size of the cover on the top right side of the screen.");
+
     #endregion
 }

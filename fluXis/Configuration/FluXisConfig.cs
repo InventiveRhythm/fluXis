@@ -64,6 +64,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.SortingMode, MapUtils.SortingMode.Title);
         SetDefault(FluXisSetting.SortingInverse, false);
         SetDefault(FluXisSetting.LeaderboardType, ScoreListType.Local);
+        SetDefault(FluXisSetting.InfoHeaderSize, 180f, 96f, 240f, 1);
 
         // UI // Editor
         SetDefault(FluXisSetting.EditorDim, 0.4f, 0f, 1f, 0.2f);
@@ -151,6 +152,7 @@ public enum FluXisSetting
     SortingMode,
     SortingInverse,
     LeaderboardType,
+    InfoHeaderSize,
 
     // UI // Editor
     EditorDim,
