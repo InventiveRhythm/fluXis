@@ -147,9 +147,9 @@ public partial class EditorBottomBar : Container
                                         editor.Push(new GameplayLoader(map.RealmMap, mods, () =>
                                         {
                                             if (shouldAutoPlay)
-                                                return new EditorAutoPlaytestScreen(map.RealmMap, clone, startTime, mods);
+                                                return new EditorAutoPlaytestScreen(clock, map.RealmMap, clone, startTime, mods);
 
-                                            return new EditorPlaytestScreen(map.RealmMap, clone, startTime, mods);
+                                            return new EditorPlaytestScreen(clock, map.RealmMap, clone, startTime, mods);
                                         }));
                                     }
                                 }

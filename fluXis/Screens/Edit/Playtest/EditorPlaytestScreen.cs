@@ -14,15 +14,24 @@ public partial class EditorPlaytestScreen : GameplayScreen
     protected override bool InstantlyExitOnPause => true;
     public override bool FadeBackToGlobalClock => false;
 
+    private EditorClock editorClock { get; }
     private MapInfo map { get; }
 
-    public EditorPlaytestScreen(RealmMap realmMap, MapInfo info, double startTime, List<IMod> mods)
+    public EditorPlaytestScreen(EditorClock editorClock, RealmMap realmMap, MapInfo info, double startTime, List<IMod> mods)
         : base(realmMap, mods)
     {
+        this.editorClock = editorClock;
         GameplayStartTime = startTime;
         map = info;
     }
 
     protected override MapInfo LoadMap() => map;
     protected override void End() => this.Delay(GameplayClock.BeatTime * 2).FadeIn().OnComplete(_ => this.Exit());
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        editorClock.Seek(GameplayClock.CurrentTime);
+        editorClock.Start();
+        return base.OnExiting(e);
+    }
 }

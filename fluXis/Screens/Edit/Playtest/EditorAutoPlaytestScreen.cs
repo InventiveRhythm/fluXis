@@ -14,11 +14,13 @@ public partial class EditorAutoPlaytestScreen : ReplayGameplayScreen
     protected override double GameplayStartTime { get; }
     public override bool FadeBackToGlobalClock => false;
 
+    private EditorClock editorClock { get; }
     private MapInfo map { get; }
 
-    public EditorAutoPlaytestScreen(RealmMap realmMap, MapInfo info, double startTime, List<IMod> mods)
+    public EditorAutoPlaytestScreen(EditorClock editorClock, RealmMap realmMap, MapInfo info, double startTime, List<IMod> mods)
         : base(realmMap, mods, new AutoGenerator(info, realmMap.KeyCount).Generate())
     {
+        this.editorClock = editorClock;
         GameplayStartTime = startTime;
         map = info;
     }
@@ -26,4 +28,11 @@ public partial class EditorAutoPlaytestScreen : ReplayGameplayScreen
     protected override MapInfo LoadMap() => map;
     public override void OnDeath() => this.Exit();
     protected override void End() => this.Delay(GameplayClock.BeatTime * 2).FadeIn().OnComplete(_ => this.Exit());
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        editorClock.Seek(GameplayClock.CurrentTime);
+        editorClock.Start();
+        return base.OnExiting(e);
+    }
 }
