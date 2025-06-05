@@ -4,6 +4,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
 using fluXis.Online.API.Models.Maps;
+using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -63,7 +64,7 @@ public partial class MapSetDownloadButton : MapSetButton
 
     private void setAdded(RealmMapSet _) => updateIcon();
 
-    private void downloadStart(MapStore.DownloadStatus status)
+    private void downloadStart(DownloadStatus status)
     {
         if (status.OnlineID != set.ID)
             return;
@@ -75,7 +76,7 @@ public partial class MapSetDownloadButton : MapSetButton
         progressUpdate(status.Progress);
     }
 
-    private void downloadFinish(MapStore.DownloadStatus status)
+    private void downloadFinish(DownloadStatus status)
     {
         status.StateChanged -= stateUpdate;
         status.OnProgress -= progressUpdate;
@@ -85,15 +86,15 @@ public partial class MapSetDownloadButton : MapSetButton
     private void progressUpdate(float prog)
         => Scheduler.ScheduleIfNeeded(() => progress.ProgressTo(prog, 100, Easing.OutQuint));
 
-    private void stateUpdate(MapStore.DownloadState state) => Scheduler.ScheduleIfNeeded(() =>
+    private void stateUpdate(DownloadState state) => Scheduler.ScheduleIfNeeded(() =>
     {
         switch (state)
         {
-            case MapStore.DownloadState.Downloading:
+            case DownloadState.Downloading:
                 progress.FadeIn(300);
                 break;
 
-            case MapStore.DownloadState.Importing:
+            case DownloadState.Importing:
                 progress.ProgressTo(0, 300, Easing.OutQuint);
                 break;
 
@@ -111,21 +112,21 @@ public partial class MapSetDownloadButton : MapSetButton
         Icon.Icon = downloaded ? FontAwesome6.Solid.AngleDoubleRight : FontAwesome6.Solid.ArrowDown;
 
         var status = maps.DownloadQueue.FirstOrDefault(s => s.OnlineID == set.ID);
-        var state = status?.State ?? (downloaded ? MapStore.DownloadState.Finished : null);
+        var state = status?.State ?? (downloaded ? DownloadState.Finished : null);
 
         var color = Colour4.White;
 
         switch (state)
         {
-            case MapStore.DownloadState.Importing:
+            case DownloadState.Importing:
                 color = FluXisColors.Highlight.Lighten(.8f);
                 break;
 
-            case MapStore.DownloadState.Finished:
+            case DownloadState.Finished:
                 color = FluXisColors.Green.Lighten(1.2f);
                 break;
 
-            case MapStore.DownloadState.Failed:
+            case DownloadState.Failed:
                 color = FluXisColors.Red.Lighten(1.2f);
                 break;
         }

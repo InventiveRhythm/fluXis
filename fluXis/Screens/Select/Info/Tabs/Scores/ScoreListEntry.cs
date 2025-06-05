@@ -20,6 +20,7 @@ using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Skinning;
 using fluXis.Utils;
+using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using Humanizer;
 using JetBrains.Annotations;
@@ -60,7 +61,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
             };
 
             if (DownloadAction != null)
-                items.Add(new FluXisMenuItem("Download Replay", FontAwesome6.Solid.ArrowDown, MenuItemType.Normal, () => DownloadAction.Invoke()));
+                items.Add(new FluXisMenuItem("Download Replay", FontAwesome6.Solid.ArrowDown, MenuItemType.Normal, download));
 
             if (ReplayAction != null)
                 items.Add(new FluXisMenuItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
@@ -85,7 +86,8 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     public bool ShowSelfOutline { get; init; } = true;
 
     public Action ReplayAction { get; init; }
-    public Action DownloadAction { get; init; }
+    public Func<DownloadStatus> DownloadAction { get; init; }
+    public Action<Drawable> DownloadFinishedAction { get; init; }
     public Action DeleteAction { get; init; }
 
     private DateTimeOffset date;
@@ -93,6 +95,9 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     private Container wrapper;
     private Box rankBackground;
     private FluXisSpriteText timeText;
+
+    private Box downloadBar;
+    private Circle downloadCircle;
 
     private ColourInfo outlineColor
     {
@@ -353,6 +358,17 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     }
+                },
+                downloadBar = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Width = 0
+                },
+                downloadCircle = new Circle
+                {
+                    Colour = FluXisColors.Background2,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre
                 }
             }
         };
@@ -366,6 +382,39 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
         if (ScoreInfo.Rank == ScoreRank.X)
             rankBackground.Rainbow();
+    }
+
+    private void download()
+    {
+        var status = DownloadAction?.Invoke();
+        if (status is null) return;
+
+        downloadBar.FadeIn().FadeColour(FluXisColors.Blue);
+
+        status.OnProgress += f => Scheduler.ScheduleIfNeeded(() => downloadBar.ResizeWidthTo(f, 200, Easing.OutQuint));
+        status.StateChanged += s => Scheduler.ScheduleIfNeeded(() =>
+        {
+            switch (s)
+            {
+                case DownloadState.Downloading:
+                    downloadBar.FadeColour(FluXisColors.Blue, 400);
+                    break;
+
+                case DownloadState.Finished:
+                    downloadBar.FadeColour(FluXisColors.Green, 400).Then(400).FadeOut().OnComplete(_ =>
+                    {
+                        var w = DrawWidth;
+                        downloadCircle.FadeIn().ResizeTo(w).FadeColour(downloadBar.Colour)
+                                      .ResizeTo(32, 600, Easing.OutQuint)
+                                      .Then(400).FadeTo(0).OnComplete(_ => DownloadFinishedAction?.Invoke(downloadCircle));
+                    });
+                    break;
+
+                case DownloadState.Failed:
+                    downloadBar.FadeColour(FluXisColors.Red, 400).Then(1000).FadeOut(400);
+                    break;
+            }
+        });
     }
 
     public override void Hide()

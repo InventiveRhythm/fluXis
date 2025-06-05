@@ -79,6 +79,8 @@ public partial class ScoreListTab : SelectInfoTab
     private CancellationTokenSource cancelSource;
     private CancellationToken cancel;
 
+    private LeaderboardTypeButton localButton;
+
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
@@ -142,13 +144,19 @@ public partial class ScoreListTab : SelectInfoTab
         };
     }
 
-    public override Drawable CreateHeader() => new FillFlowContainer()
+    public override Drawable CreateHeader()
     {
-        AutoSizeAxes = Axes.Both,
-        Direction = FillDirection.Horizontal,
-        ChildrenEnumerable = Enum.GetValues<ScoreListType>().Select(x => new LeaderboardTypeButton(x, type)),
-        Padding = new MarginPadding(8)
-    };
+        var buttons = Enum.GetValues<ScoreListType>().Select(x => new LeaderboardTypeButton(x, type)).ToArray();
+        localButton = buttons.First();
+
+        return new FillFlowContainer()
+        {
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Horizontal,
+            ChildrenEnumerable = buttons,
+            Padding = new MarginPadding(8)
+        };
+    }
 
     protected override void LoadComplete()
     {
@@ -331,7 +339,27 @@ public partial class ScoreListTab : SelectInfoTab
             ScoreInfo = x.ToScoreInfo(),
             Map = map,
             Player = x.User,
-            // DownloadAction = () => downloadScore(map, x)
+            DownloadAction = () => scoreManager.DownloadScore(map, x),
+            DownloadFinishedAction = d =>
+            {
+                var ssp = d.ScreenSpaceDrawQuad.Centre;
+                var pad = new Vector2(Padding.Left, Padding.Top);
+                var pos = ToLocalSpace(ssp) - pad;
+
+                var circle = new Circle
+                {
+                    Size = d.Size,
+                    Colour = d.Colour,
+                    Anchor = Anchor.TopLeft,
+                    Origin = Anchor.Centre,
+                    Position = pos
+                };
+
+                AddInternal(circle);
+
+                var target = ToLocalSpace(localButton.ScreenSpaceDrawQuad.Centre) - pad;
+                circle.MoveTo(target, 600, Easing.OutQuint).ScaleTo(0f, 600, Easing.OutQuint).Expire();
+            }
         }));
 
         return true;

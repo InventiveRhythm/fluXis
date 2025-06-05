@@ -13,6 +13,7 @@ using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
+using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -386,7 +387,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     }
 
     private void mapsetsUpdated(RealmMapSet set) => Schedule(updateState);
-    private void downloadStateChanged(MapStore.DownloadStatus status) => Schedule(updateState);
+    private void downloadStateChanged(DownloadStatus status) => Schedule(updateState);
 
     private void updateState()
     {

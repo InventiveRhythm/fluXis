@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
+using fluXis.IO;
 using fluXis.Map;
+using fluXis.Online.API.Models.Scores;
 using fluXis.Online.Fluxel;
+using fluXis.Replays;
 using fluXis.Scoring.Processing;
 using fluXis.Utils;
+using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
 namespace fluXis.Scoring;
@@ -30,6 +36,9 @@ public partial class ScoreManager : CompositeDrawable
 
     [Resolved]
     private FluXisRealm realm { get; set; } = null!;
+
+    [Resolved]
+    private ReplayStorage replays { get; set; } = null!;
 
     [Resolved]
     private MapStore maps { get; set; } = null!;
@@ -218,4 +227,75 @@ public partial class ScoreManager : CompositeDrawable
             }
         }
     }
+
+    #region Downloading
+
+    private readonly List<DownloadStatus> downloading = new();
+    private readonly object downloadLock = new { };
+
+    public DownloadStatus? DownloadScore(RealmMap map, APIScore score)
+    {
+        if (realm.Run(r => r.All<RealmScore>().Any(x => x.OnlineID == score.ID)))
+            return null;
+
+        if (IsDownloading(score.ID, out var existing))
+            return existing;
+
+        var status = new DownloadStatus(score.ID);
+
+        lock (downloadLock)
+            downloading.Add(status);
+
+        var req = new WebRequest($"{api.Endpoint.AssetUrl}/replay/{score.ID}.frp");
+        req.DownloadProgress += (cur, max) => status.Progress = cur / (float)max;
+        req.AllowInsecureRequests = true;
+
+        req.Finished += () =>
+        {
+            try
+            {
+                var json = req.GetResponseString();
+                var replay = json.Deserialize<Replay>();
+
+                var rsc = Add(map.ID, score.ToScoreInfo(), score.ID);
+                replays.Save(replay, rsc.ID);
+
+                status.State = DownloadState.Finished;
+                finish(status);
+            }
+            catch (Exception ex)
+            {
+                fail(ex);
+            }
+        };
+
+        req.Failed += fail;
+
+        _ = req.PerformAsync();
+        return status;
+
+        void fail(Exception ex)
+        {
+            Logger.Error(ex, "Failed to download score!");
+            status.State = DownloadState.Failed;
+            finish(status);
+        }
+
+        void finish(DownloadStatus s)
+        {
+            lock (downloadLock)
+                downloading.Remove(s);
+        }
+    }
+
+    public bool IsDownloading(long id, [NotNullWhen(true)] out DownloadStatus? status)
+    {
+        lock (downloadLock)
+        {
+            status = downloading.FirstOrDefault(x => x.OnlineID == id);
+            return status is not null;
+        }
+    }
+
+    #endregion
 }

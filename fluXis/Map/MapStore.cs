@@ -28,6 +28,7 @@ using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -537,50 +538,6 @@ public partial class MapStore : Component
         startDownload(status);
         api.PerformRequestAsync(req);
         notifications.AddTask(notification);
-    }
-
-    public class DownloadStatus
-    {
-        public long OnlineID { get; }
-
-        public DownloadState State
-        {
-            get => state;
-            set
-            {
-                state = value;
-                StateChanged?.Invoke(state);
-            }
-        }
-
-        public float Progress
-        {
-            get => progress;
-            set
-            {
-                progress = value;
-                OnProgress?.Invoke(progress);
-            }
-        }
-
-        public event Action<DownloadState> StateChanged;
-        public event Action<float> OnProgress;
-
-        private DownloadState state = DownloadState.Downloading;
-        private float progress;
-
-        public DownloadStatus(long onlineID)
-        {
-            OnlineID = onlineID;
-        }
-    }
-
-    public enum DownloadState
-    {
-        Downloading,
-        Importing,
-        Finished,
-        Failed
     }
 
     [CanBeNull]
