@@ -802,7 +802,12 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         var item = currentItem;
 
         if (item is null)
+        {
+            if (Items.Count > 0)
+                Items.First().Select();
+
             return;
+        }
 
         if (!item.ChangeChild(by))
             return;
@@ -1023,6 +1028,9 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         {
             sortItems();
             mapList.EndBulkInsert();
+
+            if (Items.Count == 1)
+                Items.First().Select();
 
             if (!Items.Any())
                 noMapsContainer.Show();
