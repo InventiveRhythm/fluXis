@@ -13,6 +13,8 @@ public partial class SearchTextBox : FluXisTextBox
     [Resolved]
     private SearchFilters filters { get; set; }
 
+    public override bool HandleLeftRightArrows => false;
+
     public SearchTextBox()
     {
         FontSize = FluXisSpriteText.GetWebFontSize(22);
