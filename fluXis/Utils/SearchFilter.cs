@@ -57,8 +57,6 @@ public class SearchFilters
 
     public bool Matches(RealmMap map)
     {
-        bool matches = true;
-
         if (BPM > 0)
         {
             switch (BPMType)
@@ -97,28 +95,33 @@ public class SearchFilters
 
         if (Query.Length > 0)
         {
-            bool termMatches = false;
+            var words = Query.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
-            termMatches |= map.Metadata.Title.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
-            termMatches |= map.Metadata.TitleRomanized?.Contains(Query, StringComparison.CurrentCultureIgnoreCase) ?? false;
-            termMatches |= map.Metadata.Artist.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
-            termMatches |= map.Metadata.ArtistRomanized?.Contains(Query, StringComparison.CurrentCultureIgnoreCase) ?? false;
-            termMatches |= map.Metadata.Mapper.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
-            termMatches |= map.Metadata.Source.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
-            termMatches |= map.Metadata.Tags.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
-            termMatches |= map.Difficulty.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
+            foreach (var word in words)
+            {
+                var matches = false;
 
-            if (!termMatches)
-                matches = false;
+                matches |= map.Metadata.Title.Contains(word, StringComparison.CurrentCultureIgnoreCase);
+                matches |= map.Metadata.TitleRomanized?.Contains(word, StringComparison.CurrentCultureIgnoreCase) ?? false;
+                matches |= map.Metadata.Artist.Contains(word, StringComparison.CurrentCultureIgnoreCase);
+                matches |= map.Metadata.ArtistRomanized?.Contains(word, StringComparison.CurrentCultureIgnoreCase) ?? false;
+                matches |= map.Metadata.Mapper.Contains(word, StringComparison.CurrentCultureIgnoreCase);
+                matches |= map.Metadata.Source.Contains(word, StringComparison.CurrentCultureIgnoreCase);
+                matches |= map.Metadata.Tags.Contains(word, StringComparison.CurrentCultureIgnoreCase);
+                matches |= map.Difficulty.Contains(word, StringComparison.CurrentCultureIgnoreCase);
+
+                if (!matches)
+                    return false;
+            }
         }
 
         if (KeyMode > 0)
         {
             if (map.KeyCount != KeyMode)
-                matches = false;
+                return false;
         }
 
-        return matches;
+        return true;
     }
 
     public enum Type
