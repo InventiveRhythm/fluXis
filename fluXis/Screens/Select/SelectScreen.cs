@@ -902,6 +902,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         searchBar.Hide();
         filterControl.Hide();
         footer.Hide();
+        noMapsContainer.Hide();
     }
 
     #endregion
@@ -964,7 +965,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         var first = Items.FirstOrDefault(i => getLetter(i.Metadata.SortingTitle.FirstOrDefault(' ')) == letter);
         first?.Select();
 
-        letterContainer.SetLetter(letter);
+        letterContainer.SetLetter(letter, first is not null);
     }
 
     private void cycleLetter(char letter)

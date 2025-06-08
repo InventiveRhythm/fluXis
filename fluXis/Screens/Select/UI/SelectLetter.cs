@@ -17,25 +17,24 @@ public partial class SelectLetter : CompositeDrawable
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Size = new Vector2(100);
+        Size = new Vector2(96);
         Alpha = 0;
-        CornerRadius = 20;
+        CornerRadius = 16;
         Masking = true;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
-                Alpha = 0.5f,
+                Alpha = .8f,
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black
+                Colour = FluXisColors.Background2
             },
             text = new FluXisSpriteText
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                FontSize = 64,
-                Text = "A"
+                WebFontSize = 48
             }
         };
     }
@@ -43,9 +42,12 @@ public partial class SelectLetter : CompositeDrawable
     public void SetLetter(char letter, bool found = true)
     {
         text.Text = letter.ToString();
-        this.FadeIn(200).Delay(1000).FadeOut(300);
+
+        this.ScaleTo(1.1f).FadeIn(50)
+            .ScaleTo(1, 200, Easing.OutQuint).Delay(600)
+            .FadeOut(200).ScaleTo(.9f, 400, Easing.OutQuint);
 
         if (!found)
-            text.FadeColour(Colour4.FromHex("#FF5555")).FadeColour(FluXisColors.Text, 1000);
+            text.FadeColour(FluXisColors.Red).Delay(200).FadeColour(FluXisColors.Text, 600);
     }
 }

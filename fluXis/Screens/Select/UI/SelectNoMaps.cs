@@ -1,8 +1,9 @@
+using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
-using fluXis.Graphics.UserInterface.Color;
 using fluXis.Localization;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -12,8 +13,10 @@ namespace fluXis.Screens.Select.UI;
 
 public partial class SelectNoMaps : CompositeDrawable
 {
+    private AudioFilter lowpass;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(AudioManager audio)
     {
         AutoSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
@@ -21,10 +24,10 @@ public partial class SelectNoMaps : CompositeDrawable
         CornerRadius = 20;
         Masking = true;
         Alpha = 0;
-        Scale = new Vector2(0.9f);
 
         InternalChildren = new Drawable[]
         {
+            lowpass = new AudioFilter(audio.TrackMixer),
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
@@ -36,37 +39,46 @@ public partial class SelectNoMaps : CompositeDrawable
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Vertical,
                 Padding = new MarginPadding(20),
+                Spacing = new Vector2(-2),
                 Children = new Drawable[]
                 {
                     new FluXisSpriteIcon
                     {
+                        Margin = new MarginPadding { Bottom = 8 },
                         Icon = FontAwesome6.Solid.TriangleExclamation,
-                        Size = new Vector2(30),
                         Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre
+                        Origin = Anchor.TopCentre,
+                        Size = new Vector2(32)
                     },
                     new FluXisSpriteText
                     {
                         Text = LocalizationStrings.SongSelect.NoMapsFound,
-                        FontSize = 32,
-                        Shadow = true,
                         Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre
+                        Origin = Anchor.TopCentre,
+                        WebFontSize = 20
                     },
                     new FluXisSpriteText
                     {
                         Text = LocalizationStrings.SongSelect.NoMapsFoundDescription,
-                        FontSize = 26,
-                        Colour = FluXisColors.Text2,
-                        Shadow = true,
                         Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre
+                        Origin = Anchor.TopCentre,
+                        WebFontSize = 14,
+                        Alpha = .8f
                     }
                 }
             }
         };
     }
 
-    public override void Show() => this.FadeIn(400, Easing.OutQuint).ScaleTo(1, 1000, Easing.OutElastic);
-    public override void Hide() => this.FadeOut(400, Easing.OutQuint).ScaleTo(0.9f, 400, Easing.OutQuint);
+    public override void Show()
+    {
+        lowpass.CutoffTo(AudioFilter.MIN, 600, Easing.OutQuint);
+        this.FadeIn(200).ScaleTo(.8f).ScaleTo(1, 800, Easing.OutElasticHalf);
+    }
+
+    public override void Hide()
+    {
+        lowpass.CutoffTo(AudioFilter.MAX, 600, Easing.OutQuint);
+        this.FadeOut(200).ScaleTo(0.9f, 400, Easing.OutQuint);
+    }
 }
