@@ -72,7 +72,7 @@ public partial class BackgroundVideo : CompositeDrawable
             if (stream == null)
                 return;
 
-            video = new Video(stream, false)
+            var v = video = new Video(stream, false)
             {
                 RelativeSizeAxes = Axes.Both,
                 FillMode = FillMode.Fill,
@@ -80,7 +80,7 @@ public partial class BackgroundVideo : CompositeDrawable
                 Origin = Anchor.Centre
             };
 
-            Scheduler.ScheduleIfNeeded(() => LoadComponentAsync(video, videoContainer.Add));
+            Scheduler.ScheduleIfNeeded(() => LoadComponentAsync(v, videoContainer.Add));
         }
         catch (Exception e)
         {
