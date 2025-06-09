@@ -120,7 +120,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private DependencyContainer dependencies;
 
     private bool starting = true;
-    private bool restarting;
+    public bool Restarting { get; private set; }
 
     public event Action OnExit;
 
@@ -540,9 +540,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public virtual void RestartMap()
     {
-        if (restarting || !AllowRestart) return;
+        if (Restarting || !AllowRestart) return;
 
-        restarting = true;
+        Restarting = true;
         Samples.Restart();
         OnRestart?.Invoke();
     }
@@ -620,7 +620,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         switch (e.Action)
         {
-            case FluXisGlobalKeybind.QuickRestart when !starting && !restarting && AllowRestart:
+            case FluXisGlobalKeybind.QuickRestart when !starting && !Restarting && AllowRestart:
                 quickActionOverlay.OnConfirm = RestartMap;
                 quickActionOverlay.IsHolding = true;
                 return true;

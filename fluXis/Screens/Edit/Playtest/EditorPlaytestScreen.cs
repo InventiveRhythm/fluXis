@@ -30,8 +30,12 @@ public partial class EditorPlaytestScreen : GameplayScreen
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        editorClock.Seek(GameplayClock.CurrentTime);
-        editorClock.Start();
+        if (!Restarting)
+        {
+            editorClock.Seek(GameplayClock.CurrentTime);
+            editorClock.Start();
+        }
+
         return base.OnExiting(e);
     }
 }
