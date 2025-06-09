@@ -2,9 +2,11 @@ using System;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics;
+using fluXis.Graphics.Gamepad;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Input;
 using fluXis.Localization;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -17,6 +19,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
+using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
 
@@ -64,40 +67,51 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
     private HoverLayer hover;
     private FlashLayer flash;
     private Box dim;
+    private GamepadIcon gamepadIcon;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = new Container // wrapper so we can freely animate the button
+        InternalChildren = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            Child = content = new Container
+            new Container // wrapper so we can freely animate the button
             {
                 RelativeSizeAxes = Axes.Both,
-                CornerRadius = 10,
-                Masking = true,
-                Alpha = 0,
-                Anchor = Anchor.Centre,
+                Child = content = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    CornerRadius = 10,
+                    Masking = true,
+                    Alpha = 0,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    EdgeEffect = FluXisStyles.ShadowMedium,
+                    ChildrenEnumerable = new Drawable[]
+                    {
+                        Background = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FluXisColors.Background2
+                        },
+                        hover = new HoverLayer()
+                    }.Concat(CreateContent()).Concat(new Drawable[]
+                    {
+                        flash = new FlashLayer(),
+                        dim = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = Color4.Black.Opacity(0.5f),
+                            Alpha = 0
+                        }
+                    })
+                }
+            },
+            gamepadIcon = new GamepadIcon
+            {
+                Size = new Vector2(48),
+                Button = GamepadButton,
                 Origin = Anchor.Centre,
-                EdgeEffect = FluXisStyles.ShadowMedium,
-                ChildrenEnumerable = new Drawable[]
-                {
-                    Background = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
-                    },
-                    hover = new HoverLayer()
-                }.Concat(CreateContent()).Concat(new Drawable[]
-                {
-                    flash = new FlashLayer(),
-                    dim = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Color4.Black.Opacity(0.5f),
-                        Alpha = 0
-                    }
-                })
+                Shear = new Vector2(-SHEAR_AMOUNT, 0)
             }
         };
     }
@@ -110,6 +124,14 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
         {
             dim.FadeTo(enabled.NewValue ? 0 : 1, 300, Easing.OutQuint);
         }, true);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        gamepadIcon.Alpha = GamepadHandler.GamepadConnected ? content.Alpha : 0;
+        gamepadIcon.Position = content.DrawSize + content.Position - new Vector2(12);
     }
 
     protected abstract Drawable[] CreateContent();
