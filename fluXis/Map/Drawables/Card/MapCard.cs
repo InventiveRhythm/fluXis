@@ -242,7 +242,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                 new ForcedHeightText(true)
                                                 {
                                                     RelativeSizeAxes = Axes.X,
-                                                    Text = $"by {MapSet.LocalizedArtist}",
+                                                    Text = MapSet.LocalizedArtist,
                                                     Height = 16,
                                                     WebFontSize = 14,
                                                     Shadow = true
