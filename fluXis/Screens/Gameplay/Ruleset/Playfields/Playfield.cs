@@ -50,6 +50,7 @@ public partial class Playfield : Container
     public Stage Stage { get; private set; }
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager HitManager { get; private set; }
+    public float HUDAlpha { get; set; } = 1f;
 
     public MapInfo MapInfo => ruleset.MapInfo;
     public MapEvents MapEvents => ruleset.MapEvents;

@@ -39,7 +39,6 @@ using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Audio;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.HUD;
-using fluXis.Screens.Gameplay.HUD.Leaderboard;
 using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Overlay;
 using fluXis.Screens.Gameplay.Overlay.Effect;
@@ -286,13 +285,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         {
                             RelativeSizeAxes = Axes.Both,
                             Alpha = DisplayHUD ? 1 : 0,
-                            Children = new Drawable[]
-                            {
-                                new GameplayHUD(RulesetContainer),
-                                new ModsDisplay()
-                            }
+                            Child = new GameplayHUD(RulesetContainer)
                         },
-                        new GameplayLeaderboard(Scores),
                         CreateTextOverlay(),
                         new DangerHealthOverlay(),
                         new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Overlay),

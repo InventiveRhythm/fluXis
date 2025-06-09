@@ -40,15 +40,24 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
             FadeLayer.Stage => playfield.Stage,
             FadeLayer.Receptors => playfield.Receptors,
             FadeLayer.Playfield => playfield,
+            FadeLayer.HUD => playfield,
             _ => throw new ArgumentOutOfRangeException()
         };
+
+        if (drawable is null)
+            return;
 
         // make sure this is set, just in case it's missing
         if (Alpha <= 0.0001f)
             drawable.AlwaysPresent = true;
 
         using (drawable.BeginAbsoluteSequence(Time))
-            drawable.FadeTo(Alpha, Math.Max(Duration, 0), Easing);
+        {
+            if (Layer == FadeLayer.HUD) // yes, the cast is necessary
+                ((Playfield)drawable).TransformTo(nameof(Playfield.HUDAlpha), Alpha, Math.Max(Duration, 0), Easing);
+            else
+                drawable.FadeTo(Alpha, Math.Max(Duration, 0), Easing);
+        }
     }
 
     public enum FadeLayer
@@ -56,6 +65,7 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
         HitObjects,
         Stage,
         Receptors,
-        Playfield
+        Playfield,
+        HUD
     }
 }

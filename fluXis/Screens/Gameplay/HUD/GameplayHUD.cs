@@ -1,7 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using fluXis.Scoring;
+using fluXis.Screens.Gameplay.HUD.Leaderboard;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Screens.Gameplay.UI;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -18,6 +23,10 @@ public partial class GameplayHUD : Container
 
     [Resolved]
     private LayoutManager layouts { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private GameplayScreen screen { get; set; }
 
     public GameplayHUDComponent[] Components => components.Concat(playfields[0].Children).ToArray();
 
@@ -38,6 +47,7 @@ public partial class GameplayHUD : Container
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+        AlwaysPresent = true;
 
         InternalChildren = new Drawable[]
         {
@@ -52,7 +62,9 @@ public partial class GameplayHUD : Container
                 {
                     playfields = ruleset.PlayfieldManager.Players.Select(x => new PlayfieldHUD(x)).ToArray()
                 }
-            }
+            },
+            new ModsDisplay(),
+            new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>()),
         };
 
         layout ??= layouts.Layout.Value;
@@ -67,6 +79,12 @@ public partial class GameplayHUD : Container
 
         layouts.Reloaded += refreshLayout;
         layouts.Layout.ValueChanged += bindableRefreshLayout;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        Alpha = playfields.MaxBy(x => x.Playfield.HUDAlpha).Playfield.HUDAlpha;
     }
 
     protected override void Dispose(bool isDisposing)
