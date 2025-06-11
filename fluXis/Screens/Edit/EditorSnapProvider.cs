@@ -27,8 +27,8 @@ public class EditorSnapProvider
         if (snap <= 0) snap = settings.SnapDivisor;
 
         var tp = map.MapInfo.GetTimingPoint(time);
-        double t = tp.Time;
-        double increase = tp.Signature * tp.MsPerBeat / (4 * snap);
+        var t = tp.Time;
+        double increase = tp.MsPerBeat / snap;
         if (increase == 0) return time; // no snapping, the game will just freeze because it loops infinitely
 
         if (time < t)
