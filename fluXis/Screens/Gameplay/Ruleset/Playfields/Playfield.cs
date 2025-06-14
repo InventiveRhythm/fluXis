@@ -142,7 +142,6 @@ public partial class Playfield : Container
         MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
-        MapEvents.ScrollMultiplyEvents.ForEach(e => e.Apply(HitManager));
         MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
     }
 

@@ -29,12 +29,12 @@ public partial class TimingLine : Box
         Height = 3;
         Origin = Anchor.BottomLeft;
 
-        scrollVelocityTime = column.ScrollVelocityPositionFromTime(OriginalTime);
+        scrollVelocityTime = column.DefaultScrollGroup.PositionFromTime(OriginalTime);
         easing = playfield.HitManager.EasingAtTime(OriginalTime);
     }
 
     protected override void Update()
     {
-        Y = column.PositionAtTime(scrollVelocityTime, easing);
+        Y = column.PositionAtTime(scrollVelocityTime, null, easing);
     }
 }

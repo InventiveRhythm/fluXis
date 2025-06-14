@@ -102,7 +102,7 @@ public partial class DrawableLongNote : DrawableHitObject
         if (IsBeingHeld.Value)
             Y = ObjectManager.HitPosition;
 
-        var endY = Column.PositionAtTime(ScrollVelocityEndTime, Data.EndEasing);
+        var endY = Column.PositionAtTime(ScrollVelocityEndTime, Data.ScrollGroup, Data.EndEasing);
         var height = Y - endY;
 
         bodyPiece.Height = height;

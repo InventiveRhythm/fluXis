@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using fluXis.Import.Quaver.Map.Structs;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Events;
 using JetBrains.Annotations;
 using osu.Framework.Logging;
 
@@ -23,10 +24,15 @@ public class QuaverMap
     public string Creator { get; set; }
     public string DifficultyName { get; set; }
 
-    public List<QuaverHitObjectInfo> HitObjects { get; set; }
-    public List<QuaverTimingPointInfo> TimingPoints { get; set; }
-    public List<QuaverSliderVelocityInfo> SliderVelocities { get; set; }
-    public List<QuaverBookmark> Bookmarks { get; set; }
+    public List<QuaverHitObjectInfo> HitObjects { get; set; } = new();
+    public List<QuaverTimingPointInfo> TimingPoints { get; set; } = new();
+    public List<QuaverSliderVelocityInfo> SliderVelocities { get; set; } = new();
+    public Dictionary<string, QuaverTimingGroup> TimingGroups { get; set; } = new();
+    public List<QuaverScrollFactor> ScrollSpeedFactors { get; set; } = new();
+    public List<QuaverBookmark> Bookmarks { get; set; } = new();
+
+    [CanBeNull]
+    private MapEvents events;
 
     public MapInfo ToMapInfo()
     {
@@ -57,7 +63,8 @@ public class QuaverMap
             {
                 Time = o.StartTime,
                 Lane = o.Lane,
-                HoldTime = o.IsLongNote ? o.EndTime - o.StartTime : 0
+                HoldTime = o.IsLongNote ? o.EndTime - o.StartTime : 0,
+                Group = o.TimingGroup
             });
         }
 
@@ -81,11 +88,62 @@ public class QuaverMap
             });
         }
 
+        foreach (var factor in ScrollSpeedFactors)
+        {
+            events ??= new MapEvents();
+
+            events.ScrollMultiplyEvents.Add(new ScrollMultiplierEvent
+            {
+                Time = factor.StartTime,
+                Multiplier = factor.Multiplier
+            });
+        }
+
+        foreach (var (key, group) in TimingGroups)
+        {
+            foreach (var velocity in group.ScrollVelocities)
+            {
+                mapInfo.ScrollVelocities.Add(new ScrollVelocity
+                {
+                    Time = velocity.StartTime,
+                    Multiplier = velocity.Multiplier,
+                    Groups = new List<string> { key }
+                });
+            }
+
+            for (var i = 0; i < group.ScrollSpeedFactors.Count; i++)
+            {
+                events ??= new MapEvents();
+
+                var factor = group.ScrollSpeedFactors[i];
+                var duration = 0d;
+                var mult = factor.Multiplier;
+
+                if (i + 1 < group.ScrollSpeedFactors.Count)
+                {
+                    var next = group.ScrollSpeedFactors[i + 1];
+                    duration = Math.Abs(next.StartTime - factor.StartTime);
+                    mult = next.Multiplier;
+                }
+
+                events.ScrollMultiplyEvents.Add(new ScrollMultiplierEvent
+                {
+                    Time = factor.StartTime,
+                    Multiplier = mult,
+                    Duration = duration,
+                    Groups = new List<string> { key }
+                });
+            }
+        }
+
         return mapInfo;
     }
 
     public MapEvents GetEffects()
     {
+        if (events != null)
+            return events;
+
         string effectFile = "";
 
         if (Bookmarks != null)

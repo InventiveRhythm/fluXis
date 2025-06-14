@@ -81,7 +81,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
                                                    if (ruleset.MapInfo.IsSplit)
                                                        lane += KeyCount * playfield.Index;
 
-                                                   return new HitObjectColumn(ruleset.MapInfo, this, lane);
+                                                   return new HitObjectColumn(ruleset.MapInfo, ruleset, this, lane);
                                                });
 
         scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);

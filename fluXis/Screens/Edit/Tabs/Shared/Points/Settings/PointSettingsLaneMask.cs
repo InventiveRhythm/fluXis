@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using osu.Framework.Allocation;
@@ -12,12 +13,12 @@ namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 public partial class PointSettingsLaneMask : CompositeDrawable
 {
     private EditorMap map { get; }
-    private IHasLaneMask mask { get; }
+    private IHasGroups groups { get; }
 
-    public PointSettingsLaneMask(EditorMap map, IHasLaneMask mask)
+    public PointSettingsLaneMask(EditorMap map, IHasGroups groups)
     {
         this.map = map;
-        this.mask = mask;
+        this.groups = groups;
     }
 
     [BackgroundDependencyLoader]
@@ -26,10 +27,13 @@ public partial class PointSettingsLaneMask : CompositeDrawable
         RelativeSizeAxes = Axes.X;
         Height = 32;
 
-        while (mask.LaneMask.Count < map.RealmMap.KeyCount)
-            mask.LaneMask.Add(true);
+        if (groups.Groups.Count == 0)
+        {
+            for (int i = 0; i < map.RealmMap.KeyCount; i++)
+                groups.Groups.Add($"${i + 1}");
+        }
 
-        var bind = new BindableList<bool>(mask.LaneMask);
+        var bind = new BindableList<string>(groups.Groups);
 
         var draws = new List<Drawable>();
         var cols = new List<Dimension>();
@@ -45,8 +49,21 @@ public partial class PointSettingsLaneMask : CompositeDrawable
                 {
                     Action = () =>
                     {
-                        var cur = mask.ValidFor(idx + 1);
-                        mask.LaneMask[idx] = bind[idx] = !cur;
+                        var group = $"${idx + 1}";
+
+                        if (groups.Groups.Contains(group))
+                            bind.Remove(group);
+                        else
+                            bind.Add(group);
+
+                        var list = bind.ToList();
+
+                        // to save space, we can clear the list
+                        // since empty lists get applies to all lanes anyway
+                        if (list.Count == map.RealmMap.KeyCount && list.All(x => x.StartsWith('$')))
+                            list.Clear();
+
+                        groups.Groups = list;
                     }
                 }
             });
@@ -74,12 +91,12 @@ public partial class PointSettingsLaneMask : CompositeDrawable
 
     private partial class LaneButton : ClickableContainer
     {
-        private BindableList<bool> list { get; }
+        private BindableList<string> list { get; }
         private int idx { get; }
 
-        private bool active => list.Count < idx + 1 || list[idx];
+        private bool active => list.Contains($"${idx + 1}");
 
-        public LaneButton(BindableList<bool> l, int i)
+        public LaneButton(BindableList<string> l, int i)
         {
             list = l;
             idx = i;

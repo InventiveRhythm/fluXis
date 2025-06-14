@@ -1,6 +1,8 @@
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using fluXis.Scoring.Structs;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using fluXis.Screens.Gameplay.Ruleset;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -18,14 +20,18 @@ public class HitObject : ITimedObject
     /// <summary>
     /// the visual position of the note. (only applies to tick notes)
     /// </summary>
-    [JsonProperty("visual-lane")]
+    [JsonProperty("visual-lane", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public float VisualLane { get; set; }
 
-    [JsonProperty("holdtime")]
+    [JsonProperty("holdtime", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public double HoldTime { get; set; }
 
     [JsonProperty("hitsound")]
     public string HitSound { get; set; }
+
+    [DefaultValue("")]
+    [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public string Group { get; set; }
 
     /// <summary>
     /// 0 = Normal / Long
@@ -62,6 +68,13 @@ public class HitObject : ITimedObject
     [CanBeNull]
     [JsonIgnore]
     public HitObject NextObject { get; set; }
+
+    /// <summary>
+    /// The scroll group for this object.
+    /// </summary>
+    [CanBeNull]
+    [JsonIgnore]
+    public ScrollGroup ScrollGroup { get; set; }
 
     /// <summary>
     /// The ease type the start of this note has.

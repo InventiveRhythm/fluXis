@@ -57,7 +57,8 @@ public partial class ScrollMultiplierEntry : PointListEntry
                     Map.Update(scroll);
                 }
             },
-            new PointSettingsEasing<ScrollMultiplierEvent>(Map, scroll)
+            new PointSettingsEasing<ScrollMultiplierEvent>(Map, scroll),
+            new PointSettingsLaneMask(Map, scroll)
         });
     }
 }

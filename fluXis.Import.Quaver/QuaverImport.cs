@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using fluXis.Database.Maps;
 using fluXis.Import.Quaver.Map;
+using fluXis.Import.Quaver.Map.Structs;
 using fluXis.Overlay.Notifications;
 using fluXis.Utils;
 using JetBrains.Annotations;
@@ -89,7 +90,8 @@ public class QuaverImport : MapImporter
     public static QuaverMap ParseFromYaml(string yaml)
     {
         var builder = new DeserializerBuilder();
-        builder.IgnoreUnmatchedProperties();
+        builder.IgnoreUnmatchedProperties()
+               .WithTagMapping("!ScrollGroup", typeof(QuaverTimingGroup));
         var deserializer = builder.Build();
 
         QuaverMap map = deserializer.Deserialize<QuaverMap>(yaml);

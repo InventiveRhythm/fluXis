@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures;
-using fluXis.Map.Structures.Bases;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Structs;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
@@ -33,8 +32,6 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     public List<HitObject> FutureHitObjects { get; } = new();
     public List<DrawableHitObject> HitObjects { get; } = new();
 
-    public double CurrentTime { get; private set; }
-
     public bool Finished => HitObjects.Count == 0 && FutureHitObjects.Count == 0;
 
     [CanBeNull]
@@ -56,14 +53,17 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     private static int[] snaps { get; } = { 48, 24, 16, 12, 8, 6, 4, 3 };
     private Dictionary<int, int> snapIndices { get; } = new();
 
+    public ScrollGroup DefaultScrollGroup { get; }
+
     private JudgementProcessor judgementProcessor => player.JudgementProcessor;
     private DependencyContainer dependencies;
 
-    public HitObjectColumn(MapInfo map, HitObjectManager hitManager, int lane)
+    public HitObjectColumn(MapInfo map, RulesetContainer ruleset, HitObjectManager hitManager, int lane)
     {
         Map = map;
         Lane = lane;
         HitManager = hitManager;
+        DefaultScrollGroup = ruleset.ScrollGroups[$"${Lane}"];
 
         var objects = Map.HitObjects.Where(h => h.Lane == Lane).ToList();
         objects.Sort((a, b) => a.Time.CompareTo(b.Time));
@@ -79,9 +79,11 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
             hit.StartEasing = HitManager.EasingAtTime(hit.Time);
             hit.EndEasing = HitManager.EasingAtTime(hit.EndTime);
             last = hit;
+
+            if (!string.IsNullOrWhiteSpace(hit.Group) && ruleset.ScrollGroups.TryGetValue(hit.Group, out var gr))
+                hit.ScrollGroup = gr;
         }
 
-        initScrollVelocityMarks();
         initSnapIndices();
     }
 
@@ -97,9 +99,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     {
         base.Update();
 
-        updateTime();
-
-        while (FutureHitObjects is { Count: > 0 } && (ShouldDisplay(FutureHitObjects[0].Time) || HitObjects.Count < minimum_loaded_hit_objects))
+        while (FutureHitObjects is { Count: > 0 } && (ShouldDisplay(FutureHitObjects[0].Time, FutureHitObjects[0].ScrollGroup) || HitObjects.Count < minimum_loaded_hit_objects))
         {
             var hit = createHitObject(FutureHitObjects[0]);
             HitObjects.Add(hit);
@@ -108,7 +108,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
             FutureHitObjects.RemoveAt(0);
         }
 
-        while (HitObjects.Count > 0 && !ShouldDisplay(HitObjects.Last().Data.Time) && HitObjects.Count > minimum_loaded_hit_objects)
+        while (HitObjects.Count > 0 && !ShouldDisplay(HitObjects.Last().Data.Time, HitObjects.Last().Data.ScrollGroup) && HitObjects.Count > minimum_loaded_hit_objects)
         {
             var hit = HitObjects.Last();
             removeHitObject(hit, true);
@@ -128,32 +128,25 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         }
     }
 
-    private void updateTime()
+    public bool ShouldDisplay(double time, [CanBeNull] ScrollGroup group = null)
     {
-        var current = Clock.CurrentTime;
-        int svIndex = 0;
+        group ??= DefaultScrollGroup;
 
-        while (Map.ScrollVelocities != null && svIndex < svPoints.Count && svPoints[svIndex].Time <= current)
-            svIndex++;
-
-        CurrentTime = ScrollVelocityPositionFromTime(current, svIndex);
-    }
-
-    public bool ShouldDisplay(double time)
-    {
-        var svTime = ScrollVelocityPositionFromTime(time);
-        var y = PositionAtTime(svTime);
+        var svTime = group.PositionFromTime(time);
+        var y = PositionAtTime(svTime, group);
         return y >= 0;
     }
 
-    public Vector2 FullPositionAt(double time, float lane, Easing ease = Easing.None)
-        => new(HitManager.PositionAtLane(lane), PositionAtTime(time, ease));
+    public Vector2 FullPositionAt(double time, float lane, [CanBeNull] ScrollGroup group = null, Easing ease = Easing.None)
+        => new(HitManager.PositionAtLane(lane), PositionAtTime(time, group, ease));
 
-    public float PositionAtTime(double time, Easing ease = Easing.None)
+    public float PositionAtTime(double time, [CanBeNull] ScrollGroup group = null, Easing ease = Easing.None)
     {
+        group ??= DefaultScrollGroup;
+
         var pos = HitManager.HitPosition;
-        var current = CurrentTime + HitManager.VisualTimeOffset;
-        var y = (float)(pos - .5f * ((time - (float)current) * (HitManager.ScrollSpeed * HitManager.DirectScrollMultiplier)));
+        var current = group.CurrentTime + HitManager.VisualTimeOffset;
+        var y = (float)(pos - .5f * ((time - (float)current) * (HitManager.ScrollSpeed * group.ScrollMultiplier)));
 
         if (ease <= Easing.None || y < 0 || y > pos)
             return y;
@@ -294,62 +287,6 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
             return snaps.Length - 1;
         }
     }
-
-    #region SV
-
-    private readonly List<ScrollVelocity> svPoints = new();
-    private readonly List<double> scrollVelocityMarks = new();
-
-    public double ScrollVelocityPositionFromTime(double time, int index = -1)
-    {
-        if (svPoints.Count == 0)
-            return time;
-
-        if (index == -1)
-        {
-            for (index = 0; index < svPoints.Count; index++)
-            {
-                if (time < svPoints[index].Time)
-                    break;
-            }
-        }
-
-        if (index == 0)
-            return time;
-
-        var prev = svPoints[index - 1];
-
-        var position = scrollVelocityMarks[index - 1];
-        position += (time - prev.Time) * prev.Multiplier;
-        return position;
-    }
-
-    private void initScrollVelocityMarks()
-    {
-        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0)
-            return;
-
-        svPoints.AddRange(Map.ScrollVelocities.Where(s => s.ValidFor(Lane)));
-
-        if (svPoints.Count == 0)
-            return;
-
-        var first = svPoints[0];
-
-        var time = first.Time;
-        scrollVelocityMarks.Add(time);
-
-        for (var i = 1; i < svPoints.Count; i++)
-        {
-            var prev = svPoints[i - 1];
-            var current = svPoints[i];
-
-            time += (int)((current.Time - prev.Time) * prev.Multiplier);
-            scrollVelocityMarks.Add(time);
-        }
-    }
-
-    #endregion
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

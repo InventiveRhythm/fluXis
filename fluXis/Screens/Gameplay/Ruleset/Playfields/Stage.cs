@@ -7,7 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace fluXis.Screens.Gameplay.Ruleset;
+namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
 
 public partial class Stage : Container
 {

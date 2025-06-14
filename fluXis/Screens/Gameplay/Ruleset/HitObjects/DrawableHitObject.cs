@@ -65,8 +65,9 @@ public partial class DrawableHitObject : CompositeDrawable
         AutoSizeAxes = Axes.Y;
         Origin = Anchor.BottomLeft;
 
-        ScrollVelocityTime = Column.ScrollVelocityPositionFromTime(Data.Time);
-        ScrollVelocityEndTime = Column.ScrollVelocityPositionFromTime(Data.EndTime);
+        var group = Data.ScrollGroup ?? Column.DefaultScrollGroup;
+        ScrollVelocityTime = group.PositionFromTime(Data.Time);
+        ScrollVelocityEndTime = group.PositionFromTime(Data.EndTime);
     }
 
     protected override void LoadComplete()
@@ -82,7 +83,7 @@ public partial class DrawableHitObject : CompositeDrawable
         base.Update();
 
         X = ObjectManager.PositionAtLane(Data.Lane);
-        Y = Column.PositionAtTime(ScrollVelocityTime, Data.StartEasing);
+        Y = Column.PositionAtTime(ScrollVelocityTime, Data.ScrollGroup, Data.StartEasing);
         Width = ObjectManager.WidthOfLane(Data.Lane);
     }
 

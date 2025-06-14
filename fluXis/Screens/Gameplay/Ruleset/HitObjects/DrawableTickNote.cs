@@ -62,7 +62,7 @@ public partial class DrawableTickNote : DrawableHitObject
         if (next?.Type == 1 && next.Lane == Data.Lane && (Data.VisualLane != 0 || next.VisualLane != 0))
         {
             var l = next.VisualLane == 0 ? next.Lane : next.VisualLane;
-            var pos = Column.FullPositionAt(next.Time, l, next.StartEasing);
+            var pos = Column.FullPositionAt(next.Time, l, next.ScrollGroup, next.StartEasing);
             var delta = pos - Position;
             var distance = delta.Length;
 

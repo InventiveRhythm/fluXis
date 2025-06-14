@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using fluXis.Map.Structures.Bases;
-using fluXis.Screens.Gameplay.Ruleset.HitObjects;
+using fluXis.Screens.Gameplay.Ruleset;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events;
 
-public class ScrollMultiplierEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToHitManager
+public class ScrollMultiplierEvent : IMapEvent, IHasDuration, IHasEasing, IHasGroups
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -20,9 +21,12 @@ public class ScrollMultiplierEvent : IMapEvent, IHasDuration, IHasEasing, IAppli
     [JsonProperty("ease")]
     public Easing Easing { get; set; }
 
-    public void Apply(HitObjectManager manager)
+    [JsonProperty("groups", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public List<string> Groups { get; set; } = new();
+
+    public void Apply(ScrollGroup group)
     {
-        using (manager.BeginAbsoluteSequence(Time))
-            manager.TransformTo(nameof(manager.DirectScrollMultiplier), Multiplier, Math.Max(Duration, 0), Easing);
+        using (group.BeginAbsoluteSequence(Time))
+            group.TransformTo(nameof(group.ScrollMultiplier), Multiplier, Math.Max(Duration, 0), Easing);
     }
 }

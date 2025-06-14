@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio.Transforms;
 using fluXis.Map;
+using fluXis.Map.Structures.Bases;
 using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
@@ -12,6 +13,7 @@ using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -31,6 +33,9 @@ public partial class RulesetContainer : CompositeDrawable
 
     public HitWindows HitWindows { get; private set; }
     public ReleaseWindows ReleaseWindows { get; private set; }
+
+    private readonly Dictionary<string, ScrollGroup> scrolls = new();
+    public IReadOnlyDictionary<string, ScrollGroup> ScrollGroups => scrolls;
 
     public event Action OnDeath;
 
@@ -70,13 +75,14 @@ public partial class RulesetContainer : CompositeDrawable
         dependencies.CacheAs(this);
 
         createHitWindows();
+        createScrollGroups();
 
-        InternalChildren = new Drawable[]
+        InternalChildrenEnumerable = new Drawable[]
         {
             dependencies.CacheAsAndReturn(Input),
             PlayfieldManager,
             DebugText
-        };
+        }.Concat(scrolls.Values.ToArray());
     }
 
     protected virtual GameplayInput CreateInput() => new(IsPaused.GetBoundCopy(), MapInfo.RealmEntry!.KeyCount, MapInfo.IsDual);
@@ -109,6 +115,44 @@ public partial class RulesetContainer : CompositeDrawable
 
         HitWindows = new HitWindows(difficulty, Rate);
         ReleaseWindows = new ReleaseWindows(difficulty, Rate);
+    }
+
+    private void createScrollGroups()
+    {
+        // creating groups
+        for (int i = 0; i < MapInfo.RealmEntry!.KeyCount; i++)
+            scrolls[$"${i + 1}"] = new ScrollGroup { Name = $"${i + 1}" };
+
+        var events = MapInfo.ScrollVelocities.Cast<IHasGroups>().Concat(MapEvents.ScrollMultiplyEvents).ToList();
+        var groups = events.SelectMany(x => x.Groups).Distinct().Order().ToList();
+
+        foreach (var group in groups)
+        {
+            if (group.StartsWith('$'))
+                continue;
+
+            if (!scrolls.ContainsKey(group))
+                scrolls[group] = new ScrollGroup { Name = group };
+        }
+
+        scrolls.ForEach(x => LoadComponent(x.Value));
+
+        // populating groups
+        foreach (var ev in events)
+        {
+            if (ev.Groups.Count == 0)
+            {
+                foreach (var (_, group) in scrolls.Where(x => x.Key.StartsWith('$')))
+                    ev.Apply(group);
+            }
+            else
+            {
+                foreach (var group in ev.Groups)
+                    ev.Apply(scrolls[group]);
+            }
+        }
+
+        scrolls.ForEach(x => x.Value.InitMarkers());
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

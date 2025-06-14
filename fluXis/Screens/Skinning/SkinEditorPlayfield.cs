@@ -1,4 +1,4 @@
-using fluXis.Screens.Gameplay.Ruleset;
+using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Skinning;
 using fluXis.Skinning.Json;
 using osu.Framework.Allocation;

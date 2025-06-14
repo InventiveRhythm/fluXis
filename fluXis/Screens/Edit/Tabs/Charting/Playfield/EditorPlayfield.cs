@@ -6,7 +6,7 @@ using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Screens.Edit.Tabs.Shared.Lines;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
-using fluXis.Screens.Gameplay.Ruleset;
+using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Audio.Track;
