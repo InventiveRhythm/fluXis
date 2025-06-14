@@ -32,7 +32,7 @@ public partial class GeneralFoldersSection : SettingsSubSection
             {
                 Label = strings.FoldersOpen,
                 ButtonText = "Open",
-                Action = () => storage.OpenFileExternally(".")
+                Action = () => storage.PresentExternally()
             },
             new SettingsButton
             {
