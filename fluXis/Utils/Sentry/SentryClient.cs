@@ -112,7 +112,7 @@ public partial class SentryClient : Component
             scope.Contexts["hashes"] = new
             {
                 game = game.ClientHash,
-                plugins = game.Plugins?.Plugins.ToDictionary(x => x.Name, x => x.Hash)
+                plugins = game.Plugins?.Plugins.ToDictionary(x => x.AssemblyName, x => x.Hash)
             };
         });
     }
@@ -126,7 +126,7 @@ public partial class SentryClient : Component
                 return true;
 
             case WebException web:
-                if (web.Response is HttpWebResponse { StatusCode: System.Net.HttpStatusCode.BadGateway or System.Net.HttpStatusCode.ServiceUnavailable })
+                if (web.Response is HttpWebResponse { StatusCode: HttpStatusCode.BadGateway or HttpStatusCode.ServiceUnavailable })
                     return true;
 
                 return web.Status is WebExceptionStatus.Timeout or WebExceptionStatus.UnknownError;
