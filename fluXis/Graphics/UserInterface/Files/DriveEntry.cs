@@ -85,7 +85,7 @@ public partial class DriveEntry : Container
                             {
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
-                                Text = $"{info.Name}{info.VolumeLabel}",
+                                Text = OperatingSystem.IsLinux() ? info.VolumeLabel : $"{info.Name}{info.VolumeLabel}",
                                 Margin = new MarginPadding { Left = 35 }
                             },
                             new FluXisSpriteText
@@ -93,7 +93,7 @@ public partial class DriveEntry : Container
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight,
                                 Alpha = .8f,
-                                Text = $"{used / 1024 / 1024 / 1024} GB / {info.TotalSize / 1024 / 1024 / 1024} GB",
+                                Text = $"{toOptimalSizeString(used)} / {toOptimalSizeString(info.TotalSize)}",
                             }
                         }
                     },
@@ -140,5 +140,25 @@ public partial class DriveEntry : Container
     protected override void OnHoverLost(HoverLostEvent e)
     {
         hover.Hide();
+    }
+
+    private static string toOptimalSizeString(long sizeB)
+    {
+        string[] suffixes = { "B", "KiB", "MiB", "GiB", "TiB" };
+
+        long maxB = 1024;
+        long size = sizeB;
+        for (int i = 0; i < suffixes.Length - 1; i++)
+        {
+            if (sizeB < maxB)
+            {
+                return $"{size} {suffixes[i]}";
+            }
+
+            maxB *= 1024;
+            size /= 1024;
+        }
+
+        return $"{size} {suffixes[suffixes.Length - 1]}";
     }
 }
