@@ -1,5 +1,7 @@
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Menus.Draw;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -32,22 +34,17 @@ public partial class FluXisMenu : Menu
         }
     }
 
-    protected override void AnimateClose()
-    {
-        this.FadeOut(200);
-    }
-
-    protected override void AnimateOpen()
-    {
-        this.FadeIn(200);
-    }
+    protected override void AnimateClose() => this.FadeOut(200);
+    protected override void AnimateOpen() => this.FadeIn(200);
 
     protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item)
     {
         return item switch
         {
-            FluXisMenuSpacer spacer => new DrawableFluXisMenuSpacer(spacer),
-            FluXisMenuItem menuItem => new DrawableFluXisMenuItem(menuItem),
+            MenuActionItem action => new DrawableMenuActionItem(action),
+            MenuExpandItem expand => new DrawableMenuExpandItem(expand),
+            MenuToggleItem toggle => new DrawableMenuToggleItem(toggle),
+            MenuSpacerItem spacer => new DrawableMenuSpacer(spacer),
             _ => new BasicMenu.BasicDrawableMenuItem(item)
         };
     }

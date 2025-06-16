@@ -4,6 +4,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Multiplayer;
@@ -27,11 +28,11 @@ public partial class PlayerListEntry : Container, IHasContextMenu
         {
             var list = new List<MenuItem>
             {
-                new FluXisMenuItem("View Profile", FontAwesome6.Solid.User, () => game?.PresentUser(Participant.ID))
+                new MenuActionItem("View Profile", FontAwesome6.Solid.User, () => game?.PresentUser(Participant.ID))
             };
 
             if (client.Room!.Host.ID == client.Player.ID && Participant.ID != client.Player.ID)
-                list.Add(new FluXisMenuItem("Promote to Host", FontAwesome6.Solid.Crown, MenuItemType.Normal, () => client.TransferHost(Participant.ID)));
+                list.Add(new MenuActionItem("Promote to Host", FontAwesome6.Solid.Crown, MenuItemType.Normal, () => client.TransferHost(Participant.ID)));
 
             return list.ToArray();
         }

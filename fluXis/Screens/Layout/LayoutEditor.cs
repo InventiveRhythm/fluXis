@@ -9,6 +9,7 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Input;
@@ -185,24 +186,15 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                 {
                     Items = new MenuItem[]
                     {
-                        new FluXisMenuItem("File", FontAwesome6.Solid.File)
+                        new MenuExpandItem("File", FontAwesome6.Solid.File, new MenuItem[]
                         {
-                            Items = new MenuItem[]
-                            {
-                                new FluXisMenuItem("Save", FontAwesome6.Solid.FloppyDisk, MenuItemType.Normal, () => save()),
-                                new FluXisMenuItem("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, this.Exit)
-                            }
-                        },
-                        new FluXisMenuItem("View", FontAwesome6.Solid.Eye)
+                            new MenuActionItem("Save", FontAwesome6.Solid.FloppyDisk, MenuItemType.Normal, () => save()),
+                            new MenuActionItem("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, this.Exit)
+                        }),
+                        new MenuExpandItem("View", FontAwesome6.Solid.Eye, new MenuItem[]
                         {
-                            Items = new MenuItem[]
-                            {
-                                new FluXisMenuItem("Force 16:9", FontAwesome6.Solid.RectangleWide, MenuItemType.Normal, forceAspect.Toggle)
-                                {
-                                    IsActive = () => forceAspect.Value
-                                }
-                            }
-                        }
+                            new MenuToggleItem("Force 16:9", FontAwesome6.Solid.RectangleWide, forceAspect.Toggle, () => forceAspect.Value)
+                        })
                     }
                 }
             }

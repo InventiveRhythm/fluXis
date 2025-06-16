@@ -10,6 +10,7 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
@@ -49,18 +50,18 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         {
             var list = new List<MenuItem>
             {
-                new FluXisMenuItem("View", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
+                new MenuActionItem("View", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
             };
 
             if (downloaded)
-                list.Add(new FluXisMenuItem("Show in Song Select", FontAwesome6.Solid.Eye, selectAndShow));
+                list.Add(new MenuActionItem("Show in Song Select", FontAwesome6.Solid.Eye, selectAndShow));
             else if (!downloading)
-                list.Add(new FluXisMenuItem("Download", FontAwesome6.Solid.Download, download));
+                list.Add(new MenuActionItem("Download", FontAwesome6.Solid.Download, download));
 
-            list.Add(new FluXisMenuItem("Open in Web", FontAwesome6.Solid.EarthAmericas, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
+            list.Add(new MenuActionItem("Open in Web", FontAwesome6.Solid.EarthAmericas, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
 
             if (RequestDelete != null && canDelete)
-                list.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
+                list.Add(new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
 
             return list.ToArray();
         }

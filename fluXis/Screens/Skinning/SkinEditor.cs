@@ -6,6 +6,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Input;
 using fluXis.Overlay.Notifications;
 using fluXis.Scoring.Enums;
@@ -287,16 +288,13 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                 {
                     Items = new[]
                     {
-                        new FluXisMenuItem("File", FontAwesome6.Solid.File)
+                        new MenuExpandItem("File", FontAwesome6.Solid.File, new FluXisMenuItem[]
                         {
-                            Items = new[]
-                            {
-                                new FluXisMenuItem("Save", FontAwesome6.Solid.FloppyDisk, save),
-                                new("Open Skin Folder", FontAwesome6.Solid.FolderOpen, skinManager.OpenFolder),
-                                new FluXisMenuItem("Exit", FontAwesome6.Solid.DoorOpen, this.Exit)
-                            }
-                        },
-                        new FluXisMenuItem("Key Mode") { Items = getKeymodeItems() }
+                            new MenuActionItem("Save", FontAwesome6.Solid.FloppyDisk, save),
+                            new MenuActionItem("Open Skin Folder", FontAwesome6.Solid.FolderOpen, skinManager.OpenFolder),
+                            new MenuActionItem("Exit", FontAwesome6.Solid.DoorOpen, this.Exit)
+                        }),
+                        new MenuExpandItem("Key Mode", FontAwesome6.Solid.Keyboard, getKeymodeItems())
                     }
                 }
             }
@@ -306,7 +304,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private IReadOnlyList<MenuItem> getKeymodeItems()
     {
         return Enumerable.Range(1, 10)
-                         .Select(x => new FluXisMenuItem($"{x} Key{(x > 1 ? "s" : "")}", () => keyMode.Value = x))
+                         .Select(x => new MenuActionItem($"{x} Key{(x > 1 ? "s" : "")}", FontAwesome6.Solid.Circle, () => keyMode.Value = x))
                          .ToList();
     }
 

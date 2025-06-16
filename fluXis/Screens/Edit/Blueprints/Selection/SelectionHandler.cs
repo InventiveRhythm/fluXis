@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Input;
@@ -6,19 +5,15 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Primitives;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Blueprints.Selection;
 
-public partial class SelectionHandler<T> : Container, IHasContextMenu, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class SelectionHandler<T> : Container, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    public virtual MenuItem[] ContextMenuItems => Array.Empty<MenuItem>();
-
     public IReadOnlyList<SelectionBlueprint<T>> Selected => selected;
     private readonly List<SelectionBlueprint<T>> selected = new();
 

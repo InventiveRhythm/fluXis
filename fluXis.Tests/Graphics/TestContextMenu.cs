@@ -1,5 +1,7 @@
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Context;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
@@ -29,18 +31,9 @@ public partial class TestContextMenu : FluXisTestScene
     {
         public MenuItem[] ContextMenuItems => new MenuItem[]
         {
-            new FluXisMenuItem("Make Gray", () =>
-            {
-                Colour = Colour4.Gray;
-            }),
-            new FluXisMenuItem("Make Blue", MenuItemType.Highlighted, () =>
-            {
-                Colour = Colour4.Blue;
-            }),
-            new FluXisMenuItem("Make Red", MenuItemType.Dangerous, () =>
-            {
-                Colour = Colour4.Red;
-            })
+            new MenuActionItem("Make Gray", FontAwesome6.Solid.Circle, () => Colour = Colour4.Gray),
+            new MenuActionItem("Make Blue", FontAwesome6.Solid.Circle, MenuItemType.Highlighted, () => Colour = Colour4.Blue),
+            new MenuActionItem("Make Red", FontAwesome6.Solid.Circle, MenuItemType.Dangerous, () => Colour = Colour4.Red)
         };
     }
 }

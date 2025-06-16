@@ -7,6 +7,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Requests.Chat;
@@ -229,9 +230,9 @@ public partial class DrawableChatMessage : Container
                 var items = new List<MenuItem>();
 
                 if (API.User.Value?.CanModerate() ?? false)
-                    items.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete));
+                    items.Add(new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete));
 
-                items.Add(new FluXisMenuItem("Report", FontAwesome6.Solid.Flag, MenuItemType.Dangerous, report) { Enabled = () => false });
+                items.Add(new MenuActionItem("Report", FontAwesome6.Solid.Flag, MenuItemType.Dangerous, report) { IsEnabled = () => false });
                 return items.ToArray();
             }
         }

@@ -9,6 +9,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
@@ -57,20 +58,17 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
         {
             var items = new List<MenuItem>
             {
-                new FluXisMenuItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails)
+                new MenuActionItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails)
             };
 
             if (DownloadAction != null)
-                items.Add(new FluXisMenuItem("Download Replay", FontAwesome6.Solid.ArrowDown, MenuItemType.Normal, download));
-
+                items.Add(new MenuActionItem("Download Replay", FontAwesome6.Solid.ArrowDown, MenuItemType.Normal, download));
             if (ReplayAction != null)
-                items.Add(new FluXisMenuItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
-
+                items.Add(new MenuActionItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
             if (profileOverlay != null)
-                items.Add(new FluXisMenuItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Normal, () => profileOverlay.ShowUser(Player.ID)));
-
+                items.Add(new MenuActionItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Normal, () => profileOverlay.ShowUser(Player.ID)));
             if (DeleteAction != null)
-                items.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => DeleteAction.Invoke()));
+                items.Add(new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => DeleteAction.Invoke()));
 
             return items.ToArray();
         }

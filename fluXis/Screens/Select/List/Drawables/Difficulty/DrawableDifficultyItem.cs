@@ -8,6 +8,7 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Map.Drawables;
@@ -37,19 +38,19 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
             List<MenuItem> items = new()
             {
                 !Equals(maps.CurrentMap, map)
-                    ? new FluXisMenuItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => maps.Select(map, true))
-                    : new FluXisMenuItem(LocalizationStrings.General.Play, FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => SelectAction?.Invoke()),
-                new FluXisMenuItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => EditAction?.Invoke(map)),
-                new FluXisMenuItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => ExportAction?.Invoke(map.MapSet)) { Enabled = () => !map.MapSet.AutoImported },
-                new FluXisMenuItem(LocalizationStrings.General.Delete, FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => DeleteAction?.Invoke(map.MapSet)) { Enabled = () => !map.MapSet.AutoImported }
+                    ? new MenuActionItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => maps.Select(map, true))
+                    : new MenuActionItem(LocalizationStrings.General.Play, FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => SelectAction?.Invoke()),
+                new MenuActionItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => EditAction?.Invoke(map)),
+                new MenuActionItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => ExportAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported },
+                new MenuActionItem(LocalizationStrings.General.Delete, FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => DeleteAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported }
             };
 
             if (FluXisGameBase.IsDebug)
             {
                 if (map.OnlineID > 0)
-                    items.Add(new FluXisMenuItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
+                    items.Add(new MenuActionItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
 
-                items.Add(new FluXisMenuItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
+                items.Add(new MenuActionItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
             }
 
             return items.ToArray();

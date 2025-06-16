@@ -5,6 +5,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Events;
@@ -32,10 +33,10 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     public MenuItem[] ContextMenuItems => new MenuItem[]
     {
-        new FluXisMenuItem("Clone to current time", FontAwesome6.Solid.Clone, clone),
-        new FluXisMenuItem("Go to time", FontAwesome6.Solid.ArrowRight, goTo),
-        new FluXisMenuItem("Edit", FontAwesome6.Solid.PenRuler, OpenSettings),
-        new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => delete(false))
+        new MenuActionItem("Clone to current time", FontAwesome6.Solid.Clone, clone),
+        new MenuActionItem("Go to time", FontAwesome6.Solid.ArrowRight, goTo),
+        new MenuActionItem("Edit", FontAwesome6.Solid.PenRuler, OpenSettings),
+        new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => delete(false))
     };
 
     public event Action<PointListEntry> Selected;

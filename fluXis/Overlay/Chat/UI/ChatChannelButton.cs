@@ -4,6 +4,7 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Online.Chat;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -26,7 +27,7 @@ public partial class ChatChannelButton : Container, IHasContextMenu
 
     public MenuItem[] ContextMenuItems => new MenuItem[]
     {
-        new FluXisMenuItem("Leave Channel", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, leave)
+        new MenuActionItem("Leave Channel", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, leave)
     };
 
     private Bindable<string> bind { get; }

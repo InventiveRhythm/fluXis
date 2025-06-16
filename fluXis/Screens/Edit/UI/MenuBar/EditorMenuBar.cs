@@ -1,5 +1,6 @@
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -34,8 +35,8 @@ public partial class EditorMenuBar : FluXisMenu
 
     protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item)
     {
-        if (item is FluXisMenuItem i)
-            return new DrawableFluXisMenuItem(i, false);
+        if (item is MenuExpandItem i)
+            i.ShowIcon = false;
 
         return base.CreateDrawableMenuItem(item);
     }

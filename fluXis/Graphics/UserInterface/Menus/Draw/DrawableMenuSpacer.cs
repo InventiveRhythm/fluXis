@@ -1,14 +1,15 @@
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 
-namespace fluXis.Graphics.UserInterface.Menus;
+namespace fluXis.Graphics.UserInterface.Menus.Draw;
 
-public partial class DrawableFluXisMenuSpacer : Menu.DrawableMenuItem
+public partial class DrawableMenuSpacer : Menu.DrawableMenuItem
 {
-    public DrawableFluXisMenuSpacer(FluXisMenuSpacer spacer)
+    public DrawableMenuSpacer(MenuSpacerItem spacer)
         : base(spacer)
     {
         BackgroundColour = Colour4.Transparent;

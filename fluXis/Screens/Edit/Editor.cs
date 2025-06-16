@@ -17,6 +17,7 @@ using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Context;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Graphics.UserInterface.Panel.Types;
@@ -282,106 +283,94 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         {
                             Items = new FluXisMenuItem[]
                             {
-                                new("File", FontAwesome6.Solid.File)
+                                new MenuExpandItem("File", FontAwesome6.Solid.File, new FluXisMenuItem[]
                                 {
-                                    Items = new FluXisMenuItem[]
+                                    new MenuActionItem("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { IsEnabled = () => HasUnsavedChanges },
+                                    new MenuSpacerItem(),
+                                    new MenuActionItem("Create new difficulty...", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
                                     {
-                                        new("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { Enabled = () => HasUnsavedChanges },
-                                        new FluXisMenuSpacer(),
-                                        new("Create new difficulty...", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
+                                        OnCreate = createNewDiff
+                                    }) { IsEnabled = () => canSave },
+                                    new MenuActionItem("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
+                                    {
+                                        IsEnabled = () => editorMap.MapSet.Maps.Count > 1,
+                                        Items = editorMap.MapSet.Maps.Where(x => x.ID != editorMap.RealmMap.ID)
+                                                         .Select(x => new MenuActionItem(x.Difficulty, FontAwesome6.Solid.Circle, () => loader.SwitchTo(x))).ToList()
+                                    },
+                                    new MenuActionItem("Delete difficulty...", FontAwesome6.Solid.Trash, () =>
+                                    {
+                                        panels.Content = new ConfirmDeletionPanel(() =>
                                         {
-                                            OnCreate = createNewDiff
-                                        }) { Enabled = () => canSave },
-                                        new("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
-                                        {
-                                            Enabled = () => editorMap.MapSet.Maps.Count > 1,
-                                            Items = editorMap.MapSet.Maps.Where(x => x.ID != editorMap.RealmMap.ID)
-                                                             .Select(x => new FluXisMenuItem(x.Difficulty, () => loader.SwitchTo(x))).ToList()
-                                        },
-                                        new("Delete difficulty...", FontAwesome6.Solid.Trash, () =>
-                                        {
-                                            panels.Content = new ConfirmDeletionPanel(() =>
-                                            {
-                                                // delete diff
-                                                mapStore.DeleteDifficulty(editorMap.MapSet, editorMap.RealmMap);
+                                            // delete diff
+                                            mapStore.DeleteDifficulty(editorMap.MapSet, editorMap.RealmMap);
 
-                                                // requery mapset
-                                                var set = mapStore.GetFromGuid(editorMap.MapSet.ID);
+                                            // requery mapset
+                                            var set = mapStore.GetFromGuid(editorMap.MapSet.ID);
 
-                                                // switch to other diff
-                                                var other = set.Maps.FirstOrDefault(x => x.ID != editorMap.RealmMap.ID);
-                                                loader.SwitchTo(other);
-                                            }, itemName: "difficulty");
-                                        })
-                                        {
-                                            Enabled = () => editorMap.MapSet.Maps.Count > 1 && canSave
-                                        },
-                                        new FluXisMenuSpacer(),
-                                        new("Export", FontAwesome6.Solid.BoxOpen, export),
-                                        new("Upload...", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave && api.IsLoggedIn },
-                                        new("Submit to Queue...", FontAwesome6.Solid.Upload, submitToQueue) { Enabled = () => editorMap.MapSet.OnlineID > 0 && api.IsLoggedIn },
-                                        new FluXisMenuSpacer(),
-                                        new("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
-                                        new FluXisMenuSpacer(),
-                                        new("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, tryExit)
-                                    }
-                                },
-                                new("Edit", FontAwesome6.Solid.Pen)
-                                {
-                                    Items = new FluXisMenuItem[]
+                                            // switch to other diff
+                                            var other = set.Maps.FirstOrDefault(x => x.ID != editorMap.RealmMap.ID);
+                                            loader.SwitchTo(other);
+                                        }, itemName: "difficulty");
+                                    })
                                     {
-                                        new("Undo", FontAwesome6.Solid.RotateLeft, actionStack.Undo) { Enabled = () => actionStack.CanUndo },
-                                        new("Redo", FontAwesome6.Solid.RotateRight, actionStack.Redo) { Enabled = () => actionStack.CanRedo },
-                                        new FluXisMenuSpacer(),
-                                        new("Copy", FontAwesome6.Solid.Copy, () => ChartingContainer?.Copy())
-                                            { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
-                                        new("Cut", FontAwesome6.Solid.Cut, () => ChartingContainer?.Copy(true))
-                                            { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
-                                        new("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
-                                        new FluXisMenuSpacer(),
-                                        new("Apply Offset...", FontAwesome6.Solid.Clock, applyOffset),
-                                        new("Flip Selection", FontAwesome6.Solid.LeftRight, () => ChartingContainer?.FlipSelection())
-                                            { Enabled = () => ChartingContainer?.CanFlipSelection ?? false },
-                                        new("Shuffle Selection", FontAwesome6.Solid.Shuffle, () => ChartingContainer?.ShuffleSelection())
-                                            { Enabled = () => ChartingContainer?.CanShuffleSelection ?? false },
-                                        new("Re-snap all notes", FontAwesome6.Solid.ArrowsRotate, () => ChartingContainer?.ReSnapAll()),
-                                        new FluXisMenuSpacer(),
-                                        new("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll()),
-                                        new("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
-                                        new FluXisMenuSpacer(),
-                                        new("Editor Keymap...", FontAwesome6.Solid.Keyboard, () => keymapOverlay.Show())
-                                    }
-                                },
-                                new("View", FontAwesome6.Solid.Eye) { Items = createView() },
-                                new("Timing", FontAwesome6.Solid.Clock)
+                                        IsEnabled = () => editorMap.MapSet.Maps.Count > 1 && canSave
+                                    },
+                                    new MenuSpacerItem(),
+                                    new MenuActionItem("Export", FontAwesome6.Solid.BoxOpen, export),
+                                    new MenuActionItem("Upload...", FontAwesome6.Solid.Upload, startUpload) { IsEnabled = () => canSave && api.IsLoggedIn },
+                                    new MenuActionItem("Submit to Queue...", FontAwesome6.Solid.Upload, submitToQueue) { IsEnabled = () => editorMap.MapSet.OnlineID > 0 && api.IsLoggedIn },
+                                    new MenuSpacerItem(),
+                                    new MenuActionItem("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
+                                    new MenuSpacerItem(),
+                                    new MenuActionItem("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, tryExit)
+                                }),
+                                new MenuExpandItem("Edit", FontAwesome6.Solid.Pen, new FluXisMenuItem[]
                                 {
-                                    Items = new FluXisMenuItem[]
-                                    {
-                                        new("Set preview point to current time", FontAwesome6.Solid.Stopwatch, () =>
-                                        {
-                                            editorMap.MapInfo.Metadata.PreviewTime
-                                                = editorMap.RealmMap.Metadata.PreviewTime
-                                                    = (int)clock.CurrentTime;
-                                        })
-                                    }
-                                },
-                                new("Audio", FontAwesome6.Solid.VolumeHigh)
+                                    new MenuActionItem("Undo", FontAwesome6.Solid.RotateLeft, actionStack.Undo) { IsEnabled = () => actionStack.CanUndo },
+                                    new MenuActionItem("Redo", FontAwesome6.Solid.RotateRight, actionStack.Redo) { IsEnabled = () => actionStack.CanRedo },
+                                    new MenuSpacerItem(),
+                                    new MenuActionItem("Copy", FontAwesome6.Solid.Copy, () => ChartingContainer?.Copy())
+                                        { IsEnabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
+                                    new MenuActionItem("Cut", FontAwesome6.Solid.Cut, () => ChartingContainer?.Copy(true))
+                                        { IsEnabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
+                                    new MenuActionItem("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
+                                    new MenuSpacerItem(),
+                                    new MenuActionItem("Apply Offset...", FontAwesome6.Solid.Clock, applyOffset),
+                                    new MenuActionItem("Flip Selection", FontAwesome6.Solid.LeftRight, () => ChartingContainer?.FlipSelection())
+                                        { IsEnabled = () => ChartingContainer?.CanFlipSelection ?? false },
+                                    new MenuActionItem("Shuffle Selection", FontAwesome6.Solid.Shuffle, () => ChartingContainer?.ShuffleSelection())
+                                        { IsEnabled = () => ChartingContainer?.CanShuffleSelection ?? false },
+                                    new MenuActionItem("Re-snap all notes", FontAwesome6.Solid.ArrowsRotate, () => ChartingContainer?.ReSnapAll()),
+                                    new MenuSpacerItem(),
+                                    new MenuActionItem("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll()),
+                                    new MenuActionItem("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
+                                    new MenuSpacerItem(),
+                                    new MenuActionItem("Editor Keymap...", FontAwesome6.Solid.Keyboard, () => keymapOverlay.Show())
+                                }),
+                                new MenuExpandItem("View", FontAwesome6.Solid.Eye, createView()),
+                                new MenuExpandItem("Timing", FontAwesome6.Solid.Clock, new FluXisMenuItem[]
                                 {
-                                    Items = new FluXisMenuItem[]
+                                    new MenuActionItem("Set preview point to current time", FontAwesome6.Solid.Stopwatch, () =>
                                     {
-                                        new("Enable Low Pass filter", FontAwesome6.Solid.AngleDown, () =>
-                                        {
-                                            lowPassEnabled = !lowPassEnabled;
-                                            lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, 400);
-                                        }) { IsActive = () => lowPassEnabled },
-                                        new("Enable High Pass filter", FontAwesome6.Solid.AngleUp, () =>
-                                        {
-                                            highPassEnabled = !highPassEnabled;
-                                            highPass.CutoffTo(highPassEnabled ? 300 : 0, 400);
-                                        }) { IsActive = () => highPassEnabled }
-                                    }
-                                },
-                                new("Wiki", FontAwesome6.Solid.Book, openHelp)
+                                        editorMap.MapInfo.Metadata.PreviewTime
+                                            = editorMap.RealmMap.Metadata.PreviewTime
+                                                = (int)clock.CurrentTime;
+                                    })
+                                }),
+                                new MenuExpandItem("Audio", FontAwesome6.Solid.VolumeHigh, new FluXisMenuItem[]
+                                {
+                                    new MenuToggleItem("Enable Low Pass filter", FontAwesome6.Solid.AngleDown, () =>
+                                    {
+                                        lowPassEnabled = !lowPassEnabled;
+                                        lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, 400);
+                                    }, () => lowPassEnabled),
+                                    new MenuToggleItem("Enable High Pass filter", FontAwesome6.Solid.AngleUp, () =>
+                                    {
+                                        highPassEnabled = !highPassEnabled;
+                                        highPass.CutoffTo(highPassEnabled ? 300 : 0, 400);
+                                    }, () => highPassEnabled)
+                                }),
+                                new MenuActionItem("Wiki", FontAwesome6.Solid.Book, openHelp)
                             }
                         },
                         new EditorTabSwitcher
@@ -401,29 +390,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             var list = new List<FluXisMenuItem>
             {
-                new("Background Dim", FontAwesome6.Solid.Image)
-                {
-                    Items = createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)
-                },
-                new("Background Blur", FontAwesome6.Solid.Aperture)
-                {
-                    Items = createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)
-                },
-                new FluXisMenuSpacer(),
-                new("Waveform opacity", FontAwesome6.Solid.WaveformLines)
-                {
-                    Items = createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)
-                },
-                new FluXisMenuSpacer(),
-                new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value)
-                    { IsActive = () => settings.ShowSamples.Value },
-                new FluXisMenuSpacer(),
-                new("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, () => settings.ForceAspectRatio.Toggle())
-                    { IsActive = () => settings.ForceAspectRatio.Value }
+                new MenuExpandItem("Background Dim", FontAwesome6.Solid.Image, createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)),
+                new MenuExpandItem("Background Blur", FontAwesome6.Solid.Aperture, createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)),
+                new MenuSpacerItem(),
+                new MenuExpandItem("Waveform opacity", FontAwesome6.Solid.WaveformLines, createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)),
+                new MenuSpacerItem(),
+                new MenuToggleItem("Show sample on notes", FontAwesome6.Solid.LayerGroup, settings.ShowSamples),
+                new MenuSpacerItem(),
+                new MenuToggleItem("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, settings.ForceAspectRatio)
             };
 
             if (experiments.Get<bool>(ExperimentConfig.ModView))
-                list.Add(new FluXisMenuItem("Toggle ModView", FontAwesome6.Solid.Pen, () => modding.Toggle()) { IsActive = () => modding.IsActive });
+                list.Add(new MenuToggleItem("Toggle ModView", FontAwesome6.Solid.Pen, () => modding.Toggle(), () => modding.IsActive));
 
             return list.ToArray();
         }
@@ -432,11 +410,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private FluXisMenuItem[] createPercentItems(Func<float> get, Action<float> set)
     {
         float[] values = { 0, .2f, .4f, .6f, .8f, 1 };
-
-        return values.Select(x => new FluXisMenuItem($"{x * 100:0}%", FontAwesome6.Solid.Percent, () => set(x))
-        {
-            IsActive = () => Math.Abs(get() - x) < .01f
-        }).ToArray();
+        return values.Select(x => new MenuToggleItem($"{x * 100:0}%", FontAwesome6.Solid.Percent, () => set(x), () => Math.Abs(get() - x) < .01f)).ToArray<FluXisMenuItem>();
     }
 
     private void updateStateHash()

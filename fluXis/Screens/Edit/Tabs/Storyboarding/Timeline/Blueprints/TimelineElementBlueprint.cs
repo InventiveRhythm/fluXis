@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Storyboards;
 using osu.Framework.Allocation;
@@ -23,7 +24,7 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 
     public MenuItem[] ContextMenuItems => new List<MenuItem>
     {
-        new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete)
+        new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete)
     }.ToArray();
 
     public override double FirstComparer => Object.StartTime;
