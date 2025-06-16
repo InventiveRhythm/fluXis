@@ -8,9 +8,9 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
+using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
-using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -26,6 +26,9 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
     [Resolved]
     private TimelineBlueprintContainer blueprints { get; set; }
+
+    [Resolved]
+    private ScriptStorage scripts { get; set; }
 
     private Anchor[] validAnchors { get; } =
     {
@@ -111,6 +114,8 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 item.StartX = result;
                             else
                                 box.NotifyError();
+
+                            map.Update(item);
                         }
                     },
                     new PointSettingsTextBox
@@ -123,34 +128,52 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 item.StartY = result;
                             else
                                 box.NotifyError();
+
+                            map.Update(item);
                         }
                     },
                     new PointSettingsColor
                     {
                         Text = "Color",
                         Color = Colour4.FromRGBA(item.Color),
-                        OnColorChanged = c => item.Color = c.ToRGBA()
+                        OnColorChanged = c =>
+                        {
+                            item.Color = c.ToRGBA();
+                            map.Update(item);
+                        }
                     },
                     new PointSettingsDropdown<StoryboardLayer>
                     {
                         Text = "Layer",
                         CurrentValue = item.Layer,
                         Items = Enum.GetValues<StoryboardLayer>().ToList(),
-                        OnValueChanged = l => item.Layer = l
+                        OnValueChanged = l =>
+                        {
+                            item.Layer = l;
+                            map.Update(item);
+                        }
                     },
                     new PointSettingsDropdown<Anchor>
                     {
                         Text = "Anchor",
                         CurrentValue = item.Anchor,
                         Items = validAnchors.ToList(),
-                        OnValueChanged = a => item.Anchor = a
+                        OnValueChanged = a =>
+                        {
+                            item.Anchor = a;
+                            map.Update(item);
+                        }
                     },
                     new PointSettingsDropdown<Anchor>
                     {
                         Text = "Origin",
                         CurrentValue = item.Origin,
                         Items = validAnchors.ToList(),
-                        OnValueChanged = o => item.Origin = o
+                        OnValueChanged = o =>
+                        {
+                            item.Origin = o;
+                            map.Update(item);
+                        }
                     }
                 };
 
@@ -169,6 +192,8 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                         item.Width = result;
                                     else
                                         box.NotifyError();
+
+                                    map.Update(item);
                                 }
                             },
                             new PointSettingsTextBox
@@ -181,6 +206,8 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                         item.Height = result;
                                     else
                                         box.NotifyError();
+
+                                    map.Update(item);
                                 }
                             },
                         });
@@ -190,9 +217,13 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         drawables.Add(new PointSettingsTextBox
                         {
                             Text = "Texture",
-                            DefaultText = item.Parameters["file"]?.ToString() ?? "",
+                            DefaultText = item.GetParameter("file", ""),
                             TextBoxWidth = 320,
-                            OnTextChanged = t => item.Parameters["file"] = JToken.FromObject(t.Text)
+                            OnTextChanged = t =>
+                            {
+                                item.Parameters["file"] = t.Text;
+                                map.Update(item);
+                            }
                         });
                         break;
 
@@ -202,23 +233,88 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             new PointSettingsTextBox
                             {
                                 Text = "Text",
-                                DefaultText = item.Parameters["text"]?.ToString() ?? "",
+                                DefaultText = item.GetParameter("text", ""),
                                 TextBoxWidth = 420,
-                                OnTextChanged = t => item.Parameters["text"] = JToken.FromObject(t.Text)
+                                OnTextChanged = t =>
+                                {
+                                    item.Parameters["text"] = t.Text;
+                                    map.Update(item);
+                                }
                             },
                             new PointSettingsTextBox
                             {
                                 Text = "Font Size",
-                                DefaultText = (item.Parameters["size"]?.ToObject<float>() ?? 20).ToStringInvariant(),
+                                DefaultText = item.GetParameter("size", 20f).ToStringInvariant(),
                                 OnTextChanged = box =>
                                 {
                                     if (box.Text.TryParseFloatInvariant(out var result) && result >= 1)
-                                        item.Parameters["size"] = JToken.FromObject(result);
+                                        item.Parameters["size"] = result;
                                     else
                                         box.NotifyError();
+
+                                    map.Update(item);
                                 }
                             },
                         });
+                        break;
+
+                    case StoryboardElementType.Script:
+                        var path = item.GetParameter("path", "");
+
+                        drawables.Add(new PointSettingsTextBox
+                        {
+                            Text = "Path",
+                            DefaultText = path,
+                            TextBoxWidth = 320,
+                            OnTextChanged = t =>
+                            {
+                                item.Parameters["path"] = t.Text;
+                                map.Update(item);
+                            },
+                            OnCommit = _ =>
+                            {
+                                collectionChanged(null, null);
+                                map.Update(item);
+                            }
+                        });
+
+                        var script = scripts.Scripts.FirstOrDefault(x => x.Path.EqualsLower(path));
+                        if (script is null) break;
+
+                        foreach (var parameter in script.Parameters)
+                        {
+                            if (parameter.Type == typeof(string))
+                            {
+                                drawables.Add(new PointSettingsTextBox
+                                {
+                                    Text = parameter.Title,
+                                    DefaultText = item.GetParameter(parameter.Key, ""),
+                                    OnTextChanged = t =>
+                                    {
+                                        item.Parameters[parameter.Key] = t.Text;
+                                        map.Update(item);
+                                    }
+                                });
+                            }
+                            else if (parameter.Type == typeof(float))
+                            {
+                                drawables.Add(new PointSettingsTextBox
+                                {
+                                    Text = parameter.Title,
+                                    DefaultText = item.GetParameter(parameter.Key, 0f).ToStringInvariant(),
+                                    OnTextChanged = box =>
+                                    {
+                                        if (box.Text.TryParseFloatInvariant(out var result))
+                                            item.Parameters[parameter.Key] = result;
+                                        else
+                                            box.NotifyError();
+
+                                        map.Update(item);
+                                    }
+                                });
+                            }
+                        }
+
                         break;
                 }
 

@@ -37,6 +37,9 @@ public class LuaStoryboardElement : ILuaModel
     [LuaMember(Name = "y")]
     public float StartY { get; set; }
 
+    [LuaMember(Name = "blend")]
+    public bool Blending { get; set; }
+
     [LuaMember(Name = "width")]
     public float Width { get; set; }
 
@@ -84,6 +87,7 @@ public class LuaStoryboardElement : ILuaModel
         Origin = Origin,
         StartX = StartX,
         StartY = StartY,
+        Blending = Blending,
         Width = Width,
         Height = Height,
         Color = Color,
@@ -100,6 +104,7 @@ public class LuaStoryboardElement : ILuaModel
         Origin = element.Origin,
         StartX = element.StartX,
         StartY = element.StartY,
+        Blending = element.Blending,
         Width = element.Width,
         Height = element.Height,
         Color = element.Color,

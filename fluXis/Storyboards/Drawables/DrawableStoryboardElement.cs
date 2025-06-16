@@ -9,6 +9,8 @@ public partial class DrawableStoryboardElement : CompositeDrawable
 {
     public StoryboardElement Element { get; }
 
+    public override bool RemoveCompletedTransforms => false;
+
     public DrawableStoryboardElement(StoryboardElement element)
     {
         Element = element;
@@ -25,6 +27,9 @@ public partial class DrawableStoryboardElement : CompositeDrawable
         Height = Element.Height;
         Colour = Colour4.FromRGBA(Element.Color);
         AlwaysPresent = true;
+
+        if (Element.Blending)
+            Blending = BlendingParameters.Additive;
 
         foreach (var animation in Element.Animations)
         {

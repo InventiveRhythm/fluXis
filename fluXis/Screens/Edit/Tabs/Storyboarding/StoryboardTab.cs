@@ -1,10 +1,19 @@
 ﻿using System;
+using System.Linq;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.UserInterface.Color;
+using fluXis.Map.Drawables;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Settings;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
+using fluXis.Storyboards;
+using fluXis.Storyboards.Drawables;
+using fluXis.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK.Input;
@@ -22,9 +31,14 @@ public partial class StoryboardTab : EditorTab
     [Resolved]
     private EditorMap map { get; set; }
 
+    [Resolved]
+    private Editor editor { get; set; }
+
     private DependencyContainer dependencies;
 
     private float scrollAccumulation;
+    private AspectRatioContainer aspect;
+    private IdleTracker idleTracker;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -38,6 +52,7 @@ public partial class StoryboardTab : EditorTab
 
         InternalChildren = new Drawable[]
         {
+            idleTracker = new IdleTracker(400, rebuildPreview),
             new GridContainer
             {
                 RelativeSizeAxes = Axes.Both,
@@ -56,7 +71,7 @@ public partial class StoryboardTab : EditorTab
                             ColumnDimensions = new Dimension[]
                             {
                                 new(),
-                                new(GridSizeMode.Absolute, 560)
+                                new(GridSizeMode.Absolute, 700)
                             },
                             Content = new[]
                             {
@@ -64,7 +79,25 @@ public partial class StoryboardTab : EditorTab
                                 {
                                     new Container
                                     {
-                                        RelativeSizeAxes = Axes.Both
+                                        RelativeSizeAxes = Axes.Both,
+                                        Children = new Drawable[]
+                                        {
+                                            new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = FluXisColors.Background1
+                                            },
+                                            new Container
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Padding = new MarginPadding(12),
+                                                Child = aspect = new AspectRatioContainer(new BindableBool(true))
+                                                {
+                                                    CornerRadius = 12,
+                                                    Masking = true
+                                                }
+                                            }
+                                        }
                                     },
                                     new StoryboardElementSettings()
                                 }
@@ -78,6 +111,44 @@ public partial class StoryboardTab : EditorTab
                 }
             }
         };
+
+        rebuildPreview();
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        map.Storyboard.ElementAdded += queueRebuild;
+        map.Storyboard.ElementRemoved += queueRebuild;
+        map.Storyboard.ElementUpdated += queueRebuild;
+    }
+
+    private void queueRebuild(StoryboardElement _) => idleTracker.Reset();
+
+    private void rebuildPreview()
+    {
+        aspect.Clear();
+
+        var copy = map.Storyboard.JsonCopy();
+
+        var draw = new DrawableStoryboard(map.MapInfo, copy, editor.MapSetPath);
+        LoadComponent(draw);
+
+        aspect.AddRange(new Drawable[]
+        {
+            new MapBackground(map.RealmMap)
+            {
+                RelativeSizeAxes = Axes.Both
+            },
+            new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.Black,
+                Alpha = editor.BindableBackgroundDim.Value
+            }
+        });
+        aspect.AddRange(Enum.GetValues<StoryboardLayer>().Select(x => new DrawableStoryboardWrapper(clock, draw, x)).ToArray());
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)

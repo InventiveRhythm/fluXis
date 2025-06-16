@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit;
 using Newtonsoft.Json;
 using osuTK;
 
 namespace fluXis.Storyboards;
 
-public class Storyboard
+public class Storyboard : EditorMap.IChangeNotifier
 {
     [JsonProperty("resolution")]
     public Vector2 Resolution { get; set; } = new(1920, 1080);
@@ -25,21 +27,48 @@ public class Storyboard
 
     public event Action<StoryboardElement> ElementAdded;
     public event Action<StoryboardElement> ElementRemoved;
+    public event Action<StoryboardElement> ElementUpdated;
 
-    public void Add(StoryboardElement element)
-    {
-        Elements.Add(element);
-        ElementAdded?.Invoke(element);
-    }
-
-    public void Remove(StoryboardElement element)
-    {
-        Elements.Remove(element);
-        ElementRemoved?.Invoke(element);
-    }
+    public event Action<ITimedObject> OnAdd;
+    public event Action<ITimedObject> OnRemove;
+    public event Action<ITimedObject> OnUpdate;
 
     public void Sort()
     {
         Elements.Sort((a, b) => a.StartTime.CompareTo(b.StartTime));
     }
+
+    public void Add(ITimedObject obj)
+    {
+        var element = (StoryboardElement)obj;
+
+        Elements.Add(element);
+        ElementAdded?.Invoke(element);
+        OnAdd?.Invoke(element);
+    }
+
+    public void Remove(ITimedObject obj)
+    {
+        var element = (StoryboardElement)obj;
+
+        Elements.Remove(element);
+        ElementRemoved?.Invoke(element);
+        OnRemove?.Invoke(element);
+    }
+
+    public void Update(ITimedObject obj)
+    {
+        var element = (StoryboardElement)obj;
+
+        ElementUpdated?.Invoke(element);
+        OnUpdate?.Invoke(obj);
+    }
+
+    public void ApplyOffset(float offset) => Elements.ForEach(x =>
+    {
+        x.StartTime += offset;
+        x.EndTime += offset;
+    });
+
+    public bool Matches(Type type) => typeof(StoryboardElement) == type;
 }

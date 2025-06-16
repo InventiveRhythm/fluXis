@@ -7,6 +7,8 @@ namespace fluXis.Graphics.Containers;
 
 public partial class AspectRatioContainer : Container
 {
+    public Vector2 TargetSize { get; set; } = new(1920, 1080);
+
     private readonly Bindable<bool> enabled;
 
     public AspectRatioContainer(Bindable<bool> enabled)
@@ -33,22 +35,20 @@ public partial class AspectRatioContainer : Container
 
         Size = new Vector2(pW, pH);
 
-        if (enabled.Value)
+        if (!enabled.Value) return;
+
+        var targetAspect = TargetSize.X / TargetSize.Y;
+        var currentAspect = pW / pH;
+
+        if (currentAspect < targetAspect)
         {
-            const float target_aspect = 1920 / 1080f;
-
-            var currentAspect = pW / pH;
-
-            if (currentAspect < target_aspect)
-            {
-                Width = pW;
-                Height = DrawWidth / target_aspect;
-            }
-            else
-            {
-                Width = DrawHeight * target_aspect;
-                Height = pH;
-            }
+            Width = pW;
+            Height = DrawWidth / targetAspect;
+        }
+        else
+        {
+            Width = DrawHeight * targetAspect;
+            Height = pH;
         }
     }
 }

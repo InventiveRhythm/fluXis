@@ -9,6 +9,7 @@
 ---@field x number
 ---@field y number
 ---@field z number
+---@field blend boolean
 ---@field width number
 ---@field height number
 ---@field color number

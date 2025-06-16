@@ -1,25 +1,39 @@
 ﻿using System;
 using System.Linq;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
 
-public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvider
+public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvider, IHasContextMenu
 {
     private const float min_height = 200;
     private const float max_height = 600;
+
+    public MenuItem[] ContextMenuItems => new MenuItem[]
+    {
+        new MenuExpandItem(
+            "Create new...",
+            FontAwesome6.Solid.Plus,
+            Enum.GetValues<StoryboardElementType>()
+                .Select(x => new MenuActionItem($"{x}", x.GetIcon(), () => create(x))))
+    };
 
     [Resolved]
     private EditorMap map { get; set; }
@@ -97,12 +111,36 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
 
         storyboard.ElementAdded += add;
         storyboard.ElementRemoved += remove;
+        storyboard.ElementUpdated += update;
         storyboard.Elements.ForEach(add);
 
         foreach (var element in storyboard.Elements)
         {
             elementContainer.Add(new TimelineElement(element));
         }
+    }
+
+    public void CloneElement(StoryboardElement element)
+    {
+        var copy = element.JsonCopy();
+        var length = element.EndTime - element.StartTime;
+
+        copy.StartTime = clock.CurrentTime;
+        copy.EndTime = copy.StartTime + length;
+
+        storyboard.Add(copy);
+    }
+
+    private void create(StoryboardElementType type)
+    {
+        var element = new StoryboardElement
+        {
+            Type = type,
+            StartTime = clock.CurrentTime,
+            EndTime = clock.CurrentTime + clock.BeatTime
+        };
+
+        storyboard.Add(element);
     }
 
     private void add(StoryboardElement element)
@@ -114,6 +152,12 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     {
         var drawable = GetDrawable(element);
         elementContainer.Remove(drawable, true);
+    }
+
+    private void update(StoryboardElement element)
+    {
+        var drawable = GetDrawable(element);
+        drawable?.UpdateText();
     }
 
     public TimelineElement GetDrawable(StoryboardElement element)

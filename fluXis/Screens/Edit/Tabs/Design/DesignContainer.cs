@@ -29,6 +29,7 @@ using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Scripting;
+using fluXis.Storyboards;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -51,7 +52,8 @@ public partial class DesignContainer : EditorTabContainer
     {
         typeof(PulseEvent),
         typeof(ShaderEvent),
-        typeof(NoteEvent)
+        typeof(NoteEvent),
+        typeof(StoryboardElement)
     };
 
     private DrawSizePreservingFillContainer drawSizePreserve;

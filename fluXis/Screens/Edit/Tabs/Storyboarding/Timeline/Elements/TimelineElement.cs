@@ -1,10 +1,16 @@
-﻿using fluXis.Graphics.Sprites.Text;
+﻿using System.Linq;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Scripting;
 using fluXis.Storyboards;
+using fluXis.Utils;
+using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 
@@ -13,7 +19,12 @@ public partial class TimelineElement : CompositeDrawable
     [Resolved]
     private StoryboardTimeline timeline { get; set; }
 
+    [Resolved]
+    private ScriptStorage scripts { get; set; }
+
     public StoryboardElement Element { get; }
+
+    private TruncatingText text;
 
     public TimelineElement(StoryboardElement element)
     {
@@ -22,9 +33,11 @@ public partial class TimelineElement : CompositeDrawable
         Name = $"{element.Type}";
 
         if (element.Type == StoryboardElementType.Sprite)
-            Name += $" [{element.Parameters["file"]}]";
+            Name += $" [{element.GetParameter("file", "")}]";
         if (element.Type == StoryboardElementType.Text)
-            Name += $" [{element.Parameters["text"]}] ";
+            Name += $" [{element.GetParameter("text", "")}] ";
+        if (element.Type == StoryboardElementType.Script)
+            Name += $" [{element.GetParameter("path", "")}] ";
     }
 
     [BackgroundDependencyLoader]
@@ -44,31 +57,77 @@ public partial class TimelineElement : CompositeDrawable
                 BorderColour = FluXisColors.Highlight.Lighten(1f),
                 Child = new Box { RelativeSizeAxes = Axes.Both }
             },
-            new TruncatingText
+            new GridContainer
             {
-                RelativeSizeAxes = Axes.X,
-                Text = createText(),
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Padding = new MarginPadding { Horizontal = 14 },
-                WebFontSize = 12,
-                Alpha = .75f
-            }
+                RelativeSizeAxes = Axes.Both,
+                ColumnDimensions = new Dimension[]
+                {
+                    new(GridSizeMode.Absolute, 36),
+                    new()
+                },
+                Content = new[]
+                {
+                    new Drawable[]
+                    {
+                        new FluXisSpriteIcon
+                        {
+                            Size = new Vector2(16),
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Icon = Element.Type.GetIcon()
+                        },
+                        text = new TruncatingText
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            Padding = new MarginPadding { Left = -2, Right = 14 },
+                            WebFontSize = 12
+                        }
+                    }
+                }
+            },
         };
     }
 
-    private string createText()
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        UpdateText();
+    }
+
+    public void UpdateText()
     {
         switch (Element.Type)
         {
             case StoryboardElementType.Text:
-                return Element.Parameters["text"]?.ToString();
+                text.Text = Element.GetParameter("text", "");
+                break;
 
             case StoryboardElementType.Sprite:
-                return Element.Parameters["file"]?.ToString();
-        }
+                text.Text = Element.GetParameter("file", "");
+                break;
 
-        return "";
+            case StoryboardElementType.Script:
+            {
+                var path = Element.GetParameter("path", "");
+                var script = scripts.Scripts.FirstOrDefault(x => x.Path.EqualsLower(path));
+                var txt = path;
+
+                if (script is not null)
+                {
+                    var args = script.Parameters.Select(parameter => Element.GetParameter<object>(parameter.Key, "")).ToList();
+                    txt += $" ({string.Join(", ", args)})";
+                }
+
+                text.Text = txt;
+                break;
+            }
+
+            default:
+                text.Text = "";
+                break;
+        }
     }
 
     protected override void Update()

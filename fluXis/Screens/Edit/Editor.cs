@@ -155,6 +155,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public Bindable<float> BindableBackgroundDim { get; private set; }
     public Bindable<float> BindableBackgroundBlur { get; private set; }
 
+    public string MapSetPath { get; private set; }
+
     public ChartingContainer ChartingContainer { get; set; }
     private VerifyTab verifyTab;
 
@@ -224,12 +226,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         dependencies.CacheAs(new EditorSnapProvider(editorMap, settings, clock));
 
-        var setPath = MapFiles.GetFullPath($"{editorMap.MapSet.ID}");
+        MapSetPath = MapFiles.GetFullPath($"{editorMap.MapSet.ID}");
 
-        if (!Directory.Exists(setPath))
-            Directory.CreateDirectory(setPath);
+        if (!Directory.Exists(MapSetPath))
+            Directory.CreateDirectory(MapSetPath);
 
-        dependencies.CacheAs(new ScriptStorage(setPath));
+        dependencies.CacheAs(new ScriptStorage(MapSetPath));
 
         var tabList = new List<EditorTab>
         {

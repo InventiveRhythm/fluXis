@@ -24,7 +24,8 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 
     public MenuItem[] ContextMenuItems => new List<MenuItem>
     {
-        new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete)
+        new MenuActionItem("Clone", FontAwesome6.Solid.Clone, MenuItemType.Normal, clone),
+        new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete),
     }.ToArray();
 
     public override double FirstComparer => Object.StartTime;
@@ -63,6 +64,11 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 
         Position = start;
         Width = end.X - start.X;
+    }
+
+    private void clone()
+    {
+        timeline.CloneElement(Object);
     }
 
     private void delete()

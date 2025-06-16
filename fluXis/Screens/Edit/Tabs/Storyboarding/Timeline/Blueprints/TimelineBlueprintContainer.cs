@@ -4,6 +4,7 @@ using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Storyboards;
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
+using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 
@@ -36,6 +37,8 @@ public partial class TimelineBlueprintContainer : BlueprintContainer<StoryboardE
         return bp;
     }
 
+    protected override bool OnMouseDown(MouseDownEvent e) => e.Button == MouseButton.Left && base.OnMouseDown(e);
+
     protected override void MoveSelection(DragEvent e)
     {
         if (DraggedBlueprints == null) return;
@@ -58,6 +61,7 @@ public partial class TimelineBlueprintContainer : BlueprintContainer<StoryboardE
         foreach (var blueprint in DraggedBlueprints)
         {
             blueprint.Object.StartTime += timeDelta;
+            blueprint.Object.EndTime += timeDelta;
             blueprint.Object.ZIndex += zDelta;
         }
     }

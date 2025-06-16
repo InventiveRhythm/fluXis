@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Map.Structures.Bases;
+using fluXis.Utils.Attributes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Graphics;
@@ -41,16 +42,19 @@ public class StoryboardElement : ITimedObject
     public double EndTime { get; set; }
 
     [JsonProperty("anchor")]
-    public Anchor Anchor { get; set; }
+    public Anchor Anchor { get; set; } = Anchor.TopLeft;
 
     [JsonProperty("origin")]
-    public Anchor Origin { get; set; }
+    public Anchor Origin { get; set; } = Anchor.TopLeft;
 
     [JsonProperty("x")]
     public float StartX { get; set; }
 
     [JsonProperty("y")]
     public float StartY { get; set; }
+
+    [JsonProperty("blend")]
+    public bool Blending { get; set; }
 
     [JsonProperty("width")]
     public float Width { get; set; }
@@ -88,9 +92,16 @@ public class StoryboardElement : ITimedObject
 
 public enum StoryboardElementType
 {
+    [Icon(0xf0c8)]
     Box = 0,
+
+    [Icon(0xf03e)]
     Sprite = 1,
+
+    [Icon(0xf031)]
     Text = 2,
+
+    [Icon(0xf70e)]
     Script = 3
 }
 

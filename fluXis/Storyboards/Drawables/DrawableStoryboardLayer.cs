@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Storyboards.Drawables.Elements;
 using fluXis.Storyboards.Storage;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -14,7 +15,9 @@ public partial class DrawableStoryboardLayer : Container<DrawableStoryboardEleme
     private StoryboardStorage storage { get; }
 
     private List<StoryboardElement> elements { get; }
-    private List<DrawableStoryboardElement> drawables { get; } = new();
+
+    private readonly Stack<DrawableStoryboardElement> past = new();
+    private readonly Stack<DrawableStoryboardElement> future = new();
 
     public DrawableStoryboardLayer(StoryboardStorage storage, List<StoryboardElement> elements)
     {
@@ -26,6 +29,8 @@ public partial class DrawableStoryboardLayer : Container<DrawableStoryboardEleme
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+
+        var drawables = new List<DrawableStoryboardElement>();
 
         foreach (var element in elements)
         {
@@ -46,25 +51,53 @@ public partial class DrawableStoryboardLayer : Container<DrawableStoryboardEleme
             drawables.Add(drawable);
         }
 
-        drawables.Sort((a, b) => a.Element.StartTime.CompareTo(b.Element.StartTime));
+        drawables.OrderByDescending(x => x.Element.StartTime).ForEach(x => future.Push(x));
     }
 
     protected override void Update()
     {
         base.Update();
 
-        while (drawables.Count > 0 && drawables[0].Element.StartTime <= Time.Current)
+        while (future.Count > 0 && future.Peek().Element.StartTime <= Time.Current)
         {
-            AddInternal(drawables[0]);
-            drawables.RemoveAt(0);
+            var drawable = future.Pop();
+            AddInternal(drawable);
+        }
+
+        var tooEarly = Children.Where(c => c.Element.StartTime > Time.Current).ToList();
+
+        foreach (var drawable in tooEarly.OrderByDescending(x => x.Element.StartTime))
+        {
+            Remove(drawable, false);
+            future.Push(drawable);
         }
 
         var toRemove = Children.Where(c => c.Element.EndTime < Time.Current).ToList();
 
-        foreach (var drawable in toRemove)
-            Remove(drawable, true);
+        foreach (var drawable in toRemove.OrderByDescending(x => x.Element.EndTime))
+        {
+            Remove(drawable, false);
+            past.Push(drawable);
+        }
+
+        while (past.Count > 0 && past.Peek().Element.EndTime > Time.Current)
+        {
+            var drawable = past.Pop();
+            AddInternal(drawable);
+        }
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => new DependencyContainer(base.CreateChildDependencies(parent));
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        while (past.TryPop(out var p))
+            p.Dispose();
+
+        while (future.TryPop(out var f))
+            f.Dispose();
+    }
 }

@@ -155,7 +155,8 @@ public class EditorMap : IVerifyContext
             new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents, obj => TimeOffsetEventAdded?.Invoke(obj), obj => TimeOffsetEventRemoved?.Invoke(obj),
                 obj => TimeOffsetEventUpdated?.Invoke(obj)),
             new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents, obj => ScriptEventAdded?.Invoke(obj), obj => ScriptEventRemoved?.Invoke(obj), obj => ScriptEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents, obj => NoteEventAdded?.Invoke(obj), obj => NoteEventRemoved?.Invoke(obj), obj => NoteEventUpdated?.Invoke(obj))
+            new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents, obj => NoteEventAdded?.Invoke(obj), obj => NoteEventRemoved?.Invoke(obj), obj => NoteEventUpdated?.Invoke(obj)),
+            MapInfo.Storyboard
         };
 
         foreach (var notifier in notifiers)
@@ -350,7 +351,7 @@ public class EditorMap : IVerifyContext
         }
     }
 
-    private interface IChangeNotifier
+    public interface IChangeNotifier
     {
         event Action<ITimedObject> OnAdd;
         event Action<ITimedObject> OnRemove;
