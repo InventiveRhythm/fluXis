@@ -19,8 +19,8 @@ public partial class DrawableStoryboardText : DrawableStoryboardElement
     {
         AutoSizeAxes = Axes.Both;
 
-        var text = Element.Parameters["text"].ToObject<string>() ?? string.Empty;
-        var size = Element.Parameters.ContainsKey("size") ? Element.Parameters["size"].ToObject<float>() : 20;
+        var text = Element.GetParameter("text", string.Empty);
+        var size = Element.GetParameter("size", 20f);
 
         InternalChild = new FluXisSpriteText
         {

@@ -20,7 +20,7 @@ public partial class DrawableStoryboardSprite : DrawableStoryboardElement
     {
         AutoSizeAxes = Axes.Both;
 
-        var file = Element.Parameters["file"].ToObject<string>();
+        var file = Element.GetParameter("file", "");
         Name = file;
 
         InternalChild = new Sprite
