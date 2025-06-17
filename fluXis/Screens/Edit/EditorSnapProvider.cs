@@ -8,6 +8,8 @@ public class EditorSnapProvider
     private EditorSettings settings { get; }
     private EditorClock clock { get; }
 
+    public float CurrentStep => map.MapInfo.GetTimingPoint(clock.CurrentTime).MsPerBeat / settings.SnapDivisor;
+
     public EditorSnapProvider(EditorMap map, EditorSettings settings, EditorClock clock)
     {
         this.map = map;

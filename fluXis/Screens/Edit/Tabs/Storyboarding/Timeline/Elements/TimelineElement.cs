@@ -2,6 +2,7 @@
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
@@ -10,6 +11,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
@@ -25,6 +27,7 @@ public partial class TimelineElement : CompositeDrawable
     public StoryboardElement Element { get; }
 
     private TruncatingText text;
+    private DragHandle handle;
 
     public TimelineElement(StoryboardElement element)
     {
@@ -63,7 +66,8 @@ public partial class TimelineElement : CompositeDrawable
                 ColumnDimensions = new Dimension[]
                 {
                     new(GridSizeMode.Absolute, 36),
-                    new()
+                    new(),
+                    new(GridSizeMode.Absolute, 28)
                 },
                 Content = new[]
                 {
@@ -83,7 +87,8 @@ public partial class TimelineElement : CompositeDrawable
                             Origin = Anchor.CentreLeft,
                             Padding = new MarginPadding { Left = -2, Right = 14 },
                             WebFontSize = 12
-                        }
+                        },
+                        handle = new DragHandle { Alpha = 0 }
                     }
                 }
             },
@@ -140,5 +145,52 @@ public partial class TimelineElement : CompositeDrawable
         Width = end - start;
         X = start;
         Y = timeline.PositionAtZ(Element.ZIndex);
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        handle.FadeIn(200);
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        handle.FadeOut(200);
+    }
+
+    /// <summary>
+    /// for the actual dragging see <see cref="TimelineElementBlueprint.BlueprintHandle"/>
+    /// </summary>
+    private partial class DragHandle : CompositeDrawable
+    {
+        private Circle handle { get; }
+
+        public DragHandle()
+        {
+            RelativeSizeAxes = Axes.Both;
+
+            InternalChildren = new Drawable[]
+            {
+                handle = new Circle
+                {
+                    Size = new Vector2(4, 16),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Alpha = .6f
+                }
+            };
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            handle.FadeTo(1f, 100).ResizeWidthTo(8, 200, Easing.OutQuint);
+            return false;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            handle.FadeTo(.6f, 600).ResizeWidthTo(4, 400, Easing.OutQuint);
+            base.OnHoverLost(e);
+        }
     }
 }
