@@ -88,14 +88,26 @@ public class QuaverMap
             });
         }
 
-        foreach (var factor in ScrollSpeedFactors)
+        for (var i = 0; i < ScrollSpeedFactors.Count; i++)
         {
             events ??= new MapEvents();
+
+            var factor = ScrollSpeedFactors[i];
+            var duration = 0d;
+            var mult = factor.Multiplier;
+
+            if (i + 1 < ScrollSpeedFactors.Count)
+            {
+                var next = ScrollSpeedFactors[i + 1];
+                duration = Math.Abs(next.StartTime - factor.StartTime);
+                mult = next.Multiplier;
+            }
 
             events.ScrollMultiplyEvents.Add(new ScrollMultiplierEvent
             {
                 Time = factor.StartTime,
-                Multiplier = factor.Multiplier
+                Multiplier = mult,
+                Duration = duration
             });
         }
 
