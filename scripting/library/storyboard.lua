@@ -13,7 +13,19 @@
 ---@field width number
 ---@field height number
 ---@field color number
-local StoryboardElement = {}
+local __StoryboardElement = {}
+
+---@class StoryboardBox: StoryboardElement
+local __StoryboardBox = {}
+
+---@class StoryboardSprite: StoryboardElement
+---@field texture string
+local __StoryboardSprite = {}
+
+---@class StoryboardText: StoryboardElement
+---@field text string
+---@field size number
+local __StoryboardText = {}
 
 ---@type Vector2
 ---@diagnostic disable-next-line: missing-fields
@@ -25,15 +37,20 @@ screen = {};
 ---@param startval string
 ---@param endval string
 ---@param ease Easing
-function StoryboardElement:animate(type, time, len, startval, endval, ease) end
+function __StoryboardElement:animate(type, time, len, startval, endval, ease) end
 
----@return StoryboardElement
+---@param key string
+---@param fallback any
+---@return any
+function __StoryboardElement:param(key, fallback) end
+
+---@return StoryboardBox
 function StoryboardBox() end
 
----@return StoryboardElement
+---@return StoryboardSprite
 function StoryboardSprite() end
 
----@return StoryboardElement
+---@return StoryboardText
 function StoryboardText() end
 
 ---@param input string
