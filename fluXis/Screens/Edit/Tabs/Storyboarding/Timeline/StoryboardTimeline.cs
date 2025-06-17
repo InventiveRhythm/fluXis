@@ -6,6 +6,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
+using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Lines;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Attributes;
@@ -78,7 +79,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Top = 8 },
+                Padding = new MarginPadding { Top = 8, Bottom = 24 },
                 Children = new Drawable[]
                 {
                     elementContainer = new Container<TimelineElement>
@@ -101,6 +102,13 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
                 RelativeSizeAxes = Axes.X,
                 Height = 4,
                 Colour = FluXisColors.Background3
+            },
+            new StoryboardTimingLines(this)
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 24,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
             }
         };
     }

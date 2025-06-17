@@ -1,52 +1,50 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting;
-using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Lines;
 
-public partial class EditorTimingLines : Container<EditorTimingLines.Line>
+public abstract partial class EditorTimingLines<T> : Container<T>
+    where T : EditorTimingLines<T>.Line
 {
     [Resolved]
-    private EditorSettings settings { get; set; }
+    public EditorSettings Settings { get; private set; }
+
+    [Resolved]
+    public EditorClock EditorClock { get; private set; }
 
     [Resolved]
     private EditorMap map { get; set; }
 
-    [Resolved]
-    private EditorClock clock { get; set; }
-
-    private List<Line> pastLines { get; } = new();
-    private List<Line> futureLines { get; } = new();
+    private List<T> pastLines { get; } = new();
+    private List<T> futureLines { get; } = new();
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.Both;
         Masking = true;
 
-        settings.SnapDivisorBindable.BindValueChanged(_ => scheduleRedraw(null), true);
+        Settings.SnapDivisorBindable.BindValueChanged(_ => scheduleRedraw(null), true);
         map.TimingPointAdded += scheduleRedraw;
         map.TimingPointRemoved += scheduleRedraw;
         map.TimingPointUpdated += scheduleRedraw;
     }
 
-    private void scheduleRedraw(TimingPoint _)
+    private void scheduleRedraw(TimingPoint _) => Schedule(() =>
     {
-        Schedule(() =>
-        {
-            pastLines.Clear();
-            futureLines.Clear();
-            ClearInternal();
-            createLines();
-        });
-    }
+        pastLines.Clear();
+        futureLines.Clear();
+        ClearInternal();
+        createLines();
+    });
 
     protected override void Update()
     {
@@ -79,7 +77,7 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
         }
     }
 
-    private void addAndSort(Line line)
+    private void addAndSort(T line)
     {
         Add(line);
         SortInternal();
@@ -87,8 +85,8 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
 
     protected override int Compare(Drawable x, Drawable y)
     {
-        var lineX = (Line)x;
-        var lineY = (Line)y;
+        var lineX = (T)x;
+        var lineY = (T)y;
 
         return lineX.CompareTo(lineY);
     }
@@ -104,8 +102,8 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
             if (point.Signature == 0)
                 continue;
 
-            var target = i + 1 < points.Count ? points[i + 1].Time : clock.TrackLength;
-            var increase = point.MsPerBeat / settings.SnapDivisor;
+            var target = i + 1 < points.Count ? points[i + 1].Time : EditorClock.TrackLength;
+            var increase = point.MsPerBeat / Settings.SnapDivisor;
 
             if (increase < .1f)
                 continue;
@@ -114,14 +112,8 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
 
             for (var position = point.Time; position < target; position += increase)
             {
-                var divisor = divisorForIndex(j, settings.SnapDivisor);
-
-                var line = new Line
-                {
-                    Time = position,
-                    Height = j % (point.Signature * settings.SnapDivisor) == 0 ? 5 : 3,
-                    Colour = FluXisColors.GetEditorSnapColor(divisor)
-                };
+                var divisor = divisorForIndex(j, Settings.SnapDivisor);
+                var line = CreateLine(position, j % (point.Signature * Settings.SnapDivisor) == 0, FluXisColors.GetEditorSnapColor(divisor));
 
                 LoadComponent(line);
 
@@ -140,44 +132,27 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
     private static int divisorForIndex(int index, int snap)
     {
         var beat = index % snap;
-
-        foreach (int divisor in ChartingContainer.SNAP_DIVISORS)
-        {
-            if (beat * divisor % snap == 0)
-                return divisor;
-        }
-
-        return 0;
+        return ChartingContainer.SNAP_DIVISORS.FirstOrDefault(divisor => beat * divisor % snap == 0);
     }
 
-    public partial class Line : Box, IComparable<Line>
+    protected abstract T CreateLine(double time, bool big, Colour4 color);
+    protected abstract Vector2 GetPosition(double time);
+
+    public abstract partial class Line : Box, IComparable<Line>
     {
-        [Resolved]
-        private EditorClock clock { get; set; }
+        protected new double Time { get; }
+        public abstract bool BelowScreen { get; }
+        public abstract bool AboveScreen { get; }
 
-        [Resolved]
-        private EditorSettings settings { get; set; }
+        protected new EditorTimingLines<T> Parent { get; }
 
-        public new double Time { get; set; }
-
-        public bool BelowScreen => clock.CurrentTime >= Time + 1000;
-        public bool AboveScreen => clock.CurrentTime <= Time - 3000 / settings.Zoom;
-
-        public bool IsVisible => !BelowScreen && !AboveScreen;
-
-        public Line()
+        protected Line(EditorTimingLines<T> parent, double time)
         {
-            RelativeSizeAxes = Axes.X;
-            Height = 3;
-            Anchor = Anchor.BottomCentre;
-            Origin = Anchor.BottomCentre;
+            Parent = parent;
+            Time = time;
         }
 
-        protected override void Update()
-        {
-            Y = (float)(-EditorHitObjectContainer.HITPOSITION - .5f * ((Time - clock.CurrentTime) * settings.Zoom));
-        }
-
+        protected override void Update() => Position = Parent.GetPosition(Time);
         public int CompareTo(Line other) => Time.CompareTo(other.Time);
     }
 }

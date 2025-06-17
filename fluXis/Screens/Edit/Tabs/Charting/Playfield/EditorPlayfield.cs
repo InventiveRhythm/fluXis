@@ -4,7 +4,6 @@ using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
-using fluXis.Screens.Edit.Tabs.Shared.Lines;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
@@ -91,7 +90,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             },
             Effects = new EditorEffectContainer(),
             modHighlight,
-            new EditorTimingLines(),
+            new ChartingTimingLines(),
             HitObjectContainer,
             new Box
             {
