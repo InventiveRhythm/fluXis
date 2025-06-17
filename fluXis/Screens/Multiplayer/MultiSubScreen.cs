@@ -56,18 +56,25 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
                             RelativeSizeAxes = Axes.Both
                         }
                     },
-                    titleText = new FluXisSpriteText
+                    new FillFlowContainer
                     {
-                        Text = Title,
+                        AutoSizeAxes = Axes.Both,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Direction = FillDirection.Vertical,
                         Margin = new MarginPadding { Left = 12 },
-                        WebFontSize = 28
-                    },
-                    titleSubText = new FluXisSpriteText
-                    {
-                        Text = SubTitle,
-                        WebFontSize = 14,
-                        Margin = new MarginPadding { Top = 32, Left = 12 },
-                        Alpha = .8f
+                        Children = new Drawable[]
+                        {
+                            titleText = new FluXisSpriteText
+                            {
+                                WebFontSize = 16,
+                                Alpha = .8f
+                            },
+                            titleSubText = new FluXisSpriteText
+                            {
+                                WebFontSize = 20
+                            }
+                        }
                     }
                 }
             }
@@ -76,6 +83,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
+        RefreshTitle();
         this.FadeOut();
 
         using (BeginDelayedSequence(FluXisScreen.ENTER_DELAY))
@@ -86,6 +94,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
+        RefreshTitle();
         this.FadeOut();
 
         using (BeginDelayedSequence(FluXisScreen.ENTER_DELAY))
@@ -113,6 +122,12 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
     {
         titleContainer.MoveToX(50, FluXisScreen.MOVE_DURATION);
         this.FadeOut(FluXisScreen.FADE_DURATION);
+    }
+
+    protected void RefreshTitle()
+    {
+        titleText.Text = Title;
+        titleSubText.Text = SubTitle;
     }
 
     protected void RefreshActivity() => Activity.Value = InitialActivity;

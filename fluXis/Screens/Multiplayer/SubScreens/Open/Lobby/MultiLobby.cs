@@ -6,7 +6,6 @@ using fluXis.Audio.Transforms;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites.Icons;
-using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Panel;
@@ -39,7 +38,7 @@ namespace fluXis.Screens.Multiplayer.SubScreens.Open.Lobby;
 public partial class MultiLobby : MultiSubScreen
 {
     public override string Title => "Open Match";
-    public override string SubTitle => "Lobby";
+    public override string SubTitle => Room?.Name ?? "Lobby";
 
     protected override UserActivity InitialActivity => new UserActivity.MultiLobby(Room);
     public override bool AllowMusicPausing => true;
@@ -77,7 +76,6 @@ public partial class MultiLobby : MultiSubScreen
 
     private List<IMod> mods = new();
 
-    private FluXisSpriteText hostText = null!;
     private MultiLobbyPlayerList playerList = null!;
     private MultiLobbyDisc disc = null!;
     private MultiLobbyFooter footer = null!;
@@ -108,31 +106,6 @@ public partial class MultiLobby : MultiSubScreen
 
         InternalChildren = new Drawable[]
         {
-            new FillFlowContainer
-            {
-                AutoSizeAxes = Axes.Both,
-                Direction = FillDirection.Vertical,
-                Anchor = Anchor.TopRight,
-                Origin = Anchor.TopRight,
-                Margin = new MarginPadding(30),
-                Children = new Drawable[]
-                {
-                    new FluXisSpriteText
-                    {
-                        Text = Room.Name,
-                        Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight,
-                        FontSize = 30
-                    },
-                    hostText = new FluXisSpriteText
-                    {
-                        Text = $"hosted by {Room.Host.Username}",
-                        Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight,
-                        FontSize = 20
-                    }
-                }
-            },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -347,7 +320,6 @@ public partial class MultiLobby : MultiSubScreen
     {
         var isHost = newHost == client.Player.ID;
         footer.CanChangeMap.Value = isHost;
-        hostText.Text = $"hosted by {Room?.Host.Username}";
 
         if (isHost)
             notifications.SendSmallText("You are now the lobby host.", FontAwesome6.Solid.Crown);
