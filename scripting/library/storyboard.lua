@@ -42,6 +42,7 @@ function __StoryboardElement:animate(type, time, len, startval, endval, ease) en
 ---@param key string
 ---@param fallback any
 ---@return any
+---@nodiscard
 function __StoryboardElement:param(key, fallback) end
 
 ---@return StoryboardBox
@@ -55,6 +56,7 @@ function StoryboardText() end
 
 ---@param input string
 ---@return number
+---@nodiscard
 function Layer(input) end
 
 ---@param element StoryboardElement
