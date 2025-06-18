@@ -63,7 +63,13 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         Map = map;
         Lane = lane;
         HitManager = hitManager;
-        DefaultScrollGroup = ruleset.ScrollGroups[$"${Lane}"];
+
+        var idx = Lane;
+
+        if (map.IsSplit && idx > map.RealmEntry!.KeyCount)
+            idx -= map.RealmEntry!.KeyCount;
+
+        DefaultScrollGroup = ruleset.ScrollGroups[$"${idx}"];
 
         var objects = Map.HitObjects.Where(h => h.Lane == Lane).ToList();
         objects.Sort((a, b) => a.Time.CompareTo(b.Time));

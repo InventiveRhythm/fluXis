@@ -47,7 +47,6 @@ public partial class HitObjectManager : Container<HitObjectColumn>
 
     private Bindable<bool> hitsounds;
 
-    public float DirectScrollMultiplier { get; set; } = 1;
     public double VisualTimeOffset { get; set; } = 0;
 
     public int KeyCount => playfield.RealmMap.KeyCount;
