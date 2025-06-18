@@ -523,7 +523,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         public void Push(LoadTask task)
         {
             queue.Enqueue(task);
-            TasksTotal = queue.Count;
+            TasksTotal = queue.Count(x => x.ShowProgress);
         }
 
         public LoadTask PerformNext(Action then)
@@ -538,17 +538,13 @@ public partial class FluXisGameBase : osu.Framework.Game
             TaskStarted?.Invoke(task);
             task.Perform?.Invoke(() =>
             {
-                TasksFinished++;
+                if (task.ShowProgress)
+                    TasksFinished++;
+
                 then?.Invoke();
             });
 
             return task;
-        }
-
-        public override string ToString()
-        {
-            var finished = TasksTotal - queue.Count;
-            return $"{finished / TasksTotal * 100:00.00}% ({finished}/{TasksTotal})";
         }
     }
 
@@ -556,11 +552,13 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         public string Name { get; }
         public Action<Action> Perform { get; }
+        public bool ShowProgress { get; }
 
-        public LoadTask(string name, Action<Action> perform)
+        public LoadTask(string name, Action<Action> perform, bool showProgress = true)
         {
             Name = name;
             Perform = perform;
+            ShowProgress = showProgress;
         }
 
         public override string ToString() => Name;

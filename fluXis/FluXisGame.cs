@@ -167,7 +167,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             }
 
             MapStore.DownloadBundledMaps(c);
-        }));
+        }, false));
 
         Audio.AddAdjustment(AdjustableProperty.Volume, inactiveVolume);
 

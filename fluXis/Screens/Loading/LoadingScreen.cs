@@ -103,7 +103,12 @@ public partial class LoadingScreen : FluXisScreen
 
         loadInfo.TaskStarted += task =>
         {
-            loadingText.Text = $"{task.Name} ({loadInfo.TasksFinished + 1}/{loadInfo.TasksTotal})";
+            var str = $"{task.Name}";
+
+            if (task.ShowProgress)
+                str += $" ({loadInfo.TasksFinished + 1}/{loadInfo.TasksTotal})";
+
+            loadingText.Text = str;
             bar.ResizeWidthTo((loadInfo.TasksFinished + 1) / (float)loadInfo.TasksTotal, 300, Easing.OutQuint);
         };
 
