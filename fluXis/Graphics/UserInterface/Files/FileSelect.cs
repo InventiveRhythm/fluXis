@@ -527,8 +527,16 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             if (!drive.IsReady) continue;
             if (drive.DriveType == DriveType.Ram || drive.DriveType == DriveType.NoRootDirectory)
                 continue;
-            try { if (drive.TotalSize == 0) continue; }
-            catch (UnauthorizedAccessException) { continue; }
+
+            try
+            {
+                if (drive.TotalSize == 0)
+                    continue;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                continue;
+            }
 
             drivesFlow.Add(new DriveEntry(drive, this));
         }

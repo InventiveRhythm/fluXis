@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -148,6 +149,7 @@ public partial class DriveEntry : Container
 
         long maxB = 1024;
         long size = sizeB;
+
         for (int i = 0; i < suffixes.Length - 1; i++)
         {
             if (sizeB < maxB)
@@ -159,6 +161,6 @@ public partial class DriveEntry : Container
             size /= 1024;
         }
 
-        return $"{size} {suffixes[suffixes.Length - 1]}";
+        return $"{size} {suffixes.Last()}";
     }
 }

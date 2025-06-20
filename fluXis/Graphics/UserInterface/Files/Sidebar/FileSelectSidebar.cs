@@ -59,30 +59,31 @@ public partial class FileSelectSidebar : ExpandingContainer
             }
         };
 
-        if (!string.IsNullOrEmpty(mapDirectory))
-            entries.Add(new SidebarEntry(FontAwesome6.Solid.Cube, "Map Folder", new DirectoryInfo(mapDirectory), select));
-
         string folder;
-        if (TryGetFolderPath(Environment.SpecialFolder.Desktop, out folder))
+
+        if (tryGetFolderPath(Environment.SpecialFolder.Desktop, out folder))
         {
             entries.Add(new SidebarEntry(FontAwesome6.Solid.Display, "Desktop", new DirectoryInfo(folder), select));
         }
 
-        if (TryGetFolderPath(Environment.SpecialFolder.UserProfile, out folder))
+        if (tryGetFolderPath(Environment.SpecialFolder.UserProfile, out folder))
         {
             entries.Add(new SidebarEntry(FontAwesome6.Solid.User, Environment.UserName, new DirectoryInfo(folder), select));
             entries.Add(new SidebarEntry(FontAwesome6.Solid.Download, "Downloads", new DirectoryInfo(folder).CreateSubdirectory("Downloads"), select));
         }
 
-        if (TryGetFolderPath(Environment.SpecialFolder.MyPictures, out folder))
+        if (tryGetFolderPath(Environment.SpecialFolder.MyPictures, out folder))
         {
             entries.Add(new SidebarEntry(FontAwesome6.Solid.Images, "Pictures", new DirectoryInfo(folder), select));
         }
 
-        if (TryGetFolderPath(Environment.SpecialFolder.MyMusic, out folder))
+        if (tryGetFolderPath(Environment.SpecialFolder.MyMusic, out folder))
         {
             entries.Add(new SidebarEntry(FontAwesome6.Solid.Music, "Music", new DirectoryInfo(folder), select));
         }
+
+        if (!string.IsNullOrEmpty(mapDirectory))
+            entries.Add(new SidebarEntry(FontAwesome6.Solid.Cube, "Map Folder", new DirectoryInfo(mapDirectory), select));
     }
 
     protected override void LoadComplete()
@@ -92,7 +93,7 @@ public partial class FileSelectSidebar : ExpandingContainer
         Expanded.BindValueChanged(e => this.ResizeWidthTo(e.NewValue ? 250 : 84, 500, Easing.OutQuint), true);
     }
 
-    private static bool TryGetFolderPath(Environment.SpecialFolder folder, out string path)
+    private static bool tryGetFolderPath(Environment.SpecialFolder folder, out string path)
     {
         path = Environment.GetFolderPath(folder);
 
