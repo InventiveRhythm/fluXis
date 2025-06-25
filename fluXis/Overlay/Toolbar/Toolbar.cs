@@ -201,11 +201,12 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 TooltipSub = LocalizationStrings.Toolbar.WikiDescription,
                                 Icon = FontAwesome6.Solid.Book,
                                 Overlay = wiki,
+                                RequireLogin = true,
                                 OnVisibilityToggle = v =>
                                 {
                                     if (v == Visibility.Visible)
                                         wiki.NavigateTo("/home");
-                                },
+                                }
                             },
                             new ToolbarOverlayButton
                             {

@@ -26,7 +26,8 @@ public interface IAPIClient
     string AccessToken { get; }
     string MultifactorToken { get; set; }
 
-    APIEndpointConfig Endpoint { get; }
+    bool CanUseOnline { get; }
+    EndpointConfig Endpoint { get; }
     Exception? LastException { get; }
 
     long LastReadTime { get; }
@@ -47,6 +48,8 @@ public interface IAPIClient
 
     void PerformRequest(APIRequest request);
     Task PerformRequestAsync(APIRequest request);
+
+    void PullServerConfig(Action complete, Action<Exception> failure);
 
     void Login(string username, string password);
     void Register(string username, string password, string email);

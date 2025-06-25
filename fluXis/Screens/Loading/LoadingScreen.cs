@@ -1,9 +1,11 @@
+using System;
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Intro;
 using fluXis.Screens.Warning;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -101,7 +103,7 @@ public partial class LoadingScreen : FluXisScreen
     {
         base.LoadComplete();
 
-        loadInfo.TaskStarted += task =>
+        loadInfo.TaskStarted += task => Scheduler.ScheduleIfNeeded(() =>
         {
             var str = $"{task.Name}";
 
@@ -109,19 +111,19 @@ public partial class LoadingScreen : FluXisScreen
                 str += $" ({loadInfo.TasksFinished + 1}/{loadInfo.TasksTotal})";
 
             loadingText.Text = str;
-            bar.ResizeWidthTo((loadInfo.TasksFinished + 1) / (float)loadInfo.TasksTotal, 300, Easing.OutQuint);
-        };
+            bar.ResizeWidthTo(Math.Min(loadInfo.TasksFinished + 1, loadInfo.TasksTotal) / (float)loadInfo.TasksTotal, 300, Easing.OutQuint);
+        });
 
         loadInfo.AllFinished += complete;
     }
 
-    private void complete()
+    private void complete() => Scheduler.ScheduleIfNeeded(() =>
     {
         if (config.Get<bool>(FluXisSetting.SkipIntro))
             this.Push(new IntroAnimation());
         else
             this.Push(new WarningScreen());
-    }
+    });
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {

@@ -226,7 +226,7 @@ public partial class LoginOverlay : CompositeDrawable
 
     public override void Show()
     {
-        if (api.Status.Value == ConnectionStatus.Online)
+        if (api.Status.Value == ConnectionStatus.Online || !api.CanUseOnline)
             return;
 
         this.FadeInFromZero(400, Easing.OutQuint);

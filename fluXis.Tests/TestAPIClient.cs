@@ -34,7 +34,8 @@ public class TestAPIClient : IAPIClient
 
     public string AccessToken => "token";
     public string MultifactorToken { get; set; } = "mfa-token";
-    public APIEndpointConfig Endpoint => new();
+    public bool CanUseOnline => true;
+    public EndpointConfig Endpoint => new(string.Empty);
     public Exception? LastException { get; private set; }
     public long LastReadTime { get; set; } = 0;
 
@@ -67,6 +68,8 @@ public class TestAPIClient : IAPIClient
         PerformRequest(request);
         await Task.CompletedTask;
     }
+
+    public void PullServerConfig(Action complete, Action<Exception> failure) => complete();
 
     public void Login(string username, string password)
     {

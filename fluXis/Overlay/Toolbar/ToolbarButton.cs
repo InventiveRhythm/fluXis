@@ -251,6 +251,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
             {
                 icon.Alpha = 0;
                 title.Text = "Log in to use this feature.";
+                keybind.Text = string.Empty;
                 description.Alpha = 0;
                 return;
             }

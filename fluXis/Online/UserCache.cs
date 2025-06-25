@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Fluxel;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -52,8 +53,12 @@ public partial class UserCache : Component
         return user;
     }
 
+    [CanBeNull]
     private APIUser fetch(long id)
     {
+        if (!api.CanUseOnline)
+            return null;
+
         try
         {
             var req = new UserRequest(id);

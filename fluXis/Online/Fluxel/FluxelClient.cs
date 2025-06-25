@@ -37,7 +37,9 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     private Bindable<bool> logResponses = null!;
     public bool LogResponses => logResponses.Value;
 
-    public APIEndpointConfig Endpoint { get; }
+    public bool CanUseOnline { get; private set; }
+    public EndpointConfig Endpoint { get; private set; } = new(string.Empty);
+    private string configUrl = string.Empty;
 
     public Bindable<APIUser?> User { get; } = new();
     public Bindable<ConnectionStatus> Status { get; } = new();
@@ -61,20 +63,13 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
     #endregion
 
-    public FluxelClient(APIEndpointConfig endpoint)
-    {
-        Endpoint = endpoint;
-    }
-
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
+        configUrl = config.Get<string>(FluXisSetting.ServerUrl);
         username = config.GetBindable<string>(FluXisSetting.Username);
         tokenBindable = config.GetBindable<string>(FluXisSetting.Token);
         logResponses = config.GetBindable<bool>(FluXisSetting.LogAPIResponses);
-
-        var thread = new Thread(loop) { IsBackground = true };
-        thread.Start();
     }
 
     protected override void LoadComplete()
@@ -143,6 +138,41 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     #region Socket Connect
 
     private TypedWebSocketClient<INotificationServer, INotificationClient>? connection;
+
+    public void PullServerConfig(Action complete, Action<Exception> failure)
+    {
+        try
+        {
+            Endpoint = new EndpointConfig(configUrl);
+
+            var req = new ServerConfigRequest();
+            req.Failure += fail;
+            req.Success += res =>
+            {
+                Logger.Log($"Pulled config for {configUrl}.", LoggingTarget.Network);
+
+                Endpoint = new EndpointConfig(configUrl, res.Data);
+                CanUseOnline = true;
+
+                var thread = new Thread(loop) { IsBackground = true };
+                thread.Start();
+
+                complete();
+            };
+
+            PerformRequestAsync(req);
+        }
+        catch (Exception ex)
+        {
+            fail(ex);
+        }
+
+        void fail(Exception ex)
+        {
+            Logger.Error(ex, "Failed to pull server config!", LoggingTarget.Network);
+            failure.Invoke(ex);
+        }
+    }
 
     private void loop()
     {

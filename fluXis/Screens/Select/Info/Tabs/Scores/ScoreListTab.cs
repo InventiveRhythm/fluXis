@@ -19,6 +19,7 @@ using fluXis.Map;
 using fluXis.Online;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Maps;
+using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Maps;
 using fluXis.Online.Fluxel;
 using fluXis.Scoring;
@@ -146,7 +147,15 @@ public partial class ScoreListTab : SelectInfoTab
 
     public override Drawable CreateHeader()
     {
-        var buttons = Enum.GetValues<ScoreListType>().Select(x => new LeaderboardTypeButton(x, type)).ToArray();
+        var types = Enum.GetValues<ScoreListType>();
+
+        if (!api.CanUseOnline)
+        {
+            types = new[] { ScoreListType.Local };
+            type.Value = ScoreListType.Local;
+        }
+
+        var buttons = types.Select(x => new LeaderboardTypeButton(x, type)).ToArray();
         localButton = buttons.First();
 
         return new FillFlowContainer()
@@ -229,7 +238,7 @@ public partial class ScoreListTab : SelectInfoTab
                     var info = x.ToScoreInfo();
                     var detach = x.Detach();
 
-                    var player = users.Get(info.PlayerID);
+                    var player = users.Get(info.PlayerID) ?? APIUser.Default;
 
                     return new ScoreListEntry
                     {

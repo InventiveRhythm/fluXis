@@ -1,6 +1,6 @@
 using System;
 using System.Text;
-using fluXis.Online;
+using fluXis.Online.Fluxel;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
@@ -9,12 +9,12 @@ namespace fluXis.Graphics;
 
 public class OnlineTextureStore : TextureStore
 {
-    private APIEndpointConfig endpointConfig { get; }
+    private IAPIClient api { get; }
 
-    public OnlineTextureStore(GameHost host, APIEndpointConfig endpointConfig)
+    public OnlineTextureStore(GameHost host, IAPIClient api)
         : base(host.Renderer)
     {
-        this.endpointConfig = endpointConfig;
+        this.api = api;
         AddTextureSource(host.CreateTextureLoaderStore(new OnlineStore()));
         AddTextureSource(host.CreateTextureLoaderStore(new HttpOnlineStore()));
     }
@@ -45,7 +45,7 @@ public class OnlineTextureStore : TextureStore
         };
 
         var builder = new StringBuilder();
-        builder.Append($"{endpointConfig.AssetUrl}/{typeStr}/{id}");
+        builder.Append($"{api.Endpoint.AssetUrl}/{typeStr}/{id}");
 
         if (size == AssetSize.Large)
             builder.Append("-lg");

@@ -280,6 +280,12 @@ public partial class MapStore : Component
 
     public void DownloadBundledMaps(Action complete)
     {
+        if (MapSets.Count > 0)
+        {
+            complete();
+            return;
+        }
+
         var req = new MapSetBundledRequest();
         req.Failure += _ => displayError();
         req.Success += res =>

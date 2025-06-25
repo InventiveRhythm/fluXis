@@ -91,6 +91,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         // Account
         SetDefault(FluXisSetting.Username, string.Empty);
         SetDefault(FluXisSetting.Token, string.Empty);
+        SetDefault(FluXisSetting.ServerUrl, "https://fluxis.flux.moe/api");
 
         // Debug
         SetDefault(FluXisSetting.LogAPIResponses, false);
@@ -179,6 +180,7 @@ public enum FluXisSetting
     // Account
     Username,
     Token,
+    ServerUrl,
 
     // Debug
     LogAPIResponses,

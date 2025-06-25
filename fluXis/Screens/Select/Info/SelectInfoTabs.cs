@@ -142,6 +142,7 @@ public partial class SelectInfoTabs : CompositeDrawable
             current.Value = tab;
 
         tabFlow.Add(new TabItem(tab, current));
+        LoadComponent(tab);
 
         var head = tab.CreateHeader();
         headers.Add(head);

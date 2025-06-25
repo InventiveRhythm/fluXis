@@ -47,6 +47,9 @@ public partial class MenuUpdates : Container<Container<MenuUpdates.UpdateImage>>
 
     private void loadUpdates()
     {
+        if (!api.CanUseOnline)
+            return;
+
         var req = new MenuUpdatesRequest();
 
         req.Success += res => Schedule(() =>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
 using fluXis.Configuration;
@@ -9,6 +10,7 @@ using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
+using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Localization.Stores;
@@ -42,6 +44,7 @@ using fluXis.Screens.Multiplayer;
 using fluXis.Screens.Result;
 using fluXis.Screens.Select;
 using fluXis.Screens.Skinning;
+using fluXis.UI.Tips;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using fluXis.Utils.Sentry;
@@ -158,16 +161,20 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(MenuScreen = new MenuScreen());
 
-        LoadQueue.Push(new LoadTask("Checking for bundled maps...", c =>
+        LoadQueue.Push(new LoadTask("Downloading server config...", c => APIClient.PullServerConfig(c, _ =>
         {
-            if (MapStore.MapSets.Count > 0)
-            {
-                c?.Invoke();
-                return;
-            }
+            panelContainer.Content = new SingleButtonPanel(FontAwesome6.Solid.TriangleExclamation, "Failed to download server config!",
+                "Online functionality will be unavailable until you restart the game.", "Okay", () => c?.Invoke());
+        }), false));
 
-            MapStore.DownloadBundledMaps(c);
-        }, false));
+        LoadQueue.Push(new LoadTask("Loading splashes...", c => Task.Run(() =>
+        {
+            MenuSplashes.Load(Host.CacheStorage);
+            LoadingTips.Load(Host.CacheStorage);
+            c();
+        }), false));
+
+        LoadQueue.Push(new LoadTask("Checking for bundled maps...", MapStore.DownloadBundledMaps, false));
 
         Audio.AddAdjustment(AdjustableProperty.Volume, inactiveVolume);
 

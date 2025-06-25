@@ -37,7 +37,6 @@ using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Menu;
 using fluXis.Skinning;
 using fluXis.UI;
-using fluXis.UI.Tips;
 using fluXis.Utils;
 using fluXis.Utils.Exceptions;
 using JetBrains.Annotations;
@@ -173,8 +172,6 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             CurrentSeason = getSeason();
 
-            var endpoint = getApiEndpoint();
-
             cacheComponent(this);
 
             var mapStorage = storage.GetStorageForDirectory("maps");
@@ -189,7 +186,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             cacheComponent(NotificationManager = new NotificationManager());
 
-            cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
+            cacheComponent(APIClient = new FluxelClient(), true, true);
             cacheComponent(APIClient as FluxelClient);
             cacheComponent(new ChatClient(), true, true);
 
@@ -198,7 +195,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             cacheComponent(new BackgroundTextureStore(Host, mapStorage));
             cacheComponent(new CroppedBackgroundStore(Host, mapStorage));
-            cacheComponent(new OnlineTextureStore(Host, endpoint));
+            cacheComponent(new OnlineTextureStore(Host, APIClient));
             cacheComponent(new AnimatedSpriteStore(Host, APIClient));
 
             cacheComponent(MapStore = new MapStore(), true, true);
@@ -249,8 +246,6 @@ public partial class FluXisGameBase : osu.Framework.Game
             keybindStore.AssignDefaults(new GameplayKeybindContainer(Realm, 0, true));
 
             cacheComponent(keybinds);
-            MenuSplashes.Load(Host.CacheStorage);
-            LoadingTips.Load(Host.CacheStorage);
         }
         catch (Exception ex)
         {
@@ -369,26 +364,6 @@ public partial class FluXisGameBase : osu.Framework.Game
             { Month: 1 } => Season.Winter,
             _ => Season.Normal
         };
-    }
-
-    private APIEndpointConfig getApiEndpoint()
-    {
-#if CLOSED_TESTING
-        return new APIEndpointConfig().AddLocalDefaults();
-#else
-        var path = Host.Storage.GetFullPath("server.json");
-
-        if (File.Exists(path))
-        {
-            var json = File.ReadAllText(path);
-            return json.Deserialize<APIEndpointConfig>().AddDefaults();
-        }
-
-        var defaultEndpoint = new APIEndpointConfig().AddDefaults();
-        File.WriteAllText(path, defaultEndpoint.Serialize());
-
-        return getApiEndpoint();
-#endif
     }
 
     private void initFonts()

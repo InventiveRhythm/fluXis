@@ -188,7 +188,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        if (e.Button != MouseButton.Right) return false;
+        if (e.Button != MouseButton.Right || api.User.Value is null) return false;
 
         panels.Content = new ButtonPanel
         {
@@ -208,6 +208,12 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
     {
         flash.Show();
         samples.Click();
+
+        if (!api.CanUseOnline)
+        {
+            panels.Content = new SingleButtonPanel(FontAwesome6.Solid.PlugCircleXMark, "You must be online to use this feature.", "Restart fluXis to connect to the online services.", "Okay");
+            return true;
+        }
 
         if (api.User.Value == null)
             loginOverlay.Show();
