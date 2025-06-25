@@ -14,6 +14,7 @@ using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Map.Drawables;
+using fluXis.Online.Fluxel;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -44,7 +45,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 items.Add(new MenuActionItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => selection.Select(mapset.LowestDifficulty)));
 
             if (mapset.OnlineID > 0)
-                items.Add(new MenuActionItem("View Online", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)));
+                items.Add(new MenuActionItem("View Online", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)) { IsEnabled = () => api.CanUseOnline });
 
             items.Add(new MenuActionItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset))
                 { IsEnabled = () => !mapset.AutoImported });
@@ -52,6 +53,8 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
             if (FluXisGameBase.IsDebug)
             {
+                items.Add(new MenuSpacerItem());
+
                 if (mapset.OnlineID > 0)
                     items.Add(new MenuActionItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(mapset.OnlineID.ToString())));
 
@@ -67,6 +70,9 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
     [Resolved]
     private Clipboard clipboard { get; set; }
+
+    [Resolved]
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private ISelectionManager selection { get; set; }

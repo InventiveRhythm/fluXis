@@ -66,7 +66,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
             if (ReplayAction != null)
                 items.Add(new MenuActionItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
             if (profileOverlay != null)
-                items.Add(new MenuActionItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Normal, () => profileOverlay.ShowUser(Player.ID)));
+                items.Add(new MenuActionItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Normal, () => profileOverlay.ShowUser(Player.ID)) { IsEnabled = () => api.CanUseOnline });
             if (DeleteAction != null)
                 items.Add(new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => DeleteAction.Invoke()));
 

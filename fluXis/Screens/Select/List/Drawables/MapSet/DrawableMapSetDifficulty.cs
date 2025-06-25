@@ -50,6 +50,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
 
             if (FluXisGameBase.IsDebug)
             {
+                items.Add(new MenuSpacerItem());
+
                 if (map.OnlineID > 0)
                     items.Add(new MenuActionItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
 

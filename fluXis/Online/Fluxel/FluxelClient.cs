@@ -152,10 +152,10 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
                 Logger.Log($"Pulled config for {configUrl}.", LoggingTarget.Network);
 
                 Endpoint = new EndpointConfig(configUrl, res.Data);
-                CanUseOnline = true;
+                /*CanUseOnline = true;
 
                 var thread = new Thread(loop) { IsBackground = true };
-                thread.Start();
+                thread.Start();*/
 
                 complete();
             };
