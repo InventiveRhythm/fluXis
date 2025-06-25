@@ -76,6 +76,7 @@ public partial class ScoreListTab : SelectInfoTab
 
     private RealmMap map;
     private readonly Bindable<ScoreListType> type = new();
+    private readonly Bindable<string> username = new();
 
     private CancellationTokenSource cancelSource;
     private CancellationToken cancel;
@@ -89,6 +90,7 @@ public partial class ScoreListTab : SelectInfoTab
         Padding = new MarginPadding(8) { Bottom = 0 };
 
         type.Value = config.Get<ScoreListType>(FluXisSetting.LeaderboardType);
+        username.Value = config.Get<string>(FluXisSetting.Username);
 
         InternalChildren = new Drawable[]
         {
@@ -238,7 +240,17 @@ public partial class ScoreListTab : SelectInfoTab
                     var info = x.ToScoreInfo();
                     var detach = x.Detach();
 
-                    var player = users.Get(info.PlayerID) ?? APIUser.Default;
+                    var player = users.Get(info.PlayerID);
+
+                    if (player is null)
+                    {
+                        var u = APIUser.Default;
+
+                        if (!string.IsNullOrEmpty(username.Value))
+                            u.Username = username.Value;
+
+                        player = u;
+                    }
 
                     return new ScoreListEntry
                     {
