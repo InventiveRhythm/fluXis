@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Audio.Transforms;
 using fluXis.Database.Maps;
 using fluXis.Mods;
 using fluXis.Online.Activity;
@@ -94,6 +95,6 @@ public partial class MultiGameplayScreen : GameplayScreen
     private void onDisconnect()
     {
         CursorVisible = true;
-        GameplayClock.Stop();
+        GameplayClock.RateTo(0, MOVE_DURATION);
     }
 }

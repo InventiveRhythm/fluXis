@@ -1,4 +1,5 @@
 using fluXis.Audio;
+using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
@@ -158,13 +159,13 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobal
     public override void OnEntering(ScreenTransitionEvent e)
     {
         track?.Start();
-        clock.Stop();
+        clock.RateTo(0, MOVE_DURATION);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         track?.Stop();
-        clock.Start();
+        clock.RateTo(1f, MOVE_DURATION);
         return base.OnExiting(e);
     }
 
