@@ -100,7 +100,7 @@ public partial class GlobalBackground : CompositeDrawable
             return;
 
         this.blur = blur;
-        addMap(stack.Current?.Map);
+        stack.Current?.TransformTo(nameof(BlurableBackground.BlurStrength), blur, FluXisScreen.FADE_DURATION);
     }
 
     protected override void Update()

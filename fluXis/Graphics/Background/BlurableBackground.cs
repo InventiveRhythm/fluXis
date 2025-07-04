@@ -18,7 +18,17 @@ public partial class BlurableBackground : CompositeDrawable
 
     public RealmMap Map { get; }
 
-    private float blur { get; }
+    public float BlurStrength
+    {
+        get => blur;
+        set
+        {
+            blur = value;
+            updateBlur();
+        }
+    }
+
+    private float blur;
 
     [CanBeNull]
     private BufferedContainer blurContainer;
