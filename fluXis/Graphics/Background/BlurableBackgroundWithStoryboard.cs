@@ -77,6 +77,6 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
         base.Update();
 
         if (video != null)
-            video.PlaybackPosition = GlobalClock.CurrentTime;
+            video.PlaybackPosition = video.Clock.CurrentTime;
     }
 }
