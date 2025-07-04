@@ -4,7 +4,6 @@ using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
 using fluXis.Database.Maps;
-using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
@@ -45,9 +44,6 @@ public partial class MultiLobby : MultiSubScreen
 
     [Resolved]
     private MapStore mapStore { get; set; } = null!;
-
-    [Resolved]
-    private GlobalBackground backgrounds { get; set; } = null!;
 
     [Resolved]
     private GlobalClock clock { get; set; } = null!;
@@ -279,7 +275,7 @@ public partial class MultiLobby : MultiSubScreen
         if (mapSet == null)
         {
             stopClockMusic();
-            backgrounds.AddBackgroundFromMap(null);
+            ApplyMapBackground(null);
 
             var dummy = RealmMap.CreateNew();
             dummy.Metadata.Title = map.Title;
@@ -307,7 +303,7 @@ public partial class MultiLobby : MultiSubScreen
         }
 
         clock.RestartPoint = 0;
-        backgrounds.AddBackgroundFromMap(localMap);
+        ApplyMapBackground(localMap);
         startClockMusic();
         clock.RestartPoint = 0;
         clock.AllowLimitedLoop = false;
@@ -429,7 +425,7 @@ public partial class MultiLobby : MultiSubScreen
 
             clock.Looping = false;
             stopClockMusic();
-            backgrounds.AddBackgroundFromMap(null);
+            ApplyMapBackground(null);
             return base.OnExiting(e);
         }
 

@@ -24,7 +24,7 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
 
     protected override IEnumerable<Drawable> CreateContent()
     {
-        var info = Map.GetMapInfo();
+        var info = Map?.GetMapInfo();
 
         foreach (var drawable in base.CreateContent())
             yield return drawable;

@@ -24,6 +24,9 @@ public class SettingsUIStrings : LocalizationCategory
     public TranslatableString Parallax => Get("parallax", "Parallax");
     public TranslatableString ParallaxDescription => Get("parallax-description", "Enable the parallax effect on backgrounds and such.");
 
+    public TranslatableString ShowStoryboardVideo => Get("show-storyboard-video", "Show Storyboard and Video");
+    public TranslatableString ShowStoryboardVideoDescription => Get("show-storyboard-video-description", "Displays storyboards and videos in most screens. (REQUIRES SUPPORTER, except song select)");
+
     #endregion
 
     #region Main Menu

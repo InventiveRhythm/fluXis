@@ -50,6 +50,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.HoldToConfirm, 400f, 0f, 1000f, 200f);
         SetDefault(FluXisSetting.SkipIntro, false);
         SetDefault(FluXisSetting.Parallax, true);
+        SetDefault(FluXisSetting.ShowStoryboardVideo, true);
 
         // UI // Main Menu
         SetDefault(FluXisSetting.IntroTheme, true);
@@ -139,6 +140,7 @@ public enum FluXisSetting
     HoldToConfirm,
     SkipIntro,
     Parallax,
+    ShowStoryboardVideo,
 
     // UI // Main Menu
     IntroTheme,

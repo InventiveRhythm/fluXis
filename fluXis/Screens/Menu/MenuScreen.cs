@@ -52,6 +52,7 @@ public partial class MenuScreen : FluXisScreen
     public override float Zoom => pressedStart ? 1f : 1.2f;
     public override bool ShowToolbar => pressedStart;
     public override bool AutoPlayNext => true;
+    protected override bool BackgroundAllowStoryboard => showStoryboard.Value && (api.User.Value?.IsSupporter ?? false);
 
     [Resolved]
     private MapStore maps { get; set; }
@@ -96,6 +97,7 @@ public partial class MenuScreen : FluXisScreen
     private bool shouldSnow => Game.CurrentSeason is Season.Winter or Season.Christmas || forceSnow.Value;
 
     private Bindable<bool> forceSnow;
+    private Bindable<bool> showStoryboard;
 
     private Container textContainer;
     private Container buttons;
@@ -121,6 +123,7 @@ public partial class MenuScreen : FluXisScreen
     private void load(TextureStore textures)
     {
         forceSnow = config.GetBindable<bool>(FluXisSetting.ForceSnow);
+        showStoryboard = config.GetBindable<bool>(FluXisSetting.ShowStoryboardVideo);
 
         InternalChildren = new Drawable[]
         {
@@ -548,7 +551,8 @@ public partial class MenuScreen : FluXisScreen
         randomizeSplash();
         this.FadeIn(300);
         inactivityTime = 0;
-        backgrounds.PushBackground(new BlurableBackground(maps.CurrentMap, BackgroundBlur));
+
+        ApplyMapBackground(maps.CurrentMap);
     }
 
     protected override bool OnMouseMove(MouseMoveEvent e)

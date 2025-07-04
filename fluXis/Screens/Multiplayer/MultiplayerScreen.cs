@@ -1,5 +1,6 @@
+using System.Linq;
 using fluXis.Audio;
-using fluXis.Graphics.Background;
+using fluXis.Configuration;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -9,6 +10,7 @@ using fluXis.Map;
 using fluXis.Online.Multiplayer;
 using fluXis.Screens.Multiplayer.SubScreens;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
@@ -23,6 +25,7 @@ public partial class MultiplayerScreen : FluXisScreen
     public override float ParallaxStrength => 0;
     public override float BackgroundDim => .5f;
     public override float BackgroundBlur => .2f;
+    protected override bool BackgroundAllowStoryboard => showStoryboard.Value && client.Connected && client.Player.IsSupporter;
     public override bool AllowMusicControl => false;
     public override bool AllowMusicPausing => screenStack?.CurrentScreen is MultiSubScreen { AllowMusicPausing: true };
     public override bool AllowExit => canExit();
@@ -34,9 +37,6 @@ public partial class MultiplayerScreen : FluXisScreen
     private MapStore mapStore { get; set; }
 
     [Resolved]
-    private GlobalBackground backgrounds { get; set; }
-
-    [Resolved]
     private PanelContainer panels { get; set; }
 
     [Cached]
@@ -45,6 +45,8 @@ public partial class MultiplayerScreen : FluXisScreen
     public long TargetLobby { get; init; }
     public string LobbyPassword { get; init; }
 
+    private Bindable<bool> showStoryboard;
+
     private ScreenStack screenStack;
     private DependencyContainer dependencies;
     private MultiplayerClient client;
@@ -52,8 +54,10 @@ public partial class MultiplayerScreen : FluXisScreen
     private FillFlowContainer connectingContainer;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        showStoryboard = config.GetBindable<bool>(FluXisSetting.ShowStoryboardVideo);
+
         client = new OnlineMultiplayerClient();
         dependencies.CacheAs(client);
 
@@ -164,7 +168,7 @@ public partial class MultiplayerScreen : FluXisScreen
         }
 
         globalClock.VolumeOut(400).OnComplete(c => c.Stop());
-        backgrounds.AddBackgroundFromMap(null);
+        ApplyMapBackground(null);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
@@ -193,7 +197,7 @@ public partial class MultiplayerScreen : FluXisScreen
 
         globalClock.Start();
         globalClock.VolumeIn(FADE_DURATION);
-        backgrounds.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
+        ApplyMapBackground(mapStore.CurrentMapSet?.Maps.First());
         return false;
     }
 }

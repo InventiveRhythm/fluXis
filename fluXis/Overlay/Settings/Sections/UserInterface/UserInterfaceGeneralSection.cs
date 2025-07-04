@@ -45,6 +45,12 @@ public partial class UserInterfaceGeneralSection : SettingsSubSection
                 Label = strings.Parallax,
                 Description = strings.ParallaxDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.Parallax)
+            },
+            new SettingsToggle
+            {
+                Label = strings.ShowStoryboardVideo,
+                Description = strings.ShowStoryboardVideoDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.ShowStoryboardVideo)
             }
         });
     }

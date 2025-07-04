@@ -1,4 +1,6 @@
 using fluXis.Audio;
+using fluXis.Database.Maps;
+using fluXis.Graphics.Background;
 using fluXis.Online.Activity;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -14,6 +16,7 @@ public partial class FluXisScreen : Screen
     public virtual bool ShowToolbar => true;
     public virtual float BackgroundDim => 0.25f;
     public virtual float BackgroundBlur => 0f;
+    protected virtual bool BackgroundAllowStoryboard => false;
     public virtual bool AllowMusicControl => true;
     public virtual bool AllowMusicPausing => AllowMusicControl;
     public virtual bool ShowCursor => true;
@@ -31,6 +34,9 @@ public partial class FluXisScreen : Screen
     public Bindable<UserActivity> Activity { get; }
 
     public BindableBool AllowOverlays { get; }
+
+    [Resolved]
+    protected GlobalBackground Backgrounds { get; private set; }
 
     [Resolved]
     protected UISamples UISamples { get; private set; }
@@ -51,5 +57,11 @@ public partial class FluXisScreen : Screen
             UISamples?.Back();
 
         return base.OnExiting(e);
+    }
+
+    public virtual void ApplyMapBackground(RealmMap map)
+    {
+        var draw = BackgroundAllowStoryboard ? new BlurableBackgroundWithStoryboard(map, BackgroundBlur) : new BlurableBackground(map, BackgroundBlur);
+        Backgrounds.PushBackground(draw);
     }
 }

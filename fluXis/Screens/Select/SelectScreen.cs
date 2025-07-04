@@ -59,6 +59,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 {
     public override float Zoom => 1.1f;
     public override float BackgroundBlur => songSelectBlur.Value ? 0.25f : 0;
+    protected override bool BackgroundAllowStoryboard => showStoryboard.Value;
     public override bool ApplyValuesAfterLoad => true;
 
     public override UserActivity InitialActivity => new UserActivity.SongSelect();
@@ -105,7 +106,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     private LoadingIcon loadingIcon;
 
     private Bindable<bool> songSelectBlur;
-    private Bindable<bool> backgroundVideo;
+    private Bindable<bool> showStoryboard;
 
     private DependencyContainer dependencies;
 
@@ -117,7 +118,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         rewindClick = samples.Get("UI/Select/rewind");
 
         songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
-        backgroundVideo = config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
+        showStoryboard = config.GetBindable<bool>(FluXisSetting.ShowStoryboardVideo);
 
         groupMode = config.GetBindable<MapUtils.GroupingMode>(FluXisSetting.GroupingMode);
         sortMode = config.GetBindable<MapUtils.SortingMode>(FluXisSetting.SortingMode);
@@ -479,7 +480,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         if (lastBackground != newBackground || firstMapUpdate)
         {
-            var bg = backgroundVideo.Value ? new BlurableBackgroundWithStoryboard(map, BackgroundBlur) : new BlurableBackground(map, BackgroundBlur);
+            var bg = BackgroundAllowStoryboard ? new BlurableBackgroundWithStoryboard(map, BackgroundBlur) : new BlurableBackground(map, BackgroundBlur);
             backgrounds.PushBackground(bg);
         }
 
@@ -735,7 +736,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     {
         playEnterAnimation();
 
-        songSelectBlur.ValueChanged += updateBackgroundBlur;
+        songSelectBlur.BindValueChanged(updateBackgroundBlur, true);
 
         if (Maps.CurrentMap != null)
             clock.RestartPoint = Maps.CurrentMap.Metadata.PreviewTime;

@@ -119,6 +119,12 @@ public partial class GlobalBackground : CompositeDrawable
 
     public void PushBackground(BlurableBackground background) => Scheduler.ScheduleIfNeeded(() =>
     {
+        if (stack.Current != null && stack.Current.IsSameAs(background))
+        {
+            background.Dispose();
+            return;
+        }
+
         cancellationSource?.Cancel();
         LoadComponentAsync(background, b =>
         {

@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Screens;
+using JetBrains.Annotations;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -8,6 +9,7 @@ namespace fluXis.Graphics.Sprites;
 public partial class SpriteStack<T> : CompositeDrawable
     where T : Drawable
 {
+    [CanBeNull]
     public T Current => InternalChildren.LastOrDefault() as T;
 
     public bool AutoFill { get; set; } = true;

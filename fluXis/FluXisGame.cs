@@ -274,7 +274,13 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     public override void SelectMapSet(RealmMapSet set)
     {
         base.SelectMapSet(set);
-        globalBackground.AddBackgroundFromMap(set.Maps.First());
+
+        var map = set.Maps.First();
+
+        if (screenStack.CurrentScreen is FluXisScreen current)
+            current.ApplyMapBackground(map);
+        else
+            globalBackground.AddBackgroundFromMap(map);
     }
 
     public void OpenLink(string link, bool skipWarning = false)

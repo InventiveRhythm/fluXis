@@ -78,4 +78,9 @@ public partial class BlurableBackground : CompositeDrawable
         RedrawOnScale = false,
         ChildrenEnumerable = children
     };
+
+    public bool IsSameAs(BlurableBackground other)
+    {
+        return GetType() == other.GetType() && Equals(Map, other.Map);
+    }
 }

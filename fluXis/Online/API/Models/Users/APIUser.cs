@@ -55,6 +55,9 @@ public class APIUser
     [JsonProperty("online")]
     public bool IsOnline { get; init; }
 
+    [JsonProperty("supporter")]
+    public bool IsSupporter { get; init; }
+
     #region Optional
 
     [JsonProperty("created")]

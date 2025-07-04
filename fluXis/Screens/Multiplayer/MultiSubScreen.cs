@@ -1,3 +1,4 @@
+using fluXis.Database.Maps;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
@@ -131,6 +132,8 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
     }
 
     protected void RefreshActivity() => Activity.Value = InitialActivity;
+
+    protected void ApplyMapBackground(RealmMap map) => MultiScreen.ApplyMapBackground(map);
 
     public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
