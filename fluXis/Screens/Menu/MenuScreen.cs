@@ -548,6 +548,7 @@ public partial class MenuScreen : FluXisScreen
         randomizeSplash();
         this.FadeIn(300);
         inactivityTime = 0;
+        backgrounds.PushBackground(new BlurableBackground(maps.CurrentMap, BackgroundBlur));
     }
 
     protected override bool OnMouseMove(MouseMoveEvent e)
