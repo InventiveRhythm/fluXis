@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Database.Maps;
+using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Panel;
@@ -48,6 +49,9 @@ public partial class MultiLobbyList : MultiSubScreen
 
     [Resolved]
     private MultiplayerClient client { get; set; }
+
+    [Resolved]
+    private GlobalBackground backgrounds { get; set; }
 
     private FillFlowContainer lobbyList;
     private FluXisTextFlow textFlow;
@@ -156,7 +160,11 @@ public partial class MultiLobbyList : MultiSubScreen
         });
     }
 
-    private void startCreate() => this.Push(new MultiSelectScreen(create));
+    private void startCreate()
+    {
+        menuMusic.StopAll();
+        this.Push(new MultiSelectScreen(create));
+    }
 
     private void create(RealmMap map, List<string> mods)
     {
@@ -203,6 +211,7 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         base.FadeIn();
 
+        backgrounds.AddBackgroundFromMap(null);
         clock.VolumeOut(600).OnComplete(_ => clock.Stop());
 
         menuMusic.GoToLayer(0, 1);
