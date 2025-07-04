@@ -507,8 +507,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         BindableBackgroundBlur.UnbindAll();
     }
 
-    private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue, 400);
-    private void updateBlur(ValueChangedEvent<float> e) => backgrounds.SetBlur(e.NewValue, 400);
+    private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
+    private void updateBlur(ValueChangedEvent<float> e) => backgrounds.SetBlur(e.NewValue);
 
     private void changeTab(int to)
     {

@@ -261,6 +261,7 @@ public class MapInfo
         return new DrawableStoryboard(this, sb, MapFiles.GetFullPath(RealmEntry!.MapSet.ID.ToString()));
     }
 
+    [CanBeNull]
     public virtual Stream GetVideoStream()
     {
         var file = RealmEntry?.MapSet.GetPathForFile(VideoFile);

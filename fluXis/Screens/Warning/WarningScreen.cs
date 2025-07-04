@@ -64,7 +64,7 @@ public partial class WarningScreen : FluXisScreen
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        backgrounds.SetDim(1f, 0);
+        backgrounds.SetDim(1f);
 
         next();
 

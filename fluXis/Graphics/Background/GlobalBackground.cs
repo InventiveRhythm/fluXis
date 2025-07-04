@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading;
 using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
@@ -6,6 +7,7 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Screens;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -22,7 +24,7 @@ public partial class GlobalBackground : CompositeDrawable
 
     public RealmMap DefaultMap { get; init; }
     public float InitialBlur { get; init; } = 0.01f;
-    public float InitialDim { get; init; } = 0;
+    public float InitialDim { get; init; }
 
     private SpriteStack<BlurableBackground> stack;
     private ParallaxContainer parallaxContainer;
@@ -32,6 +34,9 @@ public partial class GlobalBackground : CompositeDrawable
     private float blur;
 
     private Bindable<bool> backgroundPulse;
+
+    [CanBeNull]
+    private CancellationTokenSource cancellationSource;
 
     public float Zoom { set => stack.ScaleTo(value, 1000, Easing.OutQuint); }
     public float ParallaxStrength { set => parallaxContainer.Strength = value; }
@@ -83,19 +88,19 @@ public partial class GlobalBackground : CompositeDrawable
         backgroundPulse.BindValueChanged(e =>
         {
             if (!e.NewValue)
-                this.ScaleTo(1, 500, Easing.OutQuint);
+                this.ScaleTo(1, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         }, true);
     }
 
-    public void SetDim(float alpha, float duration = FluXisScreen.FADE_DURATION) => backgroundDim.FadeTo(alpha, duration);
+    public void SetDim(float alpha) => backgroundDim.FadeTo(alpha, FluXisScreen.FADE_DURATION);
 
-    public void SetBlur(float blur, float duration = FluXisScreen.FADE_DURATION)
+    public void SetBlur(float blur)
     {
         if (this.blur == blur)
             return;
 
         this.blur = blur;
-        add(stack.Current?.Map, duration);
+        addMap(stack.Current?.Map);
     }
 
     protected override void Update()
@@ -112,6 +117,16 @@ public partial class GlobalBackground : CompositeDrawable
         base.Update();
     }
 
+    public void PushBackground(BlurableBackground background) => Scheduler.ScheduleIfNeeded(() =>
+    {
+        cancellationSource?.Cancel();
+        LoadComponentAsync(background, b =>
+        {
+            b.FadeInFromZero(FluXisScreen.FADE_DURATION);
+            stack.Add(b);
+        }, (cancellationSource = new CancellationTokenSource()).Token);
+    });
+
     public void AddBackgroundFromMap(RealmMap map)
     {
         string file = map?.MapSet?.GetPathForFile(map.Metadata?.Background);
@@ -127,7 +142,7 @@ public partial class GlobalBackground : CompositeDrawable
         }
         else currentBackground = null;
 
-        add(map, 300);
+        addMap(map);
     }
 
     public void SwipeAnimation()
@@ -143,6 +158,5 @@ public partial class GlobalBackground : CompositeDrawable
                       .FadeOut(fade_duration);
     }
 
-    private void add(RealmMap map, float duration)
-        => Scheduler.ScheduleIfNeeded(() => stack.Add(new BlurableBackground(map, blur, duration), duration));
+    private void addMap(RealmMap map) => PushBackground(new BlurableBackground(map, blur));
 }

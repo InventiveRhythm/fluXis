@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
@@ -36,15 +35,12 @@ using fluXis.Screens.Select.List.Items;
 using fluXis.Screens.Select.Mods;
 using fluXis.Screens.Select.Search;
 using fluXis.Screens.Select.UI;
-using fluXis.Storyboards;
-using fluXis.Storyboards.Drawables;
 using fluXis.UI;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -95,10 +91,6 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     // private BufferedContainer modsBlur { get; set; }
 
-    private BackgroundVideo video;
-    private Container storyboardContainer;
-    private CancellationTokenSource storyboardCancellationToken;
-
     private SelectMapInfo selectMapInfo;
     private SearchBar searchBar;
     private SearchFilterControls filterControl;
@@ -145,40 +137,10 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                 RedrawOnScale = false,
                 Children = new Drawable[] { }
             },*/
-            new Container
+            new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Top = -10 },
-                Children = new Drawable[]
-                {
-                    new BufferedContainer
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        BlurSigma = new Vector2(12),
-                        RedrawOnScale = false,
-                        Children = new Drawable[]
-                        {
-                            video = new BackgroundVideo
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                FillMode = FillMode.Fill,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                VideoClock = clock
-                            },
-                            storyboardContainer = new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true
-                            }
-                        }
-                    },
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(.8f), Colour4.Black.Opacity(0))
-                    }
-                }
+                Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(.8f), Colour4.Black.Opacity(0))
             },
             new FluXisContextMenuContainer()
             {
@@ -246,7 +208,6 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                 Maps.MapSetAdded += addMapSet;
                 Maps.MapSetUpdated += replaceMapSet;
                 Maps.MapSetRemoved += removeMapSet;
-                Maps.MapSetBindable.BindValueChanged(mapSetBindableChanged, true);
                 Maps.MapBindable.BindValueChanged(mapBindableChanged, true);
 
                 mapList.FadeIn(500);
@@ -263,8 +224,6 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         Maps.MapSetUpdated -= replaceMapSet;
         Maps.MapSetRemoved -= removeMapSet;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
-
-        Maps.MapSetBindable.ValueChanged -= mapSetBindableChanged;
         Maps.MapBindable.ValueChanged -= mapBindableChanged;
 
         Filters.OnChange -= UpdateSearch;
@@ -485,6 +444,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     #region Callbacks
 
+    private bool firstMapUpdate = true;
+
     private void addMapSet(RealmMapSet set)
     {
         Scheduler.ScheduleIfNeeded(() =>
@@ -506,65 +467,6 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         });
     }
 
-    private void mapSetBindableChanged(ValueChangedEvent<RealmMapSet> e)
-    {
-        var set = e.NewValue;
-
-        if (set == null)
-            return;
-
-        video.Stop();
-        storyboardCancellationToken?.Cancel();
-
-        if (storyboardContainer.Count > 0)
-            storyboardContainer.ForEach(d => d.FadeOut(FADE_DURATION).Expire());
-
-        if (!backgroundVideo.Value)
-            return;
-
-        storyboardCancellationToken = new CancellationTokenSource();
-        var token = storyboardCancellationToken.Token;
-
-        // it doesn't work for some reason when it has a token
-        // ReSharper disable once MethodSupportsCancellation
-        Task.Run(() =>
-        {
-            var map = set.LowestDifficulty!;
-            var info = map.GetMapInfo();
-
-            video.LoadVideo(info);
-            ScheduleAfterChildren(video.Start);
-
-            try
-            {
-                var sb = info?.CreateDrawableStoryboard();
-
-                if (sb == null)
-                    return;
-
-                var layers = Enum.GetValues<StoryboardLayer>();
-
-                foreach (var layer in layers)
-                {
-                    Schedule(() =>
-                    {
-                        LoadComponent(sb); // needed for storage
-                        var wrapper = new DrawableStoryboardWrapper(clock, sb, layer);
-                        LoadComponentAsync(wrapper, s =>
-                        {
-                            storyboardContainer.Add(s);
-                            s.FadeInFromZero(FADE_DURATION);
-                        }, cancellation: token);
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Failed to load storyboard!");
-            }
-        });
-    }
-
     private void mapBindableChanged(ValueChangedEvent<RealmMap> e)
     {
         var map = e.NewValue;
@@ -572,8 +474,16 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (map == null)
             return;
 
+        var lastBackground = $"{e.OldValue.MapSet.ID}-{e.OldValue.Metadata.Background}";
+        var newBackground = $"{e.NewValue.MapSet.ID}-{e.NewValue.Metadata.Background}";
+
+        if (lastBackground != newBackground || firstMapUpdate)
+        {
+            var bg = backgroundVideo.Value ? new BlurableBackgroundWithStoryboard(map, BackgroundBlur) : new BlurableBackground(map, BackgroundBlur);
+            backgrounds.PushBackground(bg);
+        }
+
         menuScroll.Play();
-        backgrounds.AddBackgroundFromMap(map);
         lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
         clock.AllowLimitedLoop = true;
 
@@ -584,14 +494,16 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         if (item is not null)
             ScheduleAfterChildren(() => mapList.ScrollToItem(item));
+
+        firstMapUpdate = false;
     }
 
     private void updateBackgroundBlur(ValueChangedEvent<bool> e)
     {
         if (e.NewValue)
-            backgrounds.SetBlur(BackgroundBlur, 500);
+            backgrounds.SetBlur(BackgroundBlur);
         else
-            backgrounds.SetBlur(0, 500);
+            backgrounds.SetBlur(0);
     }
 
     #endregion
