@@ -20,6 +20,7 @@ public class StoryboardScriptRunner : ScriptRunner
         this.map = map;
 
         AddField("screen", new LuaVector(storyboard.Resolution));
+        AddField("metadata", new LuaMetadata(map));
 
         AddFunction("Add", add);
         AddFunction("BPMAtTime", findBpm);

@@ -27,6 +27,19 @@ local __StoryboardSprite = {}
 ---@field size number
 local __StoryboardText = {}
 
+---@class LuaMetadata
+---@field title string
+---@field artist string
+---@field mapper string
+---@field difficulty string
+---@field background string
+---@field cover string
+local __Metadata = {}
+
+---@type LuaMetadata
+---@diagnostic disable-next-line: missing-fields
+metadata = {};
+
 ---@type Vector2
 ---@diagnostic disable-next-line: missing-fields
 screen = {};
