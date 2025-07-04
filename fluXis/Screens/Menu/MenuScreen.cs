@@ -580,6 +580,7 @@ public partial class MenuScreen : FluXisScreen
 
             LoadComponentAsync(new BlurableBackground(map, .2f), b =>
             {
+                b.FadeInFromZero(FADE_DURATION);
                 playButton.Stack.AutoFill = false;
                 playButton.Stack.Add(b);
             });
