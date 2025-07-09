@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit;
+using fluXis.Utils;
 using Newtonsoft.Json;
 using osuTK;
 
@@ -33,9 +34,10 @@ public class Storyboard : EditorMap.IChangeNotifier
     public event Action<ITimedObject> OnRemove;
     public event Action<ITimedObject> OnUpdate;
 
-    public void Sort()
+    public Storyboard Sort()
     {
         Elements.Sort((a, b) => a.StartTime.CompareTo(b.StartTime));
+        return this;
     }
 
     public void Add(ITimedObject obj)
@@ -71,4 +73,6 @@ public class Storyboard : EditorMap.IChangeNotifier
     });
 
     public bool Matches(Type type) => typeof(StoryboardElement) == type;
+
+    public string Save() => Sort().Serialize();
 }

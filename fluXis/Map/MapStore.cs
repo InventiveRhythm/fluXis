@@ -607,7 +607,7 @@ public partial class MapStore : Component
         if (storyboard is { Empty: false })
         {
             var filename = string.IsNullOrWhiteSpace(info.StoryboardFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsb" : info.StoryboardFile;
-            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(filename)), storyboard.Serialize());
+            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(filename)), storyboard.Save());
             info.StoryboardFile = filename;
         }
         else
