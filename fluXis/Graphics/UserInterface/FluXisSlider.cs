@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
@@ -9,6 +10,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 using Vector2 = osuTK.Vector2;
 
 namespace fluXis.Graphics.UserInterface;
@@ -23,6 +25,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
     private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
     private ClickableSpriteIcon leftIcon;
     private ClickableSpriteIcon rightIcon;
+    private FluXisSliderBar sliderBar;
 
     private double lastSampleTime;
     private Sample valueChange;
@@ -52,7 +55,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Horizontal = 20 },
-                Child = new FluXisSliderBar(this, Height)
+                Child = sliderBar = new FluXisSliderBar(this, Height)
                 {
                     RelativeSizeAxes = Axes.Both,
                     Current = Bindable,
@@ -115,8 +118,14 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
         }
     }
 
+    public void OnDoubleClick(Action<DoubleClickEvent> onDoubleClick)
+    {
+        sliderBar.BindDoubleClick(onDoubleClick);
+    }
+
     private partial class FluXisSliderBar : SliderBar<T>
     {
+        private Action<DoubleClickEvent> onDoubleClickCallback;
         private FluXisSlider<T> parent { get; }
         private Box background { get; }
         private Box bar { get; }
@@ -155,6 +164,22 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             var colour = parent.CustomColor ?? FluXisColors.AccentGradient.Interpolate(new Vector2(value, 1));
             bar.FadeColour(colour, 400, Easing.OutQuint).ResizeWidthTo(value, 400, Easing.OutQuint);
             background.FadeColour(colour, 400, Easing.OutQuint);
+        }
+
+        public void BindDoubleClick(Action<DoubleClickEvent> onDoubleClick)
+        {
+            onDoubleClickCallback = onDoubleClick;
+        }
+
+        protected override bool OnDoubleClick(DoubleClickEvent e)
+        {
+            if (onDoubleClickCallback != null)
+            {
+                onDoubleClickCallback.Invoke(e);
+                return true;
+            }
+            
+            return base.OnDoubleClick(e);
         }
     }
 }

@@ -24,6 +24,7 @@ public partial class ModSelectRate : FillFlowContainer
     public ModsOverlay Selector { get; set; }
 
     public BindableFloat RateBindable { get; private set; }
+    private FluXisSlider<float> rateSlider { get; set; }
     private RateMod mod;
 
     private FluXisSpriteText rateText;
@@ -137,7 +138,7 @@ public partial class ModSelectRate : FillFlowContainer
                                     }
                                 }
                             },
-                            new FluXisSlider<float>
+                            rateSlider = new FluXisSlider<float>
                             {
                                 Bindable = RateBindable,
                                 RelativeSizeAxes = Axes.X,
@@ -181,6 +182,11 @@ public partial class ModSelectRate : FillFlowContainer
 
             int multiplier = (int)Math.Round(mod.ScoreMultiplier * 100) - 100;
             multiplierText.Text = $"{(multiplier > 0 ? "+" : string.Empty)}{multiplier}%";
+        });
+
+        rateSlider.OnDoubleClick(e =>
+        {
+            RateBindable.Value = 1f;
         });
     }
 
