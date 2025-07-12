@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
@@ -7,6 +8,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Localisation;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Select.Mods;
@@ -111,5 +113,10 @@ public partial class ModCategory : CompositeDrawable
                     entry.Hide();
             }
         }, delay);
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        return true;
     }
 }

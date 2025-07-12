@@ -12,6 +12,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Select.Mods;
@@ -201,6 +202,11 @@ public partial class ModSelectRate : FillFlowContainer
     {
         this.Delay(ModsOverlay.STAGGER_DURATION)
             .FadeOut(200).MoveToX(-50, 400, Easing.OutQuint);
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        return true;
     }
 
     private partial class SliderTickMark : Container
