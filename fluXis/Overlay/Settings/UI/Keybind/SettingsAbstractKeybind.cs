@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Utils.Extensions;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -14,6 +15,7 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
+using osu.Framework.Extensions.ObjectExtensions;
 
 namespace fluXis.Overlay.Settings.UI.Keybind;
 
@@ -30,6 +32,36 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
     private FillFlowContainer<KeybindContainer> flow;
     private int index = -1;
     private Sample menuScroll;
+
+    private bool? cachedIsDefault;
+
+    protected override bool IsDefault
+    {
+        get
+        {
+            if (cachedIsDefault.IsNotNull()) return cachedIsDefault.Value;
+
+            KeyBinding[] defaultBindings = Keybinds.Select(InputUtils.GetDefaultBindingFor<T>).ToArray();
+            KeyBinding[] keybindCombos = Keybinds.Select(GetComboFor).ToArray();
+
+            foreach (var (keybind, defaultBinding) in keybindCombos.Zip(defaultBindings))
+            {
+                if (!defaultBinding.KeyCombination.Keys.SequenceEqual(keybind.KeyCombination.Keys))
+                {
+                    cachedIsDefault = false;
+                    return false;
+                }
+            }
+            
+            cachedIsDefault = true;
+            return true;
+        }
+    }
+
+    private void clearIsDefaultCache()
+    {
+        cachedIsDefault = null;
+    }
 
     protected SettingsAbstractKeybind()
     {
@@ -62,10 +94,26 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
                 KeybindText = keyCombinationProvider.GetReadableString(GetComboFor(keybind).KeyCombination)
             });
         }
+        UpdateResetButton();
     }
 
     protected override void Reset()
     {
+        foreach (var keybind in Keybinds)
+        {
+            var defaultBinding = InputUtils.GetDefaultBindingFor<T>(keybind);
+            UpdateBinding(keybind, defaultBinding.KeyCombination);
+        }
+
+        for (int i = 0; i < flow.Children.Count; i++)
+        {
+            var keybind = Keybinds[i];
+            var bind = GetComboFor(keybind);
+            flow[i].KeybindText = keyCombinationProvider.GetReadableString(bind.KeyCombination);
+        }
+
+        clearIsDefaultCache();
+        index = -1;
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -136,6 +184,9 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
         {
             var keybind = Keybinds[index];
             UpdateBinding(keybind, combination);
+            
+            clearIsDefaultCache();
+            UpdateResetButton();
 
             var bind = GetComboFor(keybind);
             flow[index].KeybindText = keyCombinationProvider.GetReadableString(bind.KeyCombination);

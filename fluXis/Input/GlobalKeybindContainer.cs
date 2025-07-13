@@ -27,7 +27,7 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
     public override IEnumerable<IKeyBinding> DefaultKeyBindings => GlobalKeyBindings
         .Concat(InGameKeyBindings);
 
-    public IEnumerable<KeyBinding> GlobalKeyBindings = new[]
+    public static IEnumerable<KeyBinding> GlobalKeyBindings = new[]
     {
         new KeyBinding(InputKey.Enter, FluXisGlobalKeybind.Select),
         new KeyBinding(InputKey.Escape, FluXisGlobalKeybind.Back),
@@ -59,7 +59,7 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
         new KeyBinding(new KeyCombination(InputKey.S, InputKey.E, InputKey.X), FluXisGlobalKeybind.Funny)
     };
 
-    public IEnumerable<KeyBinding> InGameKeyBindings = new[]
+    public static IEnumerable<KeyBinding> InGameKeyBindings = new[]
     {
         new KeyBinding(InputKey.Space, FluXisGlobalKeybind.Skip),
         new KeyBinding(InputKey.Shift, FluXisGlobalKeybind.QuickRestart),

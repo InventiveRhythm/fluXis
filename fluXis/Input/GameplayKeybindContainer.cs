@@ -41,10 +41,10 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         else
             binds = Enum.GetValues<FluXisGameplayKeybind>().ToList();
 
-        return binds.Select(b => new KeyBinding(getDefaultFor(b), b));
+        return binds.Select(b => new KeyBinding(GetDefaultFor(b), b));
     }
 
-    private InputKey getDefaultFor(FluXisGameplayKeybind bind) => bind switch
+    public static InputKey GetDefaultFor(FluXisGameplayKeybind bind) => bind switch
     {
         FluXisGameplayKeybind.Key1k1 => InputKey.Space,
 
