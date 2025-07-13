@@ -65,6 +65,7 @@ public partial class ModsOverlay : VisibilityContainer
     private ModCategory diffIncrease;
     private ModCategory miscellaneous;
     private ModCategory automation;
+    private ModReset modResetButton;
 
     private Sample sampleOpen;
     private Sample sampleClose;
@@ -258,9 +259,16 @@ public partial class ModsOverlay : VisibilityContainer
                                                                 new AutoPlayMod()
                                                             })
                                                         }
-                                                    }
+                                                    },
                                                 }
                                             }
+                                        },
+                                        new Container
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Margin = new MarginPadding { Top = 30 },
+                                            Child = modResetButton = new ModReset(this)
                                         }
                                     }
                                 }
@@ -290,6 +298,7 @@ public partial class ModsOverlay : VisibilityContainer
         diffIncrease.Show((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         miscellaneous.Show((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         automation.Show((diffDecrease.ModCount + diffIncrease.ModCount + 4) * STAGGER_DURATION);
+        modResetButton.Show();
         // this.TransformTo(nameof(blur), 1f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
         sampleOpen?.Play();
@@ -305,6 +314,7 @@ public partial class ModsOverlay : VisibilityContainer
         diffIncrease.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         miscellaneous.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         automation.Hide((diffDecrease.ModCount + diffIncrease.ModCount + 4) * STAGGER_DURATION);
+        modResetButton.Hide();
         // this.TransformTo(nameof(blur), 0f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
         if (!first)
@@ -333,6 +343,7 @@ public partial class ModsOverlay : VisibilityContainer
         sampleDeselect?.Play();
         SelectedMods.Clear();
         RateMod.RateBindable.Value = 1f;
+        modResetButton.Animate();
     }
 
     public void UpdateTotalMultiplier()
