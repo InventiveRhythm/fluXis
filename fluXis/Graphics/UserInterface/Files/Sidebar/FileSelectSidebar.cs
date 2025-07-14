@@ -59,12 +59,8 @@ public partial class FileSelectSidebar : ExpandingContainer
             }
         };
 
-        string folder;
-
-        if (tryGetFolderPath(Environment.SpecialFolder.Desktop, out folder))
-        {
+        if (tryGetFolderPath(Environment.SpecialFolder.Desktop, out var folder))
             entries.Add(new SidebarEntry(FontAwesome6.Solid.Display, "Desktop", new DirectoryInfo(folder), select));
-        }
 
         if (tryGetFolderPath(Environment.SpecialFolder.UserProfile, out folder))
         {
@@ -73,15 +69,9 @@ public partial class FileSelectSidebar : ExpandingContainer
         }
 
         if (tryGetFolderPath(Environment.SpecialFolder.MyPictures, out folder))
-        {
             entries.Add(new SidebarEntry(FontAwesome6.Solid.Images, "Pictures", new DirectoryInfo(folder), select));
-        }
-
         if (tryGetFolderPath(Environment.SpecialFolder.MyMusic, out folder))
-        {
             entries.Add(new SidebarEntry(FontAwesome6.Solid.Music, "Music", new DirectoryInfo(folder), select));
-        }
-
         if (!string.IsNullOrEmpty(mapDirectory))
             entries.Add(new SidebarEntry(FontAwesome6.Solid.Cube, "Map Folder", new DirectoryInfo(mapDirectory), select));
     }
@@ -96,12 +86,6 @@ public partial class FileSelectSidebar : ExpandingContainer
     private static bool tryGetFolderPath(Environment.SpecialFolder folder, out string path)
     {
         path = Environment.GetFolderPath(folder);
-
-        if (string.IsNullOrEmpty(path))
-        {
-            return false;
-        }
-
-        return true;
+        return !string.IsNullOrEmpty(path);
     }
 }

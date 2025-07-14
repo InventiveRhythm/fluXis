@@ -147,15 +147,13 @@ public partial class DriveEntry : Container
     {
         string[] suffixes = { "B", "KiB", "MiB", "GiB", "TiB" };
 
-        long maxB = 1024;
-        long size = sizeB;
+        var maxB = 1024L;
+        var size = sizeB;
 
         for (int i = 0; i < suffixes.Length - 1; i++)
         {
             if (sizeB < maxB)
-            {
                 return $"{size} {suffixes[i]}";
-            }
 
             maxB *= 1024;
             size /= 1024;
