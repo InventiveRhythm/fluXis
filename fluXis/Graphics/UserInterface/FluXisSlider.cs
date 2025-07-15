@@ -23,7 +23,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
     public Colour4? CustomColor { get; set; }
 
     private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
-    public Action<DoubleClickEvent> DoubleClickAction { get; set; }
+    public Action<DoubleClickEvent> OnDoubleClickAction { get; set; }
     private ClickableSpriteIcon leftIcon;
     private ClickableSpriteIcon rightIcon;
     private FluXisSliderBar sliderBar;
@@ -163,9 +163,9 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
 
         protected override bool OnDoubleClick(DoubleClickEvent e)
         {
-            if (parent.DoubleClickAction != null)
+            if (parent.OnDoubleClickAction != null)
             {
-                parent.DoubleClickAction.Invoke(e);
+                parent.OnDoubleClickAction.Invoke(e);
                 return true;
             }
             

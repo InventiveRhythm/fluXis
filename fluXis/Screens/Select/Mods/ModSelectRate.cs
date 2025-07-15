@@ -185,7 +185,7 @@ public partial class ModSelectRate : FillFlowContainer
             multiplierText.Text = $"{(multiplier > 0 ? "+" : string.Empty)}{multiplier}%";
         });
 
-        rateSlider.DoubleClickAction = e => RateBindable.Value = 1f;
+        rateSlider.OnDoubleClickAction = e => RateBindable.Value = 1f;
     }
 
     public override void Show()
