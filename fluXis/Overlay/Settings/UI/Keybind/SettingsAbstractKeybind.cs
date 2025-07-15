@@ -96,6 +96,8 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
                 KeybindText = keyCombinationProvider.GetReadableString(GetComboFor(keybind).KeyCombination)
             });
         }
+
+        base.UpdateResetButton();
     }
 
     protected override void Reset()
