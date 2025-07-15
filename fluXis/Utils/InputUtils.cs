@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Database;
 using fluXis.Database.Input;
 using fluXis.Input;
+using fluXis.Screens.Edit.Input;
 using osu.Framework.Input.Bindings;
 
 namespace fluXis.Utils;
@@ -34,12 +35,20 @@ public static class InputUtils
             return globalKeyBind;
         }
 
+        if (bind is EditorKeybinding editorBind)
+        {
+            var editorKeybind = EditorKeybindingContainer.EditorKeyBindings
+                .FirstOrDefault(kb => kb.Action.Equals(editorBind));
+
+            return editorKeybind;
+        }
+
         if (bind is FluXisGameplayKeybind gameplayBind)
         {
             var defaultKey = GameplayKeybindContainer.GetDefaultFor(gameplayBind);
             return new KeyBinding(defaultKey, gameplayBind);
         }
 
-        return null;
+        throw new ArgumentException($"keybinding type not found for: {typeof(T).Name}", nameof(bind));
     }
 }

@@ -15,7 +15,7 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
-using osu.Framework.Extensions.ObjectExtensions;
+using osu.Framework.Logging;
 
 namespace fluXis.Overlay.Settings.UI.Keybind;
 
@@ -41,18 +41,25 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
         {
             if (cachedIsDefault != null) return cachedIsDefault.Value;
 
-            KeyBinding[] defaultBindings = Keybinds.Select(InputUtils.GetDefaultBindingFor<T>).ToArray();
-            KeyBinding[] keybindCombos = Keybinds.Select(GetComboFor).ToArray();
-
-            foreach (var (keybind, defaultBinding) in keybindCombos.Zip(defaultBindings))
+            try
             {
-                if (!defaultBinding.KeyCombination.Keys.SequenceEqual(keybind.KeyCombination.Keys))
+                KeyBinding[] defaultBindings = Keybinds.Select(InputUtils.GetDefaultBindingFor<T>).ToArray();
+                KeyBinding[] keybindCombos = Keybinds.Select(GetComboFor).ToArray();
+
+                foreach (var (keybind, defaultBinding) in keybindCombos.Zip(defaultBindings))
                 {
-                    cachedIsDefault = false;
-                    return false;
+                    if (!defaultBinding.KeyCombination.Keys.SequenceEqual(keybind.KeyCombination.Keys))
+                    {
+                        cachedIsDefault = false;
+                        return false;
+                    }
                 }
             }
-            
+            catch (Exception e)
+            {
+                Logger.Error(e, "Failed get default bindings for settings");
+            }
+
             cachedIsDefault = true;
             return true;
         }
