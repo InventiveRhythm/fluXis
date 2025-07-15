@@ -88,7 +88,7 @@ public abstract partial class SettingsItem : Container
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        UpdateResetButton();
+        updateResetButton();
 
         Content.FinishTransforms(true);
 
@@ -106,10 +106,10 @@ public abstract partial class SettingsItem : Container
         if (isDefault == IsDefault) return;
 
         isDefault = IsDefault;
-        UpdateResetButton();
+        updateResetButton();
     }
 
-    protected void UpdateResetButton()
+    private void updateResetButton()
     {
         if (IsDefault)
             resetButton.Hide();

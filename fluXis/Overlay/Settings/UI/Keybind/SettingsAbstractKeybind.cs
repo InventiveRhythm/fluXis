@@ -39,7 +39,7 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
     {
         get
         {
-            if (cachedIsDefault.IsNotNull()) return cachedIsDefault.Value;
+            if (cachedIsDefault != null) return cachedIsDefault.Value;
 
             KeyBinding[] defaultBindings = Keybinds.Select(InputUtils.GetDefaultBindingFor<T>).ToArray();
             KeyBinding[] keybindCombos = Keybinds.Select(GetComboFor).ToArray();
@@ -56,11 +56,6 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
             cachedIsDefault = true;
             return true;
         }
-    }
-
-    private void clearIsDefaultCache()
-    {
-        cachedIsDefault = null;
     }
 
     protected SettingsAbstractKeybind()
@@ -94,7 +89,6 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
                 KeybindText = keyCombinationProvider.GetReadableString(GetComboFor(keybind).KeyCombination)
             });
         }
-        UpdateResetButton();
     }
 
     protected override void Reset()
@@ -186,7 +180,6 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
             UpdateBinding(keybind, combination);
             
             clearIsDefaultCache();
-            UpdateResetButton();
 
             var bind = GetComboFor(keybind);
             flow[index].KeybindText = keyCombinationProvider.GetReadableString(bind.KeyCombination);
@@ -195,6 +188,11 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
             menuScroll?.Play();
         }
         else index = -1;
+    }
+
+    private void clearIsDefaultCache()
+    {
+        cachedIsDefault = null;
     }
 
     private void select(T bind)
