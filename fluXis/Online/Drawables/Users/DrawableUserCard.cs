@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -142,7 +141,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                                 Height = 16,
                                 Direction = FillDirection.Horizontal,
                                 Spacing = new Vector2(4),
-                                Children = new Drawable[]
+                                Children = new[]
                                 {
                                     new ClubTag(user.Club)
                                     {
@@ -173,7 +172,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                                 Direction = FillDirection.Horizontal,
                                 Spacing = new Vector2(5),
                                 Alpha = user.Groups.Count != 0 ? 1 : 0,
-                                ChildrenEnumerable = user.Groups.Select(group => new DrawableGroupBadge(group))
+                                ChildrenEnumerable = createBadges()
                             },
                             new ForcedHeightText
                             {
@@ -212,6 +211,15 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
             WebFontSize = 16,
             Shadow = true
         };
+    }
+
+    private IEnumerable<Drawable> createBadges()
+    {
+        if (user.IsSupporter)
+            yield return new DrawableSupporterBadge();
+
+        foreach (var group in user.Groups)
+            yield return new DrawableGroupBadge(group);
     }
 
     protected override bool OnClick(ClickEvent e)
