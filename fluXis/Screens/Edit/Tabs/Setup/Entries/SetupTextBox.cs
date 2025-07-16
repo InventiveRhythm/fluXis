@@ -31,28 +31,31 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
     {
     }
 
-    protected override Drawable CreateContent()
+    protected override Drawable CreateContent() => textBox = new FluXisTextBox
     {
-        return textBox = new FluXisTextBox
-        {
-            RelativeSizeAxes = Axes.X,
-            Height = 24,
-            Text = Default,
-            FontSize = FluXisSpriteText.GetWebFontSize(18),
-            SidePadding = 0,
-            PlaceholderText = Placeholder,
-            BackgroundActive = BackgroundColor,
-            BackgroundInactive = BackgroundColor,
-            OnTextChanged = () => OnChange.Invoke(textBox.Text),
-            OnCommitAction = () => OnChange.Invoke(textBox.Text),
-            CommitOnFocusLost = true,
-            LengthLimit = MaxLength
-        };
+        RelativeSizeAxes = Axes.X,
+        Height = 24,
+        Text = Default,
+        FontSize = FluXisSpriteText.GetWebFontSize(18),
+        SidePadding = 0,
+        PlaceholderText = Placeholder,
+        BackgroundActive = BackgroundColor,
+        BackgroundInactive = BackgroundColor,
+        OnTextChanged = () => OnChange.Invoke(textBox.Text),
+        OnCommitAction = () => OnChange.Invoke(textBox.Text),
+        OnFocusAction = StartHighlight,
+        OnFocusLostAction = StopHighlight,
+        CommitOnFocusLost = true,
+        LengthLimit = MaxLength
+    };
+
+    protected override void OnFocus(FocusEvent e) => redirect();
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        redirect();
+        return true;
     }
 
-    protected override void OnFocus(FocusEvent e)
-    {
-        // redirect focus to the textbox
-        GetContainingFocusManager()?.ChangeFocus(textBox);
-    }
+    private void redirect() => GetContainingFocusManager()?.ChangeFocus(textBox);
 }
