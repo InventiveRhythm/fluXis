@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -81,6 +82,8 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
     {
         CornerRadius = 12;
         Masking = true;
+
+        var badges = createBadges().ToArray();
 
         InternalChildren = new Drawable[]
         {
@@ -171,8 +174,8 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                                 AutoSizeAxes = Axes.Both,
                                 Direction = FillDirection.Horizontal,
                                 Spacing = new Vector2(5),
-                                Alpha = user.Groups.Count != 0 ? 1 : 0,
-                                ChildrenEnumerable = createBadges()
+                                Alpha = badges.Length != 0 ? 1 : 0,
+                                Children = badges
                             },
                             new ForcedHeightText
                             {
