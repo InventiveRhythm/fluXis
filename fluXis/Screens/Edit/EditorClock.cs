@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
@@ -31,12 +32,19 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public override bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;
 
-    public double CurrentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
+    //public double CurrentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
+    public double CurrentTimeAccurate => isSeekingSmoothly? smoothSeekTarget : CurrentTime;
 
     private readonly FramedMapClock underlying;
     private readonly Bindable<DrawableTrack> track = new();
 
     private bool playbackFinished;
+
+    //seeking animation variables
+    private double interpolationDuration = 300;
+    private bool isSeekingSmoothly = false;
+    private double smoothSeekTarget;
+    private double smoothSeekTime;
 
     public EditorClock(MapInfo mapInfo)
     {
@@ -58,9 +66,28 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         if (IsRunning)
             Seek(time);
         else
-            TimeTo(time, 300, Easing.OutQuint);
+            startSeekAnimation(time, 300);
     }
 
+    private void startSeekAnimation(double newTime, double duration)
+    {
+        isSeekingSmoothly = true;
+        smoothSeekTime = 0;
+        smoothSeekTarget = newTime;
+        interpolationDuration = duration;
+    }
+    private void seekSmoothlyStep()
+    {
+        smoothSeekTime += Clock.ElapsedFrameTime;
+        if (smoothSeekTime > interpolationDuration)
+        {
+            isSeekingSmoothly = false;
+            smoothSeekTime = interpolationDuration;
+            Seek(smoothSeekTarget);
+        }
+        else
+            Seek(InterpolateAt(smoothSeekTime, smoothSeekTarget, interpolationDuration, Easing.OutQuint));
+    }
     private double snap(double position)
     {
         var point = MapInfo.GetTimingPoint((float)position);
@@ -164,6 +191,8 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
             if (IsRunning) underlying.Stop();
             if (CurrentTime > TrackLength) underlying.Seek(TrackLength);
         }
+
+        if (isSeekingSmoothly) seekSmoothlyStep();
 
         updateStep();
     }
