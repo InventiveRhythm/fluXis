@@ -49,18 +49,21 @@ public abstract partial class EditorTimingLines<T> : Container<T>
 
     protected override void Update()
     {
+        bool shouldSort = false;
         while (pastLines.Count > 0 && !pastLines[^1].BelowScreen)
         {
             var line = pastLines[^1];
+            pastLines.RemoveAt(pastLines.Count - 1);
             Add(line);
-            pastLines.Remove(line);
+            shouldSort = true;
         }
 
         while (futureLines.Count > 0 && !futureLines[0].AboveScreen)
         {
             var line = futureLines[0];
+            futureLines.RemoveAt(0);
             Add(line);
-            futureLines.Remove(line);
+            shouldSort = true;
         }
 
         while (Children.Count > 0 && Children[0].BelowScreen)
@@ -77,7 +80,8 @@ public abstract partial class EditorTimingLines<T> : Container<T>
             Remove(line, false);
         }
 
-        SortInternal();
+        if (shouldSort)
+            SortInternal();
     }
 
     private void addAndSort(T line)
