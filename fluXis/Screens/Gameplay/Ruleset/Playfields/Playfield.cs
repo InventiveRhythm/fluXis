@@ -150,6 +150,7 @@ public partial class Playfield : Container
         updatePositionScale();
 
         hitline.Y = -laneSwitchManager.HitPosition;
+        Receptors.Padding = new MarginPadding { Bottom = laneSwitchManager.ReceptorOffset };
 
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
