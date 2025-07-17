@@ -146,7 +146,6 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
             new FluXisContextMenuContainer()
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Bottom = 50 },
                 Children = new Drawable[]
                 {
                     new Container
@@ -155,7 +154,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        Padding = new MarginPadding(10) { Top = 140, Bottom = 40 },
+                        Padding = new MarginPadding(10) { Top = 140, Bottom = 90 },
                         Child = mapList
                     },
                     filterControl = new SearchFilterControls(),
@@ -181,11 +180,11 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                                 Size = new Vector2(50)
                             }
                         }
-                    }
-                }
+                    },
+                    modsOverlay,
+                    footer = CreateFooter(),
+                },
             },
-            modsOverlay,
-            footer = CreateFooter()
         };
 
         // modsOverlay.BackgroundBlur = modsBlur;
