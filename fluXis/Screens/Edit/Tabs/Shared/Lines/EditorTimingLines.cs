@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
@@ -51,14 +52,14 @@ public abstract partial class EditorTimingLines<T> : Container<T>
         while (pastLines.Count > 0 && !pastLines[^1].BelowScreen)
         {
             var line = pastLines[^1];
-            addAndSort(line);
+            Add(line);
             pastLines.Remove(line);
         }
 
         while (futureLines.Count > 0 && !futureLines[0].AboveScreen)
         {
             var line = futureLines[0];
-            addAndSort(line);
+            Add(line);
             futureLines.Remove(line);
         }
 
@@ -75,6 +76,8 @@ public abstract partial class EditorTimingLines<T> : Container<T>
             futureLines.Insert(0, line);
             Remove(line, false);
         }
+
+        SortInternal();
     }
 
     private void addAndSort(T line)
