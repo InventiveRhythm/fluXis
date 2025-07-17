@@ -78,6 +78,11 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     }
     private void seekSmoothlyStep()
     {
+        if (IsRunning)
+        {
+            isSeekingSmoothly = false;
+            return;
+        }
         smoothSeekTime += Clock.ElapsedFrameTime;
         if (smoothSeekTime > interpolationDuration)
         {
