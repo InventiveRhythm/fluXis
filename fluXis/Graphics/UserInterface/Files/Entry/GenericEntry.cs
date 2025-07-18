@@ -1,3 +1,4 @@
+using System;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -13,7 +14,7 @@ using osuTK;
 
 namespace fluXis.Graphics.UserInterface.Files.Entry;
 
-public abstract partial class GenericEntry : Container
+public abstract partial class GenericEntry : Container, IComparable<GenericEntry>
 {
     protected abstract IconUsage Icon { get; }
     public abstract string Text { get; }
@@ -135,5 +136,23 @@ public abstract partial class GenericEntry : Container
                 background.FadeOut(200);
             });
         }
+    }
+
+    public int CompareTo(GenericEntry other)
+    {
+        if (other == null)
+        {
+            return 1;
+        }
+
+        bool thisIsDirectory = this is DirectoryEntry;
+        bool otherIsDirectory = other is DirectoryEntry;
+
+        if (thisIsDirectory != otherIsDirectory)
+        {
+            return thisIsDirectory ? -1 : 1;
+        }
+
+        return string.Compare(Text, other.Text, StringComparison.Ordinal);
     }
 }
