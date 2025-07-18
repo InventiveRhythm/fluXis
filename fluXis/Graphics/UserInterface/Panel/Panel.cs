@@ -2,7 +2,6 @@ using fluXis.Audio;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Screens;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -34,8 +33,8 @@ public partial class Panel : Container
         CornerRadius = 20;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        EdgeEffect = FluXisStyles.ShadowMedium;
-        BorderColour = FluXisColors.Red;
+        EdgeEffect = Styling.ShadowMedium;
+        BorderColour = Theme.Red;
 
         Children = new[]
         {
@@ -54,7 +53,7 @@ public partial class Panel : Container
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2,
+                        Colour = Theme.Background2,
                         Alpha = .5f
                     },
                     new LoadingIcon
@@ -94,9 +93,9 @@ public partial class Panel : Container
         state = Visibility.Hidden;
         samples.PanelClose(IsDangerous);
 
-        this.ScaleTo(.9f, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-            .RotateTo(-5, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-            .FadeOut(FluXisScreen.FADE_DURATION, Easing.OutQuint);
+        this.ScaleTo(.9f, Styling.TRANSITION_MOVE, Easing.OutQuint)
+            .RotateTo(-5, Styling.TRANSITION_MOVE, Easing.OutQuint)
+            .FadeOut(Styling.TRANSITION_FADE, Easing.OutQuint);
     }
 
     public override void Show()
@@ -109,7 +108,7 @@ public partial class Panel : Container
 
         this.RotateTo(15).ScaleTo(1.25f)
             .RotateTo(0f, 800, Easing.OutElasticHalf)
-            .FadeInFromZero(FluXisScreen.FADE_DURATION, Easing.OutQuint)
+            .FadeInFromZero(Styling.TRANSITION_FADE, Easing.OutQuint)
             .ScaleTo(1f, 800, Easing.OutElasticHalf);
     }
 

@@ -11,8 +11,8 @@ public class PrimaryButtonData : ButtonData
     {
         Text = text;
         Action = action;
-        Color = FluXisColors.Primary;
-        TextColor = FluXisColors.Background1;
+        Color = Theme.Primary;
+        TextColor = Theme.Background1;
         HoldToConfirm = holdToConfirm;
     }
 

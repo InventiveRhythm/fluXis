@@ -56,13 +56,13 @@ public partial class ModCategory : CompositeDrawable
                                 RelativeSizeAxes = Axes.Y,
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight,
-                                Colour = FluXisColors.Background2,
+                                Colour = Theme.Background2,
                                 Alpha = .5f
                             },
                             new FluXisSpriteText
                             {
                                 Text = label,
-                                Colour = FluXisColors.TextDark,
+                                Colour = Theme.TextDark,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Shear = new Vector2(-.2f, 0),

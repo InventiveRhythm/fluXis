@@ -60,7 +60,7 @@ public partial class EditorLoader : FluXisScreen
             {
                 Size = new Vector2(circle_size),
                 Scale = new Vector2(0),
-                BorderColour = FluXisColors.Background3,
+                BorderColour = Theme.Background3,
                 BorderThickness = border_size,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

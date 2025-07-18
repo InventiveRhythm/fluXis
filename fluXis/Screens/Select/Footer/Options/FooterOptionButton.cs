@@ -20,7 +20,7 @@ public partial class FooterOptionButton : Container
     public LocalisableString Text { get; set; }
     public IconUsage Icon { get; set; }
     public Action Action { get; set; }
-    public Colour4 Color { get; set; } = FluXisColors.Text;
+    public Colour4 Color { get; set; } = Theme.Text;
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -50,7 +50,7 @@ public partial class FooterOptionButton : Container
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background3
+                        Colour = Theme.Background3
                     },
                     hover = new HoverLayer { Colour = Color },
                     flash = new FlashLayer { Colour = Color },

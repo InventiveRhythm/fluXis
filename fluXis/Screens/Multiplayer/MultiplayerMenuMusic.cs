@@ -1,3 +1,4 @@
+using fluXis.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -46,7 +47,7 @@ public partial class MultiplayerMenuMusic : Container<DrawableTrack>
 
     public void GoToLayer(int layer, int mode, int alt = 0)
     {
-        const float duration = FluXisScreen.FADE_DURATION;
+        const float duration = Styling.TRANSITION_FADE;
 
         baseTrack.VolumeTo(1, duration);
 
@@ -102,6 +103,6 @@ public partial class MultiplayerMenuMusic : Container<DrawableTrack>
     public void StopAll()
     {
         foreach (var track in Children)
-            track.VolumeTo(0, FluXisScreen.FADE_DURATION);
+            track.VolumeTo(0, Styling.TRANSITION_FADE);
     }
 }

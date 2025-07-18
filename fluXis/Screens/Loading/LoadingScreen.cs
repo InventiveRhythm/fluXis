@@ -1,5 +1,6 @@
 using System;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
@@ -71,7 +72,7 @@ public partial class LoadingScreen : FluXisScreen
                             {
                                 Size = new Vector2(240, 8),
                                 Masking = true,
-                                Colour = FluXisColors.Text,
+                                Colour = Theme.Text,
                                 Children = new Drawable[]
                                 {
                                     new Box
@@ -127,8 +128,8 @@ public partial class LoadingScreen : FluXisScreen
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        this.FadeOut(FADE_DURATION);
-        this.MoveToY(20, MOVE_DURATION, Easing.OutQuint);
+        this.FadeOut(Styling.TRANSITION_FADE);
+        this.MoveToY(20, Styling.TRANSITION_MOVE, Easing.OutQuint);
         base.OnSuspending(e);
     }
 }

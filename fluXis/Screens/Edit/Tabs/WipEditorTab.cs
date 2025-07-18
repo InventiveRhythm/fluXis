@@ -40,7 +40,7 @@ public partial class WipEditorTab : EditorTab
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2,
+                    Colour = Theme.Background2,
                     Alpha = .6f
                 },
                 new FillFlowContainer

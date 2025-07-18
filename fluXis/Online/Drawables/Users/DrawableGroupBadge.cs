@@ -29,7 +29,7 @@ public partial class DrawableGroupBadge : CircularContainer
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = .8f
             },
             new FluXisSpriteText

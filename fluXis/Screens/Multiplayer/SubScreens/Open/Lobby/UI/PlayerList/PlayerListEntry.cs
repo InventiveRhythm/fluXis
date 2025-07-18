@@ -117,7 +117,7 @@ public partial class PlayerListEntry : Container, IHasContextMenu
                             stateBackground = new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background1
+                                Colour = Theme.Background1
                             },
                             stateText = new FluXisSpriteText
                             {
@@ -161,7 +161,7 @@ public partial class PlayerListEntry : Container, IHasContextMenu
             MultiplayerUserState.Playing => Colour4.FromHex("#FFC657"),
             MultiplayerUserState.Finished => Colour4.FromHex("#FFC657"),
             MultiplayerUserState.Results => Colour4.FromHex("#57C7FF"),
-            _ => FluXisColors.Background1
+            _ => Theme.Background1
         };
 
         stateText.Text = state switch
@@ -173,6 +173,6 @@ public partial class PlayerListEntry : Container, IHasContextMenu
             _ => "Not Ready"
         };
 
-        stateText.Colour = FluXisColors.IsBright(stateBackground.Colour) ? Colour4.Black : FluXisColors.Text;
+        stateText.Colour = Theme.IsBright(stateBackground.Colour) ? Colour4.Black : Theme.Text;
     }
 }

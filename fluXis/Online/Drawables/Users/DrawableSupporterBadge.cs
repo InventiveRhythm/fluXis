@@ -27,7 +27,7 @@ public partial class DrawableSupporterBadge : CircularContainer
             {
                 Size = new Vector2(10),
                 Icon = FontAwesome6.Solid.Heart,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             }

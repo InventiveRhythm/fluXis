@@ -38,7 +38,7 @@ public partial class UserTooltip : CustomTooltipContainer<APIUser>
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             new FillFlowContainer
             {
@@ -59,7 +59,7 @@ public partial class UserTooltip : CustomTooltipContainer<APIUser>
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background2,
+                                Colour = Theme.Background2,
                                 Alpha = .5f
                             },
                             new FillFlowContainer
@@ -206,13 +206,13 @@ public partial class UserTooltip : CustomTooltipContainer<APIUser>
         if (user.IsOnline)
         {
             statusIcon.Icon = FontAwesome6.Solid.Circle;
-            statusIcon.Colour = FluXisColors.Green;
+            statusIcon.Colour = Theme.Green;
             statusText.Text = "Online";
         }
         else
         {
             statusIcon.Icon = FontAwesome6.Regular.Circle;
-            statusIcon.Colour = FluXisColors.Foreground;
+            statusIcon.Colour = Theme.Foreground;
             statusText.Text = "Offline";
         }
     }

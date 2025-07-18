@@ -63,7 +63,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2,
+                    Colour = Theme.Background2,
                     Alpha = .75f
                 }
             });
@@ -177,7 +177,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background1
+                Colour = Theme.Background1
             }
         }
     };

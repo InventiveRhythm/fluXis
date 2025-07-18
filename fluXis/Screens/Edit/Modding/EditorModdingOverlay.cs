@@ -33,18 +33,18 @@ public partial class EditorModdingOverlay : CompositeDrawable
 
     private void createContent()
     {
-        EdgeEffect = FluXisStyles.ShadowMedium;
+        EdgeEffect = Styling.ShadowMedium;
         Position = new Vector2(margin, top + margin);
 
         BorderThickness = 4;
-        BorderColour = FluXisColors.Highlight;
+        BorderColour = Theme.Highlight;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             }
         };
     }

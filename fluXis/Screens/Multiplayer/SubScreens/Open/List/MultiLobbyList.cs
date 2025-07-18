@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Panel;
@@ -121,7 +122,7 @@ public partial class MultiLobbyList : MultiSubScreen
         loadingIcon.Show();
         textFlow.Text = "";
 
-        lobbyList.FadeOut(FluXisScreen.FADE_DURATION).OnComplete(_ =>
+        lobbyList.FadeOut(Styling.TRANSITION_FADE).OnComplete(_ =>
         {
             lobbyList.Clear();
 
@@ -138,7 +139,7 @@ public partial class MultiLobbyList : MultiSubScreen
                     lobbyList.Add(new EmptyLobbySlot());
 
                 loadingIcon.Hide();
-                lobbyList.FadeIn(FluXisScreen.FADE_DURATION);
+                lobbyList.FadeIn(Styling.TRANSITION_FADE);
             };
 
             request.Failure += ex =>
@@ -211,7 +212,7 @@ public partial class MultiLobbyList : MultiSubScreen
         clock.VolumeOut(600).OnComplete(_ => clock.Stop());
 
         menuMusic.GoToLayer(0, 1);
-        lobbyList.MoveToY(-100).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        lobbyList.MoveToY(-100).MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
         footer.Show();
     }
 
@@ -219,7 +220,7 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         base.FadeOut(next);
 
-        lobbyList.MoveToY(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        lobbyList.MoveToY(-100, Styling.TRANSITION_MOVE, Easing.OutQuint);
         footer.Hide();
     }
 

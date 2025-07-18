@@ -28,9 +28,9 @@ public class MapColors : ICustomColorProvider
         get
         {
             if (string.IsNullOrEmpty(AccentHex))
-                return FluXisColors.Highlight;
+                return Theme.Highlight;
 
-            return Colour4.TryParseHex(AccentHex, out var color) ? color : FluXisColors.Highlight;
+            return Colour4.TryParseHex(AccentHex, out var color) ? color : Theme.Highlight;
         }
         set => AccentHex = value.ToHex();
     }
@@ -70,7 +70,7 @@ public class MapColors : ICustomColorProvider
 
     public bool HasColorFor(int lane, int keyCount, out Colour4 colour)
     {
-        var index = FluXisColors.GetLaneColorIndex(lane, keyCount);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
         colour = GetColor(index, Colour4.Transparent);
         return colour != Colour4.Transparent;
     }

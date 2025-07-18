@@ -68,7 +68,7 @@ public partial class ChatChannelButton : Container, IHasContextMenu
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background3
+                        Colour = Theme.Background3
                     },
                     hover = new HoverLayer(),
                     flash = new FlashLayer(),

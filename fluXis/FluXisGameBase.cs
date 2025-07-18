@@ -273,7 +273,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                         WebFontSize = 16,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        Colour = FluXisColors.Red
+                        Colour = Theme.Red
                     }
                 }
             };

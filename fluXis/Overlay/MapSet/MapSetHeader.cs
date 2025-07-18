@@ -47,7 +47,7 @@ public partial class MapSetHeader : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2.Opacity(.5f)
+                Colour = Theme.Background2.Opacity(.5f)
             },
             new Container
             {
@@ -74,7 +74,7 @@ public partial class MapSetHeader : CompositeDrawable
                                 Size = new Vector2(160),
                                 CornerRadius = 16,
                                 Masking = true,
-                                EdgeEffect = FluXisStyles.ShadowMedium,
+                                EdgeEffect = Styling.ShadowMedium,
                                 LoadContent = () => new DrawableOnlineCover(set, OnlineTextureStore.AssetSize.Large)
                                 {
                                     RelativeSizeAxes = Axes.Both,
@@ -180,7 +180,7 @@ public partial class MapSetHeader : CompositeDrawable
             AutoSizeAxes = Axes.X;
             Height = 30;
             Masking = true;
-            EdgeEffect = FluXisStyles.ShadowSmall;
+            EdgeEffect = Styling.ShadowSmall;
             Anchor = Anchor.CentreLeft;
             Origin = Anchor.CentreLeft;
 
@@ -189,7 +189,7 @@ public partial class MapSetHeader : CompositeDrawable
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.GetStatusColor(status)
+                    Colour = Theme.GetStatusColor(status)
                 },
                 new FluXisSpriteText
                 {

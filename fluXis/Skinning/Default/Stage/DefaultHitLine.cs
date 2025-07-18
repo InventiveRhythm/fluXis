@@ -21,7 +21,7 @@ public partial class DefaultHitLine : ColorableSkinDrawable
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.TopCentre;
         Height = 3;
-        Colour = ColourInfo.GradientHorizontal(GetIndexOrFallback(1, FluXisColors.Secondary), GetIndexOrFallback(2, FluXisColors.Primary));
+        Colour = ColourInfo.GradientHorizontal(GetIndexOrFallback(1, Theme.Secondary), GetIndexOrFallback(2, Theme.Primary));
 
         InternalChild = new Box
         {

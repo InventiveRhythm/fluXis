@@ -1,5 +1,6 @@
 using fluXis.Audio;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
@@ -69,7 +70,7 @@ public partial class DangerHealthOverlay : Container
         player.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
         screen.OnExit += () =>
         {
-            lowPass.CutoffTo(AudioFilter.MAX, FluXisScreen.MOVE_DURATION);
+            lowPass.CutoffTo(AudioFilter.MAX, Styling.TRANSITION_MOVE);
             exited = true;
         };
     }

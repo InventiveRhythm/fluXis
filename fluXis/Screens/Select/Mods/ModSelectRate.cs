@@ -41,7 +41,7 @@ public partial class ModSelectRate : FillFlowContainer
 
         mod = new RateMod();
 
-        var color = FluXisColors.GetModTypeColor(ModType.Rate);
+        var color = Theme.GetModTypeColor(ModType.Rate);
 
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
@@ -71,13 +71,13 @@ public partial class ModSelectRate : FillFlowContainer
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Colour = FluXisColors.Background2,
+                        Colour = Theme.Background2,
                         Alpha = .5f
                     },
                     new FluXisSpriteText
                     {
                         Text = LocalizationStrings.ModSelect.RateSection,
-                        Colour = FluXisColors.TextDark,
+                        Colour = Theme.TextDark,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         Shear = new Vector2(-.2f, 0),
@@ -97,7 +97,7 @@ public partial class ModSelectRate : FillFlowContainer
                 {
                     new Box
                     {
-                        Colour = FluXisColors.Background3,
+                        Colour = Theme.Background3,
                         RelativeSizeAxes = Axes.Both
                     },
                     new FillFlowContainer

@@ -133,13 +133,13 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
                 background = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Primary,
+                    Colour = Theme.Primary,
                     Alpha = .2f
                 },
                 bar = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Primary
+                    Colour = Theme.Primary
                 }
             };
         }
@@ -152,7 +152,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
 
         protected override void UpdateValue(float value)
         {
-            var colour = parent.CustomColor ?? FluXisColors.AccentGradient.Interpolate(new Vector2(value, 1));
+            var colour = parent.CustomColor ?? Theme.AccentGradient.Interpolate(new Vector2(value, 1));
             bar.FadeColour(colour, 400, Easing.OutQuint).ResizeWidthTo(value, 400, Easing.OutQuint);
             background.FadeColour(colour, 400, Easing.OutQuint);
         }

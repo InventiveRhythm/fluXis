@@ -1,5 +1,5 @@
-﻿using fluXis.Graphics.Sprites.Text;
-using fluXis.Screens;
+﻿using fluXis.Graphics;
+using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;
@@ -59,6 +59,6 @@ public partial class OnlineErrorContainer : FillFlowContainer
             Show();
     }
 
-    public override void Show() => this.ScaleTo(1.1f).FadeIn(FluXisScreen.FADE_DURATION).ScaleTo(1, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-    public override void Hide() => this.FadeOut(FluXisScreen.FADE_DURATION).ScaleTo(.9f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    public override void Show() => this.ScaleTo(1.1f).FadeIn(Styling.TRANSITION_FADE).ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
+    public override void Hide() => this.FadeOut(Styling.TRANSITION_FADE).ScaleTo(.9f, Styling.TRANSITION_MOVE, Easing.OutQuint);
 }

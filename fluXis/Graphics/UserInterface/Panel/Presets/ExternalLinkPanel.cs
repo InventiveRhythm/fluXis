@@ -31,7 +31,7 @@ public partial class ExternalLinkPanel : ButtonPanel
         CreateSubText = flow =>
         {
             flow.AddText("You're about to open the following link in your browser:\n");
-            flow.AddText<FluXisSpriteText>(link, text => text.Colour = FluXisColors.Highlight);
+            flow.AddText<FluXisSpriteText>(link, text => text.Colour = Theme.Highlight);
         };
 
         Buttons = new ButtonData[]

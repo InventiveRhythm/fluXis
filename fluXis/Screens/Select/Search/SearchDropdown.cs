@@ -22,14 +22,14 @@ public partial class SearchDropdown : Container
         Masking = true;
         Y = -30;
         Alpha = 0;
-        EdgeEffect = FluXisStyles.ShadowMedium;
+        EdgeEffect = Styling.ShadowMedium;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background1
+                Colour = Theme.Background1
             },
             new FillFlowContainer
             {

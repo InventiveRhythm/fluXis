@@ -1,5 +1,4 @@
 using System.Linq;
-using fluXis.Screens;
 using JetBrains.Annotations;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,7 +18,7 @@ public partial class SpriteStack<T> : CompositeDrawable
         RelativeSizeAxes = Axes.Both;
     }
 
-    public void Add(T sprite, float duration = FluXisScreen.FADE_DURATION)
+    public void Add(T sprite, float duration = Styling.TRANSITION_FADE)
     {
         if (sprite is not IHasLoadedValue)
             Current?.Delay(duration).Expire();

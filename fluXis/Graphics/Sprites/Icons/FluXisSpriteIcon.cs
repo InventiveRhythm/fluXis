@@ -7,6 +7,6 @@ public partial class FluXisSpriteIcon : SpriteIcon
 {
     public FluXisSpriteIcon()
     {
-        Colour = FluXisColors.Text;
+        Colour = Theme.Text;
     }
 }

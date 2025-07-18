@@ -53,11 +53,11 @@ public partial class TimelineElement : CompositeDrawable
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Highlight,
+                Colour = Theme.Highlight,
                 CornerRadius = 6,
                 Masking = true,
                 BorderThickness = 4,
-                BorderColour = FluXisColors.Highlight.Lighten(1f),
+                BorderColour = Theme.Highlight.Lighten(1f),
                 Child = new Box { RelativeSizeAxes = Axes.Both }
             },
             new GridContainer

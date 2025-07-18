@@ -206,13 +206,13 @@ public partial class DrawableChatMessage : Container
             {
                 if (word.StartsWith('@')) // mention
                 {
-                    AddText(word, t => t.Colour = FluXisColors.Highlight);
+                    AddText(word, t => t.Colour = Theme.Highlight);
                 }
                 else if (Regex.IsMatch(word, link_regex)) // link
                 {
                     AddText<ClickableFluXisSpriteText>(word, t =>
                     {
-                        t.Colour = FluXisColors.Link;
+                        t.Colour = Theme.Highlight;
                         t.Action = () => game?.OpenLink(word);
                     });
                 }

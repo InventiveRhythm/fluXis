@@ -114,7 +114,7 @@ public abstract partial class EditorTimingLines<T> : Container<T>
             for (var position = point.Time; position < target; position += increase)
             {
                 var divisor = divisorForIndex(j, Settings.SnapDivisor);
-                var line = CreateLine(position, j % (point.Signature * Settings.SnapDivisor) == 0, FluXisColors.GetEditorSnapColor(divisor));
+                var line = CreateLine(position, j % (point.Signature * Settings.SnapDivisor) == 0, Theme.GetEditorSnapColor(divisor));
 
                 LoadComponent(line);
 

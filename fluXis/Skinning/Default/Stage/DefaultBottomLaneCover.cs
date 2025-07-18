@@ -17,7 +17,7 @@ public partial class DefaultBottomLaneCover : Container
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
         Height = 0.5f;
-        Colour = FluXisColors.Background3;
+        Colour = Theme.Background3;
 
         InternalChildren = new Drawable[]
         {

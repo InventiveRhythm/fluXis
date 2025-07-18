@@ -19,7 +19,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class ScriptEntry : PointListEntry
 {
     protected override string Text => "Script";
-    protected override Colour4 Color => FluXisColors.Script;
+    protected override Colour4 Color => Theme.Script;
 
     private ScriptEvent script => (ScriptEvent)Object;
 

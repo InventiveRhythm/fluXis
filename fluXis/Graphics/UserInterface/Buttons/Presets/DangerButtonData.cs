@@ -10,8 +10,8 @@ public class DangerButtonData : ButtonData
     {
         Text = text;
         Action = action;
-        Color = FluXisColors.Red;
-        TextColor = FluXisColors.Background1;
+        Color = Theme.Red;
+        TextColor = Theme.Background1;
         HoldToConfirm = holdToConfirm;
     }
 }

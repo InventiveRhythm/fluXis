@@ -14,7 +14,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class HitObjectEaseEntry : PointListEntry
 {
     protected override string Text => "HitObject Ease";
-    protected override Colour4 Color => FluXisColors.HitObjectEase;
+    protected override Colour4 Color => Theme.HitObjectEase;
 
     private HitObjectEaseEvent ease => Object as HitObjectEaseEvent;
 

@@ -123,7 +123,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background3
+                    Colour = Theme.Background3
                 },
                 new FluXisSpriteText
                 {
@@ -140,7 +140,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             content = new Container
             {
@@ -153,7 +153,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background3
+                        Colour = Theme.Background3
                     },
                     new LoadWrapper<DrawableOnlineBackground>
                     {
@@ -164,7 +164,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                     gradient = new SectionedGradient
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2,
+                        Colour = Theme.Background2,
                         SplitPoint = .3f,
                         EndAlpha = .5f,
                         Alpha = .6f
@@ -232,7 +232,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                                 Anchor = Anchor.CentreRight,
                                                                 Origin = Anchor.CentreRight,
                                                                 BackgroundColour = Colour4.Black.Opacity(.5f),
-                                                                TextColour = FluXisColors.Text,
+                                                                TextColour = Theme.Text,
                                                                 WebFontSize = 8,
                                                                 Height = 16,
                                                                 Margin = new MarginPadding { Left = 8 }
@@ -279,15 +279,15 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                         _ => "UNKNOWN"
                                                     },
                                                     TextColour = Colour4.Black.Opacity(.75f),
-                                                    BackgroundColour = FluXisColors.GetStatusColor(MapSet.Status),
-                                                    EdgeEffect = FluXisStyles.ShadowSmallNoOffset
+                                                    BackgroundColour = Theme.GetStatusColor(MapSet.Status),
+                                                    EdgeEffect = Styling.ShadowSmallNoOffset
                                                 },
                                                 new RoundedChip
                                                 {
                                                     Text = getKeymodeString(),
                                                     TextColour = Colour4.Black.Opacity(.75f),
                                                     BackgroundColour = getKeymodeColor(),
-                                                    EdgeEffect = FluXisStyles.ShadowSmallNoOffset,
+                                                    EdgeEffect = Styling.ShadowSmallNoOffset,
                                                     Anchor = Anchor.CentreRight,
                                                     Origin = Anchor.CentreRight
                                                 }
@@ -384,7 +384,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         var lowest = MapSet.Maps.Min(x => x.Mode);
         var highest = MapSet.Maps.Max(x => x.Mode);
 
-        return ColourInfo.GradientHorizontal(FluXisColors.GetKeyColor(lowest), FluXisColors.GetKeyColor(highest));
+        return ColourInfo.GradientHorizontal(Theme.GetKeyCountColor(lowest), Theme.GetKeyCountColor(highest));
     }
 
     private void mapsetsUpdated(RealmMapSet set) => Schedule(updateState);
@@ -400,10 +400,10 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         content.ResizeWidthTo(shouldShow ? CardWidth - 10 : CardWidth, 400, Easing.OutQuint);
 
         if (downloading)
-            background.Colour = FluXisColors.DownloadQueued;
+            background.Colour = Theme.DownloadQueued;
         else if (downloaded)
-            background.Colour = FluXisColors.DownloadFinished;
+            background.Colour = Theme.DownloadFinished;
         else
-            background.Colour = FluXisColors.Background3;
+            background.Colour = Theme.Background3;
     }
 }

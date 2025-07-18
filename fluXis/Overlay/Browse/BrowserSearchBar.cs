@@ -31,7 +31,7 @@ public partial class BrowserSearchBar : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             new Container
             {
@@ -47,7 +47,7 @@ public partial class BrowserSearchBar : Container
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background3
+                            Colour = Theme.Background3
                         },
                         new Container
                         {
@@ -58,8 +58,8 @@ public partial class BrowserSearchBar : Container
                                 RelativeSizeAxes = Axes.Both,
                                 PlaceholderText = "Search...",
                                 FontSize = FluXisSpriteText.GetWebFontSize(20),
-                                BackgroundInactive = FluXisColors.Background3,
-                                BackgroundActive = FluXisColors.Background3
+                                BackgroundInactive = Theme.Background3,
+                                BackgroundActive = Theme.Background3
                             }
                         }
                     }

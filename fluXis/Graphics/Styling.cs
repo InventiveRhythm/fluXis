@@ -4,9 +4,13 @@ using osuTK;
 
 namespace fluXis.Graphics;
 
-public static class FluXisStyles
+public static class Styling
 {
     public const float SHADOW_OPACITY = .25f;
+
+    public const float TRANSITION_MOVE = 600;
+    public const float TRANSITION_FADE = 300;
+    public const float TRANSITION_ENTER_DELAY = 100;
 
     public static EdgeEffectParameters ShadowSmall => createShadow(5, 2);
     public static EdgeEffectParameters ShadowSmallNoOffset => createShadow(5, 0);

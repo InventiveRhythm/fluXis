@@ -15,7 +15,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class ScrollVelocityEntry : PointListEntry
 {
     protected override string Text => "Scroll Velocity";
-    protected override Colour4 Color => FluXisColors.ScrollVelocity;
+    protected override Colour4 Color => Theme.ScrollVelocity;
 
     private ScrollVelocity sv => Object as ScrollVelocity;
 

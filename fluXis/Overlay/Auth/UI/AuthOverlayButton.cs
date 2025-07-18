@@ -12,8 +12,8 @@ public partial class AuthOverlayButton : FluXisButton
         Text = text;
         RelativeSizeAxes = Axes.X;
         Height = 40;
-        Color = FluXisColors.Highlight;
-        TextColor = FluXisColors.Background2;
+        Color = Theme.Highlight;
+        TextColor = Theme.Background2;
         FontSize = FluXisSpriteText.GetWebFontSize(14);
         Anchor = Anchor.TopCentre;
         Origin = Anchor.TopCentre;

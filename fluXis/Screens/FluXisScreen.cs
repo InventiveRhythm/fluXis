@@ -25,11 +25,6 @@ public partial class FluXisScreen : Screen
     public virtual bool PlayBackSound => true;
     public virtual bool AutoPlayNext => false;
 
-    // transition defaults
-    public const float MOVE_DURATION = 600;
-    public const float FADE_DURATION = 300;
-    public const float ENTER_DELAY = 100;
-
     public virtual UserActivity InitialActivity => new UserActivity.MenuGeneral();
     public Bindable<UserActivity> Activity { get; }
 

@@ -40,14 +40,14 @@ public partial class SearchBar : Container
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
                 Masking = true,
-                EdgeEffect = FluXisStyles.ShadowMedium,
+                EdgeEffect = Styling.ShadowMedium,
                 Shear = new Vector2(-.2f, 0),
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background1
+                        Colour = Theme.Background1
                     },
                     new Container
                     {
@@ -71,7 +71,7 @@ public partial class SearchBar : Container
                                 Child = new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = FluXisColors.Background2
+                                    Colour = Theme.Background2
                                 }
                             },
                             new Container
@@ -97,7 +97,7 @@ public partial class SearchBar : Container
                                 Child = new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = FluXisColors.Background3
+                                    Colour = Theme.Background3
                                 }
                             },
                             new FluXisSpriteIcon
@@ -141,8 +141,8 @@ public partial class SearchBar : Container
         else dropdown.Hide();
     }
 
-    public override void Show() => this.MoveToX(-100).MoveToX(-10, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-    public override void Hide() => this.MoveToX(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    public override void Show() => this.MoveToX(-100).MoveToX(-10, Styling.TRANSITION_MOVE, Easing.OutQuint);
+    public override void Hide() => this.MoveToX(-100, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
     protected override bool OnClick(ClickEvent e) => true;
 }

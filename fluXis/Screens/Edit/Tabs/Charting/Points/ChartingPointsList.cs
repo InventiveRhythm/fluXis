@@ -42,8 +42,8 @@ public partial class ChartingPointsList : PointsList
 
     protected override IEnumerable<DropdownEntry> CreateDropdownEntries() => new DropdownEntry[]
     {
-        new("Timing Point", FluXisColors.TimingPoint, () => Create(new TimingPoint()), x => x is TimingPoint),
-        new("Lane Switch", FluXisColors.LaneSwitch, () => Create(new LaneSwitchEvent { Count = Map.RealmMap.KeyCount }), x => x is LaneSwitchEvent),
-        new("Note", FluXisColors.Note, () => Create(new NoteEvent()), x => x is NoteEvent),
+        new("Timing Point", Theme.TimingPoint, () => Create(new TimingPoint()), x => x is TimingPoint),
+        new("Lane Switch", Theme.LaneSwitch, () => Create(new LaneSwitchEvent { Count = Map.RealmMap.KeyCount }), x => x is LaneSwitchEvent),
+        new("Note", Theme.Note, () => Create(new NoteEvent()), x => x is NoteEvent),
     };
 }

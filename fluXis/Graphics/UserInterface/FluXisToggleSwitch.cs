@@ -45,7 +45,7 @@ public partial class FluXisToggleSwitch : Container
                 Child = background = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background3
+                    Colour = Theme.Background3
                 }
             },
             new Container
@@ -68,7 +68,7 @@ public partial class FluXisToggleSwitch : Container
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.Centre,
                         Size = new Vector2(16),
-                        Colour = FluXisColors.Background5
+                        Colour = Theme.Background5
                     }
                 }
             }
@@ -81,8 +81,8 @@ public partial class FluXisToggleSwitch : Container
 
         State.BindValueChanged(v =>
         {
-            background.FadeColour(v.NewValue ? FluXisColors.Highlight : FluXisColors.Background3, 200);
-            nub.FadeColour(v.NewValue ? FluXisColors.Background3 : FluXisColors.Background5, 200);
+            background.FadeColour(v.NewValue ? Theme.Highlight : Theme.Background3, 200);
+            nub.FadeColour(v.NewValue ? Theme.Background3 : Theme.Background5, 200);
             nub.MoveToX(v.NewValue ? 1 : 0, 400, Easing.OutQuint);
             nub.ResizeTo(v.NewValue ? 24 : 16, 400, Easing.OutQuint);
 

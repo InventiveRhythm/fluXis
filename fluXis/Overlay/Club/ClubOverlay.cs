@@ -66,13 +66,13 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                     RelativeSizeAxes = Axes.Both,
                     RelativePositionAxes = Axes.Both,
                     Masking = true,
-                    EdgeEffect = FluXisStyles.ShadowLargeNoOffset,
+                    EdgeEffect = Styling.ShadowLargeNoOffset,
                     Children = new Drawable[]
                     {
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background1
+                            Colour = Theme.Background1
                         },
                         scroll = new FluXisScrollContainer
                         {

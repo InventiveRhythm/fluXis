@@ -15,7 +15,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries;
 public partial class LaneSwitchEntry : PointListEntry
 {
     protected override string Text => "Lane Switch";
-    protected override Colour4 Color => FluXisColors.LaneSwitch;
+    protected override Colour4 Color => Theme.LaneSwitch;
 
     private LaneSwitchEvent laneSwitch => Object as LaneSwitchEvent;
 

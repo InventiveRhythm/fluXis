@@ -1,3 +1,4 @@
+using fluXis.Graphics;
 using fluXis.Graphics.Shaders.Bloom;
 using fluXis.Graphics.Shaders.Chromatic;
 using fluXis.Graphics.Shaders.Glitch;
@@ -67,7 +68,7 @@ public partial class MultiModeSelect : MultiSubScreen
                         Origin = Anchor.Centre,
                         Scale = new Vector2(2f),
                         Alpha = 0,
-                        Colour = FluXisColors.Red
+                        Colour = Theme.Red
                     },
                     buttons = new BloomContainer
                     {
@@ -99,11 +100,11 @@ public partial class MultiModeSelect : MultiSubScreen
                                     this.Shake(200, 15);
                                     redBox.FadeTo(.5f).FadeOut(600);
 
-                                    chroma.StrengthTo(16).StrengthTo(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+                                    chroma.StrengthTo(16).StrengthTo(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
                                     glitch.StrengthTo(1).Strength2To(1).Strength3To(.04f)
-                                          .StrengthTo(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-                                          .Strength2To(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-                                          .Strength3To(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+                                          .StrengthTo(0, Styling.TRANSITION_MOVE, Easing.OutQuint)
+                                          .Strength2To(0, Styling.TRANSITION_MOVE, Easing.OutQuint)
+                                          .Strength3To(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
                                     if (++clickCount < max_clicks)
                                         return;
@@ -180,7 +181,7 @@ public partial class MultiModeSelect : MultiSubScreen
     {
         base.FadeIn();
 
-        buttons.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        buttons.MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
         menuMusic.GoToLayer(0, -1);
 
@@ -194,7 +195,7 @@ public partial class MultiModeSelect : MultiSubScreen
         base.FadeOut(next);
 
         var up = next is MultiRankedMain;
-        buttons.MoveToY(up ? -100 : 100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        buttons.MoveToY(up ? -100 : 100, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
         rankedButton.Hide();
         openLobbyButton.Hide();

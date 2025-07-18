@@ -1,7 +1,7 @@
 using fluXis.Audio;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Input;
-using fluXis.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Graphics;
@@ -129,15 +129,15 @@ public partial class VolumeOverlay : VisibilityContainer, IKeyBindingHandler<Flu
 
     protected override void PopIn()
     {
-        this.FadeIn(FluXisScreen.FADE_DURATION);
-        categories.MoveToY(-60).MoveToY(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        this.FadeIn(Styling.TRANSITION_FADE);
+        categories.MoveToY(-60).MoveToY(-100, Styling.TRANSITION_MOVE, Easing.OutQuint);
         changeCategory(-index);
     }
 
     protected override void PopOut()
     {
-        this.FadeOut(FluXisScreen.FADE_DURATION);
-        categories.MoveToY(200, FluXisScreen.MOVE_DURATION, Easing.InQuint);
+        this.FadeOut(Styling.TRANSITION_FADE);
+        categories.MoveToY(200, Styling.TRANSITION_MOVE, Easing.InQuint);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

@@ -83,7 +83,7 @@ public partial class MenuSnow : Container
         {
             Origin = Anchor.Centre;
             Size = new Vector2(10);
-            EdgeEffect = FluXisStyles.SnowShadow;
+            EdgeEffect = Styling.SnowShadow;
         }
     }
 }

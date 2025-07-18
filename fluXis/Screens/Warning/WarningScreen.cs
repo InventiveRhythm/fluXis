@@ -1,3 +1,4 @@
+using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Text;
@@ -81,15 +82,15 @@ public partial class WarningScreen : FluXisScreen
         switch (step)
         {
             case 1:
-                seq = epilepsyContainer.ScaleTo(1.1f).FadeInFromZero(FADE_DURATION)
-                                       .ScaleTo(1, MOVE_DURATION, Easing.OutQuint)
+                seq = epilepsyContainer.ScaleTo(1.1f).FadeInFromZero(Styling.TRANSITION_FADE)
+                                       .ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint)
                                        .Then(5000)
-                                       .ScaleTo(0.9f, MOVE_DURATION, Easing.OutQuint)
-                                       .FadeOut(FADE_DURATION);
+                                       .ScaleTo(0.9f, Styling.TRANSITION_MOVE, Easing.OutQuint)
+                                       .FadeOut(Styling.TRANSITION_FADE);
 
                 epilepsyText.Delay(2000).ScaleTo(1.1f)
-                            .FadeIn(FADE_DURATION)
-                            .ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
+                            .FadeIn(Styling.TRANSITION_FADE)
+                            .ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
                 break;
 
             default:
@@ -113,6 +114,6 @@ public partial class WarningScreen : FluXisScreen
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        this.ScaleTo(0.9f, MOVE_DURATION, Easing.OutQuint).FadeOut(FADE_DURATION);
+        this.ScaleTo(0.9f, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeOut(Styling.TRANSITION_FADE);
     }
 }

@@ -19,7 +19,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries;
 public partial class TimingPointEntry : PointListEntry
 {
     protected override string Text => "Timing Point";
-    protected override Colour4 Color => FluXisColors.TimingPoint;
+    protected override Colour4 Color => Theme.TimingPoint;
 
     private TimingPoint timing => Object as TimingPoint;
 

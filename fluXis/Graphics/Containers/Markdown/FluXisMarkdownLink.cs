@@ -44,6 +44,6 @@ public partial class FluXisMarkdownLink : MarkdownLinkText, IHasTooltip
     public override SpriteText CreateSpriteText() => new FluXisSpriteText
     {
         WebFontSize = 14,
-        Colour = FluXisColors.Highlight
+        Colour = Theme.Highlight
     };
 }

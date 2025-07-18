@@ -85,7 +85,7 @@ public partial class SearchDropdownStatus : Container
             CornerRadius = 10;
             Masking = true;
 
-            var color = FluXisColors.GetStatusColor(Status);
+            var color = Theme.GetStatusColor(Status);
 
             InternalChildren = new Drawable[]
             {
@@ -113,12 +113,12 @@ public partial class SearchDropdownStatus : Container
             if (DropdownItem.onStatusClick(this))
             {
                 colorBox.FadeIn(200);
-                text.FadeColour(FluXisColors.IsBright(colorBox.Colour) ? FluXisColors.TextDark : FluXisColors.Text, 200);
+                text.FadeColour(Theme.IsBright(colorBox.Colour) ? Theme.TextDark : Theme.Text, 200);
             }
             else
             {
                 colorBox.FadeOut(200);
-                text.FadeColour(FluXisColors.Text, 200);
+                text.FadeColour(Theme.Text, 200);
             }
 
             return true;

@@ -366,15 +366,15 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
         foreach (var mode in modes)
         {
-            var color = FluXisColors.GetKeyColor(mode.Key);
+            var color = Theme.GetKeyCountColor(mode.Key);
 
             diffsContainer.Add(new RoundedChip
             {
                 Text = $"{mode.Key}K",
                 BackgroundColour = color,
-                TextColour = (FluXisColors.IsBright(color) ? FluXisColors.Background2 : FluXisColors.Text).Opacity(.75f),
+                TextColour = (Theme.IsBright(color) ? Theme.Background2 : Theme.Text).Opacity(.75f),
                 Margin = new MarginPadding { Left = 6, Right = 2 },
-                EdgeEffect = FluXisStyles.ShadowSmall,
+                EdgeEffect = Styling.ShadowSmall,
                 SidePadding = 8
             });
 
@@ -386,8 +386,8 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    Colour = FluXisColors.GetDifficultyColor(diff.Rating),
-                    EdgeEffect = FluXisStyles.ShadowSmall
+                    Colour = Theme.GetDifficultyColor(diff.Rating),
+                    EdgeEffect = Styling.ShadowSmall
                 });
             }
         }
@@ -484,7 +484,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2,
+                    Colour = Theme.Background2,
                     Alpha = .5f
                 },
                 icon = new FluXisSpriteIcon

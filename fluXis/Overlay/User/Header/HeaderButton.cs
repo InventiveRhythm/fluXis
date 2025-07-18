@@ -33,14 +33,14 @@ public partial class HeaderButton : CircularContainer
         AutoSizeAxes = Axes.X;
         Height = 48;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        EdgeEffect = Styling.ShadowSmall;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             hover = new HoverLayer(),
             flash = new FlashLayer(),

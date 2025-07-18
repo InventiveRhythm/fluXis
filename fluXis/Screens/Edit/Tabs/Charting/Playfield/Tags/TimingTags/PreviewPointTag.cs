@@ -10,7 +10,7 @@ public partial class PreviewPointTag : EditorTag
     [Resolved]
     private EditorMap map { get; set; }
 
-    public override Colour4 TagColour => FluXisColors.PreviewPoint;
+    public override Colour4 TagColour => Theme.PreviewPoint;
 
     public PreviewPointTag(EditorTagContainer parent)
         : base(parent, new PreviewPointObject())
