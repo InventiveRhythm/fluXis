@@ -115,8 +115,5 @@ public partial class ModCategory : CompositeDrawable
         }, delay);
     }
 
-    protected override bool OnClick(ClickEvent e)
-    {
-        return true;
-    }
+    protected override bool OnClick(ClickEvent e) => true;
 }
