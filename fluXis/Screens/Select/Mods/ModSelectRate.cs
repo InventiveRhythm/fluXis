@@ -201,11 +201,7 @@ public partial class ModSelectRate : FillFlowContainer
             .FadeOut(200).MoveToX(-50, 400, Easing.OutQuint);
     }
 
-    protected override bool OnClick(ClickEvent e)
-    {
-        return true;
-    }
-
+    protected override bool OnClick(ClickEvent e) => true;
     private partial class SliderTickMark : Container
     {
         public float Value { get; init; }
