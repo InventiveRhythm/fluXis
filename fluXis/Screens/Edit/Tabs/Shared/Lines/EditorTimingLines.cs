@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
