@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
@@ -31,9 +30,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public IClock Source => underlying.Source;
     public override bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;
-
-    //public double CurrentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
-    public double CurrentTimeAccurate => isSeekingSmoothly? smoothSeekTarget : CurrentTime;
+    public double CurrentTimeAccurate => isSeekingSmoothly ? smoothSeekTarget : CurrentTime;
 
     private readonly FramedMapClock underlying;
     private readonly Bindable<DrawableTrack> track = new();

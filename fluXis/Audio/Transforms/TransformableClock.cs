@@ -40,5 +40,6 @@ public abstract partial class TransformableClock : CompositeComponent, IAdjustab
 
     public double InterpolateAt(double elapsedTime, double newTime, double duration, Easing easing = Easing.None)
         => Interpolation.ValueAt(elapsedTime, CurrentTime, newTime, 0, duration, easing);
+
     public abstract void ProcessFrame();
 }

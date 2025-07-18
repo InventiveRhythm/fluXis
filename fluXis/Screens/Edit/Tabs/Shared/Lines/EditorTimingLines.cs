@@ -50,6 +50,7 @@ public abstract partial class EditorTimingLines<T> : Container<T>
     protected override void Update()
     {
         bool shouldSort = false;
+
         while (pastLines.Count > 0 && !pastLines[^1].BelowScreen)
         {
             var line = pastLines[^1];
@@ -82,12 +83,6 @@ public abstract partial class EditorTimingLines<T> : Container<T>
 
         if (shouldSort)
             SortInternal();
-    }
-
-    private void addAndSort(T line)
-    {
-        Add(line);
-        SortInternal();
     }
 
     protected override int Compare(Drawable x, Drawable y)
