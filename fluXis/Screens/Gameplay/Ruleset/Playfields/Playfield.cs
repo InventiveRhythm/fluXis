@@ -145,12 +145,21 @@ public partial class Playfield : Container
         MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        laneSwitchManager.ReceptorOffsetChanged += offset =>
+        {
+            Receptors.Padding = new MarginPadding { Bottom = offset };
+        };
+    }
+
     protected override void Update()
     {
         updatePositionScale();
 
         hitline.Y = -laneSwitchManager.HitPosition;
-        Receptors.Padding = new MarginPadding { Bottom = laneSwitchManager.ReceptorOffset };
 
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
