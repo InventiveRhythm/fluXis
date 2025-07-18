@@ -11,6 +11,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osuTK.Input;
 using Vector2 = osuTK.Vector2;
 
 namespace fluXis.Graphics.UserInterface;
@@ -23,10 +24,9 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
     public Colour4? CustomColor { get; set; }
 
     private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
-    public Action<DoubleClickEvent> OnDoubleClickAction { get; set; }
+    public Action<MouseDownEvent> OnRightClick { get; set; }
     private ClickableSpriteIcon leftIcon;
     private ClickableSpriteIcon rightIcon;
-    private FluXisSliderBar sliderBar;
 
     private double lastSampleTime;
     private Sample valueChange;
@@ -56,7 +56,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Horizontal = 20 },
-                Child = sliderBar = new FluXisSliderBar(this, Height)
+                Child = new FluXisSliderBar(this, Height)
                 {
                     RelativeSizeAxes = Axes.Both,
                     Current = Bindable,
@@ -161,15 +161,15 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             background.FadeColour(colour, 400, Easing.OutQuint);
         }
 
-        protected override bool OnDoubleClick(DoubleClickEvent e)
+        protected override bool OnMouseDown(MouseDownEvent e)
         {
-            if (parent.OnDoubleClickAction != null)
+            if (parent.OnRightClick != null && e.Button == MouseButton.Right)
             {
-                parent.OnDoubleClickAction.Invoke(e);
+                parent.OnRightClick.Invoke(e);
                 return true;
             }
             
-            return base.OnDoubleClick(e);
+            return base.OnMouseDown(e);
         }
     }
 }

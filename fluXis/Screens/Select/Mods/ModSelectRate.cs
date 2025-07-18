@@ -144,7 +144,8 @@ public partial class ModSelectRate : FillFlowContainer
                                 Bindable = RateBindable,
                                 RelativeSizeAxes = Axes.X,
                                 Step = RateBindable.Precision,
-                                CustomColor = color
+                                CustomColor = color,
+                                OnRightClick = _ => RateBindable.Value = 1f
                             },
                             new Container
                             {
@@ -184,8 +185,6 @@ public partial class ModSelectRate : FillFlowContainer
             int multiplier = (int)Math.Round(mod.ScoreMultiplier * 100) - 100;
             multiplierText.Text = $"{(multiplier > 0 ? "+" : string.Empty)}{multiplier}%";
         });
-
-        rateSlider.OnDoubleClickAction = e => RateBindable.Value = 1f;
     }
 
     public override void Show()
