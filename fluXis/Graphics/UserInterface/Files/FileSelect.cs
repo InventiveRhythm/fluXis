@@ -42,6 +42,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     public FileInfo CurrentFile { get; private set; }
     public List<GenericEntry> EntryList { get; private set; } = new();
     private bool canRefresh = false;
+    private bool isfilesFlowFull = false;
 
     public event Action<FileInfo> FileChanged;
 
@@ -63,6 +64,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     private FluXisButton selectButton;
 
     private Sample errorSample { get; set; }
+
+    private const int add_batch_size = 50;
 
     public FileSelect()
     {
@@ -523,6 +526,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         filesFlow.Clear();
         EntryList.Clear();
         searchTextBox.Text = "";
+        isfilesFlowFull = false;
 
         if (!tryGetEntriesForPath(info, out var items)) return;
 
@@ -547,7 +551,11 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         EntryList.Sort();
 
-        if (items.Count < 4500) filesFlow.AddRange(EntryList);
+        if (items.Count < 4500)
+        {
+            filesFlow.AddRange(EntryList);
+            isfilesFlowFull = true;
+        }
     }
 
     private void showDriveSelect()
@@ -626,6 +634,42 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         }
     }
 
+    private void batchAddEntries(List<GenericEntry> entries, int batchSize = 10)
+    {
+        var entriesToAdd = getEntriesNotInFilesFlow()
+            .Where(entry => entries.Contains(entry)).ToList();
+        
+        if (entriesToAdd.Count == 0) return;
+
+        int curIdx = 0;
+        
+        void addBatch()
+        {
+            if (currentSearchDelegate == null || currentSearchDelegate.Cancelled)
+                return;
+                
+            int endIdx = Math.Min(curIdx + batchSize, entriesToAdd.Count);
+            var batch = entriesToAdd.GetRange(curIdx, endIdx - curIdx);
+
+            filesFlow.AddRange(batch);
+            
+            curIdx = endIdx;
+            
+            if (curIdx < entriesToAdd.Count)
+            {
+                currentSearchDelegate = Scheduler.AddDelayed(addBatch, 10);
+            }
+        }
+        
+        addBatch();
+    }
+
+    private List<GenericEntry> getEntriesNotInFilesFlow(IEnumerable<GenericEntry> entries = null)
+    {   
+        entries ??= filesFlow.Children.OfType<GenericEntry>();
+        return EntryList.Except(entries).ToList();
+    }
+
     private ScheduledDelegate currentSearchDelegate;
 
     private void updateSearch()
@@ -659,8 +703,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             bool matchFound = false;
 
             var entriesToProcess = EntryList.OfType<GenericEntry>().ToList();
-            int currentIndex = 0;
-            const int batch_size = 50;
+            int curIdx = 0;
             
             filesFlow.Hide();
 
@@ -672,19 +715,19 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     return;
                 }
 
-                int endIdx = Math.Min(currentIndex + batch_size, entriesToProcess.Count);
+                var matchingEntries = new List<GenericEntry>();
+                int endIdx = Math.Min(curIdx + add_batch_size, entriesToProcess.Count);
 
                 updateNoFilesContainerVisibility();
 
-                for (int i = currentIndex; i < endIdx; i++)
+                for (int i = curIdx; i < endIdx; i++)
                 {
                     var entry = entriesToProcess[i];
                     bool matchesSearch = entry.Text.Contains(search, StringComparison.OrdinalIgnoreCase);
 
                     if (matchesSearch)
                     {
-                        if (!filesFlow.Contains(entry))
-                            filesFlow.Add(entry);
+                        matchingEntries.Add(entry);
                         if (!matchFound) filesFlow.FadeIn();
                         matchFound = true;
                         entry.Show();
@@ -695,9 +738,14 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     }
                 }
 
-                currentIndex = endIdx;
+                if (matchingEntries.Count > 0)
+                {
+                    batchAddEntries(matchingEntries, add_batch_size);
+                }
 
-                if (currentIndex < entriesToProcess.Count)
+                curIdx = endIdx;
+
+                if (curIdx < entriesToProcess.Count)
                 {
                     currentSearchDelegate = Scheduler.AddDelayed(processBatch, 10);
                 }
@@ -729,13 +777,23 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     {
         base.Update();
     
-        Scheduler.AddDelayed(updateFileFlowContainer, 200);
+        Scheduler.AddDelayed(updateFilesFlowContainer, 200);
     }
 
-    private void updateFileFlowContainer()
+    private void updateFilesFlowContainer()
     {
         var pos = 0f;
         var Current = scrollContainer.Current;
+
+        if (Current / filesFlow.Height >= 0.7f)
+        {
+            if (!isfilesFlowFull)
+            {
+                var missingEntries = getEntriesNotInFilesFlow();
+                batchAddEntries(missingEntries, add_batch_size);
+            }
+            isfilesFlowFull = true;
+        }
 
         for (var idx = 0; idx < EntryList.Count; idx++)
         {
@@ -753,8 +811,9 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     filesFlow.Add(item);
             }
         }
-
-        filesFlow.Height = pos;
+        
+        if (isfilesFlowFull) filesFlow.Height = filesFlow[^1].Y + 40;
+        else filesFlow.Height = pos;
     }
     
     public void Close() => Hide();
