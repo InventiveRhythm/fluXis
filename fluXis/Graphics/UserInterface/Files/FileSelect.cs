@@ -700,6 +700,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         else
         {
             canRefresh = false;
+            isfilesFlowFull = false;
             bool matchFound = false;
 
             var entriesToProcess = EntryList.OfType<GenericEntry>().ToList();
@@ -754,6 +755,9 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     canRefresh = true;
                     currentSearchDelegate = null;
                     updateNoFilesContainerVisibility();
+                    var unwantedEntries = getEntriesNotInFilesFlow();
+                    filesFlow.RemoveRange(unwantedEntries, false);
+                    isfilesFlowFull = true;
                 }
             }
 
