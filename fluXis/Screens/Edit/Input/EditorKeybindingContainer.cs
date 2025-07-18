@@ -34,7 +34,9 @@ public partial class EditorKeybindingContainer : KeyBindingContainer<EditorKeybi
         loadKeymap();
     }
 
-    public override IEnumerable<IKeyBinding> DefaultKeyBindings => new KeyBinding[]
+    public override IEnumerable<IKeyBinding> DefaultKeyBindings => EditorKeyBindings;
+
+    public static IEnumerable<KeyBinding> EditorKeyBindings { get; } = new KeyBinding[]
     {
         new(new KeyCombination(InputKey.F1), EditorKeybinding.OpenHelp),
         new(new KeyCombination(InputKey.Control, InputKey.S), EditorKeybinding.Save),
