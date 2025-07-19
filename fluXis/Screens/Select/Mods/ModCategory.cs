@@ -7,6 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Localisation;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Select.Mods;
@@ -112,4 +113,6 @@ public partial class ModCategory : CompositeDrawable
             }
         }, delay);
     }
+
+    protected override bool OnClick(ClickEvent e) => true;
 }
