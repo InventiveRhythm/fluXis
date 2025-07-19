@@ -24,6 +24,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
+using osu.Framework.Threading;
 using osuTK;
 
 namespace fluXis.Graphics.UserInterface.Files;
@@ -39,11 +40,15 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
     private DirectoryInfo currentDirectory;
     public FileInfo CurrentFile { get; private set; }
+    public List<GenericEntry> EntryList { get; private set; } = new();
+    private bool canRefresh = false;
+    private bool isfilesFlowFull = false;
 
     public event Action<FileInfo> FileChanged;
 
     private PathTextBox pathTextBox;
     private FluXisTextBox searchTextBox;
+    private IdleTracker searchTracker;
 
     private FluXisScrollContainer scrollContainer;
     private FillFlowContainer filesFlow;
@@ -59,6 +64,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     private FluXisButton selectButton;
 
     private Sample errorSample { get; set; }
+
+    private const int add_batch_size = 50;
 
     public FileSelect()
     {
@@ -138,7 +145,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                         filesFlow = new FillFlowContainer
                                                         {
                                                             RelativeSizeAxes = Axes.X,
-                                                            AutoSizeAxes = Axes.Y,
+                                                            // AutoSizeAxes = Axes.Y,
                                                             Direction = FillDirection.Vertical,
                                                             Spacing = new Vector2(10)
                                                         },
@@ -380,6 +387,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                     Icon = FontAwesome6.Solid.MagnifyingGlass,
                                                     Margin = new MarginPadding { Left = 15 }
                                                 },
+                                                searchTracker = new IdleTracker(300, updateSearch),
                                                 new Container
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
@@ -393,7 +401,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                         PlaceholderText = "Click to search...",
                                                         BackgroundActive = FluXisColors.Background2,
                                                         BackgroundInactive = FluXisColors.Background2,
-                                                        OnTextChanged = updateSearch
+                                                        OnTextChanged = searchTracker.Reset
                                                     }
                                                 }
                                             }
@@ -482,6 +490,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         errorContainer.FadeOut(200);
         drivesFlow.FadeOut(200);
         filesFlow.FadeIn(200);
+        scrollContainer.ScrollToStart(false);
 
         currentDirectory = info;
         pathTextBox.Text = info?.FullName ?? string.Empty;
@@ -497,24 +506,38 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             selectButton.Enabled = true;
 
         filesFlow.Clear();
+        EntryList.Clear();
+        searchTextBox.Text = "";
+        isfilesFlowFull = false;
 
         if (!tryGetEntriesForPath(info, out var items)) return;
+
+        if (items.Count > 0)
+            noFilesContainer.FadeOut();
+        else
+            noFilesContainer.FadeIn();
 
         foreach (var item in items)
         {
             switch (item)
             {
                 case DirectoryInfo dir:
-                    filesFlow.Add(new DirectoryEntry(dir, this));
+                    EntryList.Add(new DirectoryEntry(dir, this));
                     break;
 
                 case FileInfo file:
-                    filesFlow.Add(new FileEntry(file, this));
+                    EntryList.Add(new FileEntry(file, this));
                     break;
             }
         }
 
-        updateSearch();
+        EntryList.Sort();
+
+        if (items.Count < 4500)
+        {
+            filesFlow.AddRange(EntryList);
+            isfilesFlowFull = true;
+        }
     }
 
     private void showDriveSelect()
@@ -593,30 +616,141 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         }
     }
 
+    private void batchAddEntries(List<GenericEntry> entries, int batchSize = 10)
+    {
+        var entriesToAdd = getEntriesNotInFilesFlow()
+            .Where(entry => entries.Contains(entry)).ToList();
+        
+        if (entriesToAdd.Count == 0) return;
+
+        int curIdx = 0;
+        
+        void addBatch()
+        {
+            if (currentSearchDelegate == null || currentSearchDelegate.Cancelled)
+                return;
+                
+            int endIdx = Math.Min(curIdx + batchSize, entriesToAdd.Count);
+            var batch = entriesToAdd.GetRange(curIdx, endIdx - curIdx);
+
+            filesFlow.AddRange(batch);
+            
+            curIdx = endIdx;
+            
+            if (curIdx < entriesToAdd.Count)
+            {
+                currentSearchDelegate = Scheduler.AddDelayed(addBatch, 10);
+            }
+        }
+        
+        addBatch();
+    }
+
+    private List<GenericEntry> getEntriesNotInFilesFlow(IEnumerable<GenericEntry> entries = null)
+    {   
+        entries ??= filesFlow.Children.OfType<GenericEntry>();
+        return EntryList.Except(entries).ToList();
+    }
+
+    private ScheduledDelegate currentSearchDelegate;
+
     private void updateSearch()
     {
         if (currentDirectory == null) return;
 
         var search = searchTextBox.Text;
 
+        if (currentSearchDelegate != null)
+        {
+            currentSearchDelegate.Cancel();
+            currentSearchDelegate = null;
+            canRefresh = true;
+        }
+
+        scrollContainer.ScrollToStart(false);
+
         if (string.IsNullOrEmpty(search))
         {
-            foreach (var item in filesFlow)
-                item.Show();
+            if (canRefresh)
+            {
+                canRefresh = false;
+                var currentir = currentDirectory;
+                changePathTo(null);
+                changePathTo(currentir);
+            }
         }
         else
         {
-            foreach (var item in filesFlow)
-            {
-                if (item is not GenericEntry entry) continue;
+            canRefresh = false;
+            isfilesFlowFull = false;
+            bool matchFound = false;
 
-                if (entry.Text.Contains(search, StringComparison.OrdinalIgnoreCase))
-                    entry.Show();
+            var entriesToProcess = EntryList.OfType<GenericEntry>().ToList();
+            int curIdx = 0;
+            
+            filesFlow.Hide();
+
+            void processBatch()
+            {
+                if (currentSearchDelegate == null || currentSearchDelegate.Cancelled)
+                {
+                    canRefresh = true;
+                    return;
+                }
+
+                var matchingEntries = new List<GenericEntry>();
+                int endIdx = Math.Min(curIdx + add_batch_size, entriesToProcess.Count);
+
+                updateNoFilesContainerVisibility();
+
+                for (int i = curIdx; i < endIdx; i++)
+                {
+                    var entry = entriesToProcess[i];
+                    bool matchesSearch = entry.Text.Contains(search, StringComparison.OrdinalIgnoreCase);
+
+                    if (matchesSearch)
+                    {
+                        matchingEntries.Add(entry);
+                        if (!matchFound) filesFlow.FadeIn();
+                        matchFound = true;
+                        entry.Show();
+                    }
+                    else
+                    {
+                        entry.Hide();
+                    }
+                }
+
+                if (matchingEntries.Count > 0)
+                {
+                    batchAddEntries(matchingEntries, add_batch_size);
+                }
+
+                curIdx = endIdx;
+
+                if (curIdx < entriesToProcess.Count)
+                {
+                    currentSearchDelegate = Scheduler.AddDelayed(processBatch, 10);
+                }
                 else
-                    entry.Hide();
+                {
+                    canRefresh = true;
+                    currentSearchDelegate = null;
+                    updateNoFilesContainerVisibility();
+                    var unwantedEntries = getEntriesNotInFilesFlow();
+                    filesFlow.RemoveRange(unwantedEntries, false);
+                    isfilesFlowFull = true;
+                }
             }
+
+            currentSearchDelegate = Scheduler.Add(processBatch);
         }
 
+        Scheduler.AddDelayed(updateNoFilesContainerVisibility, 200);
+    }
+
+    private void updateNoFilesContainerVisibility()
+    {
         if (filesFlow.Any(e => e.Alpha > 0))
             noFilesContainer.FadeOut(200);
         else
@@ -625,6 +759,49 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
     public override void Show() => this.ScaleTo(.9f).FadeInFromZero(200).ScaleTo(1f, 1000, Easing.OutElastic);
     public override void Hide() => this.FadeOut(200).ScaleTo(.9f, 400, Easing.OutQuint);
+    protected override void Update()
+    {
+        base.Update();
+    
+        Scheduler.AddDelayed(updateFilesFlowContainer, 200);
+    }
+
+    private void updateFilesFlowContainer()
+    {
+        var pos = 0f;
+        var Current = scrollContainer.Current;
+
+        if (Current / filesFlow.Height >= 0.7f)
+        {
+            if (!isfilesFlowFull)
+            {
+                var missingEntries = getEntriesNotInFilesFlow();
+                batchAddEntries(missingEntries, add_batch_size);
+            }
+            isfilesFlowFull = true;
+        }
+
+        for (var idx = 0; idx < EntryList.Count; idx++)
+        {
+            var item = EntryList[idx];
+            item.Y = pos;
+
+            var size = item.Size;
+            pos += size.Y + 10;
+
+            bool isVisible = pos >= Current - 10000 && pos <= Current + DrawHeight + 10000;
+
+            if (isVisible)
+            {
+                if (item.Parent == null)
+                    filesFlow.Add(item);
+            }
+        }
+        
+        if (isfilesFlowFull) filesFlow.Height = filesFlow[^1].Y + 40;
+        else filesFlow.Height = pos;
+    }
+    
     public void Close() => Hide();
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
