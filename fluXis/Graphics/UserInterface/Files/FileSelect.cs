@@ -48,7 +48,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
     private PathTextBox pathTextBox;
     private FluXisTextBox searchTextBox;
-    private System.Timers.Timer searchCooldownTimer;
+    private IdleTracker searchTracker;
 
     private FluXisScrollContainer scrollContainer;
     private FillFlowContainer filesFlow;
@@ -387,6 +387,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                     Icon = FontAwesome6.Solid.MagnifyingGlass,
                                                     Margin = new MarginPadding { Left = 15 }
                                                 },
+                                                searchTracker = new IdleTracker(300, updateSearch),
                                                 new Container
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
@@ -400,7 +401,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                         PlaceholderText = "Click to search...",
                                                         BackgroundActive = FluXisColors.Background2,
                                                         BackgroundInactive = FluXisColors.Background2,
-                                                        OnTextChanged = onSearchTextChanged
+                                                        OnTextChanged = searchTracker.Reset
                                                     }
                                                 }
                                             }
@@ -420,27 +421,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         base.LoadComplete();
         Show();
 
-        initSearchCooldownTImer();
         pathTextBox.OnCommit += (_, isNew) => onPathCommit(isNew);
         changePathTo(new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)));
-    }
-
-    private void initSearchCooldownTImer()
-    {
-        searchCooldownTimer = new System.Timers.Timer(400);
-        searchCooldownTimer.Elapsed += onSearchCooldownTimerElapsed;
-        searchCooldownTimer.AutoReset = false;
-    }
-
-    private void onSearchTextChanged()
-    {
-        searchCooldownTimer?.Stop();
-        searchCooldownTimer?.Start();
-    }
-
-    private void onSearchCooldownTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
-    {
-        Schedule(() => updateSearch());
     }
 
     private void onPathCommit(bool isNew)
