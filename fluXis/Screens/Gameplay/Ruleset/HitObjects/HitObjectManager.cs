@@ -52,6 +52,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
     public int KeyCount => playfield.RealmMap.KeyCount;
 
     public float HitPosition => DrawHeight - laneSwitchManager.HitPosition;
+    public float ReceptorOffset => DrawHeight - laneSwitchManager.ReceptorOffset;
 
     public bool Finished { get; private set; }
 

@@ -27,6 +27,7 @@ public partial class LaneSwitchManager : CompositeComponent
     public LaneSwitchEvent Current { get; private set; }
     public int CurrentCount { get; private set; }
     public float HitPosition { get; private set; }
+    public float ReceptorOffset { get; private set; }
 
     public LaneSwitchManager(List<LaneSwitchEvent> events, int keycount, bool newLayout, bool mirror)
     {
@@ -56,6 +57,7 @@ public partial class LaneSwitchManager : CompositeComponent
 
         CurrentCount = keycount;
         HitPosition = skin.SkinJson.GetKeymode(keycount).HitPosition;
+        ReceptorOffset = skin.SkinJson.GetKeymode(keycount).ReceptorOffset;
 
         for (int i = 0; i < keycount; i++)
         {
@@ -77,11 +79,13 @@ public partial class LaneSwitchManager : CompositeComponent
             {
                 var count = Math.Max(1, ls.Count);
                 var pos = (float)skin.SkinJson.GetKeymode(count).HitPosition;
+                var rOffset = (float)skin.SkinJson.GetKeymode(count).ReceptorOffset;
 
                 if (first)
                 {
                     CurrentCount = count;
                     HitPosition = pos;
+                    ReceptorOffset = rOffset;
                 }
 
                 var dur = Math.Max(ls.Duration, 0);
@@ -98,6 +102,7 @@ public partial class LaneSwitchManager : CompositeComponent
                 }
 
                 this.TransformTo(nameof(HitPosition), pos, dur, ls.Easing);
+                this.TransformTo(nameof(ReceptorOffset), rOffset, dur, ls.Easing);
                 this.TransformTo(nameof(CurrentCount), count).OnComplete(_ => Current = ls);
             }
 
