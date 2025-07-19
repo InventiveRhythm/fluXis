@@ -14,6 +14,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
@@ -145,19 +146,14 @@ public partial class Playfield : Container
         MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
     }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        laneSwitchManager.ReceptorOffsetChanged += offset =>
-            Receptors.Padding = Receptors.Padding with { Bottom = offset };
-    }
-
     protected override void Update()
     {
         updatePositionScale();
+        var newReceptorOffset = laneSwitchManager.ReceptorOffset;
 
         hitline.Y = -laneSwitchManager.HitPosition;
+        if (!Precision.AlmostEquals(newReceptorOffset, Receptors.Padding.Bottom))
+            Receptors.Padding = Receptors.Padding with { Bottom = newReceptorOffset };
 
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;

@@ -27,21 +27,7 @@ public partial class LaneSwitchManager : CompositeComponent
     public LaneSwitchEvent Current { get; private set; }
     public int CurrentCount { get; private set; }
     public float HitPosition { get; private set; }
-    private float receptorOffset;
-    public float ReceptorOffset 
-    { 
-        get => receptorOffset;
-        private set
-        {
-            if (receptorOffset != value)
-            {
-                receptorOffset = value;
-                ReceptorOffsetChanged?.Invoke(value);
-            }
-        }
-    }
-    
-    public event Action<float> ReceptorOffsetChanged;
+    public float ReceptorOffset { get; private set; }
 
     public LaneSwitchManager(List<LaneSwitchEvent> events, int keycount, bool newLayout, bool mirror)
     {
