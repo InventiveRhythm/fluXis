@@ -25,7 +25,6 @@ public partial class ModSelectRate : FillFlowContainer
     public ModsOverlay Selector { get; set; }
 
     public BindableFloat RateBindable { get; private set; }
-    private FluXisSlider<float> rateSlider { get; set; }
     private RateMod mod;
 
     private FluXisSpriteText rateText;
@@ -139,7 +138,7 @@ public partial class ModSelectRate : FillFlowContainer
                                     }
                                 }
                             },
-                            rateSlider = new FluXisSlider<float>
+                            new FluXisSlider<float>
                             {
                                 Bindable = RateBindable,
                                 RelativeSizeAxes = Axes.X,
@@ -201,6 +200,7 @@ public partial class ModSelectRate : FillFlowContainer
     }
 
     protected override bool OnClick(ClickEvent e) => true;
+    
     private partial class SliderTickMark : Container
     {
         public float Value { get; init; }
