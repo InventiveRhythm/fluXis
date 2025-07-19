@@ -150,9 +150,7 @@ public partial class Playfield : Container
         base.LoadComplete();
 
         laneSwitchManager.ReceptorOffsetChanged += offset =>
-        {
-            Receptors.Padding = new MarginPadding { Bottom = offset };
-        };
+            Receptors.Padding = Receptors.Padding with { Bottom = offset };
     }
 
     protected override void Update()
