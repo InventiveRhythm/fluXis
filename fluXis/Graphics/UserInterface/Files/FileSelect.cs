@@ -787,6 +787,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     
     private void updateFilesFlowContainer()
     {
+        if (EntryList.Count <= 4500) return;
+
         var pos = 0f;
         var Current = scrollContainer.Current;
 
