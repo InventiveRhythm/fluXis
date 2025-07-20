@@ -32,6 +32,7 @@ namespace fluXis.Graphics.UserInterface.Files;
 public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public bool ShowFiles { get; init; } = true;
+    public bool IsStreamingDisabled  { get; set; } = false;
     public string MapDirectory { get; init; } = null;
     public string[] AllowedExtensions { get; init; } = Array.Empty<string>();
 
@@ -72,6 +73,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     private Sample errorSample { get; set; }
 
     private const int add_batch_size = 50;
+    private const int streamable_threshold = 4500;
+    private const int lookahead_buffer_size = 10000;
 
     public FileSelect()
     {
@@ -541,7 +544,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         EntryList.Sort();
 
-        if (items.Count < 4500)
+        if (items.Count <= streamable_threshold || IsStreamingDisabled)
         {
             filesFlow.AddRange(EntryList);
         }
@@ -787,7 +790,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     
     private void updateFilesFlowContainer()
     {
-        if (EntryList.Count <= 4500) return;
+        if (EntryList.Count <= streamable_threshold || IsStreamingDisabled) return;
 
         var pos = 0f;
         var Current = scrollContainer.Current;
@@ -817,13 +820,13 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             var size = item.Size;
             pos += size.Y + 10;
 
-            bool isVisible = pos >= Current - 10000 && pos <= Current + DrawHeight + 10000;
+            bool isVisible = pos >= Current - lookahead_buffer_size && pos <= Current + DrawHeight + lookahead_buffer_size;
 
             if (isVisible && item.Parent == null && !filesFlow.Contains(item) && canBatchAddRest)
             {
                 if (item.IsAlive)
                     filesFlow.Add(item);
-                else if (EntryList.Count > 4500 && (matchedEntries.Contains(item) || string.IsNullOrEmpty(trackedSearchString)))
+                else if (EntryList.Count > streamable_threshold && (matchedEntries.Contains(item) || string.IsNullOrEmpty(trackedSearchString)))
                 {
                     filesFlow.Add(item);
                 }
