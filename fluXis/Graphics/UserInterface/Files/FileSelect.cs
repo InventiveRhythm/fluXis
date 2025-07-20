@@ -26,7 +26,6 @@ using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Threading;
 using osuTK;
-using Sentry;
 
 namespace fluXis.Graphics.UserInterface.Files;
 
