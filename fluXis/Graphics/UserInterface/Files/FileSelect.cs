@@ -520,6 +520,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         matchedEntries.Clear();
         searchTextBox.Text = "";
         trackedSearchString = searchTextBox.Text;
+        canBatchAddRest = true;
 
         if (!tryGetEntriesForPath(info, out var items)) return;
 
