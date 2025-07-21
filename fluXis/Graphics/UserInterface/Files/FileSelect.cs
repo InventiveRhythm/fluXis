@@ -429,7 +429,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     {
         base.LoadComplete();
         Show();
-
+        
         pathTextBox.OnCommit += (_, isNew) => onPathCommit(isNew);
         changePathTo(new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)));
         
@@ -547,6 +547,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         if (items.Count <= streamable_threshold || IsStreamingDisabled)
         {
+            filesFlow.AutoSizeAxes = Axes.Y;
             filesFlow.AddRange(EntryList);
         }
     }
@@ -677,8 +678,6 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             canRefresh = true;
         }
 
-        scrollContainer.ScrollToStart(false);
-
         if (string.IsNullOrEmpty(search))
         {
             matchedEntries.Clear();
@@ -692,14 +691,18 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         }
         else
         {
+            scrollContainer.ScrollToStart(false);
             canRefresh = false;
-            bool matchFound = false;
+            var matchesFound = 0;
             matchedEntries.Clear();
 
             var entriesToProcess = EntryList.OfType<GenericEntry>().ToList();
+
             int curIdx = 0;
             
             filesFlow.Hide();
+            foreach (var entry in entriesToProcess) entry.Hide();
+            filesFlow.AutoSizeAxes = Axes.Y;
 
             void processBatch()
             {
@@ -723,23 +726,16 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     {
                         matchedEntries.Add(entry);
                         batchMatchingEntries.Add(entry);
-                        if (!matchFound) filesFlow.FadeIn();
-                        matchFound = true;
+                        if (matchesFound > 0) filesFlow.FadeIn();
+                        matchesFound++;
                         entry.Show();
                     }
-                    else
-                    {
-                        entry.Hide();
-                        filesFlow.Remove(entry, false);
-                    }
                 }
-
+                
                 if (batchMatchingEntries.Count > 0)
                 {
                     batchAddEntries(batchMatchingEntries, add_batch_size);
                 }
-
-                filesFlow.RemoveAll(e => !e.IsAlive, true);
 
                 curIdx = endIdx;
 
@@ -753,7 +749,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     currentSearchDelegate = null;
                     updateNoFilesContainerVisibility();
                     var unwantedEntries = getEntriesNotInFilesFlow(matchedEntries);
-                    filesFlow.RemoveRange(unwantedEntries, true);
+                    filesFlow.RemoveRange(unwantedEntries, false);
                 }
             }
 
@@ -788,10 +784,10 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             }, deltaTime * 2);
         }
     }
-    
+
     private void updateFilesFlowContainer()
     {
-        if (EntryList.Count <= streamable_threshold || IsStreamingDisabled) return;
+        if (EntryList.Count <= streamable_threshold || IsStreamingDisabled || !string.IsNullOrEmpty(trackedSearchString)) return;
 
         var pos = 0f;
         var Current = scrollContainer.Current;
@@ -809,9 +805,13 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     Scheduler.AddDelayed(() => { foreach (var entry in batch) filesFlow.Add(entry); }, delay);
                     delay += (int)Clock.ElapsedFrameTime + 50;
                 }
+                Scheduler.AddDelayed(() => { filesFlow.AutoSizeAxes = Axes.Y; }, delay);
                 canBatchAddRest = false;
             }
+            return;
         }
+        
+        filesFlow.AutoSizeAxes = Axes.None;
 
         for (var idx = 0; idx < EntryList.Count; idx++)
         {
@@ -821,7 +821,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             var size = item.Size;
             pos += size.Y + 10;
 
-            bool isVisible = pos >= Current - lookahead_buffer_size && pos <= Current + DrawHeight + lookahead_buffer_size;
+            bool isVisible = pos <= Current + DrawHeight + lookahead_buffer_size;
 
             if (isVisible && item.Parent == null && !filesFlow.Contains(item) && canBatchAddRest)
             {
@@ -833,6 +833,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 }
             }
         }
+
+        filesFlow.Height = pos;
     }
     
     public void Close() => Hide();
