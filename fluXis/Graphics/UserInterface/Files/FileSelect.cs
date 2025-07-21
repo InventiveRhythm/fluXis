@@ -630,7 +630,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
     private void batchAddEntries(List<GenericEntry> entries, int batchSize = 10)
     {
-        var entriesToAdd = getEntriesNotInFilesFlow()
+        var entriesToAdd = getEntryListEntriesExcept()
             .Where(entry => entries.Contains(entry)).ToList();
         
         if (entriesToAdd.Count == 0) return;
@@ -658,7 +658,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         addBatch();
     }
 
-    private List<GenericEntry> getEntriesNotInFilesFlow(IEnumerable<GenericEntry> entries = null)
+    private List<GenericEntry> getEntryListEntriesExcept(IEnumerable<GenericEntry> entries = null)
     {   
         entries ??= filesFlow.Children.OfType<GenericEntry>();
         return EntryList.Except(entries).ToList();
@@ -748,7 +748,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     canRefresh = true;
                     currentSearchDelegate = null;
                     updateNoFilesContainerVisibility();
-                    var unwantedEntries = getEntriesNotInFilesFlow(matchedEntries);
+                    var unwantedEntries = getEntryListEntriesExcept(matchedEntries);
                     filesFlow.RemoveRange(unwantedEntries, false);
                 }
             }
@@ -797,7 +797,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             if (canBatchAddRest)
             {
                 int delay = 0;
-                var missingEntries = getEntriesNotInFilesFlow();
+                var missingEntries = getEntryListEntriesExcept();
                 var entriesToAdd = missingEntries.Where(entry => !filesFlow.Contains(entry)).ToList();
                 for (int i = 0; i < entriesToAdd.Count; i += add_batch_size)
                 {
