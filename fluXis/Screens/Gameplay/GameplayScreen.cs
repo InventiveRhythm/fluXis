@@ -556,7 +556,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             ScheduleAfterChildren(() =>
             {
                 globalClock.Seek(GameplayClock.CurrentTime);
-                globalClock.RateTo(Rate, MOVE_DURATION, Easing.InQuint);
+                globalClock.RateTo(globalClock.Rate, MOVE_DURATION, Easing.InQuint);
             });
         }
 
