@@ -52,7 +52,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     public event Action<FileInfo> FileChanged;
 
     private PathTextBox pathTextBox;
-    private FluXisTextBox searchTextBox;
+    private FluXisSearchBox searchBox;
     private IdleTracker searchTracker;
     private string trackedSearchString;
     private ScheduledDelegate currentSearchDelegate;
@@ -375,45 +375,10 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 pathTextBox = new PathTextBox()
                                             }
                                         },
-                                        Empty(),
-                                        new Container
+                                        searchTracker = new IdleTracker(300, updateSearch),
+                                        searchBox = new FluXisSearchBox
                                         {
-                                            RelativeSizeAxes = Axes.Both,
-                                            CornerRadius = 10,
-                                            Masking = true,
-                                            Children = new Drawable[]
-                                            {
-                                                new Box
-                                                {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                    Colour = FluXisColors.Background2
-                                                },
-                                                new FluXisSpriteIcon
-                                                {
-                                                    Size = new Vector2(20),
-                                                    Anchor = Anchor.CentreLeft,
-                                                    Origin = Anchor.CentreLeft,
-                                                    Icon = FontAwesome6.Solid.MagnifyingGlass,
-                                                    Margin = new MarginPadding { Left = 15 }
-                                                },
-                                                searchTracker = new IdleTracker(300, updateSearch),
-                                                new Container
-                                                {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                    Padding = new MarginPadding { Left = 40, Right = 10 },
-                                                    Child = searchTextBox = new FluXisTextBox
-                                                    {
-                                                        RelativeSizeAxes = Axes.X,
-                                                        Height = 40,
-                                                        Anchor = Anchor.CentreLeft,
-                                                        Origin = Anchor.CentreLeft,
-                                                        PlaceholderText = "Click to search...",
-                                                        BackgroundActive = FluXisColors.Background2,
-                                                        BackgroundInactive = FluXisColors.Background2,
-                                                        OnTextChanged = searchTracker.Reset
-                                                    }
-                                                }
-                                            }
+                                            OnTextChanged = searchTracker.Reset
                                         }
                                     }
                                 }
@@ -500,6 +465,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         errorContainer.FadeOut(200);
         drivesFlow.FadeOut(200);
         filesFlow.FadeIn(200);
+        searchBox.HideStatus();
+        searchBox.HideLoading();
         scrollContainer.ScrollToStart(false);
 
         currentDirectory = info;
@@ -518,8 +485,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         filesFlow.Clear();
         EntryList.Clear();
         matchedEntries.Clear();
-        searchTextBox.Text = "";
-        trackedSearchString = searchTextBox.Text;
+        searchBox.TextBox.Text = "";
+        trackedSearchString = searchBox.TextBox.Text;
         canBatchAddRest = true;
 
         if (!tryGetEntriesForPath(info, out var items)) return;
@@ -668,7 +635,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     {
         if (currentDirectory == null) return;
 
-        var search = searchTextBox.Text;
+        var search = searchBox.TextBox.Text;
         trackedSearchString = search;
 
         if (currentSearchDelegate != null)
@@ -677,10 +644,15 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             currentSearchDelegate = null;
             canRefresh = true;
         }
+        
+        searchBox.ChangeStatusText("Searching...");
+        searchBox.ShowStatus();
 
         if (string.IsNullOrEmpty(search))
         {
             matchedEntries.Clear();
+            searchBox.HideStatus();
+            searchBox.HideLoading();
             if (canRefresh)
             {
                 canRefresh = false;
@@ -694,13 +666,15 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             scrollContainer.ScrollToStart(false);
             canRefresh = false;
             matchedEntries.Clear();
+            searchBox.ShowStatus();
+            searchBox.ShowLoading();
 
             var entriesToProcess = EntryList.OfType<GenericEntry>().ToList();
 
             int curIdx = 0;
             int matchesFound = 0;
             bool matchFoundAtleastOnce = false;
-            
+
             filesFlow.Hide();
             foreach (var entry in entriesToProcess) entry.Hide();
             filesFlow.AutoSizeAxes = Axes.Y;
@@ -717,7 +691,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 int endIdx = Math.Min(curIdx + add_batch_size, entriesToProcess.Count);
 
                 updateNoFilesContainerVisibility();
-                
+
                 for (int i = curIdx; i < endIdx; i++)
                 {
                     var entry = entriesToProcess[i];
@@ -728,15 +702,16 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                         matchedEntries.Add(entry);
                         batchMatchingEntries.Add(entry);
 
-                        // we don't really need matchFoundAtleastOnce but it's good to have so we don't spam filesFlow.FadeIn()
                         if (!matchFoundAtleastOnce) filesFlow.FadeIn();
                         entry.Show();
-                        
+
                         matchesFound++;
                         matchFoundAtleastOnce = true;
                     }
+                    
+                    searchBox.ChangeStatusText($"Searched {i + 1} out of {EntryList.Count}, Found {matchesFound}.");
                 }
-                
+
                 if (batchMatchingEntries.Count > 0)
                     batchAddEntries(batchMatchingEntries, add_batch_size);
 
@@ -748,6 +723,10 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 }
                 else
                 {
+                    searchBox.HideLoading();
+                    if (!matchFoundAtleastOnce)
+                        searchBox.ChangeStatusText($"Search couldn't find item.");
+
                     canRefresh = true;
                     currentSearchDelegate = null;
                     updateNoFilesContainerVisibility();
