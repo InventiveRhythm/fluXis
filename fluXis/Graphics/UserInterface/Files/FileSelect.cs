@@ -47,7 +47,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     // state variables
     private bool canBatchAddRest = true;
     private bool canRefresh = false;
-    private bool filesFlowContainerUpdateScheduled = false;
+    private bool streamFilesScheduled = false;
 
     public event Action<FileInfo> FileChanged;
 
@@ -684,21 +684,22 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             if (canRefresh)
             {
                 canRefresh = false;
-                var currentir = currentDirectory;
+                var currentDir = currentDirectory;
                 changePathTo(null);
-                changePathTo(currentir);
+                changePathTo(currentDir);
             }
         }
         else
         {
             scrollContainer.ScrollToStart(false);
             canRefresh = false;
-            var matchesFound = 0;
             matchedEntries.Clear();
 
             var entriesToProcess = EntryList.OfType<GenericEntry>().ToList();
 
             int curIdx = 0;
+            int matchesFound = 0;
+            bool matchFoundAtleastOnce = false;
             
             filesFlow.Hide();
             foreach (var entry in entriesToProcess) entry.Hide();
@@ -726,16 +727,18 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     {
                         matchedEntries.Add(entry);
                         batchMatchingEntries.Add(entry);
-                        if (matchesFound > 0) filesFlow.FadeIn();
-                        matchesFound++;
+
+                        // we don't really need matchFoundAtleastOnce but it's good to have so we don't spam filesFlow.FadeIn()
+                        if (!matchFoundAtleastOnce) filesFlow.FadeIn();
                         entry.Show();
+                        
+                        matchesFound++;
+                        matchFoundAtleastOnce = true;
                     }
                 }
                 
                 if (batchMatchingEntries.Count > 0)
-                {
                     batchAddEntries(batchMatchingEntries, add_batch_size);
-                }
 
                 curIdx = endIdx;
 
@@ -773,25 +776,28 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     protected override void Update()
     {
         base.Update();
-        var deltaTime = Clock.ElapsedFrameTime;
-        if (!filesFlowContainerUpdateScheduled)
+
+        double deltaTime = Clock.ElapsedFrameTime;
+
+        if (!streamFilesScheduled)
         {
-            filesFlowContainerUpdateScheduled = true;
+            streamFilesScheduled = true;
             Scheduler.AddDelayed(() =>
             {
-                updateFilesFlowContainer();
-                filesFlowContainerUpdateScheduled = false;
+                if ((EntryList.Count > streamable_threshold || !IsStreamingDisabled) && string.IsNullOrEmpty(trackedSearchString))
+                    streamFilesIntoFilesFlow();
+
+                streamFilesScheduled = false;
             }, deltaTime * 2);
         }
     }
 
-    private void updateFilesFlowContainer()
+    private void streamFilesIntoFilesFlow()
     {
-        if (EntryList.Count <= streamable_threshold || IsStreamingDisabled || !string.IsNullOrEmpty(trackedSearchString)) return;
-
         var pos = 0f;
         var Current = scrollContainer.Current;
 
+        // if the user has already went beyond 70% might as well just add the rest of entries
         if (Math.Abs(Current) / (EntryList.Count * 50) >= 0.7f)
         {
             if (canBatchAddRest)
@@ -799,12 +805,14 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 int delay = 0;
                 var missingEntries = getEntryListEntriesExcept();
                 var entriesToAdd = missingEntries.Where(entry => !filesFlow.Contains(entry)).ToList();
+
                 for (int i = 0; i < entriesToAdd.Count; i += add_batch_size)
                 {
                     var batch = entriesToAdd.Skip(i).Take(add_batch_size);
                     Scheduler.AddDelayed(() => { foreach (var entry in batch) filesFlow.Add(entry); }, delay);
                     delay += (int)Clock.ElapsedFrameTime + 50;
                 }
+
                 Scheduler.AddDelayed(() => { filesFlow.AutoSizeAxes = Axes.Y; }, delay);
                 canBatchAddRest = false;
             }
@@ -824,14 +832,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             bool isVisible = pos <= Current + DrawHeight + lookahead_buffer_size;
 
             if (isVisible && item.Parent == null && !filesFlow.Contains(item) && canBatchAddRest)
-            {
-                if (item.IsAlive)
-                    filesFlow.Add(item);
-                else if (EntryList.Count > streamable_threshold && (matchedEntries.Contains(item) || string.IsNullOrEmpty(trackedSearchString)))
-                {
-                    filesFlow.Add(item);
-                }
-            }
+                filesFlow.Add(item);
         }
 
         filesFlow.Height = pos;
