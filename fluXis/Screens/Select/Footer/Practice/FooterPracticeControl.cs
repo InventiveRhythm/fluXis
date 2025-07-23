@@ -2,12 +2,14 @@
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
@@ -129,7 +131,13 @@ public partial class FooterPracticeControl : GridContainer
 
         private Func<bool> action { get; }
         private HoverLayer hover { get; }
-        private FlashLayer flash { get; }
+        private Box flash { get; }
+
+        private bool isMouseDown = false;
+        private double mouseDownTime = 0;
+        private double lastClickTime = 0;
+        private const int hold_duration = 250;
+        private const int invoke_interval = 25;
 
         public Button(IconUsage icon, Func<bool> action)
         {
@@ -142,7 +150,12 @@ public partial class FooterPracticeControl : GridContainer
             InternalChildren = new Drawable[]
             {
                 hover = new HoverLayer(),
-                flash = new FlashLayer(),
+                flash = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Text,
+                    Alpha = 0,
+                },
                 new FluXisSpriteIcon
                 {
                     Icon = icon,
@@ -153,11 +166,39 @@ public partial class FooterPracticeControl : GridContainer
             };
         }
 
-        protected override bool OnClick(ClickEvent e)
+        protected override void Update()
         {
-            flash.Show();
-            samples.Click(!(action?.Invoke() ?? true));
-            return false;
+            if (isMouseDown)
+            {
+                double timeSinceMouseDown = Clock.CurrentTime - mouseDownTime;
+
+                if (timeSinceMouseDown >= hold_duration)
+                {
+                    if (Clock.CurrentTime - lastClickTime >= invoke_interval)
+                    {
+                        action?.Invoke();
+                        lastClickTime = Clock.CurrentTime;
+                    }
+                }
+            }
+        }
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {   
+            isMouseDown = true;
+            mouseDownTime = Clock.CurrentTime;
+            lastClickTime = Clock.CurrentTime;
+            flash.FadeTo(0.6f, 500, Easing.OutQuint);
+            action?.Invoke();
+            samples.Click();
+            return base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            isMouseDown = false;
+            flash.FadeOut(500, Easing.OutQuint);
+            base.OnMouseUp(e);
         }
     }
 }
