@@ -33,8 +33,8 @@ public partial class DesignPointListDropdown : FluXisDropdown<PointsList.Dropdow
             Icon.Size = new Vector2(14);
             LabelText.WebFontSize = 12;
 
-            BackgroundColour = FluXisColors.Background3;
-            BackgroundColourHover = FluXisColors.Background4;
+            BackgroundColour = Theme.Background3;
+            BackgroundColourHover = Theme.Background4;
         }
 
         protected override void LoadComplete()

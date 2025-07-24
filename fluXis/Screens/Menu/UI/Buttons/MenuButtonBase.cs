@@ -54,7 +54,7 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
             var count = 0;
             count += Column - 1;
             count += Row - 1;
-            return count * FluXisScreen.ENTER_DELAY;
+            return count * Styling.TRANSITION_ENTER_DELAY;
         }
     }
 
@@ -85,13 +85,13 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
                     Alpha = 0,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    EdgeEffect = FluXisStyles.ShadowMedium,
+                    EdgeEffect = Styling.ShadowMedium,
                     ChildrenEnumerable = new Drawable[]
                     {
                         Background = new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
+                            Colour = Theme.Background2
                         },
                         hover = new HoverLayer()
                     }.Concat(CreateContent()).Concat(new Drawable[]
@@ -193,13 +193,13 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
     public override void Show()
     {
         content.Delay(animationDelay).MoveToX(100)
-               .MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-               .FadeInFromZero(FluXisScreen.FADE_DURATION);
+               .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint)
+               .FadeInFromZero(Styling.TRANSITION_FADE);
     }
 
     public override void Hide()
     {
-        content.Delay(animationDelay).FadeOut(FluXisScreen.FADE_DURATION)
-               .MoveToX(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        content.Delay(animationDelay).FadeOut(Styling.TRANSITION_FADE)
+               .MoveToX(-100, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 }

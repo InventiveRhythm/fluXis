@@ -49,7 +49,7 @@ public partial class MapSetButton : Container
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 },
                 hover = new HoverLayer(),
                 flash = new FlashLayer(),

@@ -17,8 +17,8 @@ namespace fluXis.Graphics.UserInterface.Text;
 
 public partial class FluXisTextBox : BasicTextBox
 {
-    protected override Color4 SelectionColour => FluXisColors.Background6;
-    protected override Color4 InputErrorColour => FluXisColors.ButtonRed;
+    protected override Color4 SelectionColour => Theme.Background6;
+    protected override Color4 InputErrorColour => Theme.ButtonRed;
     protected override float LeftRightPadding => SidePadding;
 
     public int SidePadding { get; init; } = 5;
@@ -53,16 +53,16 @@ public partial class FluXisTextBox : BasicTextBox
         CornerRadius = 5;
         Masking = true;
         LengthLimit = 256;
-        BackgroundInactive = FluXisColors.Background2;
-        BackgroundActive = FluXisColors.Background3;
+        BackgroundInactive = Theme.Background2;
+        BackgroundActive = Theme.Background3;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        BackgroundCommit = FluXisColors.Highlight;
+        BackgroundCommit = Theme.Highlight;
         Placeholder.Font = FluXisSpriteText.GetFont();
-        Placeholder.Colour = FluXisColors.Foreground;
+        Placeholder.Colour = Theme.Foreground;
         TextContainer.Height = TextContainerHeight;
 
         Add(samples);
@@ -202,7 +202,7 @@ public partial class FluXisTextBox : BasicTextBox
             InternalChild = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Text,
+                Colour = Theme.Text,
             };
         }
 
@@ -249,7 +249,7 @@ public partial class FluXisTextBox : BasicTextBox
             {
                 this.MoveTo(new Vector2(position.X, position.Y), 100, Easing.OutQuint);
                 this.ResizeWidthTo(2, 100, Easing.OutQuint);
-                this.FadeColour(FluXisColors.Text, 200, Easing.OutQuint);
+                this.FadeColour(Theme.Text, 200, Easing.OutQuint);
             }
         }
 

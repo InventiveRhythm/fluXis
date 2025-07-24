@@ -64,7 +64,7 @@ public partial class LoadingPanel : Panel
                     AutoSizeAxes = Axes.Y,
                     Text = SubText,
                     FontSize = 20,
-                    Colour = FluXisColors.Text2,
+                    Colour = Theme.Text2,
                     TextAnchor = Anchor.TopCentre,
                     Shadow = true,
                     Anchor = Anchor.TopCentre,

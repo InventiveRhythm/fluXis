@@ -32,7 +32,7 @@ public partial class SetupHeader : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background1
+                Colour = Theme.Background1
             },
             background = new MapBackground(map.RealmMap)
             {
@@ -43,7 +43,7 @@ public partial class SetupHeader : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = .5f
             },
             new FillFlowContainer

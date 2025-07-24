@@ -1,8 +1,8 @@
 using System.Linq;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
-using fluXis.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -42,7 +42,7 @@ public partial class FpsOverlay : Container
         {
             new Box
             {
-                Colour = FluXisColors.Background4,
+                Colour = Theme.Background4,
                 RelativeSizeAxes = Axes.Both
             },
             new Container
@@ -97,24 +97,24 @@ public partial class FpsOverlay : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        // this.FadeIn(FluXisScreen.FADE_DURATION);
+        // this.FadeIn(Styling.TRANSITION_FADE);
         return false;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        // this.Delay(1200).FadeTo(.6f, FluXisScreen.FADE_DURATION);
+        // this.Delay(1200).FadeTo(.6f, Styling.TRANSITION_FADE);
     }
 
     public override void Show()
     {
-        this.FadeTo(.6f, FluXisScreen.FADE_DURATION)
-            .MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        this.FadeTo(.6f, Styling.TRANSITION_FADE)
+            .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     public override void Hide()
     {
-        this.FadeOut(FluXisScreen.FADE_DURATION)
-            .MoveToX(40, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        this.FadeOut(Styling.TRANSITION_FADE)
+            .MoveToX(40, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 }

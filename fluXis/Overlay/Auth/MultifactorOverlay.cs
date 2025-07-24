@@ -58,13 +58,13 @@ public partial class MultifactorOverlay : CompositeDrawable
                 Origin = Anchor.Centre,
                 CornerRadius = 20,
                 Masking = true,
-                EdgeEffect = FluXisStyles.ShadowMedium,
+                EdgeEffect = Styling.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     },
                     new FillFlowContainer
                     {
@@ -90,7 +90,7 @@ public partial class MultifactorOverlay : CompositeDrawable
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
                                 MaxWidth = 300,
-                                Colour = FluXisColors.Red,
+                                Colour = Theme.Red,
                                 WebFontSize = 14,
                                 Alpha = 0
                             },

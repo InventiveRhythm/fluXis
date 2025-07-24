@@ -1,4 +1,5 @@
 ﻿using System;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Drawables;
 using fluXis.Graphics.Sprites.Text;
@@ -7,7 +8,6 @@ using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Scores;
 using fluXis.Online.Drawables.Images;
 using fluXis.Scoring.Enums;
-using fluXis.Screens;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -84,13 +84,13 @@ public partial class ProfileScore : Container
                         new LoadWrapper<DrawableOnlineBackground>
                         {
                             RelativeSizeAxes = Axes.Both,
-                            OnComplete = d => d.FadeInFromZero(FluXisScreen.FADE_DURATION),
+                            OnComplete = d => d.FadeInFromZero(Styling.TRANSITION_FADE),
                             LoadContent = () => new DrawableOnlineBackground(score.Map)
                         },
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2,
+                            Colour = Theme.Background2,
                             Alpha = .5f
                         },
                         new GridContainer

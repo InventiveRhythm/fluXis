@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using fluXis.Graphics;
 using fluXis.Scoring;
 using fluXis.Screens.Result.Center;
 using fluXis.Screens.Result.Sides;
@@ -135,10 +136,10 @@ public partial class ResultsContent : CompositeDrawable
     {
         if (!fromGameplay)
         {
-            rank.ScaleTo(.9f).ScaleTo(1, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-            left.MoveToX(-200).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+            rank.ScaleTo(.9f).ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            left.MoveToX(-200).MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
             center.Show();
-            right.MoveToX(200).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+            right.MoveToX(200).MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
             return;
         }
 
@@ -155,20 +156,20 @@ public partial class ResultsContent : CompositeDrawable
 
         using (BeginDelayedSequence(2000))
         {
-            header.MoveToY(-50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint).FadeIn(FluXisScreen.FADE_DURATION);
-            left.MoveToX(-200).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint).FadeIn(FluXisScreen.FADE_DURATION);
-            center.FadeIn(FluXisScreen.FADE_DURATION);
+            header.MoveToY(-50).MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeIn(Styling.TRANSITION_FADE);
+            left.MoveToX(-200).MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeIn(Styling.TRANSITION_FADE);
+            center.FadeIn(Styling.TRANSITION_FADE);
             center.Show();
-            right.MoveToX(200).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint).FadeIn(FluXisScreen.FADE_DURATION);
+            right.MoveToX(200).MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeIn(Styling.TRANSITION_FADE);
             this.TransformTo(nameof(rankUseCenter), false);
         }
     }
 
     public override void Hide()
     {
-        rank.ScaleTo(.9f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        left.MoveToX(-200, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        rank.ScaleTo(.9f, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        left.MoveToX(-200, Styling.TRANSITION_MOVE, Easing.OutQuint);
         center.Hide();
-        right.MoveToX(200, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        right.MoveToX(200, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 }

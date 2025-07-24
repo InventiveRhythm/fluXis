@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -104,7 +105,7 @@ public partial class MultiplayerScreen : FluXisScreen
         client.OnConnectionError += ex => Schedule(() =>
         {
             panels.Content = new SingleButtonPanel(FontAwesome6.Solid.TriangleExclamation, "Failed to connect to multiplayer server.", ex.Message, action: this.Exit);
-            connectingContainer.FadeOut(FADE_DURATION);
+            connectingContainer.FadeOut(Styling.TRANSITION_FADE);
         });
 
         LoadComponentAsync(client, _ =>
@@ -116,7 +117,7 @@ public partial class MultiplayerScreen : FluXisScreen
             }
 
             AddInternal(client);
-            connectingContainer.FadeOut(FADE_DURATION);
+            connectingContainer.FadeOut(Styling.TRANSITION_FADE);
 
             client.OnDisconnect += () => panels.Content = new DisconnectedPanel(() =>
             {
@@ -161,10 +162,10 @@ public partial class MultiplayerScreen : FluXisScreen
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            screenStack.FadeIn(FADE_DURATION);
-            connectingContainer.FadeIn(FADE_DURATION);
+            screenStack.FadeIn(Styling.TRANSITION_FADE);
+            connectingContainer.FadeIn(Styling.TRANSITION_FADE);
         }
 
         globalClock.VolumeOut(400).OnComplete(c => c.Stop());
@@ -193,10 +194,10 @@ public partial class MultiplayerScreen : FluXisScreen
         screen?.OnSuspending(null);
 
         menuMusic.StopAll();
-        this.Delay(FADE_DURATION).FadeOut();
+        this.Delay(Styling.TRANSITION_FADE).FadeOut();
 
         globalClock.Start();
-        globalClock.VolumeIn(FADE_DURATION);
+        globalClock.VolumeIn(Styling.TRANSITION_FADE);
         ApplyMapBackground(mapStore.CurrentMapSet?.Maps.First());
         return false;
     }

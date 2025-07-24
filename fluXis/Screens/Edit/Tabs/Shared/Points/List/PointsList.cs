@@ -105,7 +105,7 @@ public abstract partial class PointsList : Container
                                         Current = bind,
                                         Items = new DropdownEntry[]
                                         {
-                                            new("All", FluXisColors.Text, () => { }, _ => true)
+                                            new("All", Theme.Text, () => { }, _ => true)
                                         }.Concat(entries)
                                     },
                                     new AddButton(entries),
@@ -483,7 +483,7 @@ public abstract partial class PointsList : Container
                 Background = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background3
+                    Colour = Theme.Background3
                 },
                 Hover = new HoverLayer(),
                 Icon = new FluXisSpriteIcon

@@ -43,7 +43,7 @@ public partial class SkinIcon : CompositeDrawable
         CornerRadius = 8;
         Masking = true;
 
-        var accent = FluXisColors.Highlight;
+        var accent = Theme.Highlight;
 
         if (!string.IsNullOrWhiteSpace(skin.AccentHex) && Colour4.TryParseHex(skin.AccentHex, out var acc))
             accent = acc;
@@ -56,7 +56,7 @@ public partial class SkinIcon : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             new Sprite
             {

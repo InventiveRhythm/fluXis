@@ -3,6 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
 using osu.Framework.Timing;
+using osu.Framework.Utils;
 
 namespace fluXis.Audio.Transforms;
 
@@ -36,6 +37,9 @@ public abstract partial class TransformableClock : CompositeComponent, IAdjustab
 
     public TransformSequence<TransformableClock> TimeTo(double newTime, double duration = 0, Easing easing = Easing.None)
         => this.TransformTo(this.PopulateTransform(new TimeTransform(), newTime, duration, easing));
+
+    public double InterpolateAt(double elapsedTime, double newTime, double duration, Easing easing = Easing.None)
+        => Interpolation.ValueAt(elapsedTime, CurrentTime, newTime, 0, duration, easing);
 
     public abstract void ProcessFrame();
 }

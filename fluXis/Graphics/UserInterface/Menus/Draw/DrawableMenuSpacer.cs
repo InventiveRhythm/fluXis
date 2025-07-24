@@ -26,7 +26,7 @@ public partial class DrawableMenuSpacer : Menu.DrawableMenuItem
         Child = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = FluXisColors.Background6
+            Colour = Theme.Background6
         }
     };
 }

@@ -47,14 +47,14 @@ public partial class HeaderFollowButton : CompositeDrawable
         Height = 50;
         CornerRadius = 25;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        EdgeEffect = Styling.ShadowSmall;
 
         InternalChildren = new Drawable[]
         {
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = following ? FluXisColors.Primary : FluXisColors.Background2,
+                Colour = following ? Theme.Primary : Theme.Background2,
             },
             flash = new FlashLayer(),
             flow = new FillFlowContainer
@@ -63,7 +63,7 @@ public partial class HeaderFollowButton : CompositeDrawable
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Direction = FillDirection.Horizontal,
-                Colour = following ? FluXisColors.Background2 : FluXisColors.Text,
+                Colour = following ? Theme.Background2 : Theme.Text,
                 Padding = new MarginPadding
                 {
                     Horizontal = 20
@@ -101,7 +101,7 @@ public partial class HeaderFollowButton : CompositeDrawable
 
         user.Following = !following;
         text.Text = user.Following!.Value ? "Unfollow" : "Follow";
-        background.FadeColour(user.Following!.Value ? FluXisColors.Red : FluXisColors.Primary, 200);
+        background.FadeColour(user.Following!.Value ? Theme.Red : Theme.Primary, 200);
         icon.Icon = user.Following!.Value ? FontAwesome6.Solid.HeartCrack : FontAwesome6.Solid.Heart;
 
         return base.OnClick(e);
@@ -111,17 +111,17 @@ public partial class HeaderFollowButton : CompositeDrawable
     {
         samples.Hover();
 
-        flow.FadeColour(FluXisColors.Background2, 50);
+        flow.FadeColour(Theme.Background2, 50);
 
         if (following)
         {
-            background.FadeColour(FluXisColors.Red, 50);
+            background.FadeColour(Theme.Red, 50);
             icon.Icon = FontAwesome6.Solid.HeartCrack;
             icon.Vibrate(100, 4);
             text.Text = "Unfollow";
         }
         else
-            background.FadeColour(FluXisColors.Primary, 50);
+            background.FadeColour(Theme.Primary, 50);
 
         return base.OnHover(e);
     }
@@ -132,11 +132,11 @@ public partial class HeaderFollowButton : CompositeDrawable
         text.Text = user.Following!.Value ? "Following" : "Follow";
 
         if (following)
-            background.FadeColour(FluXisColors.Primary, 200);
+            background.FadeColour(Theme.Primary, 200);
         else
         {
-            background.FadeColour(FluXisColors.Background2, 200);
-            flow.FadeColour(FluXisColors.Text, 200);
+            background.FadeColour(Theme.Background2, 200);
+            flow.FadeColour(Theme.Text, 200);
         }
 
         base.OnHoverLost(e);

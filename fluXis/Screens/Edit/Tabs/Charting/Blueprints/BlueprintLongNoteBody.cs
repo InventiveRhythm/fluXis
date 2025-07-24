@@ -14,7 +14,7 @@ public partial class BlueprintLongNoteBody : BlueprintNotePiece
         Child = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = FluXisColors.Selection
+            Colour = Theme.Selection
         };
     }
 }

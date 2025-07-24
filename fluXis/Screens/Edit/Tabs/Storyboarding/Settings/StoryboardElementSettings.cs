@@ -55,7 +55,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             new FluXisScrollContainer
             {

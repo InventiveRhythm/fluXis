@@ -23,7 +23,7 @@ public partial class DefaultReceptorUp : ColorableSkinDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             Diamond = new Container
             {
@@ -32,7 +32,7 @@ public partial class DefaultReceptorUp : ColorableSkinDrawable
                 Size = new Vector2(24, 24),
                 Masking = true,
                 CornerRadius = 5,
-                BorderColour = FluXisColors.Background1,
+                BorderColour = Theme.Background1,
                 BorderThickness = 5,
                 Rotation = 45,
                 Child = new Box

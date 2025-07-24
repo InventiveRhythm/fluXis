@@ -7,6 +7,7 @@ using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
+using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
@@ -484,7 +485,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         }
 
         menuScroll.Play();
-        lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
+        lightController.FadeColour(Theme.GetKeyCountColor(map.KeyCount), 400);
         clock.AllowLimitedLoop = true;
 
         if (e.OldValue.FullAudioPath != e.NewValue.FullAudioPath)
@@ -763,7 +764,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         if (Maps.CurrentMap != null)
         {
-            lightController.FadeColour(FluXisColors.GetKeyColor(Maps.CurrentMap.KeyCount), 400);
+            lightController.FadeColour(Theme.GetKeyCountColor(Maps.CurrentMap.KeyCount), 400);
 
             clock.RestartPoint = Maps.CurrentMap.Metadata.PreviewTime;
 
@@ -788,15 +789,15 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         clock.AllowLimitedLoop = true;
         this.FadeOut();
 
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            this.FadeIn(FADE_DURATION);
+            this.FadeIn(Styling.TRANSITION_FADE);
 
             mapList.MoveToX(-100)
-                   .MoveToX(0, MOVE_DURATION, Easing.OutQuint);
+                   .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
             selectMapInfo.MoveToX(100)
-                         .MoveToX(0, MOVE_DURATION, Easing.OutQuint);
+                         .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
             searchBar.Show();
             filterControl.Show();
@@ -807,10 +808,10 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     private void playExitAnimation()
     {
         clock.AllowLimitedLoop = false;
-        this.FadeOut(FADE_DURATION);
+        this.FadeOut(Styling.TRANSITION_FADE);
 
-        mapList.MoveToX(-100, MOVE_DURATION, Easing.OutQuint);
-        selectMapInfo.MoveToX(100, MOVE_DURATION, Easing.OutQuint);
+        mapList.MoveToX(-100, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        selectMapInfo.MoveToX(100, Styling.TRANSITION_MOVE, Easing.OutQuint);
         searchBar.Hide();
         filterControl.Hide();
         footer.Hide();

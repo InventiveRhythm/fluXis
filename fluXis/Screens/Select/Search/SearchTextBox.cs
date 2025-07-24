@@ -23,8 +23,8 @@ public partial class SearchTextBox : FluXisTextBox
     [BackgroundDependencyLoader]
     private void load()
     {
-        BackgroundInactive = FluXisColors.Background2;
-        BackgroundActive = FluXisColors.Background2;
+        BackgroundInactive = Theme.Background2;
+        BackgroundActive = Theme.Background2;
         RelativeSizeAxes = Axes.X;
         Height = 40;
         Anchor = Anchor.CentreLeft;

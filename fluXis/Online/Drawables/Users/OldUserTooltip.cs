@@ -115,7 +115,7 @@ public partial class OldUserTooltip : Container
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background4
+                        Colour = Theme.Background4
                     },
                     new LoadingIcon
                     {

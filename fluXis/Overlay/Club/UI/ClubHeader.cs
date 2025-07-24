@@ -46,7 +46,7 @@ public partial class ClubHeader : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2.Opacity(.5f)
+                Colour = Theme.Background2.Opacity(.5f)
             },
             new GridContainer
             {
@@ -69,7 +69,7 @@ public partial class ClubHeader : CompositeDrawable
                             Size = new Vector2(128),
                             CornerRadius = 12,
                             Masking = true,
-                            EdgeEffect = FluXisStyles.ShadowMedium,
+                            EdgeEffect = Styling.ShadowMedium,
                             LoadContent = () => new DrawableClubIcon(club)
                             {
                                 RelativeSizeAxes = Axes.Both,

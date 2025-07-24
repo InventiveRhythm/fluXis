@@ -17,7 +17,7 @@ public partial class DefaultTopLaneCover : Container
         Anchor = Anchor.TopCentre;
         Origin = Anchor.TopCentre;
         Height = 0.5f;
-        Colour = FluXisColors.Background3;
+        Colour = Theme.Background3;
 
         InternalChildren = new Drawable[]
         {

@@ -10,7 +10,7 @@ public partial class FluXisContextMenu : FluXisMenu
     public FluXisContextMenu()
         : base(Direction.Vertical)
     {
-        MaskingContainer.EdgeEffect = FluXisStyles.ShadowSmall;
+        MaskingContainer.EdgeEffect = Styling.ShadowSmall;
         MaskingContainer.CornerRadius = 10;
         ItemsContainer.Masking = true;
         ItemsContainer.CornerRadius = 10;

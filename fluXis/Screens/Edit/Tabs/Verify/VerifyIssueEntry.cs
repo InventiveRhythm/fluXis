@@ -31,10 +31,10 @@ public partial class VerifyIssueEntry : CompositeDrawable
 
         var color = issue.Severity switch
         {
-            VerifyIssueSeverity.Hint => FluXisColors.Blue,
-            VerifyIssueSeverity.Warning => FluXisColors.Yellow,
-            VerifyIssueSeverity.Problematic => FluXisColors.Red,
-            _ => FluXisColors.Background2
+            VerifyIssueSeverity.Hint => Theme.Blue,
+            VerifyIssueSeverity.Warning => Theme.Yellow,
+            VerifyIssueSeverity.Problematic => Theme.Red,
+            _ => Theme.Background2
         };
 
         InternalChildren = new Drawable[]

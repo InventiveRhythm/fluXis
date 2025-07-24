@@ -199,7 +199,7 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
 
     private Drawable createContent()
     {
-        var modeColor = FluXisColors.GetKeyColor(map.KeyCount);
+        var modeColor = Theme.GetKeyCountColor(map.KeyCount);
 
         return new Container
         {
@@ -270,8 +270,8 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                                             Height = 16,
                                             Text = $"{map.KeyCount}K",
                                             BackgroundColour = modeColor,
-                                            TextColour = (FluXisColors.IsBright(modeColor) ? FluXisColors.Background2 : FluXisColors.Text).Opacity(.75f),
-                                            EdgeEffect = FluXisStyles.ShadowSmall,
+                                            TextColour = (Theme.IsBright(modeColor) ? Theme.Background2 : Theme.Text).Opacity(.75f),
+                                            EdgeEffect = Styling.ShadowSmall,
                                             WebFontSize = 10,
                                             SidePadding = 8
                                         },
@@ -300,7 +300,7 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                                     Size = new Vector2(0, 20),
                                     WebFontSize = 12,
                                     WidthStep = 20,
-                                    EdgeEffect = FluXisStyles.ShadowSmall,
+                                    EdgeEffect = Styling.ShadowSmall,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight
                                 },
@@ -309,7 +309,7 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                                     Size = new Vector2(64, 20),
                                     WebFontSize = 12,
                                     RealmMap = map,
-                                    EdgeEffect = FluXisStyles.ShadowSmall,
+                                    EdgeEffect = Styling.ShadowSmall,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight
                                 },

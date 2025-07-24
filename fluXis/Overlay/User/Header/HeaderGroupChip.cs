@@ -35,7 +35,7 @@ public partial class HeaderGroupChip : CircularContainer
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = AccentAsBackground ? color : FluXisColors.Background2.Opacity(.5f)
+                Colour = AccentAsBackground ? color : Theme.Background2.Opacity(.5f)
             },
             new FillFlowContainer
             {
@@ -45,7 +45,7 @@ public partial class HeaderGroupChip : CircularContainer
                 Padding = new MarginPadding(12),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = AccentAsBackground ? FluXisColors.Background2 : color,
+                Colour = AccentAsBackground ? Theme.Background2 : color,
                 Children = new Drawable[]
                 {
                     new FluXisSpriteIcon

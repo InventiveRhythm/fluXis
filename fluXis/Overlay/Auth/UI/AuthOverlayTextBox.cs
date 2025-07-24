@@ -19,18 +19,18 @@ public partial class AuthOverlayTextBox : FluXisTextBox
         FontSize = FluXisSpriteText.GetWebFontSize(14);
         SidePadding = 20;
         BorderThickness = 2;
-        BorderColour = FluXisColors.Background4;
+        BorderColour = Theme.Background4;
     }
 
     protected override void OnFocus(FocusEvent e)
     {
         base.OnFocus(e);
-        this.TransformTo(nameof(BorderColour), (ColourInfo)FluXisColors.Highlight, 200);
+        this.TransformTo(nameof(BorderColour), (ColourInfo)Theme.Highlight, 200);
     }
 
     protected override void OnFocusLost(FocusLostEvent e)
     {
         base.OnFocusLost(e);
-        this.TransformTo(nameof(BorderColour), (ColourInfo)FluXisColors.Background4, 200);
+        this.TransformTo(nameof(BorderColour), (ColourInfo)Theme.Background4, 200);
     }
 }

@@ -90,7 +90,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background4
+                Colour = Theme.Background4
             },
             new LoadWrapper<DrawableBanner>
             {
@@ -106,7 +106,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = 0.5f
             },
             new FillFlowContainer

@@ -60,8 +60,8 @@ public partial class SearchFilterControls : CompositeDrawable
         };
     }
 
-    public override void Show() => this.MoveToX(-100).MoveToX(-10, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-    public override void Hide() => this.MoveToX(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    public override void Show() => this.MoveToX(-100).MoveToX(-10, Styling.TRANSITION_MOVE, Easing.OutQuint);
+    public override void Hide() => this.MoveToX(-100, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
     private partial class Control<T> : CompositeDrawable
     {
@@ -97,13 +97,13 @@ public partial class SearchFilterControls : CompositeDrawable
                     Margin = new MarginPadding { Top = 44 },
                     CornerRadius = 8,
                     Masking = true,
-                    EdgeEffect = FluXisStyles.ShadowSmall,
+                    EdgeEffect = Styling.ShadowSmall,
                     Children = new Drawable[]
                     {
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
+                            Colour = Theme.Background2
                         },
                         new FillFlowContainer
                         {
@@ -131,13 +131,13 @@ public partial class SearchFilterControls : CompositeDrawable
         {
             if (state)
             {
-                dropdown.ResizeHeightTo(item_height * values.Length, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-                        .FadeEdgeEffectTo(FluXisStyles.SHADOW_OPACITY, FluXisScreen.FADE_DURATION);
+                dropdown.ResizeHeightTo(item_height * values.Length, Styling.TRANSITION_MOVE, Easing.OutQuint)
+                        .FadeEdgeEffectTo(Styling.SHADOW_OPACITY, Styling.TRANSITION_FADE);
             }
             else
             {
-                dropdown.ResizeHeightTo(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-                        .FadeEdgeEffectTo(0, FluXisScreen.FADE_DURATION);
+                dropdown.ResizeHeightTo(0, Styling.TRANSITION_MOVE, Easing.OutQuint)
+                        .FadeEdgeEffectTo(0, Styling.TRANSITION_FADE);
             }
         }
 
@@ -156,14 +156,14 @@ public partial class SearchFilterControls : CompositeDrawable
                 RelativeSizeAxes = Axes.Both;
                 CornerRadius = 8;
                 Masking = true;
-                EdgeEffect = FluXisStyles.ShadowSmall;
+                EdgeEffect = Styling.ShadowSmall;
 
                 InternalChildren = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     },
                     new GridContainer
                     {
@@ -188,7 +188,7 @@ public partial class SearchFilterControls : CompositeDrawable
                                         new Box
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Colour = FluXisColors.Background3
+                                            Colour = Theme.Background3
                                         },
                                         new TruncatingText
                                         {

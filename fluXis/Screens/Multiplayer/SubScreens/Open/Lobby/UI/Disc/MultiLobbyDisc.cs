@@ -48,7 +48,7 @@ public partial class MultiLobbyDisc : CircularContainer
         Origin = Anchor.Centre;
         BorderThickness = 24;
         Masking = true;
-        EdgeEffect = FluXisStyles.Glow(Colour4.White, 16);
+        EdgeEffect = Styling.Glow(Colour4.White, 16);
 
         Children = new Drawable[]
         {
@@ -170,7 +170,7 @@ public partial class MultiLobbyDisc : CircularContainer
             artist.Text = map.Metadata.LocalizedArtist;
             difficulty.Text = map.Difficulty;
             modeChip.Text = $"{map.KeyCount}K";
-            modeChip.BackgroundColour = FluXisColors.GetKeyColor(map.KeyCount);
+            modeChip.BackgroundColour = Theme.GetKeyCountColor(map.KeyCount);
             difficultyChip.RealmMap = map;
 
             flash.Show();
@@ -195,15 +195,15 @@ public partial class MultiLobbyDisc : CircularContainer
     public override void Show()
     {
         this.MoveToX(100).RotateTo(10)
-            .RotateTo(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-            .MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-            .FadeInFromZero(FluXisScreen.FADE_DURATION);
+            .RotateTo(0, Styling.TRANSITION_MOVE, Easing.OutQuint)
+            .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint)
+            .FadeInFromZero(Styling.TRANSITION_FADE);
     }
 
     public override void Hide()
     {
-        this.RotateTo(10, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-            .MoveToX(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-            .FadeOut(FluXisScreen.FADE_DURATION);
+        this.RotateTo(10, Styling.TRANSITION_MOVE, Easing.OutQuint)
+            .MoveToX(100, Styling.TRANSITION_MOVE, Easing.OutQuint)
+            .FadeOut(Styling.TRANSITION_FADE);
     }
 }

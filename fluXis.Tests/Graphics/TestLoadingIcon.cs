@@ -15,7 +15,7 @@ public partial class TestLoadingIcon : FluXisTestScene
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             new LoadingIcon
             {

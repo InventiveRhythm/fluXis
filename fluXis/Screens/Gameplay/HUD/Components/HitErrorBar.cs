@@ -52,7 +52,7 @@ public partial class HitErrorBar : GameplayHUDComponent
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Text
+                        Colour = Theme.Text
                     }
                 }
             },

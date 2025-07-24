@@ -1,4 +1,5 @@
 using fluXis.Audio;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Input;
@@ -62,19 +63,19 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
     {
         this.FadeOut();
 
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            this.FadeInFromZero(FADE_DURATION);
-            flowContainer.ScaleTo(1.4f).ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
-            lowPass.CutoffTo(AudioFilter.MIN, FADE_DURATION);
+            this.FadeInFromZero(Styling.TRANSITION_FADE);
+            flowContainer.ScaleTo(1.4f).ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            lowPass.CutoffTo(AudioFilter.MIN, Styling.TRANSITION_FADE);
         }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.FadeOutFromOne(FADE_DURATION);
-        flowContainer.ScaleTo(.8f, MOVE_DURATION, Easing.OutQuint);
-        lowPass.CutoffTo(AudioFilter.MAX, FADE_DURATION);
+        this.FadeOutFromOne(Styling.TRANSITION_FADE);
+        flowContainer.ScaleTo(.8f, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        lowPass.CutoffTo(AudioFilter.MAX, Styling.TRANSITION_FADE);
 
         return base.OnExiting(e);
     }

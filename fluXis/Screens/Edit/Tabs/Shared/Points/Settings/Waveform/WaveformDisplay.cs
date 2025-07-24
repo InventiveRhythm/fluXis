@@ -52,7 +52,7 @@ public partial class WaveformDisplay : Container
         InternalChild = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = FluXisColors.Background3
+            Colour = Theme.Background3
         };
 
         for (int i = 0; i < count; i++)
@@ -167,7 +167,7 @@ public partial class WaveformDisplay : Container
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background4,
+                    Colour = Theme.Background4,
                     Alpha = middle ? 1 : 0
                 },
                 graph = new WaveformGraph
@@ -176,10 +176,10 @@ public partial class WaveformDisplay : Container
                     RelativePositionAxes = Axes.Both,
                     Waveform = editor.Waveform.Value,
                     Resolution = 1,
-                    BaseColour = FluXisColors.Highlight.Darken(1f),
-                    LowColour = FluXisColors.Highlight.Darken(.5f),
-                    MidColour = FluXisColors.Highlight,
-                    HighColour = FluXisColors.Highlight.Lighten(.5f)
+                    BaseColour = Theme.Highlight.Darken(1f),
+                    LowColour = Theme.Highlight.Darken(.5f),
+                    MidColour = Theme.Highlight,
+                    HighColour = Theme.Highlight.Lighten(.5f)
                 }
             };
         }

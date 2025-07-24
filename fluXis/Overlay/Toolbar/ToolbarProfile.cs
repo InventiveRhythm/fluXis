@@ -1,4 +1,5 @@
 using fluXis.Audio;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
@@ -15,7 +16,6 @@ using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.User;
-using fluXis.Screens;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -80,7 +80,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background4
+                        Colour = Theme.Background4
                     },
                     hover = new HoverLayer(),
                     flash = new FlashLayer(),
@@ -120,7 +120,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
                                             new Box
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Colour = FluXisColors.Background4,
+                                                Colour = Theme.Background4,
                                                 Alpha = .5f
                                             },
                                             new LoadingIcon
@@ -158,8 +158,8 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
         api.Status.BindValueChanged(updateStatus, true);
     }
 
-    protected override void PopIn() => container.MoveToY(-10, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-    protected override void PopOut() => container.MoveToY(-20, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    protected override void PopIn() => container.MoveToY(-10, Styling.TRANSITION_MOVE, Easing.OutQuint);
+    protected override void PopOut() => container.MoveToY(-20, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
     private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
     {

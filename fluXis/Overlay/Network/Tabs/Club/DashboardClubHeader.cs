@@ -45,7 +45,7 @@ public partial class DashboardClubHeader : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = .5f
             },
             new FillFlowContainer

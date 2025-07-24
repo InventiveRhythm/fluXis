@@ -41,7 +41,7 @@ public partial class MultiCountdown : CompositeDrawable
                 BorderThickness = 0,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                BorderColour = FluXisColors.Red,
+                BorderColour = Theme.Red,
             },
             text = new FluXisSpriteText
             {
@@ -55,7 +55,7 @@ public partial class MultiCountdown : CompositeDrawable
             {
                 RelativeSizeAxes = Axes.Both,
                 BorderThickness = 0,
-                BorderColour = FluXisColors.Red
+                BorderColour = Theme.Red
             }
         };
     }
@@ -78,7 +78,7 @@ public partial class MultiCountdown : CompositeDrawable
             return;
 
         var scale = 0.8f;
-        text.Colour = FluXisColors.Red;
+        text.Colour = Theme.Red;
 
         switch (seconds)
         {
@@ -110,7 +110,7 @@ public partial class MultiCountdown : CompositeDrawable
 
             default:
                 tick?.Play();
-                text.Colour = FluXisColors.Text;
+                text.Colour = Theme.Text;
                 break;
         }
 

@@ -28,7 +28,7 @@ public partial class SelectLetter : CompositeDrawable
             {
                 Alpha = .8f,
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             text = new FluXisSpriteText
             {
@@ -48,6 +48,6 @@ public partial class SelectLetter : CompositeDrawable
             .FadeOut(200).ScaleTo(.9f, 400, Easing.OutQuint);
 
         if (!found)
-            text.FadeColour(FluXisColors.Red).Delay(200).FadeColour(FluXisColors.Text, 600);
+            text.FadeColour(Theme.Red).Delay(200).FadeColour(Theme.Text, 600);
     }
 }

@@ -53,12 +53,12 @@ public partial class ComboCounter : GameplayHUDComponent
         switch (e.NewValue)
         {
             case 0:
-                text.FadeColour(FluXisColors.Red).FadeColour(FluXisColors.Text, 200).FadeOut(200).ScaleTo(1.4f, 300);
+                text.FadeColour(Theme.Red).FadeColour(Theme.Text, 200).FadeOut(200).ScaleTo(1.4f, 300);
                 break;
 
             case >= 5:
                 text.Text = $"{e.NewValue}";
-                text.FadeColour(FluXisColors.Text).FadeIn(400);
+                text.FadeColour(Theme.Text).FadeIn(400);
                 text.ScaleTo(ScaleAdditive.Value ? text.Scale.X + .05f : 1.05f).ScaleTo(1f, beatSync.BeatTime * 2, Easing.OutQuint);
                 break;
         }

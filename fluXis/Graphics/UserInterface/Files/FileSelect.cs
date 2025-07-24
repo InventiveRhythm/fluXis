@@ -79,13 +79,13 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 20,
                 Masking = true,
-                EdgeEffect = FluXisStyles.ShadowLarge,
+                EdgeEffect = Styling.ShadowLarge,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     }
                 }
             },
@@ -193,7 +193,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 Anchor = Anchor.Centre,
                                                 Origin = Anchor.Centre,
                                                 Spacing = new Vector2(10),
-                                                Colour = FluXisColors.Red,
+                                                Colour = Theme.Red,
                                                 Alpha = 0,
                                                 Children = new Drawable[]
                                                 {
@@ -225,7 +225,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                             new Box
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Colour = FluXisColors.Background3
+                                                Colour = Theme.Background3
                                             },
                                             previewContainer = new Container
                                             {
@@ -248,7 +248,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                 new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = FluXisColors.Background1
+                                    Colour = Theme.Background1
                                 },
                                 new Container
                                 {
@@ -276,7 +276,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                             Origin = Anchor.CentreRight,
                                             FontSize = 20,
                                             Text = "Select",
-                                            Color = FluXisColors.Primary,
+                                            Color = Theme.Primary,
                                             Action = OnSelect,
                                             Enabled = false
                                         }
@@ -301,13 +301,13 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                     RelativeSizeAxes = Axes.Both,
                     CornerRadius = 20,
                     Masking = true,
-                    EdgeEffect = FluXisStyles.ShadowMedium,
+                    EdgeEffect = Styling.ShadowMedium,
                     Children = new Drawable[]
                     {
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background3
+                            Colour = Theme.Background3
                         },
                         new Container
                         {
@@ -354,7 +354,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 new Box
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
-                                                    Colour = FluXisColors.Background2
+                                                    Colour = Theme.Background2
                                                 },
                                                 pathTextBox = new PathTextBox()
                                             }
@@ -370,7 +370,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 new Box
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
-                                                    Colour = FluXisColors.Background2
+                                                    Colour = Theme.Background2
                                                 },
                                                 new FluXisSpriteIcon
                                                 {
@@ -391,8 +391,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                         Anchor = Anchor.CentreLeft,
                                                         Origin = Anchor.CentreLeft,
                                                         PlaceholderText = "Click to search...",
-                                                        BackgroundActive = FluXisColors.Background2,
-                                                        BackgroundInactive = FluXisColors.Background2,
+                                                        BackgroundActive = Theme.Background2,
+                                                        BackgroundInactive = Theme.Background2,
                                                         OnTextChanged = updateSearch
                                                     }
                                                 }
@@ -651,9 +651,9 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         {
             RelativeSizeAxes = Axes.Both;
             TextContainer.Height = .5f;
-            BackgroundFocused = FluXisColors.Background2;
-            BackgroundUnfocused = FluXisColors.Background2;
-            BackgroundCommit = FluXisColors.Background2;
+            BackgroundFocused = Theme.Background2;
+            BackgroundUnfocused = Theme.Background2;
+            BackgroundCommit = Theme.Background2;
             CornerRadius = 10;
         }
     }

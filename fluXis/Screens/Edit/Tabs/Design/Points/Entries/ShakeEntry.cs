@@ -15,7 +15,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class ShakeEntry : PointListEntry
 {
     protected override string Text => "Shake";
-    protected override Colour4 Color => FluXisColors.Shake;
+    protected override Colour4 Color => Theme.Shake;
 
     private ShakeEvent shake => Object as ShakeEvent;
 

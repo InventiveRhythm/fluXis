@@ -17,7 +17,7 @@ namespace fluXis.Screens.Edit.Tabs.Setup;
 public partial class SetupEntry : CompositeDrawable, IHasTooltip
 {
     public LocalisableString TooltipText { get; set; }
-    public ColourInfo BackgroundColor { get; init; } = FluXisColors.Background3;
+    public ColourInfo BackgroundColor { get; init; } = Theme.Background3;
 
     protected virtual float ContentSpacing => 4;
     protected virtual bool ShowHoverFlash => false;
@@ -73,7 +73,7 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
                             {
                                 Text = title,
                                 WebFontSize = 16,
-                                Colour = FluXisColors.Text2
+                                Colour = Theme.Text2
                             },
                             CreateRightTitle().With(d =>
                             {
@@ -94,14 +94,14 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
     protected void StartHighlight()
     {
         BorderThickness = 3;
-        this.BorderColorTo(FluXisColors.Highlight, 50);
-        titleSprite.FadeColour(FluXisColors.Highlight, 50);
+        this.BorderColorTo(Theme.Highlight, 50);
+        titleSprite.FadeColour(Theme.Highlight, 50);
     }
 
     protected void StopHighlight()
     {
         this.BorderColorTo(BackgroundColor, 50);
-        titleSprite.FadeColour(FluXisColors.Text.Opacity(.8f), 50);
+        titleSprite.FadeColour(Theme.Text.Opacity(.8f), 50);
     }
 
     protected override bool OnHover(HoverEvent e)

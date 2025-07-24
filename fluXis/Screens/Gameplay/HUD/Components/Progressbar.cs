@@ -112,7 +112,7 @@ public partial class Progressbar : GameplayHUDComponent
             RelativeSizeAxes = Axes.X;
             Height = 10;
             Masking = true;
-            Colour = FluXisColors.Text;
+            Colour = Theme.Text;
 
             InternalChildren = new Drawable[]
             {
@@ -129,7 +129,7 @@ public partial class Progressbar : GameplayHUDComponent
                 catchup = new Circle
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Highlight
+                    Colour = Theme.Highlight
                 }
             };
         }

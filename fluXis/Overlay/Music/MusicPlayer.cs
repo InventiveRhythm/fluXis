@@ -87,7 +87,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                     Masking = true,
                     CornerRadius = rounding,
                     Y = -50,
-                    EdgeEffect = FluXisStyles.ShadowLarge,
+                    EdgeEffect = Styling.ShadowLarge,
                     HoverAction = showMetadata,
                     HoverLostAction = hideMetadata,
                     Children = new Drawable[]
@@ -95,7 +95,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
+                            Colour = Theme.Background2
                         },
                         backgrounds = new SpriteStack<MapBackground>(),
                         video = new BackgroundVideo
@@ -152,7 +152,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                             CornerRadius = 20,
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
-                                            EdgeEffect = FluXisStyles.ShadowMedium,
+                                            EdgeEffect = Styling.ShadowMedium,
                                             Child = covers = new SpriteStack<MapCover>()
                                         },
                                         new FillFlowContainer
@@ -172,7 +172,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                 artist = new FluXisSpriteText
                                                 {
                                                     Text = "by Artist",
-                                                    Colour = FluXisColors.Text2,
+                                                    Colour = Theme.Text2,
                                                     FontSize = 32,
                                                     Shadow = true
                                                 },

@@ -23,7 +23,7 @@ public partial class GameplayMenuButton : Container, IStateful<SelectedState>
     public string SubText { get; init; }
     public IconUsage Icon { get; init; }
     public Action Action { get; init; }
-    public Colour4 Color { get; init; } = FluXisColors.Text;
+    public Colour4 Color { get; init; } = Theme.Text;
 
     private SelectedState state;
 
@@ -71,7 +71,7 @@ public partial class GameplayMenuButton : Container, IStateful<SelectedState>
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background3
+                    Colour = Theme.Background3
                 },
                 hover = new HoverLayer(),
                 flash = new FlashLayer(),

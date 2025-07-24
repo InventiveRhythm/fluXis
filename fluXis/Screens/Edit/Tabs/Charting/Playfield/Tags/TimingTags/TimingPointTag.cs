@@ -9,7 +9,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags.TimingTags;
 
 public partial class TimingPointTag : EditorTag
 {
-    public override Colour4 TagColour => FluXisColors.TimingPoint;
+    public override Colour4 TagColour => Theme.TimingPoint;
 
     [Resolved]
     private PointsSidebar points { get; set; }

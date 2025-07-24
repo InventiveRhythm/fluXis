@@ -23,14 +23,14 @@ public partial class TimelineIndicator : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = ColourInfo.GradientVertical(FluXisColors.Primary, FluXisColors.Secondary)
+                Colour = ColourInfo.GradientVertical(Theme.Primary, Theme.Secondary)
             },
             new Triangle
             {
                 Size = new Vector2(8),
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.BottomCentre,
-                Colour = FluXisColors.Primary,
+                Colour = Theme.Primary,
                 Rotation = 180
             },
             new Triangle
@@ -38,7 +38,7 @@ public partial class TimelineIndicator : Container
                 Size = new Vector2(8),
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
-                Colour = FluXisColors.Secondary
+                Colour = Theme.Secondary
             }
         };
     }

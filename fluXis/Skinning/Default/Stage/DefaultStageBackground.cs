@@ -30,6 +30,6 @@ public partial class DefaultStageBackgroundBottom : Box
     public DefaultStageBackgroundBottom()
     {
         RelativeSizeAxes = Axes.X;
-        Colour = ColourInfo.GradientVertical(FluXisColors.Background3, FluXisColors.Background3.Opacity(0));
+        Colour = ColourInfo.GradientVertical(Theme.Background3, Theme.Background3.Opacity(0));
     }
 }

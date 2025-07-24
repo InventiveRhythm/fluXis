@@ -44,7 +44,7 @@ public partial class FooterPracticeGraph : GridContainer
                     var bar = new Circle
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Text,
+                        Colour = Theme.Text,
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft
                     };

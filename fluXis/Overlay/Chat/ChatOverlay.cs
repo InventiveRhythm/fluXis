@@ -81,7 +81,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background1
+                                Colour = Theme.Background1
                             },
                             new Container
                             {
@@ -92,7 +92,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = FluXisColors.Background2
+                                        Colour = Theme.Background2
                                     },
                                     new FluXisScrollContainer
                                     {

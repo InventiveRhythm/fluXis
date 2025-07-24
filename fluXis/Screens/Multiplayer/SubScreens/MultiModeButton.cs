@@ -63,14 +63,14 @@ public partial class MultiModeButton : VisibilityContainer
         Masking = true;
         CornerRadius = 40;
         Shear = new Vector2(-0.2f, 0);
-        EdgeEffect = FluXisStyles.ShadowMedium;
+        EdgeEffect = Styling.ShadowMedium;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             new Sprite
             {
@@ -155,8 +155,8 @@ public partial class MultiModeButton : VisibilityContainer
                 BorderThickness = 8,
                 Alpha = 0,
                 BorderColour = RightSide
-                    ? ColourInfo.GradientHorizontal(FluXisColors.Background4, FluXisColors.Background4.Opacity(0))
-                    : ColourInfo.GradientHorizontal(FluXisColors.Background4.Opacity(0), FluXisColors.Background4),
+                    ? ColourInfo.GradientHorizontal(Theme.Background4, Theme.Background4.Opacity(0))
+                    : ColourInfo.GradientHorizontal(Theme.Background4.Opacity(0), Theme.Background4),
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -202,21 +202,21 @@ public partial class MultiModeButton : VisibilityContainer
         samples.Hover();
 
         var x = RightSide ? x_offset_hover : -x_offset_hover;
-        this.MoveToX(x, FluXisScreen.MOVE_DURATION / 4, Easing.OutQuint);
+        this.MoveToX(x, Styling.TRANSITION_MOVE / 4, Easing.OutQuint);
 
-        border.FadeIn(FluXisScreen.FADE_DURATION / 4);
-        dim.FadeTo(.8f, FluXisScreen.FADE_DURATION / 4);
+        border.FadeIn(Styling.TRANSITION_FADE / 4);
+        dim.FadeTo(.8f, Styling.TRANSITION_FADE / 4);
     }
 
     public void Deselect()
     {
         var x = RightSide ? x_offset : -x_offset;
-        this.MoveToX(x, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        this.MoveToX(x, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
-        border.FadeOut(FluXisScreen.FADE_DURATION);
-        dim.FadeIn(FluXisScreen.FADE_DURATION);
+        border.FadeOut(Styling.TRANSITION_FADE);
+        dim.FadeIn(Styling.TRANSITION_FADE);
     }
 
-    protected override void PopIn() => this.MoveToX(RightSide ? x_offset : -x_offset, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-    protected override void PopOut() => this.MoveToX(RightSide ? x_offset_exit : -x_offset_exit, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    protected override void PopIn() => this.MoveToX(RightSide ? x_offset : -x_offset, Styling.TRANSITION_MOVE, Easing.OutQuint);
+    protected override void PopOut() => this.MoveToX(RightSide ? x_offset_exit : -x_offset_exit, Styling.TRANSITION_MOVE, Easing.OutQuint);
 }

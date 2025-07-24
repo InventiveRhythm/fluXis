@@ -40,7 +40,7 @@ public partial class FluXisMarkdownTable : MarkdownTable
                 {
                     RelativeSizeAxes = Axes.X,
                     Height = 2,
-                    Colour = FluXisColors.Background1,
+                    Colour = Theme.Background1,
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
                 });
@@ -52,7 +52,7 @@ public partial class FluXisMarkdownTable : MarkdownTable
 
             var even = idx % 2 == 0;
             var box = (Box)InternalChildren[0];
-            box.Colour = !even || header ? FluXisColors.Background2 : FluXisColors.Background1;
+            box.Colour = !even || header ? Theme.Background2 : Theme.Background1;
             box.Alpha = 1;
         }
     }

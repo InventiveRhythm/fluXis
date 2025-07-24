@@ -70,13 +70,13 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                     RelativeSizeAxes = Axes.Both,
                     RelativePositionAxes = Axes.Both,
                     Masking = true,
-                    EdgeEffect = FluXisStyles.ShadowLargeNoOffset,
+                    EdgeEffect = Styling.ShadowLargeNoOffset,
                     Children = new Drawable[]
                     {
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
+                            Colour = Theme.Background2
                         },
                         scroll = new FluXisScrollContainer
                         {
@@ -222,7 +222,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = FluXisColors.Background3
+                                        Colour = Theme.Background3
                                     },
                                     contents
                                 }
@@ -239,7 +239,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = FluXisColors.Background3
+                                        Colour = Theme.Background3
                                     },
                                     md
                                 }

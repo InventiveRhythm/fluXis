@@ -14,7 +14,7 @@ public partial class FluXisMenu : Menu
     public FluXisMenu(Direction direction, bool topLevelMenu = false)
         : base(direction, topLevelMenu)
     {
-        BackgroundColour = FluXisColors.Background4;
+        BackgroundColour = Theme.Background4;
     }
 
     protected override Menu CreateSubMenu() =>

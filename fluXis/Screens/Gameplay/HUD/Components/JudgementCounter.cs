@@ -24,7 +24,7 @@ public partial class JudgementCounter : GameplayHUDComponent
         AutoSizeAxes = Axes.Y;
         CornerRadius = 10;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        EdgeEffect = Styling.ShadowSmall;
 
         var dict = new Dictionary<Judgement, string>
         {
@@ -40,7 +40,7 @@ public partial class JudgementCounter : GameplayHUDComponent
         {
             new Box
             {
-                Colour = FluXisColors.Background4,
+                Colour = Theme.Background4,
                 RelativeSizeAxes = Axes.Both
             },
             new FillFlowContainer<CounterItem>

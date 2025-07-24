@@ -30,7 +30,7 @@ public partial class LoadingIcon : Container
     {
         Masking = true;
         CornerRadius = 10;
-        Colour = FluXisColors.Text;
+        Colour = Theme.Text;
 
         InternalChildren = new Drawable[]
         {
