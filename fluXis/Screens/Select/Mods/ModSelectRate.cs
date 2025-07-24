@@ -12,6 +12,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Select.Mods;
@@ -142,7 +143,8 @@ public partial class ModSelectRate : FillFlowContainer
                                 Bindable = RateBindable,
                                 RelativeSizeAxes = Axes.X,
                                 Step = RateBindable.Precision,
-                                CustomColor = color
+                                CustomColor = color,
+                                OnRightClick = _ => RateBindable.Value = 1f
                             },
                             new Container
                             {
@@ -197,6 +199,8 @@ public partial class ModSelectRate : FillFlowContainer
             .FadeOut(200).MoveToX(-50, 400, Easing.OutQuint);
     }
 
+    protected override bool OnClick(ClickEvent e) => true;
+    
     private partial class SliderTickMark : Container
     {
         public float Value { get; init; }

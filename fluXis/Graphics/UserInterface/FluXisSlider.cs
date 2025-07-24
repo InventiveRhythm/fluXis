@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
@@ -9,6 +10,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
+using osuTK.Input;
 using Vector2 = osuTK.Vector2;
 
 namespace fluXis.Graphics.UserInterface;
@@ -21,6 +24,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
     public Colour4? CustomColor { get; set; }
 
     private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
+    public Action<MouseDownEvent> OnRightClick { get; set; }
     private ClickableSpriteIcon leftIcon;
     private ClickableSpriteIcon rightIcon;
 
@@ -155,6 +159,17 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             var colour = parent.CustomColor ?? Theme.AccentGradient.Interpolate(new Vector2(value, 1));
             bar.FadeColour(colour, 400, Easing.OutQuint).ResizeWidthTo(value, 400, Easing.OutQuint);
             background.FadeColour(colour, 400, Easing.OutQuint);
+        }
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            if (parent.OnRightClick != null && e.Button == MouseButton.Right)
+            {
+                parent.OnRightClick.Invoke(e);
+                return true;
+            }
+            
+            return base.OnMouseDown(e);
         }
     }
 }
