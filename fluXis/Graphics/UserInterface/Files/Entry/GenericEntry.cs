@@ -63,7 +63,7 @@ public abstract partial class GenericEntry : Container, IComparable<GenericEntry
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background3
+                            Colour = Theme.Background3
                         },
                         hover = new HoverLayer { Colour = Color },
                         new Container

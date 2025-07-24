@@ -35,7 +35,7 @@ public partial class FluXisSearchBox : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             searchIcon = new FluXisSpriteIcon
             {
@@ -66,8 +66,8 @@ public partial class FluXisSearchBox : Container
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         PlaceholderText = "Click to search...",
-                        BackgroundActive = FluXisColors.Background2,
-                        BackgroundInactive = FluXisColors.Background2,
+                        BackgroundActive = Theme.Background2,
+                        BackgroundInactive = Theme.Background2,
                         OnTextChanged = OnTextChanged
                     },
                     statusText = new FluXisSpriteText
@@ -77,7 +77,7 @@ public partial class FluXisSearchBox : Container
                         Margin = new MarginPadding { Left = 5, Top = 5 },
                         Font = new FluXisFont(),
                         FontSize = 20,
-                        Colour = FluXisColors.Foreground,
+                        Colour = Theme.Foreground,
                         Text = "",
                         Alpha = 0.5f
                     }
