@@ -14,7 +14,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class BeatPulseEntry : PointListEntry
 {
     protected override string Text => "Beat Pulse";
-    protected override Colour4 Color => FluXisColors.BeatPulse;
+    protected override Colour4 Color => Theme.BeatPulse;
 
     private BeatPulseEvent pulse => Object as BeatPulseEvent;
 

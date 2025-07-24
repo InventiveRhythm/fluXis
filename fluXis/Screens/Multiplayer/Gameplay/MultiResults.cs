@@ -54,7 +54,7 @@ public partial class MultiResults : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
+                            Colour = Theme.Background2
                         },
                         new GridContainer
                         {
@@ -84,13 +84,13 @@ public partial class MultiResults : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 RelativeSizeAxes = Axes.X,
                 Height = 60,
                 Masking = true,
-                EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
+                EdgeEffect = Styling.ShadowMediumNoOffset,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 }
             },
             backButton = new CornerButton

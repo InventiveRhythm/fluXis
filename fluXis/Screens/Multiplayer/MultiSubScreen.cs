@@ -1,4 +1,5 @@
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
@@ -51,7 +52,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
-                        Colour = FluXisColors.Text,
+                        Colour = Theme.Text,
                         Child = titleLine = new Circle
                         {
                             RelativeSizeAxes = Axes.Both
@@ -87,7 +88,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
         RefreshTitle();
         this.FadeOut();
 
-        using (BeginDelayedSequence(FluXisScreen.ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
             FadeIn();
     }
 
@@ -98,7 +99,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
         RefreshTitle();
         this.FadeOut();
 
-        using (BeginDelayedSequence(FluXisScreen.ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
             FadeIn();
     }
 
@@ -113,16 +114,16 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
         RefreshActivity();
 
         titleContainer.MoveToX(0);
-        titleLine.ResizeHeightTo(0).ResizeHeightTo(1, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        titleText.MoveToX(-10).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        titleSubText.MoveToX(-10).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        this.FadeInFromZero(FluXisScreen.FADE_DURATION);
+        titleLine.ResizeHeightTo(0).ResizeHeightTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        titleText.MoveToX(-10).MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        titleSubText.MoveToX(-10).MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        this.FadeInFromZero(Styling.TRANSITION_FADE);
     }
 
     protected virtual void FadeOut(IScreen next)
     {
-        titleContainer.MoveToX(50, FluXisScreen.MOVE_DURATION);
-        this.FadeOut(FluXisScreen.FADE_DURATION);
+        titleContainer.MoveToX(50, Styling.TRANSITION_MOVE);
+        this.FadeOut(Styling.TRANSITION_FADE);
     }
 
     protected void RefreshTitle()

@@ -161,7 +161,7 @@ public partial class DashboardNotificationsTab : DashboardTab
                                         new Box
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Colour = FluXisColors.Background3
+                                            Colour = Theme.Background3
                                         },
                                         icon = new Container
                                         {
@@ -198,7 +198,7 @@ public partial class DashboardNotificationsTab : DashboardTab
                                                 },
                                                 new Circle
                                                 {
-                                                    Colour = FluXisColors.Highlight,
+                                                    Colour = Theme.Highlight,
                                                     Size = new Vector2(8),
                                                     Anchor = Anchor.CentreRight,
                                                     Origin = Anchor.CentreRight,
@@ -237,7 +237,7 @@ public partial class DashboardNotificationsTab : DashboardTab
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2,
+                            Colour = Theme.Background2,
                             Alpha = .5f
                         },
                         new FluXisSpriteIcon

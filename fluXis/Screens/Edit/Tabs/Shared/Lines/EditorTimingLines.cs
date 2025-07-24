@@ -48,18 +48,22 @@ public abstract partial class EditorTimingLines<T> : Container<T>
 
     protected override void Update()
     {
+        bool shouldSort = false;
+
         while (pastLines.Count > 0 && !pastLines[^1].BelowScreen)
         {
             var line = pastLines[^1];
-            addAndSort(line);
-            pastLines.Remove(line);
+            pastLines.RemoveAt(pastLines.Count - 1);
+            Add(line);
+            shouldSort = true;
         }
 
         while (futureLines.Count > 0 && !futureLines[0].AboveScreen)
         {
             var line = futureLines[0];
-            addAndSort(line);
-            futureLines.Remove(line);
+            futureLines.RemoveAt(0);
+            Add(line);
+            shouldSort = true;
         }
 
         while (Children.Count > 0 && Children[0].BelowScreen)
@@ -75,12 +79,9 @@ public abstract partial class EditorTimingLines<T> : Container<T>
             futureLines.Insert(0, line);
             Remove(line, false);
         }
-    }
 
-    private void addAndSort(T line)
-    {
-        Add(line);
-        SortInternal();
+        if (shouldSort)
+            SortInternal();
     }
 
     protected override int Compare(Drawable x, Drawable y)
@@ -113,7 +114,7 @@ public abstract partial class EditorTimingLines<T> : Container<T>
             for (var position = point.Time; position < target; position += increase)
             {
                 var divisor = divisorForIndex(j, Settings.SnapDivisor);
-                var line = CreateLine(position, j % (point.Signature * Settings.SnapDivisor) == 0, FluXisColors.GetEditorSnapColor(divisor));
+                var line = CreateLine(position, j % (point.Signature * Settings.SnapDivisor) == 0, Theme.GetEditorSnapColor(divisor));
 
                 LoadComponent(line);
 

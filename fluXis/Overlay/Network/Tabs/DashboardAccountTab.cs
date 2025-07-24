@@ -19,6 +19,7 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.Network.Tabs.Account;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
+using fluXis.Screens.Edit.Tabs.Setup.Entries;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -56,14 +57,14 @@ public partial class DashboardAccountTab : DashboardTab
     private Container unsavedContent = null!;
     private LoadingIcon loadingIcon = null!;
 
-    private DashboardAccountTextBox twitterEntry = null!;
-    private DashboardAccountTextBox youtubeEntry = null!;
-    private DashboardAccountTextBox twitchEntry = null!;
-    private DashboardAccountTextBox discordEntry = null!;
+    private SetupTextBox twitterEntry = null!;
+    private SetupTextBox youtubeEntry = null!;
+    private SetupTextBox twitchEntry = null!;
+    private SetupTextBox discordEntry = null!;
 
-    private DashboardAccountTextBox displayNameEntry = null!;
-    private DashboardAccountTextBox aboutmeEntry = null!;
-    private DashboardAccountTextBox pronounsEntry = null!;
+    private SetupTextBox displayNameEntry = null!;
+    private SetupTextBox aboutmeEntry = null!;
+    private SetupTextBox pronounsEntry = null!;
 
     private bool hasUnsavedChanges;
     private bool saving;
@@ -92,7 +93,7 @@ public partial class DashboardAccountTab : DashboardTab
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background3
+                        Colour = Theme.Background3
                     },
                     new FluXisSpriteText
                     {
@@ -126,8 +127,8 @@ public partial class DashboardAccountTab : DashboardTab
                                 {
                                     Text = "Save",
                                     Action = save,
-                                    Color = FluXisColors.Highlight,
-                                    TextColor = FluXisColors.Background2
+                                    Color = Theme.Highlight,
+                                    TextColor = Theme.Background2
                                 }
                             }
                         }
@@ -227,15 +228,13 @@ public partial class DashboardAccountTab : DashboardTab
                         {
                             Children = new Drawable[]
                             {
-                                new DashboardAccountTextBox
+                                new SetupTextBox("Username")
                                 {
-                                    Title = "Username",
                                     Default = user.Username,
                                     ReadOnly = true
                                 },
-                                new DashboardAccountTextBox
+                                new SetupTextBox("E-Mail")
                                 {
-                                    Title = "E-Mail",
                                     Default = StringUtils.CensorEmail(user.Email),
                                     ReadOnly = true
                                 }
@@ -263,27 +262,23 @@ public partial class DashboardAccountTab : DashboardTab
                         {
                             Children = new Drawable[]
                             {
-                                twitterEntry = new DashboardAccountTextBox
+                                twitterEntry = new SetupTextBox("Twitter")
                                 {
-                                    Title = "Twitter",
                                     Default = user.Socials.Twitter,
                                     OnChange = updateUnsavedStatus
                                 },
-                                youtubeEntry = new DashboardAccountTextBox
+                                youtubeEntry = new SetupTextBox("YouTube")
                                 {
-                                    Title = "YouTube",
                                     Default = user.Socials.YouTube,
                                     OnChange = updateUnsavedStatus
                                 },
-                                twitchEntry = new DashboardAccountTextBox
+                                twitchEntry = new SetupTextBox("Twitch")
                                 {
-                                    Title = "Twitch",
                                     Default = user.Socials.Twitch,
                                     OnChange = updateUnsavedStatus
                                 },
-                                discordEntry = new DashboardAccountTextBox
+                                discordEntry = new SetupTextBox("Discord")
                                 {
-                                    Title = "Discord",
                                     Default = user.Socials.Discord,
                                     OnChange = updateUnsavedStatus
                                 }
@@ -293,23 +288,20 @@ public partial class DashboardAccountTab : DashboardTab
                         {
                             Children = new Drawable[]
                             {
-                                displayNameEntry = new DashboardAccountTextBox
+                                displayNameEntry = new SetupTextBox("Display Name")
                                 {
-                                    Title = "Display Name",
                                     Placeholder = "...",
                                     Default = user.DisplayName,
                                     OnChange = updateUnsavedStatus
                                 },
-                                aboutmeEntry = new DashboardAccountTextBox
+                                aboutmeEntry = new SetupTextBox("About Me")
                                 {
-                                    Title = "About Me",
-                                    Placeholder = "...",
+                                    Placeholder = "Tell the world about yourself...",
                                     Default = user.AboutMe,
                                     OnChange = updateUnsavedStatus
                                 },
-                                pronounsEntry = new DashboardAccountTextBox
+                                pronounsEntry = new SetupTextBox("Pronouns")
                                 {
-                                    Title = "Pronouns",
                                     Placeholder = "../..",
                                     Default = user.Pronouns,
                                     OnChange = updateUnsavedStatus
@@ -322,7 +314,7 @@ public partial class DashboardAccountTab : DashboardTab
         };
     }
 
-    private void updateUnsavedStatus()
+    private void updateUnsavedStatus(object? _ = null)
     {
         hasUnsavedChanges = false;
 

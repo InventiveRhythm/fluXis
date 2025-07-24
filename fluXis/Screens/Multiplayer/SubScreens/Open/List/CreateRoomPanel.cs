@@ -51,14 +51,14 @@ public partial class CreateRoomPanel : Panel
                 {
                     Default = name,
                     Placeholder = "Room Name",
-                    BackgroundColor = FluXisColors.Background2,
+                    BackgroundColor = Theme.Background2,
                     OnChange = v => name = v
                 },
                 new SetupTextBox("Password")
                 {
                     Default = password,
                     Placeholder = "Leave empty for a public lobby",
-                    BackgroundColor = FluXisColors.Background2,
+                    BackgroundColor = Theme.Background2,
                     OnChange = v => password = v
                 },
                 new Container

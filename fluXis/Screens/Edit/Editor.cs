@@ -9,6 +9,7 @@ using fluXis.Configuration;
 using fluXis.Configuration.Experiments;
 using fluXis.Database;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -662,18 +663,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void exitAnimation()
     {
-        lowPass.CutoffTo(AudioFilter.MAX, MOVE_DURATION);
-        highPass.CutoffTo(0, MOVE_DURATION);
-        this.ScaleTo(1.2f, MOVE_DURATION, Easing.OutQuint).FadeOut(FADE_DURATION);
+        lowPass.CutoffTo(AudioFilter.MAX, Styling.TRANSITION_MOVE);
+        highPass.CutoffTo(0, Styling.TRANSITION_MOVE);
+        this.ScaleTo(1.2f, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeOut(Styling.TRANSITION_FADE);
     }
 
     private void enterAnimation()
     {
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            this.ScaleTo(1f).FadeInFromZero(FADE_DURATION);
-            lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, MOVE_DURATION);
-            highPass.CutoffTo(highPassEnabled ? 300 : 0, MOVE_DURATION);
+            this.ScaleTo(1f).FadeInFromZero(Styling.TRANSITION_FADE);
+            lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, Styling.TRANSITION_MOVE);
+            highPass.CutoffTo(highPassEnabled ? 300 : 0, Styling.TRANSITION_MOVE);
         }
 
         // this check won't work 100% of the time, we need a better way of storing the mappers
@@ -834,7 +835,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         flow.NewParagraph();
                         flow.AddText<ClickableFluXisSpriteText>("Click here to view the mapset.", t =>
                         {
-                            t.Colour = FluXisColors.Link;
+                            t.Colour = Theme.Highlight;
                             t.Action = () => Game.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{res.Data.SetID}", true);
                         });
                     },

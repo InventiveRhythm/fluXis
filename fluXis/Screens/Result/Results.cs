@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Input;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
@@ -80,9 +81,9 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
     {
         this.FadeOut();
 
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            this.FadeInFromZero(FADE_DURATION);
+            this.FadeInFromZero(Styling.TRANSITION_FADE);
             content.Show(PlayEnterAnimation);
             footer.Show();
         }
@@ -90,7 +91,7 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.FadeOut(FADE_DURATION);
+        this.FadeOut(Styling.TRANSITION_FADE);
         content.Hide();
         footer.Hide();
         return base.OnExiting(e);

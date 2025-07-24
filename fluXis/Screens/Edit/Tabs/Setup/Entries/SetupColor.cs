@@ -55,15 +55,12 @@ public partial class SetupColor : SetupEntry, IHasPopover
         });
     }
 
-    protected override Drawable CreateContent()
+    protected override Drawable CreateContent() => text = new FluXisSpriteText
     {
-        return text = new FluXisSpriteText
-        {
-            RelativeSizeAxes = Axes.X,
-            Text = Color.ToHex(),
-            WebFontSize = 18
-        };
-    }
+        RelativeSizeAxes = Axes.X,
+        Text = Color.ToHex(),
+        WebFontSize = 18
+    };
 
     protected override void LoadComplete()
     {
@@ -80,6 +77,7 @@ public partial class SetupColor : SetupEntry, IHasPopover
 
     protected override bool OnClick(ClickEvent e)
     {
+        StartHighlight();
         this.ShowPopover();
         return true;
     }
@@ -87,6 +85,7 @@ public partial class SetupColor : SetupEntry, IHasPopover
     public Popover GetPopover() => new FluXisPopover
     {
         ContentPadding = 0,
+        OnClose = StopHighlight,
         Child = new FluXisColorPicker { Current = { BindTarget = bindableColor } }
     };
 }

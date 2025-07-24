@@ -68,7 +68,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     {
         ButtonText = LocalizationStrings.General.Play,
         Icon = FontAwesome6.Solid.Play,
-        ButtonColor = FluXisColors.Primary,
+        ButtonColor = Theme.Primary,
         Corner = Corner.BottomRight,
         Action = PlayAction,
         PlayClickSound = false
@@ -96,7 +96,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         {
             Text = LocalizationStrings.SongSelect.FooterRandom,
             Icon = FontAwesome6.Solid.Shuffle,
-            AccentColor = FluXisColors.Footer2,
+            AccentColor = Theme.Footer2,
             Action = () =>
             {
                 if (inputManager.CurrentState.Keyboard.ShiftPressed)
@@ -111,7 +111,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         {
             Text = LocalizationStrings.SongSelect.FooterOptions,
             Icon = FontAwesome6.Solid.Gear,
-            AccentColor = FluXisColors.Footer3,
+            AccentColor = Theme.Footer3,
             Action = OpenSettings,
             Index = 2
         };
@@ -122,7 +122,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
             {
                 Text = LocalizationStrings.SongSelect.FooterPractice,
                 Icon = FontAwesome6.Solid.BullseyeArrow,
-                AccentColor = FluXisColors.Footer4,
+                AccentColor = Theme.Footer4,
                 Action = practice.ToggleVisibility,
                 Index = 3
             };

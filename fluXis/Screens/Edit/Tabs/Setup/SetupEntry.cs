@@ -1,6 +1,7 @@
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -16,11 +17,12 @@ namespace fluXis.Screens.Edit.Tabs.Setup;
 public partial class SetupEntry : CompositeDrawable, IHasTooltip
 {
     public LocalisableString TooltipText { get; set; }
-    public ColourInfo BackgroundColor { get; init; } = FluXisColors.Background3;
+    public ColourInfo BackgroundColor { get; init; } = Theme.Background3;
 
     protected virtual float ContentSpacing => 4;
     protected virtual bool ShowHoverFlash => false;
 
+    private FluXisSpriteText titleSprite;
     private HoverLayer hover;
     private FlashLayer flash;
 
@@ -38,6 +40,8 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
         Height = 60;
         CornerRadius = 10;
         Masking = true;
+        BorderColour = BackgroundColor;
+        BorderThickness = 3;
 
         InternalChildren = new Drawable[]
         {
@@ -65,11 +69,11 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
                         AutoSizeAxes = Axes.Y,
                         Children = new[]
                         {
-                            new FluXisSpriteText
+                            titleSprite = new FluXisSpriteText
                             {
                                 Text = title,
                                 WebFontSize = 16,
-                                Alpha = .8f
+                                Colour = Theme.Text2
                             },
                             CreateRightTitle().With(d =>
                             {
@@ -86,6 +90,19 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
 
     protected virtual Drawable CreateContent() => Empty();
     protected virtual Drawable CreateRightTitle() => Empty();
+
+    protected void StartHighlight()
+    {
+        BorderThickness = 3;
+        this.BorderColorTo(Theme.Highlight, 50);
+        titleSprite.FadeColour(Theme.Highlight, 50);
+    }
+
+    protected void StopHighlight()
+    {
+        this.BorderColorTo(BackgroundColor, 50);
+        titleSprite.FadeColour(Theme.Text.Opacity(.8f), 50);
+    }
 
     protected override bool OnHover(HoverEvent e)
     {

@@ -48,12 +48,12 @@ public partial class MapSetSidebarVoting : FillFlowContainer
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.VoteDown
+                        Colour = Theme.VoteDown
                     },
                     new Circle
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.VoteUp,
+                        Colour = Theme.VoteUp,
                         Width = progress
                     }
                 }
@@ -68,7 +68,7 @@ public partial class MapSetSidebarVoting : FillFlowContainer
                     {
                         Text = $"{set.UpVotes}",
                         WebFontSize = 14,
-                        Colour = FluXisColors.VoteUp,
+                        Colour = Theme.VoteUp,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft
                     },
@@ -83,7 +83,7 @@ public partial class MapSetSidebarVoting : FillFlowContainer
                     {
                         Text = $"{set.DownVotes}",
                         WebFontSize = 14,
-                        Colour = FluXisColors.VoteDown,
+                        Colour = Theme.VoteDown,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight
                     }

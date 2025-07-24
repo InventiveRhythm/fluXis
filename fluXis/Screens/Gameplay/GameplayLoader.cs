@@ -84,7 +84,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         Origin = Anchor.TopCentre,
                         CornerRadius = 20,
                         Masking = true,
-                        EdgeEffect = FluXisStyles.ShadowMedium,
+                        EdgeEffect = Styling.ShadowMedium,
                         Margin = new MarginPadding { Bottom = 20 },
                         Children = new Drawable[]
                         {
@@ -275,7 +275,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
             else
             {
                 ValidForResume = false;
-                loadingContainer.FadeOut(FADE_DURATION);
+                loadingContainer.FadeOut(Styling.TRANSITION_FADE);
 
                 if (HasRestarted)
                 {
@@ -284,8 +284,8 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     return;
                 }
 
-                clock.Delay(MOVE_DURATION).Schedule(() => clock.VolumeOut(MOVE_DURATION));
-                this.Delay(MOVE_DURATION * 2).Schedule(() =>
+                clock.Delay(Styling.TRANSITION_MOVE).Schedule(() => clock.VolumeOut(Styling.TRANSITION_MOVE));
+                this.Delay(Styling.TRANSITION_MOVE * 2).Schedule(() =>
                 {
                     clock.Stop();
                     this.Push(screen);
@@ -320,20 +320,20 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         this.FadeOut();
 
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
             content.ScaleTo(1f);
-            var seq = this.FadeIn(FADE_DURATION);
+            var seq = this.FadeIn(Styling.TRANSITION_FADE);
 
             if (!HasRestarted)
-                seq = seq.ScaleTo(.9f).ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
+                seq = seq.ScaleTo(.9f).ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
-            seq.Then(MOVE_DURATION).Schedule(loadGameplay);
+            seq.Then(Styling.TRANSITION_MOVE).Schedule(loadGameplay);
 
             tip.FadeIn().MoveToX(0);
             content.MoveToY(0);
-            loadingContainer.FadeIn(FADE_DURATION);
-            lowPass.CutoffTo(AudioFilter.MIN, MOVE_DURATION, Easing.OutQuint);
+            loadingContainer.FadeIn(Styling.TRANSITION_FADE);
+            lowPass.CutoffTo(AudioFilter.MIN, Styling.TRANSITION_MOVE, Easing.OutQuint);
         }
 
         tip.Text = LoadingTips.RandomTip;
@@ -345,15 +345,15 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         if (moveDown)
         {
-            this.Delay(MOVE_DURATION).FadeOut(FADE_DURATION);
-            tip.FadeOut(FADE_DURATION);
-            content.MoveToY(800, MOVE_DURATION + FADE_DURATION + 300, Easing.InQuint);
+            this.Delay(Styling.TRANSITION_MOVE).FadeOut(Styling.TRANSITION_FADE);
+            tip.FadeOut(Styling.TRANSITION_FADE);
+            content.MoveToY(800, Styling.TRANSITION_MOVE + Styling.TRANSITION_FADE + 300, Easing.InQuint);
         }
         else
         {
-            this.FadeOut(FADE_DURATION);
-            content.ScaleTo(.95f, MOVE_DURATION, Easing.OutQuint);
-            tip.MoveToX(-40, MOVE_DURATION, Easing.OutQuint);
+            this.FadeOut(Styling.TRANSITION_FADE);
+            content.ScaleTo(.95f, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            tip.MoveToX(-40, Styling.TRANSITION_MOVE, Easing.OutQuint);
         }
     }
 

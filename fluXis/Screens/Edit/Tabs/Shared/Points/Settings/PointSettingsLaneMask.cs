@@ -108,12 +108,12 @@ public partial class PointSettingsLaneMask : CompositeDrawable
             var box = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = active ? FluXisColors.Highlight : FluXisColors.Background3
+                Colour = active ? Theme.Highlight : Theme.Background3
             };
 
             Child = box;
 
-            list.CollectionChanged += (_, _) => box.Colour = active ? FluXisColors.Highlight : FluXisColors.Background3;
+            list.CollectionChanged += (_, _) => box.Colour = active ? Theme.Highlight : Theme.Background3;
         }
     }
 }

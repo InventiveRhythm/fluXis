@@ -83,12 +83,14 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
         CornerRadius = 12;
         Masking = true;
 
+        var badges = createBadges().ToArray();
+
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background4
+                Colour = Theme.Background4
             },
             new LoadWrapper<DrawableBanner>
             {
@@ -104,7 +106,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = 0.5f
             },
             new FillFlowContainer
@@ -142,7 +144,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                                 Height = 16,
                                 Direction = FillDirection.Horizontal,
                                 Spacing = new Vector2(4),
-                                Children = new Drawable[]
+                                Children = new[]
                                 {
                                     new ClubTag(user.Club)
                                     {
@@ -172,8 +174,8 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                                 AutoSizeAxes = Axes.Both,
                                 Direction = FillDirection.Horizontal,
                                 Spacing = new Vector2(5),
-                                Alpha = user.Groups.Count != 0 ? 1 : 0,
-                                ChildrenEnumerable = user.Groups.Select(group => new DrawableGroupBadge(group))
+                                Alpha = badges.Length != 0 ? 1 : 0,
+                                Children = badges
                             },
                             new ForcedHeightText
                             {
@@ -212,6 +214,15 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
             WebFontSize = 16,
             Shadow = true
         };
+    }
+
+    private IEnumerable<Drawable> createBadges()
+    {
+        if (user.IsSupporter)
+            yield return new DrawableSupporterBadge();
+
+        foreach (var group in user.Groups)
+            yield return new DrawableGroupBadge(group);
     }
 
     protected override bool OnClick(ClickEvent e)

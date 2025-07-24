@@ -4,7 +4,6 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
-using fluXis.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -33,7 +32,7 @@ public partial class FooterButton : CompositeDrawable
 
     public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
     public Action Action { get; init; }
-    public Colour4 AccentColor { get; init; } = FluXisColors.Text;
+    public Colour4 AccentColor { get; init; } = Theme.Text;
     public int Index { get; init; }
 
     public BindableBool Enabled { get; init; } = new(true);
@@ -61,13 +60,13 @@ public partial class FooterButton : CompositeDrawable
             RelativeSizeAxes = Axes.Both,
             CornerRadius = 10,
             Masking = true,
-            EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
+            EdgeEffect = Styling.ShadowMediumNoOffset,
             Children = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background3
+                    Colour = Theme.Background3
                 },
                 hover = new HoverLayer { Colour = AccentColor },
                 content = new Container
@@ -122,7 +121,7 @@ public partial class FooterButton : CompositeDrawable
     public override void Show()
     {
         this.MoveToY(100).Delay(100 * Index)
-            .MoveToY(20, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+            .MoveToY(20, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     protected override bool OnClick(ClickEvent e)

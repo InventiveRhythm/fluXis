@@ -79,13 +79,13 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
                 Origin = Anchor.Centre,
                 CornerRadius = 20,
                 Masking = true,
-                EdgeEffect = FluXisStyles.ShadowMedium,
+                EdgeEffect = Styling.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     },
                     warningContainer = new FillFlowContainer
                     {
@@ -128,7 +128,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
                                 MaxWidth = 400,
-                                Colour = FluXisColors.Red,
+                                Colour = Theme.Red,
                                 WebFontSize = 14,
                                 Alpha = 0
                             },
@@ -203,12 +203,12 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
         };
 
         flow.AddText("fluXis allows only");
-        flow.AddText(" one account per person.", t => t.Colour = FluXisColors.Red);
+        flow.AddText(" one account per person.", t => t.Colour = Theme.Red);
         flow.NewParagraph();
         flow.AddText("please make sure you check that you are not already registered.");
         flow.NewParagraph();
         flow.AddText("creating multiple accounts will result in ");
-        flow.AddText("a ban of both accounts.", t => t.Colour = FluXisColors.Red);
+        flow.AddText("a ban of both accounts.", t => t.Colour = Theme.Red);
         flow.NewParagraph();
         flow.NewParagraph(); // love spamming these
         flow.NewParagraph();
@@ -216,13 +216,13 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
         flow.NewParagraph();
         flow.AddText<ClickableFluXisSpriteText>("Terms of Service", t =>
         {
-            t.Colour = FluXisColors.Link;
+            t.Colour = Theme.Highlight;
             t.Action = () => game?.OpenLink("https://fluxis.flux.moe/wiki/legal/terms");
         });
         flow.AddText(" and ");
         flow.AddText<ClickableFluXisSpriteText>("Privacy Policy", t =>
         {
-            t.Colour = FluXisColors.Link;
+            t.Colour = Theme.Highlight;
             t.Action = () => game?.OpenLink("https://fluxis.flux.moe/wiki/legal/privacy");
         });
 

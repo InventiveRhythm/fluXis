@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
@@ -222,13 +223,13 @@ public partial class ModsOverlay : VisibilityContainer
                                                         Spacing = new Vector2(24),
                                                         Children = new[]
                                                         {
-                                                            diffDecrease = new(this, LocalizationStrings.ModSelect.DifficultyDecreaseSection, FluXisColors.GetModTypeColor(ModType.DifficultyDecrease),
+                                                            diffDecrease = new(this, LocalizationStrings.ModSelect.DifficultyDecreaseSection, Theme.GetModTypeColor(ModType.DifficultyDecrease),
                                                                 new IMod[]
                                                                 {
                                                                     new EasyMod(),
                                                                     new NoFailMod()
                                                                 }),
-                                                            miscellaneous = new(this, LocalizationStrings.ModSelect.MiscSection, FluXisColors.GetModTypeColor(ModType.Misc), new IMod[]
+                                                            miscellaneous = new(this, LocalizationStrings.ModSelect.MiscSection, Theme.GetModTypeColor(ModType.Misc), new IMod[]
                                                             {
                                                                 new NoSvMod(),
                                                                 new NoLnMod(),
@@ -246,14 +247,14 @@ public partial class ModsOverlay : VisibilityContainer
                                                         Spacing = new Vector2(24),
                                                         Children = new[]
                                                         {
-                                                            diffIncrease = new(this, LocalizationStrings.ModSelect.DifficultyIncreaseSection, FluXisColors.GetModTypeColor(ModType.DifficultyIncrease),
+                                                            diffIncrease = new(this, LocalizationStrings.ModSelect.DifficultyIncreaseSection, Theme.GetModTypeColor(ModType.DifficultyIncrease),
                                                                 new IMod[]
                                                                 {
                                                                     new HardMod(),
                                                                     new FragileMod(),
                                                                     new FlawlessMod()
                                                                 }),
-                                                            automation = new(this, LocalizationStrings.ModSelect.AutomationSection, FluXisColors.GetModTypeColor(ModType.Automation), new IMod[]
+                                                            automation = new(this, LocalizationStrings.ModSelect.AutomationSection, Theme.GetModTypeColor(ModType.Automation), new IMod[]
                                                             {
                                                                 new AutoPlayMod()
                                                             })
@@ -282,7 +283,7 @@ public partial class ModsOverlay : VisibilityContainer
 
     protected override void PopIn()
     {
-        background.FadeTo(1f, FluXisScreen.FADE_DURATION);
+        background.FadeTo(1f, Styling.TRANSITION_FADE);
 
         header.MoveToX(50).MoveToX(0, 400, Easing.OutQuint).FadeIn(200);
         RateMod.Show();
@@ -290,14 +291,14 @@ public partial class ModsOverlay : VisibilityContainer
         diffIncrease.Show((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         miscellaneous.Show((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         automation.Show((diffDecrease.ModCount + diffIncrease.ModCount + 4) * STAGGER_DURATION);
-        // this.TransformTo(nameof(blur), 1f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        // this.TransformTo(nameof(blur), 1f, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
         sampleOpen?.Play();
     }
 
     protected override void PopOut()
     {
-        background.FadeTo(0f, FluXisScreen.FADE_DURATION);
+        background.FadeTo(0f, Styling.TRANSITION_FADE);
 
         header.MoveToX(-50, 400, Easing.OutQuint).FadeOut(200);
         RateMod.Hide();
@@ -305,7 +306,7 @@ public partial class ModsOverlay : VisibilityContainer
         diffIncrease.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         miscellaneous.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         automation.Hide((diffDecrease.ModCount + diffIncrease.ModCount + 4) * STAGGER_DURATION);
-        // this.TransformTo(nameof(blur), 0f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        // this.TransformTo(nameof(blur), 0f, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
         if (!first)
             sampleClose?.Play();

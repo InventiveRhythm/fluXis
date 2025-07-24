@@ -46,7 +46,7 @@ public partial class EditorBottomBar : Container
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 },
                 new GridContainer
                 {
@@ -72,7 +72,7 @@ public partial class EditorBottomBar : Container
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = FluXisColors.Background1
+                                        Colour = Theme.Background1
                                     },
                                     new Container
                                     {
@@ -92,7 +92,7 @@ public partial class EditorBottomBar : Container
                                     ButtonText = "Test",
                                     Icon = FontAwesome6.Solid.Play,
                                     ShowImmediately = true,
-                                    ButtonColor = FluXisColors.Primary,
+                                    ButtonColor = Theme.Primary,
                                     Corner = Corner.BottomRight,
                                     Action = () =>
                                     {

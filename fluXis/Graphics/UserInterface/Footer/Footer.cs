@@ -3,7 +3,6 @@ using fluXis.Graphics.Gamepad;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
-using fluXis.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -39,11 +38,11 @@ public abstract partial class Footer : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Masking = true,
                 Y = 80,
-                EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
+                EdgeEffect = Styling.ShadowMediumNoOffset,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 }
             }
         };
@@ -134,7 +133,7 @@ public abstract partial class Footer : CompositeDrawable
     {
         LeftButton?.Show();
         RightButton?.Show();
-        background.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        background.MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
         Buttons.MoveToY(0);
         Buttons.ForEach(b => b.Show());
     }
@@ -143,8 +142,8 @@ public abstract partial class Footer : CompositeDrawable
     {
         LeftButton?.Hide();
         RightButton?.Hide();
-        background.MoveToY(80, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        Buttons.MoveToY(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        background.MoveToY(80, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        Buttons.MoveToY(100, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     protected abstract CornerButton? CreateLeftButton();

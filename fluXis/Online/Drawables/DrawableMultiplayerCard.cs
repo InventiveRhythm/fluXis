@@ -42,7 +42,7 @@ public partial class DrawableMultiplayerCard : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background4
+                Colour = Theme.Background4
             },
             new LoadWrapper<DrawableOnlineBackground>
             {
@@ -52,7 +52,7 @@ public partial class DrawableMultiplayerCard : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = .5f
             },
             new FillFlowContainer

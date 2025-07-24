@@ -128,7 +128,7 @@ public partial class ScoreListTab : SelectInfoTab
                     new FluXisSpriteIcon
                     {
                         Icon = FontAwesome6.Solid.TriangleExclamation,
-                        Colour = FluXisColors.Yellow,
+                        Colour = Theme.Yellow,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         Size = new Vector2(20),
@@ -466,7 +466,7 @@ public partial class ScoreListTab : SelectInfoTab
                 ScoreListType.Country => Colour4.FromHSV(0f, .6f, 1f),
                 ScoreListType.Friends => Colour4.FromHSV(210f / 360f, .6f, 1f),
                 ScoreListType.Club => Colour4.FromHSV(270f / 360f, .6f, 1f),
-                _ => FluXisColors.Background4
+                _ => Theme.Background4
             };
 
             InternalChild = content = new Container

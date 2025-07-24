@@ -61,13 +61,13 @@ public partial class PauseMenu : CompositeDrawable, IKeyBindingHandler<FluXisGlo
                 Masking = true,
                 Scale = new Vector2(.8f),
                 Alpha = 0,
-                EdgeEffect = FluXisStyles.ShadowMedium,
+                EdgeEffect = Styling.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     },
                     new FillFlowContainer
                     {
@@ -124,7 +124,7 @@ public partial class PauseMenu : CompositeDrawable, IKeyBindingHandler<FluXisGlo
                                     new()
                                     {
                                         Text = "Quit",
-                                        Color = FluXisColors.Red,
+                                        Color = Theme.Red,
                                         SubText = "Bye bye",
                                         Icon = FontAwesome6.Solid.DoorOpen,
                                         Action = () => screen.Exit()

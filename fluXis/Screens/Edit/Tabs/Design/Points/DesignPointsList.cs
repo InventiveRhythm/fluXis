@@ -112,21 +112,21 @@ public partial class DesignPointsList : PointsList
     {
         var entries = new List<DropdownEntry>
         {
-            new("Scroll Velocity", FluXisColors.ScrollVelocity, () => Create(new ScrollVelocity()), x => x is ScrollVelocity),
-            new("Flash", FluXisColors.Flash, () => Create(new FlashEvent()), x => x is FlashEvent),
-            new("Pulse", FluXisColors.Pulse, () => Create(new PulseEvent()), x => x is PulseEvent),
-            new("Shake", FluXisColors.Shake, () => Create(new ShakeEvent()), x => x is ShakeEvent),
-            new("Playfield Move", FluXisColors.PlayfieldMove, () => Create(new PlayfieldMoveEvent()), x => x is PlayfieldMoveEvent),
-            new("Playfield Scale", FluXisColors.PlayfieldScale, () => Create(new PlayfieldScaleEvent()), x => x is PlayfieldScaleEvent),
-            new("Playfield Rotate", FluXisColors.PlayfieldRotate, () => Create(new PlayfieldRotateEvent()), x => x is PlayfieldRotateEvent),
-            new("HitObject Ease", FluXisColors.HitObjectEase, () => Create(new HitObjectEaseEvent()), x => x is HitObjectEaseEvent),
-            new("Layer Fade", FluXisColors.LayerFade, () => Create(new LayerFadeEvent()), x => x is LayerFadeEvent),
-            new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent()), x => x is BeatPulseEvent),
-            new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" }), x => x is ShaderEvent),
-            new("Scroll Multiplier", FluXisColors.ScrollMultiply, () => Create(new ScrollMultiplierEvent()), x => x is ScrollMultiplierEvent),
-            new("Time Offset", FluXisColors.TimeOffset, () => Create(new TimeOffsetEvent()), x => x is TimeOffsetEvent),
+            new("Scroll Velocity", Theme.ScrollVelocity, () => Create(new ScrollVelocity()), x => x is ScrollVelocity),
+            new("Flash", Theme.Flash, () => Create(new FlashEvent()), x => x is FlashEvent),
+            new("Pulse", Theme.Pulse, () => Create(new PulseEvent()), x => x is PulseEvent),
+            new("Shake", Theme.Shake, () => Create(new ShakeEvent()), x => x is ShakeEvent),
+            new("Playfield Move", Theme.PlayfieldMove, () => Create(new PlayfieldMoveEvent()), x => x is PlayfieldMoveEvent),
+            new("Playfield Scale", Theme.PlayfieldScale, () => Create(new PlayfieldScaleEvent()), x => x is PlayfieldScaleEvent),
+            new("Playfield Rotate", Theme.PlayfieldRotate, () => Create(new PlayfieldRotateEvent()), x => x is PlayfieldRotateEvent),
+            new("HitObject Ease", Theme.HitObjectEase, () => Create(new HitObjectEaseEvent()), x => x is HitObjectEaseEvent),
+            new("Layer Fade", Theme.LayerFade, () => Create(new LayerFadeEvent()), x => x is LayerFadeEvent),
+            new("Beat Pulse", Theme.BeatPulse, () => Create(new BeatPulseEvent()), x => x is BeatPulseEvent),
+            new("Shader", Theme.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" }), x => x is ShaderEvent),
+            new("Scroll Multiplier", Theme.ScrollMultiply, () => Create(new ScrollMultiplierEvent()), x => x is ScrollMultiplierEvent),
+            new("Time Offset", Theme.TimeOffset, () => Create(new TimeOffsetEvent()), x => x is TimeOffsetEvent),
             // new("Script", FluXisColors.Script, () => Create(new ScriptEvent()), x => x is ScriptEvent),
-            new("Note", FluXisColors.Note, () => Create(new NoteEvent()), x => x is NoteEvent),
+            new("Note", Theme.Note, () => Create(new NoteEvent()), x => x is NoteEvent),
         };
 
         return entries;

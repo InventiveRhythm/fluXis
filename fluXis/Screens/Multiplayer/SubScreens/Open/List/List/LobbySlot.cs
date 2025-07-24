@@ -41,7 +41,7 @@ public partial class LobbySlot : Container, IHasPopover
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background4
+                Colour = Theme.Background4
             },
             new LoadWrapper<DrawableOnlineBackground>
             {
@@ -52,7 +52,7 @@ public partial class LobbySlot : Container, IHasPopover
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = .5f
             },
             new Container
@@ -119,7 +119,7 @@ public partial class LobbySlot : Container, IHasPopover
             {
                 Size = new Vector2(220, 40),
                 FontSize = FluXisSpriteText.GetWebFontSize(14),
-                BorderColour = FluXisColors.Highlight,
+                BorderColour = Theme.Highlight,
                 BorderThickness = 4,
                 SidePadding = 12,
                 IsPassword = true

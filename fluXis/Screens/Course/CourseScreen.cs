@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Input;
 using fluXis.Mods;
 using fluXis.Scoring;
@@ -94,16 +95,16 @@ public partial class CourseScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         this.FadeOut();
 
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            this.FadeIn(FADE_DURATION);
+            this.FadeIn(Styling.TRANSITION_FADE);
             footer.Show();
         }
     }
 
     private void fadeOut()
     {
-        this.FadeOut(FADE_DURATION);
+        this.FadeOut(Styling.TRANSITION_FADE);
         footer.Hide();
     }
 

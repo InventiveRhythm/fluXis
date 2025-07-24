@@ -17,7 +17,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class LayerFadeEntry : PointListEntry
 {
     protected override string Text => "Layer Fade";
-    protected override Colour4 Color => FluXisColors.LayerFade;
+    protected override Colour4 Color => Theme.LayerFade;
 
     private LayerFadeEvent fade => Object as LayerFadeEvent;
 

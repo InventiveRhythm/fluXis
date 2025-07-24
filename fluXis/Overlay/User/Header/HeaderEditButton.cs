@@ -33,14 +33,14 @@ public partial class HeaderEditButton : CircularContainer
         AutoSizeAxes = Axes.X;
         Height = 48;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        EdgeEffect = Styling.ShadowSmall;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             hover = new HoverLayer(),
             flash = new FlashLayer(),
@@ -50,7 +50,7 @@ public partial class HeaderEditButton : CircularContainer
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Direction = FillDirection.Horizontal,
-                Colour = FluXisColors.Text,
+                Colour = Theme.Text,
                 Padding = new MarginPadding { Horizontal = 20 },
                 Spacing = new Vector2(10),
                 Children = new Drawable[]

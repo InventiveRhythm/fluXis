@@ -12,8 +12,8 @@ namespace fluXis.Graphics.UserInterface;
 public partial class RoundedChip : CircularContainer
 {
     private LocalisableString text = "text";
-    private ColourInfo backgroundColour = FluXisColors.Background2;
-    private ColourInfo textColour = FluXisColors.Text.Opacity(.75f);
+    private ColourInfo backgroundColour = Theme.Background2;
+    private ColourInfo textColour = Theme.Text.Opacity(.75f);
 
     public LocalisableString Text
     {

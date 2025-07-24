@@ -27,7 +27,7 @@ namespace fluXis.Screens.Edit.Input;
 public partial class EditorKeymapOverlay : IconEntranceOverlay, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     protected override IconUsage Icon => FontAwesome6.Solid.Keyboard;
-    protected override ColourInfo BackgroundColor => FluXisColors.Background1;
+    protected override ColourInfo BackgroundColor => Theme.Background1;
     protected override float IconRotation => 0;
 
     private EditorKeybindingContainer bindings { get; }

@@ -146,7 +146,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background2
+                                Colour = Theme.Background2
                             },
                             new LoadWrapper<DrawableBanner>
                             {
@@ -162,7 +162,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background2,
+                                Colour = Theme.Background2,
                                 Alpha = .6f
                             },
                             new Container
@@ -364,7 +364,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                 },
                 downloadCircle = new Circle
                 {
-                    Colour = FluXisColors.Background2,
+                    Colour = Theme.Background2,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 }
@@ -387,7 +387,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
         var status = DownloadAction?.Invoke();
         if (status is null) return;
 
-        downloadBar.FadeIn().FadeColour(FluXisColors.Blue);
+        downloadBar.FadeIn().FadeColour(Theme.Blue);
 
         status.OnProgress += f => Scheduler.ScheduleIfNeeded(() => downloadBar.ResizeWidthTo(f, 200, Easing.OutQuint));
         status.StateChanged += s => Scheduler.ScheduleIfNeeded(() =>
@@ -395,11 +395,11 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
             switch (s)
             {
                 case DownloadState.Downloading:
-                    downloadBar.FadeColour(FluXisColors.Blue, 400);
+                    downloadBar.FadeColour(Theme.Blue, 400);
                     break;
 
                 case DownloadState.Finished:
-                    downloadBar.FadeColour(FluXisColors.Green, 400).Then(400).FadeOut().OnComplete(_ =>
+                    downloadBar.FadeColour(Theme.Green, 400).Then(400).FadeOut().OnComplete(_ =>
                     {
                         var w = DrawWidth;
                         downloadCircle.FadeIn().ResizeTo(w).FadeColour(downloadBar.Colour)
@@ -409,7 +409,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                     break;
 
                 case DownloadState.Failed:
-                    downloadBar.FadeColour(FluXisColors.Red, 400).Then(1000).FadeOut(400);
+                    downloadBar.FadeColour(Theme.Red, 400).Then(1000).FadeOut(400);
                     break;
             }
         });
@@ -476,7 +476,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.GetModTypeColor(mod.Type)
+                        Colour = Theme.GetModTypeColor(mod.Type)
                     },
                     new FillFlowContainer
                     {

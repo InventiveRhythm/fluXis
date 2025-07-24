@@ -15,7 +15,7 @@ public partial class DashboardAccountButton : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(500, 50);
+        Size = new Vector2(500, 60);
         Padding = new MarginPadding { Horizontal = 8 };
 
         Children = new Drawable[]

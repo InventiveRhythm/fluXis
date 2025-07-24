@@ -9,8 +9,8 @@ public class SecondaryButtonData : ButtonData
     {
         Text = text;
         Action = action;
-        Color = FluXisColors.Background4;
-        TextColor = FluXisColors.Text;
+        Color = Theme.Background4;
+        TextColor = Theme.Text;
         HoldToConfirm = holdToConfirm;
     }
 }

@@ -29,7 +29,7 @@ public partial class MultiLobbyFooter : Footer
     {
         ButtonText = "Ready",
         Icon = FontAwesome6.Solid.SquareCheck,
-        ButtonColor = FluXisColors.Primary,
+        ButtonColor = Theme.Primary,
         Corner = Corner.BottomRight,
         Action = RightButtonAction
     };
@@ -40,7 +40,7 @@ public partial class MultiLobbyFooter : Footer
         {
             Text = "Change Map",
             Icon = FontAwesome6.Solid.ArrowRightArrowLeft,
-            AccentColor = FluXisColors.Footer1,
+            AccentColor = Theme.Footer1,
             Enabled = CanChangeMap,
             Action = ChangeMapAction
         };
@@ -49,7 +49,7 @@ public partial class MultiLobbyFooter : Footer
         {
             Text = "View Map",
             Icon = FontAwesome6.Solid.Eye,
-            AccentColor = FluXisColors.Footer2,
+            AccentColor = Theme.Footer2,
             Action = ViewMapAction
         };
     }

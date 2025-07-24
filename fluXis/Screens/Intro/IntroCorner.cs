@@ -26,7 +26,7 @@ public partial class IntroCorner : Container
         Size = new Vector2(300);
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Colour = FluXisColors.Text;
+        Colour = Theme.Text;
         Alpha = 0;
 
         Rotation = corner switch

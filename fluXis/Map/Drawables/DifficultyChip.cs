@@ -84,7 +84,7 @@ public partial class DifficultyChip : CircularContainer, IHasTooltip
 
     private void updateRating()
     {
-        var color = FluXisColors.GetDifficultyColor((float)rating);
+        var color = Theme.GetDifficultyColor((float)rating);
         var texColor = Colour4.Black;
         var str = rating.ToStringInvariant("00.00");
 

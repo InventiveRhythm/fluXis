@@ -66,13 +66,13 @@ public partial class LoginOverlay : CompositeDrawable
                 Origin = Anchor.Centre,
                 CornerRadius = 20,
                 Masking = true,
-                EdgeEffect = FluXisStyles.ShadowMedium,
+                EdgeEffect = Styling.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     },
                     new FillFlowContainer
                     {
@@ -98,7 +98,7 @@ public partial class LoginOverlay : CompositeDrawable
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
                                 MaxWidth = 300,
-                                Colour = FluXisColors.Red,
+                                Colour = Theme.Red,
                                 WebFontSize = 14,
                                 Alpha = 0
                             },
@@ -122,8 +122,8 @@ public partial class LoginOverlay : CompositeDrawable
                             new AuthOverlayButton("Play offline")
                             {
                                 Action = Hide,
-                                Color = FluXisColors.Background3,
-                                TextColor = FluXisColors.Text,
+                                Color = Theme.Background3,
+                                TextColor = Theme.Text,
                             }
                         }
                     },

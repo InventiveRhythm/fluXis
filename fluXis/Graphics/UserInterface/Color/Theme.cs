@@ -5,33 +5,38 @@ using osuTK;
 
 namespace fluXis.Graphics.UserInterface.Color;
 
-public static class FluXisColors
+public static class Theme
 {
     public static Colour4 Primary => Colour4.FromHex("#6F6FE2");
     public static Colour4 Secondary => Colour4.FromHex("#AF59CF");
 
     public static ColourInfo AccentGradient => ColourInfo.GradientHorizontal(Primary, Secondary);
 
-    public static Colour4 Background1 => GetThemeColor(.2f, .12f);
-    public static Colour4 Background2 => GetThemeColor(.2f, .15f);
-    public static Colour4 Background3 => GetThemeColor(.2f, .18f);
-    public static Colour4 Background4 => GetThemeColor(.2f, .21f);
-    public static Colour4 Background5 => GetThemeColor(.2f, .24f);
-    public static Colour4 Background6 => GetThemeColor(.2f, .27f);
-    public static Colour4 Foreground => GetThemeColor(.2f, .6f);
-    public static Colour4 Highlight => GetThemeColor(.6f, .7f);
-    public static Colour4 Link => GetThemeColor(.8f, .8f);
+    public static Colour4 Background1 => getThemeColor(.2f, .12f);
+    public static Colour4 Background2 => getThemeColor(.2f, .15f);
+    public static Colour4 Background3 => getThemeColor(.2f, .18f);
+    public static Colour4 Background4 => getThemeColor(.2f, .21f);
+    public static Colour4 Background5 => getThemeColor(.2f, .24f);
+    public static Colour4 Background6 => getThemeColor(.2f, .27f);
+    public static Colour4 Foreground => getThemeColor(.2f, .6f);
+    public static Colour4 Highlight => getThemeColor(.6f, .7f);
 
-    public static Colour4 GetThemeColor(float saturation, float lightness) => Colour4.FromHSL(240 / 360f, saturation, lightness);
+    private static Colour4 getThemeColor(float saturation, float lightness) => Colour4.FromHSL(240 / 360f, saturation, lightness);
 
     public static Colour4 Text => Colour4.FromHex("#E1E2F8");
     public static Colour4 Text2 => Text.Opacity(.8f);
     public static Colour4 TextDark => Background3;
 
-    public static Colour4 Red => Colour4.FromHSL(0f, 1f, .67f);
-    public static Colour4 Yellow => Colour4.FromHSL(40 / 360f, 1f, .67f);
-    public static Colour4 Green => Colour4.FromHSL(120 / 360f, 1f, .67f);
-    public static Colour4 Blue => Colour4.FromHSL(240 / 360f, 1f, .67f);
+    public static Colour4 Red => Colour4.FromHSL(0f, 1f, 2 / 3f);
+    public static Colour4 Orange => Colour4.FromHSL(20 / 360f, 1f, 2 / 3f);
+    public static Colour4 Yellow => Colour4.FromHSL(40 / 360f, 1f, 2 / 3f);
+    public static Colour4 Lime => Colour4.FromHSL(80 / 360f, 1f, 2 / 3f);
+    public static Colour4 Green => Colour4.FromHSL(120 / 360f, 1f, 2 / 3f);
+    public static Colour4 Aqua => Colour4.FromHSL(160 / 360f, 1f, 2 / 3f);
+    public static Colour4 Cyan => Colour4.FromHSL(200 / 360f, 1f, 2 / 3f);
+    public static Colour4 Blue => Colour4.FromHSL(240 / 360f, 1f, 2 / 3f);
+    public static Colour4 Purple => Colour4.FromHSL(320 / 360f, 1f, 2 / 3f);
+    public static Colour4 Pink => Colour4.FromHSL(320 / 360f, 1f, 2 / 3f);
 
     public static Colour4 ButtonRed => Colour4.FromHSL(0f, .5f, .3f);
     public static Colour4 ButtonGreen => Colour4.FromHSL(120 / 360f, .5f, .3f);
@@ -115,7 +120,7 @@ public static class FluXisColors
         _ => Colour4.Black
     };
 
-    public static Colour4 GetKeyColor(int keyCount) => keyCount switch
+    public static Colour4 GetKeyCountColor(int keyCount) => keyCount switch
     {
         1 => Colour4.FromHex("#333346"),
         2 => Colour4.FromHex("#a53541"),

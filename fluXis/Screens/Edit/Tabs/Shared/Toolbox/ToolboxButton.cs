@@ -60,7 +60,7 @@ public partial class ToolboxButton : Container, IHasTooltip
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background4
+                        Colour = Theme.Background4
                     },
                     hover = new HoverLayer(),
                     Flash = new FlashLayer(),

@@ -23,7 +23,7 @@ namespace fluXis.Overlay.Settings;
 public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     protected override float OverlayPadding => 96;
-    protected override ColourInfo BackgroundColor => FluXisColors.Background1;
+    protected override ColourInfo BackgroundColor => Theme.Background1;
     protected override IconUsage Icon => FontAwesome6.Solid.Gear;
 
     private Bindable<SettingsSection> currentSection { get; } = new();

@@ -1,6 +1,5 @@
-using fluXis.Graphics.Sprites.Text;
+﻿using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Online.API.Models.Groups;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -9,19 +8,12 @@ using osuTK;
 
 namespace fluXis.Online.Drawables.Users;
 
-public partial class DrawableGroupBadge : CircularContainer
+public partial class DrawableSupporterBadge : CircularContainer
 {
-    private APIGroup group { get; }
-
-    public DrawableGroupBadge(APIGroup group)
-    {
-        this.group = group;
-    }
-
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(48, 16);
+        Size = new Vector2(32, 16);
         Masking = true;
 
         InternalChildren = new Drawable[]
@@ -29,14 +21,13 @@ public partial class DrawableGroupBadge : CircularContainer
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Theme.Background2,
-                Alpha = .8f
+                Colour = Colour4.FromHex("#FF99DC")
             },
-            new FluXisSpriteText
+            new FluXisSpriteIcon()
             {
-                Text = group.Tag,
-                Colour = Colour4.FromHex(group.Color),
-                WebFontSize = 10,
+                Size = new Vector2(10),
+                Icon = FontAwesome6.Solid.Heart,
+                Colour = Theme.Background2,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             }

@@ -25,7 +25,7 @@ public partial class PanelBackground : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background1
+                Colour = Theme.Background1
             },
             new Sprite
             {
@@ -34,7 +34,7 @@ public partial class PanelBackground : Container
                 Anchor = Anchor.BottomLeft,
                 Origin = Anchor.BottomLeft,
                 Texture = textures.Get("Backgrounds/panel_base"),
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = 0.5f,
                 Size = new Vector2(1)
             },
@@ -45,7 +45,7 @@ public partial class PanelBackground : Container
                 Anchor = Anchor.BottomLeft,
                 Origin = Anchor.BottomLeft,
                 Texture = textures.Get("Backgrounds/panel_lines"),
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Size = new Vector2(1)
             }
         };

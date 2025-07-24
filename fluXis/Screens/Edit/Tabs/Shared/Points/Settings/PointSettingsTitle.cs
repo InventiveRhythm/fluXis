@@ -67,8 +67,8 @@ public partial class PointSettingsTitle : CompositeDrawable
 
         protected override void UpdateColors(bool hovered)
         {
-            Background.Colour = hovered ? FluXisColors.Red : FluXisColors.Background3;
-            Icon.Colour = hovered ? FluXisColors.Background3 : FluXisColors.Text;
+            Background.Colour = hovered ? Theme.Red : Theme.Background3;
+            Icon.Colour = hovered ? Theme.Background3 : Theme.Text;
         }
     }
 }

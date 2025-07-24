@@ -10,7 +10,7 @@ public partial class HoverLayer : Box
     public HoverLayer()
     {
         RelativeSizeAxes = Axes.Both;
-        Colour = FluXisColors.Text;
+        Colour = Theme.Text;
         Alpha = 0;
     }
 

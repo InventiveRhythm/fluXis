@@ -51,9 +51,9 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
 
     public ModEntry(IMod mod, ModsOverlay overlay)
     {
-        this.Mod = mod;
+        Mod = mod;
         this.overlay = overlay;
-        accent = FluXisColors.GetModTypeColor(mod.Type);
+        accent = Theme.GetModTypeColor(mod.Type);
 
         RelativeSizeAxes = Axes.X;
         Height = 48;
@@ -77,7 +77,7 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
                 background = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 },
                 hover = new HoverLayer { Colour = accent },
                 line = new Box
@@ -161,9 +161,9 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
     private void updateSelected()
     {
         var sel = selected;
-        var color = sel ? FluXisColors.TextDark : accent;
+        var color = sel ? Theme.TextDark : accent;
 
-        background.FadeColour(sel ? accent : FluXisColors.Background2);
+        background.FadeColour(sel ? accent : Theme.Background2);
         line.FadeColour(sel ? accent.Darken(.75f) : accent).ResizeWidthTo(sel ? 12 : 6, 400, Easing.OutQuint);
         flow.MoveToX(sel ? 6 : 0, 400, Easing.OutQuint);
         icon.FadeColour(color);
@@ -234,7 +234,7 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
                         Height = 9,
                         WebFontSize = 12,
                         Margin = new MarginPadding { Horizontal = 6, Top = 2 },
-                        Colour = FluXisColors.TextDark
+                        Colour = Theme.TextDark
                     },
                     new Container
                     {
@@ -246,7 +246,7 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background2
+                                Colour = Theme.Background2
                             },
                             new FillFlowContainer
                             {
@@ -294,7 +294,7 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
         {
             var mod = content.Mod;
 
-            this.TransformTo(nameof(BackgroundColor), (ColourInfo)FluXisColors.GetModTypeColor(mod.Type), 50);
+            this.TransformTo(nameof(BackgroundColor), (ColourInfo)Theme.GetModTypeColor(mod.Type), 50);
             type.Text = mod.Type switch
             {
                 ModType.Rate => LocalizationStrings.ModSelect.RateSection,

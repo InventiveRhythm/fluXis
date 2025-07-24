@@ -252,7 +252,7 @@ public partial class ProfileFollowerList : FillFlowContainer
                 new Circle
                 {
                     Size = new Vector2(30 + outline_width * 2),
-                    Colour = FluXisColors.Background1,
+                    Colour = Theme.Background1,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 },

@@ -9,6 +9,7 @@ using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Shaders;
 using fluXis.Graphics.Shaders.Bloom;
@@ -467,7 +468,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         var canBeUploaded = Mods.All(m => m.Rankable) && RealmMap.StatusInt < 100 && !RealmMap.MapSet.AutoImported;
 
         if (SubmitScore && canBeUploaded)
-            scoreSubmissionOverlay.FadeIn(FADE_DURATION);
+            scoreSubmissionOverlay.FadeIn(Styling.TRANSITION_FADE);
 
         Task.Run(() =>
         {
@@ -496,7 +497,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     if (request.IsSuccessful && resData?.Score != null)
                         scores.UpdateOnlineID(id, resData.Score.ID);
 
-                    Schedule(() => scoreSubmissionOverlay.FadeOut(FADE_DURATION));
+                    Schedule(() => scoreSubmissionOverlay.FadeOut(Styling.TRANSITION_FADE));
                 }
             }
 
@@ -504,7 +505,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             var elapsed = stopwatch.Elapsed.TotalMilliseconds;
 
             var delay = Math.Max(200, minDelay - elapsed);
-            Schedule(() => this.Delay(delay).FadeOut(FADE_DURATION).OnComplete(_ => this.Push(screen)));
+            Schedule(() => this.Delay(delay).FadeOut(Styling.TRANSITION_FADE).OnComplete(_ => this.Push(screen)));
         });
     }
 
@@ -548,7 +549,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.FadeOut(FADE_DURATION);
+        this.FadeOut(Styling.TRANSITION_FADE);
 
         if (FadeBackToGlobalClock)
         {
@@ -556,7 +557,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             ScheduleAfterChildren(() =>
             {
                 globalClock.Seek(GameplayClock.CurrentTime);
-                globalClock.RateTo(Rate, MOVE_DURATION, Easing.InQuint);
+                globalClock.RateTo(globalClock.Rate, Styling.TRANSITION_MOVE, Easing.InQuint);
             });
         }
 
@@ -604,8 +605,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         GameplayClock.Seek(GameplayStartTime - pause * Rate);
 
-        using (BeginDelayedSequence(ENTER_DELAY))
-            this.ScaleTo(1f, MOVE_DURATION, Easing.OutQuint).FadeIn(FADE_DURATION);
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
+            this.ScaleTo(1f, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeIn(Styling.TRANSITION_FADE);
     }
 
     public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

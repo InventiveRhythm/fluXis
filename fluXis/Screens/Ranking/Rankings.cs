@@ -1,3 +1,4 @@
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
@@ -153,7 +154,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
                                 new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = FluXisColors.Background2
+                                    Colour = Theme.Background2
                                 },
                                 backButton = new CornerButton
                                 {
@@ -206,9 +207,9 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
     {
         this.FadeOut();
 
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            this.FadeInFromZero(FADE_DURATION);
+            this.FadeInFromZero(Styling.TRANSITION_FADE);
             backButton.Show();
         }
     }
@@ -216,7 +217,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
     public override bool OnExiting(ScreenExitEvent e)
     {
         backButton.Hide();
-        this.FadeOut(FADE_DURATION);
+        this.FadeOut(Styling.TRANSITION_FADE);
         return base.OnExiting(e);
     }
 

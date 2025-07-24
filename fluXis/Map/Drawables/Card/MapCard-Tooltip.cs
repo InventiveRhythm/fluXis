@@ -34,7 +34,7 @@ public partial class MapCard
                         AutoSizeAxes = Axes.None,
                         Size = new Vector2(32, 14),
                         WebFontSize = 10,
-                        BackgroundColour = FluXisColors.GetKeyColor(map.Mode),
+                        BackgroundColour = Theme.GetKeyCountColor(map.Mode),
                         TextColour = Colour4.Black.Opacity(.75f),
                         Text = $"{map.Mode}K"
                     },

@@ -78,13 +78,13 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                         CornerRadius = 20,
                         Masking = true,
                         Alpha = 0,
-                        EdgeEffect = FluXisStyles.ShadowMedium,
+                        EdgeEffect = Styling.ShadowMedium,
                         Children = new Drawable[]
                         {
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background2
+                                Colour = Theme.Background2
                             },
                             buttons = new SelectionCycleContainer<GameplayMenuButton>
                             {
@@ -105,7 +105,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                                     new()
                                     {
                                         Text = "Quit",
-                                        Color = FluXisColors.Red,
+                                        Color = Theme.Red,
                                         SubText = "Bye bye",
                                         Icon = FontAwesome6.Solid.DoorOpen,
                                         Action = () => screen?.Exit()

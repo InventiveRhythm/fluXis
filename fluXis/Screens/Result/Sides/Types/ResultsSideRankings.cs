@@ -72,7 +72,7 @@ public partial class ResultsSideRankings : ResultsSideContainer
             var diff = change.Current - change.Previous;
             var value = asRank ? $"#{(int)change.Current}" : change.Current.ToStringInvariant("00.00");
             var difference = "KEEP";
-            var color = FluXisColors.Text.Opacity(0.6f);
+            var color = Theme.Text.Opacity(0.6f);
 
             var negativeColor = Colour4.FromHex("#FF5555");
             var positiveColor = Colour4.FromHex("#55FF55");

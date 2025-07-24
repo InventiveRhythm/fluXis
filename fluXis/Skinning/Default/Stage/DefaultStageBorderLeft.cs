@@ -26,13 +26,13 @@ public partial class DefaultStageBorderLeft : ColorableSkinDrawable
                 RelativeSizeAxes = Axes.Y,
                 Width = DefaultSkin.BORDER_BASE,
                 Margin = new MarginPadding { Left = DefaultSkin.BORDER_COLOR },
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             new Box
             {
                 RelativeSizeAxes = Axes.Y,
                 Width = DefaultSkin.BORDER_COLOR,
-                Colour = GetIndexOrFallback(1, FluXisColors.Secondary)
+                Colour = GetIndexOrFallback(1, Theme.Secondary)
             }
         };
     }

@@ -41,9 +41,9 @@ public partial class ModIcon : Container, IHasTooltip
 
         Masking = true;
         Shear = new Vector2(0.2f, 0);
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        EdgeEffect = Styling.ShadowSmall;
 
-        var color = FluXisColors.GetModTypeColor(Mod.Type);
+        var color = Theme.GetModTypeColor(Mod.Type);
 
         Children = new Drawable[]
         {
@@ -67,7 +67,7 @@ public partial class ModIcon : Container, IHasTooltip
                         Origin = Anchor.Centre,
                         Icon = Mod.Icon,
                         Size = new Vector2(IconSize),
-                        Colour = FluXisColors.IsBright(color) ? FluXisColors.TextDark : FluXisColors.Text,
+                        Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text,
                         Shear = new Vector2(-0.2f, 0)
                     }
                 }
@@ -83,7 +83,7 @@ public partial class ModIcon : Container, IHasTooltip
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Text = Mod.Acronym,
-                Colour = FluXisColors.IsBright(color) ? FluXisColors.TextDark : FluXisColors.Text,
+                Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text,
                 FontSize = 18,
                 Shear = new Vector2(-0.2f, 0)
             });

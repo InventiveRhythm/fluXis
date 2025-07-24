@@ -32,13 +32,13 @@ public partial class TestPanels : FluXisTestScene
                     new ButtonData
                     {
                         Text = "dangerous button",
-                        Color = FluXisColors.ButtonRed,
+                        Color = Theme.ButtonRed,
                         Action = () => { }
                     },
                     new ButtonData
                     {
                         Text = "green button",
-                        Color = FluXisColors.ButtonGreen,
+                        Color = Theme.ButtonGreen,
                         Action = () => { }
                     },
                     new ButtonData

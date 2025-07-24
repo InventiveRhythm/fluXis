@@ -71,7 +71,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     }
                 }
             },
@@ -86,7 +86,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     },
                     new FillFlowContainer
                     {
@@ -119,7 +119,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             {
                                 Text = LocalizationStrings.SongSelect.OptionsDeleteSet,
                                 Icon = FontAwesome6.Solid.Trash,
-                                Color = FluXisColors.Red,
+                                Color = Theme.Red,
                                 Action = () =>
                                 {
                                     DeleteAction?.Invoke(maps.CurrentMapSet);
@@ -144,7 +144,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             {
                                 Text = LocalizationStrings.SongSelect.OptionsWipeScores,
                                 Icon = FontAwesome6.Solid.Eraser,
-                                Color = FluXisColors.Red,
+                                Color = Theme.Red,
                                 Action = () =>
                                 {
                                     State.Value = Visibility.Hidden;

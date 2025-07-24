@@ -36,7 +36,7 @@ public abstract partial class CustomTooltipContainer : VisibilityContainer, IToo
         CornerRadius = 8;
         Masking = true;
         AutoSizeEasing = Easing.OutQuint;
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        EdgeEffect = Styling.ShadowSmall;
         Scale = new Vector2(starting_scale);
 
         InternalChildren = new Drawable[]
@@ -44,7 +44,7 @@ public abstract partial class CustomTooltipContainer : VisibilityContainer, IToo
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             Content
         };

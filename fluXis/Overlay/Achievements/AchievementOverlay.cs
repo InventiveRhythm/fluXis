@@ -163,7 +163,7 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
         if (achievement.Level == 3)
             return getHighestColor();
 
-        return FluXisColors.Highlight;
+        return Theme.Highlight;
     }
 
     private static ColourInfo getHighestColor() => new()

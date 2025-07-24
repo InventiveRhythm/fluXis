@@ -32,12 +32,12 @@ public abstract partial class DrawableFluXisMenuItem<T> : Menu.DrawableMenuItem
         Foreground.Origin = Anchor.CentreLeft;
 
         BackgroundColour = Colour4.Transparent;
-        BackgroundColourHover = FluXisColors.Text.Opacity(.2f);
+        BackgroundColourHover = Theme.Text.Opacity(.2f);
 
         ForegroundColour = ForegroundColourHover = Item.Type switch
         {
-            MenuItemType.Highlighted => FluXisColors.Highlight,
-            MenuItemType.Dangerous => FluXisColors.Red,
+            MenuItemType.Highlighted => Theme.Highlight,
+            MenuItemType.Dangerous => Theme.Red,
             _ => Colour4.White
         };
     }

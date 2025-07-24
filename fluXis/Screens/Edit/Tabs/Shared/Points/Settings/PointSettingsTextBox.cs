@@ -61,8 +61,8 @@ public partial class PointSettingsTextBox : Container, IHasTooltip
                         SidePadding = 10,
                         TextContainerHeight = .7f,
                         CommitOnFocusLost = true,
-                        BackgroundInactive = FluXisColors.Background3,
-                        BackgroundActive = FluXisColors.Background4,
+                        BackgroundInactive = Theme.Background3,
+                        BackgroundActive = Theme.Background4,
                         OnTextChanged = () => OnTextChanged?.Invoke(TextBox),
                         OnCommitAction = () =>
                         {

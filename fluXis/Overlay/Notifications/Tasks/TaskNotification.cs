@@ -60,13 +60,13 @@ public partial class TaskNotification : CompositeDrawable
             RelativeSizeAxes = Axes.Both,
             CornerRadius = 20,
             Masking = true,
-            EdgeEffect = FluXisStyles.ShadowSmall,
+            EdgeEffect = Styling.ShadowSmall,
             Children = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 },
                 new Container
                 {
@@ -94,14 +94,14 @@ public partial class TaskNotification : CompositeDrawable
                                         iconBox = new Box
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Colour = FluXisColors.Background4
+                                            Colour = Theme.Background4
                                         },
                                         icon = new FluXisSpriteIcon
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Size = new Vector2(32),
-                                            Colour = FluXisColors.Background2
+                                            Colour = Theme.Background2
                                         }
                                     }
                                 },
@@ -145,7 +145,7 @@ public partial class TaskNotification : CompositeDrawable
                                                 progressBackground = new Box
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
-                                                    Colour = FluXisColors.Background3
+                                                    Colour = Theme.Background3
                                                 },
                                                 progress = new CircularContainer
                                                 {
@@ -157,7 +157,7 @@ public partial class TaskNotification : CompositeDrawable
                                                         progressFill = new Box
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
-                                                            Colour = FluXisColors.Background4
+                                                            Colour = Theme.Background4
                                                         }
                                                     }
                                                 }

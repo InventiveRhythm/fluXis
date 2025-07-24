@@ -33,7 +33,7 @@ public partial class FluXisMarkdownList : MarkdownList
                     Size = new Vector2(6),
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    Colour = FluXisColors.Text,
+                    Colour = Theme.Text,
                     X = 4,
                 },
                 drawable

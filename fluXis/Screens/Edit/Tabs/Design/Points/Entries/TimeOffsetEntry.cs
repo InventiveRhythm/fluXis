@@ -16,7 +16,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class TimeOffsetEntry : PointListEntry
 {
     protected override string Text => "Time Offset";
-    protected override Colour4 Color => FluXisColors.TimeOffset;
+    protected override Colour4 Color => Theme.TimeOffset;
 
     private TimeOffsetEvent offset => Object as TimeOffsetEvent;
 

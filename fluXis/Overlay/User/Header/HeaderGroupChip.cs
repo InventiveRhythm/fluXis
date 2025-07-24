@@ -13,6 +13,7 @@ namespace fluXis.Overlay.User.Header;
 
 public partial class HeaderGroupChip : CircularContainer
 {
+    public bool AccentAsBackground { get; init; } = false;
     private APIGroup group { get; }
 
     public HeaderGroupChip(APIGroup group)
@@ -34,29 +35,32 @@ public partial class HeaderGroupChip : CircularContainer
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2.Opacity(.5f)
+                Colour = AccentAsBackground ? color : Theme.Background2.Opacity(.5f)
             },
             new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Horizontal,
-                Spacing = new Vector2(8),
+                Spacing = new Vector2(6),
                 Padding = new MarginPadding(12),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
+                Colour = AccentAsBackground ? Theme.Background2 : color,
                 Children = new Drawable[]
                 {
                     new FluXisSpriteIcon
                     {
                         Icon = getIcon(),
-                        Size = new Vector2(18),
-                        Colour = color
+                        Size = new Vector2(14),
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft
                     },
                     new FluXisSpriteText
                     {
                         Text = group.Name,
                         WebFontSize = 14,
-                        Colour = color
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft
                     }
                 }
             }
@@ -72,6 +76,7 @@ public partial class HeaderGroupChip : CircularContainer
             "moderators" => FontAwesome6.Solid.ShieldHalved,
             "dev" => FontAwesome6.Solid.UserShield,
             "bot" => FontAwesome6.Solid.UserAstronaut,
+            "supporter" => FontAwesome6.Solid.Heart,
             _ => FontAwesome6.Solid.User
         };
     }

@@ -51,14 +51,14 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                EdgeEffect = FluXisStyles.ShadowLargeNoOffset,
+                EdgeEffect = Styling.ShadowLargeNoOffset,
                 Masking = true,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     },
                     new FluXisContextMenuContainer
                     {

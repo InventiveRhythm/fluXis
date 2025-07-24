@@ -68,7 +68,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
         {
             pulse = new Circle
             {
-                Colour = FluXisColors.Highlight,
+                Colour = Theme.Highlight,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Alpha = 0
@@ -79,7 +79,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
                 Height = 10,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
-                Colour = FluXisColors.Highlight,
+                Colour = Theme.Highlight,
                 Padding = new MarginPadding(3),
                 Child = line = new Circle
                 {

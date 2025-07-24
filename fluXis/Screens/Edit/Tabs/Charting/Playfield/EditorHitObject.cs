@@ -55,7 +55,7 @@ public abstract partial class EditorHitObject : CompositeDrawable
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Colour = FluXisColors.Background2,
+                    Colour = Theme.Background2,
                     Alpha = 0
                 }
             }

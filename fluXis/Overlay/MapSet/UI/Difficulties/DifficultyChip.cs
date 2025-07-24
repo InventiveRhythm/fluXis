@@ -34,14 +34,14 @@ public partial class DifficultyChip : CircularContainer
         AutoSizeAxes = Axes.X;
         Masking = true;
 
-        var color = FluXisColors.GetDifficultyColor((float)map.Rating);
+        var color = Theme.GetDifficultyColor((float)map.Rating);
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             new FillFlowContainer
             {

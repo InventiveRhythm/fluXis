@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Collections.Generic;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
@@ -58,7 +58,7 @@ public partial class ProfileHeader : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2.Opacity(.5f)
+                Colour = Theme.Background2.Opacity(.5f)
             },
             new FillFlowContainer
             {
@@ -90,7 +90,7 @@ public partial class ProfileHeader : Container
                                     Size = new Vector2(128),
                                     CornerRadius = 24,
                                     Masking = true,
-                                    EdgeEffect = FluXisStyles.ShadowMedium,
+                                    EdgeEffect = Styling.ShadowMedium,
                                     LoadContent = () => new DrawableAvatar(user)
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -120,17 +120,7 @@ public partial class ProfileHeader : Container
                                                     AutoSizeAxes = Axes.Both,
                                                     Direction = FillDirection.Horizontal,
                                                     Spacing = new Vector2(12),
-                                                    ChildrenEnumerable = user.Groups.Any()
-                                                        ? user.Groups.Select(g => new HeaderGroupChip(g))
-                                                        : new Drawable[]
-                                                        {
-                                                            new HeaderGroupChip(new APIGroup
-                                                            {
-                                                                ID = "member",
-                                                                Name = "Member",
-                                                                Color = "#AA99FF"
-                                                            })
-                                                        }
+                                                    ChildrenEnumerable = createGroups()
                                                 },
                                                 getOnlineStatus().With(d =>
                                                 {
@@ -266,6 +256,34 @@ public partial class ProfileHeader : Container
     protected override void Update()
     {
         Height = DrawWidth / 3f; // 3:1 aspect ratio
+    }
+
+    private IEnumerable<Drawable> createGroups()
+    {
+        if (user.IsSupporter)
+        {
+            yield return new HeaderGroupChip(new APIGroup
+            {
+                ID = "supporter",
+                Name = "Supporter",
+                Color = "#FF99DC"
+            }) { AccentAsBackground = true };
+        }
+
+        if (user.Groups.Count != 0)
+        {
+            foreach (var group in user.Groups)
+                yield return new HeaderGroupChip(group);
+        }
+        else
+        {
+            yield return new HeaderGroupChip(new APIGroup
+            {
+                ID = "member",
+                Name = "Member",
+                Color = "#AA99FF"
+            });
+        }
     }
 
     private Drawable getName(string text)

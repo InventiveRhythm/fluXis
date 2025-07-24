@@ -32,7 +32,7 @@ public partial class ResultsMap : CompositeDrawable
                     Size = new Vector2(88),
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    EdgeEffect = FluXisStyles.ShadowMedium,
+                    EdgeEffect = Styling.ShadowMedium,
                     CornerRadius = 12,
                     Masking = true,
                     LoadContent = () => new MapCover(map.MapSet)
@@ -77,7 +77,7 @@ public partial class ResultsMap : CompositeDrawable
                                     RealmMap = map,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
-                                    EdgeEffect = FluXisStyles.ShadowSmall
+                                    EdgeEffect = Styling.ShadowSmall
                                 },
                                 new FluXisSpriteText
                                 {

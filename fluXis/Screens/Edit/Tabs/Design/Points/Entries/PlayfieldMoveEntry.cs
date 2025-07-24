@@ -15,7 +15,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class PlayfieldMoveEntry : PointListEntry
 {
     protected override string Text => "Playfield Move";
-    protected override Colour4 Color => FluXisColors.PlayfieldMove;
+    protected override Colour4 Color => Theme.PlayfieldMove;
 
     private PlayfieldMoveEvent move => Object as PlayfieldMoveEvent;
 

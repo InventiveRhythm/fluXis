@@ -34,7 +34,7 @@ public partial class ToolbarClock : Container
                 Anchor = Anchor.Centre,
                 Origin = Anchor.TopCentre,
                 FontSize = 14,
-                Colour = FluXisColors.Text2
+                Colour = Theme.Text2
             }
         };
     }

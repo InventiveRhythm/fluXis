@@ -47,7 +47,7 @@ public partial class ResultsPlayer : CompositeDrawable
                     Size = new Vector2(88),
                     Anchor = Anchor.CentreRight,
                     Origin = Anchor.CentreRight,
-                    EdgeEffect = FluXisStyles.ShadowMedium,
+                    EdgeEffect = Styling.ShadowMedium,
                     CornerRadius = 12,
                     Masking = true,
                     LoadContent = () => new DrawableAvatar(user)

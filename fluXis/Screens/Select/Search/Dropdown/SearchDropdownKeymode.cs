@@ -94,7 +94,7 @@ public partial class SearchDropdownKeymode : CompositeDrawable
                 background = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.GetKeyColor(keymode)
+                    Colour = Theme.GetKeyCountColor(keymode)
                 },
                 text = new FluXisSpriteText
                 {
@@ -102,7 +102,7 @@ public partial class SearchDropdownKeymode : CompositeDrawable
                     FontSize = 16,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Colour = FluXisColors.TextDark
+                    Colour = Theme.TextDark
                 }
             };
         }
@@ -119,7 +119,7 @@ public partial class SearchDropdownKeymode : CompositeDrawable
             var enable = e.NewValue == keymode || e.NewValue == 0;
 
             background.FadeTo(enable ? 1 : 0, 200);
-            text.FadeColour(enable ? FluXisColors.TextDark : FluXisColors.Text, 200);
+            text.FadeColour(enable ? Theme.TextDark : Theme.Text, 200);
         }
     }
 }

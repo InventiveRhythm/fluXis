@@ -38,7 +38,7 @@ public partial class FluXisSpriteText : SpriteText
 
     public FluXisSpriteText()
     {
-        Colour = FluXisColors.Text;
+        Colour = Theme.Text;
         Font = FluXisFont.RenogareSoft;
     }
 
