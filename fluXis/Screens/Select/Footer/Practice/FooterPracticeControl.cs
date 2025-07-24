@@ -153,7 +153,7 @@ public partial class FooterPracticeControl : GridContainer
                 flash = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Text,
+                    Colour = Theme.Text,
                     Alpha = 0,
                 },
                 new FluXisSpriteIcon
