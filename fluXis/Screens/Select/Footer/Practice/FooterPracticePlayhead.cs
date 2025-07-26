@@ -1,19 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
-using fluXis.Utils;
-using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Logging;
 
 namespace fluXis.Screens.Select.Footer.Practice;
 
