@@ -26,7 +26,9 @@ public partial class FooterPracticeGraph : GridContainer
     private readonly List<Bar> bars = new();
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
-    
+
+    private int timePerBar = 0;
+
     private const int bar_count = 64;
 
     public FooterPracticeGraph(BindableNumber<int> start, BindableNumber<int> end)
@@ -96,16 +98,15 @@ public partial class FooterPracticeGraph : GridContainer
     private void updateCurrent()
     {
         if (globalClock.CurrentTrack == null || !globalClock.IsRunning) return;
-
-        int TimePerBar = end.Value * 1000 / bar_count;
         
         for (var i = 0; i < bars.Count; i++)
         {
             var bar = bars[i];
-            int barTime = i * TimePerBar;
-            int nextBarTime = (i + 1) * TimePerBar;
+            int barTime = i * timePerBar;
+            int nextBarTime = (i + 1) * timePerBar;
+            int currentTime = (int)globalClock.CurrentTrack.CurrentTime;
 
-            if (globalClock.CurrentTrack.CurrentTime >= barTime && globalClock.CurrentTrack.CurrentTime < nextBarTime)
+            if (currentTime >= barTime && currentTime < nextBarTime)
             {
                 if (!bar.IsCurrent)
                 {
@@ -140,6 +141,8 @@ public partial class FooterPracticeGraph : GridContainer
         var count = bars.Count;
         var counters = new float[count];
         var endTime = info.EndTime;
+
+        timePerBar = (int)endTime / bar_count;
 
         foreach (var hit in info.HitObjects)
         {
