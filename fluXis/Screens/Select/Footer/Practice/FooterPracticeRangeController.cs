@@ -4,6 +4,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -35,7 +36,7 @@ public partial class FooterPracticeRangeController : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomLeft;
@@ -88,14 +89,14 @@ public partial class FooterPracticeRangeController : Container
     {
         maps.MapBindable.BindValueChanged(mapChanged, true);
 
-        startPoint.X = 15;
+        startPoint.X = 10;
         endPoint.X = DrawWidth - 15;
     }
     
     private void mapChanged(ValueChangedEvent<RealmMap> v)
     {
         startPoint.X = 15;
-        endPoint.X = DrawWidth - 10;
+        endPoint.X = DrawWidth - 15;
 
         var info = v.NewValue.GetMapInfo();
         endTime = (int)info.EndTime;
@@ -113,6 +114,10 @@ public partial class FooterPracticeRangeController : Container
 
     private partial class RangePoint : CompositeDrawable
     {
+        private Sample dragSample;
+        private double lastSampleTime = 0;
+        private const int sample_interval = 50;
+
         private const float line_width = 3f;
         private const float triangle_size = 15f;
         private const float drag_area_width = 30f;
@@ -178,6 +183,12 @@ public partial class FooterPracticeRangeController : Container
             };
         }
 
+        [BackgroundDependencyLoader]
+        private void load(ISampleStore samples)
+        {
+            dragSample = samples.Get("UI/slider-tick");
+        }
+
         public void SetOtherPoint(RangePoint other)
         {
             otherPoint = other;
@@ -217,6 +228,12 @@ public partial class FooterPracticeRangeController : Container
 
                 X = newX;
                 OnDragBind?.Invoke(e);
+                
+                if (Clock.CurrentTime - lastSampleTime >= sample_interval)
+                {
+                    dragSample.Play();
+                    lastSampleTime = Clock.CurrentTime;
+                }
             }
         }
 

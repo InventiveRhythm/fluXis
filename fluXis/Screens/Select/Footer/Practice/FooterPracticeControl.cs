@@ -6,6 +6,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -128,6 +129,7 @@ public partial class FooterPracticeControl : GridContainer
     {
         [Resolved]
         private UISamples samples { get; set; }
+        private Sample holdSample;
 
         private Func<bool> action { get; }
         private HoverLayer hover { get; }
@@ -136,8 +138,10 @@ public partial class FooterPracticeControl : GridContainer
         private bool isMouseDown = false;
         private double mouseDownTime = 0;
         private double lastClickTime = 0;
+        private double lastSampleTime = 0;
         private const int hold_duration = 250;
         private const int invoke_interval = 25;
+        private const int sample_interval = 50;
 
         public Button(IconUsage icon, Func<bool> action)
         {
@@ -166,6 +170,12 @@ public partial class FooterPracticeControl : GridContainer
             };
         }
 
+        [BackgroundDependencyLoader]
+        private void load(ISampleStore samples)
+        { 
+            holdSample = samples.Get("UI/slider-tick");
+        }
+
         protected override void Update()
         {
             if (isMouseDown)
@@ -177,6 +187,13 @@ public partial class FooterPracticeControl : GridContainer
                     if (Clock.CurrentTime - lastClickTime >= invoke_interval)
                     {
                         action?.Invoke();
+
+                        if (Clock.CurrentTime - lastSampleTime >= sample_interval)
+                        {
+                            holdSample.Play();
+                            lastSampleTime = Clock.CurrentTime;
+                        }
+
                         lastClickTime = Clock.CurrentTime;
                     }
                 }
