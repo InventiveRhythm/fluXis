@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Configuration;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
@@ -18,6 +19,7 @@ using fluXis.Input;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -32,7 +34,7 @@ namespace fluXis.Graphics.UserInterface.Files;
 public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public bool ShowFiles { get; init; } = true;
-    public bool IsStreamingDisabled  { get; set; } = false;
+    public Bindable<bool> IsStreamingEnabled  { get; set; } = new Bindable<bool>(true);
     public string MapDirectory { get; init; } = null;
     public string[] AllowedExtensions { get; init; } = Array.Empty<string>();
 
@@ -82,7 +84,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples)
+    private void load(ISampleStore samples, FluXisConfig config)
     {
         errorSample = samples.Get("");
 
@@ -388,6 +390,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 }
             }
         };
+
+        IsStreamingEnabled = config.GetBindable<bool>(FluXisSetting.StreamFileBrowser);
     }
 
     protected override void LoadComplete()
@@ -512,7 +516,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         EntryList.Sort();
 
-        if (items.Count <= streamable_threshold || IsStreamingDisabled)
+        if (items.Count <= streamable_threshold || !IsStreamingEnabled.Value)
         {
             filesFlow.AutoSizeAxes = Axes.Y;
             filesFlow.AddRange(EntryList);
@@ -763,7 +767,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             streamFilesScheduled = true;
             Scheduler.AddDelayed(() =>
             {
-                if ((EntryList.Count > streamable_threshold || !IsStreamingDisabled) && string.IsNullOrEmpty(trackedSearchString))
+                if ((EntryList.Count > streamable_threshold || IsStreamingEnabled.Value) && string.IsNullOrEmpty(trackedSearchString))
                     streamFilesIntoFilesFlow();
 
                 streamFilesScheduled = false;
