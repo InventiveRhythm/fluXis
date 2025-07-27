@@ -51,14 +51,13 @@ public partial class FooterPracticeRangeController : Container
                 Origin = Anchor.CentreRight,
                 OnDragBind = e =>
                 {
-                    float timeMs = posToTime(startPoint.X - 5);
+                    float timeMs = posToTime(startPoint.X - 10);
                     start.Value = (int)(timeMs / 1000f);
                 },
                 OnRightClickBind = e =>
                 {
-                    startPoint.X = 0;
-                    float timeMs = posToTime(startPoint.X - 5);
-                    start.Value = (int)(timeMs / 1000f);
+                    startPoint.X = 10;
+                    start.Value = 0;
                 },
             },
             endPoint = new RangePoint(this, end, false)
@@ -67,14 +66,13 @@ public partial class FooterPracticeRangeController : Container
                 Origin = Anchor.CentreLeft,
                 OnDragBind = e =>
                 {
-                    float timeMs = posToTime(endPoint.X + 10);
+                    float timeMs = posToTime(endPoint.X + 15);
                     end.Value = (int)(timeMs / 1000f);
                 },
                 OnRightClickBind = e =>
                 {
                     endPoint.X = DrawWidth - 10;
-                    float timeMs = posToTime(endPoint.X + 10);
-                    end.Value = (int)(timeMs / 1000f);
+                    end.Value = endTime;
                 },
             }
         };
