@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 using osuTK.Graphics;
 
 namespace fluXis.Screens.Select.Footer.Practice;
@@ -48,28 +49,38 @@ public partial class FooterPracticeRangeController : Container
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreRight,
+                OnDragBind = e =>
+                {
+                    float timeMs = posToTime(startPoint.X - 5);
+                    start.Value = (int)(timeMs / 1000f);
+                },
+                OnRightClickBind = e =>
+                {
+                    startPoint.X = 0;
+                    float timeMs = posToTime(startPoint.X - 5);
+                    start.Value = (int)(timeMs / 1000f);
+                },
             },
             endPoint = new RangePoint(this, end, false)
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
+                OnDragBind = e =>
+                {
+                    float timeMs = posToTime(endPoint.X + 10);
+                    end.Value = (int)(timeMs / 1000f);
+                },
+                OnRightClickBind = e =>
+                {
+                    endPoint.X = DrawWidth - 10;
+                    float timeMs = posToTime(endPoint.X + 10);
+                    end.Value = (int)(timeMs / 1000f);
+                },
             }
         };
 
         startPoint.SetOtherPoint(endPoint);
         endPoint.SetOtherPoint(startPoint);
-
-        startPoint.OnDragBind = e =>
-        {
-            float timeMs = posToTime(startPoint.X - 5);
-            start.Value = (int)(timeMs / 1000f);
-        };
-
-        endPoint.OnDragBind = e =>
-        {
-            float timeMs = posToTime(endPoint.X + 10);
-            end.Value = (int)(timeMs / 1000f);
-        };
         
         start.BindValueChanged(v => startPoint.UpdatePosition(timeToPos(v.NewValue * 1000) + 10));
         end.BindValueChanged(v =>
@@ -90,13 +101,13 @@ public partial class FooterPracticeRangeController : Container
         maps.MapBindable.BindValueChanged(mapChanged, true);
 
         startPoint.X = 10;
-        endPoint.X = DrawWidth - 15;
+        endPoint.X = DrawWidth - 10;
     }
     
     private void mapChanged(ValueChangedEvent<RealmMap> v)
     {
-        startPoint.X = 15;
-        endPoint.X = DrawWidth - 15;
+        startPoint.X = 10;
+        endPoint.X = DrawWidth - 10;
 
         var info = v.NewValue.GetMapInfo();
         endTime = (int)info.EndTime;
@@ -128,6 +139,7 @@ public partial class FooterPracticeRangeController : Container
         private RangePoint otherPoint;
         private bool isDragging;
         public Action<DragEvent> OnDragBind;
+        public Action<MouseDownEvent> OnRightClickBind;
 
         private Box dragArea;
         private Box line;
@@ -256,8 +268,12 @@ public partial class FooterPracticeRangeController : Container
         protected override bool OnMouseDown(MouseDownEvent e)
         {
             this.ScaleTo(0.95f, 100);
+            if (e.Button == MouseButton.Right)
+                OnRightClickBind?.Invoke(e);
             return true;
         }
+
+        protected override bool OnClick(ClickEvent e) { return true; }
 
         protected override void OnMouseUp(MouseUpEvent e)
         {
