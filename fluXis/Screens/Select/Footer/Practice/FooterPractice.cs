@@ -27,6 +27,8 @@ public partial class FooterPractice : FocusedOverlayContainer
 
     private ForcedHeightText text;
 
+    private FooterPracticeGraph practiceGraph;
+
     private readonly BindableNumber<int> start = new();
     private readonly BindableNumber<int> end = new();
 
@@ -111,7 +113,7 @@ public partial class FooterPractice : FocusedOverlayContainer
                                 Height = 80,
                                 Children = new Drawable[]
                                 {
-                                    new FooterPracticeGraph(start, end)
+                                    practiceGraph = new FooterPracticeGraph(start, end)
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Height = 80,
@@ -121,11 +123,11 @@ public partial class FooterPractice : FocusedOverlayContainer
                                         RelativeSizeAxes = Axes.X,
                                         Height = 85,
                                     },
-                                    new FooterPracticeRangeController(start, end)
+                                    new FooterPracticeRangeController(start, end, practiceGraph.Bars)
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Height = 60,
-                                        Margin = new MarginPadding { Bottom = 10, Top = 10 }
+                                        Margin = new MarginPadding { Vertical = 10 }
                                     }
                                 }
                             },

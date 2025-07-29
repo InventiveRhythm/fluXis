@@ -23,7 +23,8 @@ public partial class FooterPracticeGraph : GridContainer
     [Resolved]
     private GlobalClock globalClock { get; set; }
 
-    private readonly List<Bar> bars = new();
+    public readonly List<Bar> Bars = new();
+    
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
 
@@ -56,7 +57,7 @@ public partial class FooterPracticeGraph : GridContainer
                         Origin = Anchor.BottomLeft
                     };
 
-                    bars.Add(bar);
+                    Bars.Add(bar);
                     return bar;
                 }
 
@@ -85,12 +86,12 @@ public partial class FooterPracticeGraph : GridContainer
         var s = start.Value / (float)end.MaxValue;
         var e = end.Value / (float)end.MaxValue;
 
-        var si = (int)Math.Ceiling(s * bars.Count) - 1;
-        var ei = (int)Math.Ceiling(e * bars.Count) - 1;
+        var si = (int)Math.Ceiling(s * Bars.Count) - 1;
+        var ei = (int)Math.Ceiling(e * Bars.Count) - 1;
 
-        for (var i = 0; i < bars.Count; i++)
+        for (var i = 0; i < Bars.Count; i++)
         {
-            var bar = bars[i];
+            var bar = Bars[i];
             bar.FadeTo(i >= si && i <= ei ? 1 : .25f, 50);
         }
     });
@@ -99,9 +100,9 @@ public partial class FooterPracticeGraph : GridContainer
     {
         if (globalClock.CurrentTrack == null || !globalClock.IsRunning) return;
         
-        for (var i = 0; i < bars.Count; i++)
+        for (var i = 0; i < Bars.Count; i++)
         {
-            var bar = bars[i];
+            var bar = Bars[i];
             int barTime = i * timePerBar;
             int nextBarTime = (i + 1) * timePerBar;
             int currentTime = (int)globalClock.CurrentTrack.CurrentTime;
@@ -138,7 +139,7 @@ public partial class FooterPracticeGraph : GridContainer
         if (info is null || info.HitObjects.Count == 0)
             return;
 
-        var count = bars.Count;
+        var count = Bars.Count;
         var counters = new float[count];
         var endTime = info.EndTime;
 
@@ -165,9 +166,9 @@ public partial class FooterPracticeGraph : GridContainer
             if (maps.CurrentMap.ID != map.ID)
                 return;
 
-            for (var i = 0; i < bars.Count; i++)
+            for (var i = 0; i < Bars.Count; i++)
             {
-                var bar = bars[i];
+                var bar = Bars[i];
                 bar.ResizeHeightTo(Math.Max(0.02f, counters[i] / highest), 400, Easing.OutQuint);
             }
 
@@ -182,5 +183,5 @@ public partial class FooterPracticeGraph : GridContainer
         maps.MapBindable.ValueChanged -= mapChanged;
     }
 
-    private partial class Bar : Circle { public bool IsCurrent = false; }
+    public partial class Bar : Circle { public bool IsCurrent = false; }
 }

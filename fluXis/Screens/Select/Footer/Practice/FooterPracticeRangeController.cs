@@ -14,6 +14,7 @@ using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 using osuTK.Graphics;
+using System.Collections.Generic;
 
 namespace fluXis.Screens.Select.Footer.Practice;
 
@@ -22,18 +23,26 @@ public partial class FooterPracticeRangeController : Container
     [Resolved]
     private MapStore maps { get; set; }
 
+    private readonly List<FooterPracticeGraph.Bar> bars;
+
     private RangePoint startPoint;
     private RangePoint endPoint;
     
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
 
+    private int maxWidth = 1;
+
     private int endTime = 1;
 
-    public FooterPracticeRangeController(BindableNumber<int> start, BindableNumber<int> end)
+    private int defaultStartX = 0;
+    private int defaultEndX = 0;
+
+    public FooterPracticeRangeController(BindableNumber<int> start, BindableNumber<int> end, List<FooterPracticeGraph.Bar> bars)
     {
         this.start = start;
         this.end = end;
+        this.bars = bars;
     }
 
     [BackgroundDependencyLoader]
@@ -51,12 +60,17 @@ public partial class FooterPracticeRangeController : Container
                 Origin = Anchor.CentreRight,
                 OnDragBind = e =>
                 {
-                    float timeMs = posToTime(startPoint.X - 10);
-                    start.Value = (int)(timeMs / 1000f);
+                    if (startPoint.X <= defaultStartX)
+                        start.Value = 0;
+                    else
+                    {
+                       float timeMs = posToTime(startPoint.X);
+                       start.Value = (int)(timeMs / 1000f); 
+                    }
                 },
                 OnRightClickBind = e =>
                 {
-                    startPoint.X = 10;
+                    startPoint.X = defaultStartX;
                     start.Value = 0;
                 },
             },
@@ -66,12 +80,17 @@ public partial class FooterPracticeRangeController : Container
                 Origin = Anchor.CentreLeft,
                 OnDragBind = e =>
                 {
-                    float timeMs = posToTime(endPoint.X + 15);
-                    end.Value = (int)(timeMs / 1000f);
+                    if (endPoint.X / defaultEndX > 0.99)
+                        end.Value = endTime;
+                    else
+                    {
+                        float timeMs = posToTime(endPoint.X + 10);
+                        end.Value = (int)(timeMs / 1000f);
+                    }
                 },
                 OnRightClickBind = e =>
                 {
-                    endPoint.X = DrawWidth - 10;
+                    endPoint.X = defaultEndX;
                     end.Value = endTime;
                 },
             }
@@ -80,17 +99,19 @@ public partial class FooterPracticeRangeController : Container
         startPoint.SetOtherPoint(endPoint);
         endPoint.SetOtherPoint(startPoint);
         
-        start.BindValueChanged(v => startPoint.UpdatePosition(timeToPos(v.NewValue * 1000) + 10));
+        start.BindValueChanged(v =>
+        {
+            if (v.NewValue * 1000 <= 0)
+                startPoint.UpdatePosition(defaultStartX);
+            else
+                startPoint.UpdatePosition(timeToPos(v.NewValue * 1000));
+        });
         end.BindValueChanged(v =>
         {
             if (v.NewValue * 1000 >= endTime)
-            {
-                endPoint.UpdatePosition(DrawWidth - 10);
-            }
+                endPoint.UpdatePosition(defaultEndX);
             else
-            {
-                endPoint.UpdatePosition(timeToPos(v.NewValue * 1000) - 5);
-            }
+                endPoint.UpdatePosition(timeToPos(v.NewValue * 1000));
         });
     }
 
@@ -98,28 +119,28 @@ public partial class FooterPracticeRangeController : Container
     {
         maps.MapBindable.BindValueChanged(mapChanged, true);
 
-        startPoint.X = 10;
-        endPoint.X = DrawWidth - 10;
+        maxWidth = (int)bars[^1].Parent.X;
+
+        Width = (maxWidth / DrawWidth) + 0.01f;
+
+        defaultStartX = 7;
+        defaultEndX = (int)DrawWidth - 5;
+
+        startPoint.X = defaultStartX;
+        endPoint.X = defaultEndX;
     }
     
     private void mapChanged(ValueChangedEvent<RealmMap> v)
     {
-        startPoint.X = 10;
-        endPoint.X = DrawWidth - 10;
+        startPoint.X = defaultStartX;
+        endPoint.X = defaultEndX;
 
         var info = v.NewValue.GetMapInfo();
         endTime = (int)info.EndTime;
     }
 
-    private float timeToPos(float time)
-    {
-        return (time / endTime) * DrawWidth;
-    }
-
-    private float posToTime(float pos)
-    {
-        return (pos / DrawWidth) * endTime;
-    }
+    private float timeToPos(float time) => time / endTime * DrawWidth;
+    private float posToTime(float pos) => pos / DrawWidth * endTime;
 
     private partial class RangePoint : CompositeDrawable
     {
@@ -222,18 +243,14 @@ public partial class FooterPracticeRangeController : Container
 
             if (Parent != null)
             {
-                newX = Math.Max(10, Math.Min(Parent.DrawWidth - 10, newX));
+                newX = Math.Max(7, Math.Min(Parent.DrawWidth - 5, newX));
 
                 if (otherPoint != null)
                 {
                     if (isStartPoint)
-                    {
-                        newX = Math.Min(newX, Math.Abs(otherPoint.X + dragArea.DrawWidth) - 15);
-                    }
+                        newX = Math.Min(newX, Math.Abs(otherPoint.X + dragArea.DrawWidth) - triangle_size);
                     else
-                    {
-                        newX = Math.Max(newX, Math.Abs(otherPoint.X - dragArea.DrawWidth) + 15);
-                    }
+                        newX = Math.Max(newX, Math.Abs(otherPoint.X - dragArea.DrawWidth) + triangle_size);
                 }
 
                 X = newX;
