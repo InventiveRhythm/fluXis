@@ -14,7 +14,6 @@ using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 using osuTK.Graphics;
-using System.Collections.Generic;
 
 namespace fluXis.Screens.Select.Footer.Practice;
 
@@ -23,26 +22,24 @@ public partial class FooterPracticeRangeController : Container
     [Resolved]
     private MapStore maps { get; set; }
 
-    private readonly List<FooterPracticeGraph.Bar> bars;
-
     private RangePoint startPoint;
     private RangePoint endPoint;
     
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
 
-    private int maxWidth = 1;
+    private float maxWidth = 1;
 
     private int endTime = 1;
 
     private int defaultStartX = 0;
     private int defaultEndX = 0;
 
-    public FooterPracticeRangeController(BindableNumber<int> start, BindableNumber<int> end, List<FooterPracticeGraph.Bar> bars)
+    public FooterPracticeRangeController(BindableNumber<int> start, BindableNumber<int> end, float maxWidth)
     {
         this.start = start;
         this.end = end;
-        this.bars = bars;
+        this.maxWidth = maxWidth;
     }
 
     [BackgroundDependencyLoader]
@@ -118,8 +115,6 @@ public partial class FooterPracticeRangeController : Container
     protected override void LoadComplete()
     {
         maps.MapBindable.BindValueChanged(mapChanged, true);
-
-        maxWidth = (int)bars[^1].Parent.X;
 
         Width = (maxWidth / DrawWidth) + 0.01f;
 

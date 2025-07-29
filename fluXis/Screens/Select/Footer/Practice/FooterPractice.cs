@@ -123,7 +123,7 @@ public partial class FooterPractice : FocusedOverlayContainer
                                         RelativeSizeAxes = Axes.X,
                                         Height = 85,
                                     },
-                                    new FooterPracticeRangeController(start, end, practiceGraph.Bars)
+                                    new FooterPracticeRangeController(start, end, practiceGraph.Bars[^1].Parent.X)
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Height = 60,
