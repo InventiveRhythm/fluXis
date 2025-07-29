@@ -11,6 +11,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osuTK;
 using osuTK.Input;
 using osuTK.Graphics;
@@ -28,18 +29,18 @@ public partial class FooterPracticeRangeController : Container
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
 
-    private float maxWidth = 1;
+    private float maxWidth = 0;
+    private float originalWidth = 1;
 
     private int endTime = 1;
 
     private int defaultStartX = 0;
     private int defaultEndX = 0;
 
-    public FooterPracticeRangeController(BindableNumber<int> start, BindableNumber<int> end, float maxWidth)
+    public FooterPracticeRangeController(BindableNumber<int> start, BindableNumber<int> end)
     {
         this.start = start;
         this.end = end;
-        this.maxWidth = maxWidth;
     }
 
     [BackgroundDependencyLoader]
@@ -61,7 +62,7 @@ public partial class FooterPracticeRangeController : Container
                         start.Value = 0;
                     else
                     {
-                       float timeMs = posToTime(startPoint.X);
+                       float timeMs = posToTime(startPoint.X - 5);
                        start.Value = (int)(timeMs / 1000f); 
                     }
                 },
@@ -81,7 +82,7 @@ public partial class FooterPracticeRangeController : Container
                         end.Value = endTime;
                     else
                     {
-                        float timeMs = posToTime(endPoint.X + 10);
+                        float timeMs = posToTime(endPoint.X + 5);
                         end.Value = (int)(timeMs / 1000f);
                     }
                 },
@@ -114,12 +115,14 @@ public partial class FooterPracticeRangeController : Container
 
     protected override void LoadComplete()
     {
+        originalWidth = DrawWidth;
+
         maps.MapBindable.BindValueChanged(mapChanged, true);
 
-        Width = (maxWidth / DrawWidth) + 0.01f;
+        SetMaxWidth(maxWidth);
 
         defaultStartX = 7;
-        defaultEndX = (int)DrawWidth - 5;
+        defaultEndX = (int)originalWidth - 10;
 
         startPoint.X = defaultStartX;
         endPoint.X = defaultEndX;
@@ -136,6 +139,17 @@ public partial class FooterPracticeRangeController : Container
 
     private float timeToPos(float time) => time / endTime * DrawWidth;
     private float posToTime(float pos) => pos / DrawWidth * endTime;
+
+    public void SetMaxWidth(float maxWidth)
+    {
+        if (Precision.DefinitelyBigger(maxWidth, 0))
+        {
+            Width = maxWidth / originalWidth;
+            return;
+        }
+
+        this.maxWidth = originalWidth;
+    }
 
     private partial class RangePoint : CompositeDrawable
     {
@@ -165,7 +179,7 @@ public partial class FooterPracticeRangeController : Container
             this.parent = parent;
             this.bindableValue = bindableValue;
             this.isStartPoint = isStartPoint;
-            
+
             RelativeSizeAxes = Axes.Y;
             Width = drag_area_width;
 
@@ -238,7 +252,7 @@ public partial class FooterPracticeRangeController : Container
 
             if (Parent != null)
             {
-                newX = Math.Max(7, Math.Min(Parent.DrawWidth - 5, newX));
+                newX = Math.Max(7, Math.Min(Parent.DrawWidth, newX));
 
                 if (otherPoint != null)
                 {
