@@ -263,11 +263,11 @@ public static class MapUtils
 
     public enum SortingMode
     {
-        [Icon(0xf031)]
+        [Icon(0xf001)]
         [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByTitle))]
         Title,
 
-        [Icon(0xf031)]
+        [Icon(0xf8cb)]
         [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByArtist))]
         Artist,
 
@@ -279,14 +279,14 @@ public static class MapUtils
         [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByDateAdded))]
         DateAdded,
 
-        [Icon(0xf1b2)]
+        [Icon(0xf162)]
         [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByDifficulty))]
         Difficulty
     }
 
     public enum GroupingMode
     {
-        [Icon(0xf068)]
+        [Icon(0xf1b2)]
         [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.GroupByDefault))]
         Default,
 
