@@ -5,12 +5,14 @@ using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Footer;
 using fluXis.Map;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Screens.Select.Footer.Practice;
@@ -190,6 +192,8 @@ public partial class FooterPractice : FocusedOverlayContainer
 
         start.ValueChanged += _ => end.MinValue = start.Value + 1;
         end.ValueChanged += _ => start.MaxValue = end.Value - 1;
+
+        Scheduler.AddDelayed(() => practiceRangeController.Width = (DrawWidth - 35) / practiceRangeController.DrawWidth, 500);
     }
 
     private void mapChanged(ValueChangedEvent<RealmMap> e)
