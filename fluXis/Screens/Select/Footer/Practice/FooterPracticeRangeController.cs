@@ -134,6 +134,13 @@ public partial class FooterPracticeRangeController : Container
         endPoint.X = defaultEndX;
 
         var info = v.NewValue.GetMapInfo();
+        
+        if (info is null || info.HitObjects.Count == 0)
+        {
+            endTime = 1;
+            return;
+        }
+            
         endTime = (int)info.EndTime;
     }
 
@@ -170,9 +177,6 @@ public partial class FooterPracticeRangeController : Container
         public Action<MouseDownEvent> OnRightClickBind;
 
         private Box dragArea;
-        private Box line;
-        private FluXisSpriteIcon topTriangle;
-        private FluXisSpriteIcon bottomTriangle;
 
         public RangePoint(FooterPracticeRangeController parent, BindableNumber<int> bindableValue, bool isStartPoint)
         {
@@ -194,7 +198,7 @@ public partial class FooterPracticeRangeController : Container
                     Colour = Color4.Transparent
                 },
 
-                line = new Box
+                new Box
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -203,7 +207,7 @@ public partial class FooterPracticeRangeController : Container
                     Colour = Color4.White
                 },
 
-                topTriangle = new FluXisSpriteIcon
+                new FluXisSpriteIcon
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.BottomCentre,
@@ -212,7 +216,7 @@ public partial class FooterPracticeRangeController : Container
                     Colour = Color4.White,
                 },
 
-                bottomTriangle = new FluXisSpriteIcon
+                new FluXisSpriteIcon
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.TopCentre,
@@ -280,7 +284,7 @@ public partial class FooterPracticeRangeController : Container
 
         protected override bool OnHover(HoverEvent e)
         {
-            this.FadeColour(Theme.AccentGradient, 100);
+            this.FadeColour(Theme.Highlight, 100);
             return true;
         }
 

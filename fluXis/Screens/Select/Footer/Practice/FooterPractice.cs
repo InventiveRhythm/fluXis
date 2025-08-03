@@ -218,7 +218,7 @@ public partial class FooterPractice : FocusedOverlayContainer
         end.MinValue = start.Value + 1;
         start.MaxValue = end.Value - 1;
 
-        if (practiceGraph.Bars[^1].Parent.X / practiceRangeController.DrawWidth >= 0.5f)
+        if (!float.IsNaN(practiceGraph.Bars[^1].Parent.X) && practiceGraph.Bars[^1].Parent.X / practiceRangeController.DrawWidth >= 0.5f)
             practiceRangeController.SetMaxWidth(practiceGraph.Bars[^1].Parent.X);
     }
 
