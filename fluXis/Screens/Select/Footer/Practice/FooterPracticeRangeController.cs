@@ -11,7 +11,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using osu.Framework.Utils;
 using osuTK;
 using osuTK.Input;
 using osuTK.Graphics;
@@ -228,10 +227,7 @@ public partial class FooterPracticeRangeController : Container
             dragSample = samples.Get("UI/slider-tick");
         }
 
-        public void SetOtherPoint(RangePoint other)
-        {
-            otherPoint = other;
-        }
+        public void SetOtherPoint(RangePoint other) => otherPoint = other;
 
         public void UpdatePosition(float newX)
         {
@@ -247,24 +243,37 @@ public partial class FooterPracticeRangeController : Container
 
         protected override void OnDrag(DragEvent e)
         {
-            float newX = X + e.Delta.X;
-
             if (Parent != null)
             {
+                var mousePos = e.ScreenSpaceMousePosition;
+                var parentScreenSpace = Parent.ScreenSpaceDrawQuad;
+                
+                if (!parentScreenSpace.Contains(mousePos))
+                    return;
+                
+                if (otherPoint != null)
+                {
+                    var mouseLocalX = Parent.ToLocalSpace(mousePos).X;
+                    
+                    if (isStartPoint)
+                        if (mouseLocalX >= otherPoint.X)
+                            return;
+                    else
+                        if (mouseLocalX <= otherPoint.X)
+                            return;
+                }
+                
+                float newX = X + e.Delta.X;
                 newX = Math.Max(0, Math.Min(Parent.DrawWidth + 7, newX));
 
                 if (otherPoint != null)
                 {
                     if (isStartPoint)
-                    {
                         if (!(BindableValue.Value + 1 > otherPoint.BindableValue.Value && e.Delta.X > 0))
                             newX = Math.Min(newX, otherPoint.X - triangle_size);
-                    }
                     else
-                    {
                         if (!(BindableValue.Value - 1 < otherPoint.BindableValue.Value && e.Delta.X < 0))
                             newX = Math.Max(newX, otherPoint.X + triangle_size);
-                    }
                 }
 
                 X = newX;

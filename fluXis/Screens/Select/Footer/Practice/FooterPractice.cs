@@ -5,14 +5,12 @@ using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Footer;
 using fluXis.Map;
-using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Screens.Select.Footer.Practice;
