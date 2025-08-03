@@ -346,6 +346,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             Logger.Error(req.FailReason, "Failed to log in with existing token!", LoggingTarget.Network);
             LastException = req.FailReason;
             Status.Value = ConnectionStatus.Failed;
+            tokenBindable.Value = "";
             return req.FailReason;
         }
 
