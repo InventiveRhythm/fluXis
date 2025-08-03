@@ -29,7 +29,6 @@ public partial class FooterPracticeRangeController : Container
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
 
-    private float maxWidth = 0;
     private float originalWidth = 1;
 
     private int endTime = 1;
@@ -55,14 +54,14 @@ public partial class FooterPracticeRangeController : Container
             startPoint = new RangePoint(this, start, true)
             {
                 Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreRight,
+                Origin = Anchor.Centre,
                 OnDragBind = e =>
                 {
                     if (startPoint.X <= defaultStartX)
                         start.Value = 0;
                     else
                     {
-                       float timeMs = posToTime(startPoint.X - 5);
+                       float timeMs = posToTime(startPoint.X + 10);
                        start.Value = (int)(timeMs / 1000f); 
                     }
                 },
@@ -75,14 +74,14 @@ public partial class FooterPracticeRangeController : Container
             endPoint = new RangePoint(this, end, false)
             {
                 Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
+                Origin = Anchor.Centre,
                 OnDragBind = e =>
                 {
                     if (endPoint.X / defaultEndX > 0.99)
                         end.Value = endTime;
                     else
                     {
-                        float timeMs = posToTime(endPoint.X + 5);
+                        float timeMs = posToTime(endPoint.X - 5);
                         end.Value = (int)(timeMs / 1000f);
                     }
                 },
@@ -102,14 +101,23 @@ public partial class FooterPracticeRangeController : Container
             if (v.NewValue * 1000 <= 0)
                 startPoint.UpdatePosition(defaultStartX);
             else
-                startPoint.UpdatePosition(timeToPos(v.NewValue * 1000));
+            {
+                float newPos = timeToPos(v.NewValue * 1000);
+                if (newPos >= endPoint.X - 10) return;
+                startPoint.UpdatePosition(newPos);
+            }
         });
+
         end.BindValueChanged(v =>
         {
             if (v.NewValue * 1000 >= endTime)
                 endPoint.UpdatePosition(defaultEndX);
             else
-                endPoint.UpdatePosition(timeToPos(v.NewValue * 1000));
+            {
+                float newPos = timeToPos(v.NewValue * 1000);
+                if (newPos <= startPoint.X + 10) return;
+                endPoint.UpdatePosition(newPos);
+            }
         });
     }
 
@@ -119,10 +127,8 @@ public partial class FooterPracticeRangeController : Container
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
 
-        SetMaxWidth(maxWidth);
-
-        defaultStartX = 7;
-        defaultEndX = (int)originalWidth - 10;
+        defaultStartX = 0;
+        defaultEndX = (int)originalWidth + 7;
 
         startPoint.X = defaultStartX;
         endPoint.X = defaultEndX;
@@ -134,7 +140,7 @@ public partial class FooterPracticeRangeController : Container
         endPoint.X = defaultEndX;
 
         var info = v.NewValue.GetMapInfo();
-        
+
         if (info is null || info.HitObjects.Count == 0)
         {
             endTime = 1;
@@ -147,17 +153,6 @@ public partial class FooterPracticeRangeController : Container
     private float timeToPos(float time) => time / endTime * DrawWidth;
     private float posToTime(float pos) => pos / DrawWidth * endTime;
 
-    public void SetMaxWidth(float maxWidth)
-    {
-        if (Precision.DefinitelyBigger(maxWidth, 0))
-        {
-            Width = maxWidth / originalWidth;
-            return;
-        }
-
-        this.maxWidth = originalWidth;
-    }
-
     private partial class RangePoint : CompositeDrawable
     {
         private Sample dragSample;
@@ -169,7 +164,7 @@ public partial class FooterPracticeRangeController : Container
         private const float drag_area_width = 30f;
 
         private readonly FooterPracticeRangeController parent;
-        private readonly BindableNumber<int> bindableValue;
+        public readonly BindableNumber<int> BindableValue;
         private readonly bool isStartPoint;
         private RangePoint otherPoint;
         private bool isDragging;
@@ -181,8 +176,8 @@ public partial class FooterPracticeRangeController : Container
         public RangePoint(FooterPracticeRangeController parent, BindableNumber<int> bindableValue, bool isStartPoint)
         {
             this.parent = parent;
-            this.bindableValue = bindableValue;
             this.isStartPoint = isStartPoint;
+            BindableValue = bindableValue;
 
             RelativeSizeAxes = Axes.Y;
             Width = drag_area_width;
@@ -256,14 +251,20 @@ public partial class FooterPracticeRangeController : Container
 
             if (Parent != null)
             {
-                newX = Math.Max(7, Math.Min(Parent.DrawWidth, newX));
+                newX = Math.Max(0, Math.Min(Parent.DrawWidth + 7, newX));
 
                 if (otherPoint != null)
                 {
                     if (isStartPoint)
-                        newX = Math.Min(newX, Math.Abs(otherPoint.X + dragArea.DrawWidth) - triangle_size);
+                    {
+                        if (!(BindableValue.Value + 1 > otherPoint.BindableValue.Value && e.Delta.X > 0))
+                            newX = Math.Min(newX, otherPoint.X - triangle_size);
+                    }
                     else
-                        newX = Math.Max(newX, Math.Abs(otherPoint.X - dragArea.DrawWidth) + triangle_size);
+                    {
+                        if (!(BindableValue.Value - 1 < otherPoint.BindableValue.Value && e.Delta.X < 0))
+                            newX = Math.Max(newX, otherPoint.X + triangle_size);
+                    }
                 }
 
                 X = newX;

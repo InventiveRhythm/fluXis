@@ -29,9 +29,6 @@ public partial class FooterPractice : FocusedOverlayContainer
 
     private ForcedHeightText text;
 
-    private FooterPracticeGraph practiceGraph;
-    private FooterPracticeRangeController practiceRangeController;
-
     private readonly BindableNumber<int> start = new();
     private readonly BindableNumber<int> end = new();
 
@@ -116,7 +113,7 @@ public partial class FooterPractice : FocusedOverlayContainer
                                 Height = 80,
                                 Children = new Drawable[]
                                 {
-                                    practiceGraph = new FooterPracticeGraph(start, end)
+                                    new FooterPracticeGraph(start, end)
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Height = 80,
@@ -126,7 +123,7 @@ public partial class FooterPractice : FocusedOverlayContainer
                                         RelativeSizeAxes = Axes.X,
                                         Height = 85,
                                     },
-                                    practiceRangeController = new FooterPracticeRangeController(start, end)
+                                    new FooterPracticeRangeController(start, end)
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Height = 60,
@@ -192,8 +189,6 @@ public partial class FooterPractice : FocusedOverlayContainer
 
         start.ValueChanged += _ => end.MinValue = start.Value + 1;
         end.ValueChanged += _ => start.MaxValue = end.Value - 1;
-
-        Scheduler.AddDelayed(() => practiceRangeController.Width = (DrawWidth - 35) / practiceRangeController.DrawWidth, 500);
     }
 
     private void mapChanged(ValueChangedEvent<RealmMap> e)
@@ -217,9 +212,6 @@ public partial class FooterPractice : FocusedOverlayContainer
 
         end.MinValue = start.Value + 1;
         start.MaxValue = end.Value - 1;
-
-        if (!float.IsNaN(practiceGraph.Bars[^1].Parent.X) && practiceGraph.Bars[^1].Parent.X / practiceRangeController.DrawWidth >= 0.5f)
-            practiceRangeController.SetMaxWidth(practiceGraph.Bars[^1].Parent.X);
     }
 
     protected override void Update()
