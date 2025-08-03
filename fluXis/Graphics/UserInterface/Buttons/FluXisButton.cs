@@ -21,7 +21,19 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
     public LocalisableString TooltipText { get; init; }
 
     public float FontSize { get; init; } = 24;
-    public LocalisableString Text { get; set; } = "Default Text";
+
+    public LocalisableString Text
+    {
+        get => text;
+        set
+        {
+            text = value;
+
+            if (textSprite != null)
+                textSprite.Text = value;
+        }
+    }
+
     public Colour4 Color { get; set; } = Theme.Background4;
     public Colour4 TextColor { get; set; } = Theme.Text;
     public bool HoldToConfirm { get; set; }
@@ -46,6 +58,9 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
         get => EnabledBindable.Value;
         set
         {
+            if (base.Enabled.Value == value)
+                return;
+
             base.Enabled.Value = value;
             EnabledBindable.Value = value;
 
@@ -57,11 +72,13 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
     }
 
     public Bindable<bool> EnabledBindable => base.Enabled;
+    private LocalisableString text = "Default Text";
 
     private HoverLayer hoverBox;
     private Box holdBox;
     private FlashLayer flashBox;
     private CircularContainer content;
+    private FluXisSpriteText textSprite;
 
     private HoldToConfirmHandler holdToConfirmHandler;
 
@@ -99,7 +116,7 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Child = new FluXisSpriteText
+                    Child = textSprite = new FluXisSpriteText
                     {
                         Text = Text,
                         FontSize = FontSize,

@@ -15,7 +15,6 @@ using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
-using fluXis.Overlay.Auth;
 using fluXis.Overlay.Browse;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
@@ -63,9 +62,6 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private SettingsMenu settings { get; set; }
-
-    [Resolved]
-    private LoginOverlay login { get; set; }
 
     [Resolved]
     private GlobalClock clock { get; set; }
@@ -425,7 +421,6 @@ public partial class MenuScreen : FluXisScreen
         {
             toolbar.Show();
             showMenu(true);
-            login.Show();
         });
 
         pressAnyKeyText.FadeOut(600).MoveToY(200, 800, Easing.InQuint);

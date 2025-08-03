@@ -1,5 +1,4 @@
 using fluXis.Graphics.UserInterface.Panel;
-using fluXis.Overlay.Auth;
 using fluXis.Overlay.Chat;
 using fluXis.Overlay.Music;
 using fluXis.Overlay.Network;
@@ -24,7 +23,6 @@ public partial class TestToolbar : FluXisTestScene
         TestDependencies.Cache(new ChatOverlay());
         TestDependencies.Cache(new FluXisScreenStack());
         TestDependencies.Cache(new UserProfileOverlay());
-        TestDependencies.Cache(new LoginOverlay());
 
         var panels = new PanelContainer();
         TestDependencies.Cache(panels);
