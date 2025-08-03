@@ -256,11 +256,15 @@ public partial class FooterPracticeRangeController : Container
                     var mouseLocalX = Parent.ToLocalSpace(mousePos).X;
                     
                     if (isStartPoint)
+                    {
                         if (mouseLocalX >= otherPoint.X)
                             return;
+                    }
                     else
+                    {
                         if (mouseLocalX <= otherPoint.X)
                             return;
+                    }
                 }
                 
                 float newX = X + e.Delta.X;
@@ -269,11 +273,15 @@ public partial class FooterPracticeRangeController : Container
                 if (otherPoint != null)
                 {
                     if (isStartPoint)
+                    {
                         if (!(BindableValue.Value + 1 > otherPoint.BindableValue.Value && e.Delta.X > 0))
                             newX = Math.Min(newX, otherPoint.X - triangle_size);
+                    }
                     else
+                    {
                         if (!(BindableValue.Value - 1 < otherPoint.BindableValue.Value && e.Delta.X < 0))
                             newX = Math.Max(newX, otherPoint.X + triangle_size);
+                    }
                 }
 
                 X = newX;
