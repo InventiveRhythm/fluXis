@@ -116,11 +116,6 @@ public partial class FooterPractice : FocusedOverlayContainer
                                         RelativeSizeAxes = Axes.X,
                                         Height = 80,
                                     },
-                                    new FooterPracticePlayhead(start, end)
-                                    {
-                                        RelativeSizeAxes = Axes.X,
-                                        Height = 85,
-                                    },
                                     new FooterPracticeRangeController(start, end)
                                     {
                                         RelativeSizeAxes = Axes.X,
