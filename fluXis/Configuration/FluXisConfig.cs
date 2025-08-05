@@ -100,6 +100,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // Misc
         SetDefault(FluXisSetting.OpenRGBIntegration, false);
+        SetDefault(FluXisSetting.UseMeridianTime, false);
     }
 }
 
@@ -189,5 +190,6 @@ public enum FluXisSetting
     ShowMissingLocalizations,
 
     // Misc
-    OpenRGBIntegration
+    OpenRGBIntegration,
+    UseMeridianTime
 }

@@ -219,6 +219,9 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             },
                             profile = new ToolbarProfile(),
                             new ToolbarClock()
+                            {
+                                Margin = new MarginPadding { Left = 10 }
+                            }
                         }
                     }
                 }
