@@ -12,12 +12,37 @@ namespace fluXis.Graphics.Containers.Markdown;
 public partial class FluXisMarkdownCodeBlock : MarkdownCodeBlock
 {
     private FluXisMarkdown markdown { get; }
+    private CodeBlock codeBlock;
+    private FluXisMarkdownCopyButton copyButton;
 
     public FluXisMarkdownCodeBlock(FluXisMarkdown markdown, [NotNull] CodeBlock codeBlock)
         : base(codeBlock)
     {
         this.markdown = markdown;
+        this.codeBlock = codeBlock;
         Margin = new MarginPadding { Bottom = 16 };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        AddInternal
+        (
+            copyButton = new FluXisMarkdownCopyButton(codeBlock)
+            {
+                Alpha = 0,
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+            }
+        );
+
+        Scheduler.AddDelayed(() =>
+        {
+            copyButton.Anchor = Anchor.TopRight;
+            copyButton.Origin = Anchor.TopRight;
+            copyButton.FadeTo(1f, 300, Easing.In);
+        }, 100);
     }
 
     protected override Drawable CreateBackground()
