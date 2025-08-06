@@ -7,6 +7,8 @@ using osu.Framework.Input.Events;
 using osu.Framework.Allocation;
 using fluXis.Overlay.Notifications;
 
+namespace fluXis.Graphics.Containers.Markdown;
+
 public partial class FluXisMarkdownCopyButton : ToolbarButton
 {
     [Resolved]
