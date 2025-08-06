@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
@@ -118,7 +119,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 },
                 new Container
                 {
@@ -341,12 +342,12 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
 
         this.FadeOut();
 
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            this.FadeIn(FADE_DURATION);
-            menuBar.MoveToY(-45).MoveToY(0, MOVE_DURATION, Easing.OutQuint);
-            content.FadeOut().ScaleTo(.98f).Delay(ENTER_DELAY)
-                   .FadeIn(FADE_DURATION).ScaleTo(1f, MOVE_DURATION, Easing.OutQuint);
+            this.FadeIn(Styling.TRANSITION_FADE);
+            menuBar.MoveToY(-45).MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            content.FadeOut().ScaleTo(.98f).Delay(Styling.TRANSITION_ENTER_DELAY)
+                   .FadeIn(Styling.TRANSITION_FADE).ScaleTo(1f, Styling.TRANSITION_MOVE, Easing.OutQuint);
         }
     }
 
@@ -372,9 +373,9 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
 
         clock.Looping = false;
 
-        menuBar.MoveToY(-45, MOVE_DURATION, Easing.OutQuint);
-        this.FadeOut(FADE_DURATION);
-        content.FadeOut(FADE_DURATION).ScaleTo(.98f, MOVE_DURATION, Easing.OutQuint);
+        menuBar.MoveToY(-45, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        this.FadeOut(Styling.TRANSITION_FADE);
+        content.FadeOut(Styling.TRANSITION_FADE).ScaleTo(.98f, Styling.TRANSITION_MOVE, Easing.OutQuint);
         return base.OnExiting(e);
     }
 

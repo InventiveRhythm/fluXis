@@ -33,7 +33,7 @@ public partial class DashboardSidebar : ExpandingContainer
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             new Container
             {

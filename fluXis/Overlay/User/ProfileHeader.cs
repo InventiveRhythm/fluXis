@@ -58,7 +58,7 @@ public partial class ProfileHeader : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2.Opacity(.5f)
+                Colour = Theme.Background2.Opacity(.5f)
             },
             new FillFlowContainer
             {
@@ -90,7 +90,7 @@ public partial class ProfileHeader : Container
                                     Size = new Vector2(128),
                                     CornerRadius = 24,
                                     Masking = true,
-                                    EdgeEffect = FluXisStyles.ShadowMedium,
+                                    EdgeEffect = Styling.ShadowMedium,
                                     LoadContent = () => new DrawableAvatar(user)
                                     {
                                         RelativeSizeAxes = Axes.Both,

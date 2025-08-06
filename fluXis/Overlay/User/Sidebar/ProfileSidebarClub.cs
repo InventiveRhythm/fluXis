@@ -52,7 +52,7 @@ public partial class ProfileSidebarClub : ClickableContainer
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2.Opacity(.5f)
+                Colour = Theme.Background2.Opacity(.5f)
             },
             new FillFlowContainer
             {

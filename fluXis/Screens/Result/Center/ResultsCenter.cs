@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using fluXis.Graphics;
 using fluXis.Mods.Drawables;
 using fluXis.Scoring;
 using fluXis.Utils;
@@ -85,17 +86,17 @@ public partial class ResultsCenter : CompositeDrawable
 
     public override void Show()
     {
-        score.MoveToY(50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        mods.MoveToY(50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        line.MoveToY(50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        stats.MoveToY(50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        score.MoveToY(50).MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        mods.MoveToY(50).MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        line.MoveToY(50).MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        stats.MoveToY(50).MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     public override void Hide()
     {
-        score.MoveToY(50, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        mods.MoveToY(50, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        line.MoveToY(50, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        stats.MoveToY(50, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        score.MoveToY(50, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        mods.MoveToY(50, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        line.MoveToY(50, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        stats.MoveToY(50, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 }

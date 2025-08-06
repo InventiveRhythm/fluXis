@@ -18,7 +18,7 @@ public partial class KeyCountChip : CircularContainer
 
             if (IsLoaded)
             {
-                box.Colour = FluXisColors.GetKeyColor(KeyCount);
+                box.Colour = Theme.GetKeyCountColor(KeyCount);
                 text.Text = $"{KeyCount}K";
             }
         }
@@ -41,7 +41,7 @@ public partial class KeyCountChip : CircularContainer
             box = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.GetKeyColor(KeyCount)
+                Colour = Theme.GetKeyCountColor(KeyCount)
             },
             text = new FluXisSpriteText
             {

@@ -68,14 +68,14 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         AutoSizeAxes = Axes.Y;
         CornerRadius = 20;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowMedium;
+        EdgeEffect = Styling.ShadowMedium;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             new FillFlowContainer
             {

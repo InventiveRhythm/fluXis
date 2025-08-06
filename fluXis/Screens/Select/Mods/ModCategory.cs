@@ -7,6 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Localisation;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Select.Mods;
@@ -56,13 +57,13 @@ public partial class ModCategory : CompositeDrawable
                                 RelativeSizeAxes = Axes.Y,
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight,
-                                Colour = FluXisColors.Background2,
+                                Colour = Theme.Background2,
                                 Alpha = .5f
                             },
                             new FluXisSpriteText
                             {
                                 Text = label,
-                                Colour = FluXisColors.TextDark,
+                                Colour = Theme.TextDark,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Shear = new Vector2(-.2f, 0),
@@ -112,4 +113,6 @@ public partial class ModCategory : CompositeDrawable
             }
         }, delay);
     }
+
+    protected override bool OnClick(ClickEvent e) => true;
 }

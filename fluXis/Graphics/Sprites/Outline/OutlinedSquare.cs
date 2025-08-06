@@ -9,7 +9,7 @@ public partial class OutlinedSquare : Container
 {
     public OutlinedSquare()
     {
-        BorderColour = FluXisColors.Text;
+        BorderColour = Theme.Text;
         BorderThickness = 20;
         Masking = true;
 

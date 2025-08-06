@@ -79,7 +79,7 @@ public partial class PointSettingsDropdown<T> : Container, IHasTooltip
         {
             public CustomHeader()
             {
-                BackgroundColour = FluXisColors.Background3;
+                BackgroundColour = Theme.Background3;
                 Height = 32;
                 CornerRadius = 5;
                 Foreground.Padding = new MarginPadding { Horizontal = 10 };
@@ -102,7 +102,7 @@ public partial class PointSettingsDropdown<T> : Container, IHasTooltip
         {
             public CustomMenu()
             {
-                BackgroundColour = FluXisColors.Background3;
+                BackgroundColour = Theme.Background3;
                 MaskingContainer.CornerRadius = 5;
                 MaxHeight = 280;
                 ScrollbarVisible = true;
@@ -116,8 +116,8 @@ public partial class PointSettingsDropdown<T> : Container, IHasTooltip
                 public CustomMenuItem(MenuItem item)
                     : base(item)
                 {
-                    BackgroundColour = FluXisColors.Background3;
-                    BackgroundColourSelected = FluXisColors.Background5;
+                    BackgroundColour = Theme.Background3;
+                    BackgroundColourSelected = Theme.Background5;
                 }
             }
         }

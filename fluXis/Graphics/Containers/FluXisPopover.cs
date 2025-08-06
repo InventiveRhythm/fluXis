@@ -20,12 +20,12 @@ public partial class FluXisPopover : Popover
     private void load()
     {
         Content.Padding = new MarginPadding(ContentPadding);
-        Background.Colour = FluXisColors.Background2;
+        Background.Colour = Theme.Background2;
 
         Body.Masking = true;
         Body.CornerRadius = BodyRadius;
         Body.Margin = new MarginPadding(10);
-        Body.EdgeEffect = FluXisStyles.ShadowSmall;
+        Body.EdgeEffect = Styling.ShadowSmall;
     }
 
     protected override Drawable CreateArrow() => Empty();

@@ -15,7 +15,7 @@ public partial class KeyModeIcon : Container
     public KeyModeIcon(int mode)
     {
         KeyMode = mode;
-        Colour = FluXisColors.GetKeyColor(mode);
+        Colour = Theme.GetKeyCountColor(mode);
     }
 
     [BackgroundDependencyLoader]

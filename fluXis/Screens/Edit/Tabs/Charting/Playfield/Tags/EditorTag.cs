@@ -83,7 +83,7 @@ public partial class EditorTag : Container
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Margin = new MarginPadding { Horizontal = 12 },
-                        Colour = FluXisColors.IsBright(TagColour) ? Colour4.Black : Colour4.White,
+                        Colour = Theme.IsBright(TagColour) ? Colour4.Black : Colour4.White,
                         Alpha = .75f,
                         WebFontSize = 12
                     }

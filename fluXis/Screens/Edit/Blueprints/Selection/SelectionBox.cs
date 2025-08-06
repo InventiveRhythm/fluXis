@@ -54,7 +54,7 @@ public partial class SelectionBox : Container
 
         InternalChild = Box = new Container
         {
-            BorderColour = FluXisColors.Text,
+            BorderColour = Theme.Text,
             BorderThickness = 4,
             CornerRadius = 10,
             Masking = true,

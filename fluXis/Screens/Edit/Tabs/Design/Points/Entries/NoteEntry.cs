@@ -14,7 +14,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class NoteEntry : PointListEntry
 {
     protected override string Text => "Note";
-    protected override Colour4 Color => FluXisColors.Note;
+    protected override Colour4 Color => Theme.Note;
 
     private NoteEvent note => (NoteEvent)Object;
 

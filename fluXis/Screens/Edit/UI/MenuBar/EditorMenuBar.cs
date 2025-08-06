@@ -15,7 +15,7 @@ public partial class EditorMenuBar : FluXisMenu
         : base(Direction.Horizontal, true)
     {
         RelativeSizeAxes = Axes.X;
-        BackgroundColour = FluXisColors.Background1;
+        BackgroundColour = Theme.Background1;
         // ItemsContainer = new Vector2(10, 0);
     }
 

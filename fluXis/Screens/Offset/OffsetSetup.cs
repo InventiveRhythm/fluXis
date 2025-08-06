@@ -1,6 +1,7 @@
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
@@ -91,13 +92,13 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobal
                     {
                         Width = 4,
                         Height = 160,
-                        Colour = FluXisColors.Primary
+                        Colour = Theme.Primary
                     },
                     line = new Line
                     {
                         Width = 6,
                         Height = 120,
-                        Colour = FluXisColors.Secondary
+                        Colour = Theme.Secondary
                     },
                     container = new Container { RelativeSizeAxes = Axes.Both }
                 }
@@ -159,13 +160,13 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobal
     public override void OnEntering(ScreenTransitionEvent e)
     {
         track?.Start();
-        clock.RateTo(0, MOVE_DURATION);
+        clock.RateTo(0, Styling.TRANSITION_MOVE);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         track?.Stop();
-        clock.RateTo(1f, MOVE_DURATION);
+        clock.RateTo(1f, Styling.TRANSITION_MOVE);
         return base.OnExiting(e);
     }
 
@@ -180,7 +181,7 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobal
                     X = progress < .5f ? progress : progress - 1f,
                     Width = 4,
                     Height = 100,
-                    Colour = FluXisColors.Primary
+                    Colour = Theme.Primary
                 };
 
                 container.Add(l);

@@ -66,7 +66,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             new Box
             {
@@ -101,7 +101,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
             {
                 RelativeSizeAxes = Axes.X,
                 Height = 4,
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             new StoryboardTimingLines(this)
             {

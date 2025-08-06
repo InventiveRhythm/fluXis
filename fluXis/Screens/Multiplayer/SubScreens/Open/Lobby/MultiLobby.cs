@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
@@ -366,12 +367,12 @@ public partial class MultiLobby : MultiSubScreen
         MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods) { Scores = client.Room?.Scores }));
     }
 
-    private void stopClockMusic() => clock.VolumeOut(FluXisScreen.MOVE_DURATION).OnComplete(_ => clock.Stop());
+    private void stopClockMusic() => clock.VolumeOut(Styling.TRANSITION_MOVE).OnComplete(_ => clock.Stop());
 
     private void startClockMusic()
     {
         clock.Start();
-        clock.VolumeIn(FluXisScreen.MOVE_DURATION);
+        clock.VolumeIn(Styling.TRANSITION_MOVE);
     }
 
     protected override void FadeIn()

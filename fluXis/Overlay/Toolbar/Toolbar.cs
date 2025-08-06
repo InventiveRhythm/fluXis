@@ -84,9 +84,9 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 },
-                EdgeEffect = FluXisStyles.ShadowMediumNoOffset
+                EdgeEffect = Styling.ShadowMediumNoOffset
             },
             new Container
             {
@@ -250,8 +250,8 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
         base.UpdateState(state);
     }
 
-    protected override void PopIn() => this.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-    protected override void PopOut() => this.MoveToY(-Height, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    protected override void PopIn() => this.MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+    protected override void PopOut() => this.MoveToY(-Height, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {

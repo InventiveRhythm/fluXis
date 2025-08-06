@@ -53,7 +53,7 @@ public partial class MenuNowPlaying : Container
                 Origin = Anchor.Centre,
                 CornerRadius = 10,
                 Masking = true,
-                EdgeEffect = FluXisStyles.ShadowSmall,
+                EdgeEffect = Styling.ShadowSmall,
                 Child = cover = new MapCover(null)
                 {
                     RelativeSizeAxes = Axes.Both,

@@ -68,7 +68,7 @@ public partial class MenuImageButton : MenuButtonBase
                         Height = .8f,
                         Anchor = Anchor.TopLeft,
                         Origin = Anchor.TopLeft,
-                        Colour = ColourInfo.GradientVertical(FluXisColors.Background2.Opacity(0), FluXisColors.Background2),
+                        Colour = ColourInfo.GradientVertical(Theme.Background2.Opacity(0), Theme.Background2),
                         Alpha = .8f
                     },
                     new Box
@@ -77,7 +77,7 @@ public partial class MenuImageButton : MenuButtonBase
                         Height = .2f,
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
-                        Colour = FluXisColors.Background2,
+                        Colour = Theme.Background2,
                         Alpha = .8f
                     },
                 }

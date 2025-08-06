@@ -30,15 +30,15 @@ public partial class MenuExitButton : MenuButtonBase
 
     protected override bool OnHover(HoverEvent e)
     {
-        Background.FadeColour(FluXisColors.Red, 50);
-        icon.FadeColour(FluXisColors.Background2, 50);
+        Background.FadeColour(Theme.Red, 50);
+        icon.FadeColour(Theme.Background2, 50);
         Samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        Background.FadeColour(FluXisColors.Background2, 200);
-        icon.FadeColour(FluXisColors.Text, 200);
+        Background.FadeColour(Theme.Background2, 200);
+        icon.FadeColour(Theme.Text, 200);
     }
 }

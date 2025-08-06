@@ -65,7 +65,7 @@ public partial class DrawableScoreRank : CompositeDrawable
             Text = letter,
             Font = FluXisFont.YoureGone,
             FontSize = FontSize,
-            Colour = AlternateColor ? FluXisColors.Background2 : color,
+            Colour = AlternateColor ? Theme.Background2 : color,
             Shadow = Shadow,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
@@ -89,7 +89,7 @@ public partial class DrawableScoreRank : CompositeDrawable
                 Origin = Anchor.Centre,
                 Shadow = true,
                 Margin = new MarginPadding { Left = space },
-                Colour = AlternateColor ? FluXisColors.Background2 : color.Darken(.4f),
+                Colour = AlternateColor ? Theme.Background2 : color.Darken(.4f),
                 Alpha = AlternateColor ? .8f : 1
             },
             new FluXisSpriteText
@@ -101,7 +101,7 @@ public partial class DrawableScoreRank : CompositeDrawable
                 Origin = Anchor.Centre,
                 Shadow = true,
                 Margin = new MarginPadding { Right = space },
-                Colour = AlternateColor ? FluXisColors.Background2 : color
+                Colour = AlternateColor ? Theme.Background2 : color
             }
         };
     }

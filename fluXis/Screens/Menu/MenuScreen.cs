@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
@@ -290,7 +291,7 @@ public partial class MenuScreen : FluXisScreen
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                                 Masking = true,
-                                BorderColour = FluXisColors.Text,
+                                BorderColour = Theme.Text,
                                 BorderThickness = 60,
                                 Children = new Drawable[]
                                 {
@@ -475,12 +476,12 @@ public partial class MenuScreen : FluXisScreen
     private void showMenu(bool longer = false)
     {
         // we don't need the delay
-        var delay = longer ? 0 : ENTER_DELAY;
+        var delay = longer ? 0 : Styling.TRANSITION_ENTER_DELAY;
 
         using (BeginDelayedSequence(delay))
         {
-            var moveDuration = longer ? 1000 : MOVE_DURATION;
-            var fadeDuration = longer ? 800 : FADE_DURATION;
+            var moveDuration = longer ? 1000 : Styling.TRANSITION_MOVE;
+            var fadeDuration = longer ? 800 : Styling.TRANSITION_FADE;
 
             textContainer.MoveToY(0, moveDuration, Easing.OutQuint).FadeIn(fadeDuration);
             buttons.ForEach(b => b.Show());
@@ -493,9 +494,9 @@ public partial class MenuScreen : FluXisScreen
 
     private void hideMenu()
     {
-        textContainer.MoveToY(-50, MOVE_DURATION, Easing.OutQuint).FadeOut(FADE_DURATION);
+        textContainer.MoveToY(-50, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeOut(Styling.TRANSITION_FADE);
         buttons.ForEach(b => b.Hide());
-        linkContainer.MoveToX(-200, MOVE_DURATION, Easing.OutQuint).FadeOut(FADE_DURATION);
+        linkContainer.MoveToX(-200, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeOut(Styling.TRANSITION_FADE);
 
         updates.CanShow = false;
         updates.Hide();
@@ -545,7 +546,7 @@ public partial class MenuScreen : FluXisScreen
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
             showMenu();
 
         randomizeSplash();
@@ -585,7 +586,7 @@ public partial class MenuScreen : FluXisScreen
 
             LoadComponentAsync(new BlurableBackground(map, .2f), b =>
             {
-                b.FadeInFromZero(FADE_DURATION);
+                b.FadeInFromZero(Styling.TRANSITION_FADE);
                 playButton.Stack.AutoFill = false;
                 playButton.Stack.Add(b);
             });

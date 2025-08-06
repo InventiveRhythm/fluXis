@@ -1,7 +1,7 @@
 using fluXis.Audio;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -45,7 +45,7 @@ public partial class VolumeCategory : CompositeDrawable
             progressBackground = new CircularProgress
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Text,
+                Colour = Theme.Text,
                 RoundedCaps = true,
                 Progress = .8f,
                 InnerRadius = .1f,
@@ -58,7 +58,7 @@ public partial class VolumeCategory : CompositeDrawable
             progress = new CircularProgress
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Text,
+                Colour = Theme.Text,
                 RoundedCaps = true,
                 Progress = Bindable.Value,
                 InnerRadius = .2f,
@@ -126,13 +126,13 @@ public partial class VolumeCategory : CompositeDrawable
 
     private void updateProgress(ValueChangedEvent<double> e)
     {
-        this.TransformTo(nameof(smoothProgress), e.NewValue, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        this.TransformTo(nameof(smoothProgress), e.NewValue, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     public void UpdateSelected(bool newValue)
     {
-        this.ScaleTo(newValue ? 1f : .75f, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
-            .FadeTo(newValue ? 1f : .8f, FluXisScreen.FADE_DURATION);
+        this.ScaleTo(newValue ? 1f : .75f, Styling.TRANSITION_MOVE, Easing.OutQuint)
+            .FadeTo(newValue ? 1f : .8f, Styling.TRANSITION_FADE);
     }
 
     protected override bool OnScroll(ScrollEvent e)

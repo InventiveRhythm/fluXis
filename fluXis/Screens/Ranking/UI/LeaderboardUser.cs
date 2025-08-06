@@ -37,7 +37,7 @@ public partial class LeaderboardUser : Container
         Height = 100;
         CornerRadius = 20;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        EdgeEffect = Styling.ShadowSmall;
 
         if (user.Statistics == null)
             return;
@@ -123,7 +123,7 @@ public partial class LeaderboardUser : Container
                                         Width = 35,
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
-                                        EdgeEffect = FluXisStyles.ShadowSmall
+                                        EdgeEffect = Styling.ShadowSmall
                                     },
                                     new FluXisSpriteText
                                     {
@@ -212,7 +212,7 @@ public partial class LeaderboardUser : Container
             Spacing = new Vector2(6)
         };
 
-        var color = FluXisColors.Text;
+        var color = Theme.Text;
 
         if (user.Groups.Any())
         {

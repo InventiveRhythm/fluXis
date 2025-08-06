@@ -10,7 +10,7 @@ public class EditorChangeRequest : ITimedObject, IHasDuration
     public APIModdingAction Action { get; }
     public APIModdingChangeRequest Request { get; }
 
-    public Colour4 AccentColor => Colour4.TryParseHex(Request.HexColor, out var col) ? col : FluXisColors.Highlight;
+    public Colour4 AccentColor => Colour4.TryParseHex(Request.HexColor, out var col) ? col : Theme.Highlight;
 
     public EditorChangeRequest(APIModdingAction action, APIModdingChangeRequest request)
     {

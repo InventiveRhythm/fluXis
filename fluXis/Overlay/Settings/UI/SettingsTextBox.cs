@@ -26,8 +26,8 @@ public partial class SettingsTextBox : SettingsItem
             SidePadding = 12,
             Text = Bindable.Value,
             CornerRadius = 8,
-            BackgroundInactive = FluXisColors.Background3,
-            BackgroundActive = FluXisColors.Background4,
+            BackgroundInactive = Theme.Background3,
+            BackgroundActive = Theme.Background4,
             FontSize = FluXisSpriteText.GetWebFontSize(16),
             OnTextChanged = () => Bindable.Value = box.Text,
             OnCommitAction = () => Bindable.Value = box.Text

@@ -68,7 +68,7 @@ public partial class SkinEditorColor : Container, IHasPopover
             box.Colour = e.NewValue;
 
             text.Text = e.NewValue.ToHex();
-            text.Colour = FluXisColors.IsBright(e.NewValue) ? FluXisColors.TextDark : FluXisColors.Text;
+            text.Colour = Theme.IsBright(e.NewValue) ? Theme.TextDark : Theme.Text;
         }, true);
     }
 

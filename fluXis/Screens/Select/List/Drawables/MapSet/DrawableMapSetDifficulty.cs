@@ -93,7 +93,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         RelativeSizeAxes = Axes.X;
         Height = 48;
 
-        var color = FluXisColors.GetKeyColor(map.KeyCount);
+        var color = Theme.GetKeyCountColor(map.KeyCount);
 
         InternalChildren = new Drawable[]
         {
@@ -142,7 +142,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                                 new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = FluXisColors.Background2
+                                    Colour = Theme.Background2
                                 },
                                 new FillFlowContainer
                                 {

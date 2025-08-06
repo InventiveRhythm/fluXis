@@ -31,7 +31,7 @@ public partial class EditorTimeline : Container
         {
             new Circle
             {
-                Colour = FluXisColors.Text,
+                Colour = Theme.Text,
                 RelativeSizeAxes = Axes.X,
                 Height = 5,
                 Anchor = Anchor.Centre,
@@ -47,7 +47,7 @@ public partial class EditorTimeline : Container
             },
             timingPoints = new Container
             {
-                Colour = FluXisColors.Text,
+                Colour = Theme.Text,
                 RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

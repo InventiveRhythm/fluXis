@@ -4,7 +4,6 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
-using fluXis.Screens;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -48,7 +47,7 @@ public partial class CornerButton : Container
         }
     }
 
-    public virtual Colour4 ButtonColor { get; set; } = FluXisColors.Background4;
+    public virtual Colour4 ButtonColor { get; set; } = Theme.Background4;
     public Corner Corner { get; set; } = Corner.BottomLeft;
     public Action Action { get; set; }
     public bool ShowImmediately { get; set; }
@@ -70,7 +69,7 @@ public partial class CornerButton : Container
         Height = 80 + corner_radius;
         CornerRadius = corner_radius;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
+        EdgeEffect = Styling.ShadowMediumNoOffset;
 
         Anchor = Origin = Corner switch
         {
@@ -184,7 +183,7 @@ public partial class CornerButton : Container
             _ => 0
         };
 
-        this.MoveToX(x, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        this.MoveToX(x, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     public override void Hide()
@@ -196,6 +195,6 @@ public partial class CornerButton : Container
             _ => 0
         };
 
-        this.MoveToX(x, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        this.MoveToX(x, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 }

@@ -30,7 +30,7 @@ public partial class SetupKeymode : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             new FillFlowContainer
             {
@@ -78,7 +78,7 @@ public partial class SetupKeymode : CompositeDrawable
             RedrawOnScale = false;
             DrawOriginal = true;
 
-            var color = FluXisColors.GetKeyColor(mode);
+            var color = Theme.GetKeyCountColor(mode);
 
             InternalChildren = new Drawable[]
             {

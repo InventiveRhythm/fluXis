@@ -46,7 +46,7 @@ public partial class MapSettingsTab : SelectInfoTab
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background1
+                Colour = Theme.Background1
             },
             new FluXisScrollContainer
             {

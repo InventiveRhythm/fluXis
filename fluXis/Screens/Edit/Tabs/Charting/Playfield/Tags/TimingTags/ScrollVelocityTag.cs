@@ -10,7 +10,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags.TimingTags;
 
 public partial class ScrollVelocityTag : EditorTag
 {
-    public override Colour4 TagColour => FluXisColors.ScrollVelocity;
+    public override Colour4 TagColour => Theme.ScrollVelocity;
 
     [Resolved]
     private PointsSidebar points { get; set; }

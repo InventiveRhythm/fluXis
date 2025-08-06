@@ -119,15 +119,15 @@ public partial class MapSetDownloadButton : MapSetButton
         switch (state)
         {
             case DownloadState.Importing:
-                color = FluXisColors.Highlight.Lighten(.8f);
+                color = Theme.Highlight.Lighten(.8f);
                 break;
 
             case DownloadState.Finished:
-                color = FluXisColors.Green.Lighten(1.2f);
+                color = Theme.Green.Lighten(1.2f);
                 break;
 
             case DownloadState.Failed:
-                color = FluXisColors.Red.Lighten(1.2f);
+                color = Theme.Red.Lighten(1.2f);
                 break;
         }
 

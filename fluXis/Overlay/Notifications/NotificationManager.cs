@@ -87,7 +87,7 @@ public partial class NotificationManager : Component
             Text = text,
             SubText = subtext,
             Icon = icon,
-            AccentColor = FluXisColors.Red,
+            AccentColor = Theme.Red,
             SampleAppearing = "UI/Notifications/error.mp3",
             Lifetime = 10000,
             Action = action

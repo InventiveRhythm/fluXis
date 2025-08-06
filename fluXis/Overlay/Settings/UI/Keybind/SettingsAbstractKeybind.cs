@@ -187,7 +187,7 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
         {
             var keybind = Keybinds[index];
             UpdateBinding(keybind, combination);
-            
+
             clearIsDefaultCache();
 
             var bind = GetComboFor(keybind);
@@ -235,7 +235,7 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
             CornerRadius = 6;
             Masking = true;
 
-            BorderColour = FluXisColors.Highlight;
+            BorderColour = Theme.Highlight;
 
             Children = new Drawable[]
             {

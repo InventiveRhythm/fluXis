@@ -40,7 +40,7 @@ public partial class MenuUpdates : Container<Container<MenuUpdates.UpdateImage>>
         CornerRadius = 20;
         Alpha = 0;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowMedium;
+        EdgeEffect = Styling.ShadowMedium;
 
         loadUpdates();
     }
@@ -91,7 +91,7 @@ public partial class MenuUpdates : Container<Container<MenuUpdates.UpdateImage>>
         cycle();
     }
 
-    public void Show(float move = FluXisScreen.MOVE_DURATION, float fade = FluXisScreen.FADE_DURATION)
+    public void Show(float move = Styling.TRANSITION_MOVE, float fade = Styling.TRANSITION_FADE)
     {
         if (!finishedLoading || !CanShow)
             return;
@@ -101,7 +101,7 @@ public partial class MenuUpdates : Container<Container<MenuUpdates.UpdateImage>>
 
     public override void Hide()
     {
-        this.MoveToX(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint).FadeOut(FluXisScreen.FADE_DURATION);
+        this.MoveToX(100, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeOut(Styling.TRANSITION_FADE);
     }
 
     private void cycle(bool initial = false)

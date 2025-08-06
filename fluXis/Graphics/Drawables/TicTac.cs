@@ -28,7 +28,7 @@ public partial class TicTac : CircularContainer
         Child = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = FluXisColors.Text,
+            Colour = Theme.Text,
         };
     }
 }

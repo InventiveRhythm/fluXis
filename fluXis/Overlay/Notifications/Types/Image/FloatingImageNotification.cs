@@ -43,13 +43,13 @@ public abstract partial class FloatingImageNotification : FloatingNotification
             AutoSizeEasing = Easing.OutQuint,
             CornerRadius = 20,
             Masking = true,
-            EdgeEffect = FluXisStyles.ShadowSmall,
+            EdgeEffect = Styling.ShadowSmall,
             Children = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Theme.Background2
                 },
                 loadingIcon = new LoadingIcon
                 {

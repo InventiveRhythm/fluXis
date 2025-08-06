@@ -39,7 +39,7 @@ public partial class SettingsCategorySelector : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = Theme.Background3
             },
             new FillFlowContainer<SettingsCategoryTab>
             {

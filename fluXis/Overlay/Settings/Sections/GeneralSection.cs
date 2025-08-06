@@ -41,7 +41,7 @@ public partial class GeneralSection : SettingsSection
                     new FluXisSpriteText
                     {
                         Text = FluXisGameBase.VersionString,
-                        Colour = FluXisColors.Text2,
+                        Colour = Theme.Text2,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.TopCentre
                     }

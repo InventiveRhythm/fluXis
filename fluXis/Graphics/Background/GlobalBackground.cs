@@ -5,7 +5,6 @@ using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
-using fluXis.Screens;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -88,11 +87,11 @@ public partial class GlobalBackground : CompositeDrawable
         backgroundPulse.BindValueChanged(e =>
         {
             if (!e.NewValue)
-                this.ScaleTo(1, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+                this.ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
         }, true);
     }
 
-    public void SetDim(float alpha) => backgroundDim.FadeTo(alpha, FluXisScreen.FADE_DURATION);
+    public void SetDim(float alpha) => backgroundDim.FadeTo(alpha, Styling.TRANSITION_FADE);
 
     public void SetBlur(float blur)
     {
@@ -100,7 +99,7 @@ public partial class GlobalBackground : CompositeDrawable
             return;
 
         this.blur = blur;
-        stack.Current?.TransformTo(nameof(BlurableBackground.BlurStrength), blur, FluXisScreen.FADE_DURATION);
+        stack.Current?.TransformTo(nameof(BlurableBackground.BlurStrength), blur, Styling.TRANSITION_FADE);
     }
 
     protected override void Update()
@@ -128,7 +127,7 @@ public partial class GlobalBackground : CompositeDrawable
         cancellationSource?.Cancel();
         LoadComponentAsync(background, b =>
         {
-            b.FadeInFromZero(FluXisScreen.FADE_DURATION);
+            b.FadeInFromZero(Styling.TRANSITION_FADE);
             stack.Add(b);
         }, (cancellationSource = new CancellationTokenSource()).Token);
     });

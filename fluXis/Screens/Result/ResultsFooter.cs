@@ -32,7 +32,7 @@ public partial class ResultsFooter : Footer
             ButtonText = "Retry",
             Corner = Corner.BottomRight,
             Icon = FontAwesome6.Solid.RotateRight,
-            ButtonColor = FluXisColors.Primary,
+            ButtonColor = Theme.Primary,
             Action = RestartAction
         };
     }
@@ -45,7 +45,7 @@ public partial class ResultsFooter : Footer
             {
                 Text = "View Replay",
                 Icon = FontAwesome6.Solid.Film,
-                AccentColor = FluXisColors.Footer1,
+                AccentColor = Theme.Footer1,
                 Action = ViewReplayAction
             };
         }

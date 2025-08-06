@@ -33,7 +33,7 @@ public partial class StatusTag : CircularContainer
         this.set = set;
         map = set.Maps.First();
         Size = new Vector2(100, 20);
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        EdgeEffect = Styling.ShadowSmall;
     }
 
     public StatusTag(RealmMap map)
@@ -86,7 +86,7 @@ public partial class StatusTag : CircularContainer
 
         text.Text = status;
         box.Colour = colour;
-        text.Colour = FluXisColors.IsBright(colour) ? Colour4.Black : Colour4.White;
+        text.Colour = Theme.IsBright(colour) ? Colour4.Black : Colour4.White;
 
         updateSize();
     }
@@ -103,7 +103,7 @@ public partial class StatusTag : CircularContainer
 
     private (string, Colour4) getStatus()
     {
-        var color = FluXisColors.GetStatusColor(map.StatusInt);
+        var color = Theme.GetStatusColor(map.StatusInt);
 
         switch (map.StatusInt)
         {

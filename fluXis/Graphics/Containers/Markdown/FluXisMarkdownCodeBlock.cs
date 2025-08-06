@@ -55,7 +55,7 @@ public partial class FluXisMarkdownCodeBlock : MarkdownCodeBlock
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background1
+                Colour = Theme.Background1
             }
         };
 

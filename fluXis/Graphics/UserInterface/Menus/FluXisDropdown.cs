@@ -38,8 +38,8 @@ public partial class FluXisDropdown<T> : Dropdown<T>
             Height = 40;
             Foreground.Padding = new MarginPadding { Horizontal = 14 };
             CornerRadius = 10;
-            BackgroundColour = FluXisColors.Background2;
-            BackgroundColourHover = FluXisColors.Background4;
+            BackgroundColour = Theme.Background2;
+            BackgroundColourHover = Theme.Background4;
 
             Children = new Drawable[]
             {
@@ -118,7 +118,7 @@ public partial class FluXisDropdown<T> : Dropdown<T>
         public FluXisDropdownMenu()
         {
             MaskingContainer.CornerRadius = 10;
-            BackgroundColour = FluXisColors.Background2;
+            BackgroundColour = Theme.Background2;
             Margin = new MarginPadding { Top = 8 };
             ScrollbarVisible = false;
         }
@@ -158,9 +158,9 @@ public partial class FluXisDropdown<T> : Dropdown<T>
             public DrawableFluXisDropdownMenuItem(MenuItem item)
                 : base(item)
             {
-                BackgroundColour = FluXisColors.Background2;
-                BackgroundColourHover = FluXisColors.Background4;
-                BackgroundColourSelected = FluXisColors.Background3;
+                BackgroundColour = Theme.Background2;
+                BackgroundColourHover = Theme.Background4;
+                BackgroundColourSelected = Theme.Background3;
 
                 Foreground.AutoSizeAxes = Axes.X;
                 Foreground.Height = 30;

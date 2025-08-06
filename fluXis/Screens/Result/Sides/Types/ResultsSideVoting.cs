@@ -129,8 +129,8 @@ public partial class ResultsSideVoting : ResultsSideContainer
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     },
-                    upButton = new VoteButton(FluXisColors.VoteUp, FontAwesome6.Solid.AngleUp, () => setVote(1)),
-                    downButton = new VoteButton(FluXisColors.VoteDown, FontAwesome6.Solid.AngleDown, () => setVote(-1))
+                    upButton = new VoteButton(Theme.VoteUp, FontAwesome6.Solid.AngleUp, () => setVote(1)),
+                    downButton = new VoteButton(Theme.VoteDown, FontAwesome6.Solid.AngleDown, () => setVote(-1))
                     {
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopRight
@@ -159,7 +159,7 @@ public partial class ResultsSideVoting : ResultsSideContainer
         [Resolved]
         private UISamples samples { get; set; }
 
-        public bool Active { set => Colour = value ? color : FluXisColors.Background6; }
+        public bool Active { set => Colour = value ? color : Theme.Background6; }
 
         private Colour4 color { get; }
         private IconUsage icon { get; }

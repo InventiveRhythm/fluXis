@@ -10,8 +10,8 @@ public partial class EditorSubMenu : FluXisMenu
     public EditorSubMenu()
         : base(Direction.Vertical)
     {
-        BackgroundColour = FluXisColors.Background2;
-        MaskingContainer.EdgeEffect = FluXisStyles.ShadowSmall;
+        BackgroundColour = Theme.Background2;
+        MaskingContainer.EdgeEffect = Styling.ShadowSmall;
     }
 
     protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorSubMenu();

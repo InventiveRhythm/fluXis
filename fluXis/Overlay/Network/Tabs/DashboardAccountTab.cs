@@ -93,7 +93,7 @@ public partial class DashboardAccountTab : DashboardTab
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background3
+                        Colour = Theme.Background3
                     },
                     new FluXisSpriteText
                     {
@@ -127,8 +127,8 @@ public partial class DashboardAccountTab : DashboardTab
                                 {
                                     Text = "Save",
                                     Action = save,
-                                    Color = FluXisColors.Highlight,
-                                    TextColor = FluXisColors.Background2
+                                    Color = Theme.Highlight,
+                                    TextColor = Theme.Background2
                                 }
                             }
                         }

@@ -29,7 +29,7 @@ public partial class SelectModsButton : FooterButton
     {
         Text = LocalizationStrings.SongSelect.FooterMods;
         Icon = FontAwesome6.Solid.Cube;
-        AccentColor = FluXisColors.Footer1;
+        AccentColor = Theme.Footer1;
         Action = action;
     }
 
@@ -81,9 +81,9 @@ public partial class SelectModsButton : FooterButton
                 SpriteText.Text = $"{multiplier.ToStringInvariant("0.00")}x";
                 SpriteText.FadeColour(multiplier switch
                 {
-                    < 1 => FluXisColors.Green,
-                    > 1 => FluXisColors.Red,
-                    _ => FluXisColors.Text
+                    < 1 => Theme.Green,
+                    > 1 => Theme.Red,
+                    _ => Theme.Text
                 }, 100);
             });
         }
@@ -93,7 +93,7 @@ public partial class SelectModsButton : FooterButton
             icon.FadeIn(200);
             mods.FadeOut(200);
             SpriteText.Text = LocalizationStrings.SongSelect.FooterMods;
-            SpriteText.FadeColour(FluXisColors.Text, 200);
+            SpriteText.FadeColour(Theme.Text, 200);
         }
     }
 

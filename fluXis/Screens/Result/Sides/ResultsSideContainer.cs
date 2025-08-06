@@ -19,7 +19,7 @@ public abstract partial class ResultsSideContainer : CompositeDrawable
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
-        EdgeEffect = FluXisStyles.ShadowMedium;
+        EdgeEffect = Styling.ShadowMedium;
         CornerRadius = 16;
         Masking = true;
 
@@ -28,7 +28,7 @@ public abstract partial class ResultsSideContainer : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             new FillFlowContainer
             {

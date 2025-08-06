@@ -9,7 +9,7 @@ public partial class OutlinedCircle : CircularContainer
 {
     public OutlinedCircle()
     {
-        BorderColour = FluXisColors.Text;
+        BorderColour = Theme.Text;
         BorderThickness = 20;
         Masking = true;
 

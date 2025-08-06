@@ -64,7 +64,7 @@ public partial class UsernameChangePanel : Panel
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     MaxWidth = 420,
-                    Colour = FluXisColors.Red,
+                    Colour = Theme.Red,
                     WebFontSize = 14,
                     Alpha = 0
                 },
@@ -125,6 +125,6 @@ public partial class UsernameChangePanel : Panel
     protected override Drawable CreateBackground() => new Box
     {
         RelativeSizeAxes = Axes.Both,
-        Colour = FluXisColors.Background2
+        Colour = Theme.Background2
     };
 }

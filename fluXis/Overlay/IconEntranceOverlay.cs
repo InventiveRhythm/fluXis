@@ -20,7 +20,7 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
 
     protected virtual float OverlayPadding => 64;
     protected virtual float IconRotation => 60;
-    protected virtual ColourInfo BackgroundColor => FluXisColors.Background2;
+    protected virtual ColourInfo BackgroundColor => Theme.Background2;
     protected virtual IconUsage Icon => FontAwesome6.Solid.Question;
 
     [CanBeNull]
@@ -67,7 +67,7 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
                     Origin = Anchor.Centre,
                     CornerRadius = 20,
                     Masking = true,
-                    EdgeEffect = FluXisStyles.ShadowLarge,
+                    EdgeEffect = Styling.ShadowLarge,
                     Children = new Drawable[]
                     {
                         new Box

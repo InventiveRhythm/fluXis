@@ -51,7 +51,7 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             closedContent = CreateClosedContent(),
             pointsList = CreatePointsList().With(l =>
@@ -71,7 +71,7 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2,
+                        Colour = Theme.Background2,
                         Size = new Vector2(1.5f)
                     },
                     new FluXisScrollContainer

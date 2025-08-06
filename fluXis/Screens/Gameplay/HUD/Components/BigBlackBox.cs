@@ -32,7 +32,7 @@ public partial class BigBlackBox : GameplayHUDComponent
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
             },
             text = new FluXisSpriteText
             {

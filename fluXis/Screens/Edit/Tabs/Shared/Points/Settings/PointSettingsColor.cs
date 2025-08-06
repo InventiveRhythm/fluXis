@@ -91,7 +91,7 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
     {
         textBackground.Colour = color;
         text.Text = color.ToHex();
-        text.Colour = FluXisColors.IsBright(color) ? FluXisColors.TextDark : FluXisColors.Text;
+        text.Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text;
     }
 
     public Popover GetPopover() => new FluXisPopover { Child = new FluXisColorPicker { Current = { BindTarget = Bindable } } };

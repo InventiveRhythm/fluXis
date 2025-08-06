@@ -61,7 +61,7 @@ public partial class SelectInfoTabs : CompositeDrawable
                             {
                                 Height = 0.5f,
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background1,
+                                Colour = Theme.Background1,
                                 Anchor = Anchor.BottomLeft,
                                 Origin = Anchor.BottomLeft,
                                 Alpha = 0
@@ -71,11 +71,11 @@ public partial class SelectInfoTabs : CompositeDrawable
                                 RelativeSizeAxes = Axes.Both,
                                 CornerRadius = 12,
                                 Masking = true,
-                                EdgeEffect = FluXisStyles.ShadowMedium,
+                                EdgeEffect = Styling.ShadowMedium,
                                 Child = new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = FluXisColors.Background2
+                                    Colour = Theme.Background2
                                 }
                             },
                             new Container

@@ -22,11 +22,11 @@ public partial class SelectionOutline : Container
         Masking = true;
         CornerRadius = 10;
         BorderThickness = 5;
-        BorderColour = FluXisColors.Selection;
+        BorderColour = Theme.Selection;
         Child = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = FluXisColors.Selection,
+            Colour = Theme.Selection,
             Alpha = 0.2f
         };
     }

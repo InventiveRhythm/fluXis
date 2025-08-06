@@ -22,7 +22,7 @@ public partial class FloatingTextNotification : FloatingNotification
     public string Text { get; init; }
     public string SubText { get; init; }
     public IconUsage Icon { get; init; } = FontAwesome6.Solid.Info;
-    public Color4 AccentColor { get; init; } = FluXisColors.Highlight;
+    public Color4 AccentColor { get; init; } = Theme.Highlight;
     public float Lifetime { get; init; } = 5000;
     public Action Action { get; init; }
 
@@ -54,11 +54,11 @@ public partial class FloatingTextNotification : FloatingNotification
                 {
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
-                    EdgeEffect = FluXisStyles.Glow(AccentColor, 10),
+                    EdgeEffect = Styling.Glow(AccentColor, 10),
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     }
                 },
                 new Container
@@ -89,7 +89,7 @@ public partial class FloatingTextNotification : FloatingNotification
                                 {
                                     Icon = Icon,
                                     Size = new Vector2(20),
-                                    Colour = FluXisColors.Background2,
+                                    Colour = Theme.Background2,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre
                                 }

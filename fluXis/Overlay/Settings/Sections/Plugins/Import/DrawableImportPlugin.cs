@@ -33,7 +33,7 @@ public partial class DrawableImportPlugin : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Colour = Theme.Background2
             },
             flow = new FillFlowContainer
             {
@@ -64,7 +64,7 @@ public partial class DrawableImportPlugin : Container
                                     new FluXisSpriteText
                                     {
                                         Text = $"by {Plugin.Author}",
-                                        Colour = FluXisColors.Text2,
+                                        Colour = Theme.Text2,
                                         FontSize = 16
                                     }
                                 }
@@ -73,7 +73,7 @@ public partial class DrawableImportPlugin : Container
                             {
                                 Text = Plugin.Version.ToString(),
                                 FontSize = 16,
-                                Colour = FluXisColors.Text2,
+                                Colour = Theme.Text2,
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight
                             }

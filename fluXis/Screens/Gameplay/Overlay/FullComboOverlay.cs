@@ -37,7 +37,7 @@ public partial class FullComboOverlay : CompositeDrawable
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = Theme.Background2,
                 Alpha = 0
             },
             square = new OutlinedSquare

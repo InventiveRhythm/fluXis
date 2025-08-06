@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -117,7 +118,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                             new Box
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Colour = FluXisColors.Background2
+                                                Colour = Theme.Background2
                                             },
                                             new FluXisScrollContainer
                                             {
@@ -347,11 +348,11 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
         this.FadeOut();
 
-        using (BeginDelayedSequence(ENTER_DELAY))
+        using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
-            this.FadeInFromZero(FADE_DURATION);
-            menuBar.MoveToY(-menuBar.Height).MoveToY(0, MOVE_DURATION, Easing.OutQuint);
-            content.ScaleTo(1f, MOVE_DURATION, Easing.OutQuint);
+            this.FadeInFromZero(Styling.TRANSITION_FADE);
+            menuBar.MoveToY(-menuBar.Height).MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            content.ScaleTo(1f, Styling.TRANSITION_MOVE, Easing.OutQuint);
         }
     }
 
@@ -359,9 +360,9 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     {
         skinManager.CanChangeSkin = true;
 
-        this.FadeOut(FADE_DURATION);
-        menuBar.MoveToY(-menuBar.Height, MOVE_DURATION, Easing.OutQuint);
-        content.ScaleTo(.9f, MOVE_DURATION, Easing.OutQuint);
+        this.FadeOut(Styling.TRANSITION_FADE);
+        menuBar.MoveToY(-menuBar.Height, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        content.ScaleTo(.9f, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
         return base.OnExiting(e);
     }

@@ -45,7 +45,7 @@ public partial class FluXisHsvColourPicker : HSVColourPicker
                     Origin = Anchor.Centre,
                     Masking = true,
                     BorderThickness = 4,
-                    BorderColour = FluXisColors.Text,
+                    BorderColour = Theme.Text,
                     Child = box
                 };
 
@@ -72,16 +72,16 @@ public partial class FluXisHsvColourPicker : HSVColourPicker
                 CornerRadius = Width / 2f;
                 Masking = true;
                 BorderThickness = 4;
-                BorderColour = FluXisColors.Text;
+                BorderColour = Theme.Text;
 
                 InternalChild = new Box { RelativeSizeAxes = Axes.Both };
 
                 Current.BindValueChanged(_ =>
                 {
-                    var bright = FluXisColors.IsBright(Current.Value);
+                    var bright = Theme.IsBright(Current.Value);
 
                     InternalChild.Colour = Current.Value;
-                    BorderColour = bright ? FluXisColors.Background2 : FluXisColors.Text;
+                    BorderColour = bright ? Theme.Background2 : Theme.Text;
                 }, true);
             }
         }

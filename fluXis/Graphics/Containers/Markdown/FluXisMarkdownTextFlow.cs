@@ -54,7 +54,7 @@ public partial class FluXisMarkdownTextFlow : MarkdownTextFlowContainer
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background1,
+                        Colour = Theme.Background1,
                     }
                 },
                 new FluXisSpriteText

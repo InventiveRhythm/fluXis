@@ -26,7 +26,7 @@ public partial class MultiLobbyListFooter : Footer
     {
         ButtonText = "Refresh",
         Icon = FontAwesome6.Solid.ArrowsRotate,
-        ButtonColor = FluXisColors.Primary,
+        ButtonColor = Theme.Primary,
         Corner = Corner.BottomRight,
         Action = RefreshAction
     };
@@ -37,7 +37,7 @@ public partial class MultiLobbyListFooter : Footer
         {
             Text = "Create",
             Icon = FontAwesome6.Solid.Plus,
-            AccentColor = FluXisColors.Footer1,
+            AccentColor = Theme.Footer1,
             Action = CreateAction
         };
     }

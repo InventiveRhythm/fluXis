@@ -20,7 +20,7 @@ public partial class LoadingBubbles : CompositeDrawable
     private const float min_extra_size = 20;
     private const float max_extra_size = 200;
     private const double spawn_cooldown = 200;
-    private readonly Colour4 particleColor = FluXisColors.Highlight;
+    private readonly Colour4 particleColor = Theme.Highlight;
 
     private double lastSpawn = -spawn_cooldown;
 

@@ -55,7 +55,7 @@ public partial class FooterPractice : FocusedOverlayContainer
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     }
                 }
             },
@@ -70,7 +70,7 @@ public partial class FooterPractice : FocusedOverlayContainer
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = Theme.Background2
                     },
                     new FillFlowContainer
                     {
@@ -134,7 +134,7 @@ public partial class FooterPractice : FocusedOverlayContainer
                                     {
                                         Text = "Reset",
                                         FontSize = FluXisSpriteText.GetWebFontSize(16),
-                                        Color = FluXisColors.Background3,
+                                        Color = Theme.Background3,
                                         Size = new Vector2(278, 50),
                                         Action = () =>
                                         {
@@ -146,8 +146,8 @@ public partial class FooterPractice : FocusedOverlayContainer
                                     {
                                         Text = "Start!",
                                         FontSize = FluXisSpriteText.GetWebFontSize(16),
-                                        Color = FluXisColors.Highlight,
-                                        TextColor = FluXisColors.Background2,
+                                        Color = Theme.Highlight,
+                                        TextColor = Theme.Background2,
                                         Size = new Vector2(278, 50),
                                         Action = () => PracticeAction?.Invoke(start.Value * 1000, end.Value * 1000)
                                     }

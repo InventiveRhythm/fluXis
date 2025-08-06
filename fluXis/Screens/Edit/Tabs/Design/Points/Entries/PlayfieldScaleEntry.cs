@@ -15,7 +15,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class PlayfieldScaleEntry : PointListEntry
 {
     protected override string Text => "Playfield Scale";
-    protected override Colour4 Color => FluXisColors.PlayfieldScale;
+    protected override Colour4 Color => Theme.PlayfieldScale;
 
     private PlayfieldScaleEvent scale => Object as PlayfieldScaleEvent;
 

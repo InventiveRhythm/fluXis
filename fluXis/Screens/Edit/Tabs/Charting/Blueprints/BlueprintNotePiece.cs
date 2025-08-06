@@ -17,7 +17,7 @@ public partial class BlueprintNotePiece : Container
         Child = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = FluXisColors.Selection
+            Colour = Theme.Selection
         };
     }
 }
