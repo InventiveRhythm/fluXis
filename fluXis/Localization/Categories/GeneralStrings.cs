@@ -22,4 +22,7 @@ public class GeneralStrings : LocalizationCategory
     public TranslatableString CanNotBeUndone => Get("can-not-be-undone", "This action cannot be undone.");
 
     public TranslatableString LoginToUse => Get("login-to-use", "Log in to use this feature.");
+    
+    public TranslatableString CopyToClipboard => Get("copy-clipboard", "Copy");
+    public TranslatableString CopyToClipboardDescription => Get("copy-clipboard-despcription", "Copy this to Clipboard.");
 }
