@@ -183,7 +183,7 @@ function mathf:vecsub(a, b) end
 ---@nodiscard
 function mathf:vecadd(a, b) end
 
---multiplies a vector by a scalar value
+---multiplies a vector by a scalar value
 ---@param a Vector2
 ---@param scalar number
 ---@return Vector2
