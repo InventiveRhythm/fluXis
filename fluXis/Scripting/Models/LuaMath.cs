@@ -87,7 +87,7 @@ public class LuaMath : ILuaModel
     public double Atan(double d) => Math.Atan(d);
 
     [LuaMember(Name = "atan2")]
-    public double Atan2(double y, double x) => Math.Atan2(y, x);
+    public double Atan2(double x, double y) => Math.Atan2(x, y);
 
     [LuaMember(Name = "deg")]
     public double Degrees(double radians) => radians * (180.0 / Math.PI);

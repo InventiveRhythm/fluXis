@@ -136,11 +136,11 @@ function mathf:acos(d) end
 ---@nodiscard
 function mathf:atan(d) end
 
----@param y number
 ---@param x number
+---@param y number
 ---@return number
 ---@nodiscard
-function mathf:atan2(y, x) end
+function mathf:atan2(x, y) end
 
 ---@param radians number
 ---@return number
