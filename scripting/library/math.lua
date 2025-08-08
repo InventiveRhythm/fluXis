@@ -207,4 +207,63 @@ function mathf:veclen(v) end
 ---@nodiscard
 function mathf:vecnorm(v) end
 
+---rotates a vector by an angle around the origin
+---@param v Vector2 the vector to rotate
+---@param angle number Angle in radians
+---@return Vector2
+---@nodiscard
+function mathf:vecrotate(v, angle) end
+
+---rotates vector a around vector b by an angle
+---@param a Vector2 the vector to rotate
+---@param b Vector2 origin/pivot
+---@param angle number Angle in radians
+---@return Vector2
+---@nodiscard
+function mathf:vecrotatearound(a, b, angle) end
+
+---@param v Vector2 
+---@return Vector2
+---@nodiscard
+function mathf:vecabs(v) end
+
+---@param a Vector2
+---@param b Vector2
+---@param acceptableDifference number (optional)
+---@return boolean
+---@nodiscard
+function mathf:vecequals(a, b, acceptableDifference) end
+
+---gets angle of vector in radians
+---@param v Vector2 The vector
+---@return number Angle in radians
+---@nodiscard
+function mathf:vecangle(v) end
+
+---gets the angle between two vectors in radians
+---@param a Vector2
+---@param b Vector2
+---@return number Angle in radians
+---@nodiscard
+function mathf:vecanglebetween(a, b) end
+
+---gets the distance between two points/vectors
+---@param a Vector2
+---@param b Vector2
+---@return number
+---@nodiscard
+function mathf:vecdist(a, b) end
+
+---@param v Vector2
+---@param acceptableDifference number (optional)
+---@return boolean
+---@nodiscard
+function mathf:vecisnorm(v, acceptableDifference) end
+
+---@param v Vector2
+---@param acceptableDifference number (optional)
+---@return boolean
+---@nodiscard
+function mathf:veciszero(v, acceptableDifference) end
+
 return mathf

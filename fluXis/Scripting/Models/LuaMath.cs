@@ -127,4 +127,57 @@ public class LuaMath : ILuaModel
         var len = VecLength(v);
         return len > 0 ? new LuaVector(v.TKVector / (float)len) : v;
     }
+
+    [LuaMember(Name = "vecrotate")]
+    public LuaVector VecRotate(LuaVector v, double angle)
+    {
+        var cos = Math.Cos(angle);
+        var sin = Math.Sin(angle);
+        var x = v.TKVector.X * cos - v.TKVector.Y * sin;
+        var y = v.TKVector.X * sin + v.TKVector.Y * cos;
+        return new LuaVector(new osuTK.Vector2((float)x, (float)y));
+    }
+
+    [LuaMember(Name = "vecrotatearound")]
+    public LuaVector VecRotateAround(LuaVector a, LuaVector b, double angle)
+    {
+        var translated = VecSub(a, b);
+        var rotated = VecRotate(translated, angle);
+        return VecAdd(rotated, b);
+    }
+
+    [LuaMember(Name = "vecequals")]
+    public bool VecEquals(LuaVector a, LuaVector b, double acceptableDifference = double.Epsilon)
+    {
+        var diff = VecSub(a, b);
+        return VecLength(diff) <= acceptableDifference;
+    }
+
+    [LuaMember(Name = "vecangle")]
+    public double VecAngle(LuaVector v) => Math.Atan2(v.TKVector.Y, v.TKVector.X);
+
+    [LuaMember(Name = "vecanglebetween")]
+    public double VecAngleBetween(LuaVector a, LuaVector b)
+    {
+        var dot = VecDot(a, b);
+        var lengthProduct = VecLength(a) * VecLength(b);
+        if (lengthProduct == 0) return 0;
+        return Math.Acos(Math.Clamp(dot / lengthProduct, -1.0, 1.0));
+    }
+
+    [LuaMember(Name = "vecdist")]
+    public double VecDistance(LuaVector a, LuaVector b) => VecLength(VecSub(a, b));
+
+    [LuaMember(Name = "vecisnorm")]
+    public bool VecIsNorm(LuaVector v, double acceptableDifference = double.Epsilon)
+    {
+        var length = VecLength(v);
+        return Math.Abs(length - 1.0) <= acceptableDifference ;
+    }
+
+    [LuaMember(Name = "veciszero")]
+    public bool VecIsZero(LuaVector v, double acceptableDifference = double.Epsilon) => VecLength(v) <= acceptableDifference;
+
+    [LuaMember(Name = "vecabs")]
+    public LuaVector VecAbs(LuaVector v) => new(new osuTK.Vector2(Math.Abs(v.TKVector.X), Math.Abs(v.TKVector.Y)));
 }

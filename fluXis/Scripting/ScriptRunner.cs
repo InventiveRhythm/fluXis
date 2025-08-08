@@ -22,7 +22,10 @@ public class ScriptRunner
 
         AddFunction("print", (string text) => Logger.Add($"[Script] {text}"));
         AddFunction("RandomRange", (int from, int to) => RNG.Next(from, to + 1));
+        
         AddFunction("Vector2", (float x, float y) => new LuaVector(x, y));
+        AddFunction("Vector2Zero", () => new LuaVector(0, 0));
+        AddFunction("Vector2One", () => new LuaVector(1, 1));
 
         AddFunction("DefineParameter", (string k, string t, string ty) => DefineParameter?.Invoke(k, t, ty));
 
