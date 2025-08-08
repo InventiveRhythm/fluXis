@@ -395,7 +395,6 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         private void buildNav(string newPath)
         {
-            Hide();
             Clear();
 
             var pathNames = newPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -407,26 +406,28 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                 paths.Insert(0, "home");
             }
 
+            var pathButtons = new List<Drawable>();
+
             foreach ((string name, string path) in pathNames.Zip(paths))
             {
                 if ("/" + path == newPath || path == newPath)
-                    addPathbutton(path, name, false);
+                    addPathbutton(path, name, pathButtons, false);
                 else
-                    addPathbutton(path, name);
+                    addPathbutton(path, name, pathButtons);
             }
 
-            Show();
+            AddRange(pathButtons);
         }
 
-        private void addPathbutton(string path, string name, bool addSeperator = true)
+        private void addPathbutton(string path, string name, List<Drawable> list, bool addSeperator = true)
         {
-            AddInternal(
+            list.Add(
                 new PathButton(path, name, overlay.NavigateTo)
             );
 
             if (addSeperator)
             {
-                AddInternal(
+                list.Add(
                     new Seperator()
                 );
             }
@@ -464,15 +465,49 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
         }
     }
 
-    private partial class BackButton : ClickableContainer
-    {
+    private partial class NavButton : ClickableContainer
+    {   
         [Resolved]
         private UISamples? samples { get; set; }
 
-        private HoverLayer hover = null!;
-        private FlashLayer flash = null!;
+        protected HoverLayer Hover = null!;
+        protected FlashLayer Flash = null!;
 
-        private WikiOverlay overlay;
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            this.ScaleTo(.9f, 1000, Easing.OutQuint);
+            return true;
+        }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            this.ScaleTo(1, 1000, Easing.OutElastic);
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            samples?.Hover();
+            Hover.Show();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            Hover.Hide();
+            base.OnHoverLost(e);
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            samples?.Click();
+            Flash.Show();
+            return base.OnClick(e);
+        }
+    }
+
+    private partial class BackButton : NavButton
+    {
+        private readonly WikiOverlay overlay;
 
         public BackButton(WikiOverlay overlay)
         {
@@ -490,8 +525,8 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
             InternalChildren = new Drawable[]
             {
-                hover = new HoverLayer(),
-                flash = new FlashLayer(),
+                Hover = new HoverLayer(),
+                Flash = new FlashLayer(),
                 new FluXisSpriteIcon
                 {
                     Anchor = Anchor.Centre,
@@ -502,52 +537,19 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             };
         }
 
-        protected override bool OnMouseDown(MouseDownEvent e)
-        {
-            this.ScaleTo(.9f, 1000, Easing.OutQuint);
-            return true;
-        }
-
-        protected override void OnMouseUp(MouseUpEvent e)
-        {
-            this.ScaleTo(1, 1000, Easing.OutElastic);
-        }
-
-        protected override bool OnHover(HoverEvent e)
-        {
-            samples?.Hover();
-            hover.Show();
-            return true;
-        }
-
-        protected override void OnHoverLost(HoverLostEvent e)
-        {
-            hover.Hide();
-            base.OnHoverLost(e);
-        }
-
         protected override bool OnClick(ClickEvent e)
         {
             overlay.NavigateBack();
-            samples?.Click();
-            flash.Show();
             return base.OnClick(e);
         }
     }
 
-    private partial class PathButton : ClickableContainer
+    private partial class PathButton : NavButton
     {
-        [Resolved]
-        private UISamples? samples { get; set; }
-
-        private HoverLayer hover = null!;
-        private FlashLayer flash = null!;
-        private Container content = null!;
-
         public string Path { get; private set; }
         public new string Name { get; private set; }
 
-        private Action<string, bool> navigateAction;
+        private readonly Action<string, bool> navigateAction;
 
         public PathButton(string path, string name, Action<string, bool> navigateAction)
         {
@@ -573,9 +575,9 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                     Margin = new MarginPadding(10),
                     Children = new Drawable[]
                     {
-                        hover = new HoverLayer(),
-                        flash = new FlashLayer(),
-                        content = new Container
+                        Hover = new HoverLayer(),
+                        Flash = new FlashLayer(),
+                        new Container
                         {
                             AutoSizeAxes = Axes.Both,
                             Padding = new MarginPadding(10),
@@ -583,8 +585,8 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                             {
                                 Text = Name,
                                 FontSize = 30,
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
                             }
                         }
                     }
@@ -595,33 +597,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
         protected override bool OnClick(ClickEvent e)
         {
             navigateAction?.Invoke(Path, true);
-            flash.Show();
-            samples?.Click();
-
             return base.OnClick(e);
-        }
-
-        protected override bool OnHover(HoverEvent e)
-        {
-            hover.Show();
-            samples?.Hover();
-            return true;
-        }
-
-        protected override void OnHoverLost(HoverLostEvent e)
-        {
-            hover.Hide();
-        }
-
-        protected override bool OnMouseDown(MouseDownEvent e)
-        {
-            content.ScaleTo(.9f, 1000, Easing.OutQuint);
-            return true;
-        }
-
-        protected override void OnMouseUp(MouseUpEvent e)
-        {
-            content.ScaleTo(1, 1000, Easing.OutElastic);
         }
     }
 }
