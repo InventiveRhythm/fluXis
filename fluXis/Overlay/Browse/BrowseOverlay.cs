@@ -119,18 +119,11 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     RelativeSizeAxes = Axes.X,
                                     AutoSizeAxes = Axes.Y,
                                     Direction = FillDirection.Vertical,
-                                    Padding = new MarginPadding { Top = 70, Bottom = 20, Horizontal = 20 },
+                                    Padding = new MarginPadding { Top = 140, Bottom = 20, Horizontal = 20 },
                                     Spacing = new Vector2(20),
                                     Children = new Drawable[]
                                     {
-                                        new BrowserSearchBar
-                                        {
-                                            OnSearch = q =>
-                                            {
-                                                currentQuery = q;
-                                                loadMapsets(reload: true);
-                                            }
-                                        },
+
                                         flow = new FillFlowContainer<MapCard>
                                         {
                                             RelativeSizeAxes = Axes.X,
@@ -166,6 +159,33 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 }
                             }
                         },
+                        new FullInputBlockingContainer
+                        {
+                            Height = 120,
+                            RelativeSizeAxes = Axes.X,
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Padding = new MarginPadding { Top = 60, Horizontal = 20 },
+                            Children = new Drawable[]
+                            {
+                                new Box
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    Height = 135,
+                                    Y = -60,
+                                    Colour = Theme.Background1
+                                },
+                                new BrowserSearchBar
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    OnSearch = q =>
+                                    {
+                                        currentQuery = q;
+                                        loadMapsets(reload: true);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
