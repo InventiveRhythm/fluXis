@@ -32,7 +32,7 @@ public partial class ScrollMultiplierEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{scroll.Multiplier.ToStringInvariant("0.##")}x {(int)scroll.Duration}ms",
+                Text = $"{scroll.Multiplier.ToStringInvariant("0.##")}x {(int)scroll.Duration}ms {scroll.Easing}",
                 Colour = Color
             }
         };
