@@ -165,6 +165,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 Children = new Drawable[]
                                 {
                                     // new MapSetButton(FontAwesome6.Solid.Star, () => { }),
+                                    new MapSetOpenOnlineButton(set, bindableMap),
                                     new MapSetDownloadButton(set),
                                     // new MapSetButton(FontAwesome6.Solid.EllipsisVertical, () => { })
                                 }
