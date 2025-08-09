@@ -7,11 +7,6 @@ screen = {}
 ---@param element StoryboardElement
 function Add(element) end
 
----@param input string
----@return number
----@nodiscard
-function Layer(input) end
-
 ---@return StoryboardBox
 ---@nodiscard
 function StoryboardBox() end
@@ -85,3 +80,13 @@ local __StoryboardText = {}
 ---| "Rotate"
 ---| "Fade"
 ---| "Color"
+
+---@alias LayerName string
+---| "Background"
+---| "Foreground"
+---| "Overlay"
+
+---@param input LayerName
+---@return number
+---@nodiscard
+function Layer(input) end

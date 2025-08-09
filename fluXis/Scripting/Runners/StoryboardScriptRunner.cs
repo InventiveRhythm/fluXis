@@ -30,7 +30,7 @@ public class StoryboardScriptRunner : ScriptRunner
         AddFunction("Add", add);
 
         // enums
-        AddFunction("Layer", parseLayer);
+        AddFunction("Layer", (string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
         AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
 
         // elements
@@ -62,9 +62,6 @@ public class StoryboardScriptRunner : ScriptRunner
 
     [LuaGlobal(Name = "Add")]
     private void add(LuaStoryboardElement element) => storyboard.Elements.Add(element.Build());
-
-    [LuaGlobal(Name = "Layer")]
-    private StoryboardLayer parseLayer(string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background;
 
     [LuaGlobal(Name = "StoryboardBox")]
     private LuaStoryboardBox newBox() => new();
