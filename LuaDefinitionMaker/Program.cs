@@ -29,8 +29,9 @@ internal class Program
         runCommand("dotnet", "build fluXis -c Release -o build /p:DocumentationFile=build/xmldoc.xml");
 
         var xml = loadXml("build/xmldoc.xml");
-
         if (xml is null) return;
+
+        Documentation.Init(xml);
 
         var assembly = typeof(FluXisGame).Assembly!;
         var files = new Dictionary<string, StringBuilder>();

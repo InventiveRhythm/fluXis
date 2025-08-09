@@ -25,12 +25,12 @@ function StoryboardSprite() end
 function StoryboardText() end
 
 ---@class metadata
----@field title string
----@field artist string
+---@field title string the non-romanized title of the current map
+---@field artist string the non-romanized artist of the current map
 ---@field mapper string
----@field difficulty string
----@field background string
----@field cover string
+---@field difficulty string difficulty name of the current map
+---@field background string relative path to the background image
+---@field cover string relative path to the cover image
 metadata = {}
 
 ---@class StoryboardElement
@@ -48,12 +48,13 @@ metadata = {}
 ---@field color number
 local __StoryboardElement = {}
 
----@param type AnimationType
----@param time number
----@param len number
----@param startVal string
----@param endVal string
----@param ease Easing
+---applies a new animation to this element
+---@param type AnimationType the type of animation
+---@param time number when this animation starts in ms (absolute from map start)
+---@param len number the total length of this animation in ms
+---@param startVal string the value this animation starts with (input based on type)
+---@param endVal string the value this animation ends with (input based on type)
+---@param ease Easing the easing function used for this animation
 function __StoryboardElement:animate(type, time, len, startVal, endVal, ease) end
 
 ---@param key string

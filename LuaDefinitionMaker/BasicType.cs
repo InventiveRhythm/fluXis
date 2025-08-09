@@ -36,7 +36,12 @@ public class BasicType : LuaType
                 var memberAttr = prop.GetCustomAttribute<LuaMemberAttribute>();
                 if (memberAttr is null) continue;
 
-                sb.AppendLine($"---@field {memberAttr.Name} {Program.GetLuaType(prop.PropertyType)}");
+                sb.Append($"---@field {memberAttr.Name} {Program.GetLuaType(prop.PropertyType)}");
+
+                var sum = Documentation.GetPropertySummary(prop);
+                if (sum is not null) sb.Append($" {sum.ReplaceLineEndings(" ")}");
+
+                sb.AppendLine();
             }
 
             if (Attribute.Public)
@@ -80,18 +85,37 @@ public class BasicType : LuaType
             var globalAttr = method.GetCustomAttribute<LuaGlobalAttribute>();
             if (memberAttr is null && globalAttr is null) continue;
 
+            var doc = Documentation.GetMethod(method);
+
+            if (doc.Summary is not null)
+            {
+                var lines = doc.Summary.Split('\n');
+                lines = lines.Select(x => x.Trim()).ToArray();
+                foreach (var line in lines) sb.AppendLine($"---{line}");
+            }
+
             foreach (var parameter in method.GetParameters())
             {
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
                 var lua = Program.GetLuaType(pType, false);
-                sb.AppendLine($"---@param {parameter.Name} {lua}");
+                sb.Append($"---@param {parameter.Name} {lua}");
+
+                var desc = doc.GetParameterDescription(parameter.Name!);
+                if (desc is not null) sb.Append($" {desc.ReplaceLineEndings(" ")}");
+
+                sb.AppendLine();
             }
 
             var ret = method.ReturnType;
 
             if (ret != typeof(void))
             {
-                sb.AppendLine($"---@return {Program.GetLuaType(method.ReturnType)}");
+                var r = $"---@return {Program.GetLuaType(method.ReturnType)}";
+
+                if (doc.Returns is not null)
+                    r += $" # {doc.Returns.ReplaceLineEndings(" ")}";
+
+                sb.AppendLine(r);
                 sb.AppendLine($"---@nodiscard");
             }
 
