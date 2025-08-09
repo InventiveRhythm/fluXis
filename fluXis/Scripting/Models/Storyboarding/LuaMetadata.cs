@@ -1,8 +1,10 @@
 ﻿using fluXis.Map;
+using fluXis.Scripting.Attributes;
 using NLua;
 
 namespace fluXis.Scripting.Models.Storyboarding;
 
+[LuaDefinition("storyboard", Name = "metadata", Public = true)]
 public class LuaMetadata : ILuaModel
 {
     [LuaMember(Name = "title")]

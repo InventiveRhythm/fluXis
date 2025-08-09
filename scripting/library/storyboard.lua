@@ -1,5 +1,38 @@
 ---@meta
 
+---@type Vector2
+---@diagnostic disable-next-line: missing-fields
+screen = {}
+
+---@param element StoryboardElement
+function Add(element) end
+
+---@param input string
+---@return number
+---@nodiscard
+function Layer(input) end
+
+---@return StoryboardBox
+---@nodiscard
+function StoryboardBox() end
+
+---@return StoryboardSprite
+---@nodiscard
+function StoryboardSprite() end
+
+---@return StoryboardText
+---@nodiscard
+function StoryboardText() end
+
+---@class metadata
+---@field title string
+---@field artist string
+---@field mapper string
+---@field difficulty string
+---@field background string
+---@field cover string
+metadata = {}
+
 ---@class StoryboardElement
 ---@field layer number
 ---@field time number
@@ -15,6 +48,20 @@
 ---@field color number
 local __StoryboardElement = {}
 
+---@param type AnimationType
+---@param time number
+---@param len number
+---@param startVal string
+---@param endVal string
+---@param ease Easing
+function __StoryboardElement:animate(type, time, len, startVal, endVal, ease) end
+
+---@param key string
+---@param fallback any
+---@return any
+---@nodiscard
+function __StoryboardElement:param(key, fallback) end
+
 ---@class StoryboardBox: StoryboardElement
 local __StoryboardBox = {}
 
@@ -23,57 +70,9 @@ local __StoryboardBox = {}
 local __StoryboardSprite = {}
 
 ---@class StoryboardText: StoryboardElement
----@field text string
 ---@field size number
+---@field text string
 local __StoryboardText = {}
-
----@class LuaMetadata
----@field title string
----@field artist string
----@field mapper string
----@field difficulty string
----@field background string
----@field cover string
-local __Metadata = {}
-
----@type LuaMetadata
----@diagnostic disable-next-line: missing-fields
-metadata = {};
-
----@type Vector2
----@diagnostic disable-next-line: missing-fields
-screen = {};
-
----@param type AnimationType
----@param time number
----@param len number
----@param startval string
----@param endval string
----@param ease Easing
-function __StoryboardElement:animate(type, time, len, startval, endval, ease) end
-
----@param key string
----@param fallback any
----@return any
----@nodiscard
-function __StoryboardElement:param(key, fallback) end
-
----@return StoryboardBox
-function StoryboardBox() end
-
----@return StoryboardSprite
-function StoryboardSprite() end
-
----@return StoryboardText
-function StoryboardText() end
-
----@param input string
----@return number
----@nodiscard
-function Layer(input) end
-
----@param element StoryboardElement
-function Add(element) end
 
 ---@alias AnimationType string
 ---| "MoveX"

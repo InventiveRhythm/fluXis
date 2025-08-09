@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using fluXis.Map.Structures.Events;
+using fluXis.Scripting.Attributes;
 using osu.Framework.Graphics;
 
 namespace fluXis.Scripting.Runners;
 
+[LuaDefinition("effect", Hide = true)]
 public class EffectScriptRunner : ScriptRunner
 {
     private ScriptStorage.Script script { get; }
@@ -17,27 +19,27 @@ public class EffectScriptRunner : ScriptRunner
 
         Run(script.Content);
 
-        AddFunction("CreateFlash", (float time, float duration, string colStart, float opStart, string colEnd, float opEnd, string ease, bool background) =>
+        AddFunction("CreateFlash", createFlash);
+    }
+
+    [LuaGlobal(Name = "CreateFlash")]
+    private void createFlash(float time, float duration, string colStart, float opStart, string colEnd, float opEnd, string ease, bool background)
+    {
+        var flash = new FlashEvent
         {
-            var flash = new FlashEvent
-            {
-                Time = time,
-                Duration = duration,
-                StartOpacity = Math.Clamp(opStart, 0, 1),
-                EndOpacity = Math.Clamp(opEnd, 0, 1),
-                InBackground = background
-            };
+            Time = time,
+            Duration = duration,
+            StartOpacity = Math.Clamp(opStart, 0, 1),
+            EndOpacity = Math.Clamp(opEnd, 0, 1),
+            InBackground = background
+        };
 
-            if (Colour4.TryParseHex(colStart, out var cs))
-                flash.StartColor = cs;
-            if (Colour4.TryParseHex(colEnd, out var ce))
-                flash.EndColor = ce;
+        if (Colour4.TryParseHex(colStart, out var cs)) flash.StartColor = cs;
+        if (Colour4.TryParseHex(colEnd, out var ce)) flash.EndColor = ce;
 
-            if (Enum.TryParse<Easing>(ease, out var e))
-                flash.Easing = e;
+        if (Enum.TryParse<Easing>(ease, out var e)) flash.Easing = e;
 
-            AddFlash?.Invoke(flash);
-        });
+        AddFlash?.Invoke(flash);
     }
 
     public void Handle(ScriptEvent ev)

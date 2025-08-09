@@ -1,5 +1,6 @@
 ﻿using System;
 using fluXis.Map;
+using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Models.Storyboarding;
 using fluXis.Scripting.Models.Storyboarding.Elements;
@@ -9,30 +10,33 @@ using osu.Framework.Logging;
 
 namespace fluXis.Scripting.Runners;
 
+[LuaDefinition("storyboard", Hide = true)]
 public class StoryboardScriptRunner : ScriptRunner
 {
-    private readonly MapInfo map;
     private readonly Storyboard storyboard;
+
+    [LuaGlobal(Name = "screen")]
+    public LuaVector2 ScreenResolution { get; }
 
     public StoryboardScriptRunner(MapInfo map, Storyboard storyboard)
     {
         this.storyboard = storyboard;
-        this.map = map;
+        Map = map;
 
-        AddField("screen", new LuaVector(storyboard.Resolution));
+        ScreenResolution = new LuaVector2(storyboard.Resolution);
+        AddField("screen", ScreenResolution);
         AddField("metadata", new LuaMetadata(map));
 
         AddFunction("Add", add);
-        AddFunction("BPMAtTime", findBpm);
 
         // enums
-        AddFunction("Layer", (string str) => Enum.TryParse(str, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
+        AddFunction("Layer", parseLayer);
         AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
 
         // elements
-        AddFunction("StoryboardBox", () => new LuaStoryboardBox());
-        AddFunction("StoryboardSprite", () => new LuaStoryboardSprite());
-        AddFunction("StoryboardText", () => new LuaStoryboardText());
+        AddFunction("StoryboardBox", newBox);
+        AddFunction("StoryboardSprite", newSprite);
+        AddFunction("StoryboardText", newText);
     }
 
     public void Process(StoryboardElement element)
@@ -56,11 +60,18 @@ public class StoryboardScriptRunner : ScriptRunner
         }
     }
 
+    [LuaGlobal(Name = "Add")]
     private void add(LuaStoryboardElement element) => storyboard.Elements.Add(element.Build());
 
-    private float findBpm(double time)
-    {
-        var point = map.GetTimingPoint(time);
-        return point.BPM;
-    }
+    [LuaGlobal(Name = "Layer")]
+    private StoryboardLayer parseLayer(string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background;
+
+    [LuaGlobal(Name = "StoryboardBox")]
+    private LuaStoryboardBox newBox() => new();
+
+    [LuaGlobal(Name = "StoryboardSprite")]
+    private LuaStoryboardSprite newSprite() => new();
+
+    [LuaGlobal(Name = "StoryboardText")]
+    private LuaStoryboardText newText() => new();
 }

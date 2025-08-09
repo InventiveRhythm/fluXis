@@ -1,4 +1,4 @@
-﻿---@meta
+---@meta
 
 ---@param from number
 ---@param to number
