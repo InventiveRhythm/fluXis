@@ -4,9 +4,7 @@
 ---@field pi number
 ---@field tau number
 ---@field e number
-mathf = {};
-
--- helper functions
+mathf = {}
 
 ---@param d number
 ---@return number
@@ -33,7 +31,7 @@ function mathf:min(a, b) end
 function mathf:max(a, b) end
 
 ---@param d number
----@return integer
+---@return number
 ---@nodiscard
 function mathf:sign(d) end
 
@@ -86,7 +84,6 @@ function mathf:pow(x, y) end
 ---@nodiscard
 function mathf:exp(d) end
 
----natural log (ln)
 ---@param d number
 ---@return number
 ---@nodiscard
@@ -103,8 +100,6 @@ function mathf:log10(d) end
 ---@return number
 ---@nodiscard
 function mathf:lerp(a, b, t) end
-
--- trigonometric functions
 
 ---@param d number
 ---@return number
@@ -179,7 +174,6 @@ function mathf:vecsub(a, b) end
 ---@nodiscard
 function mathf:vecadd(a, b) end
 
----multiplies a vector by a scalar value
 ---@param a Vector2
 ---@param scalar number
 ---@return Vector2
@@ -192,7 +186,6 @@ function mathf:vecmul(a, scalar) end
 ---@nodiscard
 function mathf:vecdot(a, b) end
 
----gets the magnitude of the vector
 ---@param v Vector2
 ---@return number
 ---@nodiscard
@@ -203,47 +196,37 @@ function mathf:veclen(v) end
 ---@nodiscard
 function mathf:vecnorm(v) end
 
----rotates a vector by an angle around the origin
----@param v Vector2 the vector to rotate
----@param angle number Angle in radians
+---@param v Vector2
+---@param angle number
 ---@return Vector2
 ---@nodiscard
 function mathf:vecrotate(v, angle) end
 
----rotates vector a around vector b by an angle
----@param a Vector2 the vector to rotate
----@param b Vector2 origin/pivot
----@param angle number Angle in radians
+---@param a Vector2
+---@param b Vector2
+---@param angle number
 ---@return Vector2
 ---@nodiscard
 function mathf:vecrotatearound(a, b, angle) end
 
----@param v Vector2 
----@return Vector2
----@nodiscard
-function mathf:vecabs(v) end
-
 ---@param a Vector2
 ---@param b Vector2
----@param acceptableDifference number (optional)
+---@param acceptableDifference number
 ---@return boolean
 ---@nodiscard
 function mathf:vecequals(a, b, acceptableDifference) end
 
----gets angle of vector in radians
----@param v Vector2 The vector
----@return number Angle in radians
+---@param v Vector2
+---@return number
 ---@nodiscard
 function mathf:vecangle(v) end
 
----gets the angle between two vectors in radians
 ---@param a Vector2
 ---@param b Vector2
----@return number Angle in radians
+---@return number
 ---@nodiscard
 function mathf:vecanglebetween(a, b) end
 
----gets the distance between two points/vectors
 ---@param a Vector2
 ---@param b Vector2
 ---@return number
@@ -251,15 +234,18 @@ function mathf:vecanglebetween(a, b) end
 function mathf:vecdist(a, b) end
 
 ---@param v Vector2
----@param acceptableDifference number (optional)
+---@param acceptableDifference number
 ---@return boolean
 ---@nodiscard
 function mathf:vecisnorm(v, acceptableDifference) end
 
 ---@param v Vector2
----@param acceptableDifference number (optional)
+---@param acceptableDifference number
 ---@return boolean
 ---@nodiscard
 function mathf:veciszero(v, acceptableDifference) end
 
-return mathf
+---@param v Vector2
+---@return Vector2
+---@nodiscard
+function mathf:vecabs(v) end
