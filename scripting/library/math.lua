@@ -4,7 +4,9 @@
 ---@field pi number
 ---@field tau number
 ---@field e number
-mathf = {}
+mathf = {};
+
+-- helper functions
 
 ---@param d number
 ---@return number
@@ -31,7 +33,7 @@ function mathf:min(a, b) end
 function mathf:max(a, b) end
 
 ---@param d number
----@return number
+---@return integer
 ---@nodiscard
 function mathf:sign(d) end
 
@@ -84,6 +86,7 @@ function mathf:pow(x, y) end
 ---@nodiscard
 function mathf:exp(d) end
 
+---natural log (ln)
 ---@param d number
 ---@return number
 ---@nodiscard
@@ -100,6 +103,8 @@ function mathf:log10(d) end
 ---@return number
 ---@nodiscard
 function mathf:lerp(a, b, t) end
+
+-- trigonometric functions
 
 ---@param d number
 ---@return number
@@ -174,6 +179,7 @@ function mathf:vecsub(a, b) end
 ---@nodiscard
 function mathf:vecadd(a, b) end
 
+---multiplies a vector by a scalar value
 ---@param a Vector2
 ---@param scalar number
 ---@return Vector2
@@ -186,6 +192,7 @@ function mathf:vecmul(a, scalar) end
 ---@nodiscard
 function mathf:vecdot(a, b) end
 
+---gets the magnitude of the vector
 ---@param v Vector2
 ---@return number
 ---@nodiscard
