@@ -41,6 +41,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     private double interpolationDuration = 300;
     private bool isSeekingSmoothly = false;
     private double smoothSeekTarget;
+    private double smoothSeekStartTime;
     private double smoothSeekTime;
 
     public EditorClock(MapInfo mapInfo)
@@ -72,8 +73,9 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         smoothSeekTime = 0;
         smoothSeekTarget = newTime;
         interpolationDuration = duration;
+        smoothSeekStartTime = CurrentTime;
     }
-    
+
     private void seekSmoothlyStep()
     {
         if (IsRunning)
@@ -81,9 +83,9 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
             isSeekingSmoothly = false;
             return;
         }
-        
+
         smoothSeekTime += Clock.ElapsedFrameTime;
-        
+
         if (smoothSeekTime > interpolationDuration)
         {
             isSeekingSmoothly = false;
@@ -91,9 +93,9 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
             Seek(smoothSeekTarget);
         }
         else
-            Seek(InterpolateAt(smoothSeekTime, smoothSeekTarget, interpolationDuration, Easing.OutQuint));
+            Seek(Interpolation.ValueAt(smoothSeekTime, smoothSeekStartTime, smoothSeekTarget, 0, interpolationDuration, Easing.OutQuint));
     }
-    
+
     private double snap(double position)
     {
         var point = MapInfo.GetTimingPoint((float)position);

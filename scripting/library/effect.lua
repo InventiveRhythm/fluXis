@@ -2,19 +2,10 @@
 
 ---@param time number
 ---@param duration number
----@param colorStart string
----@param opacityStart number
----@param colorEnd string
----@param opacityEnd number
----@param easing Easing
+---@param colStart string
+---@param opStart number
+---@param colEnd string
+---@param opEnd number
+---@param ease string
 ---@param background boolean
-function CreateFlash(
-    time,
-    duration,
-    colorStart,
-    opacityStart,
-    colorEnd,
-    opacityEnd,
-    easing,
-    background
-) end
+function CreateFlash(time, duration, colStart, opStart, colEnd, opEnd, ease, background) end

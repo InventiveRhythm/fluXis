@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Configuration;
-using fluXis.Graphics.Sprites.Icons;
 using fluXis.Online.Activity;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Chat;
@@ -15,6 +14,7 @@ using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests;
 using fluXis.Online.API.Requests.Auth;
+using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Notifications;
 using fluXis.Overlay.Notifications;
 using fluXis.Utils.Extensions;
@@ -154,9 +154,6 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
                 Endpoint = new EndpointConfig(configUrl, res.Data);
                 CanUseOnline = true;
 
-                var thread = new Thread(loop) { IsBackground = true };
-                thread.Start();
-
                 complete();
             };
 
@@ -174,6 +171,15 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
         }
     }
 
+    public void TryConnecting()
+    {
+        if (!HasCredentials)
+            return;
+
+        var thread = new Thread(loop) { IsBackground = true };
+        thread.Start();
+    }
+
     private void loop()
     {
         while (true)
@@ -181,18 +187,14 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             if (Status.Value == ConnectionStatus.Closed)
                 break;
 
-            if (Status.Value is ConnectionStatus.Failed or ConnectionStatus.Authenticating)
+            if (Status.Value is ConnectionStatus.Failed or ConnectionStatus.Authenticating or ConnectionStatus.Offline)
             {
                 Thread.Sleep(100);
                 continue;
             }
 
-            if (!hasValidCredentials)
-            {
-                Status.Value = ConnectionStatus.Offline;
-                Thread.Sleep(100);
-                continue;
-            }
+            if (!HasCredentials)
+                throw new InvalidOperationException("In connect loop without credentials?");
 
             if (connection is null)
                 tryConnect();
@@ -224,7 +226,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             connection = GetWebSocket<INotificationServer, INotificationClient>(this, "/notifications");
             connection.OnClose += () =>
             {
-                Status.Value = Status.Value == ConnectionStatus.Online ? ConnectionStatus.Reconnecting : ConnectionStatus.Failed;
+                Status.Value = ConnectionStatus.Reconnecting;
                 connection = null;
             };
 
@@ -240,7 +242,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
                     if (connection.State >= WebSocketState.Closing)
                     {
                         LastException = new APIException(connection.CloseReason);
-                        Status.Value = ConnectionStatus.Failed;
+                        Status.Value = ConnectionStatus.Reconnecting;
                         break;
                     }
 
@@ -252,10 +254,9 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
                 Logger.Log("Authentication timed out!", LoggingTarget.Network);
                 Logger.Log($"Connection status is {Status.Value}.", LoggingTarget.Network, LogLevel.Debug);
-                Logout();
 
                 LastException = new TimeoutException("Authentication timed out!");
-                Status.Value = ConnectionStatus.Failed;
+                Status.Value = ConnectionStatus.Reconnecting;
             });
 
             task.Start();
@@ -265,11 +266,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             Logger.Error(ex, "Failed to connect to server!", LoggingTarget.Network);
             LastException = ex;
             connection = null;
-
-            if (Status.Value == ConnectionStatus.Reconnecting)
-                return;
-
-            Status.Value = ConnectionStatus.Failed;
+            Status.Value = ConnectionStatus.Reconnecting;
         }
     }
 
@@ -305,6 +302,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     #region Authentication
 
     public bool IsLoggedIn => User.Value != null;
+    public bool HasCredentials => !string.IsNullOrEmpty(AccessToken);
 
     public string AccessToken => tokenBindable.Value;
     public string MultifactorToken { get; set; } = "";
@@ -312,9 +310,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
     private Bindable<string> username = null!;
 
-    private bool hasValidCredentials => !string.IsNullOrEmpty(AccessToken);
-
-    public async void Login(string username, string password)
+    public async Task<Exception?> Login(string username, string password)
     {
         Logger.Log("Logging in...", LoggingTarget.Network);
         this.username.Value = username;
@@ -329,14 +325,38 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             Logger.Error(req.FailReason, "Failed to get access token!", LoggingTarget.Network);
             LastException = req.FailReason;
             Status.Value = ConnectionStatus.Failed;
-            return;
+            return req.FailReason;
         }
 
         tokenBindable.Value = req.Response.Data!.AccessToken;
-        Status.Value = ConnectionStatus.Connecting;
+        return await ReLogin();
     }
 
-    public async void Register(string username, string password, string email)
+    public async Task<Exception?> ReLogin()
+    {
+        Logger.Log("Logging in with saved token...", LoggingTarget.Network);
+
+        Status.Value = ConnectionStatus.Authenticating;
+
+        var req = new UserSelfRequest();
+        await PerformRequestAsync(req);
+
+        if (!req.IsSuccessful)
+        {
+            Logger.Error(req.FailReason, "Failed to log in with existing token!", LoggingTarget.Network);
+            LastException = req.FailReason;
+            Status.Value = ConnectionStatus.Failed;
+            tokenBindable.Value = "";
+            return req.FailReason;
+        }
+
+        User.Value = req.Response.Data;
+        username.Value = User.Value.Username;
+        Status.Value = ConnectionStatus.Connecting;
+        return null;
+    }
+
+    public async Task<Exception?> Register(string username, string password, string email)
     {
         Logger.Log("Registering account...", LoggingTarget.Network);
         this.username.Value = username;
@@ -351,11 +371,11 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             Logger.Error(req.FailReason, "Failed to register account!", LoggingTarget.Network);
             LastException = req.FailReason;
             Status.Value = ConnectionStatus.Failed;
-            return;
+            return req.FailReason;
         }
 
         tokenBindable.Value = req.Response.Data!.AccessToken;
-        Status.Value = ConnectionStatus.Connecting;
+        return await ReLogin();
     }
 
     public void Logout()
@@ -402,8 +422,8 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
     Task INotificationClient.Logout(string reason)
     {
-        Logout();
-        notifications.SendText("You have been logged out!", reason, FontAwesome6.Solid.TriangleExclamation);
+        // Logout();
+        // notifications.SendText("You have been logged out!", reason, FontAwesome6.Solid.TriangleExclamation);
         return Task.CompletedTask;
     }
 

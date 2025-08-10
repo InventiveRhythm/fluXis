@@ -32,6 +32,7 @@ public class TestAPIClient : IAPIClient
 
     public Bindable<UserActivity> Activity { get; } = new();
 
+    public bool HasCredentials { get; }
     public string AccessToken => "token";
     public string MultifactorToken { get; set; } = "mfa-token";
     public bool CanUseOnline => true;
@@ -70,8 +71,11 @@ public class TestAPIClient : IAPIClient
     }
 
     public void PullServerConfig(Action complete, Action<Exception> failure) => complete();
+    public void TryConnecting() => throw new NotImplementedException();
 
-    public void Login(string username, string password)
+    public Task<Exception?> ReLogin() => throw new NotImplementedException();
+
+    public Task<Exception?> Login(string username, string password)
     {
         if (username == USERNAME && password == PASSWORD)
         {
@@ -82,16 +86,20 @@ public class TestAPIClient : IAPIClient
                 Username = USERNAME,
                 CountryCode = "TD"
             };
+
+            return Task.FromResult<Exception?>(null);
         }
         else
         {
             Status.Value = ConnectionStatus.Failed;
             LastException = new APIException("Invalid credentials");
             User.Value = null;
+
+            return Task.FromResult<Exception?>(LastException);
         }
     }
 
-    public void Register(string username, string password, string email)
+    public Task<Exception?> Register(string username, string password, string email)
     {
         Status.Value = ConnectionStatus.Online;
         User.Value = new APIUser
@@ -100,6 +108,8 @@ public class TestAPIClient : IAPIClient
             Username = username,
             CountryCode = "TD"
         };
+
+        return Task.FromResult<Exception?>(null);
     }
 
     public void Logout()

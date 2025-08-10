@@ -8,3 +8,5 @@ Releases
 create-release.bat
 fluXis.sln.DotSettings.user
 steam_appid.txt
+/build
+xmldoc.xml
