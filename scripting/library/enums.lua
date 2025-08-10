@@ -1,4 +1,4 @@
-﻿---@meta
+---@meta
 
 ---@alias Easing string
 ---| "None"
@@ -38,11 +38,6 @@
 ---| "InOutBounce"
 ---| "OutPow10"
 
----@param input AnchorName
----@return number
----@nodiscard
-function Anchor(input) end
-
 ---@alias AnchorName string
 ---| "TopLeft"
 ---| "TopCentre"
@@ -53,6 +48,11 @@ function Anchor(input) end
 ---| "BottomLeft"
 ---| "BottomCentre"
 ---| "BottomRight"
+
+---@param input AnchorName
+---@return number
+---@nodiscard
+function Anchor(input) end
 
 ---@alias ParameterDefinitionType string
 ---| "string"

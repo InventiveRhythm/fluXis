@@ -9,6 +9,7 @@
     <!-- I will keep this here -->
     <LangVersion>11</LangVersion>
     <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj" />
@@ -28,5 +29,8 @@
   <ItemGroup Label="Code Analysis">
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="All" />
     <AdditionalFiles Include="..\CodeAnalysis\BannedSymbols.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="build\" />
   </ItemGroup>
 </Project>
