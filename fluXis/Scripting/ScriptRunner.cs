@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using fluXis.Map;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
@@ -23,6 +24,7 @@ public class ScriptRunner
     protected ScriptRunner()
     {
         Lua = new Lua();
+        Lua.State.Encoding = Encoding.UTF8;
 
         AddField("mathf", new LuaMath());
 
