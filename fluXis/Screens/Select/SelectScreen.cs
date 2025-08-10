@@ -199,6 +199,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         sortMode.BindValueChanged(setSortingMode);
         groupMode.BindValueChanged(setGroupingMode);
+        sortInverse.BindValueChanged(setInverseState);
 
         Task.Run(() =>
         {
@@ -439,6 +440,12 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     private void setGroupingMode(ValueChangedEvent<MapUtils.GroupingMode> e)
     {
         UpdateSearch();
+    }
+
+    private void setInverseState(ValueChangedEvent<bool> e)
+    {
+        sortItems();
+        mapList.Sort();
     }
 
     #endregion

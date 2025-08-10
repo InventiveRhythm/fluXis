@@ -145,7 +145,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
         loadComponent(new SettingsMenu(), overlayContainer.Add, true);
 
-        loadComponent(new LoginOverlay(), buffer.Add, true);
+        var login = new LoginOverlay();
+        loadComponent(login, buffer.Add, true);
+
         loadComponent(new RegisterOverlay(), buffer.Add, true);
         loadComponent(new MultifactorOverlay(), buffer.Add, true);
         loadComponent(toolbar = new Toolbar(), buffer.Add, true);
@@ -173,6 +175,37 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             LoadingTips.Load(Host.CacheStorage);
             c();
         }), false));
+
+        LoadQueue.Push(new LoadTask("Logging in...", c =>
+        {
+            if (!APIClient.CanUseOnline)
+            {
+                c();
+                return;
+            }
+
+            if (APIClient.HasCredentials)
+                _ = tryRelog();
+            else
+                showLogin();
+
+            return;
+
+            async Task tryRelog()
+            {
+                var error = await APIClient.ReLogin();
+                if (error != null) showLogin();
+                else cont();
+            }
+
+            void showLogin() => Schedule(() => login.Show(cont, c));
+
+            void cont()
+            {
+                APIClient.TryConnecting();
+                c();
+            }
+        }, false));
 
         LoadQueue.Push(new LoadTask("Checking for bundled maps...", MapStore.DownloadBundledMaps, false));
 

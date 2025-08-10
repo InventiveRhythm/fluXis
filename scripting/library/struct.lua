@@ -1,11 +1,9 @@
-﻿---@env a
-
 ---@meta
 
 ---@class Vector2
 ---@field x number
 ---@field y number
-local Vec2 = {}
+local __Vector2 = {}
 
 ---@param x number
 ---@param y number

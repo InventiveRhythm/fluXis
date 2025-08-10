@@ -1,8 +1,10 @@
-﻿using fluXis.Storyboards;
+﻿using fluXis.Scripting.Attributes;
+using fluXis.Storyboards;
 using NLua;
 
 namespace fluXis.Scripting.Models.Storyboarding.Elements;
 
+[LuaDefinition("storyboard")]
 public class LuaStoryboardSprite : LuaStoryboardElement
 {
     protected override StoryboardElementType Type => StoryboardElementType.Sprite;

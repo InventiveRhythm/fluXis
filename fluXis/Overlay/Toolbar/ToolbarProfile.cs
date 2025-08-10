@@ -3,18 +3,14 @@ using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
-using fluXis.Graphics.UserInterface.Buttons;
-using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
-using fluXis.Localization;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
-using fluXis.Overlay.Auth;
 using fluXis.Overlay.User;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
@@ -28,7 +24,6 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
-using osuTK.Input;
 
 namespace fluXis.Overlay.Toolbar;
 
@@ -40,9 +35,6 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
     private UserProfileOverlay profile { get; set; }
 
     [Resolved]
-    private LoginOverlay loginOverlay { get; set; }
-
-    [Resolved]
     private IAPIClient api { get; set; }
 
     [Resolved]
@@ -52,7 +44,6 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
     private UISamples samples { get; set; }
 
     private Container container;
-    private Container avatarContainer;
     private DrawableAvatar avatar;
     private Container loadingContainer;
     private HoverLayer hover;
@@ -107,10 +98,6 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
                                             Origin = Anchor.Centre
                                         }
                                     },
-                                    avatarContainer = new Container
-                                    {
-                                        RelativeSizeAxes = Axes.Both
-                                    },
                                     loadingContainer = new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -161,47 +148,24 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
     protected override void PopIn() => container.MoveToY(-10, Styling.TRANSITION_MOVE, Easing.OutQuint);
     protected override void PopOut() => container.MoveToY(-20, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
-    private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
+    private void updateStatus(ValueChangedEvent<ConnectionStatus> e) => Scheduler.ScheduleIfNeeded(() =>
     {
-        Scheduler.ScheduleIfNeeded(() =>
+        switch (e.NewValue)
         {
-            switch (e.NewValue)
-            {
-                case ConnectionStatus.Offline:
-                case ConnectionStatus.Online:
-                case ConnectionStatus.Closed:
-                    loadingContainer.FadeOut(200);
-                    break;
+            case ConnectionStatus.Online:
+                loadingContainer.FadeOut(200);
+                break;
 
-                case ConnectionStatus.Reconnecting:
-                case ConnectionStatus.Connecting:
-                    loadingContainer.FadeIn(200);
-                    break;
-            }
-        });
-    }
+            case ConnectionStatus.Reconnecting:
+            case ConnectionStatus.Connecting:
+                loadingContainer.FadeIn(200);
+                break;
+        }
+    });
 
     private void updateUser(ValueChangedEvent<APIUser> e)
     {
         avatar.UpdateUser(e.NewValue);
-    }
-
-    protected override bool OnMouseDown(MouseDownEvent e)
-    {
-        if (e.Button != MouseButton.Right || api.User.Value is null) return false;
-
-        panels.Content = new ButtonPanel
-        {
-            Icon = FontAwesome6.Solid.DoorOpen,
-            Text = "Are you sure you want to log out?",
-            Buttons = new ButtonData[]
-            {
-                new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () => api.Logout()),
-                new CancelButtonData()
-            }
-        };
-
-        return true;
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -209,21 +173,16 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
         flash.Show();
         samples.Click();
 
-        if (!api.CanUseOnline)
+        if (!api.CanUseOnline || api.User.Value == null)
         {
             panels.Content = new SingleButtonPanel(FontAwesome6.Solid.PlugCircleXMark, "You must be online to use this feature.", "Restart fluXis to connect to the online services.", "Okay");
             return true;
         }
 
-        if (api.User.Value == null)
-            loginOverlay.Show();
+        if (profile.State.Value == Visibility.Visible)
+            profile.Hide();
         else
-        {
-            if (profile.State.Value == Visibility.Visible)
-                profile.Hide();
-            else
-                profile.ShowUser(api.User.Value.ID);
-        }
+            profile.ShowUser(api.User.Value.ID);
 
         return true;
     }
