@@ -1,9 +1,11 @@
-﻿using NLua;
+﻿using fluXis.Scripting.Attributes;
+using NLua;
 using osuTK;
 
 namespace fluXis.Scripting.Models;
 
-public class LuaVector : ILuaModel
+[LuaDefinition("struct")]
+public class LuaVector2 : ILuaModel
 {
     [LuaHide]
     public Vector2 TKVector => new(X, Y);
@@ -14,12 +16,13 @@ public class LuaVector : ILuaModel
     [LuaMember(Name = "y")]
     public float Y { get; set; }
 
-    public LuaVector(Vector2 vec)
+    public LuaVector2(Vector2 vec)
         : this(vec.X, vec.Y)
     {
     }
 
-    public LuaVector(float x, float y)
+    [LuaConstructor]
+    public LuaVector2(float x, float y)
     {
         X = x;
         Y = y;

@@ -1,3 +1,4 @@
+using System;
 using fluXis.Audio;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
@@ -9,9 +10,9 @@ using fluXis.Input;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth.UI;
 using fluXis.Overlay.Notifications;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -51,6 +52,12 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
     private AuthOverlayTextBox password;
     private AuthOverlayTextBox email;
 
+    private FullInputBlockingContainer background;
+    private AuthOverlayButton understandButton;
+    private double countdown;
+
+    private Action loginAction;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -59,7 +66,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
 
         InternalChildren = new Drawable[]
         {
-            new FullInputBlockingContainer
+            background = new FullInputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 OnClickAction = Hide,
@@ -67,7 +74,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black,
-                    Alpha = .5f
+                    Alpha = .75f
                 }
             },
             content = new ClickableContainer
@@ -100,7 +107,11 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
                         {
                             createWarning(),
                             Empty().With(d => d.Anchor = d.Origin = Anchor.TopCentre),
-                            new AuthOverlayButton("Yes, I understand.") { Action = showForm }
+                            understandButton = new AuthOverlayButton("Yes, I understand.")
+                            {
+                                Action = showForm,
+                                Enabled = false
+                            }
                         }
                     },
                     formContainer = new FillFlowContainer
@@ -177,8 +188,6 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
                 }
             }
         };
-
-        api.Status.BindValueChanged(onStatusChanged);
     }
 
     protected override void LoadComplete()
@@ -188,6 +197,24 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
         username.OnCommit += (_, _) => switchFocus(email);
         email.OnCommit += (_, _) => switchFocus(password);
         password.OnCommit += (_, _) => register();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (countdown >= 0)
+        {
+            understandButton.Text = $"Yes, I understand. ({(int)Math.Ceiling(countdown)})";
+            understandButton.Enabled = false;
+        }
+        else
+        {
+            understandButton.Text = "Yes, I understand.";
+            understandButton.Enabled = true;
+        }
+
+        countdown -= Time.Elapsed / 1000;
     }
 
     private FluXisTextFlow createWarning()
@@ -231,6 +258,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
 
     private void showForm()
     {
+        background.FadeOut(400);
         warningContainer.FadeOut(200);
         formContainer.Delay(100).FadeIn(200);
         switchFocus(username);
@@ -242,76 +270,79 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
         loginOverlay?.Show();
     }
 
-    private void onStatusChanged(ValueChangedEvent<ConnectionStatus> e)
-    {
-        Schedule(() =>
-        {
-            if (e.NewValue == ConnectionStatus.Failed)
-                setError(api.LastException?.Message ?? "Failed to connect to the server.");
-
-            switch (e.NewValue)
-            {
-                case ConnectionStatus.Online:
-                    Hide();
-                    break;
-
-                case ConnectionStatus.Offline:
-                case ConnectionStatus.Failed:
-                    loadingLayer.FadeOut(200);
-                    break;
-
-                default:
-                    loadingLayer.FadeIn(200);
-                    break;
-            }
-        });
-    }
-
     private void switchFocus(AuthOverlayTextBox to) => Schedule(() => GetContainingFocusManager()?.ChangeFocus(to));
 
-    private void setError(string msg)
+    private void setError(string msg) => Scheduler.ScheduleIfNeeded(() =>
     {
         if (string.IsNullOrEmpty(msg))
         {
+            loadingLayer.FadeIn(200);
             errorText.Alpha = 0;
             return;
         }
 
         errorText.Text = msg;
         errorText.Alpha = 1;
+        loadingLayer.FadeOut(200);
+    });
+
+    private async void register()
+    {
+        try
+        {
+            setError("");
+
+            if (api.Status.Value == ConnectionStatus.Online)
+            {
+                notifications.SendError("Already logged in!");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(username.Text))
+            {
+                setError("Username cannot be empty.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(email.Text))
+            {
+                setError("Email cannot be empty.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(password.Text) || password.Text.Length < 8 || password.Text.Length > 32)
+            {
+                setError("Password must be between 8 and 32 characters.");
+                return;
+            }
+
+            var error = await api.Register(username.Text, password.Text, email.Text);
+
+            if (error != null)
+            {
+                setError(error.Message);
+                return;
+            }
+
+            loginAction?.Invoke();
+            Hide();
+        }
+        catch (Exception e)
+        {
+            setError($"{e}: {e.Message}");
+        }
     }
 
-    private void register()
+    public void Show(Action login)
     {
-        if (api.Status.Value == ConnectionStatus.Online)
-        {
-            notifications.SendError("Already logged in!");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(username.Text))
-        {
-            setError("Username cannot be empty.");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(email.Text))
-        {
-            setError("Email cannot be empty.");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(password.Text) || password.Text.Length < 8 || password.Text.Length > 32)
-        {
-            setError("Password must be between 8 and 32 characters.");
-            return;
-        }
-
-        api.Register(username.Text, password.Text, email.Text);
+        loginAction = login;
+        Show();
     }
 
     public override void Show()
     {
+        background.Show();
+        countdown = 5;
         warningContainer.Show();
         formContainer.Hide();
 

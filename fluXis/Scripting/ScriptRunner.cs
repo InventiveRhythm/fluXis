@@ -1,4 +1,6 @@
 ﻿using System;
+using fluXis.Map;
+using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using JetBrains.Annotations;
 using NLua;
@@ -7,9 +9,13 @@ using osu.Framework.Utils;
 
 namespace fluXis.Scripting;
 
+[LuaDefinition("shared", Hide = true)]
 public class ScriptRunner
 {
     public static Logger Logger { get; } = Logger.GetLogger("scripting");
+
+    [CanBeNull]
+    protected MapInfo Map { get; set; }
 
     public Action<string, string, string> DefineParameter;
     protected Lua Lua { get; }
@@ -20,11 +26,12 @@ public class ScriptRunner
 
         AddField("mathf", new LuaMath());
 
-        AddFunction("print", (string text) => Logger.Add($"[Script] {text}"));
-        AddFunction("RandomRange", (int from, int to) => RNG.Next(from, to + 1));
-        AddFunction("Vector2", (float x, float y) => new LuaVector(x, y));
+        AddFunction("print", print);
+        AddFunction("RandomRange", randomRange);
+        AddFunction("Vector2", (float x, float y) => new LuaVector2(x, y));
+        AddFunction("BPMAtTime", findBpm);
 
-        AddFunction("DefineParameter", (string k, string t, string ty) => DefineParameter?.Invoke(k, t, ty));
+        AddFunction("DefineParameter", defineParameter);
 
         Lua.DoString("import = function() end"); // disable importing
     }
@@ -51,4 +58,20 @@ public class ScriptRunner
     {
         Lua.DoString(code);
     }
+
+    [LuaGlobal(Name = "RandomRange")]
+    private int randomRange(int from, int to) => RNG.Next(from, to + 1);
+
+    [LuaGlobal(Name = "BPMAtTime")]
+    private float findBpm(double time)
+    {
+        var point = Map?.GetTimingPoint(time) ?? throw new InvalidOperationException("Tried to call findBpm without a map!");
+        return point.BPM;
+    }
+
+    [LuaGlobal(Name = "DefineParameter")]
+    private void defineParameter(string key, string title, [LuaCustomType(typeof(ParameterDefinitionType))] string type) => DefineParameter?.Invoke(key, title, type);
+
+    [LuaGlobal]
+    private void print(string text) => Logger.Add($"[Script] {text}");
 }

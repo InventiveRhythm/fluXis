@@ -1,20 +1,19 @@
+using System;
 using fluXis.Audio;
 using fluXis.Configuration;
-using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth.UI;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Overlay.Auth;
 
@@ -40,6 +39,9 @@ public partial class LoginOverlay : CompositeDrawable
     private AuthOverlayTextBox password;
     private Container loadingLayer;
 
+    private Action loginAction;
+    private Action closeAction;
+
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
@@ -48,17 +50,6 @@ public partial class LoginOverlay : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new FullInputBlockingContainer
-            {
-                RelativeSizeAxes = Axes.Both,
-                OnClickAction = Hide,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Color4.Black,
-                    Alpha = .5f
-                }
-            },
             content = new ClickableContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -66,7 +57,6 @@ public partial class LoginOverlay : CompositeDrawable
                 Origin = Anchor.Centre,
                 CornerRadius = 20,
                 Masking = true,
-                EdgeEffect = Styling.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
@@ -121,7 +111,11 @@ public partial class LoginOverlay : CompositeDrawable
                             new AuthOverlayButton("Create new account") { Action = openRegister },
                             new AuthOverlayButton("Play offline")
                             {
-                                Action = Hide,
+                                Action = () =>
+                                {
+                                    closeAction?.Invoke();
+                                    Hide();
+                                },
                                 Color = Theme.Background3,
                                 TextColor = Theme.Text,
                             }
@@ -157,51 +151,41 @@ public partial class LoginOverlay : CompositeDrawable
         base.LoadComplete();
 
         password.OnCommit += (_, _) => login();
-        api.Status.BindValueChanged(updateStatus, true);
     }
 
-    private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
+    private async void login()
     {
-        Schedule(() =>
+        try
         {
-            if (e.NewValue == ConnectionStatus.Failed)
-                setError(api.LastException?.Message ?? "Failed to connect to the server.");
+            setError("");
 
-            switch (e.NewValue)
+            if (string.IsNullOrEmpty(username.Text))
             {
-                case ConnectionStatus.Online:
-                    Hide();
-                    break;
-
-                case ConnectionStatus.Offline:
-                case ConnectionStatus.Failed:
-                    loadingLayer.FadeOut(200);
-                    break;
-
-                default:
-                    loadingLayer.FadeIn(200);
-                    break;
+                setError("Username cannot be empty.");
+                return;
             }
-        });
-    }
 
-    private void login()
-    {
-        setError("");
+            if (string.IsNullOrEmpty(password.Text))
+            {
+                setError("Password cannot be empty.");
+                return;
+            }
 
-        if (string.IsNullOrEmpty(username.Text))
-        {
-            setError("Username cannot be empty.");
-            return;
+            var error = await api.Login(username.Text, password.Text);
+
+            if (error != null)
+            {
+                setError(error.Message);
+                return;
+            }
+
+            loginAction?.Invoke();
+            Hide();
         }
-
-        if (string.IsNullOrEmpty(password.Text))
+        catch (Exception e)
         {
-            setError("Password cannot be empty.");
-            return;
+            setError($"{e}: {e.Message}");
         }
-
-        api.Login(username.Text, password.Text);
     }
 
     private void openPasswordReset() => game?.OpenLink("https://auth.flux.moe/request-reset");
@@ -209,26 +193,32 @@ public partial class LoginOverlay : CompositeDrawable
     private void openRegister()
     {
         Hide();
-        registerOverlay?.Show();
+        registerOverlay?.Show(loginAction);
     }
 
-    private void setError(string msg)
+    private void setError(string msg) => Scheduler.ScheduleIfNeeded(() =>
     {
         if (string.IsNullOrEmpty(msg))
         {
+            loadingLayer.FadeIn(200);
             errorText.Alpha = 0;
             return;
         }
 
         errorText.Text = msg;
         errorText.Alpha = 1;
+        loadingLayer.FadeOut(200);
+    });
+
+    public void Show(Action login, Action close)
+    {
+        loginAction = login;
+        closeAction = close;
+        Show();
     }
 
     public override void Show()
     {
-        if (api.Status.Value == ConnectionStatus.Online || !api.CanUseOnline)
-            return;
-
         this.FadeInFromZero(400, Easing.OutQuint);
         content.ScaleTo(.75f).ScaleTo(1f, 800, Easing.OutElasticHalf);
         samples.Overlay(false);

@@ -2,7 +2,7 @@
 
 ---@class mathf
 ---@field pi number
-mathf = {};
+mathf = {}
 
 ---@param d number
 ---@return number
@@ -15,10 +15,8 @@ function mathf:cos(d) end
 ---@nodiscard
 function mathf:atan2(x, y) end
 
----@param x Vector2
----@param y Vector2
+---@param a Vector2
+---@param b Vector2
 ---@return Vector2
 ---@nodiscard
-function mathf:vecsub(x, y) end
-
-return mathf
+function mathf:vecsub(a, b) end
