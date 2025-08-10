@@ -22,6 +22,7 @@ public interface IAPIClient
     Bindable<UserActivity> Activity { get; }
 
     bool IsLoggedIn { get; }
+    bool HasCredentials { get; }
 
     string AccessToken { get; }
     string MultifactorToken { get; set; }
@@ -50,9 +51,11 @@ public interface IAPIClient
     Task PerformRequestAsync(APIRequest request);
 
     void PullServerConfig(Action complete, Action<Exception> failure);
+    void TryConnecting();
 
-    void Login(string username, string password);
-    void Register(string username, string password, string email);
+    Task<Exception?> Login(string username, string password);
+    Task<Exception?> ReLogin();
+    Task<Exception?> Register(string username, string password, string email);
     void Logout();
 
     void UpdateLastRead();

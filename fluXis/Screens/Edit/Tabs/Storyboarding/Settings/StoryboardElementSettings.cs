@@ -278,8 +278,17 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             }
                         });
 
-                        var script = scripts.Scripts.FirstOrDefault(x => x.Path.EqualsLower(path));
-                        if (script is null) break;
+                        var script = scripts.Scripts.FirstOrDefault(x => x.Path.Replace("\\", "/").EqualsLower(path.Replace("\\", "/")));
+
+                        if (script is null)
+                        {
+                            drawables.Add(new FluXisSpriteText
+                            {
+                                Text = "Script could not be loaded.",
+                                Colour = Theme.Red
+                            });
+                            break;
+                        }
 
                         foreach (var parameter in script.Parameters)
                         {
@@ -292,6 +301,23 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     OnTextChanged = t =>
                                     {
                                         item.Parameters[parameter.Key] = t.Text;
+                                        map.Update(item);
+                                    }
+                                });
+                            }
+                            else if (parameter.Type == typeof(int))
+                            {
+                                drawables.Add(new PointSettingsTextBox
+                                {
+                                    Text = parameter.Title,
+                                    DefaultText = item.GetParameter(parameter.Key, 0).ToString(),
+                                    OnTextChanged = box =>
+                                    {
+                                        if (box.Text.TryParseIntInvariant(out var result))
+                                            item.Parameters[parameter.Key] = result;
+                                        else
+                                            box.NotifyError();
+
                                         map.Update(item);
                                     }
                                 });

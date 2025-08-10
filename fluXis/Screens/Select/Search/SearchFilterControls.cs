@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
@@ -44,6 +45,8 @@ public partial class SearchFilterControls : CompositeDrawable
                     new(),
                     new(GridSizeMode.Absolute, 12),
                     new(),
+                    new(GridSizeMode.Absolute, 12),
+                    new(GridSizeMode.Absolute, 40),
                 },
                 Content = new[]
                 {
@@ -54,6 +57,8 @@ public partial class SearchFilterControls : CompositeDrawable
                         Empty(),
                         new Control<MapUtils.GroupingMode>(LocalizationStrings.SongSelect.GroupBy, Enum.GetValues<MapUtils.GroupingMode>(),
                             config.GetBindable<MapUtils.GroupingMode>(FluXisSetting.GroupingMode)),
+                        Empty(),
+                        new InverseButton(config.GetBindable<bool>(FluXisSetting.SortingInverse)),
                     }
                 }
             }
@@ -62,6 +67,108 @@ public partial class SearchFilterControls : CompositeDrawable
 
     public override void Show() => this.MoveToX(-100).MoveToX(-10, Styling.TRANSITION_MOVE, Easing.OutQuint);
     public override void Hide() => this.MoveToX(-100, Styling.TRANSITION_MOVE, Easing.OutQuint);
+
+    private partial class InverseButton : CompositeDrawable
+    {
+        [Resolved]
+        private UISamples samples { get; set; }
+
+        private readonly Bindable<bool> inverse;
+
+        private Container content;
+        private HoverLayer hover;
+        private FlashLayer flash;
+        private FluXisSpriteIcon icon;
+
+        public InverseButton(Bindable<bool> inverse)
+        {
+            this.inverse = inverse;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            RelativeSizeAxes = Axes.Both;
+
+            InternalChild = content = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                CornerRadius = 8,
+                Masking = true,
+                EdgeEffect = Styling.ShadowSmall,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Theme.Background3
+                    },
+                    hover = new HoverLayer(),
+                    flash = new FlashLayer(),
+                    icon = new FluXisSpriteIcon
+                    {
+                        Size = new Vector2(16),
+                        Icon = FontAwesome6.Solid.AngleDown,
+                        Shear = new Vector2(.2f, 0),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    }
+                }
+            };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            inverse.BindValueChanged(statusChanged, true);
+            FinishTransforms(true);
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+            inverse.ValueChanged -= statusChanged;
+        }
+
+        private void statusChanged(ValueChangedEvent<bool> v)
+        {
+            icon.Scale = new Vector2(1, v.NewValue ? -1 : 1);
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            inverse.Value = !inverse.Value;
+            samples.Click();
+            flash.Show();
+            return true;
+        }
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            content.ScaleTo(0.9f, 1000, Easing.OutQuint);
+            return true;
+        }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            content.ScaleTo(1, 800, Easing.OutElasticHalf);
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            samples.Hover();
+            hover.Show();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            hover.Hide();
+        }
+    }
 
     private partial class Control<T> : CompositeDrawable
     {
