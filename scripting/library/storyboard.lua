@@ -1,5 +1,33 @@
 ---@meta
 
+---@type Vector2
+---@diagnostic disable-next-line: missing-fields
+screen = {}
+
+---@param element StoryboardElement
+function Add(element) end
+
+---@return StoryboardBox
+---@nodiscard
+function StoryboardBox() end
+
+---@return StoryboardSprite
+---@nodiscard
+function StoryboardSprite() end
+
+---@return StoryboardText
+---@nodiscard
+function StoryboardText() end
+
+---@class metadata
+---@field title string the non-romanized title of the current map
+---@field artist string the non-romanized artist of the current map
+---@field mapper string
+---@field difficulty string difficulty name of the current map
+---@field background string relative path to the background image
+---@field cover string relative path to the cover image
+metadata = {}
+
 ---@class StoryboardElement
 ---@field layer number
 ---@field time number
@@ -15,6 +43,21 @@
 ---@field color number
 local __StoryboardElement = {}
 
+---applies a new animation to this element
+---@param type AnimationType the type of animation
+---@param time number when this animation starts in ms (absolute from map start)
+---@param len number the total length of this animation in ms
+---@param startVal string the value this animation starts with (input based on type)
+---@param endVal string the value this animation ends with (input based on type)
+---@param ease Easing the easing function used for this animation
+function __StoryboardElement:animate(type, time, len, startVal, endVal, ease) end
+
+---@param key string
+---@param fallback any
+---@return any
+---@nodiscard
+function __StoryboardElement:param(key, fallback) end
+
 ---@class StoryboardBox: StoryboardElement
 local __StoryboardBox = {}
 
@@ -23,57 +66,9 @@ local __StoryboardBox = {}
 local __StoryboardSprite = {}
 
 ---@class StoryboardText: StoryboardElement
----@field text string
 ---@field size number
+---@field text string
 local __StoryboardText = {}
-
----@class LuaMetadata
----@field title string
----@field artist string
----@field mapper string
----@field difficulty string
----@field background string
----@field cover string
-local __Metadata = {}
-
----@type LuaMetadata
----@diagnostic disable-next-line: missing-fields
-metadata = {};
-
----@type Vector2
----@diagnostic disable-next-line: missing-fields
-screen = {};
-
----@param type AnimationType
----@param time number
----@param len number
----@param startval string
----@param endval string
----@param ease Easing
-function __StoryboardElement:animate(type, time, len, startval, endval, ease) end
-
----@param key string
----@param fallback any
----@return any
----@nodiscard
-function __StoryboardElement:param(key, fallback) end
-
----@return StoryboardBox
-function StoryboardBox() end
-
----@return StoryboardSprite
-function StoryboardSprite() end
-
----@return StoryboardText
-function StoryboardText() end
-
----@param input string
----@return number
----@nodiscard
-function Layer(input) end
-
----@param element StoryboardElement
-function Add(element) end
 
 ---@alias AnimationType string
 ---| "MoveX"
@@ -85,3 +80,13 @@ function Add(element) end
 ---| "Rotate"
 ---| "Fade"
 ---| "Color"
+
+---@alias LayerName string
+---| "Background"
+---| "Foreground"
+---| "Overlay"
+
+---@param input LayerName
+---@return number
+---@nodiscard
+function Layer(input) end
