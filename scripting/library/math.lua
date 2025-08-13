@@ -30,6 +30,10 @@ function mathf:min(a, b) end
 ---@nodiscard
 function mathf:max(a, b) end
 
+---Returns an integer that indicates the sign of a number.
+----1 value is less than zero |
+---0 value is equal to zero |
+---1 value is greater than zero
 ---@param d number
 ---@return number
 ---@nodiscard
@@ -40,8 +44,10 @@ function mathf:sign(d) end
 ---@nodiscard
 function mathf:floor(d) end
 
----@param d number
----@param threshold number
+---Floors the input value only if it meets or greater than the threshold.
+---Otherwise returns the original value unchanged.
+---@param d number the input
+---@param threshold number The minimum value at which flooring will be applied. Values below this threshold remain unchanged.
 ---@return number
 ---@nodiscard
 function mathf:floort(d, threshold) end
@@ -51,8 +57,10 @@ function mathf:floort(d, threshold) end
 ---@nodiscard
 function mathf:ceil(d) end
 
----@param d number
----@param threshold number
+---Ceils the input value only if it is less than or equal to the specified threshold.
+---Otherwise returns the original value unchanged.
+---@param d number the input
+---@param threshold number The maximum value at which ceiling will be applied. Values above this threshold remain unchanged.
 ---@return number
 ---@nodiscard
 function mathf:ceilt(d, threshold) end
@@ -62,8 +70,11 @@ function mathf:ceilt(d, threshold) end
 ---@nodiscard
 function mathf:round(d) end
 
----@param d number
----@param threshold number
+---Rounds the input value only if it is within the specified threshold distance from a whole number.
+---Otherwise returns the original value unchanged.
+---Useful for rounding values that are "close enough" to whole numbers while leaving others unchanged.
+---@param d number the input
+---@param threshold number The maximum allowable distance from a whole number for rounding to be applied.
 ---@return number
 ---@nodiscard
 function mathf:roundt(d, threshold) end
@@ -79,11 +90,13 @@ function mathf:sqrt(d) end
 ---@nodiscard
 function mathf:pow(x, y) end
 
+---Returns e raised to the specified power.
 ---@param d number
 ---@return number
 ---@nodiscard
 function mathf:exp(d) end
 
+---Returns the natural logarithm (base e).
 ---@param d number
 ---@return number
 ---@nodiscard
@@ -94,6 +107,7 @@ function mathf:log(d) end
 ---@nodiscard
 function mathf:log10(d) end
 
+---Linearly interpolates between two values by a given factor.
 ---@param a number
 ---@param b number
 ---@param t number
@@ -101,66 +115,78 @@ function mathf:log10(d) end
 ---@nodiscard
 function mathf:lerp(a, b, t) end
 
----@param d number
+---Returns the sine of an angle.
+---@param radians number The angle in radians.
 ---@return number
 ---@nodiscard
-function mathf:sin(d) end
+function mathf:sin(radians) end
 
----@param d number
+---Returns the cosine of an angle.
+---@param radians number The angle in radians.
 ---@return number
 ---@nodiscard
-function mathf:cos(d) end
+function mathf:cos(radians) end
 
----@param d number
+---Returns the tangent of an angle.
+---@param radians number The angle in radians.
 ---@return number
 ---@nodiscard
-function mathf:tan(d) end
+function mathf:tan(radians) end
 
----@param d number
----@return number
+---Returns the angle whose sine is the specified number.
+---@param value number A number between -1 and 1.
+---@return number # Angle in radians between -π/2 and π/2.
 ---@nodiscard
-function mathf:asin(d) end
+function mathf:asin(value) end
 
----@param d number
----@return number
+---Returns the angle whose cosine is the specified number.
+---@param value number A number between -1 and 1.
+---@return number # Angle in radians between 0 and π.
 ---@nodiscard
-function mathf:acos(d) end
+function mathf:acos(value) end
 
----@param d number
----@return number
+---Returns the angle whose tangent is the specified number.
+---@param value number A real number.
+---@return number # Angle in radians between -π/2 and π/2.
 ---@nodiscard
-function mathf:atan(d) end
+function mathf:atan(value) end
 
----@param x number
----@param y number
----@return number
+---Returns the angle from the y/x ratio, handling quadrants.
+---@param x number The x coordinate.
+---@param y number The y coordinate.
+---@return number # Angle in radians between -π and π.
 ---@nodiscard
 function mathf:atan2(x, y) end
 
----@param radians number
----@return number
+---Converts from radians to degrees.
+---@param radians number Angle in radians.
+---@return number # Angle in degrees.
 ---@nodiscard
 function mathf:deg(radians) end
 
----@param degrees number
----@return number
+---Converts from degrees to radians.
+---@param degrees number Angle in degrees.
+---@return number # Angle in radians.
 ---@nodiscard
 function mathf:rad(degrees) end
 
----@param d number
+---Returns the hyperbolic sine of the specified angle.
+---@param radians number The angle in radians.
 ---@return number
 ---@nodiscard
-function mathf:sinh(d) end
+function mathf:sinh(radians) end
 
----@param d number
+---Returns the hyperbolic cosine of the specified angle.
+---@param radians number The angle in radians.
 ---@return number
 ---@nodiscard
-function mathf:cosh(d) end
+function mathf:cosh(radians) end
 
----@param d number
+---Returns the hyperbolic tangent of the specified angle.
+---@param radians number The angle in radians.
 ---@return number
 ---@nodiscard
-function mathf:tanh(d) end
+function mathf:tanh(radians) end
 
 ---@param a Vector2
 ---@param b Vector2
@@ -196,16 +222,18 @@ function mathf:veclen(v) end
 ---@nodiscard
 function mathf:vecnorm(v) end
 
----@param v Vector2
----@param angle number
----@return Vector2
+---Rotates a vector by a given angle in radians.
+---@param v Vector2 the vector to rotate.
+---@param angle number Angle in radians.
+---@return Vector2 # a rotated vector.
 ---@nodiscard
 function mathf:vecrotate(v, angle) end
 
----@param a Vector2
----@param b Vector2
----@param angle number
----@return Vector2
+---Rotates vector/point a around vector b by a given angle in radians.
+---@param a Vector2 the vector to apply the rotation to.
+---@param b Vector2 the vector to rotate around.
+---@param angle number Angle in radians.
+---@return Vector2 # a rotated vector.
 ---@nodiscard
 function mathf:vecrotatearound(a, b, angle) end
 
@@ -216,14 +244,16 @@ function mathf:vecrotatearound(a, b, angle) end
 ---@nodiscard
 function mathf:vecequals(a, b, acceptableDifference) end
 
+---Returns the angle of a vector in radians.
 ---@param v Vector2
----@return number
+---@return number # Angle in radians.
 ---@nodiscard
 function mathf:vecangle(v) end
 
+---Returns the angle of between two vectors/points in radians.
 ---@param a Vector2
 ---@param b Vector2
----@return number
+---@return number # Angle in radians.
 ---@nodiscard
 function mathf:vecanglebetween(a, b) end
 
@@ -233,18 +263,21 @@ function mathf:vecanglebetween(a, b) end
 ---@nodiscard
 function mathf:vecdist(a, b) end
 
+---Checks if the vector is normalized.
 ---@param v Vector2
 ---@param acceptableDifference number
 ---@return boolean
 ---@nodiscard
 function mathf:vecisnorm(v, acceptableDifference) end
 
+---Checks if the vector is a zero vector.
 ---@param v Vector2
 ---@param acceptableDifference number
 ---@return boolean
 ---@nodiscard
 function mathf:veciszero(v, acceptableDifference) end
 
+---Returns a vector with all components set to its absolute values.
 ---@param v Vector2
 ---@return Vector2
 ---@nodiscard
