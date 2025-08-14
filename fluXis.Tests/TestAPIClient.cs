@@ -75,6 +75,8 @@ public class TestAPIClient : IAPIClient
 
     public Task<Exception?> ReLogin() => throw new NotImplementedException();
 
+    public void TestLogin() => Login(USERNAME, PASSWORD).Wait();
+
     public Task<Exception?> Login(string username, string password)
     {
         if (username == USERNAME && password == PASSWORD)
@@ -89,14 +91,12 @@ public class TestAPIClient : IAPIClient
 
             return Task.FromResult<Exception?>(null);
         }
-        else
-        {
-            Status.Value = ConnectionStatus.Failed;
-            LastException = new APIException("Invalid credentials");
-            User.Value = null;
 
-            return Task.FromResult<Exception?>(LastException);
-        }
+        Status.Value = ConnectionStatus.Failed;
+        LastException = new APIException("Invalid credentials");
+        User.Value = null;
+
+        return Task.FromResult<Exception?>(LastException);
     }
 
     public Task<Exception?> Register(string username, string password, string email)
@@ -114,9 +114,9 @@ public class TestAPIClient : IAPIClient
 
     public void Logout()
     {
-        Logger.Log("Logging out");
         Status.Value = ConnectionStatus.Offline;
         User.Value = null;
+        Logger.Log("Logging out");
     }
 
     public void UpdateLastRead() => LastReadTime = 0;

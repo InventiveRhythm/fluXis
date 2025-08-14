@@ -2,13 +2,13 @@ using System;
 using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Text;
-using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Overlay.Toolbar;
 
@@ -23,53 +23,51 @@ public partial class ToolbarClock : Container
     private FluXisSpriteText localTime;
     private FluXisSpriteText gameTime;
 
-    private Bindable<bool> useMeridianTime = new(false);
+    private Bindable<bool> useMeridianTime;
 
     private HoverLayer hover;
     private FlashLayer flash;
-    private Container clockContainer;
+    private FillFlowContainer content;
 
     private double lastTime;
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        useMeridianTime = config.GetBindable<bool>(FluXisSetting.UseMeridianTime);
+
         RelativeSizeAxes = Axes.Y;
-        Width = 100;
-        Padding = new MarginPadding { Vertical = 5 };
+        Width = 120;
 
         InternalChildren = new Drawable[]
         {
-            clockContainer = new()
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
+            content = new FillFlowContainer()
             {
-                RelativeSizeAxes = Axes.Both,
-                CornerRadius = 5,
-                Masking = true,
+                AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(-4),
                 Children = new Drawable[]
                 {
-                    hover = new HoverLayer(),
-                    flash = new FlashLayer(),
                     localTime = new FluXisSpriteText
                     {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.BottomCentre,
-                        Y = 5
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        WebFontSize = 14
                     },
                     gameTime = new FluXisSpriteText
                     {
-                        Anchor = Anchor.Centre,
+                        Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        FontSize = 14,
-                        Colour = Theme.Text2
+                        WebFontSize = 10,
+                        Alpha = .8f
                     }
                 }
             }
-
         };
-
-        useMeridianTime = config.GetBindable<bool>(FluXisSetting.UseMeridianTime);
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -98,13 +96,13 @@ public partial class ToolbarClock : Container
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        clockContainer.ScaleTo(.9f, 1000, Easing.OutQuint);
+        content.ScaleTo(.9f, 1000, Easing.OutQuint);
         return true;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
-        clockContainer.ScaleTo(1, 1000, Easing.OutElastic);
+        content.ScaleTo(1, 1000, Easing.OutElastic);
     }
 
     protected override void Update()
@@ -122,12 +120,6 @@ public partial class ToolbarClock : Container
         gameTime.Text = $"{hours:00}:{minutes:00}:{seconds:00}";
         updateLocalClock();
     }
-    
-    private void updateLocalClock()
-    {
-        if (useMeridianTime.Value)
-            localTime.Text = DateTime.Now.ToString("hh:mm:ss tt");
-        else
-            localTime.Text = DateTime.Now.ToString("HH:mm:ss");
-    }
+
+    private void updateLocalClock() => localTime.Text = DateTime.Now.ToString(useMeridianTime.Value ? "hh:mm:ss tt" : "HH:mm:ss");
 }
