@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Structures.Bases;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Utils;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
 
@@ -20,6 +22,9 @@ public partial class EditorTagContainer : Container<EditorTag>
 
     protected List<EditorTag> Tags { get; } = new();
     protected virtual bool RightSide => false;
+    
+    private bool needsSort = false;
+    private EditorTag[] sortedChildrenCache;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -46,6 +51,7 @@ public partial class EditorTagContainer : Container<EditorTag>
 
         Tags.Remove(tag);
         Remove(tag, true);
+        needsSort = true;
     }
 
     protected override void Update()
@@ -58,6 +64,7 @@ public partial class EditorTagContainer : Container<EditorTag>
         {
             Tags.Add(tag);
             Remove(tag, false);
+            needsSort = true;
         }
 
         var tagsToDisplay = Tags.Where(t => t.TimedObject.Time < EditorClock.CurrentTime + 1000 && t.TimedObject.Time > EditorClock.CurrentTime - 1000).ToList();
@@ -66,22 +73,45 @@ public partial class EditorTagContainer : Container<EditorTag>
         {
             Tags.Remove(tag);
             Add(tag);
+            needsSort = true;
+        }
+
+        if (needsSort || sortedChildrenCache == null)
+        {
+            sortedChildrenCache = Children.OrderBy(tag => (int)tag.TimedObject.Time).ToArray();
+            needsSort = false;
         }
 
         var tagsAtTime = new Dictionary<int, int>();
+        var timeOffsets = new Dictionary<int, float>();
 
-        foreach (var tag in Children)
+        double timeThreshold = 10 / (Settings.ZoomBindable.Value - 0.99);
+        timeThreshold = Math.Clamp(timeThreshold, 5, 25);
+
+        foreach (var tag in sortedChildrenCache)
         {
             var time = (int)tag.TimedObject.Time;
+            int closestTime = -1;
 
-            if (tagsAtTime.ContainsKey(time))
+            foreach (var existingTime in tagsAtTime.Keys)
             {
-                tag.X = tagsAtTime[time] * -90;
-                tagsAtTime[time]++;
+                if (Precision.AlmostEquals(time, existingTime, timeThreshold))
+                {
+                    closestTime = existingTime;
+                    break;
+                }
+            }
+
+            if (closestTime != -1)
+            {
+                tag.X = -timeOffsets[closestTime];
+                timeOffsets[closestTime] += tag.DrawWidth + 10;
+                tagsAtTime[closestTime]++;
             }
             else
             {
                 tag.X = 0;
+                timeOffsets[time] = tag.DrawWidth + 10;
                 tagsAtTime[time] = 1;
             }
         }
