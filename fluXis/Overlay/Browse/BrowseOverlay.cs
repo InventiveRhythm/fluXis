@@ -219,6 +219,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                 }
             }
         };
+
+        scrollTopButton.ScaleTo(0.5f, 0);
     }
 
     private void loadMapsets(long offset = 0, bool reload = false)
@@ -323,11 +325,13 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
         if (currentScrollY > 1000)
         {
+            scrollTopButton.ScaleTo(1f, 200, Easing.OutQuad);
             scrollTopButton.FadeIn(200, Easing.OutQuad);
             scrollTopButton.Enabled = true;
         }
         else
         {
+            scrollTopButton.ScaleTo(0.5f, 200, Easing.OutQuad);
             scrollTopButton.FadeOut(200, Easing.OutQuad);
             scrollTopButton.Enabled = false;
         }
