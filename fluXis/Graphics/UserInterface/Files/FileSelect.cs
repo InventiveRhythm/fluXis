@@ -22,6 +22,7 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -755,7 +756,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
     public override void Show() => this.ScaleTo(.9f).FadeInFromZero(200).ScaleTo(1f, 1000, Easing.OutElastic);
     public override void Hide() => this.FadeOut(200).ScaleTo(.9f, 400, Easing.OutQuint);
-    
+
     protected override void Update()
     {
         base.Update();
@@ -772,6 +773,39 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
                 streamFilesScheduled = false;
             }, deltaTime * 2);
+        }
+
+        loadEntriesInfoInView();
+    }
+
+    private void loadEntriesInfoInView()
+    {
+        var containerScreenBounds = scrollContainer.ScreenSpaceDrawQuad;
+
+        var cullingBounds = new RectangleF(
+            containerScreenBounds.TopLeft.X - 120,
+            containerScreenBounds.TopLeft.Y - 120,
+            containerScreenBounds.Width + 120,
+            containerScreenBounds.Height + 120
+        );
+        
+        for (int i = 0; i < filesFlow.Children.Count; i++)
+        {
+            var entry = filesFlow.Children[i];
+            var entryScreenBounds = entry.ScreenSpaceDrawQuad;
+            
+            bool isVisible = cullingBounds.IntersectsWith(new RectangleF(
+                entryScreenBounds.TopLeft.X,
+                entryScreenBounds.TopLeft.Y,
+                entryScreenBounds.Width,
+                entryScreenBounds.Height
+            ));
+            
+            if (isVisible)
+            {
+                EntryList[i].GetInfo();
+                EntryList[i].UpdateSubText();
+            }
         }
     }
 
@@ -801,7 +835,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             }
             return;
         }
-        
+
         filesFlow.AutoSizeAxes = Axes.None;
 
         for (var idx = 0; idx < EntryList.Count; idx++)

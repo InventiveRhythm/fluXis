@@ -18,6 +18,7 @@ public abstract partial class GenericEntry : Container, IComparable<GenericEntry
 {
     protected abstract IconUsage Icon { get; }
     public abstract string Text { get; }
+    public abstract bool IsInfoLoaded { get; }
     protected abstract string SubText { get; }
     protected abstract Colour4 Color { get; }
 
@@ -25,6 +26,7 @@ public abstract partial class GenericEntry : Container, IComparable<GenericEntry
     private UISamples samples { get; set; }
 
     private Container contentWrapper { get; set; }
+    private FluXisSpriteText subText { get; set; }
 
     private float contentPadding
     {
@@ -88,7 +90,7 @@ public abstract partial class GenericEntry : Container, IComparable<GenericEntry
                                     Origin = Anchor.CentreLeft,
                                     X = 30
                                 },
-                                new FluXisSpriteText
+                                subText = new FluXisSpriteText
                                 {
                                     Text = SubText,
                                     Colour = Color,
@@ -102,6 +104,14 @@ public abstract partial class GenericEntry : Container, IComparable<GenericEntry
                 }
             }
         };
+    }
+
+    public abstract string GetInfo();
+
+    public void UpdateSubText()
+    {
+        if (subText != null)
+            subText.Text = SubText;
     }
 
     protected override bool OnClick(ClickEvent e)

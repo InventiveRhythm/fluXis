@@ -10,16 +10,30 @@ public partial class DirectoryEntry : GenericEntry
 {
     protected override IconUsage Icon => PathUtils.GetIconForType(PathUtils.FileType.Folder);
     public override string Text => directory.Name;
-    protected override string SubText => tryGetFiles();
+    public override bool IsInfoLoaded => isLoaded;
+    protected override string SubText => info;
     protected override Colour4 Color => PathUtils.GetColorForType(PathUtils.FileType.Folder);
 
     private DirectoryInfo directory { get; }
     private FileSelect select { get; }
 
+    private bool isLoaded = false;
+    private string info = default_subtext;
+
+    private const string default_subtext = "???KB";
+
     public DirectoryEntry(DirectoryInfo directory, FileSelect selector)
     {
         this.directory = directory;
         select = selector;
+    }
+
+    public override string GetInfo()
+    {
+        if (isLoaded) return info;
+        info = tryGetFiles();
+        isLoaded = true;
+        return info;
     }
 
     protected override bool OnClick(ClickEvent e)
