@@ -5,6 +5,7 @@ using fluXis.Audio.Preview;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Context;
@@ -17,6 +18,7 @@ using fluXis.Online.API.Requests.MapSets;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Notifications;
+using fluXis.Overlay.User.Header;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -57,6 +59,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private GlobalClock clock { get; set; }
 
     private FullInputBlockingContainer searchContainer;
+    private CircularIconButton scrollTopButton;
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer<MapCard> flow;
@@ -194,6 +197,23 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     }
                                 }
                             }
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Child = scrollTopButton = new CircularIconButton
+                            {
+                                Margin = new MarginPadding(20),
+                                Anchor = Anchor.BottomRight,
+                                Origin = Anchor.BottomRight,
+                                Icon = FontAwesome6.Solid.AngleUp,
+                                UseAutoSize = false,
+                                Size = new Vector2(64),
+                                IconSize = new Vector2(24),
+                                BackgroundColour = Theme.Background3,
+                                Action = () => scroll.ScrollToStart(),
+                                Alpha = 0
+                            }
                         }
                     }
                 }
@@ -300,6 +320,17 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
         double currentScrollY = scroll.Current;
         double scrollDelta = currentScrollY - previousScrollY;
+
+        if (currentScrollY > 1000)
+        {
+            scrollTopButton.FadeIn(200, Easing.OutQuad);
+            scrollTopButton.Enabled = true;
+        }
+        else
+        {
+            scrollTopButton.FadeOut(200, Easing.OutQuad);
+            scrollTopButton.Enabled = false;
+        }
 
         if (Math.Abs(scrollDelta) > 0.5f)
         {
