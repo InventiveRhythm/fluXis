@@ -2,12 +2,15 @@
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
@@ -126,10 +129,19 @@ public partial class FooterPracticeControl : GridContainer
     {
         [Resolved]
         private UISamples samples { get; set; }
+        private Sample holdSample;
 
         private Func<bool> action { get; }
         private HoverLayer hover { get; }
-        private FlashLayer flash { get; }
+        private Box flash { get; }
+
+        private bool isMouseDown = false;
+        private double mouseDownTime = 0;
+        private double lastClickTime = 0;
+        private double lastSampleTime = 0;
+        private const int hold_duration = 250;
+        private const int invoke_interval = 25;
+        private const int sample_interval = 50;
 
         public Button(IconUsage icon, Func<bool> action)
         {
@@ -142,7 +154,12 @@ public partial class FooterPracticeControl : GridContainer
             InternalChildren = new Drawable[]
             {
                 hover = new HoverLayer(),
-                flash = new FlashLayer(),
+                flash = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Theme.Text,
+                    Alpha = 0,
+                },
                 new FluXisSpriteIcon
                 {
                     Icon = icon,
@@ -153,11 +170,52 @@ public partial class FooterPracticeControl : GridContainer
             };
         }
 
-        protected override bool OnClick(ClickEvent e)
+        [BackgroundDependencyLoader]
+        private void load(ISampleStore samples)
+        { 
+            holdSample = samples.Get("UI/slider-tick");
+        }
+
+        protected override void Update()
         {
-            flash.Show();
-            samples.Click(!(action?.Invoke() ?? true));
-            return false;
+            if (isMouseDown)
+            {
+                double timeSinceMouseDown = Clock.CurrentTime - mouseDownTime;
+
+                if (timeSinceMouseDown >= hold_duration)
+                {
+                    if (Clock.CurrentTime - lastClickTime >= invoke_interval)
+                    {
+                        action?.Invoke();
+
+                        if (Clock.CurrentTime - lastSampleTime >= sample_interval)
+                        {
+                            holdSample.Play();
+                            lastSampleTime = Clock.CurrentTime;
+                        }
+
+                        lastClickTime = Clock.CurrentTime;
+                    }
+                }
+            }
+        }
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {   
+            isMouseDown = true;
+            mouseDownTime = Clock.CurrentTime;
+            lastClickTime = Clock.CurrentTime;
+            flash.FadeTo(0.6f, 500, Easing.OutQuint);
+            action?.Invoke();
+            samples.Click();
+            return base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            isMouseDown = false;
+            flash.FadeOut(500, Easing.OutQuint);
+            base.OnMouseUp(e);
         }
     }
 }
