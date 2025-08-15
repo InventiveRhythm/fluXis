@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Preview;
 using fluXis.Graphics;
@@ -24,6 +25,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Overlay.Browse;
@@ -54,6 +56,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     [Resolved]
     private GlobalClock clock { get; set; }
 
+    private FullInputBlockingContainer searchContainer;
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer<MapCard> flow;
@@ -63,6 +66,12 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private bool loadedAll;
     private string currentQuery = string.Empty;
     private bool firstOpen = true;
+    private double previousScrollY = 0;
+    private double totalScrolledDistance = 0;
+
+    private const float scroll_threshold = 50f;
+    private const float hide_distance = 200f;
+    private const float show_distance = 300f;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -159,7 +168,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 }
                             }
                         },
-                        new FullInputBlockingContainer
+                        searchContainer = new FullInputBlockingContainer
                         {
                             Height = 120,
                             RelativeSizeAxes = Axes.X,
@@ -278,6 +287,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         }
     }
 
+    
+
     protected override void Update()
     {
         base.Update();
@@ -286,6 +297,32 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
         if (end && !fetchingMore && !loadedAll)
             loadMapsets(flow.Count);
+
+        double currentScrollY = scroll.Current;
+        double scrollDelta = currentScrollY - previousScrollY;
+
+        if (Math.Abs(scrollDelta) > 0.5f)
+        {
+            if (Math.Sign(scrollDelta) != Math.Sign(totalScrolledDistance))
+                totalScrolledDistance = scrollDelta;
+            else
+                totalScrolledDistance += scrollDelta;
+
+            if (totalScrolledDistance > hide_distance && !Precision.AlmostEquals(searchContainer.Y, -100) && currentScrollY > scroll_threshold)
+            {
+                Logger.Log("Hiding map browser search container");
+                searchContainer.MoveToY(-100, 500, Easing.OutCubic);
+                totalScrolledDistance = 0;
+            }
+            else if ((totalScrolledDistance < -show_distance && !Precision.AlmostEquals(searchContainer.Y, 0)) || currentScrollY <= scroll_threshold)
+            {
+                Logger.Log("Showing map browser search container");
+                searchContainer.MoveToY(0, 500, Easing.OutCubic);
+                totalScrolledDistance = 0;
+            }
+        }
+
+        previousScrollY = currentScrollY;
     }
 
     protected override void PopIn()
