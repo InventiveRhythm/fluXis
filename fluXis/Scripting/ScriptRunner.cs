@@ -31,6 +31,8 @@ public class ScriptRunner
         AddFunction("print", print);
         AddFunction("RandomRange", randomRange);
         AddFunction("Vector2", (float x, float y) => new LuaVector2(x, y));
+        AddFunction("Vector2Zero", () => new LuaVector2(0, 0));
+        AddFunction("Vector2One", () => new LuaVector2(1, 1));
         AddFunction("BPMAtTime", findBpm);
 
         AddFunction("DefineParameter", defineParameter);
