@@ -41,6 +41,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     public event Action<PointListEntry> Selected;
     public event Action<PointListEntry> Deselected;
+    public event Action<PointListEntry> SelectedRange;
     public Bindable<PointListEntry> CurrentEvent { get; set; }
 
     private SelectedState state;
@@ -249,8 +250,11 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
         if (e.ControlPressed)
             State = State == SelectedState.Selected ? SelectedState.Deselected : SelectedState.Selected;
+        else if (e.ShiftPressed)
+            SelectedRange?.Invoke(this);
         else
             OpenSettings();
+
 
         return true;
     }
