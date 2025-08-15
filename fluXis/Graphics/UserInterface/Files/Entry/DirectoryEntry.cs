@@ -20,7 +20,7 @@ public partial class DirectoryEntry : GenericEntry
     private bool isLoaded = false;
     private string info = default_subtext;
 
-    private const string default_subtext = "???KB";
+    private const string default_subtext = "??? Items";
 
     public DirectoryEntry(DirectoryInfo directory, FileSelect selector)
     {
@@ -53,7 +53,7 @@ public partial class DirectoryEntry : GenericEntry
         }
         catch
         {
-            return "??? Items";
+            return default_subtext;
         }
     }
 }
