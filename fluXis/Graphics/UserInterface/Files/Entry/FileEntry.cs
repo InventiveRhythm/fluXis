@@ -10,7 +10,8 @@ public partial class FileEntry : GenericEntry
 {
     protected override IconUsage Icon => PathUtils.GetIconForType(type);
     public override string Text => file.Name;
-    protected override string SubText => getSize();
+    public override bool IsInfoLoaded => isLoaded;
+    protected override string SubText => info;
     protected override Colour4 Color => PathUtils.GetColorForType(type);
 
     private PathUtils.FileType type => PathUtils.GetTypeForExtension(file.Extension);
@@ -18,10 +19,23 @@ public partial class FileEntry : GenericEntry
     private FileInfo file { get; }
     private FileSelect selector { get; }
 
+    private bool isLoaded = false;
+    private string info = default_subtext;
+
+    private const string default_subtext = "???KB";
+
     public FileEntry(FileInfo file, FileSelect selector)
     {
         this.file = file;
         this.selector = selector;
+    }
+
+    public override string GetInfo()
+    {
+        if (isLoaded) return info;
+        info = getSize();
+        isLoaded = true;
+        return info;
     }
 
     protected override void LoadComplete()

@@ -45,6 +45,12 @@ public partial class DebugSection : SettingsSection
             },
             new SettingsToggle
             {
+                Label = strings.StreamFileBrowser,
+                Description = strings.StreamFileBrowserDescription,
+                Bindable = config.GetBindable<bool>(FluXisSetting.StreamFileBrowser)
+            },
+            new SettingsToggle
+            {
                 Label = strings.LogAPI,
                 Description = strings.LogAPIDescription,
                 Bindable = config.GetBindable<bool>(FluXisSetting.LogAPIResponses)
