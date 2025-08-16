@@ -62,10 +62,17 @@ public partial class GameplayHUD : Container
                 {
                     playfields = ruleset.PlayfieldManager.Players.Select(x => new PlayfieldHUD(x)).ToArray()
                 }
-            },
-            new ModsDisplay(),
-            new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>()),
+            }
         };
+
+        if (screen is not null)
+        {
+            AddRangeInternal(new Drawable[]
+            {
+                new ModsDisplay(),
+                new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>())
+            });
+        }
 
         layout ??= layouts.Layout.Value;
         loadLayout();
