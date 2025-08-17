@@ -59,7 +59,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private GlobalClock clock { get; set; }
 
     private FullInputBlockingContainer searchContainer;
-    private CircularIconButton scrollTopButton;
+    private HeaderButton scrollTopButton;
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer<MapCard> flow;
@@ -198,29 +198,23 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 }
                             }
                         },
-                        new Container
+                        scrollTopButton = new HeaderButton
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Child = scrollTopButton = new CircularIconButton
-                            {
-                                Margin = new MarginPadding(20),
-                                Anchor = Anchor.BottomRight,
-                                Origin = Anchor.BottomRight,
-                                Icon = FontAwesome6.Solid.AngleUp,
-                                UseAutoSize = false,
-                                Size = new Vector2(64),
-                                IconSize = new Vector2(24),
-                                BackgroundColour = Theme.Background3,
-                                Action = () => scroll.ScrollToStart(),
-                                Alpha = 0
-                            }
+                            Margin = new MarginPadding(20),
+                            Anchor = Anchor.BottomRight,
+                            Origin = Anchor.BottomRight,
+                            Icon = FontAwesome6.Solid.AngleUp,
+                            UseAutoSize = false,
+                            Size = new Vector2(64),
+                            IconSize = new Vector2(24),
+                            BackgroundColour = Theme.Background3,
+                            Action = () => scroll.ScrollToStart(),
+                            Alpha = 0
                         }
                     }
                 }
             }
         };
-
-        scrollTopButton.ScaleTo(0.5f, 0);
     }
 
     private void loadMapsets(long offset = 0, bool reload = false)
@@ -309,8 +303,6 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         }
     }
 
-    
-
     protected override void Update()
     {
         base.Update();
@@ -325,15 +317,21 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
         if (currentScrollY > 1000)
         {
-            scrollTopButton.ScaleTo(1f, 200, Easing.OutQuad);
-            scrollTopButton.FadeIn(200, Easing.OutQuad);
-            scrollTopButton.Enabled = true;
+            if (!scrollTopButton.Enabled)
+            {
+                scrollTopButton.ScaleTo(1f, 400, Easing.OutQuart);
+                scrollTopButton.FadeIn(400, Easing.OutQuart);
+                scrollTopButton.Enabled = true;
+            }
         }
         else
         {
-            scrollTopButton.ScaleTo(0.5f, 200, Easing.OutQuad);
-            scrollTopButton.FadeOut(200, Easing.OutQuad);
-            scrollTopButton.Enabled = false;
+            if (scrollTopButton.Enabled)
+            {
+                scrollTopButton.ScaleTo(0.5f, 400, Easing.OutQuart);
+                scrollTopButton.FadeOut(400, Easing.OutQuart);
+                scrollTopButton.Enabled = false;
+            }
         }
 
         if (Math.Abs(scrollDelta) > 0.5f)

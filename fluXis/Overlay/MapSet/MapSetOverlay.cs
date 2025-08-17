@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Tabs;
 using fluXis.Input;
@@ -11,6 +12,7 @@ using fluXis.Overlay.MapSet.Buttons;
 using fluXis.Overlay.MapSet.Sidebar;
 using fluXis.Overlay.MapSet.Tabs;
 using fluXis.Overlay.MapSet.UI.Difficulties;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -26,6 +28,10 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 {
     [Resolved]
     private IAPIClient api { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private FluXisGame game { get; set; }
 
     private APIMapSet set;
     private Container content;
@@ -165,7 +171,8 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 Children = new Drawable[]
                                 {
                                     // new MapSetButton(FontAwesome6.Solid.Star, () => { }),
-                                    new MapSetOpenOnlineButton(set, bindableMap),
+                                    new MapSetButton(FontAwesome6.Solid.ShareNodes, ()
+                                        => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{set.ID}#{bindableMap.Value.ID}")),
                                     new MapSetDownloadButton(set),
                                     // new MapSetButton(FontAwesome6.Solid.EllipsisVertical, () => { })
                                 }
