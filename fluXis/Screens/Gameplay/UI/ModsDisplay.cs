@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using fluXis.Mods;
 using fluXis.Mods.Drawables;
 using fluXis.Screens.Gameplay.HUD;
-using Humanizer;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 
 namespace fluXis.Screens.Gameplay.UI;
 
