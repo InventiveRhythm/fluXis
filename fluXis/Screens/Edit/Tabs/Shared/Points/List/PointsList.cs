@@ -273,16 +273,16 @@ public abstract partial class PointsList : Container
         int p2 = timeSorted.IndexOf(obj);
         if (p1 > p2) (p1, p2) = (p2, p1);
 
-        for (int i=p1; i<=p2; i++)
+        for (int i = p1; i <= p2; i++)
         {
             var e = timeSorted[i];
+
             if (e.Alpha > 0)
             {
                 e.State = SelectedState.Selected;
                 select(e);
             }
         }
-
     }
 
     private void select(PointListEntry obj)
@@ -297,8 +297,7 @@ public abstract partial class PointsList : Container
 
     private void deselect(PointListEntry obj)
     {
-        if (lastSelected == obj)
-            lastSelected = null;
+        if (lastSelected == obj) lastSelected = null;
         selectedEntries.Remove(obj);
     }
 
@@ -322,19 +321,16 @@ public abstract partial class PointsList : Container
             entry.DeleteSelected = deleteSelected;
             entry.OnClone = o => Create(o);
 
-            entry.Selected += e => select(e);
-
-            entry.Deselected += e =>
-            deselect(e);
-
+            entry.Selected += select;
+            entry.Deselected += deselect;
             entry.SelectedRange += e =>
             {
                 if (lastSelected != null)
                     selectRange(e);
                 else
                     select(e);
-
             };
+
             flow.Add(entry);
         }
 
