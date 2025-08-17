@@ -63,8 +63,8 @@ public partial class GameplayHUD : Container
                     playfields = ruleset.PlayfieldManager.Players.Select(x => new PlayfieldHUD(x)).ToArray()
                 }
             },
-            new ModsDisplay(),
-            new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>()),
+            new ModsDisplay(ruleset.Mods),
+            new GameplayLeaderboard(screen?.Scores ?? ScoreInfo.CreateDummyLeaderboard(10), ruleset.PlayfieldManager),
         };
 
         layout ??= layouts.Layout.Value;

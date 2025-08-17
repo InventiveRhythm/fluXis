@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Configuration;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -17,17 +18,23 @@ namespace fluXis.Screens.Gameplay.HUD.Leaderboard;
 
 public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 {
-    [Resolved]
-    private PlayfieldManager playfields { get; set; } = null!;
+    #nullable disable
+    
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PlayfieldManager playfields { get; set; }
+
+    #nullable enable
 
     private Bindable<bool> visible = null!;
     public Bindable<GameplayLeaderboardMode> Mode { get; private set; } = null!;
 
     private List<ScoreInfo> scores { get; }
 
-    public GameplayLeaderboard(List<ScoreInfo> scores)
+    public GameplayLeaderboard(List<ScoreInfo> scores, PlayfieldManager? playfields = null)
     {
         this.scores = scores;
+        this.playfields ??= playfields;
     }
 
     [BackgroundDependencyLoader]
@@ -44,7 +51,7 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 
         InternalChildrenEnumerable = scores.Take(10).Select(s => new LeaderboardEntry(this, s)).OrderDescending();
 
-        playfields.Players.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
+        playfields?.Players.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
     }
 
     public void PerformSort() => SortInternal();
@@ -68,7 +75,9 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 
     private void updateOpacity()
     {
-        var playfield = playfields.FirstPlayer.MainPlayfield;
+        var playfield = playfields?.FirstPlayer.MainPlayfield;
+
+        if (playfield == null) return;
 
         // lowers the opacity of the list when the playfield gets close to it
         var alpha = visible.Value ? 1f : 0f;

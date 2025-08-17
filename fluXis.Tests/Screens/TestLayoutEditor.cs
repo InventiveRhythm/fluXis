@@ -1,4 +1,5 @@
-﻿using fluXis.Graphics.UserInterface.Panel;
+﻿using fluXis.Graphics.Background;
+using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Map;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Layout;
@@ -17,6 +18,10 @@ public partial class TestLayoutEditor : FluXisTestScene
 
         if (manager.IsDefault)
             manager.CreateNewLayout(false);
+
+        var background = new GlobalBackground();
+        TestDependencies.Cache(background);
+        Add(background);
 
         var stack = new ScreenStack();
         Add(stack);
