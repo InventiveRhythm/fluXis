@@ -107,8 +107,8 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                             RelativeSizeAxes = Axes.X,
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
-                            Margin = new MarginPadding { Top = 50 },
-                            Height = 90,
+                            Margin = new MarginPadding { Top = 60 },
+                            Height = 75,
                             Children = new Drawable[]
                             {
                                 new Box
@@ -123,7 +123,8 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
                                     Masking = true,
-                                    CornerRadius = 10,
+                                    CornerRadius = 45,
+                                    CornerExponent = 7,
                                     Children = new Drawable[]
                                     {
                                         new Box
@@ -140,7 +141,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                             ColumnDimensions = new[]
                                             {
                                                 new Dimension(GridSizeMode.Absolute, 50),
-                                                new Dimension(GridSizeMode.Absolute, 5),
+                                                new Dimension(GridSizeMode.Absolute, 15),
                                                 new Dimension(GridSizeMode.AutoSize)
                                             },
                                             Content = new[]
