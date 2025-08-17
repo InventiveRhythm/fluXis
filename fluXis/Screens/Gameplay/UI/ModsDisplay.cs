@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using fluXis.Mods;
 using fluXis.Mods.Drawables;
@@ -23,7 +24,9 @@ public partial class ModsDisplay : GameplayHUDComponent
 
     public ModsDisplay(List<IMod> mods = null)
     {
-        this.mods = mods;
+        this.mods = screen?.Mods ?? mods;
+
+        if (this.mods == null) throw new Exception("Mods List is Null for ModsDisplay");
     }
 
     [BackgroundDependencyLoader]
@@ -34,13 +37,11 @@ public partial class ModsDisplay : GameplayHUDComponent
         Origin = Anchor.TopRight;
         Margin = new MarginPadding { Top = 80, Right = 20 };
         
-        var mods = screen?.Mods ?? this.mods;
         Child = modsContainer = new ModList { Mods = mods };
     }
 
     protected override void Update()
     {
-        var mods = screen?.Mods ?? this.mods;
         if (mods.Count == modsContainer.Count) return;
 
         modsContainer.ReloadList();

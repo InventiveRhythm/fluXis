@@ -35,6 +35,8 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
     {
         this.scores = scores;
         this.playfields ??= playfields;
+
+        if (this.playfields == null) throw new Exception("No playfields found for GameplayLeaderboard");
     }
 
     [BackgroundDependencyLoader]
