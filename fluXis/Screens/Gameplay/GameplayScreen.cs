@@ -68,8 +68,6 @@ using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
-using fluXis.Overlay.Notifications.Tasks;
-using fluXis.Graphics.UserInterface.Color;
 
 namespace fluXis.Screens.Gameplay;
 
@@ -589,8 +587,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         return base.OnExiting(e);
     }
-
-    
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
