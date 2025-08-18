@@ -363,8 +363,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         if (ValidForPush)
         {
-            notifications.Tasks.Show();
-            notifications.Tasks.MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            notifications.Tasks.FadeIn().MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
         }
     }
 
