@@ -68,6 +68,8 @@ using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
+using fluXis.Overlay.Notifications.Tasks;
+using fluXis.Graphics.UserInterface.Color;
 
 namespace fluXis.Screens.Gameplay;
 
@@ -359,6 +361,24 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         return stack;
     }
 
+    private void showNotifcations()
+    {
+        if (ValidForPush)
+        {
+            notifications.Tasks.Show();
+            notifications.Tasks.MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        }
+    }
+
+    private void hideNotifications()
+    {
+        if (ValidForPush)
+        {
+            notifications.Tasks.MoveToX(-400, Styling.TRANSITION_MOVE, Easing.InQuint);
+            Scheduler.AddDelayed(notifications.Tasks.Hide, Styling.TRANSITION_MOVE);
+        }
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -561,6 +581,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             });
         }
 
+        showNotifcations();
+
         OnExit?.Invoke();
         GameplayClock.Stop();
         Samples.CancelFail();
@@ -568,10 +590,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         return base.OnExiting(e);
     }
 
+    
+
     public override void OnEntering(ScreenTransitionEvent e)
     {
         GameplayClock.Start();
         GameplayClock.RateTo(Rate, 0);
+
+        hideNotifications();
 
         if (SubmitScore)
         {
