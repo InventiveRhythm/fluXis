@@ -371,8 +371,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         if (ValidForPush)
         {
-            notifications.Tasks.MoveToX(-400, Styling.TRANSITION_MOVE, Easing.InQuint);
-            Scheduler.AddDelayed(notifications.Tasks.Hide, Styling.TRANSITION_MOVE);
+            notifications.Tasks.MoveToX(-400, Styling.TRANSITION_MOVE, Easing.InQuint).Then().FadeOut();
         }
     }
 
