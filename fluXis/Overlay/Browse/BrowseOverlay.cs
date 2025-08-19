@@ -19,6 +19,7 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.User.Header;
+using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -70,11 +71,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private string currentQuery = string.Empty;
     private bool firstOpen = true;
     private double previousScrollY = 0;
-    private double totalScrolledDistance = 0;
 
     private const float scroll_threshold = 50f;
-    private const float hide_distance = 200f;
-    private const float show_distance = 300f;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -334,26 +332,11 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
             }
         }
 
-        if (Math.Abs(scrollDelta) > 0.5f)
-        {
-            if (Math.Sign(scrollDelta) != Math.Sign(totalScrolledDistance))
-                totalScrolledDistance = scrollDelta;
-            else
-                totalScrolledDistance += scrollDelta;
+        if (currentScrollY <= scroll_threshold)
+            searchContainer.Y = 0;
 
-            if (totalScrolledDistance > hide_distance && !Precision.AlmostEquals(searchContainer.Y, -100) && currentScrollY > scroll_threshold)
-            {
-                Logger.Log("Hiding map browser search container");
-                searchContainer.MoveToY(-100, 500, Easing.OutCubic);
-                totalScrolledDistance = 0;
-            }
-            else if ((totalScrolledDistance < -show_distance && !Precision.AlmostEquals(searchContainer.Y, 0)) || currentScrollY <= scroll_threshold)
-            {
-                Logger.Log("Showing map browser search container");
-                searchContainer.MoveToY(0, 500, Easing.OutCubic);
-                totalScrolledDistance = 0;
-            }
-        }
+        searchContainer.Y += -(float)scrollDelta;
+        searchContainer.Y = Math.Clamp(searchContainer.Y, -100, 0);
 
         previousScrollY = currentScrollY;
     }
