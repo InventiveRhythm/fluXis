@@ -331,7 +331,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         }
 
         if (currentScrollY <= scroll_threshold)
-            searchContainer.Y = 0;
+            searchContainer.MoveToY(0, 200, Easing.OutCubic);
 
         searchContainer.Y += -(float)scrollDelta;
         searchContainer.Y = Math.Clamp(searchContainer.Y, -100, 0);
