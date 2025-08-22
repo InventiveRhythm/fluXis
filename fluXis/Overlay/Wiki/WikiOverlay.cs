@@ -1,22 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Humanizer;
+using fluXis.Audio;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Containers.Markdown;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Input;
 using fluXis.Online.API.Requests.Wiki;
 using fluXis.Online.Drawables;
 using fluXis.Online.Fluxel;
 using Markdig.Syntax.Inlines;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
+using osu.Framework.Logging;
 
 namespace fluXis.Overlay.Wiki;
 
@@ -27,7 +35,8 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
     [Resolved]
     private IAPIClient api { get; set; } = null!;
 
-    private string currentPath = string.Empty;
+    private Bindable<string> currentPath = new(string.Empty);
+    private Bindable<string> currentHeading = new(string.Empty);
     private Stack<string> history = new();
 
     private Container content = null!;
@@ -80,6 +89,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                         },
                         scroll = new FluXisScrollContainer
                         {
+                            Margin = new MarginPadding {Top = 80},
                             RelativeSizeAxes = Axes.Both,
                             ScrollbarVisible = false
                         },
@@ -94,6 +104,72 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                             Origin = Anchor.Centre,
                             Size = new Vector2(50),
                             Alpha = 0
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            Anchor = Anchor.TopLeft,
+                            Origin = Anchor.TopLeft,
+                            Margin = new MarginPadding { Top = 60 },
+                            Height = 75,
+                            Children = new Drawable[]
+                            {
+                                new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = Theme.Background2
+                                },
+                                new Container
+                                {
+                                    Padding = new MarginPadding(10),
+                                    RelativeSizeAxes = Axes.Both,
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Masking = true,
+                                    CornerRadius = 45,
+                                    CornerExponent = 7,
+                                    Children = new Drawable[]
+                                    {
+                                        new Box
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Colour = Theme.Background3
+                                        },
+                                        new GridContainer
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft,
+                                            ColumnDimensions = new[]
+                                            {
+                                                new Dimension(GridSizeMode.Absolute, 50),
+                                                new Dimension(GridSizeMode.Absolute, 15),
+                                                new Dimension(GridSizeMode.AutoSize)
+                                            },
+                                            Content = new[]
+                                            {
+                                                new Drawable[]
+                                                {
+                                                    new BackButton(this)
+                                                    {
+                                                        Margin = new MarginPadding {Left = 10},
+                                                        Anchor = Anchor.Centre,
+                                                        Origin = Anchor.Centre,
+                                                    },
+                                                    Empty(),
+                                                    new WikiNav(currentPath, currentHeading, this)
+                                                    {
+                                                        AutoSizeAxes = Axes.Both,
+                                                        Anchor = Anchor.Centre,
+                                                        Origin = Anchor.Centre,
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -105,13 +181,13 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
     {
         Show();
 
-        if (path == currentPath)
+        if (path == currentPath.Value)
             return;
 
         if (!keepHistory)
             history.Clear();
 
-        currentPath = path;
+        currentPath.Value = path;
 
         loading.FadeIn(200);
         var req = new WikiPageRequest(path);
@@ -151,6 +227,10 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
                     switch (h.Level)
                     {
+                        case 1:
+                            currentHeading.Value = text?.ToString() ?? string.Empty;
+                            break;
+
                         case 2:
                             contents.Add(new ForcedHeightText(true)
                             {
@@ -183,17 +263,17 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                     if (l.StartsWith("/wiki"))
                         l = l[5..];
 
-                    history.Push(currentPath);
+                    history.Push(currentPath.Value);
                     NavigateTo(l, true);
-                }
+                },
+                Text = req.ResponseString
             };
-            md.Text = req.ResponseString;
 
             scroll.Add(new Container
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Padding = new MarginPadding(12) { Top = 50 + 12 },
+                Padding = new MarginPadding(12) { Top = 50 + 12, Bottom = 100 },
                 Child = new GridContainer
                 {
                     RelativeSizeAxes = Axes.X,
@@ -264,7 +344,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
     protected override void PopIn()
     {
-        if (currentPath == string.Empty)
+        if (string.IsNullOrEmpty(currentPath.Value))
             NavigateTo("/home");
 
         content.ResizeHeightTo(0).MoveToY(1)
@@ -296,4 +376,245 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
+
+    private partial class WikiNav : FillFlowContainer
+    {
+        private Bindable<string> currentPath { get; init; }
+        private Bindable<string> currentHeading { get; init; }
+        private readonly WikiOverlay overlay;
+        private static readonly char[] separator_char = new[] { '/' };
+
+        public WikiNav(Bindable<string> currentPathBindable, Bindable<string> currentHeadingBindable, WikiOverlay overlay)
+        {
+            currentPath = currentPathBindable;
+            currentHeading = currentHeadingBindable;
+            this.overlay = overlay;
+
+            Direction = FillDirection.Horizontal;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {   
+            currentHeading.BindValueChanged((heading) =>
+            {
+                if (heading.NewValue == heading.OldValue) return;
+
+                buildNav(currentPath.Value);
+            }, true);
+        }
+
+        private void buildNav(string newPath)
+        {
+            ScheduleAfterChildren(() =>
+            {
+                Alpha = 0;
+                Clear();
+                var pathButtons = createPathButtons(newPath);
+                AddRange(pathButtons);
+                this.FadeIn(100);
+            });
+        }
+
+        private List<Drawable> createPathButtons(string newPath)
+        {
+            var pathNames = newPath.Split(separator_char, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var paths = getPaths(newPath);
+
+            if (pathNames.FirstOrDefault() != "home")
+            {
+                pathNames.Insert(0, "home");
+                paths.Insert(0, "home");
+            }
+
+            var pathButtons = new List<Drawable>();
+
+            foreach ((string name, string path) in pathNames.Zip(paths))
+            {
+                if ("/" + path == newPath || path == newPath)
+                    addPathButton(path, overlay.currentHeading.Value, pathButtons, false);
+                else
+                    addPathButton(path, name.Humanize(LetterCasing.Title), pathButtons);
+            }
+
+            return pathButtons;
+        }
+
+        private void addPathButton(string path, string name, List<Drawable> list, bool addSeparator = true)
+        {
+            list.Add(new PathButton(path, name, overlay.NavigateTo));
+
+            if (addSeparator)
+            {
+                list.Add(new Separator());
+            }
+        }
+        
+        private List<string> getPaths(string path)
+        {
+            var pathNames = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var paths = new List<string>();
+
+            if (pathNames.Length == 0)
+                return paths;
+
+            string currentPath = pathNames[0];
+            paths.Add(currentPath);
+
+            for (int i = 1; i < pathNames.Length; i++)
+            {
+                currentPath += "/" + pathNames[i];
+                paths.Add(currentPath);
+            }
+
+            return paths;
+        }
+
+        private partial class Separator : FluXisSpriteIcon
+        {
+            public Separator()
+            {
+                Icon = FontAwesome6.Solid.AngleRight;
+                Size = new Vector2(15);
+                Anchor = Anchor.CentreLeft;
+                Origin = Anchor.CentreLeft;
+            }
+        }
+    }
+
+    private partial class NavButton : ClickableContainer
+    {   
+        [Resolved]
+        private UISamples? samples { get; set; }
+
+        protected HoverLayer Hover = null!;
+        protected FlashLayer Flash = null!;
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            this.ScaleTo(.9f, 1000, Easing.OutQuint);
+            return true;
+        }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            this.ScaleTo(1, 1000, Easing.OutElastic);
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            samples?.Hover();
+            Hover.Show();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            Hover.Hide();
+            base.OnHoverLost(e);
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            samples?.Click();
+            Flash.Show();
+            return base.OnClick(e);
+        }
+    }
+
+    private partial class BackButton : NavButton
+    {
+        private readonly WikiOverlay overlay;
+
+        public BackButton(WikiOverlay overlay)
+        {
+            this.overlay = overlay;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            Size = new Vector2(50);
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+            CornerRadius = 10;
+            Masking = true;
+
+            InternalChildren = new Drawable[]
+            {
+                Hover = new HoverLayer(),
+                Flash = new FlashLayer(),
+                new FluXisSpriteIcon
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Icon = FontAwesome6.Solid.AngleLeft,
+                    Size = new Vector2(20)
+                }
+            };
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            overlay.NavigateBack();
+            return base.OnClick(e);
+        }
+    }
+
+    private partial class PathButton : NavButton
+    {
+        public string Path { get; private set; }
+        public new string Name { get; private set; }
+
+        private readonly Action<string, bool> navigateAction;
+
+        public PathButton(string path, string name, Action<string, bool> navigateAction)
+        {
+            Path = path;
+            Name = name;
+            this.navigateAction = navigateAction;
+
+            AutoSizeAxes = Axes.Both;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            InternalChildren = new Drawable[]
+            {
+                new Container
+                {
+                    AutoSizeAxes = Axes.Both,
+                    CornerRadius = 5,
+                    Masking = true,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Margin = new MarginPadding(10),
+                    Children = new Drawable[]
+                    {
+                        Hover = new HoverLayer(),
+                        Flash = new FlashLayer(),
+                        new Container
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Padding = new MarginPadding(10),
+                            Child = new FluXisSpriteText()
+                            {
+                                Text = Name,
+                                FontSize = 30,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            navigateAction?.Invoke(Path, true);
+            return base.OnClick(e);
+        }
+    }
 }
