@@ -18,12 +18,12 @@ namespace fluXis.Overlay.User.Header;
 public partial class HeaderButton : CircularContainer
 {
     public IconUsage Icon { get; set; }
-    public Vector2 IconSize { get; init; } = new Vector2(20);
+    public Vector2 IconSize { get; init; } = new(20);
     public string Text { get; set; }
     public Action Action { get; set; }
     public Colour4 BackgroundColour { get; init; } = Theme.Background2;
     public bool UseAutoSize { get; init; } = true;
-    public bool Enabled { get; set; } = false;
+    public bool Enabled { get; set; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -40,7 +40,7 @@ public partial class HeaderButton : CircularContainer
             AutoSizeAxes = Axes.X;
             Height = 48;
         }
-        
+
         Masking = true;
         EdgeEffect = Styling.ShadowSmall;
 

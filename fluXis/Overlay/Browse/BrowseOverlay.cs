@@ -68,7 +68,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private bool loadedAll;
     private string currentQuery = string.Empty;
     private bool firstOpen = true;
-    private double previousScrollY = 0;
+    private double previousScrollY;
 
     private const float scroll_threshold = 50f;
 
@@ -131,7 +131,6 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     Spacing = new Vector2(20),
                                     Children = new Drawable[]
                                     {
-
                                         flow = new FillFlowContainer<MapCard>
                                         {
                                             RelativeSizeAxes = Axes.X,
@@ -139,7 +138,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                             Direction = FillDirection.Full,
                                             Spacing = new Vector2(20)
                                         },
-                                        loading = new FillFlowContainer()
+                                        loading = new FillFlowContainer
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
