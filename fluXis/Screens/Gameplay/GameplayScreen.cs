@@ -359,6 +359,18 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         return stack;
     }
 
+    private void showNotifcations()
+    {
+        if (ValidForPush)
+            notifications.Tasks.FadeIn().MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+    }
+
+    private void hideNotifications()
+    {
+        if (ValidForPush)
+            notifications.Tasks.MoveToX(-400, Styling.TRANSITION_MOVE, Easing.InQuint).Then().FadeOut();
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -561,6 +573,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             });
         }
 
+        showNotifcations();
+
         OnExit?.Invoke();
         GameplayClock.Stop();
         Samples.CancelFail();
@@ -572,6 +586,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         GameplayClock.Start();
         GameplayClock.RateTo(Rate, 0);
+
+        hideNotifications();
 
         if (SubmitScore)
         {
