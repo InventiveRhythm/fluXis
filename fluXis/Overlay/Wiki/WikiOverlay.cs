@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Humanizer;
 using fluXis.Audio;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
@@ -374,6 +375,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
     {
         private Bindable<string> currentPath { get; init; }
         private readonly WikiOverlay overlay;
+        private static readonly char[] separator_char = new[] { '/' };
 
         public WikiNav(Bindable<string> currentPathBindable, WikiOverlay overlay)
         {
@@ -398,7 +400,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
         {
             Clear();
 
-            var pathNames = newPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var pathNames = newPath.Split(separator_char, StringSplitOptions.RemoveEmptyEntries).ToList();
             var paths = getPaths(newPath);
 
             if (pathNames.First() != "home")
@@ -412,9 +414,9 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             foreach ((string name, string path) in pathNames.Zip(paths))
             {
                 if ("/" + path == newPath || path == newPath)
-                    addPathbutton(path, name, pathButtons, false);
+                    addPathbutton(path, name.Humanize(LetterCasing.Title), pathButtons, false);
                 else
-                    addPathbutton(path, name, pathButtons);
+                    addPathbutton(path, name.Humanize(LetterCasing.Title), pathButtons);
             }
 
             AddRange(pathButtons);
@@ -433,7 +435,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                 );
             }
         }
-
+        
         private List<string> getPaths(string path)
         {
             var pathNames = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
