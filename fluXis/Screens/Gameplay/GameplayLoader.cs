@@ -31,6 +31,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override float BackgroundDim => screen?.BackgroundDim ?? 0.5f;
     public override float BackgroundBlur => screen?.BackgroundBlur ?? 0.5f;
     public override bool AllowMusicControl => false;
+    protected override bool BackgroundAllowStoryboard => false;
     public override UserActivity InitialActivity => new UserActivity.LoadingGameplay();
 
     [Resolved]
@@ -301,7 +302,12 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
         this.MakeCurrent();
     }
 
-    public override void OnEntering(ScreenTransitionEvent e) => contentIn();
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        ApplyMapBackground(map);
+        contentIn();
+    }
+
     public override void OnSuspending(ScreenTransitionEvent e) => contentOut(!HasRestarted);
     public override void OnResuming(ScreenTransitionEvent e) => contentIn();
 
