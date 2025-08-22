@@ -237,9 +237,10 @@ public partial class ProfileHeader : Container
                                 Origin = Anchor.CentreRight,
                                 Children = new Drawable[]
                                 {
-                                    new HeaderButton
+                                    new HeaderButton()
                                     {
-                                        Icon = FontAwesome6.Solid.ShareNodes
+                                        Icon = FontAwesome6.Solid.ShareNodes,
+                                        Action = () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}"),
                                     },
                                     api.User.Value?.ID == user.ID
                                         ? new HeaderEditButton()

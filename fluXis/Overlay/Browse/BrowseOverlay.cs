@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Preview;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Context;
@@ -16,6 +18,7 @@ using fluXis.Online.API.Requests.MapSets;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Notifications;
+using fluXis.Overlay.User.Header;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -54,6 +57,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     [Resolved]
     private GlobalClock clock { get; set; }
 
+    private FullInputBlockingContainer searchContainer;
+    private HeaderButton scrollTopButton;
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer<MapCard> flow;
@@ -63,6 +68,9 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private bool loadedAll;
     private string currentQuery = string.Empty;
     private bool firstOpen = true;
+    private double previousScrollY = 0;
+
+    private const float scroll_threshold = 50f;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -119,18 +127,11 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     RelativeSizeAxes = Axes.X,
                                     AutoSizeAxes = Axes.Y,
                                     Direction = FillDirection.Vertical,
-                                    Padding = new MarginPadding { Top = 70, Bottom = 20, Horizontal = 20 },
+                                    Padding = new MarginPadding { Top = 140, Bottom = 20, Horizontal = 20 },
                                     Spacing = new Vector2(20),
                                     Children = new Drawable[]
                                     {
-                                        new BrowserSearchBar
-                                        {
-                                            OnSearch = q =>
-                                            {
-                                                currentQuery = q;
-                                                loadMapsets(reload: true);
-                                            }
-                                        },
+
                                         flow = new FillFlowContainer<MapCard>
                                         {
                                             RelativeSizeAxes = Axes.X,
@@ -166,6 +167,46 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 }
                             }
                         },
+                        searchContainer = new FullInputBlockingContainer
+                        {
+                            Height = 120,
+                            RelativeSizeAxes = Axes.X,
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Padding = new MarginPadding { Top = 60, Horizontal = 20 },
+                            Children = new Drawable[]
+                            {
+                                new Box
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    Height = 135,
+                                    Y = -60,
+                                    Colour = Theme.Background1
+                                },
+                                new BrowserSearchBar
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    OnSearch = q =>
+                                    {
+                                        currentQuery = q;
+                                        loadMapsets(reload: true);
+                                    }
+                                }
+                            }
+                        },
+                        scrollTopButton = new HeaderButton
+                        {
+                            Margin = new MarginPadding(20),
+                            Anchor = Anchor.BottomRight,
+                            Origin = Anchor.BottomRight,
+                            Icon = FontAwesome6.Solid.AngleUp,
+                            UseAutoSize = false,
+                            Size = new Vector2(64),
+                            IconSize = new Vector2(24),
+                            BackgroundColour = Theme.Background3,
+                            Action = () => scroll.ScrollToStart(),
+                            Alpha = 0
+                        }
                     }
                 }
             }
@@ -266,6 +307,36 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
         if (end && !fetchingMore && !loadedAll)
             loadMapsets(flow.Count);
+
+        double currentScrollY = scroll.Current;
+        double scrollDelta = currentScrollY - previousScrollY;
+
+        if (currentScrollY > 1000)
+        {
+            if (!scrollTopButton.Enabled)
+            {
+                scrollTopButton.ScaleTo(1f, 400, Easing.OutQuart);
+                scrollTopButton.FadeIn(400, Easing.OutQuart);
+                scrollTopButton.Enabled = true;
+            }
+        }
+        else
+        {
+            if (scrollTopButton.Enabled)
+            {
+                scrollTopButton.ScaleTo(0.5f, 400, Easing.OutQuart);
+                scrollTopButton.FadeOut(400, Easing.OutQuart);
+                scrollTopButton.Enabled = false;
+            }
+        }
+
+        if (currentScrollY <= scroll_threshold)
+            searchContainer.MoveToY(0, 200, Easing.OutCubic);
+
+        searchContainer.Y += -(float)scrollDelta;
+        searchContainer.Y = Math.Clamp(searchContainer.Y, -100, 0);
+
+        previousScrollY = currentScrollY;
     }
 
     protected override void PopIn()
