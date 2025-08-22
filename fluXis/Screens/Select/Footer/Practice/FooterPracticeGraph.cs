@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
@@ -19,17 +20,24 @@ public partial class FooterPracticeGraph : GridContainer
     [Resolved]
     private MapStore maps { get; set; }
 
-    private readonly List<Drawable> bars = new();
+    [Resolved]
+    private GlobalClock globalClock { get; set; }
+
+    private readonly List<Bar> bars = new();
+    
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
+
+    private int timePerBar = 0;
+
+    private const int bar_count = 64;
 
     public FooterPracticeGraph(BindableNumber<int> start, BindableNumber<int> end)
     {
         this.start = start;
         this.end = end;
 
-        const int count = 64;
-        var loop = Enumerable.Range(0, count * 2 - 1).ToList();
+        var loop = Enumerable.Range(0, bar_count * 2 - 1).ToList();
 
         ColumnDimensions = loop
                            .Select(x => x % 2 == 0 ? new Dimension() : new Dimension(GridSizeMode.Absolute, 2))
@@ -41,7 +49,7 @@ public partial class FooterPracticeGraph : GridContainer
             {
                 if (x % 2 == 0)
                 {
-                    var bar = new Circle
+                    var bar = new Bar
                     {
                         RelativeSizeAxes = Axes.Both,
                         Colour = Theme.Text,
@@ -67,6 +75,12 @@ public partial class FooterPracticeGraph : GridContainer
         end.BindValueChanged(updateHighlight, true);
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        updateCurrent();
+    }
+
     private void updateHighlight(ValueChangedEvent<int> _) => Scheduler.AddOnce(() =>
     {
         var s = start.Value / (float)end.MaxValue;
@@ -81,6 +95,36 @@ public partial class FooterPracticeGraph : GridContainer
             bar.FadeTo(i >= si && i <= ei ? 1 : .25f, 50);
         }
     });
+
+    private void updateCurrent()
+    {
+        if (globalClock.CurrentTrack == null || !globalClock.IsRunning) return;
+        
+        for (var i = 0; i < bars.Count; i++)
+        {
+            var bar = bars[i];
+            int barTime = i * timePerBar;
+            int nextBarTime = (i + 1) * timePerBar;
+            int currentTime = (int)globalClock.CurrentTrack.CurrentTime;
+
+            if (currentTime >= barTime && currentTime < nextBarTime)
+            {
+                if (!bar.IsCurrent)
+                {
+                    bar.Colour = Theme.BeatPulse;
+                    bar.IsCurrent = true;
+                }
+            }
+            else
+            {
+                if (bar.IsCurrent)
+                {
+                    bar.IsCurrent = false;
+                    bar.FadeColour(Theme.Text, 1000f, Easing.OutQuad);
+                }
+            }
+        }
+    }
 
     private void mapChanged(ValueChangedEvent<RealmMap> v)
     {
@@ -98,6 +142,8 @@ public partial class FooterPracticeGraph : GridContainer
         var count = bars.Count;
         var counters = new float[count];
         var endTime = info.EndTime;
+
+        timePerBar = (int)endTime / bar_count;
 
         foreach (var hit in info.HitObjects)
         {
@@ -136,4 +182,6 @@ public partial class FooterPracticeGraph : GridContainer
 
         maps.MapBindable.ValueChanged -= mapChanged;
     }
+
+    public partial class Bar : Circle { public bool IsCurrent = false; }
 }
