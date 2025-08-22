@@ -24,6 +24,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
+using osu.Framework.Logging;
 
 namespace fluXis.Overlay.Wiki;
 
@@ -35,6 +36,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
     private IAPIClient api { get; set; } = null!;
 
     private Bindable<string> currentPath = new(string.Empty);
+    private Bindable<string> currentHeading = new(string.Empty);
     private Stack<string> history = new();
 
     private Container content = null!;
@@ -156,7 +158,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                         Origin = Anchor.Centre,
                                                     },
                                                     Empty(),
-                                                    new WikiNav(currentPath, this)
+                                                    new WikiNav(currentPath, currentHeading, this)
                                                     {
                                                         AutoSizeAxes = Axes.Both,
                                                         Anchor = Anchor.Centre,
@@ -225,6 +227,10 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
                     switch (h.Level)
                     {
+                        case 1:
+                            currentHeading.Value = text?.ToString() ?? string.Empty;
+                            break;
+
                         case 2:
                             contents.Add(new ForcedHeightText(true)
                             {
@@ -374,12 +380,14 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
     private partial class WikiNav : FillFlowContainer
     {
         private Bindable<string> currentPath { get; init; }
+        private Bindable<string> currentHeading { get; init; }
         private readonly WikiOverlay overlay;
         private static readonly char[] separator_char = new[] { '/' };
 
-        public WikiNav(Bindable<string> currentPathBindable, WikiOverlay overlay)
+        public WikiNav(Bindable<string> currentPathBindable, Bindable<string> currentHeadingBindable, WikiOverlay overlay)
         {
             currentPath = currentPathBindable;
+            currentHeading = currentHeadingBindable;
             this.overlay = overlay;
 
             Direction = FillDirection.Horizontal;
@@ -387,23 +395,33 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         [BackgroundDependencyLoader]
         private void load()
-        {
-            currentPath.BindValueChanged((path) =>
+        {   
+            currentHeading.BindValueChanged((heading) =>
             {
-                if (path.NewValue == path.OldValue) return;
+                if (heading.NewValue == heading.OldValue) return;
 
-                buildNav(path.NewValue);
+                buildNav(currentPath.Value);
             }, true);
         }
 
         private void buildNav(string newPath)
         {
-            Clear();
+            ScheduleAfterChildren(() =>
+            {
+                Alpha = 0;
+                Clear();
+                var pathButtons = createPathButtons(newPath);
+                AddRange(pathButtons);
+                this.FadeIn(100);
+            });
+        }
 
+        private List<Drawable> createPathButtons(string newPath)
+        {
             var pathNames = newPath.Split(separator_char, StringSplitOptions.RemoveEmptyEntries).ToList();
             var paths = getPaths(newPath);
 
-            if (pathNames.First() != "home")
+            if (pathNames.FirstOrDefault() != "home")
             {
                 pathNames.Insert(0, "home");
                 paths.Insert(0, "home");
@@ -414,25 +432,21 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             foreach ((string name, string path) in pathNames.Zip(paths))
             {
                 if ("/" + path == newPath || path == newPath)
-                    addPathbutton(path, name.Humanize(LetterCasing.Title), pathButtons, false);
+                    addPathButton(path, overlay.currentHeading.Value, pathButtons, false);
                 else
-                    addPathbutton(path, name.Humanize(LetterCasing.Title), pathButtons);
+                    addPathButton(path, name.Humanize(LetterCasing.Title), pathButtons);
             }
 
-            AddRange(pathButtons);
+            return pathButtons;
         }
 
-        private void addPathbutton(string path, string name, List<Drawable> list, bool addSeperator = true)
+        private void addPathButton(string path, string name, List<Drawable> list, bool addSeparator = true)
         {
-            list.Add(
-                new PathButton(path, name, overlay.NavigateTo)
-            );
+            list.Add(new PathButton(path, name, overlay.NavigateTo));
 
-            if (addSeperator)
+            if (addSeparator)
             {
-                list.Add(
-                    new Seperator()
-                );
+                list.Add(new Separator());
             }
         }
         
@@ -456,9 +470,9 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             return paths;
         }
 
-        private partial class Seperator : FluXisSpriteIcon
+        private partial class Separator : FluXisSpriteIcon
         {
-            public Seperator()
+            public Separator()
             {
                 Icon = FontAwesome6.Solid.AngleRight;
                 Size = new Vector2(15);
