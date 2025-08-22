@@ -114,7 +114,7 @@ public partial class MenuScreen : FluXisScreen
 
     private bool pressedStart;
     private double inactivityTime;
-    private const double inactivity_timeout = 60 * 1000;
+    private const double inactivity_timeout = 20 * 1000;
 
     [BackgroundDependencyLoader]
     private void load(TextureStore textures)
