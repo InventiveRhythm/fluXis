@@ -812,14 +812,14 @@ public partial class MapStore : Component
             ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
 
             var setFolder = MapFiles.GetFullPath(set.ID.ToString());
-            var setFiles = Directory.GetFiles(setFolder);
+            var setFiles = Directory.GetFiles(setFolder, "*", SearchOption.AllDirectories);
 
             int max = setFiles.Length;
             int current = 0;
 
             foreach (var fullFilePath in setFiles)
             {
-                var file = Path.GetFileName(fullFilePath);
+                var file = Path.GetRelativePath(setFolder, fullFilePath);
                 Logger.Log($"Exporting {file}");
 
                 var entry = archive.CreateEntry(file);
