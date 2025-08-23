@@ -6,7 +6,7 @@ using fluXis.Database;
 namespace fluXis.Screens.Edit.Tabs.Verify.Checks.Assets;
 
 public class UnusedAssetsCheck : IVerifyCheck
-{
+{   
     public IEnumerable<VerifyIssue> Check(IVerifyContext ctx)
     {
         var set = ctx.MapSet;
@@ -23,6 +23,15 @@ public class UnusedAssetsCheck : IVerifyCheck
             yield break;
 
         var files = Directory.EnumerateFiles(setPath, "*", SearchOption.AllDirectories);
+
+        HashSet<string> cachedUsedAssets = new();
+
+        foreach (var storyboard in storyboards)
+        {
+            cachedUsedAssets.UnionWith(
+                storyboard.GetUsedScriptAssets(ctx.MapInfo, ctx.RealmMap.GetfullPath())
+            );
+        }
 
         foreach (var file in files)
         {
@@ -56,7 +65,15 @@ public class UnusedAssetsCheck : IVerifyCheck
                 foreach (var element in storyboard.Elements)
                 {
                     var path = element.GetParameter("file", "");
+                    
+                    if (element.Type == Storyboards.StoryboardElementType.Script)
+                    {
+                        string scriptPath = element.GetParameter("path", "");
+                        exists |= scriptPath == relative;
+                    }
+ 
                     exists |= path == relative;
+                    exists |= cachedUsedAssets.Contains(Path.ChangeExtension(relative, null));
                 }
             }
 

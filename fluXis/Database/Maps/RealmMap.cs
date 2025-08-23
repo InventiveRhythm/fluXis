@@ -115,6 +115,9 @@ public class RealmMap : RealmObject
     public virtual MapInfo GetMapInfo() => GetMapInfo<MapInfo>();
 
     [CanBeNull]
+    public virtual string GetfullPath() => MapFiles.GetFullPath(MapSet.GetPathForFile(FileName));
+
+    [CanBeNull]
     public virtual T GetMapInfo<T>()
         where T : MapInfo, new()
     {
