@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using fluXis.Map;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
@@ -59,6 +60,8 @@ public class StoryboardScriptRunner : ScriptRunner
             Logger.Add("Error when running process()!", LogLevel.Error, ex);
         }
     }
+
+    public List<StoryboardElement> GetScriptStoryboardElements() => storyboard.Elements;
 
     [LuaGlobal(Name = "Add")]
     private void add(LuaStoryboardElement element) => storyboard.Elements.Add(element.Build());

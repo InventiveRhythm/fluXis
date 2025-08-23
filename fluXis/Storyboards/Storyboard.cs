@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit;
+using fluXis.Scripting.Runners;
 using fluXis.Utils;
 using Newtonsoft.Json;
 using osuTK;
@@ -15,6 +19,8 @@ public class Storyboard : EditorMap.IChangeNotifier
 
     [JsonProperty("elements")]
     public List<StoryboardElement> Elements { get; set; } = new();
+
+    private HashSet<string> cachedUsedScriptAssets { get; } = new();
 
     [JsonIgnore]
     public bool Empty => Elements.Count == 0;
@@ -71,6 +77,34 @@ public class Storyboard : EditorMap.IChangeNotifier
         x.StartTime += offset;
         x.EndTime += offset;
     });
+
+    public HashSet<string> GetUsedScriptAssets(MapInfo map, string assetPath)
+    {
+        if (cachedUsedScriptAssets.Count > 0)
+            return cachedUsedScriptAssets;
+
+        var Scripts = Elements.Where(e => e.Type == StoryboardElementType.Script).ToList();
+        var luaSpriteElements = new List<StoryboardElement>();
+
+        foreach (var scriptElement in Scripts)
+        {
+            var directory = Path.GetDirectoryName(assetPath);
+            var full = Path.Combine(directory, scriptElement.GetParameter("path", ""));
+            var raw = File.ReadAllText(full);
+
+            var script = new StoryboardScriptRunner(map, this);
+
+            script.Run(raw);
+            script?.Process(scriptElement);
+
+            luaSpriteElements = script.GetScriptStoryboardElements().Where(e => e.Type == StoryboardElementType.Sprite).ToList();
+        }
+
+        foreach (var element in luaSpriteElements)
+            cachedUsedScriptAssets.Add(element.GetParameter("file", ""));
+
+        return cachedUsedScriptAssets;
+    }
 
     public bool Matches(Type type) => typeof(StoryboardElement) == type;
 
