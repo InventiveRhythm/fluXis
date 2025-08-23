@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using fluXis.Configuration;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Actions;
@@ -9,6 +10,7 @@ using fluXis.Screens.Edit.Modding;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -46,6 +48,8 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     private ClickableContainer sidebarClickHandler;
     private PointsSidebar sidebar;
 
+    private Bindable<ScrollDirection> scrollDirection;
+
     private double scrollAccumulation;
 
     protected virtual void BeforeLoad() { }
@@ -55,7 +59,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     protected abstract PointsSidebar CreatePointsSidebar();
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
         RelativeSizeAxes = Axes.Both;
 
@@ -105,6 +109,8 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
                 }
             }
         };
+
+        scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
     }
 
     protected override void LoadComplete()
@@ -161,6 +167,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
 
                 scrollAccumulation += delta;
                 scrollAccumulation *= Settings.InvertedScroll.Value ? -1 : 1;
+                scrollAccumulation *= scrollDirection.Value == ScrollDirection.Up ? -1 : 1;
 
                 while (Math.Abs(scrollAccumulation) >= 1)
                 {

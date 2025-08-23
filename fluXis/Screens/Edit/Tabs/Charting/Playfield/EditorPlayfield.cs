@@ -40,6 +40,8 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     public bool CursorInPlacementArea => ReceivePositionalInputAt(inputManager.CurrentState.Mouse.Position);
 
+    public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
+
     public int Index { get; }
     public bool MainPlayfield => Index == 0;
 
@@ -51,6 +53,8 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     private WaveformGraph waveform;
 
     private Sample hitSound;
+
+    private Bindable<ScrollDirection> scrollDirection;
 
     public EditorPlayfield(int idx)
     {
@@ -113,6 +117,8 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         };
         waveformBind.BindValueChanged(w => waveform.Waveform = w.NewValue, true);
         settings.WaveformOpacity.BindValueChanged(opacity => waveform.FadeTo(opacity.NewValue, 200), true);
+
+        scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
     }
 
     protected override void LoadComplete()
@@ -120,6 +126,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         base.LoadComplete();
 
         inputManager = GetContainingInputManager();
+        scrollDirection.BindValueChanged(_ => updateScale(), true);
     }
 
     protected override void Update()
@@ -135,6 +142,8 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         if (hitSound != null)
             hitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
     }
+
+    private void updateScale() => Scale = new Vector2(1, IsUpScroll ? -1 : 1);
 
     public void PlayHitSound(HitObject info, bool force = false)
     {
