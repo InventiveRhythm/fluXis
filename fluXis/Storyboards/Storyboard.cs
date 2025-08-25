@@ -83,25 +83,25 @@ public class Storyboard : EditorMap.IChangeNotifier
         if (cachedUsedScriptAssets.Count > 0)
             return cachedUsedScriptAssets;
 
-        var Scripts = Elements.Where(e => e.Type == StoryboardElementType.Script).ToList();
-        var luaSpriteElements = new List<StoryboardElement>();
+        var scriptElements = Elements.Where(e => e.Type == StoryboardElementType.Script).ToList();
 
-        foreach (var scriptElement in Scripts)
+        foreach (var scriptElement in scriptElements)
         {
             var directory = Path.GetDirectoryName(assetPath);
             var full = Path.Combine(directory, scriptElement.GetParameter("path", ""));
             var raw = File.ReadAllText(full);
 
             var script = new StoryboardScriptRunner(map, this);
-
             script.Run(raw);
             script?.Process(scriptElement);
 
-            luaSpriteElements = script.GetScriptStoryboardElements().Where(e => e.Type == StoryboardElementType.Sprite).ToList();
-        }
+            var luaSpriteElements = script.GetScriptStoryboardElements()
+                                        .Where(e => e.Type == StoryboardElementType.Sprite)
+                                        .ToList();
 
-        foreach (var element in luaSpriteElements)
-            cachedUsedScriptAssets.Add(element.GetParameter("file", ""));
+            foreach (var element in luaSpriteElements)
+                cachedUsedScriptAssets.Add(element.GetParameter("file", ""));
+        }
 
         return cachedUsedScriptAssets;
     }
