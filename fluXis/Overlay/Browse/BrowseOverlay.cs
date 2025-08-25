@@ -61,6 +61,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private HeaderButton scrollTopButton;
     private Container content;
     private FluXisScrollContainer scroll;
+    private FillFlowContainer scrollFlow;
     private FillFlowContainer<MapCard> flow;
     private FillFlowContainer loading;
 
@@ -69,8 +70,6 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private string currentQuery = string.Empty;
     private bool firstOpen = true;
     private double previousScrollY;
-
-    private const float scroll_threshold = 50f;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -122,7 +121,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 ScrollbarVisible = false,
-                                Child = new FillFlowContainer
+                                Child = scrollFlow = new FillFlowContainer
                                 {
                                     RelativeSizeAxes = Axes.X,
                                     AutoSizeAxes = Axes.Y,
@@ -168,28 +167,26 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                         },
                         searchContainer = new FullInputBlockingContainer
                         {
-                            Height = 120,
                             RelativeSizeAxes = Axes.X,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Padding = new MarginPadding { Top = 60, Horizontal = 20 },
+                            AutoSizeAxes = Axes.Y,
+                            Margin = new MarginPadding { Top = 50 },
                             Children = new Drawable[]
                             {
                                 new Box
                                 {
-                                    RelativeSizeAxes = Axes.X,
-                                    Height = 135,
-                                    Y = -60,
+                                    RelativeSizeAxes = Axes.Both,
                                     Colour = Theme.Background1
                                 },
-                                new BrowserSearchBar
+                                new Container
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    OnSearch = q =>
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Padding = new MarginPadding(20),
+                                    Child = new BrowserSearchBar(q =>
                                     {
                                         currentQuery = q;
                                         loadMapsets(reload: true);
-                                    }
+                                    })
                                 }
                             }
                         },
@@ -210,6 +207,18 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        scrollTopButton.Enabled.BindValueChanged(v =>
+        {
+            scrollTopButton.ScaleTo(v.NewValue ? 1f : 0.8f, 400, Easing.OutQuint)
+                           .FadeTo(v.NewValue ? 1f : 0f, 200);
+        }, true);
+        scrollTopButton.FinishTransforms(true);
     }
 
     private void loadMapsets(long offset = 0, bool reload = false)
@@ -310,31 +319,16 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         double currentScrollY = scroll.Current;
         double scrollDelta = currentScrollY - previousScrollY;
 
-        if (currentScrollY > 1000)
-        {
-            if (!scrollTopButton.Enabled)
-            {
-                scrollTopButton.ScaleTo(1f, 400, Easing.OutQuart);
-                scrollTopButton.FadeIn(400, Easing.OutQuart);
-                scrollTopButton.Enabled = true;
-            }
-        }
-        else
-        {
-            if (scrollTopButton.Enabled)
-            {
-                scrollTopButton.ScaleTo(0.5f, 400, Easing.OutQuart);
-                scrollTopButton.FadeOut(400, Easing.OutQuart);
-                scrollTopButton.Enabled = false;
-            }
-        }
+        scrollTopButton.Enabled.Value = currentScrollY >= 1000;
 
-        if (currentScrollY <= scroll_threshold)
-            searchContainer.MoveToY(0, 200, Easing.OutCubic);
+        var searchHeight = searchContainer.DrawHeight;
+        scrollFlow.Padding = scrollFlow.Padding with { Top = 50 + searchHeight };
+
+        if (currentScrollY <= searchHeight)
+            searchContainer.MoveToY(0, 50);
 
         searchContainer.Y += -(float)scrollDelta;
         searchContainer.Y = Math.Clamp(searchContainer.Y, -100, 0);
-
         previousScrollY = currentScrollY;
     }
 

@@ -13,9 +13,14 @@ namespace fluXis.Overlay.Browse;
 
 public partial class BrowserSearchBar : Container
 {
-    public Action<string> OnSearch { get; set; }
+    private Action<string> onSearch { get; set; }
 
     private FluXisTextBox textBox;
+
+    public BrowserSearchBar(Action<string> search)
+    {
+        onSearch = search;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -93,6 +98,6 @@ public partial class BrowserSearchBar : Container
 
     private void search()
     {
-        OnSearch?.Invoke(textBox.Text);
+        onSearch?.Invoke(textBox.Text);
     }
 }
