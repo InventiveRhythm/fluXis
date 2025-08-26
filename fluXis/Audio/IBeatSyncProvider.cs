@@ -6,5 +6,5 @@ public interface IBeatSyncProvider
 {
     double StepTime { get; }
     double BeatTime { get; }
-    Action<int> OnBeat { get; set; }
+    Action<int, bool> OnBeat { get; set; }
 }

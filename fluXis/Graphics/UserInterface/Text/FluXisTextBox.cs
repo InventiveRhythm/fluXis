@@ -216,7 +216,7 @@ public partial class FluXisTextBox : BasicTextBox
             beatSync.OnBeat += onBeat;
         }
 
-        private void onBeat(int beat)
+        private void onBeat(int beat, bool finish)
         {
             if (!shouldPulse) return;
 

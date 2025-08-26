@@ -70,7 +70,7 @@ public partial class SelectionBox : Container
     {
         base.LoadComplete();
 
-        beatSync.OnBeat += _ =>
+        beatSync.OnBeat += (_, _) =>
         {
             box.FadeTo(.3f)
                .FadeTo(.2f, beatSync.BeatTime);
