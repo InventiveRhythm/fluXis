@@ -4,6 +4,7 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -16,7 +17,7 @@ namespace fluXis.Overlay.Browse;
 
 public partial class BrowseFilter<T> : FillFlowContainer
 {
-    public BrowseFilter(LocalisableString title, IEnumerable<Option> options)
+    public BrowseFilter(LocalisableString title, BindableList<T> selected, IEnumerable<Option> options)
     {
         RelativeSizeAxes = Axes.X;
         Height = 20;
@@ -35,7 +36,7 @@ public partial class BrowseFilter<T> : FillFlowContainer
             }
         };
 
-        options.ForEach(x => Add(new Button(x)));
+        options.ForEach(x => Add(new Button(x, selected)));
     }
 
     public class Option
@@ -58,6 +59,7 @@ public partial class BrowseFilter<T> : FillFlowContainer
         private UISamples samples { get; set; }
 
         private readonly Option option;
+        private readonly BindableList<T> selected;
 
         private Box background;
         private HoverLayer hover;
@@ -66,9 +68,10 @@ public partial class BrowseFilter<T> : FillFlowContainer
 
         private bool enabled;
 
-        public Button(Option option)
+        public Button(Option option, BindableList<T> selected)
         {
             this.option = option;
+            this.selected = selected;
         }
 
         [BackgroundDependencyLoader]
@@ -103,6 +106,20 @@ public partial class BrowseFilter<T> : FillFlowContainer
             };
         }
 
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            selected.BindCollectionChanged((_, _) =>
+            {
+                enabled = selected.Contains(option.Value);
+
+                background.Alpha = enabled ? 1f : 0f;
+                text.Alpha = enabled ? 1f : .6f;
+                text.Colour = enabled ? Theme.TextDark : Theme.Text;
+            }, true);
+        }
+
         protected override bool OnHover(HoverEvent e)
         {
             samples.Hover();
@@ -115,25 +132,15 @@ public partial class BrowseFilter<T> : FillFlowContainer
             hover.Hide();
         }
 
-        protected override bool OnMouseDown(MouseDownEvent e)
-        {
-            return base.OnMouseDown(e);
-        }
-
-        protected override void OnMouseUp(MouseUpEvent e)
-        {
-            base.OnMouseUp(e);
-        }
-
         protected override bool OnClick(ClickEvent e)
         {
             enabled = !enabled;
             samples.Click();
             flash.Show();
 
-            background.Alpha = enabled ? 1f : 0f;
-            text.Alpha = enabled ? 1f : .6f;
-            text.Colour = enabled ? Theme.TextDark : Theme.Text;
+            var v = option.Value;
+            if (!selected.Remove(v))
+                selected.Add(v);
 
             return true;
         }

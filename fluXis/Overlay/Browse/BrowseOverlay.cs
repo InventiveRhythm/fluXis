@@ -22,6 +22,8 @@ using fluXis.Overlay.Notifications;
 using fluXis.Overlay.User.Header;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -72,6 +74,9 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private string currentQuery = string.Empty;
     private bool firstOpen = true;
     private double previousScrollY;
+
+    private BindableList<MapStatus> filterStatus;
+    private BindableList<int> filterKeymode;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -202,12 +207,14 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                             {
                                                 new BrowseFilter<MapStatus>(
                                                     "Status",
+                                                    filterStatus = new BindableList<MapStatus>(),
                                                     Enum.GetValues<MapStatus>()
                                                         .Where(x => x >= MapStatus.Unsubmitted)
                                                         .Select(x => new BrowseFilter<MapStatus>.Option(x, x.ToString(), Theme.GetStatusColor((int)x)))
                                                 ),
                                                 new BrowseFilter<int>(
                                                     "Keymode",
+                                                    filterKeymode = new BindableList<int>(),
                                                     Enumerable.Range(4, 5)
                                                               .Select(x => new BrowseFilter<int>.Option(x, $"{x}K", Theme.GetKeyCountColor(x)))
                                                 )
@@ -256,7 +263,25 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         if (reload)
             flow.Clear();
 
-        var req = new MapSetsRequest(offset, 48, currentQuery);
+        var query = currentQuery;
+        filterKeymode.ForEach(x => query += $" k={x}");
+
+        if (filterStatus.Count == 4)
+            query += " s=a";
+        else
+        {
+            filterStatus.ForEach(x => query += $" s={x switch {
+                MapStatus.Unsubmitted => "u",
+                MapStatus.Pending => "pen",
+                MapStatus.Impure => "i",
+                MapStatus.Pure => "p",
+                _ => throw new ArgumentOutOfRangeException(nameof(x), x, null) }
+            }");
+        }
+
+        Logger.Log(query);
+
+        var req = new MapSetsRequest(offset, 48, query);
         req.Success += response =>
         {
             loadedAll = response.Data.Count == 0;
