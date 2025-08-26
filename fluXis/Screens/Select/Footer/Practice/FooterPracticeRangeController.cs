@@ -126,7 +126,7 @@ public partial class FooterPracticeRangeController : Container
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
 
-        defaultStartX = 0;
+        defaultStartX = -7;
         defaultEndX = (int)originalWidth + 7;
 
         startPoint.X = defaultStartX;
@@ -248,49 +248,51 @@ public partial class FooterPracticeRangeController : Container
                 var mousePos = e.ScreenSpaceMousePosition;
                 var parentScreenSpace = Parent.ScreenSpaceDrawQuad;
                 
-                if (!parentScreenSpace.Contains(mousePos))
-                    return;
+                bool inBoundsX = mousePos.X >= parentScreenSpace.TopLeft.X && mousePos.X <= parentScreenSpace.TopRight.X;
                 
-                if (otherPoint != null)
+                if (inBoundsX)
                 {
-                    var mouseLocalX = Parent.ToLocalSpace(mousePos).X;
+                    if (otherPoint != null)
+                    {
+                        var mouseLocalX = Parent.ToLocalSpace(mousePos).X;
+                        
+                        if (isStartPoint)
+                        {
+                            if (mouseLocalX >= otherPoint.X)
+                                return;
+                        }
+                        else
+                        {
+                            if (mouseLocalX <= otherPoint.X)
+                                return;
+                        }
+                    }
                     
-                    if (isStartPoint)
-                    {
-                        if (mouseLocalX >= otherPoint.X)
-                            return;
-                    }
-                    else
-                    {
-                        if (mouseLocalX <= otherPoint.X)
-                            return;
-                    }
-                }
-                
-                float newX = X + e.Delta.X;
-                newX = Math.Max(0, Math.Min(Parent.DrawWidth + 7, newX));
+                    float newX = X + e.Delta.X;
+                    newX = Math.Max(0, Math.Min(Parent.DrawWidth + 7, newX));
 
-                if (otherPoint != null)
-                {
-                    if (isStartPoint)
+                    if (otherPoint != null)
                     {
-                        if (!(BindableValue.Value + 1 > otherPoint.BindableValue.Value && e.Delta.X > 0))
-                            newX = Math.Min(newX, otherPoint.X - triangle_size);
+                        if (isStartPoint)
+                        {
+                            if (!(BindableValue.Value + 1 > otherPoint.BindableValue.Value && e.Delta.X > 0))
+                                newX = Math.Min(newX, otherPoint.X - triangle_size);
+                        }
+                        else
+                        {
+                            if (!(BindableValue.Value - 1 < otherPoint.BindableValue.Value && e.Delta.X < 0))
+                                newX = Math.Max(newX, otherPoint.X + triangle_size);
+                        }
                     }
-                    else
-                    {
-                        if (!(BindableValue.Value - 1 < otherPoint.BindableValue.Value && e.Delta.X < 0))
-                            newX = Math.Max(newX, otherPoint.X + triangle_size);
-                    }
-                }
 
-                X = newX;
-                OnDragBind?.Invoke(e);
-                
-                if (Clock.CurrentTime - lastSampleTime >= sample_interval)
-                {
-                    dragSample.Play();
-                    lastSampleTime = Clock.CurrentTime;
+                    X = newX;
+                    OnDragBind?.Invoke(e);
+                    
+                    if (Clock.CurrentTime - lastSampleTime >= sample_interval)
+                    {
+                        dragSample.Play();
+                        lastSampleTime = Clock.CurrentTime;
+                    }
                 }
             }
         }
