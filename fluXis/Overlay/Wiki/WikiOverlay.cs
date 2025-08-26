@@ -482,49 +482,15 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
         }
     }
 
-    private partial class NavButton : ClickableContainer
-    {   
+    private partial class BackButton : ClickableContainer
+    {
         [Resolved]
         private UISamples? samples { get; set; }
 
-        protected HoverLayer Hover = null!;
-        protected FlashLayer Flash = null!;
-
-        protected override bool OnMouseDown(MouseDownEvent e)
-        {
-            this.ScaleTo(.9f, 1000, Easing.OutQuint);
-            return true;
-        }
-
-        protected override void OnMouseUp(MouseUpEvent e)
-        {
-            this.ScaleTo(1, 1000, Easing.OutElastic);
-        }
-
-        protected override bool OnHover(HoverEvent e)
-        {
-            samples?.Hover();
-            Hover.Show();
-            return true;
-        }
-
-        protected override void OnHoverLost(HoverLostEvent e)
-        {
-            Hover.Hide();
-            base.OnHoverLost(e);
-        }
-
-        protected override bool OnClick(ClickEvent e)
-        {
-            samples?.Click();
-            Flash.Show();
-            return base.OnClick(e);
-        }
-    }
-
-    private partial class BackButton : NavButton
-    {
         private readonly WikiOverlay overlay;
+        
+        protected HoverLayer Hover = null!;
+        protected FlashLayer Flash = null!; 
 
         public BackButton(WikiOverlay overlay)
         {
@@ -554,19 +520,49 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             };
         }
 
+        protected override bool OnHover(HoverEvent e)
+        {
+            samples?.Hover();
+            Hover.Show();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            Hover.Hide();
+            base.OnHoverLost(e);
+        }
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            this.ScaleTo(.9f, 1000, Easing.OutQuint);
+            return true;
+        }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            this.ScaleTo(1, 1000, Easing.OutElastic);
+        }
+
         protected override bool OnClick(ClickEvent e)
         {
             overlay.NavigateBack();
+            Flash.Show();
             return base.OnClick(e);
         }
     }
 
-    private partial class PathButton : NavButton
+    private partial class PathButton : ClickableContainer
     {
+        [Resolved]
+        private UISamples? samples { get; set; }
+
         public string Path { get; private set; }
         public new string Name { get; private set; }
 
         private readonly Action<string, bool> navigateAction;
+
+        private FluXisSpriteText text = null!;
 
         public PathButton(string path, string name, Action<string, bool> navigateAction)
         {
@@ -592,13 +588,11 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                     Margin = new MarginPadding(10),
                     Children = new Drawable[]
                     {
-                        Hover = new HoverLayer(),
-                        Flash = new FlashLayer(),
                         new Container
                         {
                             AutoSizeAxes = Axes.Both,
                             Padding = new MarginPadding(10),
-                            Child = new FluXisSpriteText()
+                            Child = text = new FluXisSpriteText()
                             {
                                 Text = Name,
                                 FontSize = 30,
@@ -609,6 +603,19 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                     }
                 }
             };
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            samples?.Hover();
+            text.FadeColour(Theme.Highlight, 200, Easing.Out);
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            text.FadeColour(Theme.Text, 200, Easing.Out);
+            base.OnHoverLost(e);
         }
 
         protected override bool OnClick(ClickEvent e)
