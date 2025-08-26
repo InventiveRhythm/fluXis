@@ -377,10 +377,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                     RelativeSizeAxes = Axes.Both,
                                                     Colour = Theme.Background2
                                                 },
-                                                pathTextBox = new PathTextBox()
-                                                {
-                                                    Alpha = 0
-                                                },
+                                                pathTextBox = new PathTextBox(),
                                                 searchStatus = new SearchStatus(pathTextBox)
                                                 {
                                                     Anchor = Anchor.CentreLeft,
