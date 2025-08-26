@@ -168,12 +168,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
         this.loader = loader;
-
-        editorMap = new EditorMap
-        {
-            RealmMap = realmMap,
-            MapInfo = map
-        };
+        editorMap = new EditorMap(map, realmMap, LoadComponent);
     }
 
     [BackgroundDependencyLoader]
@@ -884,7 +879,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             {
                 overlay.SubText = $"Checking for issues in '{map.Difficulty}'...";
 
-                var results = verifyTab.RunVerify(new BasicVerifyContext(map));
+                var results = verifyTab.RunVerify(new BasicVerifyContext(map, LoadComponent));
                 files[map.Difficulty] = results.ProblematicIssues;
             }
 

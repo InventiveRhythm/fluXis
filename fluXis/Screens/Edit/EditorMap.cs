@@ -28,6 +28,8 @@ public class EditorMap : IVerifyContext
     public Storyboard Storyboard => MapInfo.Storyboard;
     public RealmMapSet MapSet => RealmMap?.MapSet;
 
+    private readonly Action<Drawable> loadComponent;
+
     public string MapInfoHash => MapUtils.GetHash(MapInfo.Serialize());
     public string MapEventsHash => MapUtils.GetHash(MapEvents.Save());
     public string StoryboardHash => MapUtils.GetHash(Storyboard.Serialize());
@@ -37,6 +39,13 @@ public class EditorMap : IVerifyContext
     public PanelContainer Panels { get; set; }
 
     private List<IChangeNotifier> notifiers = new();
+
+    public EditorMap(EditorMapInfo info, RealmMap map, Action<Drawable> loadComponent)
+    {
+        MapInfo = info;
+        RealmMap = map;
+        this.loadComponent = loadComponent;
+    }
 
     #region Events
 
@@ -124,6 +133,8 @@ public class EditorMap : IVerifyContext
     public event Action<NoteEvent> NoteEventUpdated;
 
     #endregion
+
+    public void LoadComponent(Drawable drawable) => loadComponent.Invoke(drawable);
 
     public void SetupNotifiers()
     {

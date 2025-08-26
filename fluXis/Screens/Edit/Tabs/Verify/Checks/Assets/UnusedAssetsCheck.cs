@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Database;
+using fluXis.Map;
+using fluXis.Storyboards;
+using fluXis.Storyboards.Drawables;
+using fluXis.Utils;
 
 namespace fluXis.Screens.Edit.Tabs.Verify.Checks.Assets;
 
@@ -13,9 +18,45 @@ public class UnusedAssetsCheck : IVerifyCheck
         var infos = set.Maps.Select(x => x.GetMapInfo())
                        .Where(x => x != null).ToList();
 
-        var storyboards = infos.DistinctBy(x => x.StoryboardFile)
-                               .Select(x => x.GetStoryboard())
-                               .Where(x => x != null).ToList();
+        var storyboards = infos
+                          .Select<MapInfo, (MapInfo map, Storyboard storyboard)>(x => (x, x.GetStoryboard()))
+                          .Where(x => x.storyboard != null).ToList();
+
+        var storyboardFiles = new HashSet<string>();
+
+        foreach (var sb in storyboards)
+        {
+            var root = set.GetPathForFile("");
+            if (!Path.IsPathRooted(root)) root = MapFiles.GetFullPath(root);
+            root = Path.TrimEndingDirectorySeparator(root);
+
+            var storyboard = sb.storyboard.JsonCopy();
+            var draw = new DrawableStoryboard(sb.map, storyboard, root);
+            ctx.LoadComponent(draw);
+
+            foreach (var element in storyboard.Elements)
+            {
+                var path = "";
+
+                switch (element.Type)
+                {
+                    case StoryboardElementType.Sprite:
+                        path = element.GetParameter("file", "");
+                        break;
+
+                    case StoryboardElementType.Script:
+                        path = element.GetParameter("path", "");
+                        break;
+                }
+
+                if (string.IsNullOrWhiteSpace(path))
+                    continue;
+
+                storyboardFiles.Add(path);
+            }
+
+            draw.Dispose();
+        }
 
         var setPath = MapFiles.GetFullPath($"{set.ID}");
 
@@ -46,19 +87,10 @@ public class UnusedAssetsCheck : IVerifyCheck
                 exists |= info.StoryboardFile == relative;
 
                 foreach (var hitObject in info.HitObjects)
-                {
                     exists |= hitObject.HitSound == relative;
-                }
             }
 
-            foreach (var storyboard in storyboards)
-            {
-                foreach (var element in storyboard.Elements)
-                {
-                    var path = element.GetParameter("file", "");
-                    exists |= path == relative;
-                }
-            }
+            exists |= storyboardFiles.Any(x => string.Equals(Path.ChangeExtension(x, null), Path.ChangeExtension(relative, null), StringComparison.OrdinalIgnoreCase));
 
             if (!exists)
             {
