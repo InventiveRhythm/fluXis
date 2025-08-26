@@ -1,4 +1,5 @@
 using System;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -7,6 +8,7 @@ namespace fluXis.Storyboards.Drawables;
 
 public partial class DrawableStoryboardElement : CompositeDrawable
 {
+    protected virtual bool AllowBorder => false;
     public StoryboardElement Element { get; }
 
     public override bool RemoveCompletedTransforms => false;
@@ -85,6 +87,11 @@ public partial class DrawableStoryboardElement : CompositeDrawable
 
                         this.FadeColour(startColour).Then()
                             .FadeColour(endColour, duration, animation.Easing);
+                        break;
+
+                    case StoryboardAnimationType.Border when AllowBorder:
+                        this.BorderTo(animation.StartFloat).Then()
+                            .BorderTo(animation.EndFloat, duration, animation.Easing);
                         break;
                 }
             }

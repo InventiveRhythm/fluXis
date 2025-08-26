@@ -94,5 +94,6 @@ public enum StoryboardAnimationType
     Height = 5,
     Rotate = 6,
     Fade = 7,
-    Color = 8
+    Color = 8,
+    Border = 9
 }

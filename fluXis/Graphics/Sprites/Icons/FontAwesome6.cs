@@ -141,10 +141,10 @@ public class FontAwesome6
 
     public static class Regular
     {
-        private static IconUsage getRegular(int icon) => get(icon).With(weight: "Regular");
+        public static IconUsage GetRegular(int icon) => get(icon).With(weight: "Regular");
 
-        public static IconUsage Circle => getRegular(0xf111);
-        public static IconUsage Clock => getRegular(0xf017);
+        public static IconUsage Circle => GetRegular(0xf111);
+        public static IconUsage Clock => GetRegular(0xf017);
     }
 
     public static class Brands

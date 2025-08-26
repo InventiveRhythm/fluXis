@@ -102,7 +102,13 @@ public enum StoryboardElementType
     Text = 2,
 
     [Icon(0xf70e)]
-    Script = 3
+    Script = 3,
+
+    [Icon(0xf111)]
+    Circle = 4,
+
+    [Icon(0xf111, Regular = true)]
+    OutlineCircle = 5
 }
 
 public enum StoryboardLayer
