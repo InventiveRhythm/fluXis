@@ -17,9 +17,6 @@ public partial class FluXisSearchBox : Container
 
     private FluXisSpriteIcon searchIcon;
     private LoadingIcon loadingIcon;
-    private FluXisSpriteText statusText;
-
-    private bool isStatusVisible = false;
 
     public string StatusText { get; set; } = "";
 
@@ -69,17 +66,6 @@ public partial class FluXisSearchBox : Container
                         BackgroundActive = Theme.Background2,
                         BackgroundInactive = Theme.Background2,
                         OnTextChanged = OnTextChanged
-                    },
-                    statusText = new FluXisSpriteText
-                    {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Margin = new MarginPadding { Left = 5, Top = 5 },
-                        Font = new FluXisFont(),
-                        FontSize = 20,
-                        Colour = Theme.Foreground,
-                        Text = "",
-                        Alpha = 0.5f
                     }
                 }
 
@@ -97,31 +83,5 @@ public partial class FluXisSearchBox : Container
     {
         loadingIcon.FadeOut(200);
         searchIcon.FadeIn(200);
-    }
-
-    public void ShowStatus()
-    {
-        if (isStatusVisible)
-            return;
-
-        statusText.Text = StatusText;
-        statusText.FadeTo(0.4f, 250, Easing.OutQuint);
-        statusText.MoveToOffset(new Vector2(0, 20), 100, Easing.OutQuint);
-        isStatusVisible = true;
-    }
-
-    public void HideStatus()
-    {
-        if (!isStatusVisible)
-            return;
-
-        statusText.FadeOut(400, Easing.OutQuint);
-        statusText.MoveToOffset(new Vector2(0, -20), 100, Easing.OutQuint);
-        isStatusVisible = false;
-    }
-
-    public void ChangeStatusText(string newStatusText = "")
-    {
-        statusText.Text = newStatusText;
     }
 }

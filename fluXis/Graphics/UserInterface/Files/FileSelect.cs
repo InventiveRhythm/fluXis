@@ -26,6 +26,7 @@ using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osu.Framework.Threading;
 using osuTK;
@@ -54,6 +55,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
     public event Action<FileInfo> FileChanged;
 
+    private SearchStatus searchStatus;
     private PathTextBox pathTextBox;
     private FluXisSearchBox searchBox;
     private IdleTracker searchTracker;
@@ -376,6 +378,15 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                     Colour = Theme.Background2
                                                 },
                                                 pathTextBox = new PathTextBox()
+                                                {
+                                                    Alpha = 0
+                                                },
+                                                searchStatus = new SearchStatus(pathTextBox)
+                                                {
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft,
+                                                    Margin = new MarginPadding { Left = 10 }
+                                                }
                                             }
                                         },
                                         searchTracker = new IdleTracker(300, updateSearch),
@@ -470,7 +481,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         errorContainer.FadeOut(200);
         drivesFlow.FadeOut(200);
         filesFlow.FadeIn(200);
-        searchBox.HideStatus();
+        searchStatus.HideStatus();
         searchBox.HideLoading();
         scrollContainer.ScrollToStart(false);
 
@@ -650,13 +661,13 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             canRefresh = true;
         }
         
-        searchBox.ChangeStatusText("Searching...");
-        searchBox.ShowStatus();
+        searchStatus.ChangeStatus("Searching...");
+        searchStatus.ShowStatus();
 
         if (string.IsNullOrEmpty(search))
         {
             matchedEntries.Clear();
-            searchBox.HideStatus();
+            searchStatus.HideStatus();
             searchBox.HideLoading();
             if (canRefresh)
             {
@@ -671,7 +682,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             scrollContainer.ScrollToStart(false);
             canRefresh = false;
             matchedEntries.Clear();
-            searchBox.ShowStatus();
+            searchStatus.ShowStatus();
             searchBox.ShowLoading();
 
             var entriesToProcess = EntryList.OfType<GenericEntry>().ToList();
@@ -714,7 +725,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                         matchFoundAtleastOnce = true;
                     }
                     
-                    searchBox.ChangeStatusText($"Searched {i + 1} out of {EntryList.Count}, Found {matchesFound}.");
+                    searchStatus.ChangeStatus($"Searched {i + 1} out of {EntryList.Count}, Found {matchesFound}.");
                 }
 
                 if (batchMatchingEntries.Count > 0)
@@ -730,7 +741,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 {
                     searchBox.HideLoading();
                     if (!matchFoundAtleastOnce)
-                        searchBox.ChangeStatusText($"Search couldn't find item.");
+                        searchStatus.ChangeStatus($"Search couldn't find item.");
 
                     canRefresh = true;
                     currentSearchDelegate = null;
@@ -871,6 +882,83 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
+
+    private partial class SearchStatus : Container
+    {
+        private readonly PathTextBox pathTextBox;
+        private bool isStatusVisible;
+        private FluXisSpriteText statusText;
+        
+        public SearchStatus(PathTextBox pathTextBox)
+        {
+            this.pathTextBox = pathTextBox;
+            
+            RelativeSizeAxes = Axes.Both;
+            Alpha = 0f;
+            isStatusVisible = false;
+        }
+        
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+
+            Child = statusText = new FluXisSpriteText
+            {
+                Text = string.Empty,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Font = new FluXisFont(),
+                FontSize = 30,
+                Colour = Theme.Foreground,
+                Alpha = 0.7f
+            };
+        }
+        
+        public void ShowStatus(string status = null)
+        {   
+            if (status is not null)
+                statusText.Text = status;
+            
+            isStatusVisible = true;
+            
+            pathTextBox?.FadeOut(200);
+            
+            this.FadeIn(200);
+        }
+        
+        public void HideStatus()
+        {
+            isStatusVisible = false;
+            
+            pathTextBox?.FadeIn(200);
+            
+            this.FadeOut(200);
+        }
+
+        public void ChangeStatus(string newStatus) => statusText.Text = newStatus;
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            if (isStatusVisible)
+            {
+                this.FadeOut(150);
+                pathTextBox?.FadeIn(150);
+            }
+
+            return base.OnHover(e);
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            if (isStatusVisible)
+            {
+                pathTextBox?.FadeOut(150);
+                this.FadeIn(150);
+            }
+
+            base.OnHoverLost(e);
+        }
+    }
 
     private partial class PathTextBox : FluXisTextBox
     {
