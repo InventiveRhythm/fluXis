@@ -2,6 +2,7 @@
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Preview;
+using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
@@ -54,7 +55,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     [Resolved]
     private NotificationManager notifications { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private GlobalClock clock { get; set; }
 
     private FullInputBlockingContainer searchContainer;
@@ -177,16 +179,41 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = Theme.Background1
                                 },
-                                new Container
+                                new FillFlowContainer()
                                 {
                                     RelativeSizeAxes = Axes.X,
                                     AutoSizeAxes = Axes.Y,
                                     Padding = new MarginPadding(20),
-                                    Child = new BrowserSearchBar(q =>
+                                    Spacing = new Vector2(16),
+                                    Children = new Drawable[]
                                     {
-                                        currentQuery = q;
-                                        loadMapsets(reload: true);
-                                    })
+                                        new BrowserSearchBar(q =>
+                                        {
+                                            currentQuery = q;
+                                            loadMapsets(reload: true);
+                                        }),
+                                        new FillFlowContainer
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Padding = new MarginPadding { Horizontal = 16 },
+                                            Spacing = new Vector2(12),
+                                            Children = new Drawable[]
+                                            {
+                                                new BrowseFilter<MapStatus>(
+                                                    "Status",
+                                                    Enum.GetValues<MapStatus>()
+                                                        .Where(x => x >= MapStatus.Unsubmitted)
+                                                        .Select(x => new BrowseFilter<MapStatus>.Option(x, x.ToString(), Theme.GetStatusColor((int)x)))
+                                                ),
+                                                new BrowseFilter<int>(
+                                                    "Keymode",
+                                                    Enumerable.Range(4, 5)
+                                                              .Select(x => new BrowseFilter<int>.Option(x, $"{x}K", Theme.GetKeyCountColor(x)))
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -328,7 +355,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
             searchContainer.MoveToY(0, 50);
 
         searchContainer.Y += -(float)scrollDelta;
-        searchContainer.Y = Math.Clamp(searchContainer.Y, -100, 0);
+        searchContainer.Y = Math.Clamp(searchContainer.Y, -searchHeight, 0);
         previousScrollY = currentScrollY;
     }
 
@@ -339,8 +366,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                .MoveToY(0, 800, Easing.OutQuint);
 
         this.FadeIn(200);
-
-        clock.VolumeOut(400).OnComplete(_ => clock.Stop());
+        clock?.VolumeOut(400).OnComplete(_ => clock?.Stop());
 
         if (firstOpen)
         {
@@ -356,8 +382,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
         previews.StopPreview();
 
-        clock.Start();
-        clock.VolumeIn(400);
+        clock?.Start();
+        clock?.VolumeIn(400);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
