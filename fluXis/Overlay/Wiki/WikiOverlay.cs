@@ -128,11 +128,6 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     
                                     Children = new Drawable[]
                                     {
-                                        new Box
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Colour = Colour4.Transparent
-                                        },
                                         new GridContainer
                                         {
                                             RelativeSizeAxes = Axes.Both,
