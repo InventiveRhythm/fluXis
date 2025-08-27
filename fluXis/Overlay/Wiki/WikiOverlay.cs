@@ -125,44 +125,75 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
-                                    Masking = true,
-                                    CornerRadius = 45,
-                                    CornerExponent = 7,
+                                    
                                     Children = new Drawable[]
                                     {
                                         new Box
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Colour = Theme.Background3
+                                            Colour = Colour4.Transparent
                                         },
                                         new GridContainer
                                         {
-                                            RelativeSizeAxes = Axes.X,
-                                            AutoSizeAxes = Axes.Y,
+                                            RelativeSizeAxes = Axes.Both,
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
                                             ColumnDimensions = new[]
                                             {
                                                 new Dimension(GridSizeMode.Absolute, 50),
                                                 new Dimension(GridSizeMode.Absolute, 15),
-                                                new Dimension(GridSizeMode.AutoSize)
+                                                new Dimension(GridSizeMode.Absolute, 1536 - 50 - 15)
                                             },
                                             Content = new[]
                                             {
                                                 new Drawable[]
                                                 {
-                                                    new BackButton(this)
+                                                    new Container
                                                     {
-                                                        Margin = new MarginPadding {Left = 10},
-                                                        Anchor = Anchor.Centre,
-                                                        Origin = Anchor.Centre,
+                                                        Masking = true,
+                                                        CornerRadius = 8,
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Margin = new MarginPadding {Left = 5},
+                                                        Children = new Drawable[]
+                                                        {
+                                                            new Box
+                                                            {
+                                                                Anchor = Anchor.TopLeft,
+                                                                Origin = Anchor.TopLeft,
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                Colour = Theme.Background3
+                                                            },
+                                                            new BackButton(this)
+                                                            {
+                                                                Anchor = Anchor.Centre,
+                                                                Origin = Anchor.Centre,
+                                                            },
+                                                        }
                                                     },
                                                     Empty(),
-                                                    new WikiNav(currentPath, currentHeading, this)
+                                                    new Container
                                                     {
-                                                        AutoSizeAxes = Axes.Both,
-                                                        Anchor = Anchor.Centre,
-                                                        Origin = Anchor.Centre,
+                                                        Masking = true,
+                                                        CornerRadius = 8,
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        // Padding = new MarginPadding { Right = 20 },
+                                                        Width = 0.987f, // for some reason padding screws up the corners
+                                                        Children = new Drawable[]
+                                                        {
+                                                            new Box
+                                                            {
+                                                                Anchor = Anchor.TopLeft,
+                                                                Origin = Anchor.TopLeft,
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                Colour = Theme.Background3
+                                                            },
+                                                            new WikiNav(currentPath, currentHeading, this)
+                                                            {
+                                                                AutoSizeAxes = Axes.Both,
+                                                                Anchor = Anchor.CentreLeft,
+                                                                Origin = Anchor.CentreLeft,
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -500,7 +531,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
         [BackgroundDependencyLoader]
         private void load()
         {
-            Size = new Vector2(50);
+            Size = new Vector2(46);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             CornerRadius = 10;
@@ -515,7 +546,7 @@ public partial class WikiOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Icon = FontAwesome6.Solid.AngleLeft,
-                    Size = new Vector2(20)
+                    Size = new Vector2(18)
                 }
             };
         }
