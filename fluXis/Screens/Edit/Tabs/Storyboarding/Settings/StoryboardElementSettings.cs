@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
@@ -103,7 +104,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         Text = $"{item.Type}",
                         WebFontSize = 20
                     },
-                    new PointSettingsTime(map, item),
+                    new PointSettingsTime(map, item)
+                    {
+                        TimeChanged = newTime =>
+                            item.EndTime -= item.StartTime - newTime
+                    },
                     new PointSettingsTextBox
                     {
                         Text = "Start X",
