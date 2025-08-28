@@ -906,8 +906,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 Origin = Anchor.CentreLeft,
                 Font = new FluXisFont(),
                 FontSize = 30,
-                Colour = Theme.Foreground,
-                Alpha = 0.7f
+                Colour = Theme.Text
             };
         }
         
@@ -918,18 +917,16 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             
             isStatusVisible = true;
             
-            pathTextBox?.FadeOut(200);
-            
-            this.FadeIn(200);
+            pathTextBox?.Hide();
+            Show();
         }
         
         public void HideStatus()
         {
             isStatusVisible = false;
             
-            pathTextBox?.FadeIn(200);
-            
-            this.FadeOut(200);
+            pathTextBox?.Show();
+            Hide();
         }
 
         public void ChangeStatus(string newStatus) => statusText.Text = newStatus;
