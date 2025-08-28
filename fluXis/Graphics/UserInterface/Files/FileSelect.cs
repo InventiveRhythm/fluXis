@@ -378,10 +378,11 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                     Colour = Theme.Background2
                                                 },
                                                 pathTextBox = new PathTextBox(),
-                                                searchStatus = new SearchStatus
+                                                searchStatus = new SearchStatus(pathTextBox)
                                                 {
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft,
+                                                    Margin = new MarginPadding { Left = 10 }
                                                 }
                                             }
                                         },
@@ -881,11 +882,13 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
     private partial class SearchStatus : Container
     {
+        private readonly PathTextBox pathTextBox;
         private bool isStatusVisible;
         private FluXisSpriteText statusText;
         
-        public SearchStatus()
+        public SearchStatus(PathTextBox pathTextBox)
         {
+            this.pathTextBox = pathTextBox;
             
             RelativeSizeAxes = Axes.Both;
             Alpha = 0f;
@@ -895,26 +898,16 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         [BackgroundDependencyLoader]
         private void load()
         {
-            Masking = true;
-            RelativeSizeAxes = Axes.Both;
-            CornerRadius = 10;
-            Children = new Drawable[] {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Theme.Background2,
-                    Alpha = 0.8f,
-                },
-                statusText = new FluXisSpriteText
-                {
-                    Text = string.Empty,
-                    Anchor = Anchor.CentreRight,
-                    Origin = Anchor.CentreRight,
-                    Font = new FluXisFont(),
-                    FontSize = 30,
-                    Colour = Theme.Foreground,
-                    Margin = new MarginPadding { Right = 20 }
-                }
+
+            Child = statusText = new FluXisSpriteText
+            {
+                Text = string.Empty,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Font = new FluXisFont(),
+                FontSize = 30,
+                Colour = Theme.Foreground,
+                Alpha = 0.7f
             };
         }
         
@@ -925,12 +918,16 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             
             isStatusVisible = true;
             
+            pathTextBox?.FadeOut(200);
+            
             this.FadeIn(200);
         }
         
         public void HideStatus()
         {
             isStatusVisible = false;
+            
+            pathTextBox?.FadeIn(200);
             
             this.FadeOut(200);
         }
@@ -940,7 +937,10 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         protected override bool OnHover(HoverEvent e)
         {
             if (isStatusVisible)
+            {
                 this.FadeOut(150);
+                pathTextBox?.FadeIn(150);
+            }
 
             return base.OnHover(e);
         }
@@ -948,7 +948,10 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         protected override void OnHoverLost(HoverLostEvent e)
         {
             if (isStatusVisible)
+            {
+                pathTextBox?.FadeOut(150);
                 this.FadeIn(150);
+            }
 
             base.OnHoverLost(e);
         }
