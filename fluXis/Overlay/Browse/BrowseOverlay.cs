@@ -264,6 +264,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
             flow.Clear();
 
         var query = currentQuery;
+        // ReSharper disable once AccessToModifiedClosure
         filterKeymode.ForEach(x => query += $" k={x}");
 
         if (filterStatus.Count == 4)
