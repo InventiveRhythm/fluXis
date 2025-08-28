@@ -883,7 +883,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     private partial class SearchStatus : Container
     {
         private readonly PathTextBox pathTextBox;
-        private bool isStatusVisible;
+        private bool isStatusShown;
+        private bool isHovered = false;
         private FluXisSpriteText statusText;
         
         public SearchStatus(PathTextBox pathTextBox)
@@ -892,7 +893,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             
             RelativeSizeAxes = Axes.Both;
             Alpha = 0f;
-            isStatusVisible = false;
+            isStatusShown = false;
         }
         
         [BackgroundDependencyLoader]
@@ -915,7 +916,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             if (status is not null)
                 statusText.Text = status;
             
-            isStatusVisible = true;
+            isStatusShown = true;
             
             pathTextBox?.Hide();
             Show();
@@ -923,7 +924,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         
         public void HideStatus()
         {
-            isStatusVisible = false;
+            isStatusShown = false;
             
             pathTextBox?.Show();
             Hide();
@@ -933,10 +934,11 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         protected override bool OnHover(HoverEvent e)
         {
-            if (isStatusVisible)
+            if (isStatusShown && !isHovered)
             {
                 this.FadeOut(150);
                 pathTextBox?.FadeIn(150);
+                isHovered = true;
             }
 
             return base.OnHover(e);
@@ -944,10 +946,11 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            if (isStatusVisible)
+            if (isStatusShown && isHovered)
             {
                 pathTextBox?.FadeOut(150);
                 this.FadeIn(150);
+                isHovered = false;
             }
 
             base.OnHoverLost(e);
