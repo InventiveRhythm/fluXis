@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
@@ -27,6 +28,7 @@ public partial class MapList : FluXisScrollContainer, ISelectionManager
     private List<IListItem> items { get; } = new();
 
     private bool bulkInserting;
+    private bool entering = true;
 
     public MapList(Bindable<MapUtils.SortingMode> sorting)
     {
@@ -141,6 +143,12 @@ public partial class MapList : FluXisScrollContainer, ISelectionManager
         }
 
         Content.Height = pos;
+
+        if (pos > 0 && entering)
+        {
+            entering = false;
+            Schedule(() => ScheduleAfterChildren(scrollEnter));
+        }
     }
 
     public void Sort()
@@ -163,17 +171,36 @@ public partial class MapList : FluXisScrollContainer, ISelectionManager
             ScrollToItem(selected, smooth);
     }
 
+    private void scrollEnter()
+    {
+        var selected = items.FirstOrDefault(c => c.State.Value == SelectedState.Selected);
+
+        if (selected != null)
+        {
+            var position = getScrollPosition(selected);
+            var start = Math.Max(position - 800, 0);
+            ScrollTo(start, false);
+            ScrollTo(position);
+        }
+    }
+
     public void ScrollToItem(IListItem item, bool smooth = true)
+    {
+        var pos = getScrollPosition(item);
+        ScrollTo(pos, smooth);
+    }
+
+    private double getScrollPosition(IListItem item)
     {
         var top = item.ScrollPosition;
         var center = top + item.ScrollSize / 2;
 
         if (center < DisplayableContent / 2)
-            ScrollTo(0, smooth);
-        else if (center > ScrollableExtent + DisplayableContent / 2)
-            ScrollToEnd(smooth);
-        else
-            ScrollTo(center - DisplayableContent / 2, smooth);
+            return 0;
+        if (center > ScrollableExtent + DisplayableContent / 2)
+            return ScrollableExtent;
+
+        return center - DisplayableContent / 2;
     }
 
     public RealmMap CurrentMap => MapBindable.Value;

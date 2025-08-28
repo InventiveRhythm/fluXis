@@ -214,8 +214,6 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
                 mapList.FadeIn(500);
                 loadingIcon.FadeOut(500);
-
-                mapList.ScrollToSelected(false);
             });
         });
     }
