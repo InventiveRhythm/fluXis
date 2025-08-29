@@ -361,13 +361,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     private void showNotifcations()
     {
-        if (ValidForPush)
+        if (ValidForPush && notifications?.Tasks != null)
             notifications.Tasks.FadeIn().MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     private void hideNotifications()
     {
-        if (ValidForPush)
+        if (ValidForPush && notifications?.Tasks != null)
             notifications.Tasks.MoveToX(-400, Styling.TRANSITION_MOVE, Easing.InQuint).Then().FadeOut();
     }
 
