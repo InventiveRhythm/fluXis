@@ -74,6 +74,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     private readonly DrawableMapSetItem item;
     private readonly RealmMap map;
     private Container outline;
+    private Box highlight;
     private DrawableScoreRank rank;
     private DifficultyChip ratingChip;
 
@@ -143,6 +144,11 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = Theme.Background2
+                                },
+                                highlight = new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = ColourInfo.GradientHorizontal(color.Opacity(0), color.Opacity(0.25f))
                                 },
                                 new FillFlowContainer
                                 {
@@ -311,9 +317,15 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     private void updateSelected(ValueChangedEvent<RealmMap> e)
     {
         if (Equals(e.NewValue, map))
+        {
             outline.FadeIn(200);
+            highlight.FadeIn(200);
+        }
         else
+        {
             outline.FadeOut(200);
+            highlight.FadeOut(200);
+        }
     }
 
     private GimmickIcon[] getIcons()
