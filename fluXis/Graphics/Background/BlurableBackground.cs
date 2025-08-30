@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Map.Drawables;
@@ -57,10 +58,17 @@ public partial class BlurableBackground : CompositeDrawable
 
     private void updateBlur()
     {
+        if (blurContainer is null && blur > 0)
+        {
+            var children = InternalChildren.ToList();
+            ClearInternal(false);
+            InternalChild = blurContainer = CreateBlur(children);
+        }
+
         if (blurContainer is null)
             return;
 
-        blurContainer.BlurSigma = new Vector2(blur * 12);
+        blurContainer!.BlurSigma = new Vector2(blur * 12);
         blurContainer.FrameBufferScale = new Vector2(1 - blur * .5f);
     }
 
