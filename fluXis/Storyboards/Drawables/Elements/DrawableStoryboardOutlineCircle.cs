@@ -15,7 +15,7 @@ public partial class DrawableStoryboardOutlineCircle : DrawableStoryboardElement
             throw new ArgumentException($"Element provided is not {nameof(StoryboardElementType.OutlineCircle)}", nameof(element));
 
         BorderColour = Colour4.White;
-        BorderThickness = 4;
+        BorderThickness = (float)Element.GetParameter<double>("border", 4);
         Masking = true;
 
         InternalChild = new Box
