@@ -14,8 +14,8 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
     private int mode { get; }
     private Drawable sprite { get; }
 
-    public CustomHitObjectBody(SkinJson skinJson, int mode, Texture texture)
-        : base(skinJson)
+    public CustomHitObjectBody(SkinJson skinJson, int index, int mode, Texture texture)
+        : base(skinJson, index)
     {
         this.mode = mode;
 

@@ -12,8 +12,8 @@ public partial class DefaultCircleHitObjectPiece : ColorableSkinDrawable, ICanHa
 {
     protected Circle Circle { get; }
 
-    public DefaultCircleHitObjectPiece(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultCircleHitObjectPiece(SkinJson skinJson, int index)
+        : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;

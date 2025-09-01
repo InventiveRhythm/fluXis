@@ -5,8 +5,8 @@ namespace fluXis.Skinning.Default.Receptor;
 
 public partial class DefaultReceptorDown : DefaultReceptorUp
 {
-    public DefaultReceptorDown(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultReceptorDown(SkinJson skinJson, int index)
+        : base(skinJson, index)
     {
     }
 

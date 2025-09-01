@@ -12,8 +12,8 @@ public partial class CustomHitObjectPiece : ColorableSkinDrawable, ICanHaveSnapC
     private bool isEnd { get; }
     private Drawable sprite { get; }
 
-    public CustomHitObjectPiece(SkinJson skinJson, Texture texture, int mode, bool end)
-        : base(skinJson)
+    public CustomHitObjectPiece(SkinJson skinJson, Texture texture, int index, int mode, bool end)
+        : base(skinJson, index)
     {
         this.mode = mode;
         isEnd = end;

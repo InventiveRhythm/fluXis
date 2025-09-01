@@ -51,6 +51,7 @@ public partial class Playfield : Container
     public Stage Stage { get; private set; }
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager HitManager { get; private set; }
+    public ColorManager ColorManager { get; private set; }
     public float HUDAlpha { get; set; } = 1f;
 
     public MapInfo MapInfo => ruleset.MapInfo;
@@ -101,6 +102,10 @@ public partial class Playfield : Container
             ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i)),
             Padding = new MarginPadding { Bottom = skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorOffset }
         };
+
+        ColorManager = new ColorManager(this);
+        LoadComponent(ColorManager);
+        dependencies.CacheAs(ColorManager);
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(HitManager = new HitObjectManager

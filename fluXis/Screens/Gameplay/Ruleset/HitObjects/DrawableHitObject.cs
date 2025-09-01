@@ -5,6 +5,7 @@ using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Ruleset.HitObjects.Long;
+using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Skinning;
 using fluXis.Skinning.Bases;
 using osu.Framework.Allocation;
@@ -120,7 +121,7 @@ public partial class DrawableHitObject : CompositeDrawable
         }
     }
 
-    public void ChangeColor(Colour4 colour)
+    public void SetColor(Colour4 colour)
     {
         foreach (var drawable in GetColorableDrawables())
         {

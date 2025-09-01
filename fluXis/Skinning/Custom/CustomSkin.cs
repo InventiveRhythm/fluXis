@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Course;
@@ -171,7 +172,8 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), keyCount, false);
+            var index = Theme.GetLaneColorIndex(lane, keyCount);
+            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), index, keyCount, false);
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -204,7 +206,8 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            var drawable = new CustomHitObjectBody(SkinJson, keyCount, textures.Get(path));
+            var index = Theme.GetLaneColorIndex(lane, keyCount);
+            var drawable = new CustomHitObjectBody(SkinJson, index, keyCount, textures.Get(path));
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -218,7 +221,8 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), keyCount, true);
+            var index = Theme.GetLaneColorIndex(lane, keyCount);
+            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), index, keyCount, true);
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -246,9 +250,9 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            return new SkinnableSprite
+            var index = Theme.GetLaneColorIndex(lane, keyCount);
+            return new SkinnableSprite(textures.Get(path), index)
             {
-                Texture = textures.Get(path),
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 RelativeSizeAxes = Axes.X,

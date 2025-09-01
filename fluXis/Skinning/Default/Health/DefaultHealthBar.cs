@@ -24,7 +24,7 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
     private double drainRate;
 
     public DefaultHealthBar(SkinJson skinJson, HealthProcessor processor)
-        : base(skinJson)
+        : base(skinJson, -1)
     {
         Debug.Assert(processor != null);
         this.processor = processor;

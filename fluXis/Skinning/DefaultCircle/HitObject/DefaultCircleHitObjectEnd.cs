@@ -6,8 +6,8 @@ namespace fluXis.Skinning.DefaultCircle.HitObject;
 
 public partial class DefaultCircleHitObjectEnd : DefaultCircleHitObjectPiece
 {
-    public DefaultCircleHitObjectEnd(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultCircleHitObjectEnd(SkinJson skinJson, int index)
+        : base(skinJson, index)
     {
         Circle.BorderColour = ColourInfo.GradientVertical(Colour4.White.Darken(0.2f), Colour4.White);
         Circle.Child.Colour = Colour4.White.Darken(0.2f);

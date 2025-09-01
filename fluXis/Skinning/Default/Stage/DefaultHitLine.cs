@@ -11,7 +11,7 @@ namespace fluXis.Skinning.Default.Stage;
 public partial class DefaultHitLine : ColorableSkinDrawable
 {
     public DefaultHitLine(SkinJson skinJson)
-        : base(skinJson)
+        : base(skinJson, -1)
     {
     }
 

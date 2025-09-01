@@ -10,8 +10,8 @@ public partial class DefaultHitObjectEnd : ColorableSkinDrawable, ICanHaveSnapCo
 {
     private readonly Box box;
 
-    public DefaultHitObjectEnd(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultHitObjectEnd(SkinJson skinJson, int index)
+        : base(skinJson, index)
     {
         CornerRadius = 10;
         Masking = true;

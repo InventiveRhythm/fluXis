@@ -19,8 +19,8 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
     protected OutlinedCircle Circle { get; }
     private Colour4 color { get; set; }
 
-    public DefaultCircleReceptorUp(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultCircleReceptorUp(SkinJson skinJson, int index)
+        : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;

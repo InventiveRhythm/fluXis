@@ -17,9 +17,18 @@ public partial class ColorableSkinDrawable : CompositeDrawable
 
     protected bool UseCustomColor { get; set; }
 
-    public ColorableSkinDrawable(SkinJson skinJson)
+    public int Index { get; private set; }
+
+    public ColorableSkinDrawable(SkinJson skinJson, int index)
     {
         SkinJson = skinJson;
+        Index = index;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        ColorProvider.Register(this);
     }
 
     public void UpdateColor(int lane, int keyCount) => Schedule(() =>
@@ -42,7 +51,7 @@ public partial class ColorableSkinDrawable : CompositeDrawable
     /// Not to be confused with <see cref="TransformableExtensions.FadeColour{T}(T, osu.Framework.Graphics.Colour.ColourInfo, double, Easing)" />
     /// </summary>
     /// <param name="color"></param>
-    public virtual void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None) {  }
+    public virtual void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None) { }
 
     protected Colour4 GetIndexOrFallback(int index, Colour4 fallback)
     {
@@ -52,5 +61,11 @@ public partial class ColorableSkinDrawable : CompositeDrawable
             return fallback;
 
         return col.Value;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        ColorProvider.Unregister(this);
+        base.Dispose(isDisposing);
     }
 }

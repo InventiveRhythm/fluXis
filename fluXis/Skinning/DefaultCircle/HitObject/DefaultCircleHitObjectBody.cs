@@ -7,8 +7,8 @@ namespace fluXis.Skinning.DefaultCircle.HitObject;
 
 public partial class DefaultCircleHitObjectBody : DefaultHitObjectBody
 {
-    public DefaultCircleHitObjectBody(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultCircleHitObjectBody(SkinJson skinJson, int index)
+        : base(skinJson, index)
     {
         Width = DefaultCircleSkin.SCALE - 0.01f;
         Masking = true;

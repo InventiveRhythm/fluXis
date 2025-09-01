@@ -12,8 +12,8 @@ public partial class DefaultReceptorUp : ColorableSkinDrawable
 {
     protected Container Diamond { get; }
 
-    public DefaultReceptorUp(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultReceptorUp(SkinJson skinJson, int index)
+        : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;

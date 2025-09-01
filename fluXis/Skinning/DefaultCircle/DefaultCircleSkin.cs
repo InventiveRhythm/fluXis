@@ -1,4 +1,5 @@
-﻿using fluXis.Skinning.Default;
+﻿using fluXis.Graphics.UserInterface.Color;
+using fluXis.Skinning.Default;
 using fluXis.Skinning.Default.Stage;
 using fluXis.Skinning.DefaultCircle.HitObject;
 using fluXis.Skinning.DefaultCircle.Lighting;
@@ -25,21 +26,24 @@ public class DefaultCircleSkin : DefaultSkin
 
     public override Drawable GetHitObject(int lane, int keyCount)
     {
-        var piece = new DefaultCircleHitObjectPiece(SkinJson);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var piece = new DefaultCircleHitObjectPiece(SkinJson, index);
         piece.UpdateColor(lane, keyCount);
         return piece;
     }
 
     public override Drawable GetLongNoteBody(int lane, int keyCount)
     {
-        var body = new DefaultCircleHitObjectBody(SkinJson);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var body = new DefaultCircleHitObjectBody(SkinJson, index);
         body.UpdateColor(lane, keyCount);
         return body;
     }
 
     public override Drawable GetLongNoteEnd(int lane, int keyCount)
     {
-        var end = new DefaultCircleHitObjectEnd(SkinJson);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var end = new DefaultCircleHitObjectEnd(SkinJson, index);
         end.UpdateColor(lane, keyCount);
         return end;
     }
@@ -63,7 +67,8 @@ public class DefaultCircleSkin : DefaultSkin
 
     public override Drawable GetReceptor(int lane, int keyCount, bool down)
     {
-        var receptor = down ? new DefaultCircleReceptorDown(SkinJson) : new DefaultCircleReceptorUp(SkinJson);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var receptor = down ? new DefaultCircleReceptorDown(SkinJson, index) : new DefaultCircleReceptorUp(SkinJson, index);
         receptor.UpdateColor(lane, keyCount);
         return receptor;
     }

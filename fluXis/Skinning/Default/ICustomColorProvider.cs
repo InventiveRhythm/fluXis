@@ -1,3 +1,4 @@
+using fluXis.Skinning.Bases;
 using osu.Framework.Graphics;
 
 namespace fluXis.Skinning.Default;
@@ -10,4 +11,7 @@ public interface ICustomColorProvider
 
     bool HasColorFor(int lane, int keyCount, out Colour4 colour);
     Colour4 GetColor(int index, Colour4 fallback);
+
+    void Register(ColorableSkinDrawable skinDrawable) { }
+    void Unregister(ColorableSkinDrawable skinDrawable) { }
 }
