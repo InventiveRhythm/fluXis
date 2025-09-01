@@ -30,7 +30,7 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
         };
     }
 
-    protected override void SetColor(Colour4 color)
+    public override void SetColor(Colour4 color)
     {
         var keymode = SkinJson.GetKeymode(mode);
 
@@ -38,6 +38,16 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
             return;
 
         sprite.Colour = color;
+    }
+
+    public override void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
+    { 
+        var keymode = SkinJson.GetKeymode(mode);
+
+        if (!keymode.TintNotes || !keymode.TintLongNotes)
+            return;
+
+        sprite.FadeColour(color, duration, easing);
     }
 
     public void ApplySnapColor(int start, int end)

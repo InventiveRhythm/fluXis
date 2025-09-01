@@ -36,7 +36,13 @@ public partial class ColorableSkinDrawable : CompositeDrawable
         SetColor(SkinJson?.GetLaneColor(lane, keyCount) ?? Colour4.White);
     });
 
-    protected virtual void SetColor(Colour4 color) { }
+    public virtual void SetColor(Colour4 color) { }
+
+    /// <summary>
+    /// Not to be confused with <see cref="TransformableExtensions.FadeColour{T}(T, osu.Framework.Graphics.Colour.ColourInfo, double, Easing)" />
+    /// </summary>
+    /// <param name="color"></param>
+    public virtual void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None) {  }
 
     protected Colour4 GetIndexOrFallback(int index, Colour4 fallback)
     {

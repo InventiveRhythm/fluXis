@@ -31,7 +31,10 @@ public partial class DefaultHitObjectEnd : ColorableSkinDrawable, ICanHaveSnapCo
         Height = 42f * factor;
     }
 
-    protected override void SetColor(Colour4 color) => box.Colour = color.Darken(.4f);
+    public override void SetColor(Colour4 color) => box.Colour = color.Darken(.4f);
+
+    public override void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
+        => box.FadeColour(color.Darken(.4f), duration, easing);
 
     public void ApplySnapColor(int start, int end)
     {

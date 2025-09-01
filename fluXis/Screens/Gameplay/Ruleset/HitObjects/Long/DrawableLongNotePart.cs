@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Skinning;
@@ -63,6 +65,8 @@ public partial class DrawableLongNotePart : CompositeDrawable
         var child = InternalChild as ICanHaveSnapColor;
         child?.ApplySnapColor(idx, 0);
     }
+
+    public IReadOnlyList<Drawable> GetInternalChildren() => InternalChildren;
 
     protected override void Update()
     {

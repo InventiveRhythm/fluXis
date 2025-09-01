@@ -10,5 +10,8 @@ public partial class DefaultReceptorDown : DefaultReceptorUp
     {
     }
 
-    protected override void SetColor(Colour4 color) => Diamond.BorderColour = color;
+    public override void SetColor(Colour4 color) => Diamond.BorderColour = color;
+
+    public override void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
+        => Diamond.TransformTo(nameof(Diamond.BorderColour), color, duration, easing);
 }
