@@ -41,30 +41,34 @@ public partial class ColorManager : Component, ICustomColorProvider
     public void Register(ColorableSkinDrawable skinDrawable) => colorableDrawables.Add(skinDrawable);
     public void Unregister(ColorableSkinDrawable skinDrawable) => colorableDrawables.Remove(skinDrawable);
 
+
+    private void UpdateColor(MapColor index, Colour4 color)
+    {
+        switch (index)
+        {
+            case MapColor.Primary:
+                Primary = color;
+                break;
+
+            case MapColor.Secondary:
+                Secondary = color;
+                break;
+
+            case MapColor.Middle:
+                Middle = color;
+                break;
+        }
+    }
+
     public void SetColor(MapColor index, Colour4 color)
     {
-        // Not implemented yet
         colorableDrawables.ForEach(drawable =>
         {
-            // Logger.Log($"{drawable.Index}");
             if (drawable.Index == index)
             {
                 drawable.SetColor(color);
 
-                switch (drawable.Index)
-                {
-                    case MapColor.Primary:
-                        Primary = color;
-                        break;
-
-                    case MapColor.Secondary:
-                        Secondary = color;
-                        break;
-
-                    case MapColor.Middle:
-                        Middle = color;
-                        break;
-                }
+                UpdateColor(drawable.Index, color);
             }
         });
         ColorChanged?.Invoke(color);
@@ -72,7 +76,15 @@ public partial class ColorManager : Component, ICustomColorProvider
 
     public void FadeColor(MapColor index, Colour4 color, double duration = 0, Easing easing = Easing.None)
     {
-        // Not implemented yet
+        colorableDrawables.ForEach(drawable =>
+        {
+            if (drawable.Index == index)
+            {
+                drawable.FadeColor(color, duration, easing);
+
+                UpdateColor(drawable.Index, color);
+            }
+        });
         ColorChanged?.Invoke(color);
     }
 
