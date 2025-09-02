@@ -9,8 +9,10 @@ namespace fluXis.Skinning.Default.Stage;
 
 public partial class DefaultStageBorderLeft : ColorableSkinDrawable
 {
+    private Box border;
+
     public DefaultStageBorderLeft(SkinJson skinJson)
-        : base(skinJson, MapColor.Primary)
+        : base(skinJson, MapColor.Secondary)
     {
         AutoSizeAxes = Axes.X;
         RelativeSizeAxes = Axes.Y;
@@ -28,7 +30,7 @@ public partial class DefaultStageBorderLeft : ColorableSkinDrawable
                 Margin = new MarginPadding { Left = DefaultSkin.BORDER_COLOR },
                 Colour = Theme.Background3
             },
-            new Box
+            border = new Box
             {
                 RelativeSizeAxes = Axes.Y,
                 Width = DefaultSkin.BORDER_COLOR,
@@ -36,4 +38,8 @@ public partial class DefaultStageBorderLeft : ColorableSkinDrawable
             }
         };
     }
+
+    public override void SetColor(Colour4 color) => border.Colour = color;
+    public override void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
+        => border.FadeColour(color, duration, easing);
 }
