@@ -9,6 +9,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osu.Framework.Utils;
 using osuTK;
 
@@ -24,7 +25,7 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
     private double drainRate;
 
     public DefaultHealthBar(SkinJson skinJson, HealthProcessor processor)
-        : base(skinJson, MapColor.Other)
+        : base(skinJson, MapColor.Gradient)
     {
         Debug.Assert(processor != null);
         this.processor = processor;
@@ -56,7 +57,14 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
                 Y = 10
             }
         };
+
+        ColorProvider.Register(this);
     }
+
+    public override void SetColorGradient(Colour4 color1, Colour4 color2) => BorderColour = ColourInfo.GradientVertical(color1, color2);
+
+    public override void FadeColorGradient(Colour4 color1, Colour4 color2, double duration = 0, Easing easing = Easing.None)
+        => this.TransformTo(nameof(BorderColour), ColourInfo.GradientVertical(color1, color2), duration, easing);
 
     protected override void Update()
     {
@@ -77,5 +85,11 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
                 BorderColour = text.Colour = drainGradient.Interpolate(new Vector2(1 - (Math.Clamp((float)drainRate, -.2f, .2f) + .2f) / .4f, 0));
                 break;
         }
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        ColorProvider.Unregister(this);
+        base.Dispose(isDisposing);
     }
 }

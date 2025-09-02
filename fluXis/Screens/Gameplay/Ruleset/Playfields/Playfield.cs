@@ -104,7 +104,7 @@ public partial class Playfield : Container
             Padding = new MarginPadding { Bottom = skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorOffset }
         };
 
-        ColorManager = new ColorManager(this);
+        ColorManager = new ColorManager(this, dependencies);
         LoadComponent(ColorManager);
         dependencies.CacheAs<ICustomColorProvider>(ColorManager);
 

@@ -6,7 +6,6 @@ using fluXis.Skinning.Bases;
 using fluXis.Skinning.Default;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Logging;
 
 namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
 
@@ -16,6 +15,7 @@ public partial class ColorManager : Component, ICustomColorProvider
     private ICustomColorProvider mapColors { get; set; }
 
     private Playfield playfield;
+    private DependencyContainer dependencies;
     private List<ColorableSkinDrawable> colorableDrawables;
 
     public Colour4 Primary { get; private set; } = Theme.Primary;
@@ -24,9 +24,10 @@ public partial class ColorManager : Component, ICustomColorProvider
 
     public event Action<Colour4> ColorChanged;
 
-    public ColorManager(Playfield playfield)
+    public ColorManager(Playfield playfield, DependencyContainer dependencies)
     {
         this.playfield = playfield;
+        this.dependencies = dependencies;
         colorableDrawables = new();
     }
 
@@ -41,8 +42,7 @@ public partial class ColorManager : Component, ICustomColorProvider
     public void Register(ColorableSkinDrawable skinDrawable) => colorableDrawables.Add(skinDrawable);
     public void Unregister(ColorableSkinDrawable skinDrawable) => colorableDrawables.Remove(skinDrawable);
 
-
-    private void UpdateColor(MapColor index, Colour4 color)
+    private void updateColor(MapColor index, Colour4 color)
     {
         switch (index)
         {
@@ -60,15 +60,41 @@ public partial class ColorManager : Component, ICustomColorProvider
         }
     }
 
+    private void updateCache()
+    {
+        var cachedMapColors = (MapColors)mapColors;
+        foreach (var cachedDrawable in cachedMapColors.CachedDrawables)
+        {
+            if (!colorableDrawables.Contains(cachedDrawable))
+            {
+                cachedDrawable.ResolveProviderFrom(dependencies);
+                colorableDrawables.AddRange(cachedMapColors.CachedDrawables);
+            }
+        }
+    }
+
     public void SetColor(MapColor index, Colour4 color)
     {
+        updateCache();
+
         colorableDrawables.ForEach(drawable =>
         {
             if (drawable.Index == index)
             {
                 drawable.SetColor(color);
 
-                UpdateColor(drawable.Index, color);
+                switch (index)
+                {
+                    case MapColor.Primary:
+                        drawable.SetColorGradient(color, Secondary);
+                        break;
+
+                    case MapColor.Secondary:
+                        drawable.SetColorGradient(Primary, color);
+                        break;
+                }
+                
+                updateColor(drawable.Index, color);
             }
         });
         ColorChanged?.Invoke(color);
@@ -76,13 +102,26 @@ public partial class ColorManager : Component, ICustomColorProvider
 
     public void FadeColor(MapColor index, Colour4 color, double duration = 0, Easing easing = Easing.None)
     {
+        updateCache();
+
         colorableDrawables.ForEach(drawable =>
         {
-            if (drawable.Index == index)
+            if (drawable.Index == index || drawable.Index == MapColor.Gradient)
             {
                 drawable.FadeColor(color, duration, easing);
 
-                UpdateColor(drawable.Index, color);
+                switch (index)
+                {
+                    case MapColor.Primary:
+                        drawable.FadeColorGradient(color, Secondary, duration, easing);
+                        break;
+
+                    case MapColor.Secondary:
+                        drawable.FadeColorGradient(Primary, color, duration, easing);
+                        break;
+                }
+                
+                updateColor(drawable.Index, color);
             }
         });
         ColorChanged?.Invoke(color);

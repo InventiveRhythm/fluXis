@@ -234,4 +234,5 @@ public enum MapColor
     Secondary,
     Middle,
     Other,
+    Gradient,
 }

@@ -1,5 +1,4 @@
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Skinning.Default;
 using fluXis.Skinning.Json;
 using JetBrains.Annotations;
@@ -33,6 +32,8 @@ public partial class ColorableSkinDrawable : CompositeDrawable
         ColorProvider.Register(this);
     }
 
+    public void ResolveProviderFrom(DependencyContainer dependencies) => ColorProvider = dependencies.Get<ICustomColorProvider>();
+
     public void UpdateColor(int lane, int keyCount) => Schedule(() =>
     {
         if (UseCustomColor)
@@ -48,12 +49,14 @@ public partial class ColorableSkinDrawable : CompositeDrawable
     });
 
     public virtual void SetColor(Colour4 color) { }
+    public virtual void SetColorGradient(Colour4 color1, Colour4 color2) { }
 
     /// <summary>
     /// Not to be confused with <see cref="TransformableExtensions.FadeColour{T}(T, osu.Framework.Graphics.Colour.ColourInfo, double, Easing)" />
     /// </summary>
     /// <param name="color"></param>
     public virtual void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None) { }
+    public virtual void FadeColorGradient(Colour4 color1, Colour4 color2, double duration = 0, Easing easing = Easing.None) { }
 
     protected Colour4 GetIndexOrFallback(int index, Colour4 fallback)
     {
