@@ -57,8 +57,6 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
                 Y = 10
             }
         };
-
-        ColorProvider.Register(this);
     }
 
     public override void SetColorGradient(Colour4 color1, Colour4 color2) => BorderColour = ColourInfo.GradientVertical(color1, color2);
@@ -85,11 +83,5 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
                 BorderColour = text.Colour = drainGradient.Interpolate(new Vector2(1 - (Math.Clamp((float)drainRate, -.2f, .2f) + .2f) / .4f, 0));
                 break;
         }
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-        ColorProvider.Unregister(this);
-        base.Dispose(isDisposing);
     }
 }
