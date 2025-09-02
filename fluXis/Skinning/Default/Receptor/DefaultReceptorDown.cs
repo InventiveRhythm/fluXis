@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Json;
 using osu.Framework.Graphics;
 
@@ -5,7 +6,7 @@ namespace fluXis.Skinning.Default.Receptor;
 
 public partial class DefaultReceptorDown : DefaultReceptorUp
 {
-    public DefaultReceptorDown(SkinJson skinJson, int index)
+    public DefaultReceptorDown(SkinJson skinJson, MapColor index)
         : base(skinJson, index)
     {
     }

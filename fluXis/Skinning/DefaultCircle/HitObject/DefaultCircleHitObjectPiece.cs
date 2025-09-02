@@ -1,4 +1,5 @@
-﻿using fluXis.Skinning.Bases;
+﻿using fluXis.Graphics.UserInterface.Color;
+using fluXis.Skinning.Bases;
 using fluXis.Skinning.Bases.HitObjects;
 using fluXis.Skinning.Json;
 using osu.Framework.Graphics;
@@ -12,7 +13,7 @@ public partial class DefaultCircleHitObjectPiece : ColorableSkinDrawable, ICanHa
 {
     protected Circle Circle { get; }
 
-    public DefaultCircleHitObjectPiece(SkinJson skinJson, int index)
+    public DefaultCircleHitObjectPiece(SkinJson skinJson, MapColor index)
         : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;

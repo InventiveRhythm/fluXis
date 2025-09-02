@@ -1,5 +1,6 @@
 ﻿using fluXis.Audio;
 using fluXis.Graphics.Sprites.Outline;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Json;
 using fluXis.Utils.Extensions;
@@ -19,7 +20,7 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
     protected OutlinedCircle Circle { get; }
     private Colour4 color { get; set; }
 
-    public DefaultCircleReceptorUp(SkinJson skinJson, int index)
+    public DefaultCircleReceptorUp(SkinJson skinJson, MapColor index)
         : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;

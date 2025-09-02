@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Bases.HitObjects;
 using fluXis.Skinning.Json;
@@ -9,7 +10,7 @@ namespace fluXis.Skinning.Default.HitObject;
 
 public partial class DefaultHitObjectBody : ColorableSkinDrawable, ICanHaveSnapColor
 {
-    public DefaultHitObjectBody(SkinJson skinJson, int index)
+    public DefaultHitObjectBody(SkinJson skinJson, MapColor index)
         : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;

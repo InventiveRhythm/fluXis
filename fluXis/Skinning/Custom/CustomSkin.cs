@@ -173,7 +173,7 @@ public class CustomSkin : ISkin
         if (storage.Exists(path))
         {
             var index = Theme.GetLaneColorIndex(lane, keyCount);
-            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), index, keyCount, false);
+            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), (MapColor)index, keyCount, false);
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -207,7 +207,7 @@ public class CustomSkin : ISkin
         if (storage.Exists(path))
         {
             var index = Theme.GetLaneColorIndex(lane, keyCount);
-            var drawable = new CustomHitObjectBody(SkinJson, index, keyCount, textures.Get(path));
+            var drawable = new CustomHitObjectBody(SkinJson, (MapColor)index, keyCount, textures.Get(path));
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -222,7 +222,7 @@ public class CustomSkin : ISkin
         if (storage.Exists(path))
         {
             var index = Theme.GetLaneColorIndex(lane, keyCount);
-            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), index, keyCount, true);
+            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), (MapColor)index, keyCount, true);
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }

@@ -10,7 +10,7 @@ namespace fluXis.Skinning.Default.Stage;
 public partial class DefaultStageBorderRight : ColorableSkinDrawable
 {
     public DefaultStageBorderRight(SkinJson skinJson)
-        : base(skinJson, 2)
+        : base(skinJson, MapColor.Secondary)
     {
         AutoSizeAxes = Axes.X;
         RelativeSizeAxes = Axes.Y;

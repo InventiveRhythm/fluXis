@@ -1,11 +1,12 @@
-﻿using fluXis.Skinning.Json;
+﻿using fluXis.Graphics.UserInterface.Color;
+using fluXis.Skinning.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Skinning.DefaultCircle.Receptor;
 
 public partial class DefaultCircleReceptorDown : DefaultCircleReceptorUp
 {
-    public DefaultCircleReceptorDown(SkinJson skinJson, int index)
+    public DefaultCircleReceptorDown(SkinJson skinJson, MapColor index)
         : base(skinJson, index)
     {
         Alpha = 0;

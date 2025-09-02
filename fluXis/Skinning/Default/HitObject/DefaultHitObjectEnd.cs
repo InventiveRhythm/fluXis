@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Bases.HitObjects;
 using fluXis.Skinning.Json;
@@ -10,7 +11,7 @@ public partial class DefaultHitObjectEnd : ColorableSkinDrawable, ICanHaveSnapCo
 {
     private readonly Box box;
 
-    public DefaultHitObjectEnd(SkinJson skinJson, int index)
+    public DefaultHitObjectEnd(SkinJson skinJson, MapColor index)
         : base(skinJson, index)
     {
         CornerRadius = 10;

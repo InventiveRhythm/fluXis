@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Bases.HitObjects;
 using fluXis.Skinning.Json;
@@ -14,7 +15,7 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
     private int mode { get; }
     private Drawable sprite { get; }
 
-    public CustomHitObjectBody(SkinJson skinJson, int index, int mode, Texture texture)
+    public CustomHitObjectBody(SkinJson skinJson, MapColor index, int mode, Texture texture)
         : base(skinJson, index)
     {
         this.mode = mode;

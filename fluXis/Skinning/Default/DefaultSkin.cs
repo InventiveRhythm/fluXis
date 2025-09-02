@@ -113,7 +113,7 @@ public class DefaultSkin : ISkin
     public virtual Drawable GetHitObject(int lane, int keyCount)
     {
         var index = Theme.GetLaneColorIndex(lane, keyCount);
-        var piece = new DefaultHitObjectPiece(SkinJson, index);
+        var piece = new DefaultHitObjectPiece(SkinJson, (MapColor)index);
         piece.UpdateColor(lane, keyCount);
         return piece;
     }
@@ -123,7 +123,7 @@ public class DefaultSkin : ISkin
     public virtual Drawable GetLongNoteBody(int lane, int keyCount)
     {
         var index = Theme.GetLaneColorIndex(lane, keyCount);
-        var body = new DefaultHitObjectBody(SkinJson, index);
+        var body = new DefaultHitObjectBody(SkinJson, (MapColor)index);
         body.UpdateColor(lane, keyCount);
         return body;
     }
@@ -131,7 +131,7 @@ public class DefaultSkin : ISkin
     public virtual Drawable GetLongNoteEnd(int lane, int keyCount)
     {
         var index = Theme.GetLaneColorIndex(lane, keyCount);
-        var end = new DefaultHitObjectEnd(SkinJson, index);
+        var end = new DefaultHitObjectEnd(SkinJson, (MapColor)index);
         end.UpdateColor(lane, keyCount);
         return end;
     }
@@ -146,7 +146,7 @@ public class DefaultSkin : ISkin
     public virtual Drawable GetReceptor(int lane, int keyCount, bool down)
     {
         var index = Theme.GetLaneColorIndex(lane, keyCount);
-        var receptor = down ? new DefaultReceptorDown(SkinJson, index) : new DefaultReceptorUp(SkinJson, index);
+        var receptor = down ? new DefaultReceptorDown(SkinJson, (MapColor)index) : new DefaultReceptorUp(SkinJson, (MapColor)index);
         receptor.UpdateColor(lane, keyCount);
         receptor.Height = SkinJson.GetKeymode(keyCount).HitPosition;
         return receptor;

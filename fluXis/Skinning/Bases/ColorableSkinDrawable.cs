@@ -1,3 +1,5 @@
+using fluXis.Graphics.UserInterface.Color;
+using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Skinning.Default;
 using fluXis.Skinning.Json;
 using JetBrains.Annotations;
@@ -17,9 +19,9 @@ public partial class ColorableSkinDrawable : CompositeDrawable
 
     protected bool UseCustomColor { get; set; }
 
-    public int Index { get; private set; }
+    public MapColor Index { get; private set; }
 
-    public ColorableSkinDrawable(SkinJson skinJson, int index)
+    public ColorableSkinDrawable(SkinJson skinJson, MapColor index)
     {
         SkinJson = skinJson;
         Index = index;

@@ -226,3 +226,12 @@ public static class Theme
         _ => Colour4.FromHex("#cccccc")
     };
 }
+
+public enum MapColor
+{
+    Accent,
+    Primary,
+    Secondary,
+    Middle,
+    Other,
+}

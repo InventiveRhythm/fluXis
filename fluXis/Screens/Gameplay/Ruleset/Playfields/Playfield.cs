@@ -9,6 +9,7 @@ using fluXis.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Screens.Gameplay.Ruleset.Playfields.UI;
 using fluXis.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Skinning;
+using fluXis.Skinning.Default;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -105,7 +106,7 @@ public partial class Playfield : Container
 
         ColorManager = new ColorManager(this);
         LoadComponent(ColorManager);
-        dependencies.CacheAs(ColorManager);
+        dependencies.CacheAs<ICustomColorProvider>(ColorManager);
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(HitManager = new HitObjectManager
