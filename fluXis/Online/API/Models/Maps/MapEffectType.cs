@@ -22,6 +22,8 @@ public enum MapEffectType : ulong
     LayerFade = 1 << 11,
     HitObjectEase = 1 << 12,
     ScrollMultiply = 1 << 13,
-    TimeOffset = 1 << 14
+    TimeOffset = 1 << 14,
+
+    ColorFade = 1 << 15
 }
 

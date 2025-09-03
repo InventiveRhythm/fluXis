@@ -55,8 +55,8 @@ public partial class ColorableSkinDrawable : CompositeDrawable
     /// Not to be confused with <see cref="TransformableExtensions.FadeColour{T}(T, osu.Framework.Graphics.Colour.ColourInfo, double, Easing)" />
     /// </summary>
     /// <param name="color"></param>
-    public virtual void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None) { }
-    public virtual void FadeColorGradient(Colour4 color1, Colour4 color2, double duration = 0, Easing easing = Easing.None) { }
+    public virtual void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None) { }
+    public virtual void FadeColorGradient(Colour4 color1, Colour4 color2, double startTime, double duration = 0, Easing easing = Easing.None) { }
 
     protected Colour4 GetIndexOrFallback(int index, Colour4 fallback)
     {

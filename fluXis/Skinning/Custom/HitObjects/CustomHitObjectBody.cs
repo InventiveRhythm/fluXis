@@ -41,14 +41,15 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
         sprite.Colour = color;
     }
 
-    public override void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
-    { 
+    public override void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None)
+    {
         var keymode = SkinJson.GetKeymode(mode);
 
         if (!keymode.TintNotes || !keymode.TintLongNotes)
             return;
 
-        sprite.FadeColour(color, duration, easing);
+        using (BeginAbsoluteSequence(startTime))
+            sprite.FadeColour(color, duration, easing);
     }
 
     public void ApplySnapColor(int start, int end)

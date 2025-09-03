@@ -9,7 +9,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Logging;
 using osu.Framework.Utils;
 using osuTK;
 
@@ -61,8 +60,12 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
 
     public override void SetColorGradient(Colour4 color1, Colour4 color2) => BorderColour = ColourInfo.GradientVertical(color1, color2);
 
-    public override void FadeColorGradient(Colour4 color1, Colour4 color2, double duration = 0, Easing easing = Easing.None)
-        => this.TransformTo(nameof(BorderColour), ColourInfo.GradientVertical(color1, color2), duration, easing);
+    public override void FadeColorGradient(Colour4 color1, Colour4 color2, double startTime, double duration = 0, Easing easing = Easing.None)
+    {
+        using (BeginAbsoluteSequence(startTime))
+            this.TransformTo(nameof(BorderColour), ColourInfo.GradientVertical(color1, color2), duration, easing);
+    }
+    
 
     protected override void Update()
     {

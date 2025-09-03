@@ -104,7 +104,7 @@ public partial class Playfield : Container
             Padding = new MarginPadding { Bottom = skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorOffset }
         };
 
-        ColorManager = new ColorManager(this, dependencies);
+        ColorManager = new ColorManager(this, ruleset, dependencies);
         LoadComponent(ColorManager);
         dependencies.CacheAs<ICustomColorProvider>(ColorManager);
 
@@ -145,6 +145,7 @@ public partial class Playfield : Container
             new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(Math.Max(shake.Duration, 0), shake.Magnitude))
         };
 
+        MapEvents.ColorFadeEvents.ForEach(e => e.Apply(this));
         MapEvents.LayerFadeEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
@@ -155,6 +156,7 @@ public partial class Playfield : Container
     protected override void Update()
     {
         updatePositionScale();
+        ColorManager.Update();
         var newReceptorOffset = laneSwitchManager.ReceptorOffset;
 
         hitline.Y = -laneSwitchManager.HitPosition;

@@ -40,6 +40,10 @@ public partial class DefaultStageBorderLeft : ColorableSkinDrawable
     }
 
     public override void SetColor(Colour4 color) => border.Colour = color;
-    public override void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
-        => border.FadeColour(color, duration, easing);
+
+    public override void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None)
+    {
+        using (BeginAbsoluteSequence(startTime))
+            border.FadeColour(color, duration, easing);
+    }
 }

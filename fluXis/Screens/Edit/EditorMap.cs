@@ -80,6 +80,10 @@ public class EditorMap : IVerifyContext
     public event Action<FlashEvent> FlashEventRemoved;
     public event Action<FlashEvent> FlashEventUpdated;
 
+    public event Action<ColorFadeEvent> ColorFadeEventAdded;
+    public event Action<ColorFadeEvent> ColorFadeEventRemoved;
+    public event Action<ColorFadeEvent> ColorFadeEventUpdated;
+
     public event Action<PulseEvent> PulseEventAdded;
     public event Action<PulseEvent> PulseEventRemoved;
     public event Action<PulseEvent> PulseEventUpdated;
@@ -146,6 +150,7 @@ public class EditorMap : IVerifyContext
             new ChangeNotifier<LaneSwitchEvent>(MapEvents.LaneSwitchEvents, obj => LaneSwitchEventAdded?.Invoke(obj), obj => LaneSwitchEventRemoved?.Invoke(obj),
                 obj => LaneSwitchEventUpdated?.Invoke(obj)),
             new ChangeNotifier<FlashEvent>(MapEvents.FlashEvents, obj => FlashEventAdded?.Invoke(obj), obj => FlashEventRemoved?.Invoke(obj), obj => FlashEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<ColorFadeEvent>(MapEvents.ColorFadeEvents, obj => ColorFadeEventAdded?.Invoke(obj), obj => ColorFadeEventRemoved?.Invoke(obj), obj => ColorFadeEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PulseEvent>(MapEvents.PulseEvents, obj => PulseEventAdded?.Invoke(obj), obj => PulseEventRemoved?.Invoke(obj), obj => PulseEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PlayfieldMoveEvent>(MapEvents.PlayfieldMoveEvents, obj => PlayfieldMoveEventAdded?.Invoke(obj), obj => PlayfieldMoveEventRemoved?.Invoke(obj),
                 obj => PlayfieldMoveEventUpdated?.Invoke(obj)),

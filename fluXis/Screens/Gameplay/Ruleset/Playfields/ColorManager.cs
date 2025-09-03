@@ -9,14 +9,23 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
 
-public partial class ColorManager : Component, ICustomColorProvider
+public partial class ColorManager : Drawable, ICustomColorProvider
 {
     [Resolved(CanBeNull = true)]
     private ICustomColorProvider mapColors { get; set; }
 
     private Playfield playfield;
+    private RulesetContainer ruleset;
     private DependencyContainer dependencies;
     private List<ColorableSkinDrawable> colorableDrawables;
+
+    private List<Transform> queuedTransforms = new();
+
+    private struct Transform
+    {
+        public Action Action;
+        public double StartTime;
+    }
 
     public Colour4 Primary { get; private set; } = Theme.Primary;
     public Colour4 Secondary { get; private set; } = Theme.Secondary;
@@ -24,10 +33,11 @@ public partial class ColorManager : Component, ICustomColorProvider
 
     public event Action<Colour4> ColorChanged;
 
-    public ColorManager(Playfield playfield, DependencyContainer dependencies)
+    public ColorManager(Playfield playfield, RulesetContainer ruleset, DependencyContainer dependencies)
     {
         this.playfield = playfield;
         this.dependencies = dependencies;
+        this.ruleset = ruleset;
         colorableDrawables = new();
     }
 
@@ -35,7 +45,7 @@ public partial class ColorManager : Component, ICustomColorProvider
     private void load()
     {
         Primary = mapColors?.Primary ?? Primary;
-        Secondary = mapColors?.Primary ?? Secondary;
+        Secondary = mapColors?.Secondary ?? Secondary;
         Middle = mapColors?.Middle ?? Middle;
     }
 
@@ -73,10 +83,24 @@ public partial class ColorManager : Component, ICustomColorProvider
         }
     }
 
-    public void SetColor(MapColor index, Colour4 color)
+    // For some reason we can't override update so we're calling from playfield
+    public new void Update()
     {
-        updateCache();
+        double currentTime = ruleset.Clock.CurrentTime;
 
+        for (int i = queuedTransforms.Count - 1; i >= 0; i--)
+        {
+            var transform = queuedTransforms[i];
+            if (currentTime >= transform.StartTime)
+            {
+                transform.Action.Invoke();
+                queuedTransforms.RemoveAt(i);
+            }
+        }
+    }
+
+    public void SetColorInternal(MapColor index, Colour4 color)
+    {
         colorableDrawables.ForEach(drawable =>
         {
             if (drawable.Index == index)
@@ -93,37 +117,54 @@ public partial class ColorManager : Component, ICustomColorProvider
                         drawable.SetColorGradient(Primary, color);
                         break;
                 }
-                
+
                 updateColor(drawable.Index, color);
             }
         });
         ColorChanged?.Invoke(color);
     }
 
-    public void FadeColor(MapColor index, Colour4 color, double duration = 0, Easing easing = Easing.None)
+    public void SetColor(MapColor index, Colour4 color)
     {
         updateCache();
 
-        colorableDrawables.ForEach(drawable =>
-        {
-            if (drawable.Index == index || drawable.Index == MapColor.Gradient)
+        SetColorInternal(index, color);
+    }
+
+    public void FadeColor(MapColor index, Colour4 color, double startTime = 0, double duration = 0, Easing easing = Easing.None)
+    {
+        queuedTransforms.Add(
+            new Transform
             {
-                drawable.FadeColor(color, duration, easing);
-
-                switch (index)
+                Action = () =>
                 {
-                    case MapColor.Primary:
-                        drawable.FadeColorGradient(color, Secondary, duration, easing);
-                        break;
+                    updateCache();
 
-                    case MapColor.Secondary:
-                        drawable.FadeColorGradient(Primary, color, duration, easing);
-                        break;
-                }
-                
-                updateColor(drawable.Index, color);
+                    colorableDrawables.ForEach(drawable =>
+                    {
+                        if (drawable.Index == index || drawable.Index == MapColor.Gradient)
+                        {
+                            drawable.FadeColor(color, startTime, duration, easing);
+
+                            switch (index)
+                            {
+                                case MapColor.Primary:
+                                    drawable.FadeColorGradient(color, Secondary, startTime, duration, easing);
+                                    break;
+
+                                case MapColor.Secondary:
+                                    drawable.FadeColorGradient(Primary, color, startTime, duration, easing);
+                                    break;
+                            }
+
+                            updateColor(drawable.Index, color);
+                        }
+                    });
+                },
+                StartTime = startTime
             }
-        });
+        );
+        
         ColorChanged?.Invoke(color);
     }
 

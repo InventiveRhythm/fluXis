@@ -18,7 +18,7 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
     private IBeatSyncProvider beatSync { get; set; }
 
     protected OutlinedCircle Circle { get; }
-    private Colour4 color { get; set; }
+    private Colour4 colour { get; set; }
 
     public DefaultCircleReceptorUp(SkinJson skinJson, MapColor index)
         : base(skinJson, index)
@@ -43,14 +43,18 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
 
     public override void SetColor(Colour4 color)
     {
-        this.color = color;
+        colour = color;
         Circle.Colour = color.Lighten(0.4f);
     }
 
-    public override void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
+    public override void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None)
     {
-        this.FadeColour(color, duration, easing);
-        Circle.FadeColour(color.Lighten(0.4f), duration, easing);
+        using (BeginAbsoluteSequence(startTime))
+        {
+            this.FadeColour(color, duration, easing);
+            this.TransformTo(nameof(colour), color, duration, easing);
+            Circle.FadeColour(color.Lighten(0.4f), duration, easing);
+        }
     }
 
     protected override void Update()
@@ -65,7 +69,7 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
         var duration = beatSync?.BeatTime ?? 200;
         this.FadeInFromZero().FadeTo(.25f, duration / 2);
 
-        Circle.BorderTo(16).FadeColour(color)
-              .BorderTo(8, duration, Easing.OutQuint).FadeColour(color.Lighten(.4f), duration / 2);
+        Circle.BorderTo(16).FadeColour(colour)
+              .BorderTo(8, duration, Easing.OutQuint).FadeColour(colour.Lighten(.4f), duration / 2);
     }
 }

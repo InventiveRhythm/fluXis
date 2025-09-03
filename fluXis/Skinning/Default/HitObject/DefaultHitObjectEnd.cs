@@ -34,8 +34,11 @@ public partial class DefaultHitObjectEnd : ColorableSkinDrawable, ICanHaveSnapCo
 
     public override void SetColor(Colour4 color) => box.Colour = color.Darken(.4f);
 
-    public override void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
-        => box.FadeColour(color.Darken(.4f), duration, easing);
+    public override void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None)
+    {
+        using (BeginAbsoluteSequence(startTime))
+            box.FadeColour(color.Darken(.4f), duration, easing);
+    }
 
     public void ApplySnapColor(int start, int end)
     {
