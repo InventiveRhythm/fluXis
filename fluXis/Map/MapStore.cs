@@ -246,6 +246,12 @@ public partial class MapStore : Component
         => MapSets.FirstOrDefault(set => set.Maps.Any(m => m.ID == guid))?
             .Maps.FirstOrDefault(m => m.ID == guid);
 
+    [CanBeNull]
+    public RealmMapSet GetFromOnlineID(long id) => MapSets.FirstOrDefault(set => set.OnlineID == id);
+
+    [CanBeNull]
+    public RealmMap GetMapFromOnlineID(long id) => MapSets.SelectMany(set => set.Maps).FirstOrDefault(map => map.OnlineID == id);
+
     public RealmMapSet QuerySet(Guid id) => realm.Run(r => QuerySetFromRealm(r, id)).Detach();
     public RealmMapSet QuerySetFromRealm(Realm realm, Guid id) => realm.Find<RealmMapSet>(id);
 

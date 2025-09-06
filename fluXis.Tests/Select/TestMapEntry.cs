@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
-using fluXis.Screens.Select.List.Drawables.MapSet;
 using fluXis.Screens.Select.List.Items;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -74,6 +73,7 @@ public partial class TestMapEntry : FluXisTestScene
         AddStep("Test MapEntry", () =>
         {
             Clear();
+
             Add(new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
@@ -83,7 +83,11 @@ public partial class TestMapEntry : FluXisTestScene
                 Spacing = new Vector2(10),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                ChildrenEnumerable = maps.Select(set => new DrawableMapSetItem(new MapSetItem(set), set))
+                ChildrenEnumerable = maps.Select(set =>
+                {
+                    var item = new MapSetItem(set);
+                    return item.CreateDrawable();
+                })
             });
         });
     }

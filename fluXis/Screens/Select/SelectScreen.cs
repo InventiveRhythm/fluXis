@@ -22,6 +22,7 @@ using fluXis.IO;
 using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Online.Activity;
+using fluXis.Online.Collections;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Replays;
@@ -158,7 +159,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                         Padding = new MarginPadding(10) { Top = 140, Bottom = 90 },
                         Child = mapList
                     },
-                    filterControl = new SearchFilterControls(),
+                    filterControl = new SearchFilterControls(CurrentCollection),
                     searchBar = new SearchBar(),
                     selectMapInfo = new SelectMapInfo
                     {
@@ -197,6 +198,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (Maps.CurrentMap.Hash == "dummy" && Maps.MapSets.Any())
             Maps.Select(Maps.GetRandom()?.LowestDifficulty, true);
 
+        CurrentCollection.BindValueChanged(setCollection);
         sortMode.BindValueChanged(setSortingMode);
         groupMode.BindValueChanged(setGroupingMode);
         sortInverse.BindValueChanged(setInverseState);
@@ -425,9 +427,15 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     public MapUtils.SortingMode SortMode => sortMode.Value;
     public bool SortInverse => sortInverse.Value;
 
+#nullable enable
+    public Bindable<Collection?> CurrentCollection { get; } = new();
+#nullable disable
+
     private Bindable<MapUtils.GroupingMode> groupMode;
     private Bindable<MapUtils.SortingMode> sortMode;
     private Bindable<bool> sortInverse;
+
+    private void setCollection(ValueChangedEvent<Collection> e) => UpdateSearch();
 
     private void setSortingMode(ValueChangedEvent<MapUtils.SortingMode> e)
     {
@@ -926,20 +934,57 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         mapList.StartBulkInsert();
 
-        foreach (var set in Maps.MapSets)
+        var items = new List<IListItem>();
+        var collection = CurrentCollection.Value;
+
+        if (collection != null)
         {
-            if (!ShouldAdd(set))
-                continue;
+            var maps = new List<RealmMap>();
 
-            var items = createItems(set);
-
-            foreach (var item in items)
+            foreach (var item in collection.Items)
             {
-                if (item.MatchesFilter(Filters))
+                var map = item.Type switch
                 {
-                    Items.Add(item);
-                    mapList.Insert(item);
-                }
+                    CollectionItemType.Online => Maps.GetMapFromOnlineID(item.Map!.ID),
+                    CollectionItemType.Local => Maps.GetMapFromGuid(item.LocalID!.Value),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+
+                if (map is null || !ShouldAdd(map.MapSet))
+                    continue;
+
+                maps.Add(map);
+            }
+
+            switch (groupMode.Value)
+            {
+                case MapUtils.GroupingMode.Default:
+                    var grouped = maps.GroupBy(x => x.MapSet.ID);
+                    items.AddRange(grouped.Select(x => new MapSetItem(Maps.GetFromGuid(x.Key), x.ToList())));
+                    break;
+
+                default:
+                    items.AddRange(maps.Select(x => new MapDifficultyItem(x)));
+                    break;
+            }
+        }
+        else
+        {
+            foreach (var set in Maps.MapSets)
+            {
+                if (!ShouldAdd(set))
+                    continue;
+
+                items.AddRange(createItems(set));
+            }
+        }
+
+        foreach (var item in items)
+        {
+            if (item.MatchesFilter(Filters))
+            {
+                Items.Add(item);
+                mapList.Insert(item);
             }
         }
 

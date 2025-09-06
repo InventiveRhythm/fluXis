@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Screens.Select.List.Drawables.MapSet;
@@ -26,8 +27,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
             if (State.Value != SelectedState.Selected)
                 return 80;
 
-            var diffs = set.Maps.Count;
-
+            var diffs = maps.Count;
             return 85 + diffs * 53 - 5;
         }
     }
@@ -39,10 +39,9 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     {
         get
         {
-            var sorted = set.MapsSorted;
-            var current = sorted.IndexOf(Selection.CurrentMap);
+            var current = maps.IndexOf(Selection.CurrentMap);
 
-            if (current < 0 || current >= sorted.Count)
+            if (current < 0 || current >= maps.Count)
                 return Position;
 
             return Position + 85 + current * (48 + 5);
@@ -54,13 +53,16 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     public Drawable Drawable { get; set; }
 
     private RealmMapSet set { get; }
+    private List<RealmMap> maps { get; }
 
-    public MapSetItem(RealmMapSet set)
+    public MapSetItem(RealmMapSet set, List<RealmMap> maps = null)
     {
         this.set = set;
+        this.maps = maps ?? set.MapsSorted;
+        this.maps.Sort((a, b) => MapUtils.CompareMap(a, b, MapUtils.SortingMode.Difficulty));
     }
 
-    public Drawable CreateDrawable() => Drawable = new DrawableMapSetItem(this, set)
+    public Drawable CreateDrawable() => Drawable = new DrawableMapSetItem(this, set, maps)
     {
         SelectAction = Screen.Accept,
         EditAction = Screen.EditMap,
@@ -73,7 +75,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
 
     public void Select(bool last = false)
     {
-        var map = last ? set.HighestDifficulty : set.LowestDifficulty;
+        var map = last ? maps.Last() : maps.First();
         Selection.Select(map);
     }
 
@@ -83,21 +85,19 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
             return ReferenceEquals(obj, set);
 
         if (obj is RealmMap map)
-            return set.Maps.Any(m => ReferenceEquals(m, map));
+            return maps.Any(m => ReferenceEquals(m, map));
 
         return false;
     }
 
     public bool MatchesFilter(SearchFilters filters)
     {
-        var first = set.Maps.FirstOrDefault(filters.Matches);
+        var first = maps.FirstOrDefault(filters.Matches);
         return first is not null;
     }
 
     public bool ChangeChild(int by)
     {
-        var maps = set.MapsSorted;
-
         int current = maps.IndexOf(Selection.CurrentMap);
         current += by;
 

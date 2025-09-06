@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Configuration;
-using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Map.Structures;
 using fluXis.Skinning;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Screens.Select.List.Items;
@@ -21,16 +22,18 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
     private MapSetItem item { get; }
     public RealmMapSet MapSet { get; private set; }
+    private readonly List<RealmMap> maps;
 
     private SelectedState selectedState = SelectedState.Deselected;
 
     private DrawableMapSetHeader header;
     private Container<DrawableMapSetDifficulty> difficultyFlow;
 
-    public DrawableMapSetItem(MapSetItem item, RealmMapSet mapSet)
+    public DrawableMapSetItem(MapSetItem item, RealmMapSet mapSet, List<RealmMap> maps)
     {
         MapSet = mapSet;
         this.item = item;
+        this.maps = maps;
     }
 
     [BackgroundDependencyLoader]
@@ -52,7 +55,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
             header = new DrawableMapSetHeader(this, MapSet)
         };
 
-        foreach (var map in MapSet.MapsSorted)
+        foreach (var map in maps)
         {
             difficultyFlow.Add(new DrawableMapSetDifficulty(this, map)
             {
