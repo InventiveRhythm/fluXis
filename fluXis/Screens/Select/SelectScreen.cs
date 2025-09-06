@@ -940,6 +940,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (collection != null)
         {
             var maps = new List<RealmMap>();
+            var missing = new List<CollectionItem>();
 
             foreach (var item in collection.Items)
             {
@@ -950,7 +951,13 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-                if (map is null || !ShouldAdd(map.MapSet))
+                if (map is null)
+                {
+                    missing.Add(item);
+                    continue;
+                }
+
+                if (!ShouldAdd(map.MapSet))
                     continue;
 
                 maps.Add(map);
@@ -967,6 +974,9 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                     items.AddRange(maps.Select(x => new MapDifficultyItem(x)));
                     break;
             }
+
+            if (missing.Count > 0)
+                items.Add(new CollectionMissingItem(missing.Count));
         }
         else
         {

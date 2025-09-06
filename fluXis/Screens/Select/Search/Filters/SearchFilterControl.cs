@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using fluXis.Graphics;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
@@ -61,12 +62,17 @@ public partial class SearchFilterControl<T> : CompositeDrawable
                         RelativeSizeAxes = Axes.Both,
                         Colour = Theme.Background2
                     },
-                    new FillFlowContainer
+                    new FluXisScrollContainer
                     {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Direction = FillDirection.Vertical,
-                        ChildrenEnumerable = values.Select(v => new Entry(v, GenerateItemText(v), GenerateItemIcon(v), () => bind.Value = v))
+                        RelativeSizeAxes = Axes.Both,
+                        Masking = false,
+                        Child = new FillFlowContainer
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            AutoSizeAxes = Axes.Y,
+                            Direction = FillDirection.Vertical,
+                            ChildrenEnumerable = values.Select(v => new Entry(v, GenerateItemText(v), GenerateItemIcon(v), () => bind.Value = v))
+                        }
                     }
                 }
             }
@@ -90,7 +96,9 @@ public partial class SearchFilterControl<T> : CompositeDrawable
     {
         if (state)
         {
-            dropdown.ResizeHeightTo(item_height * values.Length, Styling.TRANSITION_MOVE, Easing.OutQuint)
+            const float max_height = item_height * 8.5f;
+
+            dropdown.ResizeHeightTo(Math.Min(item_height * values.Length, max_height), Styling.TRANSITION_MOVE, Easing.OutQuint)
                     .FadeEdgeEffectTo(Styling.SHADOW_OPACITY, Styling.TRANSITION_FADE);
         }
         else

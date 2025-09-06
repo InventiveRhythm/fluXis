@@ -16,6 +16,12 @@ public class CollectionItem
 
     [JsonProperty("local-id")]
     public Guid? LocalID { get; set; }
+
+    [JsonProperty("local-title")]
+    public string? LocalTitle { get; set; }
+
+    [JsonProperty("local-artist")]
+    public string? LocalArtist { get; set; }
 }
 
 public enum CollectionItemType

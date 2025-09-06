@@ -16,6 +16,23 @@ public partial class SearchCollectionFilter : SearchFilterControl<Collection?>
     {
     }
 
-    protected override IconUsage GenerateItemIcon(Collection? item) => FontAwesome6.Solid.Question;
+    protected override IconUsage GenerateItemIcon(Collection? item)
+    {
+        switch (item?.Type)
+        {
+            case CollectionType.Loved:
+                return FontAwesome6.Solid.Heart;
+
+            case CollectionType.Owned:
+                return FontAwesome6.Solid.ListMusic;
+
+            case CollectionType.Subscribed:
+                return FontAwesome6.Solid.EarthAmericas;
+
+            default:
+                return FontAwesome6.Solid.XMark;
+        }
+    }
+
     protected override LocalisableString GenerateItemText(Collection? item) => item?.Name ?? "None";
 }
