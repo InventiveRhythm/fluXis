@@ -170,7 +170,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 Spacing = new Vector2(12),
                                 Children = new Drawable[]
                                 {
-                                    // new MapSetButton(FontAwesome6.Solid.Star, () => { }),
+                                    new MapSetLoveButton(set),
                                     new MapSetButton(FontAwesome6.Solid.ShareNodes, ()
                                         => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{set.ID}#{bindableMap.Value.ID}")),
                                     new MapSetDownloadButton(set),

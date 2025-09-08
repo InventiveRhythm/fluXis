@@ -35,7 +35,7 @@ public static class Theme
     public static Colour4 Aqua => Colour4.FromHSL(160 / 360f, 1f, 2 / 3f);
     public static Colour4 Cyan => Colour4.FromHSL(200 / 360f, 1f, 2 / 3f);
     public static Colour4 Blue => Colour4.FromHSL(240 / 360f, 1f, 2 / 3f);
-    public static Colour4 Purple => Colour4.FromHSL(320 / 360f, 1f, 2 / 3f);
+    public static Colour4 Purple => Colour4.FromHSL(280 / 360f, 1f, 2 / 3f);
     public static Colour4 Pink => Colour4.FromHSL(320 / 360f, 1f, 2 / 3f);
 
     public static Colour4 ButtonRed => Colour4.FromHSL(0f, .5f, .3f);

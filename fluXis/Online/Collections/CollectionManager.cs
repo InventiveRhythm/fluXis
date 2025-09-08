@@ -28,7 +28,7 @@ public partial class CollectionManager : Component
             Collections.AddRange(res.Data);
             complete?.Invoke();
         };
-        req.Failure += ex => complete?.Invoke();
+        req.Failure += _ => complete?.Invoke();
         api.PerformRequestAsync(req);
     }
 }

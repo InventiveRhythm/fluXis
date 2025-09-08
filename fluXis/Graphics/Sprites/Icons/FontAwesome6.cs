@@ -147,6 +147,7 @@ public class FontAwesome6
 
         public static IconUsage Circle => GetRegular(0xf111);
         public static IconUsage Clock => GetRegular(0xf017);
+        public static IconUsage Heart => GetRegular(0xf004);
     }
 
     public static class Brands
