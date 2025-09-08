@@ -72,6 +72,7 @@ public partial class DashboardAccountTab : DashboardTab
     [BackgroundDependencyLoader]
     private void load()
     {
+        Header.Child = new DashboardAccountLogoutButton();
         Content.Children = new Drawable[]
         {
             editContent = new Container
