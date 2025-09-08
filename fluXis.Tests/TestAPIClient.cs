@@ -9,6 +9,7 @@ using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Collections;
 using fluXis.Online.Fluxel;
 using Midori.Networking.WebSockets.Typed;
 using osu.Framework.Bindables;
@@ -53,6 +54,7 @@ public class TestAPIClient : IAPIClient
     public event Action<string>? ChatChannelRemoved;
     public event Action<APIChatMessage>? ChatMessageReceived;
     public event Action<string, string>? ChatMessageRemoved;
+    public event Action<string, List<CollectionItem>, List<CollectionItem>, List<string>>? OnCollectionUpdated;
 
     public bool IsLoggedIn => Status.Value == ConnectionStatus.Online;
 

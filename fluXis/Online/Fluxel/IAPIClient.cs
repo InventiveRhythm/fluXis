@@ -7,6 +7,7 @@ using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Collections;
 using Midori.Networking.WebSockets.Typed;
 using osu.Framework.Bindables;
 
@@ -46,6 +47,8 @@ public interface IAPIClient
     event Action<string> ChatChannelRemoved;
     event Action<APIChatMessage> ChatMessageReceived;
     event Action<string, string> ChatMessageRemoved;
+
+    event Action<string, List<CollectionItem>, List<CollectionItem>, List<string>>? OnCollectionUpdated;
 
     void PerformRequest(APIRequest request);
     Task PerformRequestAsync(APIRequest request);

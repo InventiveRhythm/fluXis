@@ -6,6 +6,9 @@ namespace fluXis.Online.Collections;
 
 public class Collection
 {
+    [JsonProperty("id")]
+    public string ID { get; set; }
+
     [JsonProperty("name")]
     public string Name { get; init; }
 
