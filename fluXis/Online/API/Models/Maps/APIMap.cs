@@ -85,6 +85,12 @@ public class APIMap
     [JsonProperty("file")]
     public string? FileName { get; set; }
 
+    [JsonProperty("claim_owned")]
+    public APIMapClaim? ClaimOwned { get; set; }
+
+    [JsonProperty("claim_your_club")]
+    public APIMapClaim? ClaimYourClub { get; set; }
+
     #endregion
 
     #region Localization
