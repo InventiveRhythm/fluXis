@@ -24,7 +24,7 @@ public class Collection
 
 public enum CollectionType
 {
-    Loved,
+    Favorite,
     Owned,
     Subscribed
 }

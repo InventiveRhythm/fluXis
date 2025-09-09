@@ -20,7 +20,7 @@ public partial class SearchCollectionFilter : SearchFilterControl<Collection?>
     {
         switch (item?.Type)
         {
-            case CollectionType.Loved:
+            case CollectionType.Favorite:
                 return FontAwesome6.Solid.Heart;
 
             case CollectionType.Owned:

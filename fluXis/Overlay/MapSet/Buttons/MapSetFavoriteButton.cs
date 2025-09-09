@@ -2,7 +2,7 @@
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Maps;
-using fluXis.Online.API.Requests.MapSets.Loved;
+using fluXis.Online.API.Requests.MapSets.Favorite;
 using fluXis.Online.Fluxel;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
@@ -14,7 +14,7 @@ using osuTK;
 
 namespace fluXis.Overlay.MapSet.Buttons;
 
-public partial class MapSetLoveButton : MapSetButton
+public partial class MapSetFavoriteButton : MapSetButton
 {
     [Resolved]
     private IAPIClient api { get; set; }
@@ -25,11 +25,11 @@ public partial class MapSetLoveButton : MapSetButton
     private Container loading;
     private bool updating;
 
-    public MapSetLoveButton(APIMapSet set)
+    public MapSetFavoriteButton(APIMapSet set)
         : base(FontAwesome6.Regular.Heart, () => { })
     {
         this.set = set;
-        state = set.Loved ?? false;
+        state = set.Favorite ?? false;
     }
 
     [BackgroundDependencyLoader]
@@ -68,8 +68,8 @@ public partial class MapSetLoveButton : MapSetButton
         if (updating)
             return true;
 
-        var req = new MapLoveUpdateRequest(set.ID, !state);
-        req.Success += res => finish(res.Data.Loved);
+        var req = new MapFavoriteUpdateRequest(set.ID, !state);
+        req.Success += res => finish(res.Data.Favorite);
         req.Failure += _ => finish(state);
         api.PerformRequestAsync(req);
 

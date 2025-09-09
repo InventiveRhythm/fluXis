@@ -3,17 +3,17 @@ using fluXis.Online.API.Models.Maps;
 using fluXis.Utils;
 using osu.Framework.IO.Network;
 
-namespace fluXis.Online.API.Requests.MapSets.Loved;
+namespace fluXis.Online.API.Requests.MapSets.Favorite;
 
-public class MapLoveUpdateRequest : APIRequest<APIMapSetLoveState>
+public class MapFavoriteUpdateRequest : APIRequest<APIMapSetFavoriteState>
 {
-    protected override string Path => $"/mapset/{id}/love";
+    protected override string Path => $"/mapset/{id}/favorite";
     protected override HttpMethod Method => HttpMethod.Patch;
 
     private long id { get; }
     private bool value { get; }
 
-    public MapLoveUpdateRequest(long id, bool value)
+    public MapFavoriteUpdateRequest(long id, bool value)
     {
         this.id = id;
         this.value = value;
@@ -22,7 +22,7 @@ public class MapLoveUpdateRequest : APIRequest<APIMapSetLoveState>
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
-        req.AddRaw(new APIMapSetLoveState { Loved = value }.Serialize());
+        req.AddRaw(new APIMapSetFavoriteState { Favorite = value }.Serialize());
         return req;
     }
 }
