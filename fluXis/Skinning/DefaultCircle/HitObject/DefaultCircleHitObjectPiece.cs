@@ -39,12 +39,6 @@ public partial class DefaultCircleHitObjectPiece : ColorableSkinDrawable, ICanHa
 
     public override void SetColor(Colour4 color) => Circle.Colour = color;
 
-    public override void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None)
-    {
-        using (BeginAbsoluteSequence(startTime))
-            Circle.FadeColour(color, duration, easing);
-    }
-
     public void ApplySnapColor(int start, int end)
     {
         UseCustomColor = true;

@@ -12,7 +12,7 @@ public partial class DefaultStageBorderLeft : ColorableSkinDrawable
     private Box border;
 
     public DefaultStageBorderLeft(SkinJson skinJson)
-        : base(skinJson, MapColor.Secondary)
+        : base(skinJson, MapColor.Primary)
     {
         AutoSizeAxes = Axes.X;
         RelativeSizeAxes = Axes.Y;
@@ -40,10 +40,4 @@ public partial class DefaultStageBorderLeft : ColorableSkinDrawable
     }
 
     public override void SetColor(Colour4 color) => border.Colour = color;
-
-    public override void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None)
-    {
-        using (BeginAbsoluteSequence(startTime))
-            border.FadeColour(color, duration, easing);
-    }
 }

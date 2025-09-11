@@ -104,10 +104,6 @@ public partial class Playfield : Container
             Padding = new MarginPadding { Bottom = skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorOffset }
         };
 
-        ColorManager = new ColorManager(this, ruleset, dependencies);
-        LoadComponent(ColorManager);
-        dependencies.CacheAs<ICustomColorProvider>(ColorManager);
-
         dependencies.CacheAs(this);
         dependencies.CacheAs(HitManager = new HitObjectManager
         {
@@ -115,10 +111,14 @@ public partial class Playfield : Container
             Masking = true
         });
 
+        LoadComponent(ColorManager = new ColorManager());
+        dependencies.CacheAs<ICustomColorProvider>(ColorManager);
+
         var receptorsFirst = skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorsFirst;
 
         InternalChildren = new[]
         {
+            ColorManager,
             new LaneSwitchAlert(),
             Stage = new Stage(),
             new TimingLineManager(),
@@ -156,7 +156,6 @@ public partial class Playfield : Container
     protected override void Update()
     {
         updatePositionScale();
-        ColorManager.Update();
         var newReceptorOffset = laneSwitchManager.ReceptorOffset;
 
         hitline.Y = -laneSwitchManager.HitPosition;

@@ -1,171 +1,73 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Map;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Default;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
 
-public partial class ColorManager : Drawable, ICustomColorProvider
+public partial class ColorManager : Component, ICustomColorProvider
 {
-    [Resolved(CanBeNull = true)]
-    private ICustomColorProvider mapColors { get; set; }
+    private List<(ColorableSkinDrawable draw, MapColor idx)> drawables { get; } = new();
 
-    private Playfield playfield;
-    private RulesetContainer ruleset;
-    private DependencyContainer dependencies;
-    private List<ColorableSkinDrawable> colorableDrawables;
+    private Colour4 primary = Theme.Primary;
+    private Colour4 secondary = Theme.Secondary;
+    private Colour4 middle = Colour4.White;
 
-    private List<Transform> queuedTransforms = new();
-
-    private struct Transform
+    public Colour4 Primary
     {
-        public Action Action;
-        public double StartTime;
+        get => primary;
+        private set
+        {
+            if (primary == value) return;
+
+            primary = value;
+            SetColor(MapColor.Primary, value);
+        }
     }
 
-    public Colour4 Primary { get; private set; } = Theme.Primary;
-    public Colour4 Secondary { get; private set; } = Theme.Secondary;
-    public Colour4 Middle { get; private set; } = Colour4.White;
-
-    public event Action<Colour4> ColorChanged;
-
-    public ColorManager(Playfield playfield, RulesetContainer ruleset, DependencyContainer dependencies)
+    public Colour4 Secondary
     {
-        this.playfield = playfield;
-        this.dependencies = dependencies;
-        this.ruleset = ruleset;
-        colorableDrawables = new();
+        get => secondary;
+        private set
+        {
+            if (secondary == value) return;
+
+            secondary = value;
+            SetColor(MapColor.Secondary, value);
+        }
     }
 
-    [BackgroundDependencyLoader]
-    private void load()
+    public Colour4 Middle
+    {
+        get => middle;
+        private set
+        {
+            if (middle == value) return;
+
+            middle = value;
+            SetColor(MapColor.Middle, value);
+        }
+    }
+
+    [BackgroundDependencyLoader(true)]
+    private void load([CanBeNull] ICustomColorProvider mapColors)
     {
         Primary = mapColors?.Primary ?? Primary;
         Secondary = mapColors?.Secondary ?? Secondary;
         Middle = mapColors?.Middle ?? Middle;
     }
 
-    public void Register(ColorableSkinDrawable skinDrawable) => colorableDrawables.Add(skinDrawable);
-    public void Unregister(ColorableSkinDrawable skinDrawable) => colorableDrawables.Remove(skinDrawable);
-
-    private void updateColor(MapColor index, Colour4 color)
-    {
-        switch (index)
-        {
-            case MapColor.Primary:
-                Primary = color;
-                break;
-
-            case MapColor.Secondary:
-                Secondary = color;
-                break;
-
-            case MapColor.Middle:
-                Middle = color;
-                break;
-        }
-    }
-
-    private void updateCache()
-    {
-        var cachedMapColors = (MapColors)mapColors;
-        foreach (var cachedDrawable in cachedMapColors.CachedDrawables)
-        {
-            if (!colorableDrawables.Contains(cachedDrawable))
-            {
-                cachedDrawable.ResolveProviderFrom(dependencies);
-                colorableDrawables.AddRange(cachedMapColors.CachedDrawables);
-            }
-        }
-    }
-
-    // For some reason we can't override update so we're calling from playfield
-    public new void Update()
-    {
-        double currentTime = ruleset.Clock.CurrentTime;
-
-        for (int i = queuedTransforms.Count - 1; i >= 0; i--)
-        {
-            var transform = queuedTransforms[i];
-            if (currentTime >= transform.StartTime)
-            {
-                transform.Action.Invoke();
-                queuedTransforms.RemoveAt(i);
-            }
-        }
-    }
-
-    public void SetColorInternal(MapColor index, Colour4 color)
-    {
-        colorableDrawables.ForEach(drawable =>
-        {
-            if (drawable.Index == index)
-            {
-                drawable.SetColor(color);
-
-                switch (index)
-                {
-                    case MapColor.Primary:
-                        drawable.SetColorGradient(color, Secondary);
-                        break;
-
-                    case MapColor.Secondary:
-                        drawable.SetColorGradient(Primary, color);
-                        break;
-                }
-
-                updateColor(drawable.Index, color);
-            }
-        });
-        ColorChanged?.Invoke(color);
-    }
+    public void Register(ColorableSkinDrawable draw, MapColor index) => drawables.Add((draw, index));
+    public void Unregister(ColorableSkinDrawable draw, MapColor index) => drawables.RemoveAll(x => x.draw == draw && x.idx == index);
 
     public void SetColor(MapColor index, Colour4 color)
     {
-        updateCache();
-
-        SetColorInternal(index, color);
-    }
-
-    public void FadeColor(MapColor index, Colour4 color, double startTime = 0, double duration = 0, Easing easing = Easing.None)
-    {
-        queuedTransforms.Add(
-            new Transform
-            {
-                Action = () =>
-                {
-                    updateCache();
-
-                    colorableDrawables.ForEach(drawable =>
-                    {
-                        if (drawable.Index == index || drawable.Index == MapColor.Gradient)
-                        {
-                            drawable.FadeColor(color, startTime, duration, easing);
-
-                            switch (index)
-                            {
-                                case MapColor.Primary:
-                                    drawable.FadeColorGradient(color, Secondary, startTime, duration, easing);
-                                    break;
-
-                                case MapColor.Secondary:
-                                    drawable.FadeColorGradient(Primary, color, startTime, duration, easing);
-                                    break;
-                            }
-
-                            updateColor(drawable.Index, color);
-                        }
-                    });
-                },
-                StartTime = startTime
-            }
-        );
-        
-        ColorChanged?.Invoke(color);
+        var match = drawables.Where(x => x.idx == index).ToList();
+        match.ForEach(x => x.draw.UpdateColor(index, color));
     }
 
     public bool HasColorFor(int lane, int keyCount, out Colour4 colour)

@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Skinning.Bases;
 using fluXis.Skinning.Default;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -21,11 +19,6 @@ public class MapColors : ICustomColorProvider
 
     [JsonProperty("middle")]
     public string MiddleHex { get; set; } = "";
-
-    public List<ColorableSkinDrawable> CachedDrawables = new();
-
-    public void Register(ColorableSkinDrawable skinDrawable) => CachedDrawables.Add(skinDrawable);
-    public void Unregister(ColorableSkinDrawable skinDrawable) => CachedDrawables.Remove(skinDrawable);
 
     public override string ToString()
         => $"Accent: {AccentHex}, Primary: {PrimaryHex}, Secondary: {SecondaryHex}, Middle: {MiddleHex}";

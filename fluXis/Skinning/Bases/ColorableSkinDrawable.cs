@@ -29,10 +29,8 @@ public partial class ColorableSkinDrawable : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        ColorProvider.Register(this);
+        RegisterToProvider();
     }
-
-    public void ResolveProviderFrom(DependencyContainer dependencies) => ColorProvider = dependencies.Get<ICustomColorProvider>();
 
     public void UpdateColor(int lane, int keyCount) => Schedule(() =>
     {
@@ -49,14 +47,10 @@ public partial class ColorableSkinDrawable : CompositeDrawable
     });
 
     public virtual void SetColor(Colour4 color) { }
-    public virtual void SetColorGradient(Colour4 color1, Colour4 color2) { }
+    public virtual void UpdateColor(MapColor index, Colour4 color) => SetColor(color);
 
-    /// <summary>
-    /// Not to be confused with <see cref="TransformableExtensions.FadeColour{T}(T, osu.Framework.Graphics.Colour.ColourInfo, double, Easing)" />
-    /// </summary>
-    /// <param name="color"></param>
-    public virtual void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None) { }
-    public virtual void FadeColorGradient(Colour4 color1, Colour4 color2, double startTime, double duration = 0, Easing easing = Easing.None) { }
+    protected virtual void RegisterToProvider() => ColorProvider?.Register(this, Index);
+    protected virtual void UnregisterFromProvider() => ColorProvider?.Unregister(this, Index);
 
     protected Colour4 GetIndexOrFallback(int index, Colour4 fallback)
     {
@@ -70,7 +64,7 @@ public partial class ColorableSkinDrawable : CompositeDrawable
 
     protected override void Dispose(bool isDisposing)
     {
-        ColorProvider.Unregister(this);
+        UnregisterFromProvider();
         base.Dispose(isDisposing);
     }
 }

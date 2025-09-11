@@ -1,5 +1,4 @@
 using System;
-using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
@@ -41,9 +40,10 @@ public class ColorFadeEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableTo
 
         using (playfield.BeginAbsoluteSequence(Time))
         {
-            playfield.ColorManager.FadeColor(MapColor.Primary, (Colour4)Primary, Time, Math.Max(Duration, 0), Easing);
-            playfield.ColorManager.FadeColor(MapColor.Secondary, (Colour4)Secondary, Time, Math.Max(Duration, 0), Easing);
-            playfield.ColorManager.FadeColor(MapColor.Middle, (Colour4)Middle, Time, Math.Max(Duration, 0), Easing);
+            var manager = playfield.ColorManager;
+            manager.TransformTo(nameof(ColorManager.Primary), (Colour4)Primary, Math.Max(Duration, 0), Easing);
+            manager.TransformTo(nameof(ColorManager.Secondary), (Colour4)Secondary, Math.Max(Duration, 0), Easing);
+            manager.TransformTo(nameof(ColorManager.Middle), (Colour4)Middle, Math.Max(Duration, 0), Easing);
         }
     }
 }

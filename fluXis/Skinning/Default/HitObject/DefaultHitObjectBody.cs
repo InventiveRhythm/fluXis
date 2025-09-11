@@ -26,11 +26,6 @@ public partial class DefaultHitObjectBody : ColorableSkinDrawable, ICanHaveSnapC
 
     public override void SetColor(Colour4 color)
         => Colour = color;
-    public override void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None)
-    {
-        using (BeginAbsoluteSequence(startTime))
-            this.FadeColour(color, duration, easing);
-    }
 
     public void ApplySnapColor(int start, int end)
     {

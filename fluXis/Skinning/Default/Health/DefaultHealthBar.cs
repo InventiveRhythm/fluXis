@@ -23,8 +23,12 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
     private readonly ColourInfo drainGradient = ColourInfo.GradientHorizontal(Colour4.FromHex("#40aef8"), Colour4.FromHex("#751010"));
     private double drainRate;
 
+    private Colour4 top;
+    private Colour4 bottom;
+    private bool updateColors;
+
     public DefaultHealthBar(SkinJson skinJson, HealthProcessor processor)
-        : base(skinJson, MapColor.Gradient)
+        : base(skinJson, MapColor.Accent)
     {
         Debug.Assert(processor != null);
         this.processor = processor;
@@ -38,7 +42,7 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
         Origin = Anchor.BottomLeft;
         CornerRadius = 10;
         Masking = true;
-        BorderColour = ColourInfo.GradientVertical(GetIndexOrFallback(1, Theme.Primary), GetIndexOrFallback(2, Theme.Secondary));
+        BorderColour = ColourInfo.GradientVertical(top = GetIndexOrFallback(1, Theme.Primary), bottom = GetIndexOrFallback(2, Theme.Secondary));
         BorderThickness = 4;
         InternalChildren = new Drawable[]
         {
@@ -58,18 +62,44 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
         };
     }
 
-    public override void SetColorGradient(Colour4 color1, Colour4 color2) => BorderColour = ColourInfo.GradientVertical(color1, color2);
-
-    public override void FadeColorGradient(Colour4 color1, Colour4 color2, double startTime, double duration = 0, Easing easing = Easing.None)
+    public override void UpdateColor(MapColor index, Colour4 color)
     {
-        using (BeginAbsoluteSequence(startTime))
-            this.TransformTo(nameof(BorderColour), ColourInfo.GradientVertical(color1, color2), duration, easing);
+        switch (index)
+        {
+            case MapColor.Primary:
+                top = color;
+                break;
+
+            case MapColor.Secondary:
+                bottom = color;
+                break;
+        }
+
+        updateColors = true;
     }
-    
+
+    protected override void RegisterToProvider()
+    {
+        ColorProvider?.Register(this, MapColor.Primary);
+        ColorProvider?.Register(this, MapColor.Secondary);
+    }
+
+    protected override void UnregisterFromProvider()
+    {
+        ColorProvider?.Unregister(this, MapColor.Primary);
+        ColorProvider?.Unregister(this, MapColor.Secondary);
+    }
 
     protected override void Update()
     {
         base.Update();
+
+        if (updateColors)
+        {
+            text.Colour = top;
+            BorderColour = ColourInfo.GradientVertical(top, bottom);
+            updateColors = false;
+        }
 
         text.Text = $"{(int)Math.Round(processor.SmoothHealth)}";
 

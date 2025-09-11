@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Skinning;

@@ -47,16 +47,6 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
         Circle.Colour = color.Lighten(0.4f);
     }
 
-    public override void FadeColor(Colour4 color, double startTime, double duration = 0, Easing easing = Easing.None)
-    {
-        using (BeginAbsoluteSequence(startTime))
-        {
-            this.FadeColour(color, duration, easing);
-            this.TransformTo(nameof(colour), color, duration, easing);
-            Circle.FadeColour(color.Lighten(0.4f), duration, easing);
-        }
-    }
-
     protected override void Update()
     {
         base.Update();

@@ -233,7 +233,5 @@ public enum MapColor
     Accent,
     Primary,
     Secondary,
-    Middle,
-    Other,
-    Gradient,
+    Middle
 }

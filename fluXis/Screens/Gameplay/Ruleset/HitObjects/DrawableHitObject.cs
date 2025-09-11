@@ -5,7 +5,6 @@ using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Ruleset.HitObjects.Long;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Skinning;
 using fluXis.Skinning.Bases;
 using osu.Framework.Allocation;
@@ -92,7 +91,7 @@ public partial class DrawableHitObject : CompositeDrawable
                 case ColorableSkinDrawable drawable:
                     yield return drawable;
                     break;
-                    
+
                 default:
                     if (child.Parent is DrawableLongNote drawableLongNote)
                     {
@@ -116,7 +115,7 @@ public partial class DrawableHitObject : CompositeDrawable
                 {
                     if (notePartChild is ColorableSkinDrawable drawable)
                         yield return drawable;
-                } 
+                }
             }
         }
     }
