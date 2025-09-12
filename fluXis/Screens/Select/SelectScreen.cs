@@ -214,8 +214,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                 Maps.MapSetRemoved += removeMapSet;
                 Maps.MapBindable.BindValueChanged(mapBindableChanged, true);
 
-                mapList.FadeIn(500);
-                loadingIcon.FadeOut(500);
+                mapList.Delay(200).FadeIn(Styling.TRANSITION_FADE);
+                loadingIcon.FadeOut(Styling.TRANSITION_FADE);
             });
         });
     }
@@ -806,14 +806,20 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         {
             this.FadeIn(Styling.TRANSITION_FADE);
 
+            searchBar.Show();
+
+            filterControl.FadeOut().MoveToX(-100)
+                         .Delay(Styling.TRANSITION_ENTER_DELAY)
+                         .FadeInFromZero(Styling.TRANSITION_FADE)
+                         .MoveToX(-10, Styling.TRANSITION_MOVE, Easing.OutQuint);
+
             mapList.MoveToX(-100)
+                   .Delay(Styling.TRANSITION_ENTER_DELAY * 2)
                    .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
             selectMapInfo.MoveToX(100)
                          .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
-            searchBar.Show();
-            filterControl.Show();
             footer.Show();
         }
     }
