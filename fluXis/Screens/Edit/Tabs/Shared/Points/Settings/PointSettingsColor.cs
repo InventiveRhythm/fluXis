@@ -22,6 +22,10 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
     public Action<Colour4> OnColorChanged { get; set; } = _ => { };
     public Bindable<Colour4> Bindable { get; set; }
 
+    public Bindable<bool> Enabled { get; init; } = new(true);
+    public bool HideWhenDisabled { get; init; } = false;
+
+    private FullInputBlockingContainer inputBlockingContainer;
     private Circle textBackground;
     private FluXisSpriteText text;
 
@@ -60,9 +64,10 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
                         Origin = Anchor.Centre,
                         FontSize = 16,
                         FixedWidth = true
-                    }
+                    },
+                    inputBlockingContainer = new FullInputBlockingContainer{ RelativeSizeAxes = Axes.Both },
                 }
-            }
+            },
         };
     }
 
@@ -72,6 +77,9 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
 
         updateColors(Color);
         Bindable.BindValueChanged(valueChanged);
+        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200), true);
+        Enabled.BindValueChanged(e => inputBlockingContainer.Alpha = e.NewValue ? 0f : 1f, true);
+        FinishTransforms();
     }
 
     protected override void Dispose(bool isDisposing)

@@ -8,6 +8,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Utils;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
@@ -36,18 +37,21 @@ public partial class ColorFadeEntry : PointListEntry
             {
                 Size = new Vector2(20),
                 Colour = colorFade.Primary,
-                Margin = new MarginPadding { Right = 10 }
+                Alpha = colorFade.FadePrimary ? 1f : .4f,
+                Margin = new MarginPadding { Right = 4 }
             },
             new Circle
-            {
+            {   
                 Size = new Vector2(20),
                 Colour = colorFade.Secondary,
+                Alpha = colorFade.FadeSecondary ? 1f : .4f,
                 Margin = new MarginPadding { Right = 4 }
             },
             new Circle
             {
                 Size = new Vector2(20),
                 Colour = colorFade.Middle,
+                Alpha = colorFade.FadeMiddle ? 1f : .4f,
                 Margin = new MarginPadding { Right = 10 }
             },
             new FluXisSpriteText
@@ -60,13 +64,51 @@ public partial class ColorFadeEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings()
     {
+        var primaryToggle = new PointSettingsToggle
+        {
+            Text = "Fade Primary",
+            TooltipText = "Enables whether Primary color should be faded.",
+            Bindable = new Bindable<bool>(colorFade.FadePrimary),
+            OnStateChanged = enabled =>
+            {
+                colorFade.FadePrimary = enabled;
+                Map.Update(colorFade);
+            }
+        };
+
+        var secondaryToggle = new PointSettingsToggle
+        {
+            Text = "Fade secondary",
+            TooltipText = "Enables whether secondary color should be faded.",
+            Bindable = new Bindable<bool>(colorFade.FadeSecondary),
+            OnStateChanged = enabled =>
+            {
+                colorFade.FadeSecondary = enabled;
+                Map.Update(colorFade);
+            }
+        };
+
+        var middleToggle = new PointSettingsToggle
+        {
+            Text = "Fade middle",
+            TooltipText = "Enables whether middle color should be faded.",
+            Bindable = new Bindable<bool>(colorFade.FadeMiddle),
+            OnStateChanged = enabled =>
+            {
+                colorFade.FadeMiddle = enabled;
+                Map.Update(colorFade);
+            }
+        };
+
         return base.CreateSettings().Concat(new Drawable[]
         {
             new PointSettingsLength<ColorFadeEvent>(Map, colorFade, BeatLength),
+            primaryToggle,
             new PointSettingsColor
             {
+                Enabled = primaryToggle.Bindable,
                 Text = "Primary",
-                TooltipText = "Color of the primary lane, right playfield border & Health top gradient.",
+                TooltipText = "Color of the primary lane, left stage border & Health top gradient.",
                 Color = colorFade.Primary,
                 OnColorChanged = c =>
                 {
@@ -74,10 +116,12 @@ public partial class ColorFadeEntry : PointListEntry
                     Map.Update(colorFade);
                 }
             },
+            secondaryToggle,
             new PointSettingsColor
             {
+                Enabled = secondaryToggle.Bindable,
                 Text = "Secondary",
-                TooltipText = "Color of the secondary lane, left playfield border & Health Bottom gradient.",
+                TooltipText = "Color of the secondary lane, right stage border & Health Bottom gradient.",
                 Color = colorFade.Secondary,
                 OnColorChanged = c =>
                 {
@@ -85,8 +129,10 @@ public partial class ColorFadeEntry : PointListEntry
                     Map.Update(colorFade);
                 }
             },
+            middleToggle,
             new PointSettingsColor
             {
+                Enabled = middleToggle.Bindable,
                 Text = "Middle",
                 TooltipText = "Color of the middle lane.",
                 Color = colorFade.Middle,

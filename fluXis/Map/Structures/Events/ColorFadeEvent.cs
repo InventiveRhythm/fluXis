@@ -1,6 +1,7 @@
 using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using Midori.Logging;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK.Graphics;
@@ -12,11 +13,20 @@ public class ColorFadeEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableTo
     [JsonProperty("time")]
     public double Time { get; set; }
 
+    [JsonProperty("fade-primary")]
+    public bool FadePrimary { get; set; } = false;
+
     [JsonProperty("primary")]
     public Color4 Primary { get; set; } = Color4.White;
 
+    [JsonProperty("fade-secondary")]
+    public bool FadeSecondary { get; set; } = false;
+
     [JsonProperty("secondary")]
     public Color4 Secondary { get; set; } = Color4.White;
+
+    [JsonProperty("fade-middle")]
+    public bool FadeMiddle { get; set; } = false;
 
     [JsonProperty("middle")]
     public Color4 Middle { get; set; } = Color4.White;
@@ -41,9 +51,12 @@ public class ColorFadeEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableTo
         using (playfield.BeginAbsoluteSequence(Time))
         {
             var manager = playfield.ColorManager;
-            manager.TransformTo(nameof(ColorManager.Primary), (Colour4)Primary, Math.Max(Duration, 0), Easing);
-            manager.TransformTo(nameof(ColorManager.Secondary), (Colour4)Secondary, Math.Max(Duration, 0), Easing);
-            manager.TransformTo(nameof(ColorManager.Middle), (Colour4)Middle, Math.Max(Duration, 0), Easing);
+            if (FadePrimary)
+                manager.TransformTo(nameof(ColorManager.Primary), (Colour4)Primary, Math.Max(Duration, 0), Easing);
+            if (FadeSecondary)
+                manager.TransformTo(nameof(ColorManager.Secondary), (Colour4)Secondary, Math.Max(Duration, 0), Easing);
+            if (FadeMiddle)
+                manager.TransformTo(nameof(ColorManager.Middle), (Colour4)Middle, Math.Max(Duration, 0), Easing);
         }
     }
 }
