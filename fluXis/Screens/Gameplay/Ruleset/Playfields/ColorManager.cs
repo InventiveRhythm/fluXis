@@ -56,10 +56,12 @@ public partial class ColorManager : Component, ICustomColorProvider
     [BackgroundDependencyLoader(true)]
     private void load([CanBeNull] ICustomColorProvider mapColors)
     {
-        Primary = mapColors?.Primary ?? Primary;
-        Secondary = mapColors?.Secondary ?? Secondary;
-        Middle = mapColors?.Middle ?? Middle;
+        Primary = isDefaultColor(mapColors.Primary) ? Primary : mapColors.Primary;
+        Secondary = isDefaultColor(mapColors.Secondary) ? Secondary : mapColors.Secondary;
+        Middle = isDefaultColor(mapColors.Middle) ? Middle : mapColors.Middle;
     }
+
+    private static bool isDefaultColor(Colour4 colour) => colour == Colour4.Transparent;
 
     public void Register(ColorableSkinDrawable draw, MapColor index) => drawables.Add((draw, index));
     public void Unregister(ColorableSkinDrawable draw, MapColor index) => drawables.RemoveAll(x => x.draw == draw && x.idx == index);
