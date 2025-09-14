@@ -56,7 +56,7 @@ public partial class ColorFadeEntry : PointListEntry
             },
             new FluXisSpriteText
             {
-                Text = $"{(int)colorFade.Duration}ms",
+                Text = $"{(int)colorFade.Duration}ms P{colorFade.PlayfieldIndex}S{colorFade.PlayfieldSubIndex}",
                 Colour = Color
             }
         };
