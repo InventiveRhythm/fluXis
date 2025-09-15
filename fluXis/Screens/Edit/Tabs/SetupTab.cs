@@ -136,17 +136,29 @@ public partial class SetupTab : EditorTab
                                                         new SetupColor("Primary")
                                                         {
                                                             Color = map.MapInfo.Colors.GetColor(1, Colour4.White),
-                                                            OnColorChanged = color => map.MapInfo.Colors.PrimaryHex = color.ToHex()
+                                                            OnColorChanged = color =>
+                                                            {
+                                                                map.MapInfo.Colors.PrimaryHex = color.ToHex();
+                                                                map.TriggerAnyChange();
+                                                            }
                                                         },
                                                         new SetupColor("Secondary")
                                                         {
                                                             Color = map.MapInfo.Colors.GetColor(2, Colour4.White),
-                                                            OnColorChanged = color => map.MapInfo.Colors.SecondaryHex = color.ToHex()
+                                                            OnColorChanged = color =>
+                                                            {
+                                                                map.MapInfo.Colors.SecondaryHex = color.ToHex();
+                                                                map.TriggerAnyChange();
+                                                            }
                                                         },
                                                         new SetupColor("Middle")
                                                         {
                                                             Color = map.MapInfo.Colors.GetColor(3, Colour4.White),
-                                                            OnColorChanged = color => map.MapInfo.Colors.MiddleHex = color.ToHex()
+                                                            OnColorChanged = color =>
+                                                            {
+                                                                map.MapInfo.Colors.MiddleHex = color.ToHex();
+                                                                map.TriggerAnyChange();
+                                                            }
                                                         }
                                                     }
                                                 },

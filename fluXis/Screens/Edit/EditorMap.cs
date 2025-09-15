@@ -140,6 +140,8 @@ public class EditorMap : IVerifyContext
 
     public void LoadComponent(Drawable drawable) => loadComponent.Invoke(drawable);
 
+    public void TriggerAnyChange(ITimedObject obj = null) => AnyChange?.Invoke(obj);
+
     public void SetupNotifiers()
     {
         notifiers = new List<IChangeNotifier>
