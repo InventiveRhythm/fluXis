@@ -55,7 +55,7 @@ public partial class CustomReceptor : ColorableSkinDrawable
     {
         var keymode = SkinJson.GetKeymode(mode);
 
-        if (!keymode.TintNotes)
+        if (!keymode.TintReceptors)
             return;
 
         Sprite.Colour = color;

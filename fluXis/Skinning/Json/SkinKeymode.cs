@@ -24,6 +24,13 @@ public class SkinKeymode
     [JsonProperty("tint_lns")]
     public bool TintLongNotes { get; set; } = true;
 
+    /// <summary>
+    /// tints the receptors.
+    /// only applies when <see cref="TintReceptors"/> is true.
+    /// </summary>
+    [JsonProperty("tint_receptors")]
+    public bool TintReceptors { get; set; } = false;
+
     [JsonProperty("colors")]
     public List<string> Colors { get; set; } = new();
 
