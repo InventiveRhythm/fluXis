@@ -7,12 +7,10 @@ namespace fluXis.Skinning;
 public partial class SkinnableSprite : Sprite
 {
     public bool SkipResizing { get; set; }
-    public int Index { get; set; }
 
-    public SkinnableSprite(Texture texture = null, int index = 0)
+    public SkinnableSprite(Texture texture = null)
     {
         Texture = texture;
-        Index = index;
     }
 
     protected override void Update()
@@ -34,10 +32,4 @@ public partial class SkinnableSprite : Sprite
             }
         }
     }
-
-    public void SetColor(Colour4 color)
-        => Colour = color;
-
-    public void FadeColor(Colour4 color, double duration = 0, Easing easing = Easing.None)
-        => this.FadeColour(color, duration, easing);
 }

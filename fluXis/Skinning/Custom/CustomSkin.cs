@@ -10,6 +10,7 @@ using fluXis.Skinning.Custom.Health;
 using fluXis.Skinning.Custom.HitObjects;
 using fluXis.Skinning.Custom.Judgements;
 using fluXis.Skinning.Custom.Lighting;
+using fluXis.Skinning.Custom.Receptor;
 using fluXis.Skinning.Json;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -251,13 +252,7 @@ public class CustomSkin : ISkin
         if (storage.Exists(path))
         {
             var index = Theme.GetLaneColorIndex(lane, keyCount);
-            return new SkinnableSprite(textures.Get(path), index)
-            {
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Width = 1
-            };
+            return new CustomReceptor(SkinJson, textures.Get(path), (MapColor)index, keyCount);
         }
 
         return null;
