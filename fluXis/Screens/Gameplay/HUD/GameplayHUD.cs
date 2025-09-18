@@ -6,6 +6,7 @@ using fluXis.Screens.Gameplay.HUD.Leaderboard;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Gameplay.UI;
+using fluXis.Skinning.Default;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -171,6 +172,8 @@ public partial class GameplayHUD : Container
         public PlayfieldPlayer Player { get; }
         public Playfield Playfield => Player.MainPlayfield;
 
+        private DependencyContainer dependencies;
+
         public PlayfieldHUD(PlayfieldPlayer player)
         {
             Player = player;
@@ -179,6 +182,15 @@ public partial class GameplayHUD : Container
             RelativeSizeAxes = Axes.Y;
             Anchor = Origin = Anchor.Centre;
         }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            dependencies.CacheAs<ICustomColorProvider>(Playfield.ColorManager);
+        }
+
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+            => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
         protected override void Update()
         {

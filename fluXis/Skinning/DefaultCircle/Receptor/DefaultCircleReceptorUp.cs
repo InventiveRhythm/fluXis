@@ -1,5 +1,6 @@
 ﻿using fluXis.Audio;
 using fluXis.Graphics.Sprites.Outline;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Json;
 using fluXis.Utils.Extensions;
@@ -17,10 +18,10 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
     private IBeatSyncProvider beatSync { get; set; }
 
     protected OutlinedCircle Circle { get; }
-    private Colour4 color { get; set; }
+    private Colour4 colour { get; set; }
 
-    public DefaultCircleReceptorUp(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultCircleReceptorUp(SkinJson skinJson, MapColor index)
+        : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;
@@ -40,9 +41,9 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
         };
     }
 
-    protected override void SetColor(Colour4 color)
+    public override void SetColor(Colour4 color)
     {
-        this.color = color;
+        colour = color;
         Circle.Colour = color.Lighten(0.4f);
     }
 
@@ -58,7 +59,7 @@ public partial class DefaultCircleReceptorUp : ColorableSkinDrawable
         var duration = beatSync?.BeatTime ?? 200;
         this.FadeInFromZero().FadeTo(.25f, duration / 2);
 
-        Circle.BorderTo(16).FadeColour(color)
-              .BorderTo(8, duration, Easing.OutQuint).FadeColour(color.Lighten(.4f), duration / 2);
+        Circle.BorderTo(16).FadeColour(colour)
+              .BorderTo(8, duration, Easing.OutQuint).FadeColour(colour.Lighten(.4f), duration / 2);
     }
 }

@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Bases.HitObjects;
 using fluXis.Skinning.Json;
@@ -10,8 +11,8 @@ public partial class DefaultHitObjectPiece : ColorableSkinDrawable, ICanHaveSnap
 {
     private readonly Box box;
 
-    public DefaultHitObjectPiece(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultHitObjectPiece(SkinJson skinJson, MapColor index)
+        : base(skinJson, index)
     {
         CornerRadius = 10;
         Masking = true;
@@ -31,7 +32,7 @@ public partial class DefaultHitObjectPiece : ColorableSkinDrawable, ICanHaveSnap
         Height = 42f * factor;
     }
 
-    protected override void SetColor(Colour4 color) => box.Colour = color;
+    public override void SetColor(Colour4 color) => box.Colour = color;
 
     public void ApplySnapColor(int start, int end)
     {

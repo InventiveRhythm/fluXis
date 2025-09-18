@@ -20,7 +20,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     private const float minimum_loaded_hit_objects = 3;
 
     [Resolved]
-    private Playfield playfield { get; set; }
+    public Playfield Playfield { get; private set; }
 
     [Resolved]
     private PlayfieldPlayer player { get; set; }
@@ -199,7 +199,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
     private void revertHitObject(HitObject hit)
     {
-        if (!playfield.IsSubPlayfield)
+        if (!Playfield.IsSubPlayfield)
         {
             if (hit.HoldEndResult is not null)
                 judgementProcessor.RevertResult(hit.HoldEndResult.Value);
@@ -241,7 +241,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
     private void hit(DrawableHitObject hitObject, double difference)
     {
-        if (playfield.IsSubPlayfield)
+        if (Playfield.IsSubPlayfield)
             return;
 
         // since judged is only set after hitting the tail this works

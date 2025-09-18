@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Json;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -16,6 +17,8 @@ public partial class DefaultColumnLighting : VisibilityContainer
     [Resolved(CanBeNull = true)]
     private ICustomColorProvider colorProvider { get; set; }
 
+    private MapColor index;
+
     public DefaultColumnLighting(SkinJson skinJson)
     {
         this.skinJson = skinJson;
@@ -31,6 +34,7 @@ public partial class DefaultColumnLighting : VisibilityContainer
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
+                Colour = ColourInfo.GradientVertical(Colour4.White.Opacity(0), Colour4.White),
                 Alpha = .5f
             }
         };
@@ -41,9 +45,27 @@ public partial class DefaultColumnLighting : VisibilityContainer
         if (colorProvider == null || !colorProvider.HasColorFor(lane, maxLanes, out var color))
             color = skinJson.GetLaneColor(lane, maxLanes);
 
-        Colour = ColourInfo.GradientVertical(color.Opacity(0), color);
+        Colour = color;
+        index = (MapColor)Theme.GetLaneColorIndex(lane, maxLanes);
     });
 
     protected override void PopIn() => this.FadeIn();
     protected override void PopOut() => this.FadeOut(300, Easing.Out);
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (colorProvider is null) return;
+
+        // kinda dumb but it's the best way of doing this
+        // without having to rewrite this to not use a visibility container
+        Colour = index switch
+        {
+            MapColor.Primary => colorProvider.Primary,
+            MapColor.Secondary => colorProvider.Secondary,
+            MapColor.Middle => colorProvider.Middle,
+            _ => Colour
+        };
+    }
 }

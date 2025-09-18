@@ -1,0 +1,102 @@
+using System.Collections.Generic;
+using System.Linq;
+using fluXis.Graphics.UserInterface.Color;
+using fluXis.Skinning.Bases;
+using fluXis.Skinning.Default;
+using JetBrains.Annotations;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics;
+
+namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
+
+public partial class ColorManager : Component, ICustomColorProvider
+{
+    private List<(ColorableSkinDrawable draw, MapColor idx)> drawables { get; } = new();
+
+    private Colour4 primary = Theme.Primary;
+    private Colour4 secondary = Theme.Secondary;
+    private Colour4 middle = Colour4.White;
+
+    public Colour4 Primary
+    {
+        get => primary;
+        private set
+        {
+            if (primary == value) return;
+
+            primary = value;
+            SetColor(MapColor.Primary, value);
+        }
+    }
+
+    public Colour4 Secondary
+    {
+        get => secondary;
+        private set
+        {
+            if (secondary == value) return;
+
+            secondary = value;
+            SetColor(MapColor.Secondary, value);
+        }
+    }
+
+    public Colour4 Middle
+    {
+        get => middle;
+        private set
+        {
+            if (middle == value) return;
+
+            middle = value;
+            SetColor(MapColor.Middle, value);
+        }
+    }
+
+    [BackgroundDependencyLoader(true)]
+    private void load([CanBeNull] ICustomColorProvider mapColors)
+    {
+        Primary = isDefaultColor(mapColors.Primary) ? Primary : mapColors.Primary;
+        Secondary = isDefaultColor(mapColors.Secondary) ? Secondary : mapColors.Secondary;
+        Middle = isDefaultColor(mapColors.Middle) ? Middle : mapColors.Middle;
+    }
+
+    private static bool isDefaultColor(Colour4 colour) => colour == Colour4.Transparent;
+
+    public void Register(ColorableSkinDrawable draw, MapColor index) => drawables.Add((draw, index));
+    public void Unregister(ColorableSkinDrawable draw, MapColor index) => drawables.RemoveAll(x => x.draw == draw && x.idx == index);
+
+    public void SetColor(MapColor index, Colour4 color)
+    {
+        var match = drawables.Where(x => x.idx == index).ToList();
+        match.ForEach(x => x.draw.UpdateColor(index, color));
+    }
+
+    public bool HasColorFor(int lane, int keyCount, out Colour4 colour)
+    {
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        colour = GetColor(index, Colour4.Transparent);
+        return colour != Colour4.Transparent;
+    }
+
+    public Colour4 GetColor(int index, Colour4 fallback)
+    {
+        var colors = new[]
+        {
+            Colour4.Transparent,
+            Primary,
+            Secondary,
+            Middle
+        };
+
+        if (index < 0 || index >= colors.Length)
+            return fallback;
+
+        var col = colors[index];
+
+        if (col == Colour4.Transparent)
+            return fallback;
+
+        return col;
+    }
+}

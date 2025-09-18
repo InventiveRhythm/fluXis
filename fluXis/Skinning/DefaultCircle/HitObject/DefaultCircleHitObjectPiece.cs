@@ -1,4 +1,5 @@
-﻿using fluXis.Skinning.Bases;
+﻿using fluXis.Graphics.UserInterface.Color;
+using fluXis.Skinning.Bases;
 using fluXis.Skinning.Bases.HitObjects;
 using fluXis.Skinning.Json;
 using osu.Framework.Graphics;
@@ -12,8 +13,8 @@ public partial class DefaultCircleHitObjectPiece : ColorableSkinDrawable, ICanHa
 {
     protected Circle Circle { get; }
 
-    public DefaultCircleHitObjectPiece(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultCircleHitObjectPiece(SkinJson skinJson, MapColor index)
+        : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;
@@ -36,7 +37,7 @@ public partial class DefaultCircleHitObjectPiece : ColorableSkinDrawable, ICanHa
         Height = DrawWidth;
     }
 
-    protected override void SetColor(Colour4 color) => Circle.Colour = color;
+    public override void SetColor(Colour4 color) => Circle.Colour = color;
 
     public void ApplySnapColor(int start, int end)
     {

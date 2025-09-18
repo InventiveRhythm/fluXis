@@ -60,6 +60,7 @@ public static class Theme
     public static Colour4 PlayfieldMove => Colour4.FromHex("#01FE55");
     public static Colour4 PlayfieldScale => Colour4.FromHex("#D279C4");
     public static Colour4 PlayfieldRotate => Colour4.FromHex("#8AF7A2");
+    public static Colour4 ColorFade => Colour4.FromHex("#90FFFF");
     public static Colour4 HitObjectEase => Colour4.FromHex("#5B92FF");
     public static Colour4 LayerFade => Colour4.FromHex("#8AF3F7");
     public static Colour4 BeatPulse => Colour4.FromHex("#9973EF");
@@ -225,4 +226,12 @@ public static class Theme
         ModType.Misc => Colour4.FromHex("#8866ff"),
         _ => Colour4.FromHex("#cccccc")
     };
+}
+
+public enum MapColor
+{
+    Accent,
+    Primary,
+    Secondary,
+    Middle
 }

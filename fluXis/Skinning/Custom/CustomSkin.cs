@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Course;
@@ -9,6 +10,7 @@ using fluXis.Skinning.Custom.Health;
 using fluXis.Skinning.Custom.HitObjects;
 using fluXis.Skinning.Custom.Judgements;
 using fluXis.Skinning.Custom.Lighting;
+using fluXis.Skinning.Custom.Receptor;
 using fluXis.Skinning.Json;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -171,7 +173,8 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), keyCount, false);
+            var index = Theme.GetLaneColorIndex(lane, keyCount);
+            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), (MapColor)index, keyCount, false);
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -204,7 +207,8 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            var drawable = new CustomHitObjectBody(SkinJson, keyCount, textures.Get(path));
+            var index = Theme.GetLaneColorIndex(lane, keyCount);
+            var drawable = new CustomHitObjectBody(SkinJson, (MapColor)index, keyCount, textures.Get(path));
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -218,7 +222,8 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), keyCount, true);
+            var index = Theme.GetLaneColorIndex(lane, keyCount);
+            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), (MapColor)index, keyCount, true);
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -246,14 +251,8 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            return new SkinnableSprite
-            {
-                Texture = textures.Get(path),
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Width = 1
-            };
+            var index = Theme.GetLaneColorIndex(lane, keyCount);
+            return new CustomReceptor(SkinJson, textures.Get(path), (MapColor)index, keyCount);
         }
 
         return null;

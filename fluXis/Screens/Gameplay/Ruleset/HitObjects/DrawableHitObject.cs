@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Input;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Input;
+using fluXis.Screens.Gameplay.Ruleset.HitObjects.Long;
 using fluXis.Skinning;
+using fluXis.Skinning.Bases;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -25,7 +28,7 @@ public partial class DrawableHitObject : CompositeDrawable
     protected GameplayInput Input { get; private set; }
 
     [Resolved]
-    protected ISkin Skin { get; private set; }
+    public ISkin Skin { get; private set; }
 
     public HitObject Data { get; }
     protected double ScrollVelocityTime { get; private set; }
@@ -64,6 +67,7 @@ public partial class DrawableHitObject : CompositeDrawable
     {
         AutoSizeAxes = Axes.Y;
         Origin = Anchor.BottomLeft;
+        Masking = true;
 
         var group = Data.ScrollGroup ?? Column.DefaultScrollGroup;
         ScrollVelocityTime = group.PositionFromTime(Data.Time);
@@ -76,6 +80,52 @@ public partial class DrawableHitObject : CompositeDrawable
 
         Input.OnPress += OnPressed;
         Input.OnRelease += OnReleased;
+    }
+
+    public IEnumerable<ColorableSkinDrawable> GetColorableDrawables()
+    {
+        foreach (var child in InternalChildren)
+        {
+            switch (child)
+            {
+                case ColorableSkinDrawable drawable:
+                    yield return drawable;
+                    break;
+
+                default:
+                    if (child.Parent is DrawableLongNote drawableLongNote)
+                    {
+                        foreach (var longNoteDrawable in getLongNoteColorableDrawables(drawableLongNote))
+                        {
+                            yield return longNoteDrawable;
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+    private IEnumerable<ColorableSkinDrawable> getLongNoteColorableDrawables(DrawableLongNote longNote)
+    {
+        foreach (var lnChild in longNote.InternalChildren)
+        {
+            if (lnChild is DrawableLongNotePart notePart)
+            {
+                foreach (var notePartChild in notePart.GetInternalChildren())
+                {
+                    if (notePartChild is ColorableSkinDrawable drawable)
+                        yield return drawable;
+                }
+            }
+        }
+    }
+
+    public void SetColor(Colour4 colour)
+    {
+        foreach (var drawable in GetColorableDrawables())
+        {
+            drawable.SetColor(colour);
+        }
     }
 
     protected override void Update()
