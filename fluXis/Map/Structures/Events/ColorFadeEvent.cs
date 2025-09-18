@@ -1,7 +1,6 @@
 using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
-using Midori.Logging;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK.Graphics;
