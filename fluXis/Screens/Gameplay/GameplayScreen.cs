@@ -222,7 +222,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         clockContainer = new GameplayClockContainer(tracks, RealmMap, Map, new Drawable[]
         {
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
-            RulesetContainer = CreateRuleset(),
+            RulesetContainer = CreateRuleset().With(x =>
+            {
+                x.ScrollSpeed = new Bindable<float>(Config.Get<float>(FluXisSetting.ScrollSpeed));
+            }),
             replayRecorder = new ReplayRecorder()
         }.Concat(transforms), UseGlobalOffset);
 
@@ -661,14 +664,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 if (Map.StartTime - GameplayClock.CurrentTime < 2000) return false;
 
                 GameplayClock.Seek(Map.StartTime - 2000);
-                return true;
-
-            case FluXisGlobalKeybind.ScrollSpeedIncrease:
-                Config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value += 0.1f;
-                return true;
-
-            case FluXisGlobalKeybind.ScrollSpeedDecrease:
-                Config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value -= 0.1f;
                 return true;
         }
 
