@@ -1,10 +1,10 @@
-﻿using fluXis.Map.Structures.Bases;
+﻿using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using osu.Framework.Allocation;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
-public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObject>
+public partial class ChartingSelectionBlueprint : SelectionBlueprint<HitObject>
 {
     [Resolved]
     protected EditorSnapProvider Snaps { get; private set; }
@@ -21,7 +21,7 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
     public override double FirstComparer => Object.Time;
     public override double SecondComparer => Object.Time;
 
-    protected ChartingSelectionBlueprint(ITimedObject info)
+    protected ChartingSelectionBlueprint(HitObject info)
         : base(info)
     {
     }

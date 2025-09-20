@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using fluXis.Map.Structures;
-using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Blueprints;
@@ -19,7 +18,7 @@ using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints;
 
-public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObject>
+public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
 {
     protected override bool InArea => ChartingContainer.CursorInPlacementArea;
 
@@ -101,7 +100,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
             updatePlacementPosition();
     }
 
-    protected override SelectionHandler<ITimedObject> CreateSelectionHandler() => new ChartingSelectionHandler();
+    protected override SelectionHandler<HitObject> CreateSelectionHandler() => new ChartingSelectionHandler();
 
     private void createPlacement()
     {
@@ -147,21 +146,16 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         return true;
     }
 
-    protected override SelectionBlueprint<ITimedObject> CreateBlueprint(ITimedObject obj)
+    protected override SelectionBlueprint<HitObject> CreateBlueprint(HitObject hit)
     {
-        SelectionBlueprint<ITimedObject> blueprint = null!;
+        var hitDrawable = hit.EditorDrawable;
+        if (hitDrawable == null) return null;
 
-        switch (obj)
-        {
-            case HitObject hit:
-                var hitDrawable = hit.EditorDrawable;
-                if (hitDrawable == null) return null;
+        ChartingSelectionBlueprint blueprint = hit.LongNote
+            ? new LongNoteSelectionBlueprint(hit)
+            : new SingleNoteSelectionBlueprint(hit);
 
-                blueprint = hit.LongNote ? new LongNoteSelectionBlueprint(hit) : new SingleNoteSelectionBlueprint(hit);
-                blueprint.Drawable = hitDrawable;
-                break;
-        }
-
+        blueprint.Drawable = hitDrawable;
         return blueprint;
     }
 
