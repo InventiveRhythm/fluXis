@@ -4,13 +4,12 @@ using fluXis.Graphics.UserInterface;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsToggle : Container, IHasTooltip
+public partial class PointSettingsToggle : PointSettingsBase, IHasTooltip
 {
     public string Text { get; init; }
     public LocalisableString TooltipText { get; init; } = string.Empty;

@@ -6,13 +6,12 @@ using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsSlider<T> : Container, IHasTooltip
+public partial class PointSettingsSlider<T> : PointSettingsBase, IHasTooltip
     where T : struct, INumber<T>, IMinMaxValue<T>
 {
     public override bool PropagateNonPositionalInputSubTree => Enabled.Value;
@@ -34,6 +33,7 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
     public bool HideWhenDisabled { get; init; } = false;
 
     private FluXisSpriteText valText;
+    private FluXisSlider<T> slider;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -67,7 +67,7 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
                 Origin = Anchor.CentreRight,
                 WebFontSize = 16
             },
-            new FluXisSlider<T>
+            slider = new FluXisSlider<T>
             {
                 Width = 150,
                 Anchor = Anchor.CentreRight,
@@ -86,6 +86,12 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
 
         Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200), true);
         FinishTransforms();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        valText.X = -(slider.DrawWidth * slider.Scale.X);
     }
 
     protected override void Dispose(bool isDisposing)

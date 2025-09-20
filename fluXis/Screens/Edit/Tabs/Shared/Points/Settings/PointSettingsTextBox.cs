@@ -12,7 +12,7 @@ using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsTextBox : Container, IHasTooltip
+public partial class PointSettingsTextBox : PointSettingsBase, IHasTooltip
 {
     public string Text { get; init; }
     public LocalisableString TooltipText { get; init; } = string.Empty;

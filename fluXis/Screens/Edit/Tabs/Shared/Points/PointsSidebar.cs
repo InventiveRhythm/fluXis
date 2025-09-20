@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
@@ -7,6 +9,7 @@ using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -37,9 +40,13 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
     private ClickableContainer settingsWrapper;
     private FillFlowContainer settingsFlow;
 
+    private Bindable<bool> compactMode;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        compactMode = config.GetBindable<bool>(FluXisSetting.EditorCompactMode);
+
         Width = 320;
         RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.TopRight;
@@ -97,6 +104,7 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
         base.LoadComplete();
 
         OnWrapperClick = close;
+        compactMode.BindValueChanged(compactChanged, true);
 
         Expanded.BindValueChanged(v =>
         {
@@ -113,6 +121,19 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
                 pointsList.FadeOut(200);
             }
         }, true);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        compactMode.ValueChanged -= compactChanged;
+    }
+
+    private void compactChanged(ValueChangedEvent<bool> v)
+    {
+        var compact = v.NewValue;
+
+        settingsFlow.TransformTo(nameof(FillFlowContainer.Spacing), new Vector2(compact ? 8 : 20), Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     protected abstract PointsList CreatePointsList();
