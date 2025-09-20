@@ -13,9 +13,9 @@ public partial class ColorManager : Component, ICustomColorProvider
 {
     private List<(ColorableSkinDrawable draw, MapColor idx)> drawables { get; } = new();
 
-    private Colour4 primary = Theme.Primary;
-    private Colour4 secondary = Theme.Secondary;
-    private Colour4 middle = Colour4.White;
+    private Colour4 primary = Theme.GetLaneColor(1).Lighten(.2f);
+    private Colour4 secondary = Theme.GetLaneColor(2).Lighten(.2f);
+    private Colour4 middle = Theme.GetLaneColor(3).Lighten(.2f);
 
     public Colour4 Primary
     {
