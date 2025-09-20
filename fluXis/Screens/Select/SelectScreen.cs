@@ -771,7 +771,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (e.Last is EditorLoader)
             this.FadeIn();
         else
-            playEnterAnimation();
+            playEnterAnimation(true);
 
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
@@ -797,10 +797,13 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         return base.OnExiting(e);
     }
 
-    private void playEnterAnimation()
+    private void playEnterAnimation(bool resume = false)
     {
         clock.AllowLimitedLoop = true;
         this.FadeOut();
+
+        if (resume)
+            mapList.FadeOut();
 
         using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
@@ -816,6 +819,12 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
             mapList.MoveToX(-100)
                    .Delay(Styling.TRANSITION_ENTER_DELAY * 2)
                    .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+
+            if (resume)
+            {
+                mapList.Delay(Styling.TRANSITION_ENTER_DELAY * 2)
+                       .FadeInFromZero(Styling.TRANSITION_FADE);
+            }
 
             selectMapInfo.MoveToX(100)
                          .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
