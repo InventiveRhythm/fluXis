@@ -211,4 +211,56 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
             moveAction = null;
         }
     }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        var timeDiff = e.Key switch
+        {
+            Key.Up => 1,
+            Key.Down => -1,
+            _ => 0
+        };
+
+        var laneDiff = e.Key switch
+        {
+            Key.Left => -1,
+            Key.Right => 1,
+            _ => 0
+        };
+
+        if (laneDiff != 0 || timeDiff != 0)
+        {
+            var selected = SelectedObjects.ToList();
+            var changed = false;
+
+            var action = new NoteMoveAction(selected.ToArray());
+
+            var minLane = selected.Min(x => x.Lane);
+            var maxLane = selected.Max(x => x.Lane);
+
+            if (minLane + laneDiff >= 1 && maxLane + laneDiff <= map.RealmMap.KeyCount)
+            {
+                changed = true;
+                selected.ForEach(x => x.Lane += laneDiff);
+            }
+
+            var minTime = selected.Min(x => x.Time);
+            var step = snaps.CurrentStep * timeDiff;
+
+            if (minTime + step >= 0)
+            {
+                changed = true;
+                selected.ForEach(x => x.Time += step);
+            }
+
+            if (!changed)
+                return false;
+
+            action.Apply(NoteMoveAction.CreateFrom(selected.ToArray()), true);
+            actions.Add(action);
+            return true;
+        }
+
+        return base.OnKeyDown(e);
+    }
 }
