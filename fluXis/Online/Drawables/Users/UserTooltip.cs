@@ -2,6 +2,7 @@
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
@@ -21,10 +22,11 @@ public partial class UserTooltip : CustomTooltipContainer<APIUser>
     private FillFlowContainer topText { get; }
     private ForcedHeightText bottomText { get; }
 
-    private FluXisSpriteIcon statusIcon;
-    private FluXisSpriteText statusText;
+    private readonly FluXisSpriteIcon statusIcon;
+    private readonly FluXisSpriteText statusText;
 
     private long lastId = -1;
+    private string lastActivity;
 
     public UserTooltip()
     {
@@ -134,10 +136,14 @@ public partial class UserTooltip : CustomTooltipContainer<APIUser>
 
     public override void SetContent(APIUser user)
     {
-        if (user.ID == lastId)
+        var same = user.ID == lastId;
+        same &= user.Activity?.Name == lastActivity;
+
+        if (same)
             return;
 
         lastId = user.ID;
+        lastActivity = user.Activity?.Name;
 
         banner.Child = new LoadWrapper<DrawableBanner>
         {
@@ -205,6 +211,38 @@ public partial class UserTooltip : CustomTooltipContainer<APIUser>
 
         if (user.IsOnline)
         {
+            if (user.Activity != null)
+            {
+                switch (user.Activity.Name)
+                {
+                    case nameof(UserActivity.Playing):
+                    case nameof(UserActivity.Paused):
+                        statusIcon.Icon = FontAwesome6.Solid.Gamepad;
+                        statusIcon.Colour = Theme.Blue;
+                        statusText.Text = "Playing";
+                        return;
+
+                    case nameof(UserActivity.WatchingReplay):
+                        statusIcon.Icon = FontAwesome6.Solid.Film;
+                        statusIcon.Colour = Theme.Purple;
+                        statusText.Text = "Watching Replay";
+                        return;
+
+                    case nameof(UserActivity.MultiLobby):
+                        statusIcon.Icon = FontAwesome6.Solid.EarthAmericas;
+                        statusIcon.Colour = Theme.Cyan;
+                        statusText.Text = "Playing Multiplayer";
+                        return;
+
+                    case nameof(UserActivity.Editing):
+                    case nameof(UserActivity.Modding):
+                        statusIcon.Icon = FontAwesome6.Solid.PenRuler;
+                        statusIcon.Colour = Theme.Red;
+                        statusText.Text = "Editing";
+                        return;
+                }
+            }
+
             statusIcon.Icon = FontAwesome6.Solid.Circle;
             statusIcon.Colour = Theme.Green;
             statusText.Text = "Online";

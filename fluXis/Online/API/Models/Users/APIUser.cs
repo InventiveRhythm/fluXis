@@ -72,6 +72,9 @@ public class APIUser
     [JsonProperty("stats")]
     public APIUserStatistics? Statistics { get; set; }
 
+    [JsonProperty("activity")]
+    public APIActivity? Activity { get; set; }
+
     [JsonProperty("following")]
     public bool? Following { get; set; }
 
