@@ -19,9 +19,6 @@ public partial class DrawableLandmine : DrawableHitObject
     [Resolved]
     private GameplayInput input { get; set; }
 
-    private bool isBeingHeld;
-    private double? holdStartTime;
-
     private Circle followLine;
 
     public DrawableLandmine(HitObject data)
@@ -53,8 +50,9 @@ public partial class DrawableLandmine : DrawableHitObject
         if (Data.VisualLane > 1)
             X = ObjectManager.PositionAtLane(Data.VisualLane);
 
-        if (isBeingHeld)
-            UpdateJudgement(true);
+        //judge the landmine as soon as it leaves the perfect timing window
+        if (TimeDelta <= -HitWindows.TimingFor(Judgement.Perfect))
+            UpdateJudgement(false);
 
         var next = Data.NextObject;
 
@@ -82,11 +80,8 @@ public partial class DrawableLandmine : DrawableHitObject
             return;
         }
 
-        //if (offset >= HitWindows.TimingFor(Judgement.Flawless))
-        if (Math.Abs(offset) >= HitWindows.TimingFor(Judgement.Flawless) / 2)
-            return;
-
-        ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+        if (Math.Abs(offset) <= HitWindows.TimingFor(Judgement.Perfect))
+            ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
     }
 
     public override void OnPressed(FluXisGameplayKeybind key)
@@ -94,18 +89,6 @@ public partial class DrawableLandmine : DrawableHitObject
         if (key != Keybind)
             return;
 
-        isBeingHeld = true;
-
-        var idx = input.Keys.IndexOf(key);
-        holdStartTime = input.PressTimes[idx];
-    }
-
-    public override void OnReleased(FluXisGameplayKeybind key)
-    {
-        if (key != Keybind)
-            return;
-
-        isBeingHeld = false;
-        holdStartTime = null;
+        UpdateJudgement(true);
     }
 }
