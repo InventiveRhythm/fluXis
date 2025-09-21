@@ -120,6 +120,8 @@ public class DefaultSkin : ISkin
 
     public virtual Drawable GetTickNote(int lane, int keyCount, bool small) => new DefaultTickNote(small);
 
+    public virtual Drawable GetLandmine(int lake, int keyCount, bool small) => new DefaultLandmine(small);
+
     public virtual Drawable GetLongNoteBody(int lane, int keyCount)
     {
         var index = Theme.GetLaneColorIndex(lane, keyCount);

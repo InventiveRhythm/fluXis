@@ -187,6 +187,9 @@ public partial class HitObjectManager : Container<HitObjectColumn>
             case 1:
                 return new DrawableTickNote(hit);
 
+            case 2:
+                return new DrawableLandmine(hit);
+
             default:
             {
                 if (hit.LongNote)

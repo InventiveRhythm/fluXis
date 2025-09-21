@@ -96,6 +96,8 @@ public class AutoGenerator
         for (int i = 0; i < map.HitObjects.Count; i++)
         {
             var currentObject = map.HitObjects[i];
+            if (currentObject.Type == 2) continue;
+
             var nextObjectInColumn = getNextObject(i);
             var releaseTime = calculateReleaseTime(currentObject, nextObjectInColumn);
 
