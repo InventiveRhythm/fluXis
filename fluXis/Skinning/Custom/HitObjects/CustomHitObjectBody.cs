@@ -2,6 +2,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Bases.HitObjects;
 using fluXis.Skinning.Json;
+using JetBrains.Annotations;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Sprites;
@@ -15,7 +16,7 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
     private int mode { get; }
     private Drawable sprite { get; }
 
-    public CustomHitObjectBody(SkinJson skinJson, MapColor index, int mode, Texture texture)
+    public CustomHitObjectBody(SkinJson skinJson, MapColor index, int mode, Texture texture, [CanBeNull] Texture tintless)
         : base(skinJson, index)
     {
         this.mode = mode;
@@ -29,6 +30,16 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
             Size = new Vector2(1),
             Texture = texture
         };
+
+        if (tintless != null)
+        {
+            AddInternal(new Sprite
+            {
+                RelativeSizeAxes = Axes.Both,
+                Size = new Vector2(1),
+                Texture = tintless,
+            });
+        }
     }
 
     public override void SetColor(Colour4 color)
