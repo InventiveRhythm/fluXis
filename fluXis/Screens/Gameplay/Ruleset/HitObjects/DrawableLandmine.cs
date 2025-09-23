@@ -37,6 +37,14 @@ public partial class DrawableLandmine : DrawableHitObject
         //judge the landmine as soon as it leaves the perfect timing window
         if (TimeDelta <= -HitWindows.TimingFor(Judgement.Perfect))
             UpdateJudgement(false);
+
+        //if the landmine is in the timing window of the next regular or long note, judge it as soon as it passes the receptors
+        HitObject next = Data.NextObject;
+
+        if (next != null && next.Type != 2 && next.Time - Data.Time < HitWindows.TimingFor(Judgement.Okay) && TimeDelta <= 0)
+        {
+            UpdateJudgement(false);
+        }
     }
 
     protected override void CheckJudgement(bool byUser, double offset)
@@ -53,7 +61,7 @@ public partial class DrawableLandmine : DrawableHitObject
 
     public override void OnPressed(FluXisGameplayKeybind key)
     {
-        if (key != Keybind)
+        if (key != Keybind || !Column.IsFirst(this))
             return;
 
         UpdateJudgement(true);
