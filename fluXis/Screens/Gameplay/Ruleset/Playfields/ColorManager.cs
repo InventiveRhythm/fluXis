@@ -56,12 +56,18 @@ public partial class ColorManager : Component, ICustomColorProvider
     [BackgroundDependencyLoader(true)]
     private void load([CanBeNull] ICustomColorProvider mapColors)
     {
-        Primary = isDefaultColor(mapColors.Primary) ? Primary : mapColors.Primary;
-        Secondary = isDefaultColor(mapColors.Secondary) ? Secondary : mapColors.Secondary;
-        Middle = isDefaultColor(mapColors.Middle) ? Middle : mapColors.Middle;
+        Primary = getDefaultColor(mapColors?.Primary, Primary);
+        Secondary = getDefaultColor(mapColors?.Secondary, Secondary);
+        Middle = getDefaultColor(mapColors?.Middle, Middle);
     }
 
-    private static bool isDefaultColor(Colour4 colour) => colour == Colour4.Transparent;
+    private static Colour4 getDefaultColor(Colour4? colour, Colour4 fallback)
+    {
+        if (colour is null || colour == Colour4.Transparent)
+            return fallback;
+
+        return colour.Value;
+    }
 
     public void Register(ColorableSkinDrawable draw, MapColor index) => drawables.Add((draw, index));
     public void Unregister(ColorableSkinDrawable draw, MapColor index) => drawables.RemoveAll(x => x.draw == draw && x.idx == index);
