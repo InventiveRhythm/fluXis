@@ -1,14 +1,14 @@
 using System;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
-using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
+
+namespace fluXis.Graphics.UserInterface.Text;
 
 public partial class FluXisSearchBox : Container
 {
@@ -43,7 +43,7 @@ public partial class FluXisSearchBox : Container
                 Margin = new MarginPadding { Left = 15 },
                 Alpha = 1f
             },
-            loadingIcon = new LoadingIcon()
+            loadingIcon = new LoadingIcon
             {
                 Size = new Vector2(25),
                 Anchor = Anchor.CentreLeft,
@@ -55,7 +55,8 @@ public partial class FluXisSearchBox : Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Left = 40, Right = 10 },
-                Children = new Drawable[] {
+                Children = new Drawable[]
+                {
                     TextBox = new FluXisTextBox
                     {
                         RelativeSizeAxes = Axes.X,
@@ -68,7 +69,6 @@ public partial class FluXisSearchBox : Container
                         OnTextChanged = OnTextChanged
                     }
                 }
-
             },
         };
     }

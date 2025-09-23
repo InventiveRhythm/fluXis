@@ -26,7 +26,6 @@ using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osu.Framework.Threading;
 using osuTK;
@@ -36,22 +35,22 @@ namespace fluXis.Graphics.UserInterface.Files;
 public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public bool ShowFiles { get; init; } = true;
-    public Bindable<bool> IsStreamingEnabled  { get; set; } = new Bindable<bool>(true);
-    public string MapDirectory { get; init; } = null;
+    public Bindable<bool> IsStreamingEnabled { get; set; } = new(true);
+    public string MapDirectory { get; init; }
     public string[] AllowedExtensions { get; init; } = Array.Empty<string>();
 
-    public Action<FileInfo> OnFileSelected { get; set; }
-    public Action<DirectoryInfo> OnDirectorySelected { get; set; }
+    public Action<FileInfo> OnFileSelected { get; init; }
+    public Action<DirectoryInfo> OnDirectorySelected { get; init; }
 
     private DirectoryInfo currentDirectory;
     public FileInfo CurrentFile { get; private set; }
-    public List<GenericEntry> EntryList { get; private set; } = new();
-    private List<GenericEntry> matchedEntries = new();
+    private readonly List<GenericEntry> entryList = new();
+    private readonly List<GenericEntry> matchedEntries = new();
 
     // state variables
     private bool canBatchAddRest = true;
-    private bool canRefresh = false;
-    private bool streamFilesScheduled = false;
+    private bool canRefresh;
+    private bool streamFilesScheduled;
 
     public event Action<FileInfo> FileChanged;
 
@@ -89,7 +88,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples, FluXisConfig config)
     {
-        errorSample = samples.Get("");
+        errorSample = samples.Get("UI/Keyboard/error");
 
         Anchor = Origin = Anchor.Centre;
 
@@ -382,7 +381,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 {
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft,
-                                                    Margin = new MarginPadding { Left = 10 }
+                                                    Margin = new MarginPadding { Left = 16 }
                                                 }
                                             }
                                         },
@@ -407,10 +406,9 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     {
         base.LoadComplete();
         Show();
-        
+
         pathTextBox.OnCommit += (_, isNew) => onPathCommit(isNew);
         changePathTo(new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)));
-        
     }
 
     private void onPathCommit(bool isNew)
@@ -478,7 +476,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         errorContainer.FadeOut(200);
         drivesFlow.FadeOut(200);
         filesFlow.FadeIn(200);
-        searchStatus.HideStatus();
+        searchStatus.Hide();
         searchBox.HideLoading();
         scrollContainer.ScrollToStart(false);
 
@@ -496,7 +494,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             selectButton.Enabled = true;
 
         filesFlow.Clear();
-        EntryList.Clear();
+        entryList.Clear();
         matchedEntries.Clear();
         searchBox.TextBox.Text = "";
         trackedSearchString = searchBox.TextBox.Text;
@@ -514,21 +512,21 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             switch (item)
             {
                 case DirectoryInfo dir:
-                    EntryList.Add(new DirectoryEntry(dir, this));
+                    entryList.Add(new DirectoryEntry(dir, this));
                     break;
 
                 case FileInfo file:
-                    EntryList.Add(new FileEntry(file, this));
+                    entryList.Add(new FileEntry(file, this));
                     break;
             }
         }
 
-        EntryList.Sort();
+        entryList.Sort();
 
         if (items.Count <= streamable_threshold || !IsStreamingEnabled.Value)
         {
             filesFlow.AutoSizeAxes = Axes.Y;
-            filesFlow.AddRange(EntryList);
+            filesFlow.AddRange(entryList);
         }
     }
 
@@ -611,37 +609,37 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     private void batchAddEntries(List<GenericEntry> entries, int batchSize = 10)
     {
         var entriesToAdd = getEntryListEntriesExcept()
-            .Where(entry => entries.Contains(entry)).ToList();
-        
+                           .Where(entries.Contains).ToList();
+
         if (entriesToAdd.Count == 0) return;
 
         int curIdx = 0;
-        
+
         void addBatch()
         {
             if (currentSearchDelegate == null || currentSearchDelegate.Cancelled)
                 return;
-                
+
             int endIdx = Math.Min(curIdx + batchSize, entriesToAdd.Count);
             var batch = entriesToAdd.GetRange(curIdx, endIdx - curIdx);
 
             filesFlow.AddRange(batch);
-            
+
             curIdx = endIdx;
-            
+
             if (curIdx < entriesToAdd.Count)
             {
                 currentSearchDelegate = Scheduler.AddDelayed(addBatch, Clock.ElapsedFrameTime);
             }
         }
-        
+
         addBatch();
     }
 
     private List<GenericEntry> getEntryListEntriesExcept(IEnumerable<GenericEntry> entries = null)
-    {   
+    {
         entries ??= filesFlow.Children.OfType<GenericEntry>();
-        return EntryList.Except(entries).ToList();
+        return entryList.Except(entries).ToList();
     }
 
     private void updateSearch()
@@ -657,15 +655,16 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             currentSearchDelegate = null;
             canRefresh = true;
         }
-        
-        searchStatus.ChangeStatus("Searching...");
-        searchStatus.ShowStatus();
+
+        searchStatus.ChangeStatus($"Searching in {currentDirectory.Name}...");
+        searchStatus.Show();
 
         if (string.IsNullOrEmpty(search))
         {
             matchedEntries.Clear();
-            searchStatus.HideStatus();
+            searchStatus.Hide();
             searchBox.HideLoading();
+
             if (canRefresh)
             {
                 canRefresh = false;
@@ -679,14 +678,14 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             scrollContainer.ScrollToStart(false);
             canRefresh = false;
             matchedEntries.Clear();
-            searchStatus.ShowStatus();
+            searchStatus.Show();
             searchBox.ShowLoading();
 
-            var entriesToProcess = EntryList.OfType<GenericEntry>().ToList();
+            var entriesToProcess = entryList.ToList();
 
             int curIdx = 0;
             int matchesFound = 0;
-            bool matchFoundAtleastOnce = false;
+            bool matchFoundAtLeastOnce = false;
 
             filesFlow.Hide();
             foreach (var entry in entriesToProcess) entry.Hide();
@@ -715,14 +714,14 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                         matchedEntries.Add(entry);
                         batchMatchingEntries.Add(entry);
 
-                        if (!matchFoundAtleastOnce) filesFlow.FadeIn();
+                        if (!matchFoundAtLeastOnce) filesFlow.FadeIn();
                         entry.Show();
 
                         matchesFound++;
-                        matchFoundAtleastOnce = true;
+                        matchFoundAtLeastOnce = true;
                     }
-                    
-                    searchStatus.ChangeStatus($"Searched {i + 1} out of {EntryList.Count}, Found {matchesFound}.");
+
+                    searchStatus.ChangeStatus($"Searching in {currentDirectory.Name}... {(i + 1) / (float)entryList.Count * 100:0}%");
                 }
 
                 if (batchMatchingEntries.Count > 0)
@@ -737,8 +736,11 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 else
                 {
                     searchBox.HideLoading();
-                    if (!matchFoundAtleastOnce)
-                        searchStatus.ChangeStatus($"Search couldn't find item.");
+
+                    if (!matchFoundAtLeastOnce)
+                        searchStatus.Hide();
+                    else
+                        searchStatus.ChangeStatus($"Search Results in {currentDirectory.Name}: {matchesFound} found");
 
                     canRefresh = true;
                     currentSearchDelegate = null;
@@ -776,7 +778,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             streamFilesScheduled = true;
             Scheduler.AddDelayed(() =>
             {
-                if ((EntryList.Count > streamable_threshold || IsStreamingEnabled.Value) && string.IsNullOrEmpty(trackedSearchString))
+                if ((entryList.Count > streamable_threshold || IsStreamingEnabled.Value) && string.IsNullOrEmpty(trackedSearchString))
                     streamFilesIntoFilesFlow();
 
                 streamFilesScheduled = false;
@@ -796,23 +798,23 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
             containerScreenBounds.Width + 120,
             containerScreenBounds.Height + 120
         );
-        
+
         for (int i = 0; i < filesFlow.Children.Count; i++)
         {
             var entry = filesFlow.Children[i];
             var entryScreenBounds = entry.ScreenSpaceDrawQuad;
-            
+
             bool isVisible = cullingBounds.IntersectsWith(new RectangleF(
                 entryScreenBounds.TopLeft.X,
                 entryScreenBounds.TopLeft.Y,
                 entryScreenBounds.Width,
                 entryScreenBounds.Height
             ));
-            
+
             if (isVisible)
             {
-                EntryList[i].GetInfo();
-                EntryList[i].UpdateSubText();
+                entryList[i].GetInfo();
+                entryList[i].UpdateSubText();
             }
         }
     }
@@ -820,10 +822,10 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     private void streamFilesIntoFilesFlow()
     {
         var pos = 0f;
-        var Current = scrollContainer.Current;
+        var current = scrollContainer.Current;
 
         // if the user has already went beyond 70% might as well just add the rest of entries
-        if (Math.Abs(Current) / (EntryList.Count * 50) >= 0.7f)
+        if (Math.Abs(current) / (entryList.Count * 50) >= 0.7f)
         {
             if (canBatchAddRest)
             {
@@ -834,27 +836,31 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 for (int i = 0; i < entriesToAdd.Count; i += add_batch_size)
                 {
                     var batch = entriesToAdd.Skip(i).Take(add_batch_size);
-                    Scheduler.AddDelayed(() => { foreach (var entry in batch) filesFlow.Add(entry); }, delay);
+                    Scheduler.AddDelayed(() =>
+                    {
+                        foreach (var entry in batch) filesFlow.Add(entry);
+                    }, delay);
                     delay += (int)Clock.ElapsedFrameTime + 50;
                 }
 
                 Scheduler.AddDelayed(() => { filesFlow.AutoSizeAxes = Axes.Y; }, delay);
                 canBatchAddRest = false;
             }
+
             return;
         }
 
         filesFlow.AutoSizeAxes = Axes.None;
 
-        for (var idx = 0; idx < EntryList.Count; idx++)
+        for (var idx = 0; idx < entryList.Count; idx++)
         {
-            var item = EntryList[idx];
+            var item = entryList[idx];
             item.Y = pos;
 
             var size = item.Size;
             pos += size.Y + 10;
 
-            bool isVisible = pos <= Current + DrawHeight + lookahead_buffer_size;
+            bool isVisible = pos <= current + DrawHeight + lookahead_buffer_size;
 
             if (isVisible && item.Parent == null && !filesFlow.Contains(item) && canBatchAddRest)
                 filesFlow.Add(item);
@@ -862,7 +868,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         filesFlow.Height = pos;
     }
-    
+
     public void Close() => Hide();
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
@@ -880,92 +886,74 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
-    private partial class SearchStatus : Container
+    private partial class SearchStatus : VisibilityContainer
     {
+        protected override bool StartHidden => true;
+
         private readonly PathTextBox pathTextBox;
-        private bool isStatusShown;
-        private bool isHovered = false;
         private FluXisSpriteText statusText;
-        
+
         public SearchStatus(PathTextBox pathTextBox)
         {
             this.pathTextBox = pathTextBox;
-            
-            RelativeSizeAxes = Axes.Both;
-            Alpha = 0f;
-            isStatusShown = false;
         }
-        
+
         [BackgroundDependencyLoader]
         private void load()
         {
+            RelativeSizeAxes = Axes.Both;
 
             Child = statusText = new FluXisSpriteText
             {
-                Text = string.Empty,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Font = new FluXisFont(),
-                FontSize = 30,
-                Colour = Theme.Text
+                WebFontSize = 20
             };
-        }
-        
-        public void ShowStatus(string status = null)
-        {   
-            if (status is not null)
-                statusText.Text = status;
-            
-            isStatusShown = true;
-            
-            pathTextBox?.Hide();
-            Show();
-        }
-        
-        public void HideStatus()
-        {
-            isStatusShown = false;
-            
-            pathTextBox?.Show();
-            Hide();
         }
 
         public void ChangeStatus(string newStatus) => statusText.Text = newStatus;
 
         protected override bool OnHover(HoverEvent e)
         {
-            if (isStatusShown && !isHovered)
-            {
-                this.FadeOut(150);
-                pathTextBox?.FadeIn(150);
-                isHovered = true;
-            }
+            if (State.Value != Visibility.Visible)
+                return false;
 
-            return base.OnHover(e);
+            hide(150);
+            return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            if (isStatusShown && isHovered)
-            {
-                pathTextBox?.FadeOut(150);
-                this.FadeIn(150);
-                isHovered = false;
-            }
+            if (State.Value != Visibility.Visible)
+                return;
 
-            base.OnHoverLost(e);
+            show(150);
+        }
+
+        protected override void PopIn() => show(0);
+        protected override void PopOut() => hide(0);
+
+        private void show(double duration)
+        {
+            this.FadeIn(duration);
+            pathTextBox?.FadeOut(duration);
+        }
+
+        private void hide(double duration)
+        {
+            this.FadeOut(duration);
+            pathTextBox?.FadeIn(duration);
         }
     }
 
     private partial class PathTextBox : FluXisTextBox
     {
-        protected override float LeftRightPadding => 10;
+        protected override float LeftRightPadding => 16;
 
-        [BackgroundDependencyLoader]
-        private void load()
+        public PathTextBox()
         {
             RelativeSizeAxes = Axes.Both;
-            TextContainer.Height = .5f;
+            FontSize = FluXisSpriteText.GetWebFontSize(20);
             BackgroundFocused = Theme.Background2;
             BackgroundUnfocused = Theme.Background2;
             BackgroundCommit = Theme.Background2;
