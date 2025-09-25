@@ -92,5 +92,8 @@ public enum ShaderType
     Glitch,
     SplitScreen,
     FishEye,
-    Reflections
+    Reflections,
+    DrunkThing,
+    NeonThing,
+    Perspective
 }

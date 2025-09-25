@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Configuration;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Shaders;
@@ -18,6 +17,9 @@ using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Graphics.Shaders.SplitScreen;
 using fluXis.Graphics.Shaders.FishEye;
 using fluXis.Graphics.Shaders.Reflections;
+using fluXis.Graphics.Shaders.DrunkThing;
+using fluXis.Graphics.Shaders.NeonThing;
+using fluXis.Graphics.Shaders.Perspective;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures.Events;
 using fluXis.Mods;
@@ -33,7 +35,6 @@ using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -72,16 +73,7 @@ public partial class DesignContainer : EditorTabContainer
 
     private IdleTracker rulesetIdleTracker;
 
-    private Bindable<float> userScrollSpeed;
-    private Bindable<float> rulesetScrollSpeed { get; } = new();
-
     private BackgroundVideo backgroundVideo;
-
-    [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
-    {
-        userScrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
-    }
 
     protected override IEnumerable<Drawable> CreateContent()
     {
@@ -158,13 +150,6 @@ public partial class DesignContainer : EditorTabContainer
         Editor.BindableBackgroundBlur.BindValueChanged(e => backgroundStack.Add(new BlurableBackground(Map.RealmMap, e.NewValue)), true);
     }
 
-    protected override void Update()
-    {
-        base.Update();
-
-        rulesetScrollSpeed.Value = (float)(userScrollSpeed.Value * (Settings.Zoom / 2f));
-    }
-
     private RulesetContainer createRuleset()
     {
         var effects = Map.MapEvents.JsonCopy();
@@ -174,9 +159,10 @@ public partial class DesignContainer : EditorTabContainer
         frontFlash.Rebuild(effects.FlashEvents.Where(x => !x.InBackground).ToList());
 
         var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap.KeyCount);
-        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, effects, new List<IMod> { new NoFailMod() });
-        container.ScrollSpeed = rulesetScrollSpeed;
-        container.ParentClock = EditorClock;
+        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, effects, new List<IMod> { new NoFailMod() })
+        {
+            ParentClock = EditorClock
+        };
         return container;
     }
 
@@ -203,6 +189,9 @@ public partial class DesignContainer : EditorTabContainer
                 ShaderType.SplitScreen => new SplitScreenContainer(),
                 ShaderType.FishEye => new FishEyeContainer(),
                 ShaderType.Reflections => new ReflectionsContainer(),
+                ShaderType.DrunkThing => new DrunkThingContainer(),
+                ShaderType.NeonThing => new NeonThingContainer(),
+                ShaderType.Perspective => new PerspectiveContainer(),
                 _ => null
             };
 

@@ -369,6 +369,224 @@ public partial class ShaderEntry : PointListEntry
                     }
                 });
                 break;
+            case ShaderType.NeonThing:
+                settings.AddRange(new Drawable[]
+                {
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start Speed",
+                        TooltipText = "Color shift speed.",
+                        CurrentValue = shader.StartParameters.Strength,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End Speed",
+                        TooltipText = "Color shift speed.",
+                        CurrentValue = shader.EndParameters.Strength,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start Thickness",
+                        TooltipText = "Thickness.",
+                        CurrentValue = shader.StartParameters.Strength2,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength2 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End Thickness",
+                        TooltipText = "Thickness.",
+                        CurrentValue = shader.EndParameters.Strength2,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength2 = value;
+                            Map.Update(shader);
+                        }
+                    }
+                });
+                break;
+            case ShaderType.Perspective:
+                settings.AddRange(new Drawable[]
+                {
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start X Rotation",
+                        TooltipText = "X axis rotation ([value] - 90 (lol)).",
+                        CurrentValue = shader.StartParameters.Strength,
+                        Min = -90.0f,
+                        Max = 90.0f,
+                        Step = 1.0f,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End X Rotation",
+                        TooltipText = "X axis rotation ([value] - 90 (lol)).",
+                        CurrentValue = shader.EndParameters.Strength,
+                        Min = -90.0f,
+                        Max = 90.0f,
+                        Step = 1.0f,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start Y Rotation",
+                        TooltipText = "Y axis rotation.",
+                        CurrentValue = shader.StartParameters.Strength2,
+                        Min = -90.0f,
+                        Max = 90.0f,
+                        Step = 1.0f,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength2 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End Y Rotation",
+                        TooltipText = "Y axis rotation.",
+                        CurrentValue = shader.EndParameters.Strength2,
+                        Min = -90.0f,
+                        Max = 90.0f,
+                        Step = 1.0f,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength2 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start FOV",
+                        TooltipText = "FOV.",
+                        CurrentValue = shader.StartParameters.Strength3,
+                        Min = 0.0f,
+                        Max = 100.0f,
+                        Step = 1.0f,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength3 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End FOV",
+                        TooltipText = "FOV.",
+                        CurrentValue = shader.EndParameters.Strength3,
+                        Min = 0.0f,
+                        Max = 100.0f,
+                        Step = 1.0f,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength3 = value;
+                            Map.Update(shader);
+                        }
+                    }
+                });
+                break;
+            case ShaderType.DrunkThing:
+                settings.AddRange(new Drawable[]
+                {
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start Strength",
+                        TooltipText = "Strength.",
+                        CurrentValue = shader.StartParameters.Strength,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End Strength",
+                        TooltipText = "Strength.",
+                        CurrentValue = shader.EndParameters.Strength,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start Speed",
+                        TooltipText = "Speed.",
+                        CurrentValue = shader.StartParameters.Strength2,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength2 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End Speed",
+                        TooltipText = "Speed",
+                        CurrentValue = shader.EndParameters.Strength2,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength2 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                });
+                break;
             case ShaderType.Bloom:
             case ShaderType.Greyscale:
             case ShaderType.Invert:
