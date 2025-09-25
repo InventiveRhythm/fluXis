@@ -9,12 +9,14 @@ namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
 
 public partial class DrawableLandmine : DrawableHitObject
 {
-    public override bool CanBeRemoved => Judged || wouldMiss;
+    public override bool CanBeRemoved => Judged || didNotGetHit;
 
-    private bool wouldMiss => Time.Current - Data.Time > HitWindows.TimingFor(HitWindows.LowestHitable);
+    private bool didNotGetHit => TimeDelta <= -HitWindows.TimingFor(Judgement.Perfect);
 
     [Resolved]
     private GameplayInput input { get; set; }
+
+    private bool isBeingHeld;
 
     public DrawableLandmine(HitObject data)
         : base(data)
@@ -24,6 +26,7 @@ public partial class DrawableLandmine : DrawableHitObject
     [BackgroundDependencyLoader]
     private void load()
     {
+        //Masking = false; //needed for using the cross in bar skin
         InternalChildren = new[]
         {
             Skin.GetLandmine(VisualLane, ObjectManager.KeyCount, Data.HoldTime > 0)
@@ -34,10 +37,6 @@ public partial class DrawableLandmine : DrawableHitObject
     {
         base.Update();
 
-        //judge the landmine as soon as it leaves the perfect timing window
-        if (TimeDelta <= -HitWindows.TimingFor(Judgement.Perfect))
-            UpdateJudgement(false);
-
         //if the landmine is in the timing window of the next regular or long note, judge it as soon as it passes the receptors
         HitObject next = Data.NextObject;
 
@@ -45,6 +44,10 @@ public partial class DrawableLandmine : DrawableHitObject
         {
             UpdateJudgement(false);
         }
+
+        //TODO (?): make it more forgiving if the landmine is too close of the previous note?
+        if (isBeingHeld)
+            UpdateJudgement(true);
     }
 
     protected override void CheckJudgement(bool byUser, double offset)
@@ -55,15 +58,33 @@ public partial class DrawableLandmine : DrawableHitObject
             return;
         }
 
+        if (isBeingHeld)
+        {
+            if (offset < 0)
+                ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+            return;
+        }
+
         if (Math.Abs(offset) <= HitWindows.TimingFor(Judgement.Perfect))
             ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
     }
 
     public override void OnPressed(FluXisGameplayKeybind key)
     {
-        if (key != Keybind || !Column.IsFirst(this))
+        if (key != Keybind)
             return;
 
-        UpdateJudgement(true);
+        if (Column.IsFirst(this))
+            UpdateJudgement(true);
+
+        isBeingHeld = true;
+    }
+
+    public override void OnReleased(FluXisGameplayKeybind key)
+    {
+        if (key != Keybind)
+            return;
+
+        isBeingHeld = false;
     }
 }
