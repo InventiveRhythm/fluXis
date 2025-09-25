@@ -439,7 +439,7 @@ public partial class ShaderEntry : PointListEntry
                     {
                         Enabled = startValToggle.Bindable,
                         Text = "Start X Rotation",
-                        TooltipText = "X axis rotation ([value] - 90 (lol)).",
+                        TooltipText = "X axis rotation.",
                         CurrentValue = shader.StartParameters.Strength,
                         Min = -90.0f,
                         Max = 90.0f,
@@ -453,7 +453,7 @@ public partial class ShaderEntry : PointListEntry
                     new PointSettingsSlider<float>
                     {
                         Text = "End X Rotation",
-                        TooltipText = "X axis rotation ([value] - 90 (lol)).",
+                        TooltipText = "X axis rotation.",
                         CurrentValue = shader.EndParameters.Strength,
                         Min = -90.0f,
                         Max = 90.0f,

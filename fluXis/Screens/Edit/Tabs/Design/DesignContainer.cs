@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Configuration;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Shaders;
@@ -35,6 +36,7 @@ using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -72,6 +74,15 @@ public partial class DesignContainer : EditorTabContainer
     private EditorFlashLayer frontFlash;
 
     private IdleTracker rulesetIdleTracker;
+
+    private Bindable<float> userScrollSpeed;
+    private Bindable<float> rulesetScrollSpeed { get; } = new();
+
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
+    {
+        userScrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
+    }
 
     private BackgroundVideo backgroundVideo;
 
@@ -150,6 +161,13 @@ public partial class DesignContainer : EditorTabContainer
         Editor.BindableBackgroundBlur.BindValueChanged(e => backgroundStack.Add(new BlurableBackground(Map.RealmMap, e.NewValue)), true);
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        rulesetScrollSpeed.Value = (float)(userScrollSpeed.Value * (Settings.Zoom / 2f));
+    }
+
     private RulesetContainer createRuleset()
     {
         var effects = Map.MapEvents.JsonCopy();
@@ -159,10 +177,10 @@ public partial class DesignContainer : EditorTabContainer
         frontFlash.Rebuild(effects.FlashEvents.Where(x => !x.InBackground).ToList());
 
         var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap.KeyCount);
-        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, effects, new List<IMod> { new NoFailMod() })
-        {
-            ParentClock = EditorClock
-        };
+        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, effects, new List<IMod> { new NoFailMod() });
+        container.ScrollSpeed = rulesetScrollSpeed;
+        container.ParentClock = EditorClock;
+
         return container;
     }
 
