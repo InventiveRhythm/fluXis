@@ -36,12 +36,16 @@ public class HitObject : ITimedObject
     /// <summary>
     /// 0 = Normal / Long
     /// 1 = Tick
+    /// 2 = Landmine
     /// </summary>
     [JsonProperty("type")]
     public int Type { get; set; }
 
     [JsonIgnore]
     public bool LongNote => HoldTime > 0 && Type == 0;
+
+    [JsonIgnore]
+    public bool Landmine => Type == 2;
 
     [JsonIgnore]
     public double EndTime
