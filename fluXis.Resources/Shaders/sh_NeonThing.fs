@@ -2,8 +2,9 @@ layout(std140, set = 0, binding = 0) uniform m_NeonThingParameters
 {
     vec2 g_TexSize;
     float g_Time;
-    float g_Strength;
-    float g_Scale;
+    float g_Strength;  // color cycle speed
+    float g_Strength2; // pattern density
+    float g_Strength3; // edge thickness
 };
 
 layout(set = 1, binding = 0) uniform texture2D m_Texture;
@@ -27,7 +28,7 @@ void main(void) {
     vec2 pixelSize = 1.0 / g_TexSize;
 
     float edgeThickness = 1.5;
-    float sampleRadius = 0.5 * edgeThickness * g_Scale;
+    float sampleRadius = 0.5 * edgeThickness * g_Strength3;
     
     vec3 centerColor = texture(sampler2D(m_Texture, m_Sampler), uv).rgb;
     vec3 rightColor = texture(sampler2D(m_Texture, m_Sampler), uv + vec2(pixelSize.x * sampleRadius, 0.0)).rgb;
@@ -55,7 +56,7 @@ void main(void) {
     
     edge = smoothstep(edgeThresholdLow, edgeThresholdHigh, edge * edgeMultiplier);
     
-    float finalEdge = edge * g_Scale;
+    float finalEdge = edge * g_Strength3;
     
     float caAmount = 0.004 * finalEdge * (1.0 + 0.2 * sin(g_Time));
     vec3 chromaColor = centerColor;
@@ -65,23 +66,17 @@ void main(void) {
         chromaColor.b = texture(sampler2D(m_Texture, m_Sampler), uv - vec2(caAmount, 0.0)).b;
     }
     
-    float colorCycleSpeed = (1.5 * g_Strength * 2) / 1000; //0.0015; // 1.5/1000 
-    float patternDensity = (10.0 * g_Strength * 2) / 1000; //;0.01;    // 10.0/1000   
+    float colorCycleSpeed = 1.5 * g_Strength;
+    float patternDensity = 5.0 * g_Strength2;
+    float time = g_Time * 0.001; // me when i don't even understand how the shader works
 
     vec3 neonColor = vec3(0.0);
 
     if (finalEdge > 0.1) {
-        neonColor = 0.5 + 0.5 * cos(g_Time * colorCycleSpeed + vec3(uv, uv) * patternDensity + vec3(0.0, 2.0, 4.0));
+        neonColor = 0.5 + 0.5 * cos(time * colorCycleSpeed + vec3(uv, uv) * patternDensity + vec3(0.0, 2.0, 4.0));
     }
     
     vec3 finalColor = mix(chromaColor, neonColor, finalEdge);
-    
-    //apenas se notaba asi que chau
-    //if (finalEdge > 0.2) {
-    //    float glitter = random(uv + mod(g_Time * 0.3, 10.0));
-    //    glitter = smoothstep(0.9, 0.95, glitter);
-    //    finalColor += glitter * neonColor * g_Strength * 0.3;
-    //}
     
     o_Colour = vec4(finalColor, 1.0);
 }

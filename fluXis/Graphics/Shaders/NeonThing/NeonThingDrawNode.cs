@@ -12,10 +12,11 @@ public partial class NeonThingContainer
 {
     private class NeonThingContainerDrawNode : ShaderDrawNode<NeonThingContainer>
     {
-        private float strength;
+        private float speed;
+        private float density;
         private IUniformBuffer<NeonThingParameters> parametersBuffer;
 
-        private float scale;
+        private float thickness;
 
         public NeonThingContainerDrawNode(NeonThingContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
@@ -26,14 +27,15 @@ public partial class NeonThingContainer
         {
             base.ApplyState();
 
-            strength = Source.Strength;
-            scale = Source.Strength2;
+            speed = Source.Strength;
+            density = Source.Strength2;
+            thickness = Source.Strength3;
         }
 
         protected override void PopulateContents(IRenderer renderer)
         {
             base.PopulateContents(renderer);
-            if (strength > 0)
+            if (speed > 0)
                 drawFrameBuffer(renderer);
         }
 
@@ -52,8 +54,9 @@ public partial class NeonThingContainer
                 {
                     TexSize = current.Size,
                     Time = (float)(Source.Clock?.CurrentTime ?? 0),
-                    Strength = strength,
-                    Scale = scale,
+                    Strength = speed,
+                    Strength2 = density,
+                    Strength3 = thickness,
                 };
 
                 Shader.BindUniformBlock("m_NeonThingParameters", parametersBuffer);
@@ -75,8 +78,9 @@ public partial class NeonThingContainer
             public UniformVector2 TexSize;
             public UniformFloat Time;
             public UniformFloat Strength;
-            public UniformFloat Scale;
-            private readonly UniformPadding12 pad1;
+            public UniformFloat Strength2;
+            public UniformFloat Strength3;
+            private readonly UniformPadding8 pad1;
         }
     }
 }

@@ -376,7 +376,7 @@ public partial class ShaderEntry : PointListEntry
                     {
                         Enabled = startValToggle.Bindable,
                         Text = "Start Speed",
-                        TooltipText = "Color shift speed.",
+                        TooltipText = "Color cycle speed.",
                         CurrentValue = shader.StartParameters.Strength,
                         Min = 0.0f,
                         Max = 1.0f,
@@ -390,7 +390,7 @@ public partial class ShaderEntry : PointListEntry
                     new PointSettingsSlider<float>
                     {
                         Text = "End Speed",
-                        TooltipText = "Color shift speed.",
+                        TooltipText = "Color cycle speed.",
                         CurrentValue = shader.EndParameters.Strength,
                         Min = 0.0f,
                         Max = 1.0f,
@@ -404,8 +404,8 @@ public partial class ShaderEntry : PointListEntry
                     new PointSettingsSlider<float>
                     {
                         Enabled = startValToggle.Bindable,
-                        Text = "Start Thickness",
-                        TooltipText = "Thickness.",
+                        Text = "Start Density",
+                        TooltipText = "Density of the color pattern.",
                         CurrentValue = shader.StartParameters.Strength2,
                         Min = 0.0f,
                         Max = 1.0f,
@@ -418,8 +418,8 @@ public partial class ShaderEntry : PointListEntry
                     },
                     new PointSettingsSlider<float>
                     {
-                        Text = "End Thickness",
-                        TooltipText = "Thickness.",
+                        Text = "End Density",
+                        TooltipText = "Density of the color pattern.",
                         CurrentValue = shader.EndParameters.Strength2,
                         Min = 0.0f,
                         Max = 1.0f,
@@ -427,6 +427,35 @@ public partial class ShaderEntry : PointListEntry
                         OnValueChanged = value =>
                         {
                             shader.EndParameters.Strength2 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start Thickness",
+                        TooltipText = "Border thickness.",
+                        CurrentValue = shader.StartParameters.Strength3,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength3 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End Thickness",
+                        TooltipText = "Border thickness.",
+                        CurrentValue = shader.EndParameters.Strength3,
+                        Min = 0.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength3 = value;
                             Map.Update(shader);
                         }
                     }
