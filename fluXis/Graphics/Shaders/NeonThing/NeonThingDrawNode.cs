@@ -35,7 +35,7 @@ public partial class NeonThingContainer
         protected override void PopulateContents(IRenderer renderer)
         {
             base.PopulateContents(renderer);
-            if (speed > 0)
+            if (thickness > 0)
                 drawFrameBuffer(renderer);
         }
 

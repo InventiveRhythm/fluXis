@@ -44,10 +44,9 @@ mat3 getRotationMatrix(float yaw, float pitch) {
 void main(void) {
     vec2 uv = (gl_FragCoord.xy / g_TexSize) - 0.5;
     
-    
     float x_rot = g_Strength2;
     float y_rot = g_Strength; 
-    float fov   = 15.0 + g_Strength3;
+    float fov   = g_Strength3 + 0.1;
     
     mat3 inv_rot_mat = getRotationMatrix(x_rot, y_rot);
     
