@@ -120,7 +120,9 @@ public partial class FooterPractice : FocusedOverlayContainer
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Height = 60,
-                                        Margin = new MarginPadding { Vertical = 10 }
+                                        Margin = new MarginPadding { Vertical = 10 },
+                                        LowerBoundOffset = 10,
+                                        UpperBoundOffset = -5,
                                     }
                                 }
                             },

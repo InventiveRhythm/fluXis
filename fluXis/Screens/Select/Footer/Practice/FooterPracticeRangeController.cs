@@ -22,18 +22,25 @@ public partial class FooterPracticeRangeController : Container
     [Resolved]
     private MapStore maps { get; set; }
 
-    private RangePoint startPoint;
-    private RangePoint endPoint;
+    public Bindable<double> LowerBound { get; set; } = new();
+    public Bindable<double> UpperBound { get; set; } = new();
+
+    public float LowerBoundOffset { get; set; } = 0f;
+    public float UpperBoundOffset { get; set; } = 0f;
+
+    private float lowerBoundOffsetRelative { get; set; } = 0f;
+    private float upperBoundOffsetRelative { get; set; } = 0f;
+
+    private RangePoint lowerBound;
+    private RangePoint upperBound;
     
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
 
-    private float originalWidth = 1;
-
     private int endTime = 1;
 
-    private int defaultStartX = 0;
-    private int defaultEndX = 0;
+    private const float default_lowerbound_value = 0f;
+    private const float default_upperbound_value = 1f;
 
     public FooterPracticeRangeController(BindableNumber<int> start, BindableNumber<int> end)
     {
@@ -50,107 +57,144 @@ public partial class FooterPracticeRangeController : Container
 
         InternalChildren = new Drawable[]
         {
-            startPoint = new RangePoint(this, start, true)
+            lowerBound = new RangePoint(this, start, true)
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 OnDragBind = e =>
                 {
-                    if (startPoint.X <= defaultStartX)
+                    lowerBoundOffsetRelative = getRelativePosition(LowerBoundOffset);
+                    float relativePos = getRelativePosition(lowerBound.X);
+                    
+                    if (relativePos <= 0.01f)
                         start.Value = 0;
                     else
                     {
-                       float timeMs = posToTime(startPoint.X + 10);
-                       start.Value = (int)(timeMs / 1000f); 
+                        float timeMs = (relativePos + lowerBoundOffsetRelative) * endTime;
+                        start.Value = (int)(timeMs / 1000f);
                     }
+                    
+                    LowerBound.Value = relativePos;
                 },
                 OnRightClickBind = e =>
                 {
-                    startPoint.X = defaultStartX;
-                    start.Value = 0;
+                    resetLowerBound();
                 },
             },
-            endPoint = new RangePoint(this, end, false)
+            upperBound = new RangePoint(this, end, false)
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 OnDragBind = e =>
                 {
-                    if (endPoint.X / defaultEndX > 0.99)
-                        end.Value = endTime;
+                    upperBoundOffsetRelative = getRelativePosition(UpperBoundOffset);
+                    float relativePos = getRelativePosition(upperBound.X);
+                    
+                    if (relativePos >= 0.98f)
+                        end.Value = (int)(endTime / 1000f);
                     else
                     {
-                        float timeMs = posToTime(endPoint.X - 5);
+                        float timeMs = (relativePos + upperBoundOffsetRelative) * endTime;
                         end.Value = (int)(timeMs / 1000f);
                     }
+                    
+                    UpperBound.Value = relativePos;
                 },
                 OnRightClickBind = e =>
                 {
-                    endPoint.X = defaultEndX;
-                    end.Value = endTime;
+                    resetUpperBound();
                 },
             }
         };
 
-        startPoint.SetOtherPoint(endPoint);
-        endPoint.SetOtherPoint(startPoint);
+        lowerBound.SetOtherPoint(upperBound);
+        upperBound.SetOtherPoint(lowerBound);
         
         start.BindValueChanged(v =>
         {
-            if (v.NewValue * 1000 <= 0)
-                startPoint.UpdatePosition(defaultStartX);
+            if (v.NewValue <= 0)
+            {
+                resetLowerBound();
+            }
             else
             {
-                float newPos = timeToPos(v.NewValue * 1000);
-                if (newPos >= endPoint.X - 10) return;
-                startPoint.UpdatePosition(newPos);
+                float relativePos = Math.Clamp(v.NewValue * 1000f / endTime, 0f, 1f);
+                float newPos = getAbsolutePosition(relativePos);
+                
+                if (newPos < upperBound.X)
+                {
+                    lowerBound.UpdatePosition(newPos);
+                    LowerBound.Value = relativePos;
+                }
             }
-        });
+        }, true);
 
         end.BindValueChanged(v =>
         {
             if (v.NewValue * 1000 >= endTime)
-                endPoint.UpdatePosition(defaultEndX);
+            {
+                resetUpperBound();
+            }
             else
             {
-                float newPos = timeToPos(v.NewValue * 1000);
-                if (newPos <= startPoint.X + 10) return;
-                endPoint.UpdatePosition(newPos);
+                float relativePos = Math.Clamp(v.NewValue * 1000f / endTime, 0f, 1f);
+                float newPos = getAbsolutePosition(relativePos);
+                
+                if (newPos > lowerBound.X)
+                {
+                    upperBound.UpdatePosition(newPos);
+                    UpperBound.Value = relativePos;
+                }
             }
-        });
+        }, true);
     }
 
     protected override void LoadComplete()
     {
-        originalWidth = DrawWidth;
-
+        base.LoadComplete();
+        
         maps.MapBindable.BindValueChanged(mapChanged, true);
-
-        defaultStartX = -7;
-        defaultEndX = (int)originalWidth + 7;
-
-        startPoint.X = defaultStartX;
-        endPoint.X = defaultEndX;
+        
+        resetLowerBound();
+        resetUpperBound();
     }
     
     private void mapChanged(ValueChangedEvent<RealmMap> v)
     {
-        startPoint.X = defaultStartX;
-        endPoint.X = defaultEndX;
-
-        var info = v.NewValue.GetMapInfo();
+        var info = v.NewValue?.GetMapInfo();
 
         if (info is null || info.HitObjects.Count == 0)
         {
             endTime = 1;
-            return;
         }
-            
-        endTime = (int)info.EndTime;
+        else
+        {
+            endTime = (int)info.EndTime;
+        }
+        
+        start.Value = 0;
+        end.Value = (int)(endTime / 1000f);
+        
+        resetLowerBound();
+        resetUpperBound();
     }
 
-    private float timeToPos(float time) => time / endTime * DrawWidth;
-    private float posToTime(float pos) => pos / DrawWidth * endTime;
+    private float getAbsolutePosition(float relativePos) => relativePos * DrawWidth;
+    private float getRelativePosition(float absoluteX) => absoluteX / DrawWidth;
+
+    private void resetLowerBound()
+    {
+        lowerBound.UpdatePosition(getAbsolutePosition(default_lowerbound_value));
+        start.Value = 0;
+        LowerBound.Value = default_lowerbound_value;
+    }
+
+    private void resetUpperBound()
+    {
+        upperBound.UpdatePosition(getAbsolutePosition(default_upperbound_value));
+        end.Value = (int)(endTime / 1000f);
+        UpperBound.Value = default_upperbound_value;
+    }
 
     private partial class RangePoint : CompositeDrawable
     {
@@ -161,10 +205,11 @@ public partial class FooterPracticeRangeController : Container
         private const float line_width = 3f;
         private const float triangle_size = 15f;
         private const float drag_area_width = 30f;
+        private const float min_distance = 10f;
 
         private readonly FooterPracticeRangeController parent;
         public readonly BindableNumber<int> BindableValue;
-        private readonly bool isStartPoint;
+        private readonly bool isLowerBound;
         private RangePoint otherPoint;
         private bool isDragging;
         public Action<DragEvent> OnDragBind;
@@ -172,10 +217,10 @@ public partial class FooterPracticeRangeController : Container
 
         private Box dragArea;
 
-        public RangePoint(FooterPracticeRangeController parent, BindableNumber<int> bindableValue, bool isStartPoint)
+        public RangePoint(FooterPracticeRangeController parent, BindableNumber<int> bindableValue, bool isLowerBound)
         {
             this.parent = parent;
-            this.isStartPoint = isStartPoint;
+            this.isLowerBound = isLowerBound;
             BindableValue = bindableValue;
 
             RelativeSizeAxes = Axes.Y;
@@ -243,57 +288,42 @@ public partial class FooterPracticeRangeController : Container
 
         protected override void OnDrag(DragEvent e)
         {
-            if (Parent != null)
+            if (Parent == null) return;
+
+            var mousePos = e.ScreenSpaceMousePosition;
+            var parentScreenSpace = Parent.ScreenSpaceDrawQuad;
+            
+            bool inBoundsX = mousePos.X >= parentScreenSpace.TopLeft.X && 
+                           mousePos.X <= parentScreenSpace.TopRight.X;
+            
+            if (!inBoundsX) return;
+
+            var mouseLocalPos = Parent.ToLocalSpace(mousePos);
+            float newX = mouseLocalPos.X;
+            
+            newX = Math.Clamp(newX, 0, Parent.DrawWidth);
+
+            if (otherPoint != null)
             {
-                var mousePos = e.ScreenSpaceMousePosition;
-                var parentScreenSpace = Parent.ScreenSpaceDrawQuad;
-                
-                bool inBoundsX = mousePos.X >= parentScreenSpace.TopLeft.X && mousePos.X <= parentScreenSpace.TopRight.X;
-                
-                if (inBoundsX)
+                if (isLowerBound)
                 {
-                    if (otherPoint != null)
-                    {
-                        var mouseLocalX = Parent.ToLocalSpace(mousePos).X;
-                        
-                        if (isStartPoint)
-                        {
-                            if (mouseLocalX >= otherPoint.X)
-                                return;
-                        }
-                        else
-                        {
-                            if (mouseLocalX <= otherPoint.X)
-                                return;
-                        }
-                    }
-                    
-                    float newX = X + e.Delta.X;
-                    newX = Math.Max(0, Math.Min(Parent.DrawWidth + 7, newX));
-
-                    if (otherPoint != null)
-                    {
-                        if (isStartPoint)
-                        {
-                            if (!(BindableValue.Value + 1 > otherPoint.BindableValue.Value && e.Delta.X > 0))
-                                newX = Math.Min(newX, otherPoint.X - triangle_size);
-                        }
-                        else
-                        {
-                            if (!(BindableValue.Value - 1 < otherPoint.BindableValue.Value && e.Delta.X < 0))
-                                newX = Math.Max(newX, otherPoint.X + triangle_size);
-                        }
-                    }
-
-                    X = newX;
-                    OnDragBind?.Invoke(e);
-                    
-                    if (Clock.CurrentTime - lastSampleTime >= sample_interval)
-                    {
-                        dragSample.Play();
-                        lastSampleTime = Clock.CurrentTime;
-                    }
+                    if (!(BindableValue.Value + 1 > otherPoint.BindableValue.Value && e.Delta.X > 0))
+                        newX = Math.Min(newX, otherPoint.X - min_distance);
                 }
+                else
+                {
+                    if (!(BindableValue.Value - 1 < otherPoint.BindableValue.Value && e.Delta.X < 0))
+                        newX = Math.Max(newX, otherPoint.X + min_distance);
+                }
+            }
+
+            X = newX;
+            OnDragBind?.Invoke(e);
+            
+            if (Clock.CurrentTime - lastSampleTime >= sample_interval)
+            {
+                dragSample?.Play();
+                lastSampleTime = Clock.CurrentTime;
             }
         }
 
@@ -321,7 +351,7 @@ public partial class FooterPracticeRangeController : Container
             return true;
         }
 
-        protected override bool OnClick(ClickEvent e) { return true; }
+        protected override bool OnClick(ClickEvent e) => true;
 
         protected override void OnMouseUp(MouseUpEvent e)
         {
