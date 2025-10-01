@@ -6,8 +6,8 @@ using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Outline;
 using fluXis.Graphics.Sprites.Text;
-using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Graphics.UserInterface.Text;
@@ -37,7 +37,6 @@ using osu.Framework.Development;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input;
@@ -104,7 +103,8 @@ public partial class MenuScreen : FluXisScreen
     private MenuUpdates updates;
 
     private Sprite logoText;
-    private CircularContainer animationCircle;
+    private OutlinedCircle animationCircle;
+    private OutlinedSquare animationSquare;
 
     private MenuImageButton playButton;
     private double mapChangeTime;
@@ -284,22 +284,17 @@ public partial class MenuScreen : FluXisScreen
                         RelativeSizeAxes = Axes.Both,
                         Children = new Drawable[]
                         {
-                            animationCircle = new CircularContainer
+                            animationSquare = new OutlinedSquare()
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Masking = true,
-                                BorderColour = Theme.Text,
-                                BorderThickness = 60,
-                                Children = new Drawable[]
-                                {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        AlwaysPresent = true,
-                                        Alpha = 0
-                                    }
-                                }
+                                BorderThickness = 60
+                            },
+                            animationCircle = new OutlinedCircle
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                BorderThickness = 60
                             },
                             logoText = new Sprite
                             {
@@ -413,17 +408,29 @@ public partial class MenuScreen : FluXisScreen
         UISamples?.Select();
         randomizeSplash();
 
-        logoText.ScaleTo(1.1f, 1000, Easing.OutQuint).FadeOut(600);
-        animationCircle.BorderTo(60f).ResizeTo(0)
-                       .BorderTo(0f, 1200, Easing.OutQuint)
-                       .ResizeTo(400, 1000, Easing.OutQuint);
+        backgrounds.Zoom = 1.3f;
 
-        this.Delay(800).FadeIn().OnComplete(_ =>
+        logoText.Delay(600).FadeOut(300);
+        logoText.ScaleTo(0.9f, 1000, Easing.OutQuint).Delay(600)
+                .ScaleTo(1.2f, 1200, Easing.OutQuint);
+
+        animationSquare.BorderTo(120f).ResizeTo(0).RotateTo(-20)
+                       .BorderTo(0f, 1800, Easing.InOutQuint)
+                       .RotateTo(45, 1400, Easing.InOutQuint)
+                       .ResizeTo(1200, 1400, Easing.InOutQuint);
+
+        animationCircle.BorderTo(240f).ResizeTo(0)
+                       .BorderTo(0f, 1800, Easing.InOutQuint)
+                       .ResizeTo(2400, 1400, Easing.InOutQuint);
+
+        this.Delay(600).FadeIn().OnComplete(_ =>
         {
             backgrounds.Zoom = 1f;
             backgrounds.SetDim(0.25f);
 
-            toolbar.Show();
+            using (toolbar.BeginDelayedSequence(200))
+                toolbar.Show();
+
             showMenu(true);
         });
 
