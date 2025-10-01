@@ -66,6 +66,9 @@ public class APIMapSet
     [JsonProperty("queue_votes")]
     public List<bool>? QueueVotes { get; set; }
 
+    [JsonProperty("favorite")]
+    public bool? Favorite { get; set; }
+
     #endregion
 
     #region Localization

@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Default;
 using fluXis.Skinning.Json;
 using JetBrains.Annotations;
@@ -17,9 +18,18 @@ public partial class ColorableSkinDrawable : CompositeDrawable
 
     protected bool UseCustomColor { get; set; }
 
-    public ColorableSkinDrawable(SkinJson skinJson)
+    public MapColor Index { get; private set; }
+
+    public ColorableSkinDrawable(SkinJson skinJson, MapColor index)
     {
         SkinJson = skinJson;
+        Index = index;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        RegisterToProvider();
     }
 
     public void UpdateColor(int lane, int keyCount) => Schedule(() =>
@@ -36,7 +46,11 @@ public partial class ColorableSkinDrawable : CompositeDrawable
         SetColor(SkinJson?.GetLaneColor(lane, keyCount) ?? Colour4.White);
     });
 
-    protected virtual void SetColor(Colour4 color) { }
+    public virtual void SetColor(Colour4 color) { }
+    public virtual void UpdateColor(MapColor index, Colour4 color) => SetColor(color);
+
+    protected virtual void RegisterToProvider() => ColorProvider?.Register(this, Index);
+    protected virtual void UnregisterFromProvider() => ColorProvider?.Unregister(this, Index);
 
     protected Colour4 GetIndexOrFallback(int index, Colour4 fallback)
     {
@@ -46,5 +60,11 @@ public partial class ColorableSkinDrawable : CompositeDrawable
             return fallback;
 
         return col.Value;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        UnregisterFromProvider();
+        base.Dispose(isDisposing);
     }
 }

@@ -22,6 +22,11 @@ public partial class DesignPointsList : PointsList
         Map.FlashEventRemoved += RemovePoint;
         Map.MapEvents.FlashEvents.ForEach(AddPoint);
 
+        Map.ColorFadeEventAdded += AddPoint;
+        Map.ColorFadeEventUpdated += UpdatePoint;
+        Map.ColorFadeEventRemoved += RemovePoint;
+        Map.MapEvents.ColorFadeEvents.ForEach(AddPoint);
+
         Map.PulseEventAdded += AddPoint;
         Map.PulseEventUpdated += UpdatePoint;
         Map.PulseEventRemoved += RemovePoint;
@@ -92,6 +97,7 @@ public partial class DesignPointsList : PointsList
     {
         ScrollVelocity scroll => new ScrollVelocityEntry(scroll),
         FlashEvent flash => new FlashEntry(flash),
+        ColorFadeEvent colorFade => new ColorFadeEntry(colorFade),
         PulseEvent pulse => new PulseEntry(pulse),
         ShakeEvent shake => new ShakeEntry(shake),
         PlayfieldMoveEvent move => new PlayfieldMoveEntry(move),
@@ -114,6 +120,7 @@ public partial class DesignPointsList : PointsList
         {
             new("Scroll Velocity", Theme.ScrollVelocity, () => Create(new ScrollVelocity()), x => x is ScrollVelocity),
             new("Flash", Theme.Flash, () => Create(new FlashEvent()), x => x is FlashEvent),
+            new("Color Fade", Theme.ColorFade, () => Create(new ColorFadeEvent()), x => x is ColorFadeEvent),
             new("Pulse", Theme.Pulse, () => Create(new PulseEvent()), x => x is PulseEvent),
             new("Shake", Theme.Shake, () => Create(new ShakeEvent()), x => x is ShakeEvent),
             new("Playfield Move", Theme.PlayfieldMove, () => Create(new PlayfieldMoveEvent()), x => x is PlayfieldMoveEvent),

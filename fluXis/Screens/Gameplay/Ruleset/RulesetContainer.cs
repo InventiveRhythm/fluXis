@@ -27,6 +27,7 @@ public partial class RulesetContainer : CompositeDrawable
     public APIUser CurrentPlayer { get; init; }
 
     public float Rate { get; }
+    public Bindable<float> ScrollSpeed { get; set; } = new(3);
 
     public GameplayInput Input { get; }
     public PlayfieldManager PlayfieldManager { get; }

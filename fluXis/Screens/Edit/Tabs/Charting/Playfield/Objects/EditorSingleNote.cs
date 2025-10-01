@@ -17,7 +17,7 @@ public partial class EditorSingleNote : EditorHitObject
 
     protected override IEnumerable<Drawable> CreateContent()
     {
-        yield return piece = new DefaultHitObjectPiece(null);
+        yield return piece = new DefaultHitObjectPiece(null, 0);
     }
 
     protected override void LoadComplete()

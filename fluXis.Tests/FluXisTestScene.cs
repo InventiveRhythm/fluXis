@@ -95,7 +95,7 @@ public partial class FluXisTestScene : TestScene
     {
         public double StepTime => 200;
         public double BeatTime => StepTime * 4;
-        public Action<int> OnBeat { get; set; }
+        public Action<int, bool> OnBeat { get; set; }
     }
 
     private class DummyAmplitudeProvider : IAmplitudeProvider

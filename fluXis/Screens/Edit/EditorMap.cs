@@ -28,6 +28,8 @@ public class EditorMap : IVerifyContext
     public Storyboard Storyboard => MapInfo.Storyboard;
     public RealmMapSet MapSet => RealmMap?.MapSet;
 
+    private readonly Action<Drawable> loadComponent;
+
     public string MapInfoHash => MapUtils.GetHash(MapInfo.Serialize());
     public string MapEventsHash => MapUtils.GetHash(MapEvents.Save());
     public string StoryboardHash => MapUtils.GetHash(Storyboard.Serialize());
@@ -37,6 +39,13 @@ public class EditorMap : IVerifyContext
     public PanelContainer Panels { get; set; }
 
     private List<IChangeNotifier> notifiers = new();
+
+    public EditorMap(EditorMapInfo info, RealmMap map, Action<Drawable> loadComponent)
+    {
+        MapInfo = info;
+        RealmMap = map;
+        this.loadComponent = loadComponent;
+    }
 
     #region Events
 
@@ -70,6 +79,10 @@ public class EditorMap : IVerifyContext
     public event Action<FlashEvent> FlashEventAdded;
     public event Action<FlashEvent> FlashEventRemoved;
     public event Action<FlashEvent> FlashEventUpdated;
+
+    public event Action<ColorFadeEvent> ColorFadeEventAdded;
+    public event Action<ColorFadeEvent> ColorFadeEventRemoved;
+    public event Action<ColorFadeEvent> ColorFadeEventUpdated;
 
     public event Action<PulseEvent> PulseEventAdded;
     public event Action<PulseEvent> PulseEventRemoved;
@@ -125,6 +138,10 @@ public class EditorMap : IVerifyContext
 
     #endregion
 
+    public void LoadComponent(Drawable drawable) => loadComponent.Invoke(drawable);
+
+    public void TriggerAnyChange(ITimedObject obj = null) => AnyChange?.Invoke(obj);
+
     public void SetupNotifiers()
     {
         notifiers = new List<IChangeNotifier>
@@ -135,6 +152,7 @@ public class EditorMap : IVerifyContext
             new ChangeNotifier<LaneSwitchEvent>(MapEvents.LaneSwitchEvents, obj => LaneSwitchEventAdded?.Invoke(obj), obj => LaneSwitchEventRemoved?.Invoke(obj),
                 obj => LaneSwitchEventUpdated?.Invoke(obj)),
             new ChangeNotifier<FlashEvent>(MapEvents.FlashEvents, obj => FlashEventAdded?.Invoke(obj), obj => FlashEventRemoved?.Invoke(obj), obj => FlashEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<ColorFadeEvent>(MapEvents.ColorFadeEvents, obj => ColorFadeEventAdded?.Invoke(obj), obj => ColorFadeEventRemoved?.Invoke(obj), obj => ColorFadeEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PulseEvent>(MapEvents.PulseEvents, obj => PulseEventAdded?.Invoke(obj), obj => PulseEventRemoved?.Invoke(obj), obj => PulseEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PlayfieldMoveEvent>(MapEvents.PlayfieldMoveEvents, obj => PlayfieldMoveEventAdded?.Invoke(obj), obj => PlayfieldMoveEventRemoved?.Invoke(obj),
                 obj => PlayfieldMoveEventUpdated?.Invoke(obj)),

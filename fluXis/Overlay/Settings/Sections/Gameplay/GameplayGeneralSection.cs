@@ -1,9 +1,9 @@
-using System;
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Localization.Categories.Settings;
 using fluXis.Overlay.Settings.UI;
+using fluXis.Overlay.Settings.UI.Visual;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -23,13 +23,36 @@ public partial class GameplayGeneralSection : SettingsSubSection
     {
         AddRange(new Drawable[]
         {
-            new SettingsDropdown<ScrollDirection>
+            new SettingsVisualRow(new Drawable[]
             {
-                Label = strings.ScrollDirection,
-                Description = strings.ScrollDirectionDescription,
-                Items = Enum.GetValues<ScrollDirection>(),
-                Bindable = Config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection)
-            },
+                new SettingsVisualEnum<ScrollDirection>
+                {
+                    Label = strings.ScrollDirection,
+                    Description = strings.ScrollDirectionDescription,
+                    Bindable = Config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection),
+                    TexturePrefix = "Scroll"
+                },
+                new SettingsVisualToggle
+                {
+                    Label = strings.ShowEarlyLate,
+                    Description = strings.ShowEarlyLateDescription,
+                    Bindable = Config.GetBindable<bool>(FluXisSetting.ShowEarlyLate),
+                    TextureOn = "ShowEarlyLate-ON",
+                    TooltipOn = "Show",
+                    TextureOff = "ShowEarlyLate-OFF",
+                    TooltipOff = "Hide"
+                },
+                new SettingsVisualToggle
+                {
+                    Label = strings.JudgementSplash,
+                    Description = strings.JudgementSplashDescription,
+                    Bindable = Config.GetBindable<bool>(FluXisSetting.JudgementSplash),
+                    TextureOn = "ShowSplash-ON",
+                    TooltipOn = "Enabled",
+                    TextureOff = "ShowSplash-OFF",
+                    TooltipOff = "Disabled"
+                },
+            }),
             new SettingsToggle
             {
                 Label = strings.SnapColoring,
@@ -47,18 +70,6 @@ public partial class GameplayGeneralSection : SettingsSubSection
                 Label = strings.HideFlawless,
                 Description = strings.HideFlawlessDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.HideFlawless)
-            },
-            new SettingsToggle
-            {
-                Label = strings.ShowEarlyLate,
-                Description = strings.ShowEarlyLateDescription,
-                Bindable = Config.GetBindable<bool>(FluXisSetting.ShowEarlyLate)
-            },
-            new SettingsToggle
-            {
-                Label = strings.JudgementSplash,
-                Description = strings.JudgementSplashDescription,
-                Bindable = Config.GetBindable<bool>(FluXisSetting.JudgementSplash)
             },
             new SettingsSlider<float>
             {

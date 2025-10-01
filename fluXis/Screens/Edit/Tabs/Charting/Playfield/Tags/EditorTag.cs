@@ -1,7 +1,9 @@
+using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -18,6 +20,8 @@ public partial class EditorTag : Container
 
     private EditorTagContainer parent { get; }
 
+    private Bindable<ScrollDirection> scrollDirection;
+
     public ITimedObject TimedObject { get; }
     protected FluXisSpriteText Text { get; private set; }
     public bool RightSide { get; set; }
@@ -31,7 +35,7 @@ public partial class EditorTag : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
         AutoSizeAxes = Axes.X;
         Height = 20;
@@ -90,6 +94,17 @@ public partial class EditorTag : Container
                 }
             }
         };
+
+        scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
+    }
+
+    private void updateScale() => Scale = new Vector2(1, scrollDirection.Value == ScrollDirection.Up ? -1 : 1);
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        scrollDirection.BindValueChanged(_ => updateScale(), true);
     }
 
     protected override void Update()

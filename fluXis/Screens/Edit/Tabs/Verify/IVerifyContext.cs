@@ -1,6 +1,7 @@
 ﻿using fluXis.Database.Maps;
 using fluXis.Map;
 using fluXis.Online.API.Models.Maps;
+using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Verify;
 
@@ -10,6 +11,8 @@ public interface IVerifyContext
     MapEvents MapEvents { get; }
     RealmMap RealmMap { get; }
 
-    public int MaxKeyCount => RealmMap.KeyCount * (MapInfo.DualMode == DualMode.Separate ? 2 : 1);
-    public RealmMapSet MapSet => RealmMap.MapSet;
+    int MaxKeyCount => RealmMap.KeyCount * (MapInfo.DualMode == DualMode.Separate ? 2 : 1);
+    RealmMapSet MapSet => RealmMap.MapSet;
+
+    void LoadComponent(Drawable drawable);
 }

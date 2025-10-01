@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Preview;
+using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Context;
@@ -16,8 +19,11 @@ using fluXis.Online.API.Requests.MapSets;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Notifications;
+using fluXis.Overlay.User.Header;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -51,11 +57,15 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     [Resolved]
     private NotificationManager notifications { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private GlobalClock clock { get; set; }
 
+    private FullInputBlockingContainer searchContainer;
+    private HeaderButton scrollTopButton;
     private Container content;
     private FluXisScrollContainer scroll;
+    private FillFlowContainer scrollFlow;
     private FillFlowContainer<MapCard> flow;
     private FillFlowContainer loading;
 
@@ -63,6 +73,10 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private bool loadedAll;
     private string currentQuery = string.Empty;
     private bool firstOpen = true;
+    private double previousScrollY;
+
+    private BindableList<MapStatus> filterStatus;
+    private BindableList<int> filterKeymode;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -114,23 +128,15 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 ScrollbarVisible = false,
-                                Child = new FillFlowContainer
+                                Child = scrollFlow = new FillFlowContainer
                                 {
                                     RelativeSizeAxes = Axes.X,
                                     AutoSizeAxes = Axes.Y,
                                     Direction = FillDirection.Vertical,
-                                    Padding = new MarginPadding { Top = 70, Bottom = 20, Horizontal = 20 },
+                                    Padding = new MarginPadding { Top = 140, Bottom = 20, Horizontal = 20 },
                                     Spacing = new Vector2(20),
                                     Children = new Drawable[]
                                     {
-                                        new BrowserSearchBar
-                                        {
-                                            OnSearch = q =>
-                                            {
-                                                currentQuery = q;
-                                                loadMapsets(reload: true);
-                                            }
-                                        },
                                         flow = new FillFlowContainer<MapCard>
                                         {
                                             RelativeSizeAxes = Axes.X,
@@ -138,7 +144,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                             Direction = FillDirection.Full,
                                             Spacing = new Vector2(20)
                                         },
-                                        loading = new FillFlowContainer()
+                                        loading = new FillFlowContainer
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
@@ -166,10 +172,87 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 }
                             }
                         },
+                        searchContainer = new FullInputBlockingContainer
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            AutoSizeAxes = Axes.Y,
+                            Margin = new MarginPadding { Top = 50 },
+                            Children = new Drawable[]
+                            {
+                                new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = Theme.Background1
+                                },
+                                new FillFlowContainer()
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Padding = new MarginPadding(20),
+                                    Spacing = new Vector2(16),
+                                    Children = new Drawable[]
+                                    {
+                                        new BrowserSearchBar(q =>
+                                        {
+                                            currentQuery = q;
+                                            loadMapsets(reload: true);
+                                        }),
+                                        new FillFlowContainer
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Padding = new MarginPadding { Horizontal = 16 },
+                                            Spacing = new Vector2(12),
+                                            Children = new Drawable[]
+                                            {
+                                                new BrowseFilter<MapStatus>(
+                                                    "Status",
+                                                    filterStatus = new BindableList<MapStatus>(),
+                                                    Enum.GetValues<MapStatus>()
+                                                        .Where(x => x >= MapStatus.Unsubmitted)
+                                                        .Select(x => new BrowseFilter<MapStatus>.Option(x, x.ToString(), Theme.GetStatusColor((int)x)))
+                                                ),
+                                                new BrowseFilter<int>(
+                                                    "Keymode",
+                                                    filterKeymode = new BindableList<int>(),
+                                                    Enumerable.Range(4, 5)
+                                                              .Select(x => new BrowseFilter<int>.Option(x, $"{x}K", Theme.GetKeyCountColor(x)))
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scrollTopButton = new HeaderButton
+                        {
+                            Margin = new MarginPadding(20),
+                            Anchor = Anchor.BottomRight,
+                            Origin = Anchor.BottomRight,
+                            Icon = FontAwesome6.Solid.AngleUp,
+                            UseAutoSize = false,
+                            Size = new Vector2(64),
+                            IconSize = new Vector2(24),
+                            BackgroundColour = Theme.Background3,
+                            Action = () => scroll.ScrollToStart(),
+                            Alpha = 0
+                        }
                     }
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        scrollTopButton.Enabled.BindValueChanged(v =>
+        {
+            scrollTopButton.ScaleTo(v.NewValue ? 1f : 0.8f, 400, Easing.OutQuint)
+                           .FadeTo(v.NewValue ? 1f : 0f, 200);
+        }, true);
+        scrollTopButton.FinishTransforms(true);
     }
 
     private void loadMapsets(long offset = 0, bool reload = false)
@@ -180,7 +263,26 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         if (reload)
             flow.Clear();
 
-        var req = new MapSetsRequest(offset, 48, currentQuery);
+        var query = currentQuery;
+        // ReSharper disable once AccessToModifiedClosure
+        filterKeymode.ForEach(x => query += $" k={x}");
+
+        if (filterStatus.Count == 4)
+            query += " s=a";
+        else
+        {
+            filterStatus.ForEach(x => query += $" s={x switch {
+                MapStatus.Unsubmitted => "u",
+                MapStatus.Pending => "pen",
+                MapStatus.Impure => "i",
+                MapStatus.Pure => "p",
+                _ => throw new ArgumentOutOfRangeException(nameof(x), x, null) }
+            }");
+        }
+
+        Logger.Log(query);
+
+        var req = new MapSetsRequest(offset, 48, query);
         req.Success += response =>
         {
             loadedAll = response.Data.Count == 0;
@@ -266,6 +368,21 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
         if (end && !fetchingMore && !loadedAll)
             loadMapsets(flow.Count);
+
+        double currentScrollY = scroll.Current;
+        double scrollDelta = currentScrollY - previousScrollY;
+
+        scrollTopButton.Enabled.Value = currentScrollY >= 1000;
+
+        var searchHeight = searchContainer.DrawHeight;
+        scrollFlow.Padding = scrollFlow.Padding with { Top = 50 + searchHeight };
+
+        if (currentScrollY <= searchHeight)
+            searchContainer.MoveToY(0, 50);
+
+        searchContainer.Y += -(float)scrollDelta;
+        searchContainer.Y = Math.Clamp(searchContainer.Y, -searchHeight, 0);
+        previousScrollY = currentScrollY;
     }
 
     protected override void PopIn()
@@ -275,8 +392,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                .MoveToY(0, 800, Easing.OutQuint);
 
         this.FadeIn(200);
-
-        clock.VolumeOut(400).OnComplete(_ => clock.Stop());
+        clock?.VolumeOut(400).OnComplete(_ => clock?.Stop());
 
         if (firstOpen)
         {
@@ -292,8 +408,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
         previews.StopPreview();
 
-        clock.Start();
-        clock.VolumeIn(400);
+        clock?.Start();
+        clock?.VolumeIn(400);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

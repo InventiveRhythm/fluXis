@@ -246,6 +246,12 @@ public partial class MapStore : Component
         => MapSets.FirstOrDefault(set => set.Maps.Any(m => m.ID == guid))?
             .Maps.FirstOrDefault(m => m.ID == guid);
 
+    [CanBeNull]
+    public RealmMapSet GetFromOnlineID(long id) => MapSets.FirstOrDefault(set => set.OnlineID == id);
+
+    [CanBeNull]
+    public RealmMap GetMapFromOnlineID(long id) => MapSets.SelectMany(set => set.Maps).FirstOrDefault(map => map.OnlineID == id);
+
     public RealmMapSet QuerySet(Guid id) => realm.Run(r => QuerySetFromRealm(r, id)).Detach();
     public RealmMapSet QuerySetFromRealm(Realm realm, Guid id) => realm.Find<RealmMapSet>(id);
 
@@ -812,14 +818,14 @@ public partial class MapStore : Component
             ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
 
             var setFolder = MapFiles.GetFullPath(set.ID.ToString());
-            var setFiles = Directory.GetFiles(setFolder);
+            var setFiles = Directory.GetFiles(setFolder, "*", SearchOption.AllDirectories);
 
             int max = setFiles.Length;
             int current = 0;
 
             foreach (var fullFilePath in setFiles)
             {
-                var file = Path.GetFileName(fullFilePath);
+                var file = Path.GetRelativePath(setFolder, fullFilePath);
                 Logger.Log($"Exporting {file}");
 
                 var entry = archive.CreateEntry(file);

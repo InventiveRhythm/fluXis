@@ -6,13 +6,20 @@ namespace fluXis.Tests;
 
 public partial class FluXisTestBrowser : FluXisGameBase
 {
+    private readonly string assembly;
+
+    public FluXisTestBrowser(string assembly)
+    {
+        this.assembly = assembly;
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
         AddRange(new Drawable[]
         {
-            new TestBrowser("fluXis")
+            new TestBrowser(assembly)
         });
     }
 

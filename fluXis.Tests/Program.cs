@@ -20,7 +20,7 @@ public static class Program
         Logger.Log($"Test Map ID: {TestMapID}.");
 
         using GameHost host = Host.GetSuitableDesktopHost(name);
-        using var game = new FluXisTestBrowser();
+        using var game = new FluXisTestBrowser("fluXis");
         host.Run(game);
     }
 

@@ -40,6 +40,8 @@ public partial class DrawableStoryboardLayer : Container<DrawableStoryboardEleme
                 StoryboardElementType.Sprite => new DrawableStoryboardSprite(element),
                 StoryboardElementType.Text => new DrawableStoryboardText(element),
                 StoryboardElementType.Script => null,
+                StoryboardElementType.Circle => new DrawableStoryboardCircle(element),
+                StoryboardElementType.OutlineCircle => new DrawableStoryboardOutlineCircle(element),
                 _ => new DrawableStoryboardElement(element)
             };
 

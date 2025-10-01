@@ -26,29 +26,20 @@ public static class InputUtils
     // using a string as an arg is painful for this, It's best to just use the types
     public static KeyBinding GetDefaultBindingFor<T>(T bind) where T : Enum
     {
-        if (bind is FluXisGlobalKeybind globalBind)
+        return bind switch
         {
-            var globalKeyBind = GlobalKeybindContainer.GlobalKeyBindings
+            FluXisGlobalKeybind globalBind => GlobalKeybindContainer.GlobalKeyBindings
                 .Concat(GlobalKeybindContainer.InGameKeyBindings)
-                .FirstOrDefault(kb => kb.Action.Equals(globalBind));
+                .FirstOrDefault(kb => kb.Action.Equals(globalBind)),
 
-            return globalKeyBind;
-        }
+            EditorKeybinding editorBind => EditorKeybindingContainer.EditorKeyBindings
+                .FirstOrDefault(kb => kb.Action.Equals(editorBind)),
 
-        if (bind is EditorKeybinding editorBind)
-        {
-            var editorKeybind = EditorKeybindingContainer.EditorKeyBindings
-                .FirstOrDefault(kb => kb.Action.Equals(editorBind));
+            FluXisGameplayKeybind gameplayBind => new KeyBinding(
+                GameplayKeybindContainer.GetDefaultFor(gameplayBind), 
+                gameplayBind),
 
-            return editorKeybind;
-        }
-
-        if (bind is FluXisGameplayKeybind gameplayBind)
-        {
-            var defaultKey = GameplayKeybindContainer.GetDefaultFor(gameplayBind);
-            return new KeyBinding(defaultKey, gameplayBind);
-        }
-
-        throw new ArgumentException($"keybinding type not found for: {typeof(T).Name}", nameof(bind));
+            _ => throw new ArgumentException($"keybinding type not found for: {typeof(T).Name}", nameof(bind))
+        };
     }
 }

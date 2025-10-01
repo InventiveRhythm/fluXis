@@ -75,7 +75,7 @@ public partial class HealthBar : GameplayHUDComponent
             beatSync.OnBeat += onBeat;
     }
 
-    private void onBeat(int beat)
+    private void onBeat(int beat, bool finish)
     {
         if (!showingIcon || beat % 4 != 0)
             return;

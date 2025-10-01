@@ -13,6 +13,7 @@ using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -37,7 +38,8 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
     [Resolved]
     private IAPIClient api { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private PanelContainer panels { get; set; }
 
     [Resolved]
@@ -175,7 +177,9 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
 
         if (!api.CanUseOnline || api.User.Value == null)
         {
-            panels.Content = new SingleButtonPanel(FontAwesome6.Solid.PlugCircleXMark, "You must be online to use this feature.", "Restart fluXis to connect to the online services.", "Okay");
+            if (panels is not null)
+                panels.Content = new SingleButtonPanel(FontAwesome6.Solid.PlugCircleXMark, "You must be online to use this feature.", "Restart fluXis to connect to the online services.", "Okay");
+
             return true;
         }
 

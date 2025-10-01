@@ -33,6 +33,7 @@ using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
+using osu.Framework.Development;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -50,6 +51,7 @@ namespace fluXis.Screens.Menu;
 public partial class MenuScreen : FluXisScreen
 {
     public override float Zoom => pressedStart ? 1f : 1.2f;
+    public override float BackgroundDim => pressedStart ? 0.25f : 0f;
     public override bool ShowToolbar => pressedStart;
     public override bool AutoPlayNext => true;
     protected override bool BackgroundAllowStoryboard => showStoryboard.Value && (api.User.Value?.IsSupporter ?? false);
@@ -114,7 +116,7 @@ public partial class MenuScreen : FluXisScreen
 
     private bool pressedStart;
     private double inactivityTime;
-    private const double inactivity_timeout = 60 * 1000;
+    private const double inactivity_timeout = 20 * 1000;
 
     [BackgroundDependencyLoader]
     private void load(TextureStore textures)
@@ -410,7 +412,6 @@ public partial class MenuScreen : FluXisScreen
         inactivityTime = 0;
         UISamples?.Select();
         randomizeSplash();
-        backgrounds.Zoom = 1f;
 
         logoText.ScaleTo(1.1f, 1000, Easing.OutQuint).FadeOut(600);
         animationCircle.BorderTo(60f).ResizeTo(0)
@@ -419,6 +420,9 @@ public partial class MenuScreen : FluXisScreen
 
         this.Delay(800).FadeIn().OnComplete(_ =>
         {
+            backgrounds.Zoom = 1f;
+            backgrounds.SetDim(0.25f);
+
             toolbar.Show();
             showMenu(true);
         });
@@ -430,9 +434,10 @@ public partial class MenuScreen : FluXisScreen
     {
         toolbar.Hide();
         backgrounds.Zoom = 1.2f;
+        backgrounds.SetDim(0f);
         hideMenu();
 
-        logoText.Delay(800).ScaleTo(.9f).ScaleTo(1f, 800, Easing.OutQuint).FadeIn(400);
+        logoText.Delay(800).ScaleTo(1.1f).ScaleTo(1f, 800, Easing.OutQuint).FadeIn(400);
         this.Delay(800).FadeIn().OnComplete(_ => pressedStart = false);
 
         pressAnyKeyText.Delay(800).MoveToY(0, 800, Easing.OutQuint);
@@ -441,13 +446,19 @@ public partial class MenuScreen : FluXisScreen
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
-        if (e.Key == Key.Escape)
+        switch (e.Key)
         {
-            panels.Content ??= new ConfirmExitPanel();
-            return true;
-        }
+            case Key.Escape:
+                panels.Content ??= new ConfirmExitPanel();
+                return true;
 
-        return CanPlayAnimation();
+            case Key.BackSpace when DebugUtils.IsDebugBuild:
+                revertStartAnimation();
+                return true;
+
+            default:
+                return CanPlayAnimation();
+        }
     }
 
     protected override bool OnMouseDown(MouseDownEvent e) => CanPlayAnimation();

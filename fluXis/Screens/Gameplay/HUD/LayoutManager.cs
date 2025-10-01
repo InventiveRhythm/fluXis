@@ -44,6 +44,7 @@ public partial class LayoutManager : Component
         componentLookup.Add("HitError", typeof(HitErrorBar));
         componentLookup.Add("Judgement", typeof(JudgementDisplay));
         componentLookup.Add("JudgementCounter", typeof(JudgementCounter));
+        componentLookup.Add("KeysPerSecond", typeof(KeysPerSecondDisplay));
         componentLookup.Add("PerformanceRating", typeof(PerformanceRatingDisplay));
         componentLookup.Add("Progress", typeof(Progressbar));
 

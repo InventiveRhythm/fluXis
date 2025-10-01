@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Course;
@@ -9,6 +10,7 @@ using fluXis.Skinning.Custom.Health;
 using fluXis.Skinning.Custom.HitObjects;
 using fluXis.Skinning.Custom.Judgements;
 using fluXis.Skinning.Custom.Lighting;
+using fluXis.Skinning.Custom.Receptor;
 using fluXis.Skinning.Json;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -167,16 +169,22 @@ public class CustomSkin : ISkin
 
     public Drawable GetHitObject(int lane, int keyCount)
     {
-        var path = SkinJson.GetOverrideOrDefault($"HitObjects/Note/{keyCount}k-{lane}") + ".png";
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/Note/{keyCount}k-{lane}");
+        var main = path + ".png";
+        var tintless = path + "-tintless.png";
 
-        if (storage.Exists(path))
-        {
-            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), keyCount, false);
-            drawable.UpdateColor(lane, keyCount);
-            return drawable;
-        }
+        if (!storage.Exists(main))
+            return null;
 
-        return null;
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+
+        var drawable = new CustomHitObjectPiece(
+            SkinJson, (MapColor)index, keyCount, false,
+            textures.Get(main), textures.Get(tintless)
+        );
+
+        drawable.UpdateColor(lane, keyCount);
+        return drawable;
     }
 
     public Drawable GetTickNote(int lane, int keyCount, bool small)
@@ -200,30 +208,41 @@ public class CustomSkin : ISkin
 
     public Drawable GetLongNoteBody(int lane, int keyCount)
     {
-        var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteBody/{keyCount}k-{lane}") + ".png";
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteBody/{keyCount}k-{lane}");
+        var main = path + ".png";
+        var tintless = path + "-tintless.png";
 
-        if (storage.Exists(path))
-        {
-            var drawable = new CustomHitObjectBody(SkinJson, keyCount, textures.Get(path));
-            drawable.UpdateColor(lane, keyCount);
-            return drawable;
-        }
+        if (!storage.Exists(main))
+            return null;
 
-        return null;
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var drawable = new CustomHitObjectBody(
+            SkinJson, (MapColor)index, keyCount,
+            textures.Get(main), textures.Get(tintless)
+        );
+
+        drawable.UpdateColor(lane, keyCount);
+        return drawable;
     }
 
     public Drawable GetLongNoteEnd(int lane, int keyCount)
     {
-        var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteEnd/{keyCount}k-{lane}") + ".png";
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteEnd/{keyCount}k-{lane}");
+        var main = path + ".png";
+        var tintless = path + "-tintless.png";
 
-        if (storage.Exists(path))
-        {
-            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), keyCount, true);
-            drawable.UpdateColor(lane, keyCount);
-            return drawable;
-        }
+        if (!storage.Exists(main))
+            return null;
 
-        return null;
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+
+        var drawable = new CustomHitObjectPiece(
+            SkinJson, (MapColor)index, keyCount, true,
+            textures.Get(main), textures.Get(tintless)
+        );
+
+        drawable.UpdateColor(lane, keyCount);
+        return drawable;
     }
 
     public VisibilityContainer GetColumnLighting(int lane, int keyCount)
@@ -242,21 +261,22 @@ public class CustomSkin : ISkin
 
     public Drawable GetReceptor(int lane, int keyCount, bool down)
     {
-        var path = SkinJson.GetOverrideOrDefault($"Receptor/{keyCount}k-{lane}-{(down ? "down" : "up")}") + ".png";
+        var path = SkinJson.GetOverrideOrDefault($"Receptor/{keyCount}k-{lane}-{(down ? "down" : "up")}");
+        var main = path + ".png";
+        var tintless = path + "-tintless.png";
 
-        if (storage.Exists(path))
-        {
-            return new SkinnableSprite
-            {
-                Texture = textures.Get(path),
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Width = 1
-            };
-        }
+        if (!storage.Exists(main))
+            return null;
 
-        return null;
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+
+        var drawable = new CustomReceptor(
+            SkinJson, (MapColor)index, keyCount,
+            textures.Get(main), textures.Get(tintless)
+        );
+
+        drawable.UpdateColor(lane, keyCount);
+        return drawable;
     }
 
     public Drawable GetHitLine()

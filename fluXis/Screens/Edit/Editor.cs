@@ -168,12 +168,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
         this.loader = loader;
-
-        editorMap = new EditorMap
-        {
-            RealmMap = realmMap,
-            MapInfo = map
-        };
+        editorMap = new EditorMap(map, realmMap, LoadComponent);
     }
 
     [BackgroundDependencyLoader]
@@ -400,7 +395,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 new MenuSpacerItem(),
                 new MenuToggleItem("Show sample on notes", FontAwesome6.Solid.LayerGroup, settings.ShowSamples),
                 new MenuSpacerItem(),
-                new MenuToggleItem("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, settings.ForceAspectRatio)
+                new MenuToggleItem("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, settings.ForceAspectRatio),
+                new MenuToggleItem("Compact Sidebar", FontAwesome6.Solid.ArrowsToLine, config.GetBindable<bool>(FluXisSetting.EditorCompactMode)),
             };
 
             if (experiments.Get<bool>(ExperimentConfig.ModView))
@@ -884,7 +880,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             {
                 overlay.SubText = $"Checking for issues in '{map.Difficulty}'...";
 
-                var results = verifyTab.RunVerify(new BasicVerifyContext(map));
+                var results = verifyTab.RunVerify(new BasicVerifyContext(map, LoadComponent));
                 files[map.Difficulty] = results.ProblematicIssues;
             }
 

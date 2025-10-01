@@ -19,6 +19,14 @@ function StoryboardSprite() end
 ---@nodiscard
 function StoryboardText() end
 
+---@return StoryboardCircle
+---@nodiscard
+function StoryboardCircle() end
+
+---@return StoryboardCircle
+---@nodiscard
+function StoryboardOutlineCircle() end
+
 ---@class metadata
 ---@field title string the non-romanized title of the current map
 ---@field artist string the non-romanized artist of the current map
@@ -61,6 +69,12 @@ function __StoryboardElement:param(key, fallback) end
 ---@class StoryboardBox: StoryboardElement
 local __StoryboardBox = {}
 
+---@class StoryboardCircle: StoryboardElement
+local __StoryboardCircle = {}
+
+---@class StoryboardOutlineCircle: StoryboardElement
+local __StoryboardOutlineCircle = {}
+
 ---@class StoryboardSprite: StoryboardElement
 ---@field texture string
 local __StoryboardSprite = {}
@@ -80,6 +94,7 @@ local __StoryboardText = {}
 ---| "Rotate"
 ---| "Fade"
 ---| "Color"
+---| "Border"
 
 ---@alias LayerName string
 ---| "Background"

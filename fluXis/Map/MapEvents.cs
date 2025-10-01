@@ -23,6 +23,9 @@ public class MapEvents
     [JsonProperty("flash")]
     public List<FlashEvent> FlashEvents { get; private set; } = new();
 
+    [JsonProperty("colorfade")]
+    public List<ColorFadeEvent> ColorFadeEvents { get; private set; } = new();
+
     [JsonProperty("pulse")]
     public List<PulseEvent> PulseEvents { get; private set; } = new();
 
@@ -82,6 +85,7 @@ public class MapEvents
     [JsonIgnore]
     public bool Empty => LaneSwitchEvents.Count == 0
                          && FlashEvents.Count == 0
+                         && ColorFadeEvents.Count == 0
                          && PulseEvents.Count == 0
                          && PlayfieldMoveEvents.Count == 0
                          && PlayfieldScaleEvents.Count == 0

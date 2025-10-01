@@ -370,14 +370,14 @@ public partial class SelectMapInfoHeader : CompositeDrawable
             beatSync.OnBeat -= onBeat;
         }
 
-        private void onBeat(int beat)
+        private void onBeat(int beat, bool finish)
         {
             ValueText.FadeIn().FadeTo(min_alpha, beatSync.BeatTime);
 
             if (!IsHovered)
                 return;
 
-            if (beat % 4 == 0)
+            if (finish)
                 metronomeEndSample?.Play();
             else
                 metronomeSample?.Play();

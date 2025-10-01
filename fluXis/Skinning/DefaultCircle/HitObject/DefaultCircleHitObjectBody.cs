@@ -1,4 +1,5 @@
-﻿using fluXis.Skinning.Default.HitObject;
+﻿using fluXis.Graphics.UserInterface.Color;
+using fluXis.Skinning.Default.HitObject;
 using fluXis.Skinning.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -7,8 +8,8 @@ namespace fluXis.Skinning.DefaultCircle.HitObject;
 
 public partial class DefaultCircleHitObjectBody : DefaultHitObjectBody
 {
-    public DefaultCircleHitObjectBody(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultCircleHitObjectBody(SkinJson skinJson, MapColor index)
+        : base(skinJson, index)
     {
         Width = DefaultCircleSkin.SCALE - 0.01f;
         Masking = true;
