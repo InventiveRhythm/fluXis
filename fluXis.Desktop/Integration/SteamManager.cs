@@ -21,7 +21,17 @@ public partial class SteamManager : Component, ISteamManager
     public uint AppID => 3440100;
     public bool Initialized { get; }
 
-    public List<ulong> WorkshopItems { get; }
+    public List<ulong> WorkshopItems
+    {
+        get
+        {
+            var num = SteamUGC.GetNumSubscribedItems();
+            var items = new PublishedFileId_t[num];
+
+            SteamUGC.GetSubscribedItems(items, num);
+            return new List<ulong>(items.Select(x => x.m_PublishedFileId));
+        }
+    }
 
     public Action<bool> ItemCreated { get; set; }
     public Action<bool> ItemUpdated { get; set; }
@@ -50,14 +60,6 @@ public partial class SteamManager : Component, ISteamManager
             ticketCb = Callback<GetTicketForWebApiResponse_t>.Create(authTicketCallback);
             createItemCb = CallResult<CreateItemResult_t>.Create(createItemCallback);
             submitItemCb = CallResult<SubmitItemUpdateResult_t>.Create(onItemSubmitted);
-
-            var num = SteamUGC.GetNumSubscribedItems();
-            var items = new PublishedFileId_t[num];
-            var result = SteamUGC.GetSubscribedItems(items, num);
-
-            logger.Add($"Found {items.Length} subscribed items. [subscribed: {num}, result: {result}]");
-
-            WorkshopItems = new List<ulong>(items.Select(x => x.m_PublishedFileId));
         }
         catch (Exception e)
         {

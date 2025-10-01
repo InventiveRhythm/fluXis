@@ -1,3 +1,4 @@
+using System;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -13,10 +14,11 @@ using osuTK;
 
 namespace fluXis.Graphics.UserInterface.Files.Entry;
 
-public abstract partial class GenericEntry : Container
+public abstract partial class GenericEntry : Container, IComparable<GenericEntry>
 {
     protected abstract IconUsage Icon { get; }
     public abstract string Text { get; }
+    public abstract bool IsInfoLoaded { get; }
     protected abstract string SubText { get; }
     protected abstract Colour4 Color { get; }
 
@@ -24,6 +26,7 @@ public abstract partial class GenericEntry : Container
     private UISamples samples { get; set; }
 
     private Container contentWrapper { get; set; }
+    private FluXisSpriteText subText { get; set; }
 
     private float contentPadding
     {
@@ -87,7 +90,7 @@ public abstract partial class GenericEntry : Container
                                     Origin = Anchor.CentreLeft,
                                     X = 30
                                 },
-                                new FluXisSpriteText
+                                subText = new FluXisSpriteText
                                 {
                                     Text = SubText,
                                     Colour = Color,
@@ -101,6 +104,14 @@ public abstract partial class GenericEntry : Container
                 }
             }
         };
+    }
+
+    public abstract string GetInfo();
+
+    public void UpdateSubText()
+    {
+        if (subText != null)
+            subText.Text = SubText;
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -135,5 +146,23 @@ public abstract partial class GenericEntry : Container
                 background.FadeOut(200);
             });
         }
+    }
+
+    public int CompareTo(GenericEntry other)
+    {
+        if (other == null)
+        {
+            return 1;
+        }
+
+        bool thisIsDirectory = this is DirectoryEntry;
+        bool otherIsDirectory = other is DirectoryEntry;
+
+        if (thisIsDirectory != otherIsDirectory)
+        {
+            return thisIsDirectory ? -1 : 1;
+        }
+
+        return string.Compare(Text, other.Text, StringComparison.Ordinal);
     }
 }

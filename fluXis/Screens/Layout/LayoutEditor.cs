@@ -28,6 +28,7 @@ using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Replays;
+using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Screens.Layout.Blueprints;
 using fluXis.Screens.Layout.Components;
 using fluXis.Screens.Layout.Settings;
@@ -322,6 +323,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
 
     #region IHUDDependencyProvider Implementation
 
+    RulesetContainer IHUDDependencyProvider.Ruleset => ruleset;
     JudgementProcessor IHUDDependencyProvider.JudgementProcessor => ruleset.PlayfieldManager.Players[0].JudgementProcessor;
     HealthProcessor IHUDDependencyProvider.HealthProcessor => ruleset.PlayfieldManager.Players[0].HealthProcessor;
     ScoreProcessor IHUDDependencyProvider.ScoreProcessor => ruleset.PlayfieldManager.Players[0].ScoreProcessor;

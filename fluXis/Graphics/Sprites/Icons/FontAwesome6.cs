@@ -25,6 +25,7 @@ public class FontAwesome6
         public static IconUsage ArrowRightArrowLeft => GetSolid(0xf0ec);
         public static IconUsage ArrowTrendUp => GetSolid(0xe098);
         public static IconUsage ArrowsRotate => GetSolid(0xf021);
+        public static IconUsage ArrowsToLine => GetSolid(0xe0a7);
         public static IconUsage BackwardStep => GetSolid(0xf048);
         public static IconUsage Bars => GetSolid(0xf0c9);
         public static IconUsage Bell => GetSolid(0xf0f3);
@@ -81,6 +82,7 @@ public class FontAwesome6
         public static IconUsage LayerGroup => GetSolid(0xf5fd);
         public static IconUsage LeftRight => GetSolid(0xf337);
         public static IconUsage Link => GetSolid(0xf0c1);
+        public static IconUsage ListMusic => GetSolid(0xf8c9);
         public static IconUsage Lock => GetSolid(0xf023);
         public static IconUsage Magnet => GetSolid(0xf076);
         public static IconUsage MagnifyingGlass => GetSolid(0xf002);
@@ -97,6 +99,7 @@ public class FontAwesome6
         public static IconUsage Pen => GetSolid(0xf304);
         public static IconUsage PenRuler => GetSolid(0xf5ae);
         public static IconUsage Percent => GetSolid(0x25);
+        public static IconUsage PersonToDoor => GetSolid(0xe433);
         public static IconUsage Plane => GetSolid(0xf072);
         public static IconUsage Play => GetSolid(0xf04b);
         public static IconUsage Plug => GetSolid(0xf1e6);
@@ -142,10 +145,11 @@ public class FontAwesome6
 
     public static class Regular
     {
-        private static IconUsage getRegular(int icon) => get(icon).With(weight: "Regular");
+        public static IconUsage GetRegular(int icon) => get(icon).With(weight: "Regular");
 
-        public static IconUsage Circle => getRegular(0xf111);
-        public static IconUsage Clock => getRegular(0xf017);
+        public static IconUsage Circle => GetRegular(0xf111);
+        public static IconUsage Clock => GetRegular(0xf017);
+        public static IconUsage Heart => GetRegular(0xf004);
     }
 
     public static class Brands

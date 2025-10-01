@@ -103,7 +103,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         Text = $"{item.Type}",
                         WebFontSize = 20
                     },
-                    new PointSettingsTime(map, item),
+                    new PointSettingsTime(map, item)
+                    {
+                        TimeChanged = (oldTime, newTime) =>
+                            item.EndTime -= oldTime - newTime
+                    },
                     new PointSettingsTextBox
                     {
                         Text = "Start X",
@@ -180,6 +184,8 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 switch (item.Type)
                 {
                     case StoryboardElementType.Box:
+                    case StoryboardElementType.Circle:
+                    case StoryboardElementType.OutlineCircle:
                         drawables.AddRange(new Drawable[]
                         {
                             new PointSettingsTextBox
@@ -211,6 +217,25 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 }
                             },
                         });
+
+                        if (item.Type == StoryboardElementType.OutlineCircle)
+                        {
+                            drawables.Add(new PointSettingsTextBox
+                            {
+                                Text = "Border Width",
+                                DefaultText = item.GetParameter("border", 4f).ToStringInvariant(),
+                                OnTextChanged = box =>
+                                {
+                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
+                                        item.Parameters["border"] = result;
+                                    else
+                                        box.NotifyError();
+
+                                    map.Update(item);
+                                }
+                            });
+                        }
+
                         break;
 
                     case StoryboardElementType.Sprite:
@@ -347,7 +372,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 flow.AddRange(drawables);
                 break;
 
-            case 2:
+            case >= 2:
                 flow.Add(new FluXisSpriteText
                 {
                     Text = "More than 1 element selected.",

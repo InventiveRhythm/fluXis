@@ -27,6 +27,7 @@ using fluXis.Map;
 using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Chat;
+using fluXis.Online.Collections;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Mouse;
 using fluXis.Overlay.Notifications;
@@ -83,6 +84,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected NotificationManager NotificationManager { get; private set; }
     protected IAPIClient APIClient { get; private set; }
     protected MapStore MapStore { get; private set; }
+    protected CollectionManager Collections { get; private set; }
     protected SkinManager SkinManager { get; private set; }
     protected LayoutManager LayoutManager { get; private set; }
     protected GlobalCursorOverlay CursorOverlay { get; private set; }
@@ -201,6 +203,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(MapStore = new MapStore(), true, true);
             cacheComponent(new ScoreManager(), true, true);
             cacheComponent(new ReplayStorage(storage.GetStorageForDirectory("replays")));
+            cacheComponent(Collections = new CollectionManager(), true);
 
             cacheComponent(Plugins = new PluginManager(), true);
             cacheComponent(importManager = new ImportManager(), true, true);

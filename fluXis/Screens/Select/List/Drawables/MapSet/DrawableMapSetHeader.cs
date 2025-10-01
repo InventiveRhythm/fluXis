@@ -228,7 +228,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
             beatSync.OnBeat -= beat;
     }
 
-    private void beat(int idx)
+    private void beat(int idx, bool finish)
     {
         var dur = beatSync!.BeatTime;
         arrow?.ScaleTo(1.2f, dur * .05f).Then().ScaleTo(1, dur * .95f);

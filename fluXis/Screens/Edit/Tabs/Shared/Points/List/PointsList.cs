@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -39,6 +41,7 @@ public abstract partial class PointsList : Container
     private EditorClock clock { get; set; }
 
     private BindableList<PointListEntry> selectedEntries { get; } = new();
+    private PointListEntry lastSelected = null;
 
     public Action<IEnumerable<Drawable>> ShowSettings { get; set; }
     public Action RequestClose { get; set; }
@@ -46,6 +49,8 @@ public abstract partial class PointsList : Container
     private bool initialLoad = true;
     private FluXisScrollContainer scroll;
     private FillFlowContainer<PointListEntry> flow;
+
+    private Bindable<bool> compactMode;
 
     private Bindable<PointListEntry> currentEvent = new();
 
@@ -55,8 +60,10 @@ public abstract partial class PointsList : Container
     private bool iconDownShown;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        compactMode = config.GetBindable<bool>(FluXisSetting.EditorCompactMode);
+
         RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -180,17 +187,30 @@ public abstract partial class PointsList : Container
     {
         base.LoadComplete();
 
+        compactMode.BindValueChanged(compactChanged, true);
+
         RegisterEvents();
 
         initialLoad = false;
         sortPoints();
     }
 
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        compactMode.ValueChanged -= compactChanged;
+    }
+
+    private void compactChanged(ValueChangedEvent<bool> v)
+    {
+        var compact = v.NewValue;
+
+        flow.TransformTo(nameof(FillFlowContainer.Spacing), new Vector2(compact ? 2 : 8), Styling.TRANSITION_MOVE, Easing.OutQuint);
+    }
+
     private void openSettings(IEnumerable<Drawable> list)
     {
-        var temp = selectedEntries.ToList();
-        temp.ForEach(e => e.State = SelectedState.Deselected);
-
+        deselectAll();
         ShowSettings?.Invoke(list);
     }
 
@@ -198,6 +218,7 @@ public abstract partial class PointsList : Container
     {
         var temp = selectedEntries.ToList();
         temp.ForEach(e => e.State = SelectedState.Deselected);
+        lastSelected = null;
 
         switch (temp.Count)
         {
@@ -220,6 +241,7 @@ public abstract partial class PointsList : Container
         var objects = temp.Select(e => e.CreateClone()).ToList();
 
         temp.ForEach(e => e.State = SelectedState.Deselected);
+        lastSelected = null;
 
         var lowestTime = objects.Min(o => o.Time);
         objects.ForEach(o =>
@@ -264,6 +286,49 @@ public abstract partial class PointsList : Container
         flow.OrderBy(e => e.Object.Time).ForEach(e => flow.SetLayoutPosition(e, (float)e.Object.Time));
     }
 
+    private void selectRange(PointListEntry obj)
+    {
+        var timeSorted = flow.OrderBy(e => e.Object.Time).ToList();
+
+        int p1 = timeSorted.IndexOf(lastSelected);
+        int p2 = timeSorted.IndexOf(obj);
+        if (p1 > p2) (p1, p2) = (p2, p1);
+
+        for (int i = p1; i <= p2; i++)
+        {
+            var e = timeSorted[i];
+
+            if (e.Alpha > 0)
+            {
+                e.State = SelectedState.Selected;
+                select(e);
+            }
+        }
+    }
+
+    private void select(PointListEntry obj)
+    {
+        if (selectedEntries.Contains(obj))
+            return;
+
+        if (obj.State != SelectedState.Selected) obj.State = SelectedState.Selected;
+        selectedEntries.Add(obj);
+        lastSelected = obj;
+    }
+
+    private void deselect(PointListEntry obj)
+    {
+        if (lastSelected == obj) lastSelected = null;
+        selectedEntries.Remove(obj);
+    }
+
+    private void deselectAll()
+    {
+        var temp = selectedEntries.ToList();
+        temp.ForEach(e => e.State = SelectedState.Deselected);
+        lastSelected = null;
+    }
+
     protected void AddPoint(ITimedObject obj)
     {
         var entry = CreateEntryFor(obj);
@@ -277,15 +342,15 @@ public abstract partial class PointsList : Container
             entry.DeleteSelected = deleteSelected;
             entry.OnClone = o => Create(o);
 
-            entry.Selected += e =>
+            entry.Selected += select;
+            entry.Deselected += deselect;
+            entry.SelectedRange += e =>
             {
-                if (selectedEntries.Contains(e))
-                    return;
-
-                selectedEntries.Add(e);
+                if (lastSelected != null)
+                    selectRange(e);
+                else
+                    select(e);
             };
-
-            entry.Deselected += e => selectedEntries.Remove(e);
 
             flow.Add(entry);
         }

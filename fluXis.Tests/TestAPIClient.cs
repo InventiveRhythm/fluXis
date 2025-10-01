@@ -9,6 +9,7 @@ using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Collections;
 using fluXis.Online.Fluxel;
 using Midori.Networking.WebSockets.Typed;
 using osu.Framework.Bindables;
@@ -53,6 +54,7 @@ public class TestAPIClient : IAPIClient
     public event Action<string>? ChatChannelRemoved;
     public event Action<APIChatMessage>? ChatMessageReceived;
     public event Action<string, string>? ChatMessageRemoved;
+    public event Action<string, List<CollectionItem>, List<CollectionItem>, List<string>>? OnCollectionUpdated;
 
     public bool IsLoggedIn => Status.Value == ConnectionStatus.Online;
 
@@ -75,6 +77,8 @@ public class TestAPIClient : IAPIClient
 
     public Task<Exception?> ReLogin() => throw new NotImplementedException();
 
+    public void TestLogin() => Login(USERNAME, PASSWORD).Wait();
+
     public Task<Exception?> Login(string username, string password)
     {
         if (username == USERNAME && password == PASSWORD)
@@ -89,14 +93,12 @@ public class TestAPIClient : IAPIClient
 
             return Task.FromResult<Exception?>(null);
         }
-        else
-        {
-            Status.Value = ConnectionStatus.Failed;
-            LastException = new APIException("Invalid credentials");
-            User.Value = null;
 
-            return Task.FromResult<Exception?>(LastException);
-        }
+        Status.Value = ConnectionStatus.Failed;
+        LastException = new APIException("Invalid credentials");
+        User.Value = null;
+
+        return Task.FromResult<Exception?>(LastException);
     }
 
     public Task<Exception?> Register(string username, string password, string email)
@@ -114,9 +116,9 @@ public class TestAPIClient : IAPIClient
 
     public void Logout()
     {
-        Logger.Log("Logging out");
         Status.Value = ConnectionStatus.Offline;
         User.Value = null;
+        Logger.Log("Logging out");
     }
 
     public void UpdateLastRead() => LastReadTime = 0;

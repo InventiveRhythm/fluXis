@@ -34,13 +34,11 @@ public partial class HitObjectManager : Container<HitObjectColumn>
     private Bindable<bool> useSnapColors;
     public bool UseSnapColors => useSnapColors.Value;
 
-    private Bindable<float> scrollSpeed;
-
     public float ScrollSpeed
     {
         get
         {
-            var speed = playfield.RealmMap.Settings.ScrollSpeed ?? scrollSpeed.Value;
+            var speed = playfield.RealmMap.Settings.ScrollSpeed ?? ruleset.ScrollSpeed.Value;
             return speed * (speed / (speed * ruleset.Rate));
         }
     }
@@ -84,7 +82,6 @@ public partial class HitObjectManager : Container<HitObjectColumn>
                                                    return new HitObjectColumn(ruleset.MapInfo, ruleset, this, lane);
                                                });
 
-        scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
         useSnapColors = config.GetBindable<bool>(FluXisSetting.SnapColoring);
         hitsounds = config.GetBindable<bool>(FluXisSetting.Hitsounding);
     }

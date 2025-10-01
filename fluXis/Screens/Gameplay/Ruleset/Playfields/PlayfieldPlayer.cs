@@ -27,6 +27,7 @@ public partial class PlayfieldPlayer : CompositeDrawable, IHUDDependencyProvider
     public Playfield MainPlayfield { get; }
     public Playfield[] SubPlayfields { get; }
 
+    RulesetContainer IHUDDependencyProvider.Ruleset => ruleset;
     public JudgementProcessor JudgementProcessor { get; } = new();
     public HealthProcessor HealthProcessor { get; private set; }
     public ScoreProcessor ScoreProcessor { get; private set; }

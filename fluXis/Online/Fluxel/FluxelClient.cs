@@ -15,6 +15,7 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests;
 using fluXis.Online.API.Requests.Auth;
 using fluXis.Online.API.Requests.Users;
+using fluXis.Online.Collections;
 using fluXis.Online.Notifications;
 using fluXis.Overlay.Notifications;
 using fluXis.Utils.Extensions;
@@ -60,6 +61,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     public event Action<string>? ChatChannelRemoved;
     public event Action<APIChatMessage>? ChatMessageReceived;
     public event Action<string, string>? ChatMessageRemoved;
+    public event Action<string, List<CollectionItem>, List<CollectionItem>, List<string>>? OnCollectionUpdated;
 
     #endregion
 
@@ -496,6 +498,12 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     Task INotificationClient.RemoveFromChatChannel(string channel)
     {
         ChatChannelRemoved?.Invoke(channel);
+        return Task.CompletedTask;
+    }
+
+    Task INotificationClient.CollectionUpdated(string id, List<CollectionItem> added, List<CollectionItem> changed, List<string> removed)
+    {
+        OnCollectionUpdated?.Invoke(id, added, changed, removed);
         return Task.CompletedTask;
     }
 

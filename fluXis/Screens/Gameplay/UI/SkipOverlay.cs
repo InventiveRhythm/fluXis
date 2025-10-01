@@ -81,7 +81,7 @@ public partial class SkipOverlay : Container
         clock.OnBeat += onBeat;
     }
 
-    private void onBeat(int beat)
+    private void onBeat(int beat, bool finish)
     {
         if (!visible) return;
 

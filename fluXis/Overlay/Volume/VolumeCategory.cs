@@ -101,7 +101,7 @@ public partial class VolumeCategory : CompositeDrawable
         smoothProgress = Bindable.Value;
         Bindable.BindValueChanged(updateProgress, true);
 
-        beatSync.OnBeat += _ =>
+        beatSync.OnBeat += (_, _) =>
         {
             progressBackground.ScaleTo(.96f).FadeTo(.25f).TransformTo(nameof(CircularProgress.InnerRadius), 0.12f)
                               .ScaleTo(.95f, beatSync.BeatTime).FadeTo(.2f, beatSync.BeatTime)

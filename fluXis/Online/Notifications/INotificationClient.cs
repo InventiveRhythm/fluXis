@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Collections;
 using JetBrains.Annotations;
 
 namespace fluXis.Online.Notifications;
@@ -25,4 +27,6 @@ public interface INotificationClient
     Task DeleteChatMessage(string channel, string id);
     Task AddToChatChannel(string channel);
     Task RemoveFromChatChannel(string channel);
+
+    Task CollectionUpdated(string id, List<CollectionItem> added, List<CollectionItem> changed, List<string> removed);
 }

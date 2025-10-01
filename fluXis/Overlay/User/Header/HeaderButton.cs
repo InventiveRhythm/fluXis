@@ -6,6 +6,7 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -18,20 +19,29 @@ namespace fluXis.Overlay.User.Header;
 public partial class HeaderButton : CircularContainer
 {
     public IconUsage Icon { get; set; }
+    public Vector2 IconSize { get; init; } = new(20);
     public string Text { get; set; }
     public Action Action { get; set; }
+    public Colour4 BackgroundColour { get; init; } = Theme.Background2;
+    public bool UseAutoSize { get; init; } = true;
+    public BindableBool Enabled { get; set; } = new();
 
     [Resolved]
     private UISamples samples { get; set; }
 
     private HoverLayer hover;
     private FlashLayer flash;
+    private FillFlowContainer buttonFlow;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        AutoSizeAxes = Axes.X;
-        Height = 48;
+        if (UseAutoSize)
+        {
+            AutoSizeAxes = Axes.X;
+            Height = 48;
+        }
+
         Masking = true;
         EdgeEffect = Styling.ShadowSmall;
 
@@ -40,11 +50,11 @@ public partial class HeaderButton : CircularContainer
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Theme.Background2
+                Colour = BackgroundColour
             },
             hover = new HoverLayer(),
             flash = new FlashLayer(),
-            new FillFlowContainer
+            buttonFlow = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
@@ -61,7 +71,7 @@ public partial class HeaderButton : CircularContainer
                     new FluXisSpriteIcon
                     {
                         Icon = Icon,
-                        Size = new Vector2(20)
+                        Size = IconSize
                     },
                     new FluXisSpriteText
                     {
@@ -74,10 +84,22 @@ public partial class HeaderButton : CircularContainer
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        if (Action != null) Enabled.Value = true;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        buttonFlow.Alpha = Enabled.Value ? 1 : .5f;
+    }
+
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        if (Action == null) return false;
+        if (!Enabled.Value) return false;
 
         hover.Show();
         return true;
@@ -90,9 +112,8 @@ public partial class HeaderButton : CircularContainer
 
     protected override bool OnClick(ClickEvent e)
     {
-        samples.Click(Action == null);
-
-        if (Action == null) return false;
+        samples.Click(!Enabled.Value);
+        if (!Enabled.Value) return false;
 
         flash.Show();
         Action?.Invoke();

@@ -37,7 +37,7 @@ public partial class TestMapCard : FluXisTestScene
         };
     });
 
-    private APIMapSet create(Action<APIMapSet> func = null)
+    public static APIMapSet CreateDummy(Action<APIMapSet> func = null)
     {
         var set = new APIMapSet
         {
@@ -81,15 +81,15 @@ public partial class TestMapCard : FluXisTestScene
     [Test]
     public void TestDefault()
     {
-        AddStep("add default", () => container.Child = new MapCard(create()));
+        AddStep("add default", () => container.Child = new MapCard(CreateDummy()));
     }
 
     [Test]
     public void TestFlags()
     {
-        AddStep("add normal", () => container.Add(new MapCard(create())));
-        AddStep("add explicit", () => container.Add(new MapCard(create(s => s.Flags |= MapSetFlag.Explicit))));
-        AddStep("add featured", () => container.Add(new MapCard(create(s => s.Flags |= MapSetFlag.FeaturedArtist))));
+        AddStep("add normal", () => container.Add(new MapCard(CreateDummy())));
+        AddStep("add explicit", () => container.Add(new MapCard(CreateDummy(s => s.Flags |= MapSetFlag.Explicit))));
+        AddStep("add featured", () => container.Add(new MapCard(CreateDummy(s => s.Flags |= MapSetFlag.FeaturedArtist))));
     }
 
     [Test]
@@ -99,7 +99,7 @@ public partial class TestMapCard : FluXisTestScene
         AddStep("add all", () =>
         {
             foreach (var state in states)
-                container.Add(new MapCard(create(s => s.Status = state)));
+                container.Add(new MapCard(CreateDummy(s => s.Status = state)));
         });
     }
 

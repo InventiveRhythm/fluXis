@@ -155,9 +155,11 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             extra.Add(info);
         }
 
-        if (steam?.WorkshopItems != null)
+        var items = steam?.WorkshopItems;
+
+        if (items != null)
         {
-            foreach (var item in steam.WorkshopItems)
+            foreach (var item in items)
             {
                 var folder = steam.GetWorkshopItemDirectory(item);
 

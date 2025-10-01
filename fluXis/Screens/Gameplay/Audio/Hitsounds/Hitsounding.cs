@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Configuration;
-using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Map.Structures;
 using fluXis.Skinning;
@@ -74,14 +73,17 @@ public partial class Hitsounding : CompositeDrawable
             channels.Add(new HitSoundChannel($"{DEFAULT_PREFIX}{sample}", s, volume, fade));
         }
 
-        var dir = MapFiles.GetFullPath(set.ID.ToString());
+        var dir = set.GetPathForFile(".");
 
         if (Directory.Exists(dir))
         {
-            foreach (var file in Directory.GetFiles(dir, "*.wav"))
+            var wav = Directory.GetFiles(dir, "*.wav");
+            var ogg = Directory.GetFiles(dir, "*.ogg");
+
+            foreach (var file in wav.Concat(ogg))
             {
                 var name = Path.GetFileNameWithoutExtension(file);
-                var s = set.Resources?.SampleStore?.Get($"{set.ID}/{name}");
+                var s = set.Resources?.SampleStore?.Get(set.GetPathForFile(name));
 
                 if (s == null)
                     continue;
@@ -115,7 +117,7 @@ public partial class Hitsounding : CompositeDrawable
         if (!allowCustom && !sample.StartsWith(DEFAULT_PREFIX))
             return defaultChannel;
 
-        var name = sample.ToLower().EndsWith(".wav") ? Path.GetFileNameWithoutExtension(sample) : sample;
+        var name = sample.ToLower().EndsWith(".wav") || sample.ToLower().EndsWith(".ogg") ? Path.GetFileNameWithoutExtension(sample) : sample;
         return channels.Find(c => c.SampleName == name) ?? defaultChannel;
     }
 }

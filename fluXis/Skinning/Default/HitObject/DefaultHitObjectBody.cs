@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Bases.HitObjects;
 using fluXis.Skinning.Json;
@@ -9,8 +10,8 @@ namespace fluXis.Skinning.Default.HitObject;
 
 public partial class DefaultHitObjectBody : ColorableSkinDrawable, ICanHaveSnapColor
 {
-    public DefaultHitObjectBody(SkinJson skinJson)
-        : base(skinJson)
+    public DefaultHitObjectBody(SkinJson skinJson, MapColor index)
+        : base(skinJson, index)
     {
         RelativeSizeAxes = Axes.X;
         Width = 0.9f;
@@ -23,7 +24,7 @@ public partial class DefaultHitObjectBody : ColorableSkinDrawable, ICanHaveSnapC
         };
     }
 
-    protected override void SetColor(Colour4 color)
+    public override void SetColor(Colour4 color)
         => Colour = color;
 
     public void ApplySnapColor(int start, int end)

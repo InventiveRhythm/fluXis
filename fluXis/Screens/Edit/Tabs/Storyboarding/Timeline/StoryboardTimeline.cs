@@ -10,6 +10,7 @@ using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Lines;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Attributes;
+using Humanizer;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -33,7 +34,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
             "Create new...",
             FontAwesome6.Solid.Plus,
             Enum.GetValues<StoryboardElementType>()
-                .Select(x => new MenuActionItem($"{x}", x.GetIcon(), () => create(x))))
+                .Select(x => new MenuActionItem($"{x.Humanize(LetterCasing.Title)}", x.GetIcon(), () => create(x))))
     };
 
     [Resolved]

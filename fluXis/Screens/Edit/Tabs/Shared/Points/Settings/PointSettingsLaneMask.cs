@@ -10,7 +10,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsLaneMask : CompositeDrawable
+public partial class PointSettingsLaneMask : PointSettingsBase
 {
     private EditorMap map { get; }
     private IHasGroups groups { get; }

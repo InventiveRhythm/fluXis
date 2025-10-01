@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using fluXis.Map.Structures;
-using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Blueprints;
@@ -19,7 +18,7 @@ using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints;
 
-public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObject>
+public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
 {
     protected override bool InArea => ChartingContainer.CursorInPlacementArea;
 
@@ -101,7 +100,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
             updatePlacementPosition();
     }
 
-    protected override SelectionHandler<ITimedObject> CreateSelectionHandler() => new ChartingSelectionHandler();
+    protected override SelectionHandler<HitObject> CreateSelectionHandler() => new ChartingSelectionHandler();
 
     private void createPlacement()
     {
@@ -147,21 +146,16 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         return true;
     }
 
-    protected override SelectionBlueprint<ITimedObject> CreateBlueprint(ITimedObject obj)
+    protected override SelectionBlueprint<HitObject> CreateBlueprint(HitObject hit)
     {
-        SelectionBlueprint<ITimedObject> blueprint = null!;
+        var hitDrawable = hit.EditorDrawable;
+        if (hitDrawable == null) return null;
 
-        switch (obj)
-        {
-            case HitObject hit:
-                var hitDrawable = hit.EditorDrawable;
-                if (hitDrawable == null) return null;
+        ChartingSelectionBlueprint blueprint = hit.LongNote
+            ? new LongNoteSelectionBlueprint(hit)
+            : new SingleNoteSelectionBlueprint(hit);
 
-                blueprint = hit.LongNote ? new LongNoteSelectionBlueprint(hit) : new SingleNoteSelectionBlueprint(hit);
-                blueprint.Drawable = hitDrawable;
-                break;
-        }
-
+        blueprint.Drawable = hitDrawable;
         return blueprint;
     }
 
@@ -216,5 +210,57 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
             actions.Add(moveAction);
             moveAction = null;
         }
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        var timeDiff = e.Key switch
+        {
+            Key.Up => 1,
+            Key.Down => -1,
+            _ => 0
+        };
+
+        var laneDiff = e.Key switch
+        {
+            Key.Left => -1,
+            Key.Right => 1,
+            _ => 0
+        };
+
+        if (laneDiff != 0 || timeDiff != 0)
+        {
+            var selected = SelectedObjects.ToList();
+            var changed = false;
+
+            var action = new NoteMoveAction(selected.ToArray());
+
+            var minLane = selected.Min(x => x.Lane);
+            var maxLane = selected.Max(x => x.Lane);
+
+            if (minLane + laneDiff >= 1 && maxLane + laneDiff <= map.RealmMap.KeyCount)
+            {
+                changed = true;
+                selected.ForEach(x => x.Lane += laneDiff);
+            }
+
+            var minTime = selected.Min(x => x.Time);
+            var step = snaps.CurrentStep * timeDiff;
+
+            if (minTime + step >= 0)
+            {
+                changed = true;
+                selected.ForEach(x => x.Time += step);
+            }
+
+            if (!changed)
+                return false;
+
+            action.Apply(NoteMoveAction.CreateFrom(selected.ToArray()), true);
+            actions.Add(action);
+            return true;
+        }
+
+        return base.OnKeyDown(e);
     }
 }

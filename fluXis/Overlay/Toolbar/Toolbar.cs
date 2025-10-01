@@ -91,7 +91,6 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Horizontal = 10 },
                 Children = new Drawable[]
                 {
                     new FillFlowContainer
@@ -102,6 +101,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         AutoSizeAxes = Axes.X,
+                        Padding = new MarginPadding { Left = 10 },
                         Children = new Drawable[]
                         {
                             new ToolbarOverlayButton

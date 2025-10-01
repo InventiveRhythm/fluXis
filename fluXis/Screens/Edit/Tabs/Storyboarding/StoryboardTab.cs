@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Drawables;
@@ -16,6 +17,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding;
@@ -39,6 +41,7 @@ public partial class StoryboardTab : EditorTab
     private float scrollAccumulation;
     private AspectRatioContainer aspect;
     private IdleTracker idleTracker;
+    private Container loading;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -96,6 +99,26 @@ public partial class StoryboardTab : EditorTab
                                                     CornerRadius = 12,
                                                     Masking = true
                                                 }
+                                            },
+                                            loading = new Container
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Alpha = 0,
+                                                Children = new Drawable[]
+                                                {
+                                                    new Box
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Colour = Theme.Background1,
+                                                        Alpha = .5f
+                                                    },
+                                                    new LoadingIcon
+                                                    {
+                                                        Anchor = Anchor.Centre,
+                                                        Origin = Anchor.Centre,
+                                                        Size = new Vector2(48)
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -124,7 +147,11 @@ public partial class StoryboardTab : EditorTab
         map.Storyboard.ElementUpdated += queueRebuild;
     }
 
-    private void queueRebuild(StoryboardElement _) => idleTracker.Reset();
+    private void queueRebuild(StoryboardElement _)
+    {
+        loading.FadeIn(300);
+        idleTracker.Reset();
+    }
 
     private void rebuildPreview()
     {
@@ -149,6 +176,7 @@ public partial class StoryboardTab : EditorTab
             }
         });
         aspect.AddRange(Enum.GetValues<StoryboardLayer>().Select(x => new DrawableStoryboardWrapper(clock, draw, x)).ToArray());
+        ScheduleAfterChildren(() => loading.FadeOut(300));
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)

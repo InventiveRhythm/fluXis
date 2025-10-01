@@ -14,7 +14,7 @@ using osu.Framework.Localisation;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
+public partial class PointSettingsColor : PointSettingsBase, IHasPopover, IHasTooltip
 {
     public string Text { get; set; } = "Color";
     public LocalisableString TooltipText { get; init; } = string.Empty;
@@ -22,6 +22,10 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
     public Action<Colour4> OnColorChanged { get; set; } = _ => { };
     public Bindable<Colour4> Bindable { get; set; }
 
+    public Bindable<bool> Enabled { get; init; } = new(true);
+    public bool HideWhenDisabled { get; init; } = false;
+
+    private ClickableContainer colorContainer;
     private Circle textBackground;
     private FluXisSpriteText text;
 
@@ -42,7 +46,7 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
                 Origin = Anchor.CentreLeft,
                 WebFontSize = 16
             },
-            new ClickableContainer
+            colorContainer = new ClickableContainer
             {
                 RelativeSizeAxes = Axes.Y,
                 Width = 100,
@@ -60,9 +64,9 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
                         Origin = Anchor.Centre,
                         FontSize = 16,
                         FixedWidth = true
-                    }
+                    },
                 }
-            }
+            },
         };
     }
 
@@ -72,6 +76,12 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
 
         updateColors(Color);
         Bindable.BindValueChanged(valueChanged);
+        Enabled.BindValueChanged(e =>
+        {
+            this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200);
+            colorContainer.Action = e.NewValue ? this.ShowPopover : () => {};
+        }, true);
+        FinishTransforms();
     }
 
     protected override void Dispose(bool isDisposing)

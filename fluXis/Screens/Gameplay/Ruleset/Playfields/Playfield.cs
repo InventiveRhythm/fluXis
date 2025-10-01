@@ -9,6 +9,7 @@ using fluXis.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Screens.Gameplay.Ruleset.Playfields.UI;
 using fluXis.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Skinning;
+using fluXis.Skinning.Default;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -51,6 +52,7 @@ public partial class Playfield : Container
     public Stage Stage { get; private set; }
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager HitManager { get; private set; }
+    public ColorManager ColorManager { get; private set; }
     public float HUDAlpha { get; set; } = 1f;
 
     public MapInfo MapInfo => ruleset.MapInfo;
@@ -109,10 +111,14 @@ public partial class Playfield : Container
             Masking = true
         });
 
+        LoadComponent(ColorManager = new ColorManager());
+        dependencies.CacheAs<ICustomColorProvider>(ColorManager);
+
         var receptorsFirst = skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorsFirst;
 
         InternalChildren = new[]
         {
+            ColorManager,
             new LaneSwitchAlert(),
             Stage = new Stage(),
             new TimingLineManager(),
@@ -139,6 +145,7 @@ public partial class Playfield : Container
             new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(Math.Max(shake.Duration, 0), shake.Magnitude))
         };
 
+        MapEvents.ColorFadeEvents.ForEach(e => e.Apply(this));
         MapEvents.LayerFadeEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));

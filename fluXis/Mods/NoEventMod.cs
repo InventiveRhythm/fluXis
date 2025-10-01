@@ -19,6 +19,7 @@ public class NoEventMod : IMod, IApplicableToEvents
     public void Apply(MapEvents events)
     {
         events.FlashEvents.Clear();
+        events.ColorFadeEvents.Clear();
         events.PulseEvents.Clear();
         events.PlayfieldMoveEvents.Clear();
         events.PlayfieldScaleEvents.Clear();

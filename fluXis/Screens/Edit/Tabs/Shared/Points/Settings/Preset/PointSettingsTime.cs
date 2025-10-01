@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using fluXis.Map.Structures.Bases;
 using fluXis.Utils;
@@ -9,6 +10,8 @@ public partial class PointSettingsTime : PointSettingsTextBox
 {
     private EditorMap map { get; }
     private ITimedObject obj { get; }
+
+    public Action<double, double> TimeChanged { get; set; }
 
     public PointSettingsTime(EditorMap map, ITimedObject obj)
     {
@@ -22,6 +25,7 @@ public partial class PointSettingsTime : PointSettingsTextBox
         {
             if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var time))
             {
+                TimeChanged?.Invoke(obj.Time, time);
                 obj.Time = time;
                 map.Update(obj);
             }
@@ -33,6 +37,7 @@ public partial class PointSettingsTime : PointSettingsTextBox
     {
         Action = t =>
         {
+            TimeChanged?.Invoke(obj.Time, t);
             TextBox.Text = t.ToStringInvariant("0");
             obj.Time = t;
             map.Update(obj);

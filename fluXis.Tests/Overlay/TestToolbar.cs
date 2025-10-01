@@ -1,37 +1,59 @@
-using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Overlay.Browse;
 using fluXis.Overlay.Chat;
 using fluXis.Overlay.Music;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar;
 using fluXis.Overlay.User;
+using fluXis.Overlay.Wiki;
 using fluXis.Screens;
-using osu.Framework.Allocation;
+using NUnit.Framework;
 
 namespace fluXis.Tests.Overlay;
 
 public partial class TestToolbar : FluXisTestScene
 {
-    [BackgroundDependencyLoader]
-    private void load()
+    protected override bool UseTestAPI => true;
+
+    private Toolbar toolbar;
+    private bool cached = false;
+
+    [SetUp]
+    public void Setup() => Schedule(() =>
     {
-        CreateClock();
+        Clear();
 
-        TestDependencies.Cache(new SettingsMenu());
-        TestDependencies.Cache(new MusicPlayer());
-        TestDependencies.Cache(new Dashboard());
-        TestDependencies.Cache(new ChatOverlay());
-        TestDependencies.Cache(new FluXisScreenStack());
-        TestDependencies.Cache(new UserProfileOverlay());
+        if (!cached)
+        {
+            CreateClock();
 
-        var panels = new PanelContainer();
-        TestDependencies.Cache(panels);
+            TestDependencies.Cache(new SettingsMenu());
+            TestDependencies.Cache(new FluXisScreenStack());
 
-        var toolbar = new Toolbar();
-        Add(toolbar);
+            TestDependencies.Cache(new ChatOverlay());
+            TestDependencies.Cache(new Dashboard());
+            TestDependencies.Cache(new BrowseOverlay());
+            TestDependencies.Cache(new WikiOverlay());
+            TestDependencies.Cache(new MusicPlayer());
+            TestDependencies.Cache(new UserProfileOverlay());
+        }
 
-        Add(panels);
+        cached = true;
+        Add(toolbar = new Toolbar());
+    });
 
-        AddStep("Toggle Toolbar", toolbar.ToggleVisibility);
+    [Test]
+    public void TestBase() => show();
+
+    [Test]
+    public void TestVisibility()
+    {
+        show();
+        wait();
+        hide();
     }
+
+    private void show() => AddStep("Show Toolbar", () => toolbar.Show());
+    private void hide() => AddStep("Hide Toolbar", () => toolbar.Hide());
+    private void wait() => AddWaitStep("wait", 3);
 }

@@ -1,5 +1,6 @@
 using System;
 using fluXis.Audio;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Course;
@@ -111,7 +112,8 @@ public class DefaultSkin : ISkin
 
     public virtual Drawable GetHitObject(int lane, int keyCount)
     {
-        var piece = new DefaultHitObjectPiece(SkinJson);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var piece = new DefaultHitObjectPiece(SkinJson, (MapColor)index);
         piece.UpdateColor(lane, keyCount);
         return piece;
     }
@@ -120,14 +122,16 @@ public class DefaultSkin : ISkin
 
     public virtual Drawable GetLongNoteBody(int lane, int keyCount)
     {
-        var body = new DefaultHitObjectBody(SkinJson);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var body = new DefaultHitObjectBody(SkinJson, (MapColor)index);
         body.UpdateColor(lane, keyCount);
         return body;
     }
 
     public virtual Drawable GetLongNoteEnd(int lane, int keyCount)
     {
-        var end = new DefaultHitObjectEnd(SkinJson);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var end = new DefaultHitObjectEnd(SkinJson, (MapColor)index);
         end.UpdateColor(lane, keyCount);
         return end;
     }
@@ -141,7 +145,8 @@ public class DefaultSkin : ISkin
 
     public virtual Drawable GetReceptor(int lane, int keyCount, bool down)
     {
-        var receptor = down ? new DefaultReceptorDown(SkinJson) : new DefaultReceptorUp(SkinJson);
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var receptor = down ? new DefaultReceptorDown(SkinJson, (MapColor)index) : new DefaultReceptorUp(SkinJson, (MapColor)index);
         receptor.UpdateColor(lane, keyCount);
         receptor.Height = SkinJson.GetKeymode(keyCount).HitPosition;
         return receptor;

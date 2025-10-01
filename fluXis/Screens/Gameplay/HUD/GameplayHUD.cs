@@ -6,6 +6,7 @@ using fluXis.Screens.Gameplay.HUD.Leaderboard;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Gameplay.UI;
+using fluXis.Skinning.Default;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -62,10 +63,17 @@ public partial class GameplayHUD : Container
                 {
                     playfields = ruleset.PlayfieldManager.Players.Select(x => new PlayfieldHUD(x)).ToArray()
                 }
-            },
-            new ModsDisplay(),
-            new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>()),
+            }
         };
+
+        if (screen is not null)
+        {
+            AddRangeInternal(new Drawable[]
+            {
+                new ModsDisplay(),
+                new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>())
+            });
+        }
 
         layout ??= layouts.Layout.Value;
         loadLayout();
@@ -164,6 +172,8 @@ public partial class GameplayHUD : Container
         public PlayfieldPlayer Player { get; }
         public Playfield Playfield => Player.MainPlayfield;
 
+        private DependencyContainer dependencies;
+
         public PlayfieldHUD(PlayfieldPlayer player)
         {
             Player = player;
@@ -172,6 +182,15 @@ public partial class GameplayHUD : Container
             RelativeSizeAxes = Axes.Y;
             Anchor = Origin = Anchor.Centre;
         }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            dependencies.CacheAs<ICustomColorProvider>(Playfield.ColorManager);
+        }
+
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+            => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
         protected override void Update()
         {

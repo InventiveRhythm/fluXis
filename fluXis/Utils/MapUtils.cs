@@ -183,6 +183,9 @@ public static class MapUtils
         if (events.FlashEvents.Count > 0)
             effects |= MapEffectType.Flash;
 
+        if (events.ColorFadeEvents.Count > 0)
+            effects |= MapEffectType.ColorFade;
+
         if (events.PulseEvents.Count > 0)
             effects |= MapEffectType.Pulse;
 

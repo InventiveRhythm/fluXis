@@ -119,7 +119,7 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
 
     public double StepTime => stepTime / Rate;
     public double BeatTime => StepTime * 4;
-    public Action<int> OnBeat { get; set; }
+    public Action<int, bool> OnBeat { get; set; }
 
     private int lastStep;
     private int step;
@@ -136,13 +136,16 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
 
         var point = mapInfo.GetTimingPoint(CurrentTime);
 
-        stepTime = 60000f / point.BPM / point.Signature;
+        stepTime = 60000f / point.BPM / 4;
 
         var timeSinceTimingPoint = CurrentTime - point.Time;
         step = (int)(timeSinceTimingPoint / stepTime);
 
         if (lastStep != step && step % 4 == 0)
-            OnBeat?.Invoke(step / 4);
+        {
+            var beat = step / 4;
+            OnBeat?.Invoke(beat, beat % point.Signature == 0);
+        }
     }
 
     #endregion
