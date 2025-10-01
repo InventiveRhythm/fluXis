@@ -201,9 +201,9 @@ public class CustomSkin : ISkin
         return null;
     }
 
-    public Drawable GetLandmine(int lane, int keyCount, bool small)
+    public Drawable GetLandmine(int lane, int keyCount)
     {
-        var path = SkinJson.GetOverrideOrDefault($"HitObjects/Landmine/{keyCount}k-{lane}{(small ? "-small" : "")}") + ".png";
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/Landmine/{keyCount}k-{lane}") + ".png";
 
         if (storage.Exists(path))
         {

@@ -6,7 +6,7 @@ namespace fluXis.Skinning.Default.HitObject;
 
 public partial class DefaultLandmine : CompositeDrawable
 {
-    public DefaultLandmine(bool small)
+    public DefaultLandmine()
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;

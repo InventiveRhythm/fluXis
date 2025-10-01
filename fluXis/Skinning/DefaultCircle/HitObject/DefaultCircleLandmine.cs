@@ -9,7 +9,7 @@ public partial class DefaultCircleLandmine : CompositeDrawable
 {
     private CircularProgress progress;
 
-    public DefaultCircleLandmine(bool small)
+    public DefaultCircleLandmine()
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;

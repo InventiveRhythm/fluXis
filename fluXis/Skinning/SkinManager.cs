@@ -493,7 +493,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
     Drawable ISkin.GetHitObject(int lane, int keyCount) => currentSkin.GetHitObject(lane, keyCount) ?? defaultSkin.GetHitObject(lane, keyCount);
     Drawable ISkin.GetTickNote(int lane, int keyCount, bool small) => currentSkin.GetTickNote(lane, keyCount, small) ?? defaultSkin.GetTickNote(lane, keyCount, small);
-    Drawable ISkin.GetLandmine(int lane, int keyCount, bool small) => currentSkin.GetLandmine(lane, keyCount, small) ?? defaultSkin.GetLandmine(lane, keyCount, small);
+    Drawable ISkin.GetLandmine(int lane, int keyCount) => currentSkin.GetLandmine(lane, keyCount) ?? defaultSkin.GetLandmine(lane, keyCount);
     Drawable ISkin.GetLongNoteBody(int lane, int keyCount) => currentSkin.GetLongNoteBody(lane, keyCount) ?? defaultSkin.GetLongNoteBody(lane, keyCount);
     Drawable ISkin.GetLongNoteEnd(int lane, int keyCount) => currentSkin.GetLongNoteEnd(lane, keyCount) ?? defaultSkin.GetLongNoteEnd(lane, keyCount);
     VisibilityContainer ISkin.GetColumnLighting(int lane, int keyCount) => currentSkin.GetColumnLighting(lane, keyCount) ?? defaultSkin.GetColumnLighting(lane, keyCount);

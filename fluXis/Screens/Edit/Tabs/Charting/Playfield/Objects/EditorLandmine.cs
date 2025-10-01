@@ -16,7 +16,7 @@ public partial class EditorLandmine : EditorHitObject
 
     protected override IEnumerable<Drawable> CreateContent() => new[]
     {
-        landminePiece = new DefaultLandmine(false)
+        landminePiece = new DefaultLandmine()
     };
 
     protected override void Update()

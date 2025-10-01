@@ -29,7 +29,7 @@ public partial class DrawableLandmine : DrawableHitObject
         //Masking = false; //needed for using the cross in bar skin
         InternalChildren = new[]
         {
-            Skin.GetLandmine(VisualLane, ObjectManager.KeyCount, Data.HoldTime > 0)
+            Skin.GetLandmine(VisualLane, ObjectManager.KeyCount)
         };
     }
 
