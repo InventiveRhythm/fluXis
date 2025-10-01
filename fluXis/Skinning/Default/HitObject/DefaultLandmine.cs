@@ -8,18 +8,53 @@ public partial class DefaultLandmine : CompositeDrawable
 {
     public DefaultLandmine(bool small)
     {
-        Width = small ? 0.8f : 1f;
-
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
         Colour = Colour4.FromHex("#FF5252");
-        Height = 20;
+        Height = 42;
         CornerRadius = 10;
         Masking = true;
-        InternalChild = new Box
+        InternalChildren = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both
+            new Box()
+            {
+                RelativeSizeAxes = Axes.X,
+                Width = 1,
+                Height = 10,
+                Anchor = Anchor.TopLeft,
+                Origin = Anchor.TopLeft,
+            },
+            new Box()
+            {
+                RelativeSizeAxes = Axes.X,
+                Width = 1,
+                Height = 10,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+            },
+            new Box()
+            {
+                RelativeSizeAxes = Axes.Y,
+                Width = 10,
+                Height = 1,
+                Anchor = Anchor.TopLeft,
+                Origin = Anchor.TopLeft,
+            },
+            new Box()
+            {
+                RelativeSizeAxes = Axes.Y,
+                Width = 10,
+                Height = 1,
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+            },
         };
+    }
+
+    protected override void Update()
+    {
+        var factor = DrawWidth / 114f;
+        Height = 42f * factor;
     }
 }
