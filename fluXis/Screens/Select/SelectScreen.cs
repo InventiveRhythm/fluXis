@@ -214,8 +214,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                 Maps.MapSetRemoved += removeMapSet;
                 Maps.MapBindable.BindValueChanged(mapBindableChanged, true);
 
-                mapList.FadeIn(500);
-                loadingIcon.FadeOut(500);
+                mapList.Delay(200).FadeIn(Styling.TRANSITION_FADE);
+                loadingIcon.FadeOut(Styling.TRANSITION_FADE);
             });
         });
     }
@@ -771,7 +771,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (e.Last is EditorLoader)
             this.FadeIn();
         else
-            playEnterAnimation();
+            playEnterAnimation(true);
 
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
@@ -797,23 +797,38 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         return base.OnExiting(e);
     }
 
-    private void playEnterAnimation()
+    private void playEnterAnimation(bool resume = false)
     {
         clock.AllowLimitedLoop = true;
         this.FadeOut();
+
+        if (resume)
+            mapList.FadeOut();
 
         using (BeginDelayedSequence(Styling.TRANSITION_ENTER_DELAY))
         {
             this.FadeIn(Styling.TRANSITION_FADE);
 
+            searchBar.Show();
+
+            filterControl.FadeOut().MoveToX(-100)
+                         .Delay(Styling.TRANSITION_ENTER_DELAY)
+                         .FadeInFromZero(Styling.TRANSITION_FADE)
+                         .MoveToX(-10, Styling.TRANSITION_MOVE, Easing.OutQuint);
+
             mapList.MoveToX(-100)
+                   .Delay(Styling.TRANSITION_ENTER_DELAY * 2)
                    .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+
+            if (resume)
+            {
+                mapList.Delay(Styling.TRANSITION_ENTER_DELAY * 2)
+                       .FadeInFromZero(Styling.TRANSITION_FADE);
+            }
 
             selectMapInfo.MoveToX(100)
                          .MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
 
-            searchBar.Show();
-            filterControl.Show();
             footer.Show();
         }
     }

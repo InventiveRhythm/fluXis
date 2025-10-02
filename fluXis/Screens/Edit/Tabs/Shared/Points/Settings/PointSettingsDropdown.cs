@@ -6,14 +6,13 @@ using fluXis.Graphics.UserInterface.Menus;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsDropdown<T> : Container, IHasTooltip
+public partial class PointSettingsDropdown<T> : PointSettingsBase, IHasTooltip
 {
     public string Text { get; init; }
     public LocalisableString TooltipText { get; init; } = string.Empty;

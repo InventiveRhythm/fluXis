@@ -72,6 +72,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.EditorBlur, 0f, 0f, 1f, 0.2f);
         SetDefault(FluXisSetting.EditorShowSamples, false);
         SetDefault(FluXisSetting.EditorKeymap, "");
+        SetDefault(FluXisSetting.EditorCompactMode, false);
 
         // Audio
         SetDefault(FluXisSetting.InactiveVolume, 0.5d, 0d, 1d, 0.01d);
@@ -97,6 +98,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         // Debug
         SetDefault(FluXisSetting.LogAPIResponses, false);
         SetDefault(FluXisSetting.ShowMissingLocalizations, false);
+        SetDefault(FluXisSetting.StreamFileBrowser, true);
 
         // Misc
         SetDefault(FluXisSetting.OpenRGBIntegration, false);
@@ -163,6 +165,7 @@ public enum FluXisSetting
     EditorBlur,
     EditorShowSamples,
     EditorKeymap,
+    EditorCompactMode,
 
     // Audio
     InactiveVolume,
@@ -186,6 +189,7 @@ public enum FluXisSetting
     ServerUrl,
 
     // Debug
+    StreamFileBrowser,
     LogAPIResponses,
     ShowMissingLocalizations,
 

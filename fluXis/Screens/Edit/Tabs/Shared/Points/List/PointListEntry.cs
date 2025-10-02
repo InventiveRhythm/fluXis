@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Audio;
+using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Interaction;
@@ -85,6 +87,8 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     [Resolved]
     private EditorClock clock { get; set; }
 
+    private Bindable<bool> compactMode;
+
     private HoverLayer hover;
     private Circle indicator;
     private FluXisSpriteText timeText;
@@ -96,8 +100,10 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        compactMode = config.GetBindable<bool>(FluXisSetting.EditorCompactMode);
+
         RelativeSizeAxes = Axes.X;
         Height = 32;
         Masking = true;
@@ -146,6 +152,8 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
         UpdateValues();
 
         CurrentEvent.BindValueChanged(currentEventChange, true);
+        compactMode.BindValueChanged(compactChanged, true);
+        FinishTransforms(true);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -153,10 +161,26 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
         base.Dispose(isDisposing);
 
         CurrentEvent.ValueChanged -= currentEventChange;
+        compactMode.ValueChanged -= compactChanged;
     }
 
     private void currentEventChange(ValueChangedEvent<PointListEntry> e)
         => indicator.ResizeHeightTo(e.NewValue == this ? 16 : 0, 600, Easing.OutQuint);
+
+    private void compactChanged(ValueChangedEvent<bool> v)
+    {
+        var compact = v.NewValue;
+
+        this.ResizeHeightTo(compact ? 24 : 32, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        timeText.ScaleTo(compact ? 0.75f : 1f, Styling.TRANSITION_MOVE, Easing.OutQuint)
+                .MoveToX(compact ? 6 : 10, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        valueFlow.ScaleTo(compact ? 0.75f : 1f, Styling.TRANSITION_MOVE, Easing.OutQuint)
+                 .MoveToX(compact ? -6 : -10, Styling.TRANSITION_MOVE, Easing.OutQuint);
+
+        CompactModeChanged(v.NewValue);
+    }
+
+    protected virtual void CompactModeChanged(bool compact) { }
 
     private void updateState()
     {
@@ -254,7 +278,6 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
             SelectedRange?.Invoke(this);
         else
             OpenSettings();
-
 
         return true;
     }

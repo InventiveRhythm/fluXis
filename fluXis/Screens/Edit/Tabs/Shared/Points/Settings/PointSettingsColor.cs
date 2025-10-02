@@ -14,7 +14,7 @@ using osu.Framework.Localisation;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
+public partial class PointSettingsColor : PointSettingsBase, IHasPopover, IHasTooltip
 {
     public string Text { get; set; } = "Color";
     public LocalisableString TooltipText { get; init; } = string.Empty;
@@ -76,7 +76,7 @@ public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
 
         updateColors(Color);
         Bindable.BindValueChanged(valueChanged);
-        Enabled.BindValueChanged(e => 
+        Enabled.BindValueChanged(e =>
         {
             this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200);
             colorContainer.Action = e.NewValue ? this.ShowPopover : () => {};

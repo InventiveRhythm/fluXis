@@ -1,53 +1,43 @@
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Json;
+using JetBrains.Annotations;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Skinning.Custom.Receptor;
 
 public partial class CustomReceptor : ColorableSkinDrawable
 {
+    private Drawable sprite { get; }
     private int mode { get; }
-    public bool SkipResizing { get; set; }
 
-    protected Sprite Sprite { get; }
-
-    public CustomReceptor(SkinJson skinJson, Texture texture, MapColor index, int mode)
+    public CustomReceptor(SkinJson skinJson, MapColor index, int mode, Texture texture, [CanBeNull] Texture tintless)
         : base(skinJson, index)
     {
         this.mode = mode;
 
         RelativeSizeAxes = Axes.Both;
 
-        InternalChild = Sprite = new Sprite
+        InternalChild = sprite = new SkinnableSprite
         {
-            Texture = texture,
-            Anchor = Anchor.BottomCentre,
-            Origin = Anchor.BottomCentre,
             RelativeSizeAxes = Axes.X,
-            Width = 1,
+            Anchor = Anchor.BottomLeft,
+            Origin = Anchor.BottomLeft,
+            Texture = texture,
+            Width = 1
         };
-    }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        switch (Index)
+        if (tintless != null)
         {
-            case MapColor.Primary:
-                SetColor(ColorProvider.Primary);
-                break;
-
-            case MapColor.Secondary:
-                SetColor(ColorProvider.Secondary);
-                break;
-
-            case MapColor.Middle:
-                SetColor(ColorProvider.Middle);
-                break;
+            AddInternal(new SkinnableSprite
+            {
+                RelativeSizeAxes = Axes.X,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Texture = tintless,
+                Width = 1
+            });
         }
     }
 
@@ -58,32 +48,6 @@ public partial class CustomReceptor : ColorableSkinDrawable
         if (!keymode.TintReceptors)
             return;
 
-        Sprite.Colour = color;
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        Sprite.Height = Sprite.DrawWidth;
-
-        if (SkipResizing)
-            return;
-
-        var receptorTexture = Sprite.Texture;
-
-        if (receptorTexture != null)
-        {
-            switch (Sprite.RelativeSizeAxes)
-            {
-                case Axes.X:
-                    Sprite.Height = DrawWidth / receptorTexture.DisplayWidth * receptorTexture.DisplayHeight;
-                    break;
-
-                case Axes.Y:
-                    Sprite.Width = DrawHeight / receptorTexture.DisplayHeight * receptorTexture.DisplayWidth;
-                    break;
-            }
-        }
+        sprite.Colour = color;
     }
 }

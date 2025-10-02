@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -48,6 +50,8 @@ public abstract partial class PointsList : Container
     private FluXisScrollContainer scroll;
     private FillFlowContainer<PointListEntry> flow;
 
+    private Bindable<bool> compactMode;
+
     private Bindable<PointListEntry> currentEvent = new();
 
     private SpriteIcon iconUp;
@@ -56,8 +60,10 @@ public abstract partial class PointsList : Container
     private bool iconDownShown;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        compactMode = config.GetBindable<bool>(FluXisSetting.EditorCompactMode);
+
         RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -181,10 +187,25 @@ public abstract partial class PointsList : Container
     {
         base.LoadComplete();
 
+        compactMode.BindValueChanged(compactChanged, true);
+
         RegisterEvents();
 
         initialLoad = false;
         sortPoints();
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        compactMode.ValueChanged -= compactChanged;
+    }
+
+    private void compactChanged(ValueChangedEvent<bool> v)
+    {
+        var compact = v.NewValue;
+
+        flow.TransformTo(nameof(FillFlowContainer.Spacing), new Vector2(compact ? 2 : 8), Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     private void openSettings(IEnumerable<Drawable> list)

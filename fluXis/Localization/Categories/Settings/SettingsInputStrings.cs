@@ -71,8 +71,6 @@ public class SettingsInputStrings : LocalizationCategory
     public TranslatableString InGame => Get("keybindings-in-game", "In-Game");
 
     public TranslatableString SkipIntro => Get("keybindings-skip-intro", "Skip Intro");
-    public TranslatableString DecreaseSpeed => Get("keybindings-decrease-speed", "Decrease Scroll Speed");
-    public TranslatableString IncreaseSpeed => Get("keybindings-increase-speed", "Increase Scroll Speed");
     public TranslatableString QuickRestart => Get("keybindings-quick-restart", "Quick Restart");
     public TranslatableString QuickExit => Get("keybindings-quick-exit", "Quick Exit");
     public TranslatableString SeekBackward => Get("keybindings-seek-backward", "Seek Backward");

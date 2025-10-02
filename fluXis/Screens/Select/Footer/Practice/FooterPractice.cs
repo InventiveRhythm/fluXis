@@ -105,10 +105,26 @@ public partial class FooterPractice : FocusedOverlayContainer
                                     }
                                 }
                             },
-                            new FooterPracticeGraph(start, end)
+                            new Container
                             {
                                 RelativeSizeAxes = Axes.X,
-                                Height = 80
+                                Height = 80,
+                                Children = new Drawable[]
+                                {
+                                    new FooterPracticeGraph(start, end)
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 80,
+                                    },
+                                    new FooterPracticeRangeController(start, end)
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 60,
+                                        Margin = new MarginPadding { Vertical = 10 },
+                                        LowerBoundOffset = 10,
+                                        UpperBoundOffset = -5,
+                                    }
+                                }
                             },
                             new FillFlowContainer()
                             {

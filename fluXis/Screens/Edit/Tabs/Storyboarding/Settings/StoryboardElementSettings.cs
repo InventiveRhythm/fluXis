@@ -103,7 +103,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         Text = $"{item.Type}",
                         WebFontSize = 20
                     },
-                    new PointSettingsTime(map, item),
+                    new PointSettingsTime(map, item)
+                    {
+                        TimeChanged = (oldTime, newTime) =>
+                            item.EndTime -= oldTime - newTime
+                    },
                     new PointSettingsTextBox
                     {
                         Text = "Start X",

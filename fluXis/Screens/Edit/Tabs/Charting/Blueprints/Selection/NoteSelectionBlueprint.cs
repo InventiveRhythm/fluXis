@@ -1,6 +1,5 @@
 using System;
 using fluXis.Map.Structures;
-using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Graphics;
 
@@ -8,8 +7,6 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
 public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
 {
-    public new HitObject Object => (HitObject)base.Object;
-
     public EditorHitObject HitObject => Drawable as EditorHitObject;
 
     public override double FirstComparer => Object.Time;
@@ -26,7 +23,7 @@ public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
         }
     }
 
-    public NoteSelectionBlueprint(ITimedObject info)
+    public NoteSelectionBlueprint(HitObject info)
         : base(info)
     {
         Width = EditorHitObjectContainer.NOTEWIDTH;

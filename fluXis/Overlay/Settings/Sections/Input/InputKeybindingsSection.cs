@@ -393,16 +393,6 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             new SettingsRealmKeybind<FluXisGlobalKeybind>
             {
-                Label = strings.DecreaseSpeed,
-                Keybinds = new[] { FluXisGlobalKeybind.ScrollSpeedDecrease }
-            },
-            new SettingsRealmKeybind<FluXisGlobalKeybind>
-            {
-                Label = strings.IncreaseSpeed,
-                Keybinds = new[] { FluXisGlobalKeybind.ScrollSpeedIncrease }
-            },
-            new SettingsRealmKeybind<FluXisGlobalKeybind>
-            {
                 Label = strings.QuickRestart,
                 Keybinds = new[] { FluXisGlobalKeybind.QuickRestart }
             },
