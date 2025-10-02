@@ -238,6 +238,7 @@ public static class MapUtils
             var value = hitObject.Type switch
             {
                 1 => 0.1f, // tick
+                2 => 0, // landmine
                 _ => 1
             };
 
