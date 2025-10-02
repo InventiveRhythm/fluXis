@@ -55,6 +55,7 @@ public partial class ChartingSidebar : PointsSidebar
                         0 when !hit.LongNote => "Single",
                         0 when hit.LongNote => "Long",
                         1 => "Tick",
+                        2 => "Landmine",
                         _ => "Unknown"
                     });
 
