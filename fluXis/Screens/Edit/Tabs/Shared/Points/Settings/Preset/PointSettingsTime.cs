@@ -1,17 +1,21 @@
 using System;
-using System.Globalization;
 using fluXis.Map.Structures.Bases;
-using fluXis.Utils;
+using JetBrains.Annotations;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 
-public partial class PointSettingsTime : PointSettingsTextBox
+public partial class PointSettingsTime : PointSettingsNumber<double>
 {
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private EditorSnapProvider snaps { get; set; }
+
     private EditorMap map { get; }
     private ITimedObject obj { get; }
 
-    public Action<double, double> TimeChanged { get; set; }
+    public Action<double, double> TimeChanged { get; init; }
 
     public PointSettingsTime(EditorMap map, ITimedObject obj)
     {
@@ -20,16 +24,14 @@ public partial class PointSettingsTime : PointSettingsTextBox
 
         Text = "Time";
         TooltipText = "The time in milliseconds when the event should trigger.";
-        DefaultText = obj.Time.ToStringInvariant("0");
-        OnTextChanged = box =>
+        DefaultValue = obj.Time;
+        FetchStepValue = () => snaps?.CurrentStep ?? 1;
+        OnValueChanged = v =>
         {
-            if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var time))
-            {
-                TimeChanged?.Invoke(obj.Time, time);
-                obj.Time = time;
-                map.Update(obj);
-            }
-            else TextBox.NotifyError();
+            var old = obj.Time;
+            obj.Time = v;
+            TimeChanged?.Invoke(old, v);
+            map.Update(obj);
         };
     }
 
@@ -37,9 +39,9 @@ public partial class PointSettingsTime : PointSettingsTextBox
     {
         Action = t =>
         {
-            TimeChanged?.Invoke(obj.Time, t);
-            TextBox.Text = t.ToStringInvariant("0");
-            obj.Time = t;
+            var old = obj.Time;
+            DefaultValue = t;
+            TimeChanged?.Invoke(old, t);
             map.Update(obj);
         }
     };
