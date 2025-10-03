@@ -1,12 +1,14 @@
 using System.Linq;
+using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Utils;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Select.Search.Dropdown;
@@ -15,8 +17,6 @@ public partial class SearchDropdownKeymode : CompositeDrawable
 {
     [Resolved]
     private SearchFilters filters { get; set; }
-
-    private Bindable<int> keymodeBindable { get; } = new();
 
     private readonly int[] keymodes = { 4, 5, 6, 7, 8 };
 
@@ -44,41 +44,36 @@ public partial class SearchDropdownKeymode : CompositeDrawable
                 Origin = Anchor.CentreRight,
                 Direction = FillDirection.Horizontal,
                 Spacing = new Vector2(5),
-                ChildrenEnumerable = keymodes.Select(i => new KeymodeButton(i, keymodeBindable))
+                ChildrenEnumerable = keymodes.Select(i => new KeymodeButton(i, this))
             }
         };
     }
 
-    protected override void LoadComplete()
+    private bool onKeymodeClick(int keymode)
     {
-        base.LoadComplete();
+        if (!filters.Keymodes.Remove(keymode))
+            filters.Keymodes.Add(keymode);
 
-        keymodeBindable.BindValueChanged(e => filters.KeyMode = e.NewValue);
+        filters.OnChange.Invoke();
+        return filters.Keymodes.Contains(keymode);
     }
 
-    private partial class KeymodeButton : ClickableContainer
+    private partial class KeymodeButton : Container
     {
-        private Bindable<int> bind { get; }
+        private SearchDropdownKeymode parent { get; }
         private int keymode { get; }
 
+        [Resolved]
+        private UISamples samples { get; set; }
+
         private Box background;
+        private HoverLayer hoverBox;
         private FluXisSpriteText text;
 
-        public KeymodeButton(int keymode, Bindable<int> bind)
+        public KeymodeButton(int keymode, SearchDropdownKeymode parent)
         {
             this.keymode = keymode;
-            this.bind = bind;
-
-            Action = () =>
-            {
-                if (bind.Value == keymode)
-                {
-                    bind.Value = 0;
-                    return;
-                }
-
-                bind.Value = keymode;
-            };
+            this.parent = parent;
         }
 
         [BackgroundDependencyLoader]
@@ -94,32 +89,45 @@ public partial class SearchDropdownKeymode : CompositeDrawable
                 background = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Theme.GetKeyCountColor(keymode)
+                    Colour = Theme.GetKeyCountColor(keymode),
+                    Alpha = 0
                 },
+                hoverBox = new HoverLayer(),
                 text = new FluXisSpriteText
                 {
                     Text = $"{keymode}K",
                     FontSize = 16,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Colour = Theme.TextDark
+                    Origin = Anchor.Centre
                 }
             };
         }
 
-        protected override void LoadComplete()
+        protected override bool OnClick(ClickEvent e)
         {
-            base.LoadComplete();
+            samples.Click();
 
-            bind.BindValueChanged(updateKeymode, true);
+            if (parent.onKeymodeClick(keymode))
+            {
+                background.FadeIn(200);
+                text.FadeColour(Theme.IsBright(background.Colour) ? Theme.TextDark : Theme.Text, 200);
+            }
+            else
+            {
+                background.FadeOut(200);
+                text.FadeColour(Theme.Text, 200);
+            }
+
+            return true;
         }
 
-        private void updateKeymode(ValueChangedEvent<int> e)
+        protected override bool OnHover(HoverEvent e)
         {
-            var enable = e.NewValue == keymode || e.NewValue == 0;
-
-            background.FadeTo(enable ? 1 : 0, 200);
-            text.FadeColour(enable ? Theme.TextDark : Theme.Text, 200);
+            hoverBox.Show();
+            samples.Hover();
+            return true;
         }
+
+        protected override void OnHoverLost(HoverLostEvent e) => hoverBox.Hide();
     }
 }
