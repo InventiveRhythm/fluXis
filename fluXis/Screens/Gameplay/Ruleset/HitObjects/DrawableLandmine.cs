@@ -11,7 +11,19 @@ public partial class DrawableLandmine : DrawableHitObject
 {
     public override bool CanBeRemoved => Judged || didNotGetHit;
 
-    private bool didNotGetHit => TimeDelta <= -HitWindows.TimingFor(Judgement.Perfect);
+    private bool didNotGetHit
+    {
+        get
+        {
+            //if the landmine is in the timing window of the next regular or long note, judge it as soon as it passes the receptors
+            HitObject next = Data.NextObject;
+
+            if (next != null && next.Type != 2 && next.Time - Data.Time < HitWindows.TimingFor(Judgement.Okay) && TimeDelta <= 0)
+                return true;
+
+            return TimeDelta <= -HitWindows.TimingFor(Judgement.Perfect);
+        }
+    }
 
     [Resolved]
     private GameplayInput input { get; set; }
@@ -37,14 +49,6 @@ public partial class DrawableLandmine : DrawableHitObject
     {
         base.Update();
 
-        //if the landmine is in the timing window of the next regular or long note, judge it as soon as it passes the receptors
-        HitObject next = Data.NextObject;
-
-        if (next != null && next.Type != 2 && next.Time - Data.Time < HitWindows.TimingFor(Judgement.Okay) && TimeDelta <= 0)
-        {
-            UpdateJudgement(false);
-        }
-
         //TODO (?): make it more forgiving if the landmine is too close of the previous note?
         if (isBeingHeld)
             UpdateJudgement(true);
@@ -54,7 +58,7 @@ public partial class DrawableLandmine : DrawableHitObject
     {
         if (!byUser)
         {
-            ApplyResult(0);
+            //don't give any judgement the landime if it isn't triggered by the user
             return;
         }
 

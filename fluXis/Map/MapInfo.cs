@@ -81,6 +81,8 @@ public class MapInfo
 
             foreach (var hitObject in HitObjects)
             {
+                if (hitObject.Landmine) continue;
+
                 maxCombo++;
                 if (hitObject.LongNote)
                     maxCombo++;

@@ -146,6 +146,10 @@ public static class MapUtils
 
             if (hitObject.LongNote)
                 filters.LongNoteCount++;
+            else if (hitObject.Landmine)
+            {
+                // nothing for now, maybe a Landmine filter could be added in the future?
+            }
             else
                 filters.NoteCount++;
         }
