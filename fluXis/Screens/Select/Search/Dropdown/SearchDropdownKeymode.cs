@@ -18,6 +18,8 @@ public partial class SearchDropdownKeymode : CompositeDrawable
     [Resolved]
     private SearchFilters filters { get; set; }
 
+    private FillFlowContainer buttonFlow;
+
     private readonly int[] keymodes = { 4, 5, 6, 7, 8 };
 
     [BackgroundDependencyLoader]
@@ -36,7 +38,7 @@ public partial class SearchDropdownKeymode : CompositeDrawable
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft
             },
-            new FillFlowContainer
+            buttonFlow = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
@@ -49,18 +51,20 @@ public partial class SearchDropdownKeymode : CompositeDrawable
         };
     }
 
-    private bool onKeymodeClick(int keymode)
+    private void onKeymodeClick(int keymode)
     {
         if (!filters.Keymodes.Remove(keymode))
             filters.Keymodes.Add(keymode);
 
         filters.OnChange.Invoke();
-        return filters.Keymodes.Contains(keymode);
+        
+        foreach (var button in buttonFlow.Children.OfType<KeymodeButton>())
+            button.UpdateSelection();
     }
 
     private partial class KeymodeButton : Container
     {
-        private SearchDropdownKeymode parent { get; }
+        public SearchDropdownKeymode DropdownItem { get; init; }
         private int keymode { get; }
 
         [Resolved]
@@ -70,10 +74,10 @@ public partial class SearchDropdownKeymode : CompositeDrawable
         private HoverLayer hoverBox;
         private FluXisSpriteText text;
 
-        public KeymodeButton(int keymode, SearchDropdownKeymode parent)
+        public KeymodeButton(int keymode, SearchDropdownKeymode DropdownItem)
         {
             this.keymode = keymode;
-            this.parent = parent;
+            this.DropdownItem = DropdownItem;
         }
 
         [BackgroundDependencyLoader]
@@ -84,13 +88,14 @@ public partial class SearchDropdownKeymode : CompositeDrawable
             Masking = true;
             CornerRadius = 5;
 
+            var color = Theme.GetKeyCountColor(keymode);
+
             InternalChildren = new Drawable[]
             {
                 background = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Theme.GetKeyCountColor(keymode),
-                    Alpha = 0
+                    Colour = color,
                 },
                 hoverBox = new HoverLayer(),
                 text = new FluXisSpriteText
@@ -98,26 +103,24 @@ public partial class SearchDropdownKeymode : CompositeDrawable
                     Text = $"{keymode}K",
                     FontSize = 16,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
+                    Origin = Anchor.Centre,
+                    Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text
                 }
             };
+        }
+
+        public void UpdateSelection()
+        {
+            bool isSelected = DropdownItem.filters.Keymodes.Count == 0 || DropdownItem.filters.Keymodes.Contains(keymode);
+
+            background.FadeTo(isSelected ? 1 : 0, 200);
+            text.FadeColour(isSelected ? (Theme.IsBright(background.Colour) ? Theme.TextDark : Theme.Text) : Theme.Text, 200);
         }
 
         protected override bool OnClick(ClickEvent e)
         {
             samples.Click();
-
-            if (parent.onKeymodeClick(keymode))
-            {
-                background.FadeIn(200);
-                text.FadeColour(Theme.IsBright(background.Colour) ? Theme.TextDark : Theme.Text, 200);
-            }
-            else
-            {
-                background.FadeOut(200);
-                text.FadeColour(Theme.Text, 200);
-            }
-
+            DropdownItem.onKeymodeClick(keymode);
             return true;
         }
 
