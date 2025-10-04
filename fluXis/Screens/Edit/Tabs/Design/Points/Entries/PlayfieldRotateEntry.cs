@@ -41,7 +41,7 @@ public partial class PlayfieldRotateEntry : PointListEntry
             Text = "Rotation",
             TooltipText = "The rotation of the playfield.",
             DefaultValue = rotate.Roll,
-            Step = 0,
+            Step = 2,
             OnValueChanged = v =>
             {
                 rotate.Roll = v;
