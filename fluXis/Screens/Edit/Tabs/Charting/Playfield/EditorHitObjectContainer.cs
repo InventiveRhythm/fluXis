@@ -62,6 +62,10 @@ public partial class EditorHitObjectContainer : Container<EditorHitObject>
             case 1:
                 draw = new EditorTickNote(info);
                 break;
+
+            case 2:
+                draw = new EditorLandmine(info);
+                break;
         }
 
         if (draw is null)
