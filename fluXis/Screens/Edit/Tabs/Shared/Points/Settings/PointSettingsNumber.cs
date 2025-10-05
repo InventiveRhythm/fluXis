@@ -2,6 +2,8 @@
 using System.Globalization;
 using System.Numerics;
 using fluXis.Graphics.UserInterface.Text;
+using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Input.Events;
 using osuTK.Input;
@@ -38,6 +40,9 @@ public partial class PointSettingsNumber<T> : PointSettingsTextBox
 
     private readonly Bindable<T> bind = new();
 
+    private Sample changeSample;
+    private double lastSampleTime;
+
     public PointSettingsNumber()
     {
         base.OnTextChanged += t =>
@@ -49,6 +54,12 @@ public partial class PointSettingsNumber<T> : PointSettingsTextBox
         };
 
         base.OnCommit += _ => updateText();
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        changeSample = samples.Get("UI/slider-tick");
     }
 
     protected override bool OnDragStart(DragStartEvent e)
@@ -82,6 +93,12 @@ public partial class PointSettingsNumber<T> : PointSettingsTextBox
 
         if (change == T.Zero)
             return;
+
+        if (Math.Abs(Time.Current - lastSampleTime) > 50)
+        {
+            changeSample?.Play();
+            lastSampleTime = Time.Current;
+        }
 
         updateValue(bind.Value += change, true);
         updateText();
