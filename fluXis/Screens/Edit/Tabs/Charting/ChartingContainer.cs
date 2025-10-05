@@ -14,6 +14,7 @@ using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Screens.Edit.Tabs.Charting.Points;
 using fluXis.Screens.Edit.Tabs.Charting.Toolbox;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
@@ -68,6 +69,9 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     [Resolved]
     private NotificationManager notifications { get; set; }
 
+    [Resolved]
+    private EditorTagDependencies tagDeps { get; set; }
+
     public Bindable<string> CurrentHitSound { get; } = new($"{Hitsounding.DEFAULT_PREFIX}normal");
 
     private DependencyContainer dependencies;
@@ -97,6 +101,12 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         dependencies.Cache(this);
         dependencies.CacheAs<ITimePositionProvider>(Playfields[0]);
         dependencies.CacheAs(sidebar = new ChartingSidebar());
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        tagDeps.ChartingPoints = sidebar;
     }
 
     protected override void LoadComplete()

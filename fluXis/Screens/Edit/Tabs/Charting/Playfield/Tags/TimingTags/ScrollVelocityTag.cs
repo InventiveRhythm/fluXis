@@ -1,6 +1,5 @@
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
-using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,7 +12,7 @@ public partial class ScrollVelocityTag : EditorTag
     public override Colour4 TagColour => Theme.ScrollVelocity;
 
     [Resolved]
-    private PointsSidebar points { get; set; }
+    private EditorTagDependencies deps { get; set; }
 
     public ScrollVelocity ScrollVelocity => (ScrollVelocity)TimedObject;
 
@@ -30,7 +29,7 @@ public partial class ScrollVelocityTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        points.ShowPoint(ScrollVelocity);
+        deps.ShowPointInDesign(ScrollVelocity);
         return true;
     }
 }

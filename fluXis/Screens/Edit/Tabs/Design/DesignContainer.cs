@@ -22,6 +22,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures.Events;
 using fluXis.Mods;
 using fluXis.Replays;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Screens.Edit.Tabs.Design.Effects;
 using fluXis.Screens.Edit.Tabs.Design.Points;
 using fluXis.Screens.Edit.Tabs.Shared;
@@ -50,6 +51,9 @@ public partial class DesignContainer : EditorTabContainer
     [Resolved]
     private ScriptStorage scripts { get; set; }
 
+    [Resolved]
+    private EditorTagDependencies tagDeps { get; set; }
+
     private static Type[] ignoredForRebuild { get; } =
     {
         typeof(PulseEvent),
@@ -61,6 +65,8 @@ public partial class DesignContainer : EditorTabContainer
     private DrawSizePreservingFillContainer drawSizePreserve;
     private ShaderStackContainer shaders;
     private DesignShaderHandler handler;
+
+    private PointsSidebar sidebar;
 
     private SpriteStack<BlurableBackground> backgroundStack;
     private Box backgroundDim;
@@ -77,10 +83,13 @@ public partial class DesignContainer : EditorTabContainer
 
     private BackgroundVideo backgroundVideo;
 
+    protected override void BeforeLoad() => sidebar = new DesignSidebar();
+
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
         userScrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
+        tagDeps.DesignPoints = sidebar;
     }
 
     protected override IEnumerable<Drawable> CreateContent()
@@ -260,5 +269,5 @@ public partial class DesignContainer : EditorTabContainer
 
     protected override Container CreateContentContainer() => new AspectRatioContainer(Settings.ForceAspectRatio);
     protected override Drawable CreateLeftSide() => Empty();
-    protected override PointsSidebar CreatePointsSidebar() => new DesignSidebar();
+    protected override PointsSidebar CreatePointsSidebar() => sidebar;
 }

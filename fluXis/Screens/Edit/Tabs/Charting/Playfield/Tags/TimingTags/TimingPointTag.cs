@@ -1,6 +1,5 @@
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
-using fluXis.Screens.Edit.Tabs.Shared.Points;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
@@ -12,7 +11,7 @@ public partial class TimingPointTag : EditorTag
     public override Colour4 TagColour => Theme.TimingPoint;
 
     [Resolved]
-    private PointsSidebar points { get; set; }
+    private EditorTagDependencies deps { get; set; }
 
     public TimingPoint TimingPoint => (TimingPoint)TimedObject;
 
@@ -29,7 +28,7 @@ public partial class TimingPointTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        points.ShowPoint(TimingPoint);
+        deps.ShowPointInCharting(TimingPoint);
         return true;
     }
 }
