@@ -57,9 +57,12 @@ public partial class SearchDropdownKeymode : CompositeDrawable
             filters.Keymodes.Add(keymode);
 
         filters.OnChange.Invoke();
+
+        if (filters.Keymodes.Count == keymodes.Length)
+            filters.Keymodes.Clear();
         
         foreach (var button in buttonFlow.Children.OfType<KeymodeButton>())
-            button.UpdateSelection();
+                button.UpdateSelection();
     }
 
     private partial class KeymodeButton : Container
