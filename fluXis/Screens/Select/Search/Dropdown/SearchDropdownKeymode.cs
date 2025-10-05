@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -15,12 +16,19 @@ namespace fluXis.Screens.Select.Search.Dropdown;
 
 public partial class SearchDropdownKeymode : CompositeDrawable
 {
+    private readonly InputManager input;
+
     [Resolved]
     private SearchFilters filters { get; set; }
 
     private FillFlowContainer buttonFlow;
 
     private readonly int[] keymodes = { 4, 5, 6, 7, 8 };
+
+    public SearchDropdownKeymode(InputManager input)
+    {
+        this.input = input;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -53,16 +61,24 @@ public partial class SearchDropdownKeymode : CompositeDrawable
 
     private void onKeymodeClick(int keymode)
     {
+        bool isCtrlPressed = input.CurrentState.Keyboard.ControlPressed;
+
+        if (filters.Keymodes.Count == keymodes.Length)
+            filters.Keymodes.Clear();
+
+        if (isCtrlPressed && filters.Keymodes.Count == 0)
+        {
+            filters.Keymodes.Clear();
+            filters.Keymodes.AddRange(keymodes);
+        }
+
         if (!filters.Keymodes.Remove(keymode))
             filters.Keymodes.Add(keymode);
 
         filters.OnChange.Invoke();
-
-        if (filters.Keymodes.Count == keymodes.Length)
-            filters.Keymodes.Clear();
         
         foreach (var button in buttonFlow.Children.OfType<KeymodeButton>())
-                button.UpdateSelection();
+            button.UpdateSelection();
     }
 
     private partial class KeymodeButton : Container

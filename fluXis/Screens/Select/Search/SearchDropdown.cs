@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -12,6 +13,9 @@ namespace fluXis.Screens.Select.Search;
 
 public partial class SearchDropdown : Container
 {
+    private InputManager input;
+    private FillFlowContainer filterFlow;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -31,21 +35,28 @@ public partial class SearchDropdown : Container
                 RelativeSizeAxes = Axes.Both,
                 Colour = Theme.Background1
             },
-            new FillFlowContainer
+            filterFlow = new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
                 Spacing = new Vector2(0, 10),
                 Padding = new MarginPadding(10) { Left = 30, Top = 20 },
-                Children = new Drawable[]
-                {
-                    new SearchDropdownKeymode(),
-                    new SearchDropdownBPM(),
-                    new SearchDropdownStatus()
-                }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        input = GetContainingInputManager();
+
+        filterFlow.AddRange(new Drawable[]
+        {
+            new SearchDropdownKeymode(input),
+            new SearchDropdownBPM(),
+            new SearchDropdownStatus()
+        });
     }
 
     public override void Show() => this.FadeIn(200).MoveToY(-10, 400, Easing.OutQuint);
