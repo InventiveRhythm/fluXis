@@ -7,15 +7,28 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osuTK;
+using System.Linq;
 
 namespace fluXis.Screens.Select.Search.Dropdown;
 
 public partial class SearchDropdownStatus : Container
 {
+    private readonly InputManager input;
+
     [Resolved]
     private SearchFilters filters { get; set; }
+
+    private FillFlowContainer chipFlow;
+
+    private readonly int[] statuses = { -2, 0, 1, 2, 3 };
+
+    public SearchDropdownStatus(InputManager input)
+    {
+        this.input = input;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -33,7 +46,7 @@ public partial class SearchDropdownStatus : Container
                 Origin = Anchor.CentreLeft,
                 X = 5
             },
-            new FillFlowContainer
+            chipFlow = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
@@ -53,15 +66,26 @@ public partial class SearchDropdownStatus : Container
         };
     }
 
-    private bool onStatusClick(StatusChip chip)
+    private void onStatusClick(int status)
     {
-        if (filters.Status.Contains(chip.Status))
-            filters.Status.Remove(chip.Status);
-        else
-            filters.Status.Add(chip.Status);
+        bool isCtrlPressed = input.CurrentState.Keyboard.ControlPressed;
+
+        if (filters.Status.Count == statuses.Length)
+            filters.Status.Clear();
+
+        if (isCtrlPressed && filters.Status.Count == 0)
+        {
+            filters.Status.Clear();
+            filters.Status.AddRange(statuses);
+        }
+
+        if (!filters.Status.Remove(status))
+            filters.Status.Add(status);
 
         filters.OnChange.Invoke();
-        return filters.Status.Contains(chip.Status);
+        
+        foreach (var chip in chipFlow.Children.OfType<StatusChip>())
+            chip.UpdateSelection();
     }
 
     private partial class StatusChip : Container
@@ -93,7 +117,6 @@ public partial class SearchDropdownStatus : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = color,
-                    Alpha = 0
                 },
                 hoverBox = new HoverLayer(),
                 text = new FluXisSpriteText
@@ -101,26 +124,24 @@ public partial class SearchDropdownStatus : Container
                     Text = Text.ToUpper(),
                     FontSize = 16,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
+                    Origin = Anchor.Centre,
+                    Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text
                 }
             };
+        }
+
+        public void UpdateSelection()
+        {
+            bool isSelected = DropdownItem.filters.Status.Count == 0 || DropdownItem.filters.Status.Contains(Status);
+
+            colorBox.FadeTo(isSelected ? 1 : 0, 200);
+            text.FadeColour(isSelected ? (Theme.IsBright(colorBox.Colour) ? Theme.TextDark : Theme.Text) : Theme.Text, 200);
         }
 
         protected override bool OnClick(ClickEvent e)
         {
             samples.Click();
-
-            if (DropdownItem.onStatusClick(this))
-            {
-                colorBox.FadeIn(200);
-                text.FadeColour(Theme.IsBright(colorBox.Colour) ? Theme.TextDark : Theme.Text, 200);
-            }
-            else
-            {
-                colorBox.FadeOut(200);
-                text.FadeColour(Theme.Text, 200);
-            }
-
+            DropdownItem.onStatusClick(Status);
             return true;
         }
 

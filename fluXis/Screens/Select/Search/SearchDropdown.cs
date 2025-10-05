@@ -55,7 +55,7 @@ public partial class SearchDropdown : Container
         {
             new SearchDropdownKeymode(input),
             new SearchDropdownBPM(),
-            new SearchDropdownStatus()
+            new SearchDropdownStatus(input)
         });
     }
 
