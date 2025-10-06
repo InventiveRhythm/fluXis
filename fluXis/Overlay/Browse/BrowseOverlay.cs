@@ -20,6 +20,7 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.User.Header;
+using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -63,6 +64,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private GlobalClock clock { get; set; }
 
     private InputManager input;
+    private IdleTracker idleTracker;
 
     private FillFlowContainer filterFlow;
     private FullInputBlockingContainer searchContainer;
@@ -207,7 +209,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                             AutoSizeAxes = Axes.Y,
                                             Padding = new MarginPadding { Horizontal = 16 },
                                             Spacing = new Vector2(12),
-                                        }
+                                        },
+                                        idleTracker = new IdleTracker(400, () => loadMapsets(reload: true)),
                                     }
                                 }
                             }
@@ -259,8 +262,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
             ) { DefaultFilter = {} }
         });
 
-        filterStatus.BindCollectionChanged((_, _) => loadMapsets(reload: true), true);
-        filterKeymode.BindCollectionChanged((_, _) => loadMapsets(reload: true), true);
+        filterStatus.BindCollectionChanged((_, _) => idleTracker.Reset());
+        filterKeymode.BindCollectionChanged((_, _) => idleTracker.Reset());
 
         scrollTopButton.Enabled.BindValueChanged(v =>
         {
