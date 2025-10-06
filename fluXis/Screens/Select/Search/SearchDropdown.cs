@@ -53,9 +53,9 @@ public partial class SearchDropdown : Container
 
         filterFlow.AddRange(new Drawable[]
         {
-            new SearchDropdownKeymode(input),
+            new SearchDropdownKeymode(input) { DefaultFilter = {} },
             new SearchDropdownBPM(),
-            new SearchDropdownStatus(input)
+            new SearchDropdownStatus(input) { DefaultFilter = {} },
         });
     }
 

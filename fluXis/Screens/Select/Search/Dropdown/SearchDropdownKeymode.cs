@@ -1,90 +1,33 @@
-using System.Linq;
+using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
-using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osuTK;
 
 namespace fluXis.Screens.Select.Search.Dropdown;
 
-public partial class SearchDropdownKeymode : CompositeDrawable
+public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
 {
-    private readonly InputManager input;
+    protected override int[] Values => new[] { 4, 5, 6, 7, 8 };
+    protected override string Label => "Keymode";
+     protected override float FontSize { get; set; } = 24;
+    protected override List<int> FilterList => Filters.Keymodes;
+    public override int[] DefaultFilter { get; set; } = System.Array.Empty<int>();
 
-    [Resolved]
-    private SearchFilters filters { get; set; }
+    public SearchDropdownKeymode(InputManager input) : base(input) { }
 
-    private FillFlowContainer buttonFlow;
+    protected override Drawable CreateButton(int keymode) => new KeymodeButton(keymode, this);
 
-    private readonly int[] keymodes = { 4, 5, 6, 7, 8 };
-
-    public SearchDropdownKeymode(InputManager input)
+    private partial class KeymodeButton : Container, ISelectableButton<int>
     {
-        this.input = input;
-    }
-
-    [BackgroundDependencyLoader]
-    private void load()
-    {
-        RelativeSizeAxes = Axes.X;
-        Height = 30;
-        Padding = new MarginPadding { Horizontal = 5 };
-
-        InternalChildren = new Drawable[]
-        {
-            new FluXisSpriteText
-            {
-                Text = "Keymode",
-                FontSize = 24,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft
-            },
-            buttonFlow = new FillFlowContainer
-            {
-                AutoSizeAxes = Axes.X,
-                RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.CentreRight,
-                Origin = Anchor.CentreRight,
-                Direction = FillDirection.Horizontal,
-                Spacing = new Vector2(5),
-                ChildrenEnumerable = keymodes.Select(i => new KeymodeButton(i, this))
-            }
-        };
-    }
-
-    private void onKeymodeClick(int keymode)
-    {
-        bool isCtrlPressed = input.CurrentState.Keyboard.ControlPressed;
-
-        if (filters.Keymodes.Count == keymodes.Length)
-            filters.Keymodes.Clear();
-
-        if (isCtrlPressed && filters.Keymodes.Count == 0)
-        {
-            filters.Keymodes.Clear();
-            filters.Keymodes.AddRange(keymodes);
-        }
-
-        if (!filters.Keymodes.Remove(keymode))
-            filters.Keymodes.Add(keymode);
-
-        filters.OnChange.Invoke();
-        
-        foreach (var button in buttonFlow.Children.OfType<KeymodeButton>())
-            button.UpdateSelection();
-    }
-
-    private partial class KeymodeButton : Container
-    {
-        public SearchDropdownKeymode DropdownItem { get; init; }
-        private int keymode { get; }
+        private readonly SearchDropdownKeymode dropdownItem;
+        private readonly int keymode;
 
         [Resolved]
         private UISamples samples { get; set; }
@@ -93,10 +36,10 @@ public partial class SearchDropdownKeymode : CompositeDrawable
         private HoverLayer hoverBox;
         private FluXisSpriteText text;
 
-        public KeymodeButton(int keymode, SearchDropdownKeymode DropdownItem)
+        public KeymodeButton(int keymode, SearchDropdownKeymode dropdownItem)
         {
             this.keymode = keymode;
-            this.DropdownItem = DropdownItem;
+            this.dropdownItem = dropdownItem;
         }
 
         [BackgroundDependencyLoader]
@@ -130,7 +73,7 @@ public partial class SearchDropdownKeymode : CompositeDrawable
 
         public void UpdateSelection()
         {
-            bool isSelected = DropdownItem.filters.Keymodes.Count == 0 || DropdownItem.filters.Keymodes.Contains(keymode);
+            bool isSelected = (dropdownItem.Filters.Keymodes.Count == 0 && dropdownItem.DefaultFilter.Length == 0) || dropdownItem.Filters.Keymodes.Contains(keymode);
 
             background.FadeTo(isSelected ? 1 : 0, 200);
             text.FadeColour(isSelected ? (Theme.IsBright(background.Colour) ? Theme.TextDark : Theme.Text) : Theme.Text, 200);
@@ -139,7 +82,7 @@ public partial class SearchDropdownKeymode : CompositeDrawable
         protected override bool OnClick(ClickEvent e)
         {
             samples.Click();
-            DropdownItem.onKeymodeClick(keymode);
+            dropdownItem.OnValueClick(keymode);
             return true;
         }
 
