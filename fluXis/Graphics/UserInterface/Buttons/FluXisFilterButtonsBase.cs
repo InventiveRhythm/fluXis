@@ -56,6 +56,14 @@ public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable whe
                 ChildrenEnumerable = Values.Select(CreateButton)
             }
         };
+
+        if (DefaultFilter.Length != 0)
+        {
+            FilterList.Clear();
+            FilterList.AddRange(DefaultFilter);
+            Filters.OnChange?.Invoke();
+            UpdateAllButtons();
+        }
     }
 
     protected abstract Drawable CreateButton(T value);
