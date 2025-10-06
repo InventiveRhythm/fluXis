@@ -46,7 +46,7 @@ public partial class BrowseFilter<T> : FluXisFilterButtonsBase<T> where T : stru
 
         ButtonFlow.Anchor = Anchor.CentreLeft;
         ButtonFlow.Origin = Anchor.CentreLeft;
-        ButtonFlow.Margin = new MarginPadding { Left = Text.DrawWidth + 5 };
+        ButtonFlow.Margin = new MarginPadding { Left = Text.DrawWidth + 10 };
 
         OnFilterChanged = updateBindableList;
         UpdateAllButtons();
