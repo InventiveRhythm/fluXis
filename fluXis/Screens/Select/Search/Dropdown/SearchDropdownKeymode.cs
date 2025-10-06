@@ -3,6 +3,7 @@ using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -14,13 +15,25 @@ namespace fluXis.Screens.Select.Search.Dropdown;
 
 public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
 {
+    [Resolved]
+    private SearchFilters filters  { get; set; }
+
     protected override int[] Values => new[] { 4, 5, 6, 7, 8 };
     protected override string Label => "Keymode";
-     protected override float FontSize { get; set; } = 24;
-    protected override List<int> FilterList => Filters.Keymodes;
+    protected override float FontSize { get; set; } = 24;
+    protected override List<int> FilterList => filters.Keymodes;
     public override int[] DefaultFilter { get; set; } = System.Array.Empty<int>();
 
-    public SearchDropdownKeymode(InputManager input) : base(input) { }
+    public SearchDropdownKeymode(InputManager input) 
+        : base(input)
+    {
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        OnFilterChanged = filters.OnChange.Invoke;
+    }
 
     protected override Drawable CreateButton(int keymode) => new KeymodeButton(keymode, this);
 
@@ -34,6 +47,7 @@ public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
 
         private Box background;
         private HoverLayer hoverBox;
+        private FlashLayer flash;
         private FluXisSpriteText text;
 
         public KeymodeButton(int keymode, SearchDropdownKeymode dropdownItem)
@@ -60,6 +74,7 @@ public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
                     Colour = color,
                 },
                 hoverBox = new HoverLayer(),
+                flash = new FlashLayer(),
                 text = new FluXisSpriteText
                 {
                     Text = $"{keymode}K",
@@ -73,7 +88,7 @@ public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
 
         public void UpdateSelection()
         {
-            bool isSelected = (dropdownItem.Filters.Keymodes.Count == 0 && dropdownItem.DefaultFilter.Length == 0) || dropdownItem.Filters.Keymodes.Contains(keymode);
+            bool isSelected = (dropdownItem.FilterList.Count == 0 && dropdownItem.DefaultFilter.Length == 0) || dropdownItem.FilterList.Contains(keymode);
 
             background.FadeTo(isSelected ? 1 : 0, 200);
             text.FadeColour(isSelected ? (Theme.IsBright(background.Colour) ? Theme.TextDark : Theme.Text) : Theme.Text, 200);
@@ -94,5 +109,7 @@ public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
         }
 
         protected override void OnHoverLost(HoverLostEvent e) => hoverBox.Hide();
+
+        public void Flash() => flash.Show();
     }
 }

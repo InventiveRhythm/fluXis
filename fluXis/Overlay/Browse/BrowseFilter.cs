@@ -1,42 +1,73 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Screens.Select.Search.Dropdown;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
-using osuTK;
 
 namespace fluXis.Overlay.Browse;
 
-public partial class BrowseFilter<T> : FillFlowContainer
+public partial class BrowseFilter<T> : FluXisFilterButtonsBase<T> where T : struct
 {
-    public BrowseFilter(LocalisableString title, BindableList<T> selected, IEnumerable<Option> options)
+    private readonly BindableList<T> selected;
+    private readonly Option[] optionArray;
+
+    protected override T[] Values { get; }
+    protected override string Label { get; }
+    protected override float FontSize { get; set; } = 18;
+    private List<T> filterList;
+    protected override List<T> FilterList => filterList;
+    public override T[] DefaultFilter { get; set; } = System.Array.Empty<T>();
+
+    public BrowseFilter(LocalisableString label, BindableList<T> selected, IEnumerable<Option> options, InputManager input)
+        : base(input)
     {
-        RelativeSizeAxes = Axes.X;
+        this.selected = selected;
+        filterList = selected.ToList();
+        Label = label.ToString();
+        optionArray = options.ToArray();
+        Values = optionArray.Select(o => o.Value).ToArray();
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
         Height = 20;
-        Direction = FillDirection.Horizontal;
-        Spacing = new Vector2(4);
+        Padding = new MarginPadding { Horizontal = 0 };
 
-        Children = new Drawable[]
-        {
-            new TruncatingText
-            {
-                Text = title,
-                Width = 80,
-                WebFontSize = 12,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft
-            }
-        };
+        ButtonFlow.Anchor = Anchor.CentreLeft;
+        ButtonFlow.Origin = Anchor.CentreLeft;
+        ButtonFlow.Margin = new MarginPadding { Left = Text.DrawWidth + 5 };
 
-        options.ForEach(x => Add(new Button(x, selected)));
+        OnFilterChanged = updateBindableList;
+        UpdateAllButtons();
+    }
+
+    private void updateBindableList()
+    {
+        selected.Clear();
+        selected.AddRange(filterList);
+    }
+
+    protected override Drawable CreateButton(T value)
+    {
+        var option = optionArray.First(o => EqualityComparer<T>.Default.Equals(o.Value, value));
+        return new Button(option, selected, this);
+    }
+
+    protected new void OnValueClick(T value)
+    {
+        base.OnValueClick(value);
+        OnFilterChanged.Invoke();
     }
 
     public class Option
@@ -53,25 +84,25 @@ public partial class BrowseFilter<T> : FillFlowContainer
         }
     }
 
-    private partial class Button : CompositeDrawable
+    private partial class Button : CompositeDrawable, ISelectableButton<T>
     {
         [Resolved]
         private UISamples samples { get; set; }
 
         private readonly Option option;
         private readonly BindableList<T> selected;
+        private readonly BrowseFilter<T> parent;
 
         private Box background;
         private HoverLayer hover;
         private FlashLayer flash;
         private FluXisSpriteText text;
 
-        private bool enabled;
-
-        public Button(Option option, BindableList<T> selected)
+        public Button(Option option, BindableList<T> selected, BrowseFilter<T> parent)
         {
             this.option = option;
             this.selected = selected;
+            this.parent = parent;
         }
 
         [BackgroundDependencyLoader]
@@ -106,18 +137,13 @@ public partial class BrowseFilter<T> : FillFlowContainer
             };
         }
 
-        protected override void LoadComplete()
+        public void UpdateSelection()
         {
-            base.LoadComplete();
+            bool enabled = (parent.FilterList.Count == 0 && parent.DefaultFilter.Length == 0) || parent.FilterList.Contains(option.Value);
 
-            selected.BindCollectionChanged((_, _) =>
-            {
-                enabled = selected.Contains(option.Value);
-
-                background.Alpha = enabled ? 1f : 0f;
-                text.Alpha = enabled ? 1f : .6f;
-                text.Colour = enabled ? Theme.TextDark : Theme.Text;
-            }, true);
+            background.Alpha = enabled ? 1f : 0f;
+            text.Alpha = enabled ? 1f : .6f;
+            text.Colour = enabled ? Theme.TextDark : Theme.Text;
         }
 
         protected override bool OnHover(HoverEvent e)
@@ -134,15 +160,13 @@ public partial class BrowseFilter<T> : FillFlowContainer
 
         protected override bool OnClick(ClickEvent e)
         {
-            enabled = !enabled;
             samples.Click();
             flash.Show();
 
-            var v = option.Value;
-            if (!selected.Remove(v))
-                selected.Add(v);
-
+            parent.OnValueClick(option.Value);
             return true;
         }
+
+        public void Flash() => flash.Show();
     }
 }

@@ -1,23 +1,27 @@
+using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using System.Collections.Generic;
 
 namespace fluXis.Screens.Select.Search.Dropdown;
 
 public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
 {
+    [Resolved]
+    private SearchFilters filters { get; set; }
+
     protected override int[] Values => new[] { -2, 0, 1, 2, 3 };
     protected override string Label => "Status";
-     protected override float FontSize { get; set; } = 24;
-    protected override List<int> FilterList => Filters.Status;
+    protected override float FontSize { get; set; } = 24;
+    protected override List<int> FilterList => filters.Status;
     public override int[] DefaultFilter { get; set; } = System.Array.Empty<int>();
 
     private static readonly Dictionary<int, string> statuses = new()
@@ -29,7 +33,16 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
         { 3, "Pure" }
     };
 
-    public SearchDropdownStatus(InputManager input) : base(input) { }
+    public SearchDropdownStatus(InputManager input) 
+        : base(input)
+    {
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        OnFilterChanged = filters.OnChange.Invoke;
+    }
 
     protected override Drawable CreateButton(int status) => new StatusChip(status, statuses[status], this);
 
@@ -43,6 +56,7 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
 
         private Box colorBox;
         private HoverLayer hoverBox;
+        private FlashLayer flash;
         private FluXisSpriteText text;
 
         public StatusChip(int status, string text, SearchDropdownStatus dropdownItem)
@@ -57,6 +71,7 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
                 {
                     colorBox = new Box { RelativeSizeAxes = Axes.Both },
                     hoverBox = new HoverLayer(),
+                    flash = new FlashLayer(),
                     this.text = new FluXisSpriteText
                     {
                         Text = text.ToUpper(),
@@ -83,7 +98,7 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
 
         public void UpdateSelection()
         {
-            bool isSelected = (dropdownItem.Filters.Status.Count == 0 && dropdownItem.DefaultFilter.Length == 0) || dropdownItem.Filters.Status.Contains(status);
+            bool isSelected = (dropdownItem.FilterList.Count == 0 && dropdownItem.DefaultFilter.Length == 0) || dropdownItem.FilterList.Contains(status);
 
             colorBox.FadeTo(isSelected ? 1 : 0, 200);
             text.FadeColour(isSelected ? (Theme.IsBright(colorBox.Colour) ? Theme.TextDark : Theme.Text) : Theme.Text, 200);
@@ -104,5 +119,7 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
         }
 
         protected override void OnHoverLost(HoverLostEvent e) => hoverBox.Hide();
+
+        public void Flash() => flash.Show();
     }
 }

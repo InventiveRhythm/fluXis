@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
-using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Select.Search.Dropdown;
@@ -13,20 +13,21 @@ namespace fluXis.Screens.Select.Search.Dropdown;
 public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable where T : struct
 {
     private readonly InputManager input;
+    public System.Action OnFilterChanged;
 
-    [Resolved]
-    protected SearchFilters Filters { get; private set; }
+    protected FillFlowContainer ButtonFlow;
+    protected FluXisSpriteText Text;
 
-    private FillFlowContainer buttonFlow;
     protected abstract T[] Values { get; }
     protected abstract string Label { get; }
     protected abstract float FontSize { get; set; }
     protected abstract List<T> FilterList { get; }
     public abstract T[] DefaultFilter { get; set; }
 
-    protected FluXisFilterButtonsBase(InputManager input)
+    protected FluXisFilterButtonsBase(InputManager input, System.Action onFilterChanged = null)
     {
         this.input = input;
+        OnFilterChanged = onFilterChanged;
     }
 
     [BackgroundDependencyLoader]
@@ -38,14 +39,14 @@ public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable whe
 
         InternalChildren = new Drawable[]
         {
-            new FluXisSpriteText
+            Text = new FluXisSpriteText
             {
                 Text = Label,
                 FontSize = FontSize,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft
             },
-            buttonFlow = new FillFlowContainer
+            ButtonFlow = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
@@ -58,12 +59,7 @@ public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable whe
         };
 
         if (DefaultFilter.Length != 0)
-        {
-            FilterList.Clear();
-            FilterList.AddRange(DefaultFilter);
-            Filters.OnChange?.Invoke();
-            UpdateAllButtons();
-        }
+            ResetState();
     }
 
     protected abstract Drawable CreateButton(T value);
@@ -90,20 +86,40 @@ public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable whe
         if (FilterList.Count == 0)
             FilterList.AddRange(DefaultFilter);
         
-
-        Filters.OnChange.Invoke();
+        OnFilterChanged?.Invoke();
         
+        UpdateAllButtons();
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button == osuTK.Input.MouseButton.Right)
+        {
+            ResetState();
+            foreach (var button in ButtonFlow.Children.OfType<ISelectableButton<T>>())
+                button.Flash(); 
+        }
+
+        return base.OnMouseDown(e);
+    }  
+
+    protected void ResetState()
+    {
+        FilterList.Clear();
+        FilterList.AddRange(DefaultFilter);
+        OnFilterChanged?.Invoke();
         UpdateAllButtons();
     }
 
     protected void UpdateAllButtons()
     {
-        foreach (var button in buttonFlow.Children.OfType<ISelectableButton<T>>())
+        foreach (var button in ButtonFlow.Children.OfType<ISelectableButton<T>>())
             button.UpdateSelection();
     }
 
     protected interface ISelectableButton<TValue>
     {
         void UpdateSelection();
+        void Flash() {}
     }
 }
