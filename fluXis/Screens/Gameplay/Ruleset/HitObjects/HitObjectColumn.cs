@@ -125,9 +125,14 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
         while (ruleset.AllowReverting && PastHitObjects.Count > 0)
         {
-            var result = PastHitObjects.Peek().Result;
+            HitObject pastHitObject = PastHitObjects.Peek();
+            var result = pastHitObject.Result;
 
-            if (result is null || Clock.CurrentTime >= result.Value.Time)
+            //landmines might not have a result, but we still need to revert them in case we seek back in a replay or in the editor.
+            //use the object's time as a fallback if it doesn't have a result.
+            double comparisonTime = result?.Time ?? pastHitObject.Time;
+
+            if (Clock.CurrentTime >= comparisonTime)
                 break;
 
             revertHitObject(PastHitObjects.Pop());
@@ -239,7 +244,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         RemoveInternal(hitObject, true);
     }
 
-    private void hit(DrawableHitObject hitObject, double difference)
+    private void hit(DrawableHitObject hitObject, double difference, double? displayDifference = null)
     {
         if (Playfield.IsSubPlayfield)
             return;
@@ -253,7 +258,8 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         if (player.HealthProcessor.Failed)
             return;
 
-        var result = new HitResult(Time.Current, difference, judgement, isHoldEnd);
+        displayDifference ??= difference;
+        var result = new HitResult(Time.Current, difference, displayDifference.Value, judgement, isHoldEnd);
         judgementProcessor.AddResult(result);
 
         if (isHoldEnd)
