@@ -111,11 +111,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private EditorLoader loader { get; }
 
+    private readonly FileWatcher scriptWatcher;
+
     private Container<EditorTab> tabs;
     private int currentTab;
 
     public Bindable<Waveform> Waveform { get; private set; }
     private EditorMap editorMap { get; }
+
+    private StoryboardTab storyboardTab;
 
     private EditorClock clock;
     private EditorSettings settings;
@@ -169,6 +173,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         this.loader = loader;
         editorMap = new EditorMap(map, realmMap, LoadComponent);
+        scriptWatcher = new(realmMap.MapSet, "*.lua");
     }
 
     [BackgroundDependencyLoader]
@@ -238,7 +243,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         };
 
         if (experiments.Get<bool>(ExperimentConfig.StoryboardTab))
-            tabList.Add(new StoryboardTab());
+            tabList.Add(storyboardTab = new StoryboardTab());
 
         tabList.Add(verifyTab = new VerifyTab());
 
@@ -485,6 +490,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         editorMap.AudioChanged += () => clock.ChangeSource(loadMapTrack());
         editorMap.BackgroundChanged += () => backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
+
+        scriptWatcher.Changed += (_, _) => {
+            Schedule(storyboardTab.QueueRebuild);
+        };
+
+        scriptWatcher.Enable();
     }
 
     protected override void Update()
@@ -502,6 +513,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         clock.Stop();
         BindableBackgroundDim.UnbindAll();
         BindableBackgroundBlur.UnbindAll();
+        scriptWatcher.Dispose();
     }
 
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
@@ -563,7 +575,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         switch (e.Action)
         {
             case EditorKeybinding.Save:
+                scriptWatcher.Disable();
                 save();
+                scriptWatcher.Enable();
                 return true;
 
             case EditorKeybinding.OpenFolder:
