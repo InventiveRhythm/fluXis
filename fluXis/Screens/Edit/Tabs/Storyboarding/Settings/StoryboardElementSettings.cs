@@ -402,4 +402,10 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 break;
         }
     }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        map.ScriptChanged -= onScriptChanged;
+        base.Dispose(isDisposing);
+    }
 }
