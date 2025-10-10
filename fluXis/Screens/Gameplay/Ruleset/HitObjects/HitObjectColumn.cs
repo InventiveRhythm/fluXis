@@ -244,7 +244,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         RemoveInternal(hitObject, true);
     }
 
-    private void hit(DrawableHitObject hitObject, double difference, double? displayDifference = null)
+    private void hit(DrawableHitObject hitObject, double difference)
     {
         if (Playfield.IsSubPlayfield)
             return;
@@ -258,8 +258,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         if (player.HealthProcessor.Failed)
             return;
 
-        displayDifference ??= difference;
-        var result = new HitResult(Time.Current, difference, displayDifference.Value, judgement, isHoldEnd);
+        var result = new HitResult(Time.Current, difference, judgement, isHoldEnd);
         judgementProcessor.AddResult(result);
 
         if (isHoldEnd)
