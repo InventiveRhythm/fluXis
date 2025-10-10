@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using fluXis.Database;
 using fluXis.Database.Maps;
-using osu.Framework.Bindables;
 
 namespace fluXis.Utils;
 

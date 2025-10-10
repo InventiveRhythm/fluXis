@@ -109,9 +109,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private ITrackStore trackStore { get; set; }
 
-    private EditorLoader loader { get; }
+    private ScriptStorage scriptStorage { get; set; }
 
-    private readonly FileWatcher scriptWatcher;
+    private EditorLoader loader { get; }
 
     private Container<EditorTab> tabs;
     private int currentTab;
@@ -173,7 +173,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         this.loader = loader;
         editorMap = new EditorMap(map, realmMap, LoadComponent);
-        scriptWatcher = new(realmMap.MapSet, "*.lua");
     }
 
     [BackgroundDependencyLoader]
@@ -232,7 +231,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (!Directory.Exists(MapSetPath))
             Directory.CreateDirectory(MapSetPath);
 
-        dependencies.CacheAs(new ScriptStorage(MapSetPath));
+        dependencies.CacheAs(scriptStorage = new ScriptStorage(MapSetPath));
 
         var tabList = new List<EditorTab>
         {
@@ -491,11 +490,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         editorMap.AudioChanged += () => clock.ChangeSource(loadMapTrack());
         editorMap.BackgroundChanged += () => backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
 
-        scriptWatcher.Changed += (_, _) => {
+        editorMap.ScriptChanged += (_) => {
+            scriptStorage.Reload();
             Schedule(storyboardTab.QueueRebuild);
         };
 
-        scriptWatcher.Enable();
+        editorMap.ScriptWatcher.Enable();
     }
 
     protected override void Update()
@@ -513,7 +513,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         clock.Stop();
         BindableBackgroundDim.UnbindAll();
         BindableBackgroundBlur.UnbindAll();
-        scriptWatcher.Dispose();
+        editorMap.ScriptWatcher.Dispose();
     }
 
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
@@ -575,9 +575,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         switch (e.Action)
         {
             case EditorKeybinding.Save:
-                scriptWatcher.Disable();
+                editorMap.ScriptWatcher.Disable();
                 save();
-                scriptWatcher.Enable();
+                editorMap.ScriptWatcher.Enable();
                 return true;
 
             case EditorKeybinding.OpenFolder:
