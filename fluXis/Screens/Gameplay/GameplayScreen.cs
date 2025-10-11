@@ -281,6 +281,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                         new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
                                     }
                                 },
+                                new ComboBurst(RulesetContainer),
                                 clockContainer,
                                 new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Foreground)
                             }
