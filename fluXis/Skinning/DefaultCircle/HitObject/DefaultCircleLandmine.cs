@@ -1,29 +1,26 @@
+using fluXis.Graphics.Sprites.Outline;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace fluXis.Skinning.DefaultCircle.HitObject;
 
 public partial class DefaultCircleLandmine : CompositeDrawable
 {
-    private CircularProgress progress;
-
     public DefaultCircleLandmine()
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
         Colour = Colour4.FromHex("#FF5252");
-
-        InternalChild = progress = new CircularProgress
+        InternalChild = new OutlinedCircle
         {
             RelativeSizeAxes = Axes.Both,
             Size = new Vector2(DefaultCircleSkin.SCALE),
-            RoundedCaps = true,
-            Progress = 1,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
+            BorderColour = Colour4.White,
+            BorderThickness = 17f
         };
     }
 
@@ -31,8 +28,5 @@ public partial class DefaultCircleLandmine : CompositeDrawable
     {
         base.Update();
         Height = DrawWidth;
-
-        var factor = 8 / (progress.DrawWidth / 4);
-        progress.InnerRadius = factor;
     }
 }

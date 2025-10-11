@@ -1,6 +1,6 @@
+using fluXis.Graphics.Sprites.Outline;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Skinning.Default.HitObject;
 
@@ -13,42 +13,12 @@ public partial class DefaultLandmine : CompositeDrawable
         Origin = Anchor.BottomCentre;
         Colour = Colour4.FromHex("#FF5252");
         Height = 42;
-        CornerRadius = 10;
-        Masking = true;
-        InternalChildren = new Drawable[]
+        InternalChild = new OutlinedSquare
         {
-            new Box()
-            {
-                RelativeSizeAxes = Axes.X,
-                Width = 1,
-                Height = 10,
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-            },
-            new Box()
-            {
-                RelativeSizeAxes = Axes.X,
-                Width = 1,
-                Height = 10,
-                Anchor = Anchor.BottomLeft,
-                Origin = Anchor.BottomLeft,
-            },
-            new Box()
-            {
-                RelativeSizeAxes = Axes.Y,
-                Width = 10,
-                Height = 1,
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-            },
-            new Box()
-            {
-                RelativeSizeAxes = Axes.Y,
-                Width = 10,
-                Height = 1,
-                Anchor = Anchor.TopRight,
-                Origin = Anchor.TopRight,
-            },
+            RelativeSizeAxes = Axes.Both,
+            BorderThickness = 10,
+            BorderColour = Colour4.White,
+            CornerRadius = 10
         };
     }
 
