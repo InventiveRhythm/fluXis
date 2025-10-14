@@ -46,7 +46,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
     private UISamples samples { get; set; }
 
     private Container container;
-    private DrawableAvatar avatar;
+    private Container avatar;
     private Container loadingContainer;
     private HoverLayer hover;
     private FlashLayer flash;
@@ -88,17 +88,11 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
                                 Size = new Vector2(40),
                                 Children = new Drawable[]
                                 {
-                                    new LoadWrapper<DrawableAvatar>
+                                    avatar = new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         CornerRadius = 5,
                                         Masking = true,
-                                        LoadContent = () => avatar = new DrawableAvatar(user)
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre
-                                        }
                                     },
                                     loadingContainer = new Container
                                     {
@@ -144,6 +138,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
     {
         base.LoadComplete();
 
+        api.User.BindValueChanged(updateUser, true);
         api.Status.BindValueChanged(updateStatus, true);
     }
 
@@ -165,10 +160,17 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
         }
     });
 
-    private void updateUser(ValueChangedEvent<APIUser> e)
+    private void updateUser(ValueChangedEvent<APIUser> e) => Scheduler.ScheduleIfNeeded(() =>
     {
-        avatar.UpdateUser(e.NewValue);
-    }
+        var av = new DrawableAvatar(e.NewValue)
+        {
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
+        };
+
+        LoadComponentAsync(av, x => avatar.Child = x);
+    });
 
     protected override bool OnClick(ClickEvent e)
     {
