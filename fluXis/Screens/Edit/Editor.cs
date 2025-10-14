@@ -523,7 +523,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             var tab = tabs.Children[i];
 
             if (i == CurrentTab.Value)
-                tab.Show();
+            {
+                tab.AlwaysPresent = false; // some tabs are needed to be AlwaysPresent at start.
+                tab.Show(); 
+            }
             else
                 tab.Hide();
         }
