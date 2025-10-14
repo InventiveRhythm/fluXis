@@ -82,6 +82,28 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override bool ApplyValuesAfterLoad => true;
     public override bool AllowExit => false;
 
+    public override string WindowTitle
+    {
+        get
+        {
+            var title = "";
+
+            if (Game.UsingOriginalMetadata || string.IsNullOrWhiteSpace(Map.Metadata.ArtistRomanized))
+                title += Map.Metadata.Artist;
+            else
+                title += Map.Metadata.ArtistRomanized;
+
+            title += " - ";
+
+            if (Game.UsingOriginalMetadata || string.IsNullOrWhiteSpace(Map.Metadata.TitleRomanized))
+                title += Map.Metadata.Title;
+            else
+                title += Map.Metadata.TitleRomanized;
+
+            return title + $" [{Map.Metadata.Difficulty}]";
+        }
+    }
+
     protected virtual double GameplayStartTime => 0;
     protected virtual bool AllowRestart => true;
     protected virtual bool AllowPausing => true;
