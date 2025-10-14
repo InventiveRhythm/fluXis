@@ -129,4 +129,5 @@ public class TestAPIClient : IAPIClient
     }
 
     public void Disconnect() { }
+    public void DisableOnline() { }
 }

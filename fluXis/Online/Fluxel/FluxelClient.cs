@@ -37,8 +37,8 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
     private Bindable<bool> logResponses = null!;
     public bool LogResponses => logResponses.Value;
+    public bool CanUseOnline { get; protected set; }
 
-    public bool CanUseOnline { get; private set; }
     public EndpointConfig Endpoint { get; private set; } = new(string.Empty);
     private string configUrl = string.Empty;
 
@@ -279,6 +279,11 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
         connection = null;
         Status.Value = ConnectionStatus.Closed;
+    }
+
+    public void DisableOnline()
+    {
+        CanUseOnline = false;
     }
 
     public TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path)
