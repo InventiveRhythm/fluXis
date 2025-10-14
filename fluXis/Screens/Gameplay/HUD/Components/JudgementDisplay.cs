@@ -18,7 +18,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Screens.Gameplay.HUD.Components;
 
-public partial class JudgementDisplay : GameplayHUDComponent
+public partial class JudgementDisplay : GameplayHUDComponent, IDoNotHide
 {
     [Resolved]
     private LightController lightController { get; set; }

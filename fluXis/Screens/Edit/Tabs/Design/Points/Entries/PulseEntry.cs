@@ -33,40 +33,37 @@ public partial class PulseEntry : PointListEntry
         Colour = Color
     }.Yield().ToArray<Drawable>();
 
-    protected override IEnumerable<Drawable> CreateSettings()
+    protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        return base.CreateSettings().Concat(new Drawable[]
+        new PointSettingsLength<PulseEvent>(Map, pulse, BeatLength),
+        new PointSettingsSlider<float>
         {
-            new PointSettingsLength<PulseEvent>(Map, pulse, BeatLength),
-            new PointSettingsSlider<float>
+            Text = "Width",
+            TooltipText = "How many pixels in width the pulse should have.",
+            CurrentValue = pulse.Width,
+            Min = 1,
+            Max = 128,
+            Step = 1,
+            OnValueChanged = v =>
             {
-                Text = "Width",
-                TooltipText = "How many pixels in width the pulse should have.",
-                CurrentValue = pulse.Width,
-                Min = 1,
-                Max = 128,
-                Step = 1,
-                OnValueChanged = v =>
-                {
-                    pulse.Width = v;
-                    Map.Update(pulse);
-                }
-            },
-            new PointSettingsSlider<float>
+                pulse.Width = v;
+                Map.Update(pulse);
+            }
+        },
+        new PointSettingsSlider<float>
+        {
+            Text = "In %",
+            TooltipText = "How much of the animation should be used for going to the width.",
+            CurrentValue = pulse.InPercent,
+            Min = 0,
+            Max = 0.5f,
+            Step = 0.05f,
+            OnValueChanged = v =>
             {
-                Text = "In %",
-                TooltipText = "How much of the animation should be used for going to the width.",
-                CurrentValue = pulse.InPercent,
-                Min = 0,
-                Max = 0.5f,
-                Step = 0.05f,
-                OnValueChanged = v =>
-                {
-                    pulse.InPercent = v;
-                    Map.Update(pulse);
-                }
-            },
-            new PointSettingsEasing<PulseEvent>(Map, pulse)
-        });
-    }
+                pulse.InPercent = v;
+                Map.Update(pulse);
+            }
+        },
+        new PointSettingsEasing<PulseEvent>(Map, pulse)
+    });
 }

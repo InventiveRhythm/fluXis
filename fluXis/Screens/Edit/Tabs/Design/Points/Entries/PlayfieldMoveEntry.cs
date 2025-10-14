@@ -8,6 +8,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Utils;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
@@ -26,65 +27,50 @@ public partial class PlayfieldMoveEntry : PointListEntry
 
     public override ITimedObject CreateClone() => move.JsonCopy();
 
-    protected override Drawable[] CreateValueContent()
+    protected override Drawable[] CreateValueContent() => new FluXisSpriteText
     {
-        return new Drawable[]
-        {
-            new FluXisSpriteText
-            {
-                Text = $"{(int)move.OffsetX}x {(int)move.OffsetY}y {(int)move.OffsetZ}z {(int)move.Duration}ms P{move.PlayfieldIndex}S{move.PlayfieldSubIndex}",
-                Colour = Color
-            }
-        };
-    }
+        Text = $"{(int)move.OffsetX}x {(int)move.OffsetY}y {(int)move.OffsetZ}z {(int)move.Duration}ms P{move.PlayfieldIndex}S{move.PlayfieldSubIndex}",
+        Colour = Color
+    }.Yield().ToArray<Drawable>();
 
     protected override IEnumerable<Drawable> CreateSettings()
     {
         return base.CreateSettings().Concat(new Drawable[]
         {
             new PointSettingsLength<PlayfieldMoveEvent>(Map, move, BeatLength),
-            new PointSettingsTextBox
+            new PointSettingsNumber<float>
             {
                 Text = "Offset X",
                 TooltipText = "The horizontal offset of the playfield.",
-                DefaultText = move.OffsetX.ToStringInvariant(),
-                OnTextChanged = box =>
+                DefaultValue = move.OffsetX,
+                Step = 10,
+                OnValueChanged = v =>
                 {
-                    if (box.Text.TryParseFloatInvariant(out var result))
-                        move.OffsetX = result;
-                    else
-                        box.NotifyError();
-
+                    move.OffsetX = v;
                     Map.Update(move);
                 }
             },
-            new PointSettingsTextBox
+            new PointSettingsNumber<float>
             {
                 Text = "Offset Y",
                 TooltipText = "The vertical offset of the playfield.",
-                DefaultText = move.OffsetY.ToStringInvariant(),
-                OnTextChanged = box =>
+                DefaultValue = move.OffsetY,
+                Step = 10,
+                OnValueChanged = v =>
                 {
-                    if (box.Text.TryParseFloatInvariant(out var result))
-                        move.OffsetY = result;
-                    else
-                        box.NotifyError();
-
+                    move.OffsetY = v;
                     Map.Update(move);
                 }
             },
-            new PointSettingsTextBox
+            new PointSettingsNumber<float>
             {
                 Text = "Offset Z",
                 TooltipText = "The depth of the playfield.",
-                DefaultText = move.OffsetZ.ToStringInvariant(),
-                OnTextChanged = box =>
+                DefaultValue = move.OffsetZ,
+                Step = 10,
+                OnValueChanged = v =>
                 {
-                    if (box.Text.TryParseFloatInvariant(out var result))
-                        move.OffsetZ = result;
-                    else
-                        box.NotifyError();
-
+                    move.OffsetZ = v;
                     Map.Update(move);
                 }
             },
