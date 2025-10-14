@@ -27,11 +27,7 @@ public partial class NoteEventTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (deps.CurrentTab.Value == 2)
-            deps.ShowPointInDesign(note);
-        else
-            deps.ShowPointInCharting(note);
-
+        deps.ChartingPointsSidebar.ShowPoint(note);
         return true;
     }
 }

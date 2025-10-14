@@ -29,7 +29,7 @@ public partial class ScrollVelocityTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        deps.ShowPointInDesign(ScrollVelocity);
+        deps.ShowPointIn(ScrollVelocity, deps.ChartingPointsSidebar, deps.DesignPointsSidebar);
         return true;
     }
 }

@@ -139,10 +139,26 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
     protected abstract PointsList CreatePointsList();
     protected virtual Drawable CreateClosedContent() => Empty();
 
+    public PointListEntry GetPoint(ITimedObject obj) => pointsList.GetPoint(obj);
+
     public void ShowPoint(ITimedObject obj)
     {
         Expanded.Value = true;
         pointsList.ShowPoint(obj);
+    }
+
+    public void ShowPoint(ITimedObject obj, PointsList list)
+    {
+        Expanded.Value = true;
+        var entry = list.GetPoint(obj);
+        showPointSettings(entry.GetSettings());
+    }
+
+    public void ShowPoint(ITimedObject obj, PointsSidebar sidebar)
+    {
+        Expanded.Value = true;
+        var entry = sidebar.GetPoint(obj);
+        showPointSettings(entry.GetSettings());
     }
 
     private void showPointSettings(IEnumerable<Drawable> drawables)

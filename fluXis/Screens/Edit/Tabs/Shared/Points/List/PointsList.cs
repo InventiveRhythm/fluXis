@@ -365,6 +365,8 @@ public abstract partial class PointsList : Container
         entry?.OpenSettings();
     }
 
+    public PointListEntry GetPoint(ITimedObject obj) => flow.FirstOrDefault(e => e.Object == obj);
+
     protected void UpdatePoint(ITimedObject obj)
     {
         var entry = flow.FirstOrDefault(e => e.Object == obj);

@@ -18,6 +18,8 @@ public partial class ChartingTab : EditorTab
     [BackgroundDependencyLoader]
     private void load()
     {
+        AlwaysPresent = true;
+
         Child = loadingIcon = new LoadingIcon
         {
             Anchor = Anchor.Centre,

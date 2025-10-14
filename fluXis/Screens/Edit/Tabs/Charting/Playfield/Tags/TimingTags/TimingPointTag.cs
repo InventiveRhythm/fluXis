@@ -28,7 +28,7 @@ public partial class TimingPointTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        deps.ShowPointInCharting(TimingPoint);
+        deps.ChartingPointsSidebar.ShowPoint(TimingPoint);
         return true;
     }
 }

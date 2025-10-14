@@ -40,7 +40,7 @@ public partial class ScrollMultiplierTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        deps.ShowPointInDesign(ScrollMultiplier);
+        deps.ShowPointIn(ScrollMultiplier, deps.ChartingPointsSidebar, deps.DesignPointsSidebar);
         return true;
     }
 }

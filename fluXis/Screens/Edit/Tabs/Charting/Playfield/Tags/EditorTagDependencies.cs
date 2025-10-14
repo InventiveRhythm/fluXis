@@ -9,8 +9,8 @@ public partial class EditorTagDependencies
 {
     private Action<int> changeTabAction;
 
-    public PointsSidebar ChartingPoints;
-    public PointsSidebar DesignPoints;
+    public PointsSidebar ChartingPointsSidebar;
+    public PointsSidebar DesignPointsSidebar;
 
     public Bindable<int> CurrentTab { get; }
 
@@ -25,15 +25,6 @@ public partial class EditorTagDependencies
         changeTabAction?.Invoke(tab);
     }
 
-    public void ShowPointInCharting(ITimedObject obj)
-    {
-        ChangeTab(1);
-        ChartingPoints.ShowPoint(obj);
-    }
-    
-    public void ShowPointInDesign(ITimedObject obj)
-    {
-        ChangeTab(2);
-        DesignPoints.ShowPoint(obj);
-    }
+    public void ShowPointIn(ITimedObject obj, PointsSidebar inSidebar, PointsSidebar fromSidebar)
+        => inSidebar.ShowPoint(obj, fromSidebar);
 }

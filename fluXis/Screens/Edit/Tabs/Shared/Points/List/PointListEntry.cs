@@ -31,6 +31,7 @@ namespace fluXis.Screens.Edit.Tabs.Shared.Points.List;
 public abstract partial class PointListEntry : Container, IHasContextMenu
 {
     protected abstract string Text { get; }
+    public string Yestext => Text;
     protected abstract Colour4 Color { get; }
 
     public MenuItem[] ContextMenuItems => new MenuItem[]
@@ -202,6 +203,8 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     {
         ShowSettings?.Invoke(CreateSettings());
     }
+
+    public IEnumerable<Drawable> GetSettings() => CreateSettings();
 
     public abstract ITimedObject CreateClone();
     protected abstract Drawable[] CreateValueContent();
