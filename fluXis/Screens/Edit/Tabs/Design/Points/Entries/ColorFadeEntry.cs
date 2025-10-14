@@ -29,38 +29,35 @@ public partial class ColorFadeEntry : PointListEntry
 
     public override ITimedObject CreateClone() => colorFade.JsonCopy();
 
-    protected override Drawable[] CreateValueContent()
+    protected override Drawable[] CreateValueContent() => new Drawable[]
     {
-        return new Drawable[]
+        new Circle
         {
-            new Circle
-            {
-                Size = new Vector2(20),
-                Colour = colorFade.Primary,
-                Alpha = colorFade.FadePrimary ? 1f : .4f,
-                Margin = new MarginPadding { Right = 4 }
-            },
-            new Circle
-            {   
-                Size = new Vector2(20),
-                Colour = colorFade.Secondary,
-                Alpha = colorFade.FadeSecondary ? 1f : .4f,
-                Margin = new MarginPadding { Right = 4 }
-            },
-            new Circle
-            {
-                Size = new Vector2(20),
-                Colour = colorFade.Middle,
-                Alpha = colorFade.FadeMiddle ? 1f : .4f,
-                Margin = new MarginPadding { Right = 10 }
-            },
-            new FluXisSpriteText
-            {
-                Text = $"{(int)colorFade.Duration}ms P{colorFade.PlayfieldIndex}S{colorFade.PlayfieldSubIndex}",
-                Colour = Color
-            }
-        };
-    }
+            Size = new Vector2(20),
+            Colour = colorFade.Primary,
+            Alpha = colorFade.FadePrimary ? 1f : .4f,
+            Margin = new MarginPadding { Right = 4 }
+        },
+        new Circle
+        {
+            Size = new Vector2(20),
+            Colour = colorFade.Secondary,
+            Alpha = colorFade.FadeSecondary ? 1f : .4f,
+            Margin = new MarginPadding { Right = 4 }
+        },
+        new Circle
+        {
+            Size = new Vector2(20),
+            Colour = colorFade.Middle,
+            Alpha = colorFade.FadeMiddle ? 1f : .4f,
+            Margin = new MarginPadding { Right = 10 }
+        },
+        new FluXisSpriteText
+        {
+            Text = $"{(int)colorFade.Duration}ms P{colorFade.PlayfieldIndex}S{colorFade.PlayfieldSubIndex}",
+            Colour = Color
+        }
+    };
 
     protected override IEnumerable<Drawable> CreateSettings()
     {

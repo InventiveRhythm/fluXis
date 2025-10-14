@@ -198,7 +198,11 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 else cont();
             }
 
-            void showLogin() => Schedule(() => login.Show(cont, c));
+            void showLogin() => Schedule(() => login.Show(cont, () =>
+            {
+                APIClient.DisableOnline();
+                c();
+            }));
 
             void cont()
             {

@@ -8,6 +8,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Utils;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
@@ -26,39 +27,28 @@ public partial class ScrollMultiplierEntry : PointListEntry
 
     public override ITimedObject CreateClone() => scroll.JsonCopy();
 
-    protected override Drawable[] CreateValueContent()
+    protected override Drawable[] CreateValueContent() => new FluXisSpriteText
     {
-        return new Drawable[]
+        Text = $"{scroll.Multiplier.ToStringInvariant("0.##")}x {(int)scroll.Duration}ms {scroll.Easing}",
+        Colour = Color
+    }.Yield().ToArray<Drawable>();
+
+    protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
+    {
+        new PointSettingsLength<ScrollMultiplierEvent>(Map, scroll, BeatLength),
+        new PointSettingsNumber<float>()
         {
-            new FluXisSpriteText
+            Text = "Multiplier",
+            Formatting = "0.0#",
+            DefaultValue = scroll.Multiplier,
+            Step = 0.1f,
+            OnValueChanged = v =>
             {
-                Text = $"{scroll.Multiplier.ToStringInvariant("0.##")}x {(int)scroll.Duration}ms {scroll.Easing}",
-                Colour = Color
+                scroll.Multiplier = v;
+                Map.Update(scroll);
             }
-        };
-    }
-
-    protected override IEnumerable<Drawable> CreateSettings()
-    {
-        return base.CreateSettings().Concat(new Drawable[]
-        {
-            new PointSettingsLength<ScrollMultiplierEvent>(Map, scroll, BeatLength),
-            new PointSettingsTextBox
-            {
-                Text = "Multiplier",
-                DefaultText = scroll.Multiplier.ToStringInvariant(),
-                OnTextChanged = box =>
-                {
-                    if (box.Text.TryParseFloatInvariant(out var result))
-                        scroll.Multiplier = result;
-                    else
-                        box.NotifyError();
-
-                    Map.Update(scroll);
-                }
-            },
-            new PointSettingsEasing<ScrollMultiplierEvent>(Map, scroll),
-            new PointSettingsLaneMask(Map, scroll)
-        });
-    }
+        },
+        new PointSettingsEasing<ScrollMultiplierEvent>(Map, scroll),
+        new PointSettingsLaneMask(Map, scroll)
+    });
 }

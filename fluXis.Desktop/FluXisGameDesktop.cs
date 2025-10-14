@@ -21,9 +21,20 @@ public partial class FluXisGameDesktop : FluXisGame
         base.SetHost(host);
 
         var window = host.Window;
-        window.Title = "fluXis " + VersionString;
         window.CursorState = CursorState.Hidden;
         window.DragDrop += f => Task.Run(() => HandleDragDrop(f));
+        UpdateWindowTitle("");
+    }
+
+    public override void UpdateWindowTitle(string title)
+    {
+        var full = "fluXis";
+        if (IsDebug) full += " dev";
+
+        if (!string.IsNullOrWhiteSpace(title))
+            full += $" > {title}";
+
+        Host.Window.Title = full;
     }
 
     [BackgroundDependencyLoader]

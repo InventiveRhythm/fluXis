@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.UserInterface.Color;
@@ -305,6 +306,32 @@ public class CustomSkin : ISkin
             return new SkinnableJudgementText(texture, judgement, isLate);
 
         return null;
+    }
+
+    public IEnumerable<Drawable> GetComboBursts()
+    {
+        var files = storage.GetFiles("ComboBurst", "*.png");
+
+        foreach (var file in files)
+        {
+            var texture = textures.Get(file);
+            if (texture is null) continue;
+
+            yield return new Sprite { Texture = texture };
+        }
+    }
+
+    public IEnumerable<Sample> GetComboBurstSamples()
+    {
+        var files = storage.GetFiles("ComboBurst", "*.wav");
+
+        foreach (var file in files)
+        {
+            var sample = samples.Get(file);
+            if (sample is null) continue;
+
+            yield return sample;
+        }
     }
 
     public Drawable GetFailFlash()

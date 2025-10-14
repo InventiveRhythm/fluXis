@@ -16,7 +16,6 @@ public partial class DefaultTopLaneCover : Container
         RelativePositionAxes = Axes.Both;
         Anchor = Anchor.TopCentre;
         Origin = Anchor.TopCentre;
-        Height = 0.5f;
         Colour = Theme.Background3;
 
         InternalChildren = new Drawable[]
