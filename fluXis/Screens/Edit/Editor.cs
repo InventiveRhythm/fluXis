@@ -472,7 +472,22 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (StartTabIndex != -1)
             idx = StartTabIndex;
 
-        changeTab(idx);
+        ScheduleAfterChildren(() =>
+        {
+            foreach (var tab in tabs.Children)
+            {
+                if (tab.TabName.Equals("Design", StringComparison.OrdinalIgnoreCase))
+                {
+                    tab.AlwaysPresent = true; // have design tab already loaded once
+                    tab.OnFullyLoaded = () =>
+                    {
+                        tab.AlwaysPresent = false;
+
+                        changeTab(idx);
+                    };
+                }
+            }
+        });
 
         if (!canSave)
         {
@@ -523,10 +538,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             var tab = tabs.Children[i];
 
             if (i == CurrentTab.Value)
-            {
                 tab.Show(); 
-                tab.AlwaysPresent = false; // we no longer need a tab that's already loaded to be AlwaysPresent.
-            }
             else
                 tab.Hide();
         }

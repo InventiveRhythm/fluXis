@@ -173,6 +173,7 @@ public partial class VerifyTab : EditorTab
     protected override void LoadComplete()
     {
         base.LoadComplete();
+        InvokeFullyLoaded();
 
         RefreshIssues();
     }

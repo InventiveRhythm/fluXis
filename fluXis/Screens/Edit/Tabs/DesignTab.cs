@@ -18,8 +18,6 @@ public partial class DesignTab : EditorTab
     [BackgroundDependencyLoader]
     private void load()
     {
-        AlwaysPresent = true;
-
         Child = loadingIcon = new LoadingIcon
         {
             Anchor = Anchor.Centre,
@@ -37,7 +35,7 @@ public partial class DesignTab : EditorTab
             loadingIcon.FadeOut(200);
 
             AddInternal(container);
-            container.FadeInFromZero(200);
+            container.FadeInFromZero(200).OnComplete( _ => InvokeFullyLoaded() );
         });
     }
 }
