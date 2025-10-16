@@ -43,10 +43,6 @@ public partial class DrawableLandmine : DrawableHitObject
         {
             Skin.GetLandmine(VisualLane, ObjectManager.KeyCount)
         };
-
-        AlwaysPresent = true;
-        if (Data.Hidden) Alpha = 0;
-        //if (Data.Hidden) InternalChild.Alpha = 0;
     }
 
     protected override void Update()
@@ -76,14 +72,12 @@ public partial class DrawableLandmine : DrawableHitObject
         if (isBeingHeld)
         {
             if (offset < 0)
-                ApplyResult(HitWindows.TimingFor(HitWindows.Lowest), 0);
-                //ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+                ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
             return;
         }
 
         if (Math.Abs(offset) <= HitWindows.TimingFor(Judgement.Perfect))
-            ApplyResult(HitWindows.TimingFor(HitWindows.Lowest), offset);
-            //ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+            ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
     }
 
     public override void OnPressed(FluXisGameplayKeybind key)
