@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Graphics.Background;
 using fluXis.Map;
 using fluXis.Screens;
 using fluXis.Screens.Course;
@@ -16,6 +17,7 @@ public partial class TestCourseScreen : FluXisTestScene
 
         var stack = new FluXisScreenStack();
         TestDependencies.Cache(stack);
+        TestDependencies.CacheAs(new GlobalBackground());
         Add(stack);
 
         LoadComponent(GlobalClock);
