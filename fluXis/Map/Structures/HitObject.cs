@@ -33,6 +33,9 @@ public class HitObject : ITimedObject
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
+    [JsonProperty("hidden")]
+    public bool Hidden { get; set; }
+
     /// <summary>
     /// 0 = Normal / Long
     /// 1 = Tick

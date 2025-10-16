@@ -23,6 +23,6 @@ public partial class EditorLandmine : EditorHitObject
     {
         base.Update();
 
-        landminePiece.Width = Data.HoldTime > 0 ? 0.8f : 1f;
+        landminePiece.Alpha = Data.Hidden ? 0.3f : 1f;
     }
 }

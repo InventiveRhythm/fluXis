@@ -43,6 +43,10 @@ public partial class DrawableLandmine : DrawableHitObject
         {
             Skin.GetLandmine(VisualLane, ObjectManager.KeyCount)
         };
+
+        AlwaysPresent = true;
+        if (Data.Hidden) Alpha = 0;
+        //if (Data.Hidden) InternalChild.Alpha = 0;
     }
 
     protected override void Update()
