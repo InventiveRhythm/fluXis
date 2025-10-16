@@ -16,9 +16,7 @@ public partial class DrawableLandmine : DrawableHitObject
         get
         {
             //if the landmine is in the timing window of the next regular or long note, judge it as soon as it passes the receptors
-            HitObject next = Data.NextObject;
-
-            if (next != null && next.Type != 2 && next.Time - Data.Time < HitWindows.TimingFor(Judgement.Okay) && TimeDelta <= 0)
+            if (nextNote != null && TimeDelta <= 0)
                 return true;
 
             return TimeDelta <= -HitWindows.TimingFor(Judgement.Perfect);
@@ -29,6 +27,9 @@ public partial class DrawableLandmine : DrawableHitObject
     private GameplayInput input { get; set; }
 
     private bool isBeingHeld;
+
+    //Next non-landmine HitObject on the column. Only set if the landmine is in the hit window of the next note, null otherwise.
+    private HitObject nextNote;
 
     public DrawableLandmine(HitObject data)
         : base(data)
@@ -47,6 +48,8 @@ public partial class DrawableLandmine : DrawableHitObject
         AlwaysPresent = true;
         if (Data.Hidden) Alpha = 0;
         //if (Data.Hidden) InternalChild.Alpha = 0;
+
+        nextNote = findNextNote();
     }
 
     protected override void Update()
@@ -101,5 +104,20 @@ public partial class DrawableLandmine : DrawableHitObject
             return;
 
         isBeingHeld = false;
+    }
+
+    private HitObject findNextNote()
+    {
+        HitObject next = Data.NextObject;
+
+        while (next != null)
+        {
+            if (next.Time - Data.Time > HitWindows.TimingFor(Judgement.Okay)) return null; //no need to keep going if the next note is too far away
+            if (next.Type != 2) return next;
+
+            next = next.NextObject;
+        }
+
+        return null;
     }
 }
