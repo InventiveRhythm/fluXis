@@ -1,6 +1,5 @@
 using fluXis.Audio;
 using fluXis.Graphics;
-using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
@@ -56,8 +55,6 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
     private void load()
     {
         AutoSizeAxes = Axes.Both;
-
-        var user = api.User.Value;
 
         Children = new Drawable[]
         {
