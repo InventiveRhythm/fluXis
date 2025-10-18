@@ -146,13 +146,13 @@ public partial class DesignContainer : EditorTabContainer
             Scheduler.AddOnce(rulesetIdleTracker.Reset);
         };
 
-        Map.ShaderEventAdded += _ => checkForRebuild();
-        Map.ShaderEventUpdated += _ => checkForRebuild();
-        Map.ShaderEventRemoved += _ => checkForRebuild();
+        Map.RegisterAddListener<ShaderEvent>(_ => checkForRebuild());
+        Map.RegisterUpdateListener<ShaderEvent>(_ => checkForRebuild());
+        Map.RegisterRemoveListener<ShaderEvent>(_ => checkForRebuild());
 
-        Map.PulseEventAdded += _ => pulseEffect.Rebuild();
-        Map.PulseEventUpdated += _ => pulseEffect.Rebuild();
-        Map.PulseEventRemoved += _ => pulseEffect.Rebuild();
+        Map.RegisterAddListener<PulseEvent>(_ => pulseEffect.Rebuild());
+        Map.RegisterUpdateListener<PulseEvent>(_ => pulseEffect.Rebuild());
+        Map.RegisterRemoveListener<PulseEvent>(_ => pulseEffect.Rebuild());
 
         Editor.BindableBackgroundDim.BindValueChanged(e => backgroundDim.FadeTo(e.NewValue, 300));
         Editor.BindableBackgroundBlur.BindValueChanged(e => backgroundStack.Add(new BlurableBackground(Map.RealmMap, e.NewValue)), true);

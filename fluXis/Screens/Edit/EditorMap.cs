@@ -13,6 +13,7 @@ using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Verify;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using SixLabors.ImageSharp;
@@ -59,82 +60,7 @@ public class EditorMap : IVerifyContext
     public event Action<ITimedObject?>? AnyChange;
 #nullable disable
 
-    public event Action<HitObject> HitObjectAdded;
-    public event Action<HitObject> HitObjectRemoved;
-    public event Action<HitObject> HitObjectUpdated;
     public event Action HitSoundsChanged;
-
-    public event Action<TimingPoint> TimingPointAdded;
-    public event Action<TimingPoint> TimingPointRemoved;
-    public event Action<TimingPoint> TimingPointUpdated;
-
-    public event Action<ScrollVelocity> ScrollVelocityAdded;
-    public event Action<ScrollVelocity> ScrollVelocityRemoved;
-    public event Action<ScrollVelocity> ScrollVelocityUpdated;
-
-    public event Action<LaneSwitchEvent> LaneSwitchEventAdded;
-    public event Action<LaneSwitchEvent> LaneSwitchEventRemoved;
-    public event Action<LaneSwitchEvent> LaneSwitchEventUpdated;
-
-    public event Action<FlashEvent> FlashEventAdded;
-    public event Action<FlashEvent> FlashEventRemoved;
-    public event Action<FlashEvent> FlashEventUpdated;
-
-    public event Action<ColorFadeEvent> ColorFadeEventAdded;
-    public event Action<ColorFadeEvent> ColorFadeEventRemoved;
-    public event Action<ColorFadeEvent> ColorFadeEventUpdated;
-
-    public event Action<PulseEvent> PulseEventAdded;
-    public event Action<PulseEvent> PulseEventRemoved;
-    public event Action<PulseEvent> PulseEventUpdated;
-
-    public event Action<ShakeEvent> ShakeEventAdded;
-    public event Action<ShakeEvent> ShakeEventRemoved;
-    public event Action<ShakeEvent> ShakeEventUpdated;
-
-    public event Action<PlayfieldMoveEvent> PlayfieldMoveEventAdded;
-    public event Action<PlayfieldMoveEvent> PlayfieldMoveEventRemoved;
-    public event Action<PlayfieldMoveEvent> PlayfieldMoveEventUpdated;
-
-    public event Action<PlayfieldScaleEvent> PlayfieldScaleEventAdded;
-    public event Action<PlayfieldScaleEvent> PlayfieldScaleEventRemoved;
-    public event Action<PlayfieldScaleEvent> PlayfieldScaleEventUpdated;
-
-    public event Action<HitObjectEaseEvent> HitObjectEaseEventAdded;
-    public event Action<HitObjectEaseEvent> HitObjectEaseEventRemoved;
-    public event Action<HitObjectEaseEvent> HitObjectEaseEventUpdated;
-
-    public event Action<LayerFadeEvent> LayerFadeEventAdded;
-    public event Action<LayerFadeEvent> LayerFadeEventRemoved;
-    public event Action<LayerFadeEvent> LayerFadeEventUpdated;
-
-    public event Action<ShaderEvent> ShaderEventAdded;
-    public event Action<ShaderEvent> ShaderEventRemoved;
-    public event Action<ShaderEvent> ShaderEventUpdated;
-
-    public event Action<BeatPulseEvent> BeatPulseEventAdded;
-    public event Action<BeatPulseEvent> BeatPulseEventRemoved;
-    public event Action<BeatPulseEvent> BeatPulseEventUpdated;
-
-    public event Action<ScrollMultiplierEvent> ScrollMultiplierEventAdded;
-    public event Action<ScrollMultiplierEvent> ScrollMultiplierEventRemoved;
-    public event Action<ScrollMultiplierEvent> ScrollMultiplierEventUpdated;
-
-    public event Action<PlayfieldRotateEvent> PlayfieldRotateEventAdded;
-    public event Action<PlayfieldRotateEvent> PlayfieldRotateEventRemoved;
-    public event Action<PlayfieldRotateEvent> PlayfieldRotateEventUpdated;
-
-    public event Action<TimeOffsetEvent> TimeOffsetEventAdded;
-    public event Action<TimeOffsetEvent> TimeOffsetEventRemoved;
-    public event Action<TimeOffsetEvent> TimeOffsetEventUpdated;
-
-    public event Action<ScriptEvent> ScriptEventAdded;
-    public event Action<ScriptEvent> ScriptEventRemoved;
-    public event Action<ScriptEvent> ScriptEventUpdated;
-
-    public event Action<NoteEvent> NoteEventAdded;
-    public event Action<NoteEvent> NoteEventRemoved;
-    public event Action<NoteEvent> NoteEventUpdated;
 
     #endregion
 
@@ -146,34 +72,25 @@ public class EditorMap : IVerifyContext
     {
         notifiers = new List<IChangeNotifier>
         {
-            new ChangeNotifier<HitObject>(MapInfo.HitObjects, obj => HitObjectAdded?.Invoke(obj), obj => HitObjectRemoved?.Invoke(obj), obj => HitObjectUpdated?.Invoke(obj)),
-            new ChangeNotifier<TimingPoint>(MapInfo.TimingPoints, obj => TimingPointAdded?.Invoke(obj), obj => TimingPointRemoved?.Invoke(obj), obj => TimingPointUpdated?.Invoke(obj)),
-            new ChangeNotifier<ScrollVelocity>(MapInfo.ScrollVelocities, obj => ScrollVelocityAdded?.Invoke(obj), obj => ScrollVelocityRemoved?.Invoke(obj), obj => ScrollVelocityUpdated?.Invoke(obj)),
-            new ChangeNotifier<LaneSwitchEvent>(MapEvents.LaneSwitchEvents, obj => LaneSwitchEventAdded?.Invoke(obj), obj => LaneSwitchEventRemoved?.Invoke(obj),
-                obj => LaneSwitchEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<FlashEvent>(MapEvents.FlashEvents, obj => FlashEventAdded?.Invoke(obj), obj => FlashEventRemoved?.Invoke(obj), obj => FlashEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<ColorFadeEvent>(MapEvents.ColorFadeEvents, obj => ColorFadeEventAdded?.Invoke(obj), obj => ColorFadeEventRemoved?.Invoke(obj), obj => ColorFadeEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<PulseEvent>(MapEvents.PulseEvents, obj => PulseEventAdded?.Invoke(obj), obj => PulseEventRemoved?.Invoke(obj), obj => PulseEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<PlayfieldMoveEvent>(MapEvents.PlayfieldMoveEvents, obj => PlayfieldMoveEventAdded?.Invoke(obj), obj => PlayfieldMoveEventRemoved?.Invoke(obj),
-                obj => PlayfieldMoveEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<PlayfieldScaleEvent>(MapEvents.PlayfieldScaleEvents, obj => PlayfieldScaleEventAdded?.Invoke(obj), obj => PlayfieldScaleEventRemoved?.Invoke(obj),
-                obj => PlayfieldScaleEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<PlayfieldRotateEvent>(MapEvents.PlayfieldRotateEvents, obj => PlayfieldRotateEventAdded?.Invoke(obj), obj => PlayfieldRotateEventRemoved?.Invoke(obj),
-                obj => PlayfieldRotateEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<LayerFadeEvent>(MapEvents.LayerFadeEvents, obj => LayerFadeEventAdded?.Invoke(obj), obj => LayerFadeEventRemoved?.Invoke(obj),
-                obj => LayerFadeEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<HitObjectEaseEvent>(MapEvents.HitObjectEaseEvents, obj => HitObjectEaseEventAdded?.Invoke(obj), obj => HitObjectEaseEventRemoved?.Invoke(obj),
-                obj => HitObjectEaseEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<ShakeEvent>(MapEvents.ShakeEvents, obj => ShakeEventAdded?.Invoke(obj), obj => ShakeEventRemoved?.Invoke(obj), obj => ShakeEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<ShaderEvent>(MapEvents.ShaderEvents, obj => ShaderEventAdded?.Invoke(obj), obj => ShaderEventRemoved?.Invoke(obj), obj => ShaderEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<BeatPulseEvent>(MapEvents.BeatPulseEvents, obj => BeatPulseEventAdded?.Invoke(obj), obj => BeatPulseEventRemoved?.Invoke(obj),
-                obj => BeatPulseEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<ScrollMultiplierEvent>(MapEvents.ScrollMultiplyEvents, obj => ScrollMultiplierEventAdded?.Invoke(obj), obj => ScrollMultiplierEventRemoved?.Invoke(obj),
-                obj => ScrollMultiplierEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents, obj => TimeOffsetEventAdded?.Invoke(obj), obj => TimeOffsetEventRemoved?.Invoke(obj),
-                obj => TimeOffsetEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents, obj => ScriptEventAdded?.Invoke(obj), obj => ScriptEventRemoved?.Invoke(obj), obj => ScriptEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents, obj => NoteEventAdded?.Invoke(obj), obj => NoteEventRemoved?.Invoke(obj), obj => NoteEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<HitObject>(MapInfo.HitObjects),
+            new ChangeNotifier<TimingPoint>(MapInfo.TimingPoints),
+            new ChangeNotifier<ScrollVelocity>(MapInfo.ScrollVelocities),
+            new ChangeNotifier<LaneSwitchEvent>(MapEvents.LaneSwitchEvents),
+            new ChangeNotifier<FlashEvent>(MapEvents.FlashEvents),
+            new ChangeNotifier<ColorFadeEvent>(MapEvents.ColorFadeEvents),
+            new ChangeNotifier<PulseEvent>(MapEvents.PulseEvents),
+            new ChangeNotifier<PlayfieldMoveEvent>(MapEvents.PlayfieldMoveEvents),
+            new ChangeNotifier<PlayfieldScaleEvent>(MapEvents.PlayfieldScaleEvents),
+            new ChangeNotifier<PlayfieldRotateEvent>(MapEvents.PlayfieldRotateEvents),
+            new ChangeNotifier<LayerFadeEvent>(MapEvents.LayerFadeEvents),
+            new ChangeNotifier<HitObjectEaseEvent>(MapEvents.HitObjectEaseEvents),
+            new ChangeNotifier<ShakeEvent>(MapEvents.ShakeEvents),
+            new ChangeNotifier<ShaderEvent>(MapEvents.ShaderEvents),
+            new ChangeNotifier<BeatPulseEvent>(MapEvents.BeatPulseEvents),
+            new ChangeNotifier<ScrollMultiplierEvent>(MapEvents.ScrollMultiplyEvents),
+            new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents),
+            new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents),
+            new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents),
             MapInfo.Storyboard
         };
 
@@ -279,9 +196,74 @@ public class EditorMap : IVerifyContext
 
     #endregion
 
+    #region Listeners
+
+    public void RegisterAddListener<T>(Action<T> act)
+        where T : class, ITimedObject
+    {
+        if (!tryFindNotifier<T>(out var n))
+            throw new InvalidOperationException($"Tried to register a listener for a type that doesn't exist! [{typeof(T).Name}]");
+
+        n.OnTypedAdd += act;
+    }
+
+    public void RegisterUpdateListener<T>(Action<T> act)
+        where T : class, ITimedObject
+    {
+        if (!tryFindNotifier<T>(out var n))
+            throw new InvalidOperationException($"Tried to register a listener for a type that doesn't exist! [{typeof(T).Name}]");
+
+        n.OnTypedUpdate += act;
+    }
+
+    public void RegisterRemoveListener<T>(Action<T> act)
+        where T : class, ITimedObject
+    {
+        if (!tryFindNotifier<T>(out var n))
+            throw new InvalidOperationException($"Tried to register a listener for a type that doesn't exist! [{typeof(T).Name}]");
+
+        n.OnTypedRemove += act;
+    }
+
+    public void DeregisterAddListener<T>(Action<T> act)
+        where T : class, ITimedObject
+    {
+        if (!tryFindNotifier<T>(out var n))
+            throw new InvalidOperationException($"Tried to register a listener for a type that doesn't exist! [{typeof(T).Name}]");
+
+        n.OnTypedAdd -= act;
+    }
+
+    public void DeregisterUpdateListener<T>(Action<T> act)
+        where T : class, ITimedObject
+    {
+        if (!tryFindNotifier<T>(out var n))
+            throw new InvalidOperationException($"Tried to register a listener for a type that doesn't exist! [{typeof(T).Name}]");
+
+        n.OnTypedUpdate -= act;
+    }
+
+    public void DeregisterRemoveListener<T>(Action<T> act)
+        where T : class, ITimedObject
+    {
+        if (!tryFindNotifier<T>(out var n))
+            throw new InvalidOperationException($"Tried to register a listener for a type that doesn't exist! [{typeof(T).Name}]");
+
+        n.OnTypedRemove -= act;
+    }
+
+    #endregion
+
     #region Objects
 
-    private bool tryFindNotifier(ITimedObject obj, Action<IChangeNotifier> action)
+    private bool tryFindNotifier<T>(out ChangeNotifier<T> notifier)
+        where T : class, ITimedObject
+    {
+        notifier = notifiers.FirstOrDefault(n => n.Matches(typeof(T))) as ChangeNotifier<T>;
+        return notifier != null;
+    }
+
+    private bool tryRunNotifier(ITimedObject obj, Action<IChangeNotifier> action)
     {
         var n = notifiers.FirstOrDefault(n => n.Matches(obj.GetType()));
 
@@ -293,7 +275,7 @@ public class EditorMap : IVerifyContext
 
     public void Add(ITimedObject obj)
     {
-        if (tryFindNotifier(obj, n => n.Add(obj)))
+        if (tryRunNotifier(obj, n => n.Add(obj)))
             return;
 
         throwMissingHandler(obj);
@@ -301,7 +283,7 @@ public class EditorMap : IVerifyContext
 
     public void Update(ITimedObject obj)
     {
-        if (tryFindNotifier(obj, n => n.Update(obj)))
+        if (tryRunNotifier(obj, n => n.Update(obj)))
             return;
 
         throwMissingHandler(obj);
@@ -311,7 +293,7 @@ public class EditorMap : IVerifyContext
 
     public void Remove(ITimedObject obj)
     {
-        if (tryFindNotifier(obj, n => n.Remove(obj)))
+        if (tryRunNotifier(obj, n => n.Remove(obj)))
             return;
 
         throwMissingHandler(obj);
@@ -389,15 +371,24 @@ public class EditorMap : IVerifyContext
     {
         private List<T> list { get; }
 
+        [CanBeNull]
         private Action<T> add { get; }
+
+        [CanBeNull]
         private Action<T> remove { get; }
+
+        [CanBeNull]
         private Action<T> update { get; }
 
         public event Action<ITimedObject> OnAdd;
         public event Action<ITimedObject> OnRemove;
         public event Action<ITimedObject> OnUpdate;
 
-        public ChangeNotifier(List<T> list, Action<T> add, Action<T> remove, Action<T> update)
+        public event Action<T> OnTypedAdd;
+        public event Action<T> OnTypedRemove;
+        public event Action<T> OnTypedUpdate;
+
+        public ChangeNotifier(List<T> list, Action<T> add = null, Action<T> remove = null, Action<T> update = null)
         {
             this.list = list;
             this.add = add;
@@ -410,6 +401,7 @@ public class EditorMap : IVerifyContext
             list.Add((T)obj);
             add?.Invoke((T)obj);
             OnAdd?.Invoke(obj);
+            OnTypedAdd?.Invoke((T)obj);
         }
 
         public void Remove(ITimedObject obj)
@@ -417,12 +409,14 @@ public class EditorMap : IVerifyContext
             list.Remove((T)obj);
             remove?.Invoke((T)obj);
             OnRemove?.Invoke(obj);
+            OnTypedRemove?.Invoke((T)obj);
         }
 
         public void Update(ITimedObject obj)
         {
             update?.Invoke((T)obj);
             OnUpdate?.Invoke(obj);
+            OnTypedUpdate?.Invoke((T)obj);
         }
 
         public void ApplyOffset(float offset)
