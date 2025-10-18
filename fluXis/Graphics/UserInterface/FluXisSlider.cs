@@ -168,7 +168,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
                 parent.OnRightClick.Invoke(e);
                 return true;
             }
-            
+
             return base.OnMouseDown(e);
         }
     }

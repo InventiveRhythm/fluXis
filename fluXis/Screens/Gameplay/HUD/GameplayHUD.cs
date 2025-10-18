@@ -38,6 +38,10 @@ public partial class GameplayHUD : Container
     private Container<GameplayHUDComponent> components;
     private PlayfieldHUD[] playfields;
 
+    private readonly List<Drawable> hidable = new();
+    private GameplayLeaderboard leaderboard;
+    private float lastAlpha = 1;
+
     public GameplayHUD(RulesetContainer ruleset, HUDLayout layout = null)
     {
         this.ruleset = ruleset;
@@ -71,7 +75,7 @@ public partial class GameplayHUD : Container
             AddRangeInternal(new Drawable[]
             {
                 new ModsDisplay(),
-                new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>())
+                leaderboard = new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>())
             });
         }
 
@@ -92,7 +96,14 @@ public partial class GameplayHUD : Container
     protected override void Update()
     {
         base.Update();
-        Alpha = playfields.MaxBy(x => x.Playfield.HUDAlpha).Playfield.HUDAlpha;
+
+        var target = playfields.MaxBy(x => x.Playfield.HUDAlpha).Playfield.HUDAlpha;
+        if (Math.Abs(target - lastAlpha) < .0001f) return;
+
+        hidable.ForEach(x => x.Alpha = target);
+        if (leaderboard != null) leaderboard.HUDAlpha = target;
+
+        lastAlpha = target;
     }
 
     protected override void Dispose(bool isDisposing)
@@ -107,6 +118,7 @@ public partial class GameplayHUD : Container
 
     private void refreshLayout()
     {
+        hidable.Clear();
         components.Clear();
         playfields.ForEach(hud => hud.Clear());
 
@@ -155,6 +167,9 @@ public partial class GameplayHUD : Container
             else
                 components.Add(component);
         }
+
+        if (component is not IDoNotHide)
+            hidable.Add(component);
 
         settings.Drawable = component;
         return component;

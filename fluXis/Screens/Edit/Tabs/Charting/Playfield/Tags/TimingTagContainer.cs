@@ -19,12 +19,12 @@ public partial class TimingTagContainer : EditorTagContainer
         foreach (var sm in Map.MapInfo.MapEvents.ScrollMultiplyEvents)
             addScrollMultiplier(sm);
 
-        Map.TimingPointAdded += addTimingPoint;
-        Map.TimingPointRemoved += RemoveTag;
-        Map.ScrollVelocityAdded += addScrollVelocity;
-        Map.ScrollVelocityRemoved += RemoveTag;
-        Map.ScrollMultiplierEventAdded += addScrollMultiplier;
-        Map.ScrollMultiplierEventRemoved += RemoveTag;
+        Map.RegisterAddListener<TimingPoint>(addTimingPoint);
+        Map.RegisterRemoveListener<TimingPoint>(RemoveTag);
+        Map.RegisterAddListener<ScrollVelocity>(addScrollVelocity);
+        Map.RegisterRemoveListener<ScrollVelocity>(RemoveTag);
+        Map.RegisterAddListener<ScrollMultiplierEvent>(addScrollMultiplier);
+        Map.RegisterRemoveListener<ScrollMultiplierEvent>(RemoveTag);
     }
 
     private void addTimingPoint(TimingPoint tp) => AddTag(new TimingPointTag(this, tp));

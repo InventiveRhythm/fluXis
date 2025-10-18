@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Edit.UI.BottomBar;
 
@@ -96,6 +97,21 @@ public partial class TimeInfo : Container
         samples.Click();
         flash.Show();
 
+        return true;
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button != MouseButton.Right)
+            return true;
+
+        var text = clipboard.GetText();
+        if (text is null) return false;
+
+        if (!text.TryParseFloatInvariant(out var result))
+            return false;
+
+        clock.SeekSmoothly(result);
         return true;
     }
 }

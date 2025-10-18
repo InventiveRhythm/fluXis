@@ -44,14 +44,13 @@ public partial class EditorEffectContainer : Container
     {
         base.LoadComplete();
 
-        map.LaneSwitchEventAdded += AddLaneSwitch;
-
-        map.LaneSwitchEventRemoved += ls =>
+        map.RegisterAddListener<LaneSwitchEvent>(AddLaneSwitch);
+        map.RegisterRemoveListener<LaneSwitchEvent>(ls =>
         {
             var editorLs = LaneSwitches.FirstOrDefault(l => l.Event == ls);
             if (editorLs != null)
                 LaneSwitches.Remove(editorLs, true);
-        };
+        });
     }
 
     private void loadEvents()

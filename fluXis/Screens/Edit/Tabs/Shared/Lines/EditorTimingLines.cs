@@ -33,9 +33,9 @@ public abstract partial class EditorTimingLines<T> : Container<T>
         Masking = true;
 
         Settings.SnapDivisorBindable.BindValueChanged(_ => scheduleRedraw(null), true);
-        map.TimingPointAdded += scheduleRedraw;
-        map.TimingPointRemoved += scheduleRedraw;
-        map.TimingPointUpdated += scheduleRedraw;
+        map.RegisterAddListener<TimingPoint>(scheduleRedraw);
+        map.RegisterUpdateListener<TimingPoint>(scheduleRedraw);
+        map.RegisterRemoveListener<TimingPoint>(scheduleRedraw);
     }
 
     private void scheduleRedraw(TimingPoint _) => Schedule(() =>

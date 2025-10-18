@@ -105,7 +105,8 @@ public partial class ScoreListTab : SelectInfoTab
             list = new FluXisScrollContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                ScrollbarVisible = false
+                ScrollbarVisible = false,
+                Padding = new MarginPadding { Bottom = 52 } // to prevent clipping with footer
             },
             loading = new LoadingIcon
             {
