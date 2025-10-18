@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.UserInterface.Color;
@@ -310,6 +311,9 @@ public class CustomSkin : ISkin
 
     public IEnumerable<Drawable> GetComboBursts()
     {
+        var folder = storage.GetFullPath("ComboBurst");
+        if (!Directory.Exists(folder)) yield break;
+
         var files = storage.GetFiles("ComboBurst", "*.png");
 
         foreach (var file in files)
@@ -323,6 +327,9 @@ public class CustomSkin : ISkin
 
     public IEnumerable<Sample> GetComboBurstSamples()
     {
+        var folder = storage.GetFullPath("ComboBurst");
+        if (!Directory.Exists(folder)) yield break;
+
         var files = storage.GetFiles("ComboBurst", "*.wav");
 
         foreach (var file in files)
