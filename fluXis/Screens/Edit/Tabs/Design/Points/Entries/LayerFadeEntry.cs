@@ -10,6 +10,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Utils;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
@@ -35,14 +36,11 @@ public partial class LayerFadeEntry : PointListEntry
         if (fade.Layer == LayerFadeEvent.FadeLayer.Playfield)
             str += $" P{fade.PlayfieldIndex}S{fade.PlayfieldSubIndex}";
 
-        return new Drawable[]
+        return new FluXisSpriteText
         {
-            new FluXisSpriteText
-            {
-                Text = str,
-                Colour = Color
-            }
-        };
+            Text = str,
+            Colour = Color
+        }.Yield().ToArray<Drawable>();
     }
 
     protected override IEnumerable<Drawable> CreateSettings()

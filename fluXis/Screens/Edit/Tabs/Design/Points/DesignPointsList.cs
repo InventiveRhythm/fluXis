@@ -12,85 +12,22 @@ public partial class DesignPointsList : PointsList
 {
     protected override void RegisterEvents()
     {
-        Map.ScrollVelocityAdded += AddPoint;
-        Map.ScrollVelocityUpdated += UpdatePoint;
-        Map.ScrollVelocityRemoved += RemovePoint;
-        Map.MapInfo.ScrollVelocities.ForEach(AddPoint);
-
-        Map.FlashEventAdded += AddPoint;
-        Map.FlashEventUpdated += UpdatePoint;
-        Map.FlashEventRemoved += RemovePoint;
-        Map.MapEvents.FlashEvents.ForEach(AddPoint);
-
-        Map.ColorFadeEventAdded += AddPoint;
-        Map.ColorFadeEventUpdated += UpdatePoint;
-        Map.ColorFadeEventRemoved += RemovePoint;
-        Map.MapEvents.ColorFadeEvents.ForEach(AddPoint);
-
-        Map.PulseEventAdded += AddPoint;
-        Map.PulseEventUpdated += UpdatePoint;
-        Map.PulseEventRemoved += RemovePoint;
-        Map.MapEvents.PulseEvents.ForEach(AddPoint);
-
-        Map.ShakeEventAdded += AddPoint;
-        Map.ShakeEventUpdated += UpdatePoint;
-        Map.ShakeEventRemoved += RemovePoint;
-        Map.MapEvents.ShakeEvents.ForEach(AddPoint);
-
-        Map.PlayfieldMoveEventAdded += AddPoint;
-        Map.PlayfieldMoveEventUpdated += UpdatePoint;
-        Map.PlayfieldMoveEventRemoved += RemovePoint;
-        Map.MapEvents.PlayfieldMoveEvents.ForEach(AddPoint);
-
-        Map.PlayfieldScaleEventAdded += AddPoint;
-        Map.PlayfieldScaleEventUpdated += UpdatePoint;
-        Map.PlayfieldScaleEventRemoved += RemovePoint;
-        Map.MapEvents.PlayfieldScaleEvents.ForEach(AddPoint);
-
-        Map.HitObjectEaseEventAdded += AddPoint;
-        Map.HitObjectEaseEventUpdated += UpdatePoint;
-        Map.HitObjectEaseEventRemoved += RemovePoint;
-        Map.MapEvents.HitObjectEaseEvents.ForEach(AddPoint);
-
-        Map.LayerFadeEventAdded += AddPoint;
-        Map.LayerFadeEventUpdated += UpdatePoint;
-        Map.LayerFadeEventRemoved += RemovePoint;
-        Map.MapEvents.LayerFadeEvents.ForEach(AddPoint);
-
-        Map.ShaderEventAdded += AddPoint;
-        Map.ShaderEventUpdated += UpdatePoint;
-        Map.ShaderEventRemoved += RemovePoint;
-        Map.MapEvents.ShaderEvents.ForEach(AddPoint);
-
-        Map.BeatPulseEventAdded += AddPoint;
-        Map.BeatPulseEventUpdated += UpdatePoint;
-        Map.BeatPulseEventRemoved += RemovePoint;
-        Map.MapEvents.BeatPulseEvents.ForEach(AddPoint);
-
-        Map.PlayfieldRotateEventAdded += AddPoint;
-        Map.PlayfieldRotateEventUpdated += UpdatePoint;
-        Map.PlayfieldRotateEventRemoved += RemovePoint;
-        Map.MapEvents.PlayfieldRotateEvents.ForEach(AddPoint);
-
-        Map.ScrollMultiplierEventAdded += AddPoint;
-        Map.ScrollMultiplierEventUpdated += UpdatePoint;
-        Map.ScrollMultiplierEventRemoved += RemovePoint;
-        Map.MapEvents.ScrollMultiplyEvents.ForEach(AddPoint);
-
-        Map.TimeOffsetEventAdded += AddPoint;
-        Map.TimeOffsetEventUpdated += UpdatePoint;
-        Map.TimeOffsetEventRemoved += RemovePoint;
-        Map.MapEvents.TimeOffsetEvents.ForEach(AddPoint);
-
-        Map.ScriptEventAdded += AddPoint;
-        Map.ScriptEventUpdated += UpdatePoint;
-        Map.ScriptEventRemoved += RemovePoint;
-        Map.MapEvents.ScriptEvents.ForEach(AddPoint);
-
-        Map.NoteEventAdded += AddPoint;
-        Map.NoteEventUpdated += UpdatePoint;
-        Map.NoteEventRemoved += RemovePoint;
-        Map.MapEvents.NoteEvents.ForEach(AddPoint);
+        RegisterTypeEvents(Map.MapInfo.ScrollVelocities);
+        RegisterTypeEvents(Map.MapEvents.FlashEvents);
+        RegisterTypeEvents(Map.MapEvents.ColorFadeEvents);
+        RegisterTypeEvents(Map.MapEvents.PulseEvents);
+        RegisterTypeEvents(Map.MapEvents.ShakeEvents);
+        RegisterTypeEvents(Map.MapEvents.PlayfieldMoveEvents);
+        RegisterTypeEvents(Map.MapEvents.PlayfieldScaleEvents);
+        RegisterTypeEvents(Map.MapEvents.HitObjectEaseEvents);
+        RegisterTypeEvents(Map.MapEvents.LayerFadeEvents);
+        RegisterTypeEvents(Map.MapEvents.ShaderEvents);
+        RegisterTypeEvents(Map.MapEvents.BeatPulseEvents);
+        RegisterTypeEvents(Map.MapEvents.PlayfieldRotateEvents);
+        RegisterTypeEvents(Map.MapEvents.ScrollMultiplyEvents);
+        RegisterTypeEvents(Map.MapEvents.TimeOffsetEvents);
+        RegisterTypeEvents(Map.MapEvents.ScriptEvents);
+        RegisterTypeEvents(Map.MapEvents.NoteEvents);
     }
 
     protected override PointListEntry CreateEntryFor(ITimedObject obj) => obj switch

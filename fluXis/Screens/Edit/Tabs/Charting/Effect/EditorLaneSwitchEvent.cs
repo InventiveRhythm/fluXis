@@ -52,9 +52,9 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
     {
         base.LoadComplete();
 
-        map.LaneSwitchEventAdded += updateWrapper;
-        map.LaneSwitchEventUpdated += updateWrapper;
-        map.LaneSwitchEventRemoved += onRemove;
+        map.RegisterAddListener<LaneSwitchEvent>(updateWrapper);
+        map.RegisterUpdateListener<LaneSwitchEvent>(updateWrapper);
+        map.RegisterRemoveListener<LaneSwitchEvent>(onRemove);
 
         update();
     }
@@ -66,9 +66,9 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
         if (map == null)
             return;
 
-        map.LaneSwitchEventAdded -= updateWrapper;
-        map.LaneSwitchEventUpdated -= updateWrapper;
-        map.LaneSwitchEventRemoved -= onRemove;
+        map.DeregisterAddListener<LaneSwitchEvent>(updateWrapper);
+        map.DeregisterUpdateListener<LaneSwitchEvent>(updateWrapper);
+        map.DeregisterRemoveListener<LaneSwitchEvent>(onRemove);
     }
 
     private void updateWrapper(LaneSwitchEvent switchEvent) => update();

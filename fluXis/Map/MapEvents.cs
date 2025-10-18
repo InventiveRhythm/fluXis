@@ -83,22 +83,15 @@ public class MapEvents
     #endregion
 
     [JsonIgnore]
-    public bool Empty => LaneSwitchEvents.Count == 0
-                         && FlashEvents.Count == 0
-                         && ColorFadeEvents.Count == 0
-                         && PulseEvents.Count == 0
-                         && PlayfieldMoveEvents.Count == 0
-                         && PlayfieldScaleEvents.Count == 0
-                         && PlayfieldRotateEvents.Count == 0
-                         && LayerFadeEvents.Count == 0
-                         && HitObjectEaseEvents.Count == 0
-                         && ShakeEvents.Count == 0
-                         && ShaderEvents.Count == 0
-                         && BeatPulseEvents.Count == 0
-                         && ScrollMultiplyEvents.Count == 0
-                         && TimeOffsetEvents.Count == 0
-                         && ScriptEvents.Count == 0
-                         && NoteEvents.Count == 0;
+    public bool Empty
+    {
+        get
+        {
+            var count = 0;
+            ForAllEvents(_ => count++);
+            return count == 0;
+        }
+    }
 
     #region Server-Side Stuff
 

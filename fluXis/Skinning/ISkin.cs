@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
@@ -38,6 +39,8 @@ public interface ISkin : IDisposable
     Drawable GetHitLine();
 
     AbstractJudgementText GetJudgement(Judgement judgement, bool isLate);
+    IEnumerable<Drawable> GetComboBursts();
+    IEnumerable<Sample> GetComboBurstSamples();
 
     Drawable GetFailFlash();
 

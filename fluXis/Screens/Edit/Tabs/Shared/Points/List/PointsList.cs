@@ -267,6 +267,16 @@ public abstract partial class PointsList : Container
     }
 
     protected abstract void RegisterEvents();
+
+    protected void RegisterTypeEvents<T>(List<T> items)
+        where T : class, ITimedObject
+    {
+        Map.RegisterAddListener<T>(AddPoint);
+        Map.RegisterUpdateListener<T>(UpdatePoint);
+        Map.RegisterRemoveListener<T>(RemovePoint);
+        items.ForEach(AddPoint);
+    }
+
     protected abstract PointListEntry CreateEntryFor(ITimedObject obj);
     protected abstract IEnumerable<DropdownEntry> CreateDropdownEntries();
 

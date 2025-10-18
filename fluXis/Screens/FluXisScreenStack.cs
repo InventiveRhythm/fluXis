@@ -19,6 +19,10 @@ public partial class FluXisScreenStack : ScreenStack
     [Resolved(CanBeNull = true)]
     private Toolbar toolbar { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private FluXisGameBase game { get; set; }
+
     public bool AllowMusicControl => CurrentScreen is FluXisScreen { AllowMusicControl: true };
     public bool AllowMusicPausing => CurrentScreen is FluXisScreen { AllowMusicPausing: true };
 
@@ -45,6 +49,7 @@ public partial class FluXisScreenStack : ScreenStack
 
         if (next is FluXisScreen nextScreen)
         {
+            game?.UpdateWindowTitle(nextScreen.WindowTitle);
             activity.BindTo(nextScreen.Activity);
             allowOverlays.BindTo(nextScreen.AllowOverlays);
 

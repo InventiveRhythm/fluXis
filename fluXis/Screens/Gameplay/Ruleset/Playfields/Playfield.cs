@@ -162,8 +162,8 @@ public partial class Playfield : Container
         if (!Precision.AlmostEquals(newReceptorOffset, Receptors.Padding.Bottom))
             Receptors.Padding = Receptors.Padding with { Bottom = newReceptorOffset };
 
-        topCover.Y = (topCoverHeight.Value - 1f) / 2f;
-        bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
+        topCover.Y = (topCoverHeight.Value - 2f) / 2f;
+        bottomCover.Y = (2f - bottomCoverHeight.Value) / 2f;
 
         if (!IsSubPlayfield)
             hitsounding.PlayfieldPanning.Value = Math.Clamp(RelativePosition * 2 - 1, -1, 1) * hitsoundPanStrength.Value;
