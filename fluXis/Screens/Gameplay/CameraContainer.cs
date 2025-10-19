@@ -24,7 +24,7 @@ public partial class CameraContainer : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        events.ForEach(x => x.Apply(proxy));
+        Refresh(events);
     }
 
     protected override void Update()
@@ -36,13 +36,20 @@ public partial class CameraContainer : Container
         Rotation = proxy.Rotation;
     }
 
-    public Drawable CreateProxyDrawable() => proxy = Empty();
+    public Drawable CreateProxyDrawable() => proxy = new CameraProxy();
 
     public void Refresh(List<ICameraEvent> ev)
     {
         proxy.ClearTransforms(true);
-        proxy.MoveToX(0).MoveToY(0).ScaleTo(0).RotateTo(0);
+
+        using (proxy.BeginAbsoluteSequence(-10000))
+            proxy.MoveToX(0).MoveToY(0).ScaleTo(1f).RotateTo(0);
 
         ev.ForEach(x => x.Apply(proxy));
+    }
+
+    private partial class CameraProxy : Drawable
+    {
+        public override bool RemoveCompletedTransforms => false;
     }
 }
