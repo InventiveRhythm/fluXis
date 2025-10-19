@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
-using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Select.Search.Dropdown;
@@ -13,7 +14,7 @@ namespace fluXis.Screens.Select.Search.Dropdown;
 public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable where T : struct
 {
     private readonly InputManager input;
-    public System.Action OnFilterChanged;
+    public Action OnFilterChanged;
 
     protected FillFlowContainer ButtonFlow;
     protected FluXisSpriteText Text;
@@ -23,6 +24,7 @@ public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable whe
     protected abstract float FontSize { get; set; }
     protected abstract List<T> FilterList { get; }
     public abstract T[] DefaultFilter { get; set; }
+    public abstract bool ResetWhenFull { get; set; }
 
     protected FluXisFilterButtonsBase(InputManager input, System.Action onFilterChanged = null)
     {
@@ -60,6 +62,8 @@ public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable whe
 
         if (DefaultFilter.Length != 0)
             ResetState();
+
+        ButtonFlow.Children.OfType<ISelectableButton<T>>().ForEach(b => b.OnRightClick = ResetAllButtons);
     }
 
     protected abstract Drawable CreateButton(T value);
@@ -83,25 +87,39 @@ public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable whe
         if (!FilterList.Remove(value))
             FilterList.Add(value);
 
-        if (FilterList.Count == 0)
-            FilterList.AddRange(DefaultFilter);
+        if (FilterList.Count == 0 || (FilterList.Count == Values.Length && ResetWhenFull))
+            ResetState();
         
         OnFilterChanged?.Invoke();
         
         UpdateAllButtons();
     }
 
-    protected override bool OnMouseDown(MouseDownEvent e)
+    protected void ResetAllButtons(ISelectableButton<T> clickedButton)
     {
-        if (e.Button == osuTK.Input.MouseButton.Right)
-        {
-            ResetState();
-            foreach (var button in ButtonFlow.Children.OfType<ISelectableButton<T>>())
-                button.Flash(); 
-        }
+        if (FilterList.ToHashSet().SetEquals(DefaultFilter.ToHashSet()))
+            return;
 
-        return base.OnMouseDown(e);
-    }  
+        ResetState();
+        
+        var buttons = ButtonFlow.Children.OfType<ISelectableButton<T>>().ToList();
+        int clickedIndex = buttons.IndexOf(clickedButton);
+
+        if (clickedIndex == -1)
+            clickedIndex = buttons.Count / 2;
+            
+        double lastDelay = 0;
+
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            int distance = Math.Abs(i - clickedIndex);
+            double delay = distance * 30;
+            lastDelay = delay;
+            int index = i;
+
+            Scheduler.AddDelayed(() => buttons[index].Flash(), delay);
+        }
+    }
 
     protected void ResetState()
     {
@@ -120,6 +138,7 @@ public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable whe
     protected interface ISelectableButton<TValue>
     {
         void UpdateSelection();
-        void Flash() {}
+        void Flash();
+        Action<ISelectableButton<TValue>> OnRightClick { get; set; }
     }
 }

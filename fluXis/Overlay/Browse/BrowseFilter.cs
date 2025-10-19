@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
@@ -26,7 +27,8 @@ public partial class BrowseFilter<T> : FluXisFilterButtonsBase<T> where T : stru
     protected override float FontSize { get; set; } = 18;
     private List<T> filterList;
     protected override List<T> FilterList => filterList;
-    public override T[] DefaultFilter { get; set; } = System.Array.Empty<T>();
+    public override T[] DefaultFilter { get; set; } = Array.Empty<T>();
+    public override bool ResetWhenFull { get; set; } = false;
 
     public BrowseFilter(LocalisableString label, BindableList<T> selected, IEnumerable<Option> options, InputManager input)
         : base(input)
@@ -88,6 +90,7 @@ public partial class BrowseFilter<T> : FluXisFilterButtonsBase<T> where T : stru
     {
         [Resolved]
         private UISamples samples { get; set; }
+        public Action<ISelectableButton<T>> OnRightClick { get; set; }
 
         private readonly Option option;
         private readonly BindableList<T> selected;
@@ -124,7 +127,7 @@ public partial class BrowseFilter<T> : FluXisFilterButtonsBase<T> where T : stru
                     Alpha = 0
                 },
                 hover = new HoverLayer(),
-                flash = new FlashLayer(),
+                flash = new FlashLayer() { Colour = option.Color.Lighten(.8f) },
                 text = new FluXisSpriteText
                 {
                     Text = option.Text,
@@ -141,9 +144,9 @@ public partial class BrowseFilter<T> : FluXisFilterButtonsBase<T> where T : stru
         {
             bool enabled = (parent.FilterList.Count == 0 && parent.DefaultFilter.Length == 0) || parent.FilterList.Contains(option.Value);
 
-            background.Alpha = enabled ? 1f : 0f;
-            text.Alpha = enabled ? 1f : .6f;
-            text.Colour = enabled ? Theme.TextDark : Theme.Text;
+            background.FadeTo(enabled ? 1 : 0, 200);
+            text.FadeTo(enabled ? 1 : .6f, 200);
+            text.FadeColour(enabled ? (Theme.IsBright(background.Colour) ? Theme.TextDark : Theme.Text) : Theme.Text, 200);
         }
 
         protected override bool OnHover(HoverEvent e)
@@ -158,12 +161,20 @@ public partial class BrowseFilter<T> : FluXisFilterButtonsBase<T> where T : stru
             hover.Hide();
         }
 
-        protected override bool OnClick(ClickEvent e)
+        protected override bool OnMouseDown(MouseDownEvent e)
         {
-            samples.Click();
-            flash.Show();
+            if (e.Button == osuTK.Input.MouseButton.Right)
+            {
+                OnRightClick?.Invoke(this);
+            }
+            else
+            {
+                samples.Click();
+                flash.Show();
 
-            parent.OnValueClick(option.Value);
+                parent.OnValueClick(option.Value);
+            }
+            
             return true;
         }
 

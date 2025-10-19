@@ -252,14 +252,14 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                     .Where(x => x >= MapStatus.Unsubmitted)
                     .Select(x => new BrowseFilter<MapStatus>.Option(x, x.ToString(), Theme.GetStatusColor((int)x))),
                 input
-            ) { DefaultFilter = new MapStatus[] {MapStatus.Pure} },
+            ) { DefaultFilter = new MapStatus[] {MapStatus.Pure}, ResetWhenFull = false },
             new BrowseFilter<int>(
                 "Keymode",
                 filterKeymode,
                 Enumerable.Range(4, 5)
                     .Select(x => new BrowseFilter<int>.Option(x, $"{x}K", Theme.GetKeyCountColor(x))),
                 input
-            ) { DefaultFilter = {} }
+            ) { DefaultFilter = {}, ResetWhenFull = true }
         });
 
         filterStatus.BindCollectionChanged((_, _) => idleTracker.Reset());

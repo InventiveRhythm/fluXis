@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
@@ -22,7 +23,8 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
     protected override string Label => "Status";
     protected override float FontSize { get; set; } = 24;
     protected override List<int> FilterList => filters.Status;
-    public override int[] DefaultFilter { get; set; } = System.Array.Empty<int>();
+    public override int[] DefaultFilter { get; set; } = Array.Empty<int>();
+    public override bool ResetWhenFull { get; set; } = true;
 
     private static readonly Dictionary<int, string> statuses = new()
     {
@@ -50,6 +52,8 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
     {
         private readonly SearchDropdownStatus dropdownItem;
         private readonly int status;
+
+        public Action<ISelectableButton<int>> OnRightClick { get; set; }
 
         [Resolved]
         private UISamples samples { get; set; }
@@ -93,6 +97,7 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
 
             var color = Theme.GetStatusColor(status);
             colorBox.Colour = color;
+            flash.Colour = color.Lighten(.8f);
             text.Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text;
         }
 
@@ -104,10 +109,18 @@ public partial class SearchDropdownStatus : FluXisFilterButtonsBase<int>
             text.FadeColour(isSelected ? (Theme.IsBright(colorBox.Colour) ? Theme.TextDark : Theme.Text) : Theme.Text, 200);
         }
 
-        protected override bool OnClick(ClickEvent e)
+        protected override bool OnMouseDown(MouseDownEvent e)
         {
-            samples.Click();
-            dropdownItem.OnValueClick(status);
+            if (e.Button == osuTK.Input.MouseButton.Right)
+            {
+                OnRightClick?.Invoke(this);
+            }
+            else
+            {
+                samples.Click();
+                dropdownItem.OnValueClick(status);
+            }
+            
             return true;
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
@@ -22,7 +23,8 @@ public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
     protected override string Label => "Keymode";
     protected override float FontSize { get; set; } = 24;
     protected override List<int> FilterList => filters.Keymodes;
-    public override int[] DefaultFilter { get; set; } = System.Array.Empty<int>();
+    public override int[] DefaultFilter { get; set; } = Array.Empty<int>();
+    public override bool ResetWhenFull { get; set; } = true;
 
     public SearchDropdownKeymode(InputManager input) 
         : base(input)
@@ -41,6 +43,8 @@ public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
     {
         private readonly SearchDropdownKeymode dropdownItem;
         private readonly int keymode;
+
+        public Action<ISelectableButton<int>> OnRightClick { get; set; }
 
         [Resolved]
         private UISamples samples { get; set; }
@@ -74,7 +78,7 @@ public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
                     Colour = color,
                 },
                 hoverBox = new HoverLayer(),
-                flash = new FlashLayer(),
+                flash = new FlashLayer() { Colour = color.Lighten(.8f) },
                 text = new FluXisSpriteText
                 {
                     Text = $"{keymode}K",
@@ -94,10 +98,17 @@ public partial class SearchDropdownKeymode : FluXisFilterButtonsBase<int>
             text.FadeColour(isSelected ? (Theme.IsBright(background.Colour) ? Theme.TextDark : Theme.Text) : Theme.Text, 200);
         }
 
-        protected override bool OnClick(ClickEvent e)
+        protected override bool OnMouseDown(MouseDownEvent e)
         {
-            samples.Click();
-            dropdownItem.OnValueClick(keymode);
+            if (e.Button == osuTK.Input.MouseButton.Right)
+            {
+                OnRightClick?.Invoke(this);
+            }
+            else
+            {
+                samples.Click();
+                dropdownItem.OnValueClick(keymode);
+            }
             return true;
         }
 
