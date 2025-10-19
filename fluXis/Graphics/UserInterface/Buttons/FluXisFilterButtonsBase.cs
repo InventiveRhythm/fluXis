@@ -9,7 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osuTK;
 
-namespace fluXis.Screens.Select.Search.Dropdown;
+namespace fluXis.Graphics.UserInterface.Buttons;
 
 public abstract partial class FluXisFilterButtonsBase<T> : CompositeDrawable where T : struct
 {
