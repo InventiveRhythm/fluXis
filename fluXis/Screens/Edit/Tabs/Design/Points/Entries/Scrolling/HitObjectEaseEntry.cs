@@ -3,14 +3,14 @@ using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
-using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
+namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries.Scrolling;
 
 public partial class HitObjectEaseEntry : PointListEntry
 {

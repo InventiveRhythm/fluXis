@@ -3,7 +3,11 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Playfields;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Design.Points.Entries;
+using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Playfields;
+using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Scrolling;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 
 namespace fluXis.Screens.Edit.Tabs.Design.Points;

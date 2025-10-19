@@ -7,6 +7,8 @@ using System.Reflection;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Playfields;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Scripting;
 using fluXis.Scripting.Runners;
 using fluXis.Utils;

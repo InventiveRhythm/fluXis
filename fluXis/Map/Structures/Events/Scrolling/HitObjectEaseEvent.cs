@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
-namespace fluXis.Map.Structures.Events;
+namespace fluXis.Map.Structures.Events.Scrolling;
 
 public class HitObjectEaseEvent : IMapEvent, IHasEasing
 {
