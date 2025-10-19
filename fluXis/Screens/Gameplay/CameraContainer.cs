@@ -31,10 +31,18 @@ public partial class CameraContainer : Container
     {
         base.Update();
 
-        Position = proxy.Position;
+        Position = -proxy.Position;
         Scale = proxy.Scale;
         Rotation = proxy.Rotation;
     }
 
     public Drawable CreateProxyDrawable() => proxy = Empty();
+
+    public void Refresh(List<ICameraEvent> ev)
+    {
+        proxy.ClearTransforms(true);
+        proxy.MoveToX(0).MoveToY(0).ScaleTo(0).RotateTo(0);
+
+        ev.ForEach(x => x.Apply(proxy));
+    }
 }
