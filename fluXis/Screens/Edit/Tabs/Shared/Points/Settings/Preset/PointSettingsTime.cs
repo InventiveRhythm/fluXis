@@ -40,7 +40,7 @@ public partial class PointSettingsTime : PointSettingsNumber<double>
         Action = t =>
         {
             var old = obj.Time;
-            DefaultValue = t;
+            DefaultValue = obj.Time = t;
             TimeChanged?.Invoke(old, t);
             map.Update(obj);
         }

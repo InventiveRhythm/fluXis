@@ -10,6 +10,9 @@ using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Playfields;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Verify;
 using fluXis.Storyboards;
 using fluXis.Utils;
@@ -89,6 +92,9 @@ public class EditorMap : IVerifyContext
             new ChangeNotifier<BeatPulseEvent>(MapEvents.BeatPulseEvents),
             new ChangeNotifier<ScrollMultiplierEvent>(MapEvents.ScrollMultiplyEvents),
             new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents),
+            new ChangeNotifier<CameraMoveEvent>(MapEvents.CameraMoveEvents),
+            new ChangeNotifier<CameraScaleEvent>(MapEvents.CameraScaleEvents),
+            new ChangeNotifier<CameraRotateEvent>(MapEvents.CameraRotateEvents),
             new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents),
             MapInfo.Storyboard

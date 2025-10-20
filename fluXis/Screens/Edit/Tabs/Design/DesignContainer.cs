@@ -19,7 +19,9 @@ using fluXis.Graphics.Shaders.SplitScreen;
 using fluXis.Graphics.Shaders.FishEye;
 using fluXis.Graphics.Shaders.Reflections;
 using fluXis.Graphics.Sprites;
+using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Camera;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
@@ -27,6 +29,7 @@ using fluXis.Screens.Edit.Tabs.Design.Effects;
 using fluXis.Screens.Edit.Tabs.Design.Points;
 using fluXis.Screens.Edit.Tabs.Shared;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
+using fluXis.Screens.Gameplay;
 using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
@@ -65,6 +68,7 @@ public partial class DesignContainer : EditorTabContainer
     private DrawSizePreservingFillContainer drawSizePreserve;
     private ShaderStackContainer shaders;
     private DesignShaderHandler handler;
+    private CameraContainer camera;
 
     private PointsSidebar sidebar;
 
@@ -101,6 +105,9 @@ public partial class DesignContainer : EditorTabContainer
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
         };
+
+        camera = new CameraContainer(Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList());
+
         return new Drawable[]
         {
             handler = new DesignShaderHandler(),
@@ -109,32 +116,36 @@ public partial class DesignContainer : EditorTabContainer
                 loadingIcon.Show();
                 rulesetWrapper.FirstOrDefault()?.FadeOut(100);
             }),
-            drawSizePreserve.WithChild(createShaderStack().AddContent(new Drawable[]
+            drawSizePreserve.WithChild(createShaderStack().AddContent(new[]
             {
-                backgroundStack = new SpriteStack<BlurableBackground> { AutoFill = false },
-                backgroundVideo = new BackgroundVideo
+                camera.CreateProxyDrawable().With(x => x.Clock = EditorClock),
+                camera.WithChildren(new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    VideoClock = EditorClock
-                },
-                backgroundDim = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.Black,
-                    Alpha = Editor.BindableBackgroundDim.Value
-                },
-                backFlash = new EditorFlashLayer { Clock = EditorClock },
-                rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both },
+                    backgroundStack = new SpriteStack<BlurableBackground> { AutoFill = false },
+                    backgroundVideo = new BackgroundVideo
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        VideoClock = EditorClock
+                    },
+                    backgroundDim = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Colour4.Black,
+                        Alpha = Editor.BindableBackgroundDim.Value
+                    },
+                    backFlash = new EditorFlashLayer { Clock = EditorClock },
+                    rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both },
+                }),
                 pulseEffect = new PulseEffect(Map.MapEvents.PulseEvents) { Clock = EditorClock },
+                frontFlash = new EditorFlashLayer { Clock = EditorClock },
                 loadingIcon = new LoadingIcon
                 {
                     Size = new Vector2(32),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
-                },
-                frontFlash = new EditorFlashLayer { Clock = EditorClock }
+                }
             }))
         };
     }
@@ -163,8 +174,19 @@ public partial class DesignContainer : EditorTabContainer
         Map.RegisterUpdateListener<PulseEvent>(_ => pulseEffect.Rebuild());
         Map.RegisterRemoveListener<PulseEvent>(_ => pulseEffect.Rebuild());
 
+        registerCameraUpdate<CameraMoveEvent>();
+        registerCameraUpdate<CameraScaleEvent>();
+        registerCameraUpdate<CameraRotateEvent>();
+
         Editor.BindableBackgroundDim.BindValueChanged(e => backgroundDim.FadeTo(e.NewValue, 300));
         Editor.BindableBackgroundBlur.BindValueChanged(e => backgroundStack.Add(new BlurableBackground(Map.RealmMap, e.NewValue)), true);
+
+        void registerCameraUpdate<T>() where T : class, ICameraEvent
+        {
+            Map.RegisterAddListener<T>(_ => rebuildCamera());
+            Map.RegisterUpdateListener<T>(_ => rebuildCamera());
+            Map.RegisterRemoveListener<T>(_ => rebuildCamera());
+        }
     }
 
     protected override void Update()
@@ -240,6 +262,12 @@ public partial class DesignContainer : EditorTabContainer
         var content = shaders.RemoveContent();
         drawSizePreserve.Clear();
         drawSizePreserve.Add(createShaderStack().AddContent(content.ToArray()));
+    }
+
+    private void rebuildCamera()
+    {
+        var events = Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList();
+        camera.Refresh(events);
     }
 
     private void rebuildRuleset()

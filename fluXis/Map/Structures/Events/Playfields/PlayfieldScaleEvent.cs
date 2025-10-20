@@ -1,11 +1,10 @@
 using System;
 using fluXis.Map.Structures.Bases;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK;
 
-namespace fluXis.Map.Structures.Events;
+namespace fluXis.Map.Structures.Events.Playfields;
 
 public class PlayfieldScaleEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToPlayfield
 {
@@ -30,7 +29,7 @@ public class PlayfieldScaleEvent : IMapEvent, IHasDuration, IHasEasing, IApplica
     [JsonProperty("subfield")]
     public int PlayfieldSubIndex { get; set; }
 
-    public void Apply(Playfield playfield)
+    public void Apply(Screens.Gameplay.Ruleset.Playfields.Playfield playfield)
     {
         if (!this.AppliesTo(playfield))
             return;

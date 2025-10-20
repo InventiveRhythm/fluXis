@@ -1,6 +1,7 @@
 using System;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Scrolling;
+using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

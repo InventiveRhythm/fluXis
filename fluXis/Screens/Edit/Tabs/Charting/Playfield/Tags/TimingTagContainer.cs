@@ -1,5 +1,5 @@
 using fluXis.Map.Structures;
-using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags.TimingTags;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;

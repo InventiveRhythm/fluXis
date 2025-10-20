@@ -6,6 +6,9 @@ using System.Linq;
 using System.Reflection;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Playfields;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Scripting;
 using fluXis.Scripting.Runners;
 using fluXis.Utils;
@@ -58,6 +61,15 @@ public class MapEvents
 
     [JsonProperty("time-offset")]
     public List<TimeOffsetEvent> TimeOffsetEvents { get; private set; } = new();
+
+    [JsonProperty("camera-move")]
+    public List<CameraMoveEvent> CameraMoveEvents { get; private set; } = new();
+
+    [JsonProperty("camera-scale")]
+    public List<CameraScaleEvent> CameraScaleEvents { get; private set; } = new();
+
+    [JsonProperty("camera-rotate")]
+    public List<CameraRotateEvent> CameraRotateEvents { get; private set; } = new();
 
     [JsonProperty("scripts")]
     public List<ScriptEvent> ScriptEvents { get; private set; } = new();
@@ -334,6 +346,19 @@ public class MapEvents
         }
 
         Sort();
+    }
+
+    public IEnumerable<ITimedObject> Where(Func<ITimedObject, bool> func)
+    {
+        var list = new List<ITimedObject>();
+
+        ForAllEvents(x =>
+        {
+            if (func(x))
+                list.Add(x);
+        });
+
+        return list;
     }
 
     private static int compare(ITimedObject a, ITimedObject b)
