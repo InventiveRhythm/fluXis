@@ -11,8 +11,8 @@ layout(set = 1, binding = 1) uniform sampler m_Sampler;
 
 layout(location = 0) out vec4 o_Colour;
 
-// think this is a port of a godot shader          // saludos a mi compañero matias
-// i'll probably change the name later
+// this is a port of a godot shader          // saludos a mi compañero matias
+// probably this one: https://godotshaders.com/shader/2d-perspective
 
 bool cull_back = true;
 float inset = 0.0;
