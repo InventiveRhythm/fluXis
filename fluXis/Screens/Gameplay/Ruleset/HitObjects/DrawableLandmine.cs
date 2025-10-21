@@ -1,4 +1,3 @@
-using System;
 using fluXis.Input;
 using fluXis.Map.Structures;
 using fluXis.Scoring.Enums;
@@ -9,6 +8,8 @@ namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
 
 public partial class DrawableLandmine : DrawableHitObject
 {
+    //public override HitWindows HitWindows => Ruleset.LandmineWindows;
+
     public override bool CanBeRemoved => Judged || didNotGetHit;
 
     private bool didNotGetHit
@@ -19,7 +20,7 @@ public partial class DrawableLandmine : DrawableHitObject
             if (nextNote != null && TimeDelta <= 0)
                 return true;
 
-            return TimeDelta <= -HitWindows.TimingFor(Judgement.Perfect);
+            return TimeDelta <= -Ruleset.LandmineWindows.TimingFor(Judgement.Miss);
         }
     }
 
@@ -67,7 +68,7 @@ public partial class DrawableLandmine : DrawableHitObject
         {
             if (isBeingHeld)
             {
-                ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+                ApplyResult(0);
                 return;
             }
 
@@ -79,12 +80,12 @@ public partial class DrawableLandmine : DrawableHitObject
         if (isBeingHeld)
         {
             if (offset < 0)
-                ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+                ApplyResult(0);
             return;
         }
 
-        if (Math.Abs(offset) <= HitWindows.TimingFor(Judgement.Perfect))
-            ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+        if (Ruleset.LandmineWindows.CanBeHit(offset))
+            ApplyResult(offset);
     }
 
     public override void OnPressed(FluXisGameplayKeybind key)
@@ -112,7 +113,7 @@ public partial class DrawableLandmine : DrawableHitObject
 
         while (next != null)
         {
-            if (next.Time - Data.Time > HitWindows.TimingFor(Judgement.Okay)) return null; //no need to keep going if the next note is too far away
+            if (next.Time - Data.Time > Ruleset.HitWindows.TimingFor(Judgement.Okay)) return null; //no need to keep going if the next note is too far away
             if (next.Type != 2) return next;
 
             next = next.NextObject;

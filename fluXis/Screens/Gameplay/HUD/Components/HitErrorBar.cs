@@ -116,7 +116,7 @@ public partial class HitErrorBar : GameplayHUDComponent
     private void addHit(HitResult result)
     {
         var time = -result.Difference;
-        var judgement = HitWindows.JudgementFor(time);
+        var judgement = result.Judgement;
         time /= Deps.PlaybackRate;
 
         icon.MoveToX((float)time, 300, Easing.OutQuint);

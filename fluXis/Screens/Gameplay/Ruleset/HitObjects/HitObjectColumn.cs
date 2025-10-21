@@ -251,8 +251,13 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
         // since judged is only set after hitting the tail this works
         var isHoldEnd = hitObject is DrawableLongNote { Judged: true };
+        var isLandmine = hitObject is DrawableLandmine;
 
-        var hitWindows = isHoldEnd ? ruleset.ReleaseWindows : ruleset.HitWindows;
+        var hitWindows =
+            isHoldEnd ? ruleset.ReleaseWindows :
+            isLandmine ? ruleset.LandmineWindows :
+            ruleset.HitWindows;
+
         var judgement = hitWindows.JudgementFor(difference);
 
         if (player.HealthProcessor.Failed)
