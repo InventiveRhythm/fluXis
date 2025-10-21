@@ -208,6 +208,7 @@ public partial class ShaderEntry : PointListEntry
                     }
                 });
                 break;
+
             case ShaderType.SplitScreen:
                 settings.AddRange(new Drawable[]
                 {
@@ -272,6 +273,7 @@ public partial class ShaderEntry : PointListEntry
                     }
                 });
                 break;
+
             case ShaderType.FishEye:
                 settings.AddRange(new Drawable[]
                 {
@@ -306,6 +308,7 @@ public partial class ShaderEntry : PointListEntry
                     }
                 });
                 break;
+
             case ShaderType.Reflections:
                 settings.AddRange(new Drawable[]
                 {

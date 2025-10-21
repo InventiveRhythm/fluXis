@@ -30,6 +30,7 @@ using fluXis.Graphics.Shaders.NeonThing;
 using fluXis.Graphics.Shaders.Perspective;
 using fluXis.Input;
 using fluXis.Map;
+using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Mods;
 using fluXis.Online;
@@ -84,6 +85,28 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override bool ShowCursor => PlayfieldManager.AnyFailed || IsPaused.Value || CursorVisible;
     public override bool ApplyValuesAfterLoad => true;
     public override bool AllowExit => false;
+
+    public override string WindowTitle
+    {
+        get
+        {
+            var title = "";
+
+            if (Game.UsingOriginalMetadata || string.IsNullOrWhiteSpace(Map.Metadata.ArtistRomanized))
+                title += Map.Metadata.Artist;
+            else
+                title += Map.Metadata.ArtistRomanized;
+
+            title += " - ";
+
+            if (Game.UsingOriginalMetadata || string.IsNullOrWhiteSpace(Map.Metadata.TitleRomanized))
+                title += Map.Metadata.Title;
+            else
+                title += Map.Metadata.TitleRomanized;
+
+            return title + $" [{Map.Metadata.Difficulty}]";
+        }
+    }
 
     protected virtual double GameplayStartTime => 0;
     protected virtual bool AllowRestart => true;
@@ -246,57 +269,71 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(Map, new Storyboard(), ".");
         LoadComponent(storyboard);
 
+        var camera = new CameraContainer(MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList());
+
         InternalChildren = new Drawable[]
         {
             keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount, Map.IsDual)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Children = new Drawable[]
+                Children = new[]
                 {
+                    camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
                     Samples,
                     dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }),
                     shaders.AddContent(new[]
                     {
-                        new DrawSizePreservingFillContainer
+                        camera.WithChildren(new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            TargetDrawSize = new Vector2(1920, 1080),
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Children = new Drawable[]
+                            new DrawSizePreservingFillContainer
                             {
-                                new Container
+                                RelativeSizeAxes = Axes.Both,
+                                TargetDrawSize = new Vector2(1920, 1080),
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Children = new Drawable[]
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = ColourInfo.GradientHorizontal(Color4.White, Color4.Black).Interpolate(new Vector2(BackgroundDim, 0)),
-                                    Children = new Drawable[]
+                                    new Container
                                     {
-                                        background = new GlobalBackground
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = ColourInfo.GradientHorizontal(Color4.White, Color4.Black).Interpolate(new Vector2(BackgroundDim, 0)),
+                                        Children = new Drawable[]
                                         {
-                                            DefaultMap = RealmMap,
-                                            InitialBlur = BackgroundBlur
-                                        },
-                                        backgroundVideo = new BackgroundVideo
-                                        {
-                                            Clock = GameplayClock
-                                        },
-                                        new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
-                                    }
-                                },
-                                clockContainer,
-                                new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Foreground)
+                                            background = new GlobalBackground
+                                            {
+                                                DefaultMap = RealmMap,
+                                                InitialBlur = BackgroundBlur
+                                            },
+                                            backgroundVideo = new BackgroundVideo
+                                            {
+                                                Clock = GameplayClock
+                                            },
+                                            new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
+                                        }
+                                    },
+                                    new ComboBurst(RulesetContainer),
+                                    clockContainer,
+                                    new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Foreground)
+                                }
+                            },
+                            hud = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = DisplayHUD ? 1 : 0,
+                                Child = new GameplayHUD(RulesetContainer)
+                            },
+                            new DrawSizePreservingFillContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                TargetDrawSize = new Vector2(1920, 1080),
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Child = new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Overlay)
                             }
-                        },
-                        hud = new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Alpha = DisplayHUD ? 1 : 0,
-                            Child = new GameplayHUD(RulesetContainer)
-                        },
+                        }),
                         CreateTextOverlay(),
                         new DangerHealthOverlay(),
-                        new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Overlay),
                         new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
                         new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
                         new SkipOverlay(),
