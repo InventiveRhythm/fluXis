@@ -16,7 +16,7 @@ public partial class DrawableLongNoteHead : DrawableLongNotePart
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = Skin.GetHitObject(VisualLane, ObjectManager.KeyCount).With(d =>
+        InternalChild = Skin.GetLongNoteStart(VisualLane, ObjectManager.KeyCount).With(d =>
         {
             d.Anchor = Anchor.BottomCentre;
             d.Origin = Anchor.BottomCentre;
