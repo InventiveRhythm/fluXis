@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures;
+using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Blueprints;
@@ -24,6 +26,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
 
     [Resolved]
     private EditorMap map { get; set; }
+
+    [Resolved]
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
     private EditorActionStack actions { get; set; }
@@ -231,6 +236,13 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
         if (laneDiff != 0 || timeDiff != 0)
         {
             var selected = SelectedObjects.ToList();
+
+            if (selected?.Count == 0)
+            {
+                notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+                return true;
+            }
+
             var changed = false;
 
             var action = new NoteMoveAction(selected.ToArray());
