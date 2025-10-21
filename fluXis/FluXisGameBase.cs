@@ -154,6 +154,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             }
 
             frameworkLocale = frameworkConfig.GetBindable<string>(FrameworkSetting.Locale);
+            usingOriginalMeta = frameworkConfig.GetBindable<bool>(FrameworkSetting.ShowUnicode);
             frameworkLocale.BindValueChanged(_ => updateLanguage());
 
             localisationParameters = Localisation.CurrentParameters.GetBoundCopy();
@@ -456,6 +457,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     }
 
     public virtual void CloseOverlays() { }
+    public virtual void UpdateWindowTitle(string title) { }
     public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUser player, Action replayAction = null) { }
     public virtual void ShowMap(RealmMapSet map) { }
 
@@ -477,6 +479,9 @@ public partial class FluXisGameBase : osu.Framework.Game
             return languages;
         }
     }
+
+    private Bindable<bool> usingOriginalMeta;
+    public bool UsingOriginalMetadata => usingOriginalMeta.Value;
 
     private Bindable<string> frameworkLocale;
     private IBindable<LocalisationParameters> localisationParameters;

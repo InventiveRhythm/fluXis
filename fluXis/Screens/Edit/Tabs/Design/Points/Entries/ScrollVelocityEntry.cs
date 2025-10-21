@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
@@ -8,6 +7,7 @@ using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Utils;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
@@ -26,40 +26,28 @@ public partial class ScrollVelocityEntry : PointListEntry
 
     public override ITimedObject CreateClone() => sv.JsonCopy();
 
-    protected override Drawable[] CreateValueContent()
+    protected override Drawable[] CreateValueContent() => new FluXisSpriteText
     {
-        return new Drawable[]
+        Text = $"{sv.Multiplier.ToStringInvariant("0.00")}x",
+        Colour = Color
+    }.Yield().ToArray<Drawable>();
+
+    protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
+    {
+        new PointSettingsNumber<double>
         {
-            new FluXisSpriteText
+            Text = "Multiplier",
+            TooltipText = "The speed to multiply the scroll velocity by.",
+            ExtraText = "x",
+            TextBoxWidth = 195,
+            Formatting = "0.0000",
+            DefaultValue = sv.Multiplier,
+            OnValueChanged = v =>
             {
-                Text = $"{sv.Multiplier.ToStringInvariant("0.00")}x",
-                Colour = Color
+                sv.Multiplier = v;
+                Map.Update(sv);
             }
-        };
-    }
-
-    protected override IEnumerable<Drawable> CreateSettings()
-    {
-        return base.CreateSettings().Concat(new Drawable[]
-        {
-            new PointSettingsTextBox
-            {
-                Text = "Multiplier",
-                TooltipText = "The speed to multiply the scroll velocity by.",
-                ExtraText = "x",
-                TextBoxWidth = 195,
-                DefaultText = sv.Multiplier.ToStringInvariant("0.0000"),
-                OnTextChanged = box =>
-                {
-                    if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var result))
-                        sv.Multiplier = result;
-                    else
-                        box.NotifyError();
-
-                    Map.Update(sv);
-                }
-            },
-            new PointSettingsLaneMask(Map, sv)
-        });
-    }
+        },
+        new PointSettingsLaneMask(Map, sv)
+    });
 }

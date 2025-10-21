@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using fluXis.Import.Quaver.Map.Structs;
 using fluXis.Map;
 using fluXis.Map.Structures;
-using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Scrolling;
 using JetBrains.Annotations;
 using osu.Framework.Logging;
 

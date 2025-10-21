@@ -63,8 +63,8 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
     {
         base.LoadComplete();
 
-        map.HitObjectAdded += AddBlueprint;
-        map.HitObjectRemoved += RemoveBlueprint;
+        map.RegisterAddListener<HitObject>(AddBlueprint);
+        map.RegisterRemoveListener<HitObject>(RemoveBlueprint);
 
         SelectionBlueprints.StartBulk();
 

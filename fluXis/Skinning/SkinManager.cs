@@ -500,6 +500,10 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     Drawable ISkin.GetHitLine() => currentSkin.GetHitLine() ?? defaultSkin.GetHitLine();
     AbstractJudgementText ISkin.GetJudgement(Judgement judgement, bool isLate) => currentSkin.GetJudgement(judgement, isLate) ?? defaultSkin.GetJudgement(judgement, isLate);
 
+    // no point in falling back to default skin since they don't have any of these
+    public IEnumerable<Drawable> GetComboBursts() => currentSkin.GetComboBursts();
+    public IEnumerable<Sample> GetComboBurstSamples() => currentSkin.GetComboBurstSamples();
+
     Drawable ISkin.GetFailFlash() => currentSkin.GetFailFlash() ?? defaultSkin.GetFailFlash();
 
     Drawable ISkin.GetResultsScoreRank(ScoreRank rank) => currentSkin.GetResultsScoreRank(rank) ?? defaultSkin.GetResultsScoreRank(rank);

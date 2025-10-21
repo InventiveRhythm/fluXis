@@ -41,8 +41,9 @@ public partial class TimelineDensity : FillFlowContainer
         base.LoadComplete();
 
         clock.TrackChanged += trackChanged;
-        map.HitObjectAdded += _ => updateDensity();
-        map.HitObjectRemoved += _ => updateDensity();
+        map.RegisterAddListener<HitObject>(_ => updateDensity());
+        map.RegisterUpdateListener<HitObject>(_ => updateDensity());
+        map.RegisterRemoveListener<HitObject>(_ => updateDensity());
 
         trackChanged(track);
     }

@@ -6,6 +6,9 @@ using System.Linq;
 using System.Reflection;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Playfields;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Scripting;
 using fluXis.Scripting.Runners;
 using fluXis.Utils;
@@ -59,6 +62,15 @@ public class MapEvents
     [JsonProperty("time-offset")]
     public List<TimeOffsetEvent> TimeOffsetEvents { get; private set; } = new();
 
+    [JsonProperty("camera-move")]
+    public List<CameraMoveEvent> CameraMoveEvents { get; private set; } = new();
+
+    [JsonProperty("camera-scale")]
+    public List<CameraScaleEvent> CameraScaleEvents { get; private set; } = new();
+
+    [JsonProperty("camera-rotate")]
+    public List<CameraRotateEvent> CameraRotateEvents { get; private set; } = new();
+
     [JsonProperty("scripts")]
     public List<ScriptEvent> ScriptEvents { get; private set; } = new();
 
@@ -83,22 +95,15 @@ public class MapEvents
     #endregion
 
     [JsonIgnore]
-    public bool Empty => LaneSwitchEvents.Count == 0
-                         && FlashEvents.Count == 0
-                         && ColorFadeEvents.Count == 0
-                         && PulseEvents.Count == 0
-                         && PlayfieldMoveEvents.Count == 0
-                         && PlayfieldScaleEvents.Count == 0
-                         && PlayfieldRotateEvents.Count == 0
-                         && LayerFadeEvents.Count == 0
-                         && HitObjectEaseEvents.Count == 0
-                         && ShakeEvents.Count == 0
-                         && ShaderEvents.Count == 0
-                         && BeatPulseEvents.Count == 0
-                         && ScrollMultiplyEvents.Count == 0
-                         && TimeOffsetEvents.Count == 0
-                         && ScriptEvents.Count == 0
-                         && NoteEvents.Count == 0;
+    public bool Empty
+    {
+        get
+        {
+            var count = 0;
+            ForAllEvents(_ => count++);
+            return count == 0;
+        }
+    }
 
     #region Server-Side Stuff
 
@@ -341,6 +346,19 @@ public class MapEvents
         }
 
         Sort();
+    }
+
+    public IEnumerable<ITimedObject> Where(Func<ITimedObject, bool> func)
+    {
+        var list = new List<ITimedObject>();
+
+        ForAllEvents(x =>
+        {
+            if (func(x))
+                list.Add(x);
+        });
+
+        return list;
     }
 
     private static int compare(ITimedObject a, ITimedObject b)

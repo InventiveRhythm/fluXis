@@ -12,6 +12,9 @@
     <PackageId>fluXis.Desktop</PackageId>
     <AssemblyName>fluXis</AssemblyName>
     <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
+
+    <!-- you would not believe it but this actually fixes the dev environment on linux -->
+    <RuntimeIdentifier Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'">linux-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\fluXis\fluXis.csproj"/>
@@ -29,6 +32,7 @@
   <ItemGroup>
     <None Update="libsteam_api.so">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/linux-x64/native/libsteam_api.so</PackagePath>
     </None>
     <None Update="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

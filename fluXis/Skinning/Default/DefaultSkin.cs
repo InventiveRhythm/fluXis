@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring.Enums;
@@ -154,6 +155,8 @@ public class DefaultSkin : ISkin
 
     public virtual Drawable GetHitLine() => new DefaultHitLine(SkinJson);
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => new DefaultJudgementText(judgement, isLate);
+    public IEnumerable<Drawable> GetComboBursts() => Array.Empty<Drawable>();
+    public IEnumerable<Sample> GetComboBurstSamples() => Array.Empty<Sample>();
 
     public Drawable GetFailFlash() => new Box();
 
