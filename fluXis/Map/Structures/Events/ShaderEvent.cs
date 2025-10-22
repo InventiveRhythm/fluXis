@@ -93,7 +93,5 @@ public enum ShaderType
     SplitScreen,
     FishEye,
     Reflections,
-    DrunkThing,
-    NeonThing,
     Perspective
 }

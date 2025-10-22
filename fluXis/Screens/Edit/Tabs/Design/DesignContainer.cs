@@ -18,8 +18,6 @@ using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Graphics.Shaders.SplitScreen;
 using fluXis.Graphics.Shaders.FishEye;
 using fluXis.Graphics.Shaders.Reflections;
-using fluXis.Graphics.Shaders.DrunkThing;
-using fluXis.Graphics.Shaders.NeonThing;
 using fluXis.Graphics.Shaders.Perspective;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures.Bases;
@@ -229,8 +227,6 @@ public partial class DesignContainer : EditorTabContainer
                 ShaderType.SplitScreen => new SplitScreenContainer(),
                 ShaderType.FishEye => new FishEyeContainer(),
                 ShaderType.Reflections => new ReflectionsContainer(),
-                ShaderType.DrunkThing => new DrunkThingContainer(),
-                ShaderType.NeonThing => new NeonThingContainer(),
                 ShaderType.Perspective => new PerspectiveContainer(),
                 _ => null
             };
