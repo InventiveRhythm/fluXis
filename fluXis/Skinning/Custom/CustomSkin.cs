@@ -208,6 +208,25 @@ public class CustomSkin : ISkin
         return null;
     }
 
+    public Drawable GetLongNoteStart(int lane, int keyCount)
+    {
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteStart/{keyCount}k-{lane}");
+        var main = path + ".png";
+        var tintless = path + "-tintless.png";
+
+        if (!storage.Exists(main))
+            return GetHitObject(lane, keyCount);
+
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var drawable = new CustomHitObjectPiece(
+            SkinJson, (MapColor)index, keyCount, false,
+            textures.Get(main), textures.Get(tintless)
+        );
+
+        drawable.UpdateColor(lane, keyCount);
+        return drawable;
+    }
+
     public Drawable GetLongNoteBody(int lane, int keyCount)
     {
         var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteBody/{keyCount}k-{lane}");
