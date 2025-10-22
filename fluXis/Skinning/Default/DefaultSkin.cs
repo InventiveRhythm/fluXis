@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring.Enums;
@@ -122,6 +123,8 @@ public class DefaultSkin : ISkin
 
     public virtual Drawable GetLandmine(int lane, int keyCount) => new DefaultLandmine();
 
+    public virtual Drawable GetLongNoteStart(int lane, int keyCount) => GetHitObject(lane, keyCount);
+
     public virtual Drawable GetLongNoteBody(int lane, int keyCount)
     {
         var index = Theme.GetLaneColorIndex(lane, keyCount);
@@ -156,6 +159,8 @@ public class DefaultSkin : ISkin
 
     public virtual Drawable GetHitLine() => new DefaultHitLine(SkinJson);
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => new DefaultJudgementText(judgement, isLate);
+    public IEnumerable<Drawable> GetComboBursts() => Array.Empty<Drawable>();
+    public IEnumerable<Sample> GetComboBurstSamples() => Array.Empty<Sample>();
 
     public Drawable GetFailFlash() => new Box();
 

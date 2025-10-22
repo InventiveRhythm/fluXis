@@ -20,6 +20,8 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
     [Resolved]
     private PlayfieldManager playfields { get; set; } = null!;
 
+    public float HUDAlpha { get; set; } = 1f;
+
     private Bindable<bool> visible = null!;
     public Bindable<GameplayLeaderboardMode> Mode { get; private set; } = null!;
 
@@ -79,7 +81,7 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
             alpha -= .98f * (1 - val);
         }
 
-        alpha = Math.Clamp(alpha, 0, 1);
+        alpha = Math.Clamp(alpha * HUDAlpha, 0, 1);
 
         if (Precision.AlmostEquals(alpha, Alpha))
             Alpha = alpha;

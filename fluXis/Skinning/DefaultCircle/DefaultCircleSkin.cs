@@ -32,6 +32,8 @@ public class DefaultCircleSkin : DefaultSkin
         return piece;
     }
 
+    public override Drawable GetLongNoteStart(int lane, int keyCount) => GetHitObject(lane, keyCount);
+
     public override Drawable GetLongNoteBody(int lane, int keyCount)
     {
         var index = Theme.GetLaneColorIndex(lane, keyCount);

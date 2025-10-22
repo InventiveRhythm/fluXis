@@ -37,8 +37,8 @@ public partial class EditorHitObjectContainer : Container<EditorHitObject>
     {
         RelativeSizeAxes = Axes.Both;
 
-        map.HitObjectAdded += add;
-        map.HitObjectRemoved += remove;
+        map.RegisterAddListener<HitObject>(add);
+        map.RegisterRemoveListener<HitObject>(remove);
         map.MapInfo.HitObjects.ForEach(add);
     }
 

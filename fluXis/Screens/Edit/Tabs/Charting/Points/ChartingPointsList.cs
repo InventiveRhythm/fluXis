@@ -13,32 +13,18 @@ public partial class ChartingPointsList : PointsList
 {
     protected override void RegisterEvents()
     {
-        Map.TimingPointAdded += AddPoint;
-        Map.TimingPointUpdated += UpdatePoint;
-        Map.TimingPointRemoved += RemovePoint;
-        Map.MapInfo.TimingPoints.ForEach(AddPoint);
-
-        Map.LaneSwitchEventAdded += AddPoint;
-        Map.LaneSwitchEventUpdated += UpdatePoint;
-        Map.LaneSwitchEventRemoved += RemovePoint;
-        Map.MapEvents.LaneSwitchEvents.ForEach(AddPoint);
-
-        Map.NoteEventAdded += AddPoint;
-        Map.NoteEventUpdated += UpdatePoint;
-        Map.NoteEventRemoved += RemovePoint;
-        Map.MapEvents.NoteEvents.ForEach(AddPoint);
+        RegisterTypeEvents(Map.MapInfo.TimingPoints);
+        RegisterTypeEvents(Map.MapEvents.LaneSwitchEvents);
+        RegisterTypeEvents(Map.MapEvents.NoteEvents);
     }
 
-    protected override PointListEntry CreateEntryFor(ITimedObject obj)
+    protected override PointListEntry CreateEntryFor(ITimedObject obj) => obj switch
     {
-        return obj switch
-        {
-            TimingPoint timing => new TimingPointEntry(timing),
-            LaneSwitchEvent lane => new LaneSwitchEntry(lane),
-            NoteEvent note => new NoteEntry(note),
-            _ => null
-        };
-    }
+        TimingPoint timing => new TimingPointEntry(timing),
+        LaneSwitchEvent lane => new LaneSwitchEntry(lane),
+        NoteEvent note => new NoteEntry(note),
+        _ => null
+    };
 
     protected override IEnumerable<DropdownEntry> CreateDropdownEntries() => new DropdownEntry[]
     {

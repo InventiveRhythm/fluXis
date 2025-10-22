@@ -8,6 +8,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Utils;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
@@ -26,38 +27,27 @@ public partial class ShakeEntry : PointListEntry
 
     public override ITimedObject CreateClone() => shake.JsonCopy();
 
-    protected override Drawable[] CreateValueContent()
+    protected override Drawable[] CreateValueContent() => new FluXisSpriteText
     {
-        return new Drawable[]
-        {
-            new FluXisSpriteText
-            {
-                Text = $"{shake.Magnitude}px {shake.Duration}ms",
-                Colour = Color
-            }
-        };
-    }
+        Text = $"{shake.Magnitude}px {shake.Duration}ms",
+        Colour = Color
+    }.Yield().ToArray<Drawable>();
 
-    protected override IEnumerable<Drawable> CreateSettings()
+    protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        return base.CreateSettings().Concat(new Drawable[]
+        new PointSettingsLength<ShakeEvent>(Map, shake, BeatLength),
+        new PointSettingsNumber<float>
         {
-            new PointSettingsLength<ShakeEvent>(Map, shake, BeatLength),
-            new PointSettingsTextBox
+            Text = "Magnitude",
+            TooltipText = "The magnitude (strength) of the shake effect.",
+            Formatting = "0.##",
+            Step = 0.1f,
+            DefaultValue = shake.Magnitude,
+            OnValueChanged = v =>
             {
-                Text = "Magnitude",
-                TooltipText = "The magnitude (strength) of the shake effect.",
-                DefaultText = shake.Magnitude.ToStringInvariant(),
-                OnTextChanged = box =>
-                {
-                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                        shake.Magnitude = result;
-                    else
-                        box.NotifyError();
-
-                    Map.Update(shake);
-                }
+                shake.Magnitude = v;
+                Map.Update(shake);
             }
-        });
-    }
+        }
+    });
 }

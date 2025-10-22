@@ -935,13 +935,13 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         private void show(double duration)
         {
-            this.FadeIn(duration);
+            statusText.FadeIn(duration);
             pathTextBox?.FadeOut(duration);
         }
 
         private void hide(double duration)
         {
-            this.FadeOut(duration);
+            statusText.FadeOut(duration);
             pathTextBox?.FadeIn(duration);
         }
     }

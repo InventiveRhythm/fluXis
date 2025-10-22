@@ -25,6 +25,7 @@ public partial class FluXisScreen : Screen
     public virtual bool PlayBackSound => true;
     public virtual bool AutoPlayNext => false;
 
+    public virtual string WindowTitle => "";
     public virtual UserActivity InitialActivity => new UserActivity.MenuGeneral();
     public Bindable<UserActivity> Activity { get; }
 

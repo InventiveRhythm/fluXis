@@ -66,6 +66,9 @@ public static class Theme
     public static Colour4 BeatPulse => Colour4.FromHex("#9973EF");
     public static Colour4 ScrollMultiply => Colour4.FromHex("#c73673");
     public static Colour4 TimeOffset => Colour4.FromHex("#fa8ca1");
+    public static Colour4 CameraMove => Colour4.FromHex("#96C859");
+    public static Colour4 CameraScale => Colour4.FromHex("#7E97D4");
+    public static Colour4 CameraRotate => Colour4.FromHex("#CC9666");
     public static Colour4 Script => Colour4.FromHex("#c58a7b");
     public static Colour4 Note => Text;
     public static Colour4 Shader => Colour4.FromHex("#D65C5C");

@@ -66,5 +66,6 @@ public interface IAPIClient
     TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path)
         where S : class where C : class;
 
-    public void Disconnect();
+    void Disconnect();
+    void DisableOnline();
 }

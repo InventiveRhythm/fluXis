@@ -9,8 +9,8 @@ public partial class EffectTagContainer : EditorTagContainer
 
     protected override void LoadComplete()
     {
-        Map.NoteEventAdded += addNote;
-        Map.NoteEventRemoved -= RemoveTag;
+        Map.RegisterAddListener<NoteEvent>(addNote);
+        Map.RegisterRemoveListener<NoteEvent>(RemoveTag);
         Map.MapEvents.NoteEvents.ForEach(addNote);
     }
 

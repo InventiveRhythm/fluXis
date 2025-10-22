@@ -4,7 +4,7 @@ using fluXis.Screens.Gameplay.Ruleset.HitObjects;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
-namespace fluXis.Map.Structures.Events;
+namespace fluXis.Map.Structures.Events.Scrolling;
 
 public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToHitManager
 {

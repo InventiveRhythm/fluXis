@@ -1,13 +1,19 @@
 using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Utils;
+using JetBrains.Annotations;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 
-public abstract partial class PointSettingsBeats<T> : PointSettingsTextBox
+public abstract partial class PointSettingsBeats<T> : PointSettingsNumber<double>
     where T : class, ITimedObject
 {
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private EditorSettings settings { get; set; }
+
     protected T Object { get; }
     private EditorMap map { get; }
     private float beatLength { get; }
@@ -22,15 +28,21 @@ public abstract partial class PointSettingsBeats<T> : PointSettingsTextBox
 
         ExtraText = "beat(s)";
         TextBoxWidth = 100;
-        DefaultText = (Value / beatLength).ToStringInvariant("0.##");
-        OnTextChanged = box =>
+        Formatting = "0.##";
+        DefaultValue = Value / beatLength;
+        Min = 0;
+        OnValueChanged = v =>
         {
-            if (box.Text.TryParseFloatInvariant(out var result))
-                Value = result * beatLength;
-            else
-                box.NotifyError();
-
+            Value = v * beatLength;
             map.Update(obj);
+        };
+
+        FetchStepValue = () =>
+        {
+            if (settings is null)
+                return 1;
+
+            return 1f / settings.SnapDivisor;
         };
     }
 

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.UserInterface.Color;
@@ -225,6 +227,25 @@ public class CustomSkin : ISkin
         return null;
     }
 
+    public Drawable GetLongNoteStart(int lane, int keyCount)
+    {
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteStart/{keyCount}k-{lane}");
+        var main = path + ".png";
+        var tintless = path + "-tintless.png";
+
+        if (!storage.Exists(main))
+            return GetHitObject(lane, keyCount);
+
+        var index = Theme.GetLaneColorIndex(lane, keyCount);
+        var drawable = new CustomHitObjectPiece(
+            SkinJson, (MapColor)index, keyCount, false,
+            textures.Get(main), textures.Get(tintless)
+        );
+
+        drawable.UpdateColor(lane, keyCount);
+        return drawable;
+    }
+
     public Drawable GetLongNoteBody(int lane, int keyCount)
     {
         var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteBody/{keyCount}k-{lane}");
@@ -324,6 +345,38 @@ public class CustomSkin : ISkin
             return new SkinnableJudgementText(texture, judgement, isLate);
 
         return null;
+    }
+
+    public IEnumerable<Drawable> GetComboBursts()
+    {
+        var folder = storage.GetFullPath("ComboBurst");
+        if (!Directory.Exists(folder)) yield break;
+
+        var files = storage.GetFiles("ComboBurst", "*.png");
+
+        foreach (var file in files)
+        {
+            var texture = textures.Get(file);
+            if (texture is null) continue;
+
+            yield return new Sprite { Texture = texture };
+        }
+    }
+
+    public IEnumerable<Sample> GetComboBurstSamples()
+    {
+        var folder = storage.GetFullPath("ComboBurst");
+        if (!Directory.Exists(folder)) yield break;
+
+        var files = storage.GetFiles("ComboBurst", "*.wav");
+
+        foreach (var file in files)
+        {
+            var sample = samples.Get(file);
+            if (sample is null) continue;
+
+            yield return sample;
+        }
     }
 
     public Drawable GetFailFlash()
