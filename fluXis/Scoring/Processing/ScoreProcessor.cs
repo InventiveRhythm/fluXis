@@ -136,6 +136,8 @@ public class ScoreProcessor : JudgementDependant
             val *= 0.6;
         if (mods.Any(x => x is NoEventMod))
             val *= 0.4;
+        if (mods.Any(x => x is NoMineMod))
+            val *= 0.6; //TODO: figure out actual value. maybe it's even possible adjust this value depending on the placements of the landmines for each maps. (i.e. make it closer to 1 if most landmines don't contribute to making the map harder)
 
         return val;
     }
