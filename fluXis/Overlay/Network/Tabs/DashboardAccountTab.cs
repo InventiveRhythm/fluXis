@@ -195,7 +195,7 @@ public partial class DashboardAccountTab : DashboardTab
                                 panels.Content = new FileSelect
                                 {
                                     OnFileSelected = file => uploadImage(file, false),
-                                    AllowedExtensions = FluXisGame.PROFILE_ASSET_EXTENSIONS
+                                    AllowedExtensions = user.IsSupporter ? FluXisGame.SUPPORTER_PROFILE_ASSET_EXTENSIONS : FluXisGame.PROFILE_ASSET_EXTENSIONS
                                 };
                             }
                         },
@@ -226,7 +226,7 @@ public partial class DashboardAccountTab : DashboardTab
                                 panels.Content = new FileSelect
                                 {
                                     OnFileSelected = file => uploadImage(file, true),
-                                    AllowedExtensions = FluXisGame.PROFILE_ASSET_EXTENSIONS
+                                    AllowedExtensions = user.IsSupporter ? FluXisGame.SUPPORTER_PROFILE_ASSET_EXTENSIONS : FluXisGame.PROFILE_ASSET_EXTENSIONS
                                 };
                             }
                         }
