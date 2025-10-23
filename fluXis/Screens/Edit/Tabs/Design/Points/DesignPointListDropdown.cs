@@ -16,6 +16,7 @@ public partial class DesignPointListDropdown : FluXisDropdown<PointsList.Dropdow
     }
 
     protected override DropdownHeader CreateHeader() => new CustomHeader(this);
+    protected override DropdownMenu CreateMenu() => new CustomMenu();
 
     protected override LocalisableString GenerateItemText(PointsList.DropdownEntry item) => item.Text;
 
@@ -42,6 +43,19 @@ public partial class DesignPointListDropdown : FluXisDropdown<PointsList.Dropdow
             base.LoadComplete();
 
             dropdown.Current.BindValueChanged(e => LabelText.Colour = e.NewValue.Color, true);
+        }
+    }
+
+    private partial class CustomMenu : FluXisDropdownMenu
+    {
+        protected override DrawableDropdownMenuItem CreateDrawableDropdownMenuItem(MenuItem item)
+        {
+            var draw = base.CreateDrawableDropdownMenuItem(item);
+
+            if (item is DropdownMenuItem<PointsList.DropdownEntry> i)
+                draw.ForegroundColour = draw.ForegroundColourSelected = draw.ForegroundColourHover = i.Value.Color;
+
+            return draw;
         }
     }
 }
