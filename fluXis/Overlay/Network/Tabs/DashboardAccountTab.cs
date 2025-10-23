@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using fluXis.Audio;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
@@ -26,6 +27,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osuTK;
@@ -51,6 +53,9 @@ public partial class DashboardAccountTab : DashboardTab
 
     [Resolved]
     private PanelContainer panels { get; set; } = null!;
+
+    [Resolved]
+    private UISamples samples { get; set; } = null!;
 
     private APIUser user = null!;
     private Container editContent = null!;
@@ -170,18 +175,23 @@ public partial class DashboardAccountTab : DashboardTab
                             Size = new Vector2(250),
                             CornerRadius = 30,
                             Masking = true,
-                            Child = new LoadWrapper<DrawableAvatar>
+                            Children = new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                LoadContent = () => new DrawableAvatar(user)
+                                new LoadWrapper<DrawableAvatar>
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre
-                                }
+                                    LoadContent = () => new DrawableAvatar(user)
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre
+                                    }
+                                },
+                                new ImageEditHover()
                             },
                             Action = () =>
                             {
+                                samples.Click();
                                 panels.Content = new FileSelect
                                 {
                                     OnFileSelected = file => uploadImage(file, false),
@@ -196,20 +206,28 @@ public partial class DashboardAccountTab : DashboardTab
                             Masking = true,
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
-                            Child = new LoadWrapper<DrawableBanner>
+                            Children = new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                LoadContent = () => new DrawableBanner(user)
+                                new LoadWrapper<DrawableBanner>
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre
-                                }
+                                    LoadContent = () => new DrawableBanner(user)
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre
+                                    }
+                                },
+                                new ImageEditHover()
                             },
-                            Action = () => panels.Content = new FileSelect
+                            Action = () =>
                             {
-                                OnFileSelected = file => uploadImage(file, true),
-                                AllowedExtensions = FluXisGame.PROFILE_ASSET_EXTENSIONS
+                                samples.Click();
+                                panels.Content = new FileSelect
+                                {
+                                    OnFileSelected = file => uploadImage(file, true),
+                                    AllowedExtensions = FluXisGame.PROFILE_ASSET_EXTENSIONS
+                                };
                             }
                         }
                     }
@@ -455,5 +473,66 @@ public partial class DashboardAccountTab : DashboardTab
         };
 
         api.PerformRequestAsync(req);
+    }
+
+    private partial class ImageEditHover : CompositeDrawable
+    {
+        [Resolved]
+        private UISamples samples { get; set; } = null!;
+
+        public ImageEditHover()
+        {
+            RelativeSizeAxes = Axes.Both;
+            AlwaysPresent = true;
+            Alpha = 0;
+
+            InternalChildren = new Drawable[]
+            {
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Theme.Background2,
+                    Alpha = 0.75f
+                },
+                new FillFlowContainer
+                {
+                    AutoSizeAxes = Axes.Both,
+                    Direction = FillDirection.Vertical,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Spacing = new Vector2(8),
+                    Children = new Drawable[]
+                    {
+                        new FluXisSpriteIcon
+                        {
+                            Size = new Vector2(20),
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Icon = FontAwesome6.Solid.Pencil
+                        },
+                        new ForcedHeightText
+                        {
+                            Height = 28,
+                            WebFontSize = 16,
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Text = "click to change"
+                        }
+                    }
+                }
+            };
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            samples.Hover();
+            this.FadeIn(50);
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            this.FadeOut(200);
+        }
     }
 }
