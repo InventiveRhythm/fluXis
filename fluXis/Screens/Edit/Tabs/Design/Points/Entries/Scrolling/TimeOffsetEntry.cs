@@ -97,6 +97,7 @@ public partial class TimeOffsetEntry : PointListEntry
         {
             Text = text;
             TooltipText = tooltip;
+            Min = null;
         }
     }
 }
