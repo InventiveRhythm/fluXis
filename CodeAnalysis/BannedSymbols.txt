@@ -6,4 +6,4 @@ M:System.Single.ToString();Use .ToStringInvariant() for better code clarity.
 M:System.Double.ToString();Use .ToStringInvariant() for better code clarity.
 M:osu.Framework.Graphics.Sprites.SpriteText.#ctor;Use FluXisSpriteText.
 M:osu.Framework.Graphics.Sprites.SpriteIcon.#ctor;Use FluXisSpriteIcon.
-M:osu.Framework.Graphics.Effects.EdgeEffectParameters.#ctor;Use FluXisStyles.
+M:osu.Framework.Graphics.Effects.EdgeEffectParameters.#ctor;Use Styling.
