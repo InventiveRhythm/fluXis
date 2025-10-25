@@ -115,23 +115,31 @@ public partial class VariableControl : FillFlowContainer
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = Theme.Background3
                                 },
-                                new ClickableSpriteIcon
+                                new ClickableContainer
                                 {
-                                    Icon = FontAwesome6.Solid.Plus,
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Size = new Vector2(10),
-                                    Margin = new MarginPadding(5),
-                                    Action = () => Bindable.Value += Bindable.Precision
+                                    Size = new Vector2(20),
+                                    Action = () => Bindable.Value += Bindable.Precision,
+                                    Child = new FluXisSpriteIcon
+                                    {
+                                        Icon = FontAwesome6.Solid.Plus,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Size = new Vector2(10)
+                                    }
                                 },
-                                new ClickableSpriteIcon
+                                new ClickableContainer
                                 {
-                                    Icon = FontAwesome6.Solid.Minus,
+                                    Size = new Vector2(20),
+                                    Action = () => Bindable.Value -= Bindable.Precision,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
-                                    Size = new Vector2(10),
-                                    Margin = new MarginPadding(5),
-                                    Action = () => Bindable.Value -= Bindable.Precision
+                                    Child = new FluXisSpriteIcon
+                                    {
+                                        Icon = FontAwesome6.Solid.Minus,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Size = new Vector2(10)
+                                    }
                                 }
                             }
                         },
