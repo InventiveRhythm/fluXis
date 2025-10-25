@@ -142,17 +142,17 @@ public partial class StoryboardTab : EditorTab
     {
         base.LoadComplete();
 
-        map.Storyboard.ElementAdded += QueueRebuild;
-        map.Storyboard.ElementRemoved += QueueRebuild;
-        map.Storyboard.ElementUpdated += QueueRebuild;
+        map.Storyboard.ElementAdded += queueRebuild;
+        map.Storyboard.ElementRemoved += queueRebuild;
+        map.Storyboard.ElementUpdated += queueRebuild;
+
+        map.ScriptChanged += queueRebuild;
     }
 
-    public void QueueRebuild(StoryboardElement _)
-    {
-        QueueRebuild();
-    }
+    private void queueRebuild(StoryboardElement _) => queueRebuild();
+    private void queueRebuild(string _) => queueRebuild();
 
-    public void QueueRebuild()
+    private void queueRebuild()
     {
         loading.FadeIn(300);
         idleTracker.Reset();

@@ -6,45 +6,17 @@ namespace fluXis.Utils;
 
 public class FileWatcher : FileSystemWatcher
 {
-    public NotifyFilters DefaultFilters = NotifyFilters.LastWrite
-                                        | NotifyFilters.FileName
-                                        | NotifyFilters.DirectoryName;
-    
-    private void init()
+    public FileWatcher(RealmMapSet map, string filter = "*.*", NotifyFilters filters = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName)
+        : this(MapFiles.GetFullPath(map.GetPathForFile("")), filter, filters)
     {
-        NotifyFilter = DefaultFilters;
-        Filter = "*.*";
     }
 
-    public FileWatcher() : base()
+    public FileWatcher(string path, string filter = "*.*", NotifyFilters filters = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName)
     {
-        init();
-    }
-
-    public FileWatcher(string path) : base(path)
-    {
-        init();
-    }
-
-    public FileWatcher(string path, string filter) : base(path, filter)
-    {
-        init();
+        Path = path;
+        NotifyFilter = filters;
         Filter = filter;
-    }
-
-    public FileWatcher(RealmMapSet map, string filter) : base()
-    {
-        init();
-        Filter = filter;
-        ChangePath(map);
-    }
-
-    public void ChangePath(string newPath) => Path = newPath;
-
-    public void ChangePath(RealmMapSet map)
-    {
-        var mapRoot = map.GetPathForFile("");
-        ChangePath(MapFiles.GetFullPath(mapRoot));
+        IncludeSubdirectories = true;
     }
 
     public void Disable() => EnableRaisingEvents = false;

@@ -109,8 +109,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private ITrackStore trackStore { get; set; }
 
-    private ScriptStorage scriptStorage { get; set; }
-
     private EditorLoader loader { get; }
 
     private Container<EditorTab> tabs;
@@ -118,8 +116,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     public Bindable<Waveform> Waveform { get; private set; }
     private EditorMap editorMap { get; }
-
-    private StoryboardTab storyboardTab;
 
     private EditorClock clock;
     private EditorSettings settings;
@@ -172,7 +168,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
         this.loader = loader;
-        editorMap = new EditorMap(map, realmMap, LoadComponent);
+        editorMap = new EditorMap(map, realmMap, LoadComponent, Scheduler);
     }
 
     [BackgroundDependencyLoader]
@@ -231,7 +227,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (!Directory.Exists(MapSetPath))
             Directory.CreateDirectory(MapSetPath);
 
-        dependencies.CacheAs(scriptStorage = new ScriptStorage(MapSetPath));
+        var scripts = new ScriptStorage(MapSetPath);
+        editorMap.ScriptChanged += _ => scripts.Reload();
+        dependencies.CacheAs(scripts);
 
         var tabList = new List<EditorTab>
         {
@@ -242,7 +240,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         };
 
         if (experiments.Get<bool>(ExperimentConfig.StoryboardTab))
-            tabList.Add(storyboardTab = new StoryboardTab());
+            tabList.Add(new StoryboardTab());
 
         tabList.Add(verifyTab = new VerifyTab());
 
@@ -489,11 +487,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         editorMap.AudioChanged += () => clock.ChangeSource(loadMapTrack());
         editorMap.BackgroundChanged += () => backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
-
-        editorMap.ScriptChanged += (_) => {
-            scriptStorage.Reload();
-            Schedule(storyboardTab.QueueRebuild);
-        };
 
         editorMap.ScriptWatcher.Enable();
     }
