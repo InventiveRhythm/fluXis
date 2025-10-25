@@ -31,17 +31,18 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
     public SetupEntry(string title)
     {
         this.title = title;
+
+        RelativeSizeAxes = Axes.X;
+        Height = 64;
+        CornerRadius = 8;
+        BorderThickness = 3;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.X;
-        Height = 60;
-        CornerRadius = 10;
-        Masking = true;
         BorderColour = BackgroundColor;
-        BorderThickness = 3;
+        Masking = true;
 
         InternalChildren = new Drawable[]
         {
@@ -59,7 +60,7 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
                 Direction = FillDirection.Vertical,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Padding = new MarginPadding(10),
+                Padding = new MarginPadding(12),
                 Spacing = new Vector2(ContentSpacing),
                 Children = new[]
                 {
@@ -73,7 +74,8 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
                             {
                                 Text = title,
                                 WebFontSize = 16,
-                                Colour = Theme.Text2
+                                Colour = Theme.Text,
+                                Alpha = 0.8f
                             },
                             CreateRightTitle().With(d =>
                             {
@@ -95,13 +97,13 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
     {
         BorderThickness = 3;
         this.BorderColorTo(Theme.Highlight, 50);
-        titleSprite.FadeColour(Theme.Highlight, 50);
+        titleSprite.FadeColour(Theme.Highlight, 50).FadeIn(50);
     }
 
     protected void StopHighlight()
     {
         this.BorderColorTo(BackgroundColor, 50);
-        titleSprite.FadeColour(Theme.Text.Opacity(.8f), 50);
+        titleSprite.FadeColour(Theme.Text, 50).FadeTo(0.8f, 50);
     }
 
     protected override bool OnHover(HoverEvent e)

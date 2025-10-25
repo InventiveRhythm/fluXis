@@ -8,18 +8,23 @@ namespace fluXis.Screens.Edit.Tabs.Setup.Entries;
 
 public partial class SetupToggle : SetupEntry
 {
-    protected override float ContentSpacing => -3;
+    protected override float ContentSpacing => -2;
     protected override bool ShowHoverFlash => true;
 
     public Action<bool> OnChange { get; init; } = _ => { };
 
-    private TruncatingText text;
-    private BindableBool bindable { get; }
+    private ForcedHeightText text;
+    private Bindable<bool> bindable { get; }
 
     public SetupToggle(string title, bool value)
+        : this(title, new Bindable<bool>(value))
+    {
+    }
+
+    public SetupToggle(string title, Bindable<bool> bind)
         : base(title)
     {
-        bindable = new BindableBool(value);
+        bindable = bind;
     }
 
     protected override void LoadComplete()
@@ -30,22 +35,22 @@ public partial class SetupToggle : SetupEntry
         {
             text.Text = v.NewValue ? "Enabled" : "Disabled";
             OnChange?.Invoke(v.NewValue);
+
+            if (v.NewValue) StartHighlight();
+            else StopHighlight();
         }, true);
     }
 
-    protected override Drawable CreateContent()
+    protected override Drawable CreateContent() => text = new ForcedHeightText
     {
-        return text = new TruncatingText
-        {
-            RelativeSizeAxes = Axes.X,
-            Text = "Enabled",
-            WebFontSize = 18
-        };
-    }
+        Text = "Enabled",
+        WebFontSize = 18,
+        Height = 24
+    };
 
     protected override bool OnClick(ClickEvent e)
     {
-        bindable.Toggle();
+        bindable.Value = !bindable.Value;
         return base.OnClick(e);
     }
 }
