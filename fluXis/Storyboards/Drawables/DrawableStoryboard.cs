@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Map;
+using fluXis.Scripting;
 using fluXis.Scripting.Runners;
 using fluXis.Storyboards.Storage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 
 namespace fluXis.Storyboards.Drawables;
@@ -57,7 +60,16 @@ public partial class DrawableStoryboard : CompositeDrawable
 
         var raw = File.ReadAllText(full);
         var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard);
-        runner.Run(raw);
+
+        try
+        {
+            runner.Run(raw);
+        }
+        catch (Exception ex)
+        {
+            ScriptRunner.Logger.Add($"Failed to load script '{path}'.", LogLevel.Error, ex);
+        }
+
         return runner;
     }
 
