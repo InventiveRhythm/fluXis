@@ -40,6 +40,7 @@ using fluXis.Screens.Edit.Tabs;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Screens.Edit.Tabs.Verify.Checks;
+using fluXis.Screens.Edit.UI;
 using fluXis.Screens.Edit.UI.BottomBar;
 using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Edit.UI.TabSwitcher;
@@ -164,6 +165,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorKeybindingContainer keybinds;
     private EditorKeymapOverlay keymapOverlay;
     private EditorModding modding;
+    private EditorOsd osd;
 
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
@@ -228,7 +230,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             Directory.CreateDirectory(MapSetPath);
 
         var scripts = new ScriptStorage(MapSetPath);
-        editorMap.ScriptChanged += _ => scripts.Reload();
+        editorMap.ScriptChanged += _ =>
+        {
+            osd.DisplayText("Reloaded Scripts!");
+            scripts.Reload();
+        };
         dependencies.CacheAs(scripts);
 
         var tabList = new List<EditorTab>
@@ -381,7 +387,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     }
                 }
             },
-            keymapOverlay = new EditorKeymapOverlay(keybinds)
+            keymapOverlay = new EditorKeymapOverlay(keybinds),
+            dependencies.CacheAsAndReturn(osd = new EditorOsd())
         });
 
         return;
