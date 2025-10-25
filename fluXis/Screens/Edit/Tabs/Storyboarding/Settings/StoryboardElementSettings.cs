@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
@@ -77,6 +78,26 @@ public partial class StoryboardElementSettings : CompositeDrawable
         base.LoadComplete();
 
         blueprints.SelectionHandler.SelectedObjects.BindCollectionChanged(collectionChanged, true);
+        map.ScriptChanged += onScriptChanged;
+    }
+
+    private void onScriptChanged(string fileName)
+    {
+        var collection = blueprints.SelectionHandler.SelectedObjects;
+
+        if (collection.Count != 1)
+            return;
+
+        var item = collection.First();
+
+        if (item.Type != StoryboardElementType.Script)
+            return;
+
+        var currentPath = item.GetParameter("path", "");
+        var scriptFileName = Path.GetFileName(currentPath);
+
+        if (fileName == scriptFileName)
+            Schedule(() => collectionChanged(null, null));
     }
 
     private void collectionChanged(object _, NotifyCollectionChangedEventArgs __)
@@ -380,5 +401,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 });
                 break;
         }
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        map.ScriptChanged -= onScriptChanged;
+        base.Dispose(isDisposing);
     }
 }

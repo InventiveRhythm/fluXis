@@ -1,5 +1,8 @@
 using System;
+using fluXis.Configuration;
 using fluXis.Graphics.UserInterface.Color;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -38,9 +41,19 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
     private bool isDragging;
     private bool shouldDrag(MouseButtonEvent e) => e.Button == MouseButton.Middle && AllowDragScrolling;
 
+    private Bindable<bool> relativeMiddleScroll;
+    private Vector2 dragStart;
+    private Vector2 dragCurrent;
+
     public FluXisScrollContainer(Direction direction = Direction.Vertical)
         : base(direction)
     {
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
+    {
+        relativeMiddleScroll = config.GetBindable<bool>(FluXisSetting.RelativeMiddleScroll);
     }
 
     protected override void LoadComplete()
@@ -65,6 +78,7 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
 
         mouseScroll(e);
         isDragging = true;
+        dragStart = dragCurrent = e.MousePosition;
         return true;
     }
 
@@ -77,14 +91,30 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
     {
         if (!isDragging) return false;
 
+        dragCurrent = e.MousePosition;
         mouseScroll(e);
         return true;
     }
 
     private void mouseScroll(UIEvent e)
     {
+        if (relativeMiddleScroll.Value)
+            return;
+
         float contentSize = Content.DrawSize[ScrollDim] - DrawSize[ScrollDim] + Padding.Top + Padding.Bottom;
         ScrollTo(ToLocalSpace(e.ScreenSpaceMousePosition)[ScrollDim] / DrawSize[ScrollDim] * contentSize, true, 0.02);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (!isDragging || !relativeMiddleScroll.Value)
+            return;
+
+        var dist = dragCurrent - dragStart;
+        var amount = (ScrollDirection == Direction.Vertical ? dist.Y : dist.X) * (Time.Elapsed / 100);
+        ScrollTo(Math.Clamp(Current + amount, -64, ScrollableExtent + 64), false);
     }
 
     protected override bool OnKeyDown(KeyDownEvent e) => false;

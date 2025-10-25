@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Database.Maps;
+using fluXis.Graphics.Background;
 using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Online.API;
@@ -31,6 +32,7 @@ public partial class TestResults : FluXisTestScene
     private void load()
     {
         CreateClock();
+        TestDependencies.CacheAs(new GlobalBackground());
     }
 
     [SetUp]

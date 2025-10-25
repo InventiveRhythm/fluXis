@@ -162,6 +162,8 @@ public partial class FluXisDropdown<T> : Dropdown<T>
                 BackgroundColourHover = Theme.Background4;
                 BackgroundColourSelected = Theme.Background3;
 
+                ForegroundColour = ForegroundColourHover = ForegroundColourSelected = Theme.Text;
+
                 Foreground.AutoSizeAxes = Axes.X;
                 Foreground.Height = 30;
                 Foreground.Padding = new MarginPadding { Horizontal = 14 };
@@ -174,15 +176,13 @@ public partial class FluXisDropdown<T> : Dropdown<T>
                 Height = 30;
             }
 
-            protected override Drawable CreateContent()
+            protected override Drawable CreateContent() => new FluXisSpriteText
             {
-                return new FluXisSpriteText
-                {
-                    WebFontSize = 12,
-                    Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                };
-            }
+                WebFontSize = 12,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Colour = Colour4.White
+            };
         }
     }
 }

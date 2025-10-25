@@ -1,4 +1,5 @@
-﻿using fluXis.Graphics.UserInterface.Panel;
+﻿using fluXis.Graphics.Background;
+using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Map;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Layout;
@@ -23,6 +24,7 @@ public partial class TestLayoutEditor : FluXisTestScene
 
         var panels = new PanelContainer();
         TestDependencies.CacheAs(panels);
+        TestDependencies.CacheAs(new GlobalBackground());
         Add(panels);
 
         AddStep("Push Screen", () => stack.Push(new LayoutEditor(manager.Layout.Value)));

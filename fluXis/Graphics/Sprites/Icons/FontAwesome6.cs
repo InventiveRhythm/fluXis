@@ -96,6 +96,7 @@ public class FontAwesome6
         public static IconUsage Paste => GetSolid(0xf0ea);
         public static IconUsage Pause => GetSolid(0xf04c);
         public static IconUsage Pen => GetSolid(0xf304);
+        public static IconUsage Pencil => GetSolid(0xf303);
         public static IconUsage PenRuler => GetSolid(0xf5ae);
         public static IconUsage Percent => GetSolid(0x25);
         public static IconUsage PersonToDoor => GetSolid(0xe433);
