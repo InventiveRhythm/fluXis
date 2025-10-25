@@ -34,6 +34,8 @@ public class EditorMap : IVerifyContext
 
     private readonly Action<Drawable> loadComponent;
 
+    public readonly FileWatcher ScriptWatcher;
+
     public string MapInfoHash => MapUtils.GetHash(MapInfo.Serialize());
     public string MapEventsHash => MapUtils.GetHash(MapEvents.Save());
     public string StoryboardHash => MapUtils.GetHash(Storyboard.Serialize());
@@ -49,6 +51,8 @@ public class EditorMap : IVerifyContext
         MapInfo = info;
         RealmMap = map;
         this.loadComponent = loadComponent;
+        ScriptWatcher = new(map.MapSet, "*.lua");
+        ScriptWatcher.Changed += (_, e) => ScriptChanged.Invoke(e.Name);
     }
 
     #region Events
@@ -58,6 +62,8 @@ public class EditorMap : IVerifyContext
     public event Action AudioChanged;
     public event Action BackgroundChanged;
     public event Action CoverChanged;
+
+    public event Action<string> ScriptChanged;
 
 #nullable enable
     public event Action<ITimedObject?>? AnyChange;
