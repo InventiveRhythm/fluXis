@@ -154,8 +154,10 @@ public partial class IntroAnimation : FluXisScreen
     {
         foreach (var bar in barsContainer.Children)
         {
+            var dir = RNG.NextSingle() >= 0.5f ? 1 : -1;
+
             var rngDelay = RNG.Next(0, bars_delay);
-            bar.Delay(rngDelay).MoveToY(-1.2f, bars_duration, Easing.OutCirc);
+            bar.Delay(rngDelay).MoveToY(1.2f * dir, bars_duration, Easing.OutCirc);
         }
     }
 
