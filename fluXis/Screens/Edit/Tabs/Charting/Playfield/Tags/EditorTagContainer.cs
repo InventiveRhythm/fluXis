@@ -104,7 +104,7 @@ public partial class EditorTagContainer : Container<EditorTag>
 
             if (closestTime != -1)
             {
-                tag.X = -timeOffsets[closestTime];
+                tag.X = timeOffsets[closestTime] * (RightSide ? 1 : -1);
                 timeOffsets[closestTime] += tag.DrawWidth + 10;
                 tagsAtTime[closestTime]++;
             }
