@@ -18,6 +18,7 @@ using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Graphics.Shaders.SplitScreen;
 using fluXis.Graphics.Shaders.FishEye;
 using fluXis.Graphics.Shaders.Reflections;
+using fluXis.Graphics.Shaders.Perspective;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
@@ -79,13 +80,13 @@ public partial class DesignContainer : EditorTabContainer
     private Bindable<float> userScrollSpeed;
     private Bindable<float> rulesetScrollSpeed { get; } = new();
 
-    private BackgroundVideo backgroundVideo;
-
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
         userScrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
     }
+
+    private BackgroundVideo backgroundVideo;
 
     protected override IEnumerable<Drawable> CreateContent()
     {
@@ -199,6 +200,7 @@ public partial class DesignContainer : EditorTabContainer
         var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, effects, new List<IMod> { new NoFailMod() });
         container.ScrollSpeed = rulesetScrollSpeed;
         container.ParentClock = EditorClock;
+
         return container;
     }
 
@@ -225,6 +227,7 @@ public partial class DesignContainer : EditorTabContainer
                 ShaderType.SplitScreen => new SplitScreenContainer(),
                 ShaderType.FishEye => new FishEyeContainer(),
                 ShaderType.Reflections => new ReflectionsContainer(),
+                ShaderType.Perspective => new PerspectiveContainer(),
                 _ => null
             };
 
