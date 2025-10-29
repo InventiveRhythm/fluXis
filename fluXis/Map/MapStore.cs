@@ -465,10 +465,6 @@ public partial class MapStore : Component
 
     public void UpdateAllMaps()
     {
-        if (updateAllMapsIsRunning) return;
-
-        updateAllMapsIsRunning = true;
-
         if (!api.CanUseOnline)
         {
             panels.Content = new ButtonPanel
@@ -484,6 +480,10 @@ public partial class MapStore : Component
             
             return;
         };
+
+        if (updateAllMapsIsRunning) return;
+
+        updateAllMapsIsRunning = true;
 
         var notification = new TaskNotificationData
         {
@@ -508,6 +508,7 @@ public partial class MapStore : Component
                 {
                     notification.Progress = 1f;
                     Schedule(() => notification.State = LoadingState.Complete);
+                    updateAllMapsIsRunning = false;
                     return;
                 }
 
