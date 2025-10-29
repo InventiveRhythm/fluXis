@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map;
+using fluXis.Online.API.Requests.MapSets;
+using fluXis.Online.Fluxel;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -85,5 +87,13 @@ public class RealmMapSet : RealmObject
             map.StatusInt = status;
 
         StatusChanged?.Invoke();
+    }
+
+    public void UpdateLocalInfo(FluXisRealm realm, IAPIClient api)
+    {
+        var req = new MapSetRequest(OnlineID);
+        api.PerformRequest(req);
+
+        Maps.ForEach(m => RealmMap.UpdateLocalInfo(realm, m, req.Response.Data, req.Response.Data.Maps.FirstOrDefault(map => map.ID == OnlineID)));
     }
 }
