@@ -67,7 +67,7 @@ public partial class MapList : FluXisScrollContainer, ISelectionManager
     private void mapChanged(ValueChangedEvent<RealmMap> v)
     {
         MapBindable.Value = v.NewValue;
-        MapSetBindable.Value = CurrentMap.MapSet;
+        MapSetBindable.Value = CurrentMap?.MapSet;
     }
 
     public void StartBulkInsert() => bulkInserting = true;
@@ -105,6 +105,24 @@ public partial class MapList : FluXisScrollContainer, ISelectionManager
 
             item.Unbind();
         }
+    }
+
+    public new void Clear()
+    {
+        var copy = items.ToList();
+        items.Clear();
+
+        foreach (var item in copy)
+        {
+            item.Drawable?.Expire();
+            item.Unbind();
+        }
+
+        if (MapBindable.Value == null && MapSetBindable.Value == null)
+            return;
+
+        MapBindable.Value = null;
+        MapSetBindable.Value = null;
     }
 
     protected override void Update()
