@@ -533,11 +533,7 @@ public partial class MapStore : Component
                 var req = new MapHashesRequest(mapIDs);
                 req.Progress += (current, total) => notification.Progress = 0.2f + (0.4f * ((float)current / total));
                 req.Success += _ => notification.Progress = 0.6f;
-                req.Failure += ex =>
-                {
-                    Logger.Log($"Failed to check for updates: {ex.Message}", LoggingTarget.Network);
-                    notification.State = LoadingState.Failed;
-                };
+                req.Failure += ex => throw ex;
                 api.PerformRequest(req);
 
                 var hashes = req.Response.Data.SplitHashes();
