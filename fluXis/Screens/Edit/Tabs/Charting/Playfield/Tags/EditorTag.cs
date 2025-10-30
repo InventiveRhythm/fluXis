@@ -7,6 +7,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
@@ -25,6 +26,10 @@ public partial class EditorTag : Container
     public ITimedObject TimedObject { get; }
     protected FluXisSpriteText Text { get; private set; }
     public bool RightSide { get; set; }
+
+    protected new bool IsHovered;
+    protected MarginPadding OriginalPadding;
+    protected MarginPadding ExpandedPadding;
 
     protected Container Container { get; private set; }
 
@@ -104,6 +109,8 @@ public partial class EditorTag : Container
     {
         base.LoadComplete();
 
+        OriginalPadding = Padding;
+        ExpandedPadding = OriginalPadding with { Left = OriginalPadding.Left + 6, Right = OriginalPadding.Right + 6 };
         scrollDirection.BindValueChanged(_ => updateScale(), true);
     }
 
@@ -112,5 +119,19 @@ public partial class EditorTag : Container
         base.Update();
 
         Y = parent.ToLocalSpace(playfield.HitObjectContainer.ScreenSpacePositionAtTime(TimedObject.Time, 0)).Y;
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        IsHovered = true;
+        this.TransformTo(nameof(Padding), ExpandedPadding, 200, Easing.OutQuart);
+        return base.OnHover(e);
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        IsHovered = false;
+        this.TransformTo(nameof(Padding), OriginalPadding, 200, Easing.OutQuart);
+        base.OnHoverLost(e);
     }
 }
