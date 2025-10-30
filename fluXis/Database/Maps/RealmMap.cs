@@ -168,7 +168,7 @@ public class RealmMap : RealmObject
 
     public static RealmMap CreateNew()
     {
-        var set = new RealmMapSet(new List<RealmMap> { new() });
+        var set = new RealmMapSet(new List<RealmMap> { new(null) });
         return set.Maps[0];
     }
 }
