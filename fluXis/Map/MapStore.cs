@@ -519,9 +519,7 @@ public partial class MapStore : Component
                 {
                     noMaps();
                     return;
-                }
-
-                notification.Progress = 0.1f;
+                }  
 
                 var maps = updateContenders
                     .SelectMany(set => set.Maps
@@ -529,6 +527,8 @@ public partial class MapStore : Component
                     .ToList();
 
                 var mapIDs = maps.Select(x => x.OnlineID).ToList();
+
+                notification.Progress = 0.1f;
 
                 var req = new MapHashesRequest(mapIDs);
                 req.Progress += (current, total) => notification.Progress = 0.2f + (0.4f * ((float)current / total));
