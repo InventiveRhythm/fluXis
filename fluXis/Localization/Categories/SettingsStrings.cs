@@ -14,6 +14,6 @@ public class SettingsStrings : LocalizationCategory
     public SettingsAudioStrings Audio => new();
     public SettingsGraphicsStrings Graphics => new();
     public SettingsPluginsStrings Plugins => new();
-    public SettingsMaintenanceStrings Maintenance => new();
+    public SettingsAdvancedStrings Advanced => new();
     public SettingsDebugStrings Debug => new();
 }

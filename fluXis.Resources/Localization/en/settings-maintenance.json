@@ -1,8 +1,10 @@
 {
-  "title": "Maintenance",
+  "title": "Advanced",
   "files-title": "Files",
   "files-clean-up": "Clean up files",
   "files-clean-up-description": "Deletes all files that are not used by any maps.",
+  "stream-file-browser": "Stream Files in File Browser.",
+  "stream-file-browser-description": "Streams files and folders for large directories. Turning this off might result in a game freeze when opening a large directory.",
   "maps-title": "Maps",
   "maps-recalculate-filters": "Recalculate Filters",
   "maps-recalculate-filters-description": "Recalculates all filters for all maps.",

@@ -1,4 +1,4 @@
-using fluXis.Configuration;
+﻿using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Files;
@@ -12,12 +12,12 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 
-namespace fluXis.Overlay.Settings.Sections;
+namespace fluXis.Overlay.Settings.Sections.Advanced;
 
-public partial class DebugSection : SettingsSection
+public partial class AdvancedDebugSection : SettingsSubSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.Bug;
     public override LocalisableString Title => strings.Title;
+    public override IconUsage Icon => FontAwesome6.Solid.Bug;
 
     private SettingsDebugStrings strings => LocalizationStrings.Settings.Debug;
 
@@ -42,12 +42,6 @@ public partial class DebugSection : SettingsSection
                         OnFileSelected = file => game.HandleDragDrop(file.FullName)
                     };
                 }
-            },
-            new SettingsToggle
-            {
-                Label = strings.StreamFileBrowser,
-                Description = strings.StreamFileBrowserDescription,
-                Bindable = config.GetBindable<bool>(FluXisSetting.StreamFileBrowser)
             },
             new SettingsToggle
             {
