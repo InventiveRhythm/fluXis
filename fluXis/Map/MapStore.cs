@@ -494,6 +494,17 @@ public partial class MapStore : Component
 
         notifications.AddTask(notification);
 
+        void noMaps()
+        {
+            Schedule(() =>
+            {
+                notification.Progress = 1f;
+                notification.TextFinished = "No maps found to update.";
+                notification.State = LoadingState.Complete;
+            });
+            updateAllMapsIsRunning = false;
+        }
+
         Task.Run(() =>
         {
             try
@@ -506,9 +517,7 @@ public partial class MapStore : Component
 
                 if (updateContenders.Count == 0)
                 {
-                    notification.Progress = 1f;
-                    Schedule(() => notification.State = LoadingState.Complete);
-                    updateAllMapsIsRunning = false;
+                    noMaps();
                     return;
                 }
 
@@ -519,23 +528,17 @@ public partial class MapStore : Component
                     .Where(map => map.StatusInt >= 0 && map.StatusInt < 3)) // we exclude pure maps also because they aren't updatable
                     .ToList();
 
-                var mapIds = maps.Select(x => x.OnlineID).ToList();
+                var mapIDs = maps.Select(x => x.OnlineID).ToList();
 
-                notification.Progress = 0.2f;
-
-                var req = new MapHashesRequest(mapIds);
-                req.Progress += (current, total) =>
-                {
-                    notification.Progress = 0.2f + (0.5f * ((float)current / total));
-                };
+                var req = new MapHashesRequest(mapIDs);
+                req.Progress += (current, total) => notification.Progress = 0.2f + (0.4f * ((float)current / total));
+                req.Success += _ => notification.Progress = 0.6f;
                 req.Failure += ex =>
                 {
                     Logger.Log($"Failed to check for updates: {ex.Message}", LoggingTarget.Network);
                     notification.State = LoadingState.Failed;
                 };
                 api.PerformRequest(req);
-
-                notification.Progress = 0.7f;
 
                 var hashes = req.Response.Data.SplitHashes();
 
@@ -552,7 +555,13 @@ public partial class MapStore : Component
                         setsToUpdate.Add(map.MapSet);
 
                     processed++;
-                    notification.Progress = 0.7f + (0.3f * ((float)processed / maps.Count));
+                    notification.Progress = 0.6f + (0.4f * ((float)processed / maps.Count));
+                }
+
+                if (setsToUpdate.Count == 0)
+                {
+                    noMaps();
+                    return;
                 }
 
                 notification.Progress = 1f;
