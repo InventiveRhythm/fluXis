@@ -24,9 +24,9 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osu.Framework.Utils;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Overlay.Music;
 
@@ -106,6 +106,14 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
             {
                 RelativeSizeAxes = Axes.Both,
                 Allow = new List<Type> { typeof(MouseMoveEvent) },
+                GenericHandle = e =>
+                {
+                    if (e is not KeyDownEvent kde) return false;
+                    if (kde.Key != Key.F || kde.Repeat) return false;
+
+                    toggleFullscreen();
+                    return true;
+                },
                 Child = new ClickableContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -252,14 +260,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                 fullscreenToggle = new MusicPlayerButton
                                                 {
                                                     Icon = FontAwesome6.Solid.UpRightAndDownLeftFromCenter,
-                                                    Action = () =>
-                                                    {
-                                                        fullscreen = !fullscreen;
-                                                        this.TransformTo(nameof(animationProgress), fullscreen ? 1f : 0f, 600, Easing.OutQuint);
-
-                                                        if (fullscreen) toolbar.Hide();
-                                                        else toolbar.Show();
-                                                    }
+                                                    Action = toggleFullscreen
                                                 }
                                             }
                                         }
@@ -362,7 +363,6 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
 
     private void songChanged()
     {
-        Logger.Log($"update");
         var next = maps.CurrentMap;
 
         if (next == null) return;
@@ -434,6 +434,17 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         trackInfoContainer.Delay(1000).FadeOut(800);
         gradient.Delay(1000).FadeOut(800);
         progress.Delay(1000).FadeOut(800);
+    }
+
+    private void toggleFullscreen()
+    {
+        fullscreen = !fullscreen;
+        this.TransformTo(nameof(animationProgress), fullscreen ? 1f : 0f, 600, Easing.OutQuint);
+
+        if (fullscreen)
+            toolbar.Hide();
+        else
+            toolbar.Show();
     }
 
     protected override void PopIn()
