@@ -17,13 +17,13 @@ namespace fluXis.Screens.Edit.Tabs.Setup.Entries;
 
 public partial class SetupColor : SetupEntry, IHasPopover
 {
-    protected override float ContentSpacing => -3;
+    protected override float ContentSpacing => -2;
 
     public Colour4 Color { get; set; }
     public Action<Colour4> OnColorChanged { get; set; }
 
     private Bindable<Colour4> bindableColor;
-    private FluXisSpriteText text;
+    private ForcedHeightText text;
     private Box box;
 
     public SetupColor(string title)
@@ -55,11 +55,11 @@ public partial class SetupColor : SetupEntry, IHasPopover
         });
     }
 
-    protected override Drawable CreateContent() => text = new FluXisSpriteText
+    protected override Drawable CreateContent() => text = new ForcedHeightText
     {
-        RelativeSizeAxes = Axes.X,
         Text = Color.ToHex(),
-        WebFontSize = 18
+        WebFontSize = 18,
+        Height = 24
     };
 
     protected override void LoadComplete()

@@ -19,7 +19,7 @@ namespace fluXis.Graphics.UserInterface;
 public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, IMinMaxValue<T>
 {
     public Bindable<T> Bindable { get; init; }
-    public float Step { get; init; }
+    public T Step { get; init; }
 
     public Colour4? CustomColor { get; set; }
 
@@ -60,7 +60,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
                 {
                     RelativeSizeAxes = Axes.Both,
                     Current = Bindable,
-                    KeyboardStep = Step
+                    KeyboardStep = (float)Convert.ToDouble(Step)
                 }
             },
             rightIcon = new ClickableSpriteIcon

@@ -118,10 +118,16 @@ public partial class MapStore : Component
         {
             var sets = r.All<RealmMapSet>();
 
-            fixSetData(sets);
-
             foreach (var set in sets)
+            {
+                foreach (var map in set.Maps)
+                {
+                    map.Filters ??= new RealmMapFilters();
+                    map.Metadata ??= new RealmMapMetadata();
+                }
+
                 AddMapSet(set.Detach());
+            }
         });
     }
 
@@ -131,23 +137,6 @@ public partial class MapStore : Component
 
         MapSetBindable.BindValueChanged(
             e => Logger.Log($"Changed selected mapset to {e.NewValue?.Metadata.SortingTitle} - {e.NewValue?.Metadata.SortingArtist}", LoggingTarget.Runtime, LogLevel.Debug), true);
-    }
-
-    /// <summary>
-    /// tries to fix potentially broken
-    /// database items with null data
-    /// </summary>
-    /// <param name="sets">the sets to fix</param>
-    private void fixSetData(IQueryable<RealmMapSet> sets)
-    {
-        foreach (var set in sets)
-        {
-            foreach (var map in set.Maps)
-            {
-                map.Filters ??= new RealmMapFilters();
-                map.Metadata ??= new RealmMapMetadata();
-            }
-        }
     }
 
     internal void AssignResources(RealmMapSet mapSet) => mapSet.Resources ??= resources;

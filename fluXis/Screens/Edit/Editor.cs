@@ -199,6 +199,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         editorMap.MapInfo.MapEvents ??= new MapEvents();
         editorMap.MapInfo.Storyboard ??= new Storyboard();
 
+        editorMap.SetupWatcher();
         editorMap.SetupNotifiers();
 
         backgrounds.AddBackgroundFromMap(editorMap.RealmMap);

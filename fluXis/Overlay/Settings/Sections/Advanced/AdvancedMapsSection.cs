@@ -16,14 +16,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 
-namespace fluXis.Overlay.Settings.Sections.Maintenance;
+namespace fluXis.Overlay.Settings.Sections.Advanced;
 
-public partial class MaintenanceMapsSection : SettingsSubSection
+public partial class AdvancedMapsSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Maps;
     public override IconUsage Icon => FontAwesome6.Solid.Map;
 
-    private SettingsMaintenanceStrings strings => LocalizationStrings.Settings.Maintenance;
+    private SettingsAdvancedStrings strings => LocalizationStrings.Settings.Advanced;
 
     private bool isRunning;
 

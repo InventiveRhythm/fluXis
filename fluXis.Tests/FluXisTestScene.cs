@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Database.Maps;
@@ -33,23 +34,35 @@ public partial class FluXisTestScene : TestScene
     protected void CreateDummyBeatSync() => TestDependencies.CacheAs<IBeatSyncProvider>(new DummyBeatSyncProvider());
     protected void CreateDummyAmplitude() => TestDependencies.CacheAs<IAmplitudeProvider>(new DummyAmplitudeProvider());
 
-    protected RealmMapSet CreateDummySet()
+    protected RealmMapSet CreateDummySet(int minMaps = 1)
     {
-        var map = RealmMap.CreateNew();
-        var set = map.MapSet;
+        var count = RNG.Next(Math.Clamp(minMaps, 1, 7), 8);
 
-        set.ID = Guid.NewGuid();
-        map.ID = Guid.NewGuid();
+        var maps = new List<RealmMap>();
+        var setId = Guid.NewGuid();
 
-        set.Metadata.Title = set.ID.ToString();
-        set.Metadata.Artist = "some artist";
-        set.Metadata.Mapper = "some mapper";
-        map.Difficulty = map.ID.ToString();
-        map.Filters = new RealmMapFilters { NotesPerSecond = RNG.NextSingle(1, 30) };
-        map.OnlineID = RNG.Next(1, 10000);
-        map.Status = (MapStatus)RNG.Next((int)MapStatus.Local, (int)MapStatus.Pure + 1);
+        for (int i = 0; i < count; i++)
+        {
+            var id = Guid.NewGuid();
 
-        return set;
+            maps.Add(new RealmMap
+            {
+                ID = Guid.NewGuid(),
+                Difficulty = id.ToString(),
+                Metadata = new RealmMapMetadata
+                {
+                    Title = setId.ToString(),
+                    Artist = "some artist",
+                    Mapper = "some mapper",
+                },
+                Rating = RNG.NextSingle(1, 30),
+                Filters = new RealmMapFilters { NotesPerSecond = RNG.NextSingle(1, 30) },
+                OnlineID = RNG.Next(1, 10000),
+                Status = (MapStatus)RNG.Next((int)MapStatus.Local, (int)MapStatus.Pure + 1)
+            });
+        }
+
+        return new RealmMapSet(maps) { ID = setId };
     }
 
     protected virtual RealmMap GetTestMap(MapStore maps)

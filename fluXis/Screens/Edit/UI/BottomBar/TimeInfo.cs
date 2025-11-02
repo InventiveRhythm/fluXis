@@ -6,15 +6,19 @@ using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.UI.BottomBar;
 
-public partial class TimeInfo : Container
+public partial class TimeInfo : CompositeDrawable, IHasTooltip
 {
+    public LocalisableString TooltipText => "Click to copy.\nRight-click to paste from clipboard.";
+
     [Resolved]
     private EditorClock clock { get; set; }
 
@@ -40,7 +44,7 @@ public partial class TimeInfo : Container
     {
         RelativeSizeAxes = Axes.Both;
 
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
             hover = new HoverLayer(),
             flash = new FlashLayer(),

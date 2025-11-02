@@ -6,7 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace fluXis.Screens.Edit;
+namespace fluXis.Screens.Edit.UI;
 
 public partial class EditorUploadOverlay : FillFlowContainer
 {

@@ -22,7 +22,10 @@ public class RealmMap : RealmObject
     public Guid ID { get; set; }
 
     public string Difficulty { get; set; } = string.Empty;
+
     public RealmMapMetadata Metadata { get; set; } = null!;
+    public RealmMapFilters Filters { get; set; } = null!;
+
     public RealmMapSet MapSet { get; set; } = null!;
 
     /**
@@ -42,7 +45,6 @@ public class RealmMap : RealmObject
 
     public string FileName { get; set; } = string.Empty;
     public long OnlineID { get; set; } = -1;
-    public RealmMapFilters Filters { get; set; } = null!;
     public int KeyCount { get; set; } = 4;
     public float Rating { get; set; }
 
@@ -70,9 +72,10 @@ public class RealmMap : RealmObject
     public DateTimeOffset? LastOnlineUpdate { get; set; }
     public DateTimeOffset? LastPlayed { get; set; }
 
-    public RealmMap([CanBeNull] RealmMapMetadata meta = null)
+    public RealmMap([CanBeNull] RealmMapMetadata meta = null, [CanBeNull] RealmMapFilters filter = null)
     {
         Metadata = meta ?? new RealmMapMetadata();
+        Filters = filter ?? new RealmMapFilters();
         ID = Guid.NewGuid();
     }
 
@@ -217,11 +220,7 @@ public class RealmMap : RealmObject
 
     public static RealmMap CreateNew()
     {
-        var set = new RealmMapSet(new List<RealmMap>
-        {
-            new(null) { Filters = new RealmMapFilters() }
-        });
-
+        var set = new RealmMapSet(new List<RealmMap> { new(null) });
         return set.Maps[0];
     }
 }

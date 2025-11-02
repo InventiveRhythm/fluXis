@@ -11,7 +11,7 @@ using fluXis.Overlay.Notifications;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Course;
-using fluXis.Screens.Edit;
+using fluXis.Screens.Edit.UI;
 using fluXis.Skinning.Bases.Judgements;
 using fluXis.Skinning.Custom;
 using fluXis.Skinning.Default;

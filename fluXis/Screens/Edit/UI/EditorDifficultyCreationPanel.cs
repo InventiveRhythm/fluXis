@@ -13,7 +13,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 using osuTK;
 
-namespace fluXis.Screens.Edit;
+namespace fluXis.Screens.Edit.UI;
 
 public partial class EditorDifficultyCreationPanel : Panel
 {

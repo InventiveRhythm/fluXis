@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -11,24 +12,22 @@ namespace fluXis.Screens.Edit.Tabs.Setup.Entries;
 public partial class SetupSlider<T> : SetupEntry
     where T : struct, INumber<T>, IMinMaxValue<T>
 {
-    public T Default { get; init; }
     public string Format { get; init; } = "0.0";
-
-    public T MinValue { get; init; }
-    public T MaxValue { get; init; }
-    public T Precision { get; init; }
 
     public Action<T> OnChange { get; init; } = _ => { };
 
-    private Bindable<T> bindable;
+    private readonly BindableNumber<T> bindable;
     private FluXisSpriteText valueText;
 
-    public SetupSlider(string title, T minValue, T maxValue, T precision)
+    public SetupSlider(string title, T value, T min, T max, T precision)
+        : this(title, new BindableNumber<T>(value) { MinValue = min, MaxValue = max, Precision = precision })
+    {
+    }
+
+    public SetupSlider(string title, BindableNumber<T> bind)
         : base(title)
     {
-        MinValue = minValue;
-        MaxValue = maxValue;
-        Precision = precision;
+        bindable = bind;
     }
 
     protected override void LoadComplete()
@@ -46,31 +45,19 @@ public partial class SetupSlider<T> : SetupEntry
         OnChange.Invoke(e.NewValue);
     }
 
-    protected override Drawable CreateRightTitle()
+    protected override Drawable CreateRightTitle() => valueText = new FluXisSpriteText
     {
-        return valueText = new FluXisSpriteText
-        {
-            Text = $"{Convert.ToDouble(Default).ToStringInvariant(Format)}",
-            WebFontSize = 16,
-            Alpha = .8f
-        };
-    }
+        Text = $"{Convert.ToDouble(bindable.Value).ToStringInvariant(Format)}",
+        WebFontSize = 16,
+        Alpha = .8f
+    };
 
-    protected override Drawable CreateContent()
+    protected override Drawable CreateContent() => new FluXisSlider<T>
     {
-        bindable = new BindableNumber<T>(Default)
-        {
-            MinValue = MinValue,
-            Precision = Precision,
-            MaxValue = MaxValue
-        };
-
-        return new FluXisSlider<T>
-        {
-            RelativeSizeAxes = Axes.X,
-            Height = 15,
-            Step = 0.1f,
-            Bindable = bindable
-        };
-    }
+        RelativeSizeAxes = Axes.X,
+        Height = 16,
+        Step = bindable.Precision,
+        Bindable = bindable,
+        CustomColor = Theme.Highlight
+    };
 }

@@ -175,9 +175,8 @@ public partial class SetupTab : EditorTab
                                                                 map.MapEvents.LaneSwitchEvents.ForEach(map.Update);
                                                             }
                                                         },
-                                                        new SetupSlider<int>("Extra Playfields", 0, 5, 1)
+                                                        new SetupSlider<int>("Extra Playfields", map.MapInfo.ExtraPlayfields, 0, 5, 1)
                                                         {
-                                                            Default = map.MapInfo.ExtraPlayfields,
                                                             Format = "0",
                                                             OnChange = value => map.MapInfo.ExtraPlayfields = value
                                                         }
@@ -198,28 +197,24 @@ public partial class SetupTab : EditorTab
                                                 {
                                                     Entries = new Drawable[]
                                                     {
-                                                        new SetupAsset("Audio")
+                                                        new SetupAsset("Audio", map.MapInfo.AudioFile)
                                                         {
                                                             AllowedExtensions = FluXisGame.AUDIO_EXTENSIONS,
-                                                            Path = map.MapInfo.AudioFile,
                                                             OnChange = map.SetAudio
                                                         },
-                                                        new SetupAsset("Background")
+                                                        new SetupAsset("Background", map.MapInfo.BackgroundFile)
                                                         {
                                                             AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                                                            Path = map.MapInfo.BackgroundFile,
                                                             OnChange = map.SetBackground
                                                         },
-                                                        new SetupAsset("Cover")
+                                                        new SetupAsset("Cover", map.MapInfo.CoverFile)
                                                         {
                                                             AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                                                            Path = map.MapInfo.CoverFile,
                                                             OnChange = map.SetCover
                                                         },
-                                                        new SetupAsset("Video")
+                                                        new SetupAsset("Video", map.MapInfo.VideoFile)
                                                         {
                                                             AllowedExtensions = FluXisGame.VIDEO_EXTENSIONS,
-                                                            Path = map.MapInfo.VideoFile,
                                                             OnChange = map.SetVideo
                                                         }
                                                     }
@@ -256,14 +251,12 @@ public partial class SetupTab : EditorTab
                                                 {
                                                     Entries = new Drawable[]
                                                     {
-                                                        new SetupSlider<float>("Accuracy", 1, 10, 0.1f)
+                                                        new SetupSlider<float>("Accuracy", map.MapInfo.AccuracyDifficulty, 1, 10, 0.1f)
                                                         {
-                                                            Default = map.MapInfo.AccuracyDifficulty,
                                                             OnChange = value => map.MapInfo.AccuracyDifficulty = map.RealmMap.AccuracyDifficulty = value
                                                         },
-                                                        new SetupSlider<float>("Health", 1, 10, 0.1f)
+                                                        new SetupSlider<float>("Health", map.MapInfo.HealthDifficulty, 1, 10, 0.1f)
                                                         {
-                                                            Default = map.MapInfo.HealthDifficulty,
                                                             OnChange = value => map.MapInfo.HealthDifficulty = map.RealmMap.HealthDifficulty = value
                                                         },
                                                     }

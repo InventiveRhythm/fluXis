@@ -16,6 +16,7 @@ namespace fluXis.Screens.Warning;
 public partial class WarningScreen : FluXisScreen
 {
     public override bool ShowToolbar => false;
+    public override float BackgroundDim => 1;
 
     [Resolved]
     private GlobalBackground backgrounds { get; set; }

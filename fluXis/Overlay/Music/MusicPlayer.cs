@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Database.Maps;
@@ -7,19 +9,22 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Screens;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Overlay.Music;
@@ -36,27 +41,53 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     private MapStore maps { get; set; }
 
     [Resolved]
+    private Toolbar.Toolbar toolbar { get; set; }
+
+    [Resolved]
     private FluXisScreenStack screens { get; set; }
 
-    private const int inner_padding = 40;
-    private const int rounding = 20;
+    private const float cover_small = 96;
+    private const float cover_big = 144;
 
+    private const int inner_padding = 8;
+    private const int rounding = 16;
+
+    private Container contentPad;
     private Container content;
     private SpriteStack<MapBackground> backgrounds;
     private BackgroundVideo video;
+
+    private Container metadataContainer;
+    private Container coversContainer;
     private SpriteStack<MapCover> covers;
     private FluXisSpriteText title;
     private FluXisSpriteText artist;
+
+    private FillFlowContainer<MusicPlayerButton> buttons;
     private MusicPlayerButton pausePlay;
+    private MusicPlayerButton fullscreenToggle;
 
     private Container gradient;
-    private Container metadataContainer;
+    private VerticalSectionedGradient colorGradient;
+    private Box progress;
 
     protected override bool StartHidden => true;
+
+    [UsedImplicitly]
+    private float animationProgress;
+
+    private float lastProgress = -1;
+    private bool fullscreen;
+
+    private double metadataCountdown;
+    private bool metadataVisible;
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        // to shut up msbuild
+        animationProgress = 0;
+
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
@@ -65,6 +96,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
             new FullInputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
+                Allow = new List<Type> { typeof(MouseMoveEvent) },
                 Child = new ClickableContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -77,19 +109,17 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                     }
                 }
             },
-            new Container
+            contentPad = new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Horizontal = 150, Bottom = 150, Top = 20 },
+                Padding = new MarginPadding { Right = 20, Top = 70 },
                 Child = content = new HoverClickContainer
                 {
-                    RelativeSizeAxes = Axes.Both,
                     Masking = true,
                     CornerRadius = rounding,
-                    Y = -50,
                     EdgeEffect = Styling.ShadowLarge,
-                    HoverAction = showMetadata,
-                    HoverLostAction = hideMetadata,
+                    Anchor = Anchor.TopRight,
+                    Origin = Anchor.TopRight,
                     Children = new Drawable[]
                     {
                         new Box
@@ -103,36 +133,36 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Clock = globalClock,
-                            PlaybackStarted = hideMetadata
+                            Clock = globalClock
                         },
                         gradient = new Container
                         {
                             RelativeSizeAxes = Axes.Both,
                             Alpha = .5f,
-                            Children = new Box[]
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Children = new Drawable[]
                             {
-                                new()
+                                colorGradient = new VerticalSectionedGradient
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Height = .8f,
-                                    Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(0), Colour4.Black)
+                                    EndAlpha = 0,
+                                    Colour = Theme.Highlight,
+                                    Alpha = 0.5f
                                 },
-                                new()
+                                new VerticalSectionedGradient
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Height = .2f,
-                                    Colour = Colour4.Black,
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft
-                                }
+                                    EndAlpha = 0,
+                                    Colour = Colour4.Black
+                                },
                             }
                         },
                         new MusicVisualiser(),
                         metadataContainer = new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding { Horizontal = inner_padding, Bottom = inner_padding, Top = rounding + inner_padding },
+                            Padding = new MarginPadding(inner_padding),
                             AlwaysPresent = true,
                             Children = new Drawable[]
                             {
@@ -140,19 +170,19 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                 {
                                     AutoSizeAxes = Axes.Both,
                                     Direction = FillDirection.Horizontal,
-                                    Spacing = new Vector2(20, 0),
+                                    Spacing = new Vector2(12, 0),
                                     Anchor = Anchor.BottomLeft,
                                     Origin = Anchor.BottomLeft,
                                     Children = new Drawable[]
                                     {
-                                        new Container
+                                        coversContainer = new Container
                                         {
-                                            Size = new Vector2(150),
+                                            Size = new Vector2(96),
                                             Masking = true,
-                                            CornerRadius = 20,
+                                            CornerRadius = 8,
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
-                                            EdgeEffect = Styling.ShadowMedium,
+                                            EdgeEffect = Styling.ShadowSmall,
                                             Child = covers = new SpriteStack<MapCover>()
                                         },
                                         new FillFlowContainer
@@ -166,25 +196,25 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                 title = new FluXisSpriteText
                                                 {
                                                     Text = "Song Title",
-                                                    FontSize = 36,
+                                                    WebFontSize = 20,
                                                     Shadow = true
                                                 },
                                                 artist = new FluXisSpriteText
                                                 {
                                                     Text = "by Artist",
-                                                    Colour = Theme.Text2,
-                                                    FontSize = 32,
+                                                    WebFontSize = 14,
                                                     Shadow = true
                                                 },
-                                                new FillFlowContainer
+                                                buttons = new FillFlowContainer<MusicPlayerButton>
                                                 {
                                                     AutoSizeAxes = Axes.Both,
                                                     Direction = FillDirection.Horizontal,
-                                                    Spacing = new Vector2(10, 0),
-                                                    Margin = new MarginPadding { Top = 20 },
-                                                    Children = new Drawable[]
+                                                    Spacing = new Vector2(12),
+                                                    Margin = new MarginPadding { Top = 12 },
+                                                    Scale = new Vector2(0.75f),
+                                                    Children = new MusicPlayerButton[]
                                                     {
-                                                        new MusicPlayerButton
+                                                        new()
                                                         {
                                                             Icon = FontAwesome6.Solid.BackwardStep,
                                                             Action = () =>
@@ -207,13 +237,25 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                                     globalClock.Start();
                                                             }
                                                         },
-                                                        new MusicPlayerButton
+                                                        new()
                                                         {
                                                             Icon = FontAwesome6.Solid.ForwardStep,
                                                             Action = () =>
                                                             {
                                                                 if (screens.AllowMusicControl)
                                                                     game.NextSong();
+                                                            }
+                                                        },
+                                                        fullscreenToggle = new MusicPlayerButton
+                                                        {
+                                                            Icon = FontAwesome6.Solid.UpRightAndDownLeftFromCenter,
+                                                            Action = () =>
+                                                            {
+                                                                fullscreen = !fullscreen;
+                                                                this.TransformTo(nameof(animationProgress), fullscreen ? 1f : 0f, 600, Easing.OutQuint);
+
+                                                                if (fullscreen) toolbar.Hide();
+                                                                else toolbar.Show();
                                                             }
                                                         }
                                                     }
@@ -223,6 +265,14 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     }
                                 }
                             }
+                        },
+                        progress = new Box
+                        {
+                            Size = new Vector2(0, 4),
+                            RelativeSizeAxes = Axes.X,
+                            Colour = Theme.Text,
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft
                         }
                     }
                 }
@@ -235,6 +285,48 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         base.LoadComplete();
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        progress.Width = (float)((globalClock.CurrentTrack?.CurrentTime ?? 0) / (globalClock.CurrentTrack?.Length ?? 1000));
+
+        pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome6.Solid.Pause : FontAwesome6.Solid.Play;
+        fullscreenToggle.IconSprite.Icon = fullscreen ? FontAwesome6.Solid.DownLeftAndUpRightToCenter : FontAwesome6.Solid.UpRightAndDownLeftFromCenter;
+
+        if (video.IsPlaying && fullscreen) metadataCountdown -= Time.Elapsed;
+        if (metadataCountdown <= 0) hideMetadata();
+
+        // needs to be outside to react to toolbar movement
+        contentPad.Padding = new MarginPadding
+        {
+            Top = Interpolation.ValueAt(animationProgress, toolbar.DrawHeight + toolbar.Y + 20, 0, 0, 1),
+            Right = Interpolation.ValueAt(animationProgress, 20, 0, 0, 1)
+        };
+
+        if (lastProgress == animationProgress)
+            return;
+
+        lastProgress = animationProgress;
+
+        gradient.Height = Interpolation.ValueAt(animationProgress, 2f, 1f, 0, 1);
+
+        content.Width = Interpolation.ValueAt(animationProgress, 480, DrawWidth, 0, 1);
+        content.Height = Interpolation.ValueAt(animationProgress, cover_small + inner_padding * 2, DrawHeight, 0, 1);
+        content.CornerRadius = Interpolation.ValueAt(animationProgress, rounding, 0, 0, 1);
+
+        metadataContainer.Padding = new MarginPadding(Interpolation.ValueAt(animationProgress, inner_padding, 36, 0, 1));
+        coversContainer.Size = new Vector2(Interpolation.ValueAt(animationProgress, cover_small, cover_big, 0, 1));
+
+        title.WebFontSize = Interpolation.ValueAt(animationProgress, 20, 24, 0, 1);
+        artist.WebFontSize = Interpolation.ValueAt(animationProgress, 14, 16, 0, 1);
+
+        buttons.Scale = new Vector2(Interpolation.ValueAt(animationProgress, 0.75f, 1f, 0, 1));
+        buttons.Margin = new MarginPadding { Top = Interpolation.ValueAt(animationProgress, 12, 20, 0, 1) };
+
+        progress.Height = Interpolation.ValueAt(animationProgress, 4, 8, 0, 1);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -253,6 +345,16 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         if (next == null) return;
 
         video.Stop();
+
+        var color = next.Metadata.Color;
+        var hue = color.ToHSL().X;
+        var accent = Colour4.FromHSL(hue, .6f, .9f);
+
+        title.FadeColour(accent, 400);
+        artist.FadeColour(accent, 400);
+        progress.FadeColour(accent, 400);
+        buttons.ForEach(x => x.IconSprite.FadeColour(accent, 400));
+        colorGradient.FadeColour(accent, 400);
 
         title.Text = next.Metadata.LocalizedTitle;
         artist.Text = next.Metadata.LocalizedArtist;
@@ -285,39 +387,46 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
 
     private void showMetadata()
     {
+        metadataCountdown = 4000;
+        if (metadataVisible) return;
+
+        metadataVisible = true;
+
         metadataContainer.ClearTransforms();
         metadataContainer.FadeIn(200);
 
         gradient.ClearTransforms();
         gradient.FadeTo(.5f, 200);
+
+        progress.ClearTransforms();
+        progress.FadeIn(200);
     }
 
     private void hideMetadata()
     {
-        if (!video.IsPlaying) return;
+        if (!metadataVisible) return;
+
+        metadataVisible = false;
 
         metadataContainer.Delay(1000).FadeOut(800);
         gradient.Delay(1000).FadeOut(800);
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome6.Solid.Pause : FontAwesome6.Solid.Play;
+        progress.Delay(1000).FadeOut(800);
     }
 
     protected override void PopIn()
     {
         this.FadeIn(200);
-        content.MoveToY(0, 400, Easing.OutQuint);
+        content.MoveToY(-20).MoveToY(0, 400, Easing.OutQuint);
         showMetadata();
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
-        content.MoveToY(-50, 400, Easing.OutQuint);
+        content.MoveToY(-20, 400, Easing.OutQuint);
+
+        this.TransformTo(nameof(animationProgress), 0f, 600, Easing.OutQuint);
+        fullscreen = false;
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
@@ -333,4 +442,10 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
+
+    protected override bool OnMouseMove(MouseMoveEvent e)
+    {
+        showMetadata();
+        return true;
+    }
 }

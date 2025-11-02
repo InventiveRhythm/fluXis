@@ -124,7 +124,7 @@ public static class Program
             new SettingsGeneralStrings(),
             new SettingsGraphicsStrings(),
             new SettingsInputStrings(),
-            new SettingsMaintenanceStrings(),
+            new SettingsAdvancedStrings(),
             new SettingsPluginsStrings(),
             new SettingsUIStrings(),
             new SongSelectStrings(),
