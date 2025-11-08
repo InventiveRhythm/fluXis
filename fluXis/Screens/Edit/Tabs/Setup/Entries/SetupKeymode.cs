@@ -21,8 +21,8 @@ public partial class SetupKeymode : CompositeDrawable
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 60;
-        CornerRadius = 10;
+        Height = 64;
+        CornerRadius = 8;
         Masking = true;
 
         InternalChildren = new Drawable[]

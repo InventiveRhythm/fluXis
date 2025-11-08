@@ -77,8 +77,9 @@ public partial class ExitAnimation : FullInputBlockingContainer
 
         foreach (var bar in barsContainer.Children)
         {
+            var dir = RNG.NextSingle() >= 0.5f ? 1 : -1;
             var rngDelay = RNG.Next(0, bars_delay);
-            bar.Delay(rngDelay).MoveToY(0, bars_duration, Easing.OutCirc);
+            bar.MoveToY(1.6f * dir).Delay(rngDelay).MoveToY(0, bars_duration, Easing.OutCirc);
         }
 
         barsContainer.Delay(bars_duration + bars_delay).Schedule(onBarCompletion);

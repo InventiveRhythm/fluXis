@@ -64,10 +64,10 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
 
     public Drawable CreateDrawable() => Drawable = new DrawableMapSetItem(this, set, maps)
     {
-        SelectAction = Screen.Accept,
-        EditAction = Screen.EditMap,
-        DeleteAction = Screen.DeleteMapSet,
-        ExportAction = Screen.ExportMapSet
+        SelectAction = () => Screen?.Accept(),
+        EditAction = m => Screen?.EditMap(m),
+        DeleteAction = m => Screen?.DeleteMapSet(m),
+        ExportAction = m => Screen?.ExportMapSet(m)
     };
 
     public void Bind() => Selection.MapSetBindable.BindValueChanged(mapSetChanged, true);

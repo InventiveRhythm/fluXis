@@ -225,6 +225,9 @@ public partial class ScoreListTab : SelectInfoTab
         }
 
         currentEntries.Clear();
+
+        if (map is null) return;
+
         cancel = cancelSource.Token;
         Task.Run(() => loadScores(cancel), cancel);
     }

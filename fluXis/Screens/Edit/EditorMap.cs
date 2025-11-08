@@ -16,9 +16,11 @@ using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Verify;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Threading;
 using SixLabors.ImageSharp;
 
 namespace fluXis.Screens.Edit;
@@ -28,11 +30,14 @@ public class EditorMap : IVerifyContext
     public EditorMapInfo MapInfo { get; set; }
     public RealmMap RealmMap { get; set; }
 
+    public FileWatcher ScriptWatcher { get; private set; }
+
     public MapEvents MapEvents => MapInfo.MapEvents;
     public Storyboard Storyboard => MapInfo.Storyboard;
     public RealmMapSet MapSet => RealmMap?.MapSet;
 
     private readonly Action<Drawable> loadComponent;
+    private readonly Scheduler scheduler;
 
     public string MapInfoHash => MapUtils.GetHash(MapInfo.Serialize());
     public string MapEventsHash => MapUtils.GetHash(MapEvents.Save());
@@ -44,11 +49,19 @@ public class EditorMap : IVerifyContext
 
     private List<IChangeNotifier> notifiers = new();
 
-    public EditorMap(EditorMapInfo info, RealmMap map, Action<Drawable> loadComponent)
+    public EditorMap(EditorMapInfo info, RealmMap map, Action<Drawable> loadComponent, Scheduler scheduler)
     {
         MapInfo = info;
         RealmMap = map;
+
         this.loadComponent = loadComponent;
+        this.scheduler = scheduler;
+    }
+
+    public void SetupWatcher()
+    {
+        ScriptWatcher = new FileWatcher(RealmMap.MapSet, "*.lua");
+        ScriptWatcher.Changed += (_, e) => Schedule(() => ScriptChanged?.Invoke(e.Name));
     }
 
     #region Events
@@ -59,6 +72,8 @@ public class EditorMap : IVerifyContext
     public event Action BackgroundChanged;
     public event Action CoverChanged;
 
+    public event Action<string> ScriptChanged;
+
 #nullable enable
     public event Action<ITimedObject?>? AnyChange;
 #nullable disable
@@ -68,6 +83,7 @@ public class EditorMap : IVerifyContext
     #endregion
 
     public void LoadComponent(Drawable drawable) => loadComponent.Invoke(drawable);
+    public void Schedule(Action action) => scheduler.ScheduleIfNeeded(action);
 
     public void TriggerAnyChange(ITimedObject obj = null) => AnyChange?.Invoke(obj);
 

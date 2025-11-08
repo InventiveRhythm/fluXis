@@ -12,7 +12,7 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
     public bool CanBeTabbedTo => true;
     public override bool AcceptsFocus => true;
 
-    protected override float ContentSpacing => -3;
+    protected override float ContentSpacing => -2;
 
     public string Value
     {

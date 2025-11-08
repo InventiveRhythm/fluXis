@@ -39,7 +39,6 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
         new GraphicsSection(),
         new PluginsSection(),
         new MaintenanceSection(),
-        new DebugSection(),
         new ExperimentsSection()
     };
 

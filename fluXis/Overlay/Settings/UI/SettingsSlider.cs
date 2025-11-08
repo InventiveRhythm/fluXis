@@ -16,7 +16,7 @@ public partial class SettingsSlider<T> : SettingsItem
     public Bindable<T> Bindable { get; init; }
     public string ValueLabel { get; init; } = "{value}";
     public bool DisplayAsPercentage { get; init; }
-    public float Step { get; init; } = .01f;
+    public T Step { get; init; } = T.One;
 
     protected override bool IsDefault => Bindable.IsDefault;
 

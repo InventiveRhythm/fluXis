@@ -68,8 +68,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 {
     public static readonly string[] AUDIO_EXTENSIONS = { ".mp3", ".wav", ".ogg" };
     public static readonly string[] IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png" };
-    public static readonly string[] PROFILE_ASSET_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif" };
     public static readonly string[] VIDEO_EXTENSIONS = { ".mp4", ".mov", ".avi", ".flv", ".mpg", ".wmv", ".m4v" };
+
+    public static readonly string[] PROFILE_ASSET_EXTENSIONS = { ".jpg", ".jpeg", ".png" };
+    public static readonly string[] SUPPORTER_PROFILE_ASSET_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif" };
 
     protected override bool LoadComponentsLazy => true;
     public override bool PrioritizeGlobalKeybindings => screenStack.CurrentScreen is not Editor || overlayContainer.Any(x => x.State.Value == Visibility.Visible);

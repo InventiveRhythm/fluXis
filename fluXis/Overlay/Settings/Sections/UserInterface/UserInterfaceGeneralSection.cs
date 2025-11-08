@@ -51,6 +51,12 @@ public partial class UserInterfaceGeneralSection : SettingsSubSection
                 Label = strings.ShowStoryboardVideo,
                 Description = strings.ShowStoryboardVideoDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.ShowStoryboardVideo)
+            },
+            new SettingsToggle
+            {
+                Label = strings.RelativeMouseScroll,
+                Description = strings.RelativeMouseScrollDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.RelativeMiddleScroll)
             }
         });
     }

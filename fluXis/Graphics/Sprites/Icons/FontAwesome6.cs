@@ -50,6 +50,7 @@ public class FontAwesome6
         public static IconUsage Diamond => GetSolid(0xf219);
         public static IconUsage Display => GetSolid(0xe163);
         public static IconUsage DoorOpen => GetSolid(0xf52b);
+        public static IconUsage DownLeftAndUpRightToCenter => GetSolid(0xf422);
         public static IconUsage Download => GetSolid(0xf019);
         public static IconUsage Drum => GetSolid(0xf569);
         public static IconUsage EarthAmericas => GetSolid(0xf57d);
@@ -97,6 +98,7 @@ public class FontAwesome6
         public static IconUsage Pause => GetSolid(0xf04c);
         public static IconUsage Pen => GetSolid(0xf304);
         public static IconUsage PenRuler => GetSolid(0xf5ae);
+        public static IconUsage Pencil => GetSolid(0xf303);
         public static IconUsage Percent => GetSolid(0x25);
         public static IconUsage PersonToDoor => GetSolid(0xe433);
         public static IconUsage Plane => GetSolid(0xf072);
@@ -126,6 +128,7 @@ public class FontAwesome6
         public static IconUsage TriangleExclamation => GetSolid(0xf071);
         public static IconUsage Trophy => GetSolid(0xf091);
         public static IconUsage UpDown => GetSolid(0xf338);
+        public static IconUsage UpRightAndDownLeftFromCenter => GetSolid(0xf424);
         public static IconUsage Upload => GetSolid(0xf093);
         public static IconUsage User => GetSolid(0xf007);
         public static IconUsage UserAstronaut => GetSolid(0xf4fb);

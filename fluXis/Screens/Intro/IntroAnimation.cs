@@ -75,6 +75,7 @@ public partial class IntroAnimation : FluXisScreen
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Rotation = 10,
+                Alpha = 0,
                 ChildrenEnumerable = Enumerable.Range(0, bars).Select(i => new Circle
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -129,6 +130,7 @@ public partial class IntroAnimation : FluXisScreen
         sample.Play();
 
         logo.FadeOut();
+        barsContainer.Delay(600).FadeIn();
         barsContainer.ForEach(d => d.MoveToY(0));
 
         topLeft.Show(time_first, snap_duration);
@@ -152,8 +154,10 @@ public partial class IntroAnimation : FluXisScreen
     {
         foreach (var bar in barsContainer.Children)
         {
+            var dir = RNG.NextSingle() >= 0.5f ? 1 : -1;
+
             var rngDelay = RNG.Next(0, bars_delay);
-            bar.Delay(rngDelay).MoveToY(-1.2f, bars_duration, Easing.OutCirc);
+            bar.Delay(rngDelay).MoveToY(1.2f * dir, bars_duration, Easing.OutCirc);
         }
     }
 

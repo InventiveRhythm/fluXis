@@ -73,7 +73,7 @@ public partial class PointSettingsSlider<T> : PointSettingsBase, IHasTooltip
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Bindable = Bindable,
-                Step = (float)Convert.ToDouble(Step)
+                Step = Step
             }
         };
     }

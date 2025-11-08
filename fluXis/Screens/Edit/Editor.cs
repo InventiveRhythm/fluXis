@@ -40,6 +40,7 @@ using fluXis.Screens.Edit.Tabs;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Screens.Edit.Tabs.Verify.Checks;
+using fluXis.Screens.Edit.UI;
 using fluXis.Screens.Edit.UI.BottomBar;
 using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Edit.UI.TabSwitcher;
@@ -164,11 +165,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorKeybindingContainer keybinds;
     private EditorKeymapOverlay keymapOverlay;
     private EditorModding modding;
+    private EditorOsd osd;
 
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
         this.loader = loader;
-        editorMap = new EditorMap(map, realmMap, LoadComponent);
+        editorMap = new EditorMap(map, realmMap, LoadComponent, Scheduler);
     }
 
     [BackgroundDependencyLoader]
@@ -197,6 +199,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         editorMap.MapInfo.MapEvents ??= new MapEvents();
         editorMap.MapInfo.Storyboard ??= new Storyboard();
 
+        editorMap.SetupWatcher();
         editorMap.SetupNotifiers();
 
         backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
@@ -227,7 +230,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (!Directory.Exists(MapSetPath))
             Directory.CreateDirectory(MapSetPath);
 
-        dependencies.CacheAs(new ScriptStorage(MapSetPath));
+        var scripts = new ScriptStorage(MapSetPath);
+        editorMap.ScriptChanged += _ =>
+        {
+            osd.DisplayText("Reloaded Scripts!");
+            scripts.Reload();
+        };
+        dependencies.CacheAs(scripts);
 
         var tabList = new List<EditorTab>
         {
@@ -379,7 +388,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     }
                 }
             },
-            keymapOverlay = new EditorKeymapOverlay(keybinds)
+            keymapOverlay = new EditorKeymapOverlay(keybinds),
+            dependencies.CacheAsAndReturn(osd = new EditorOsd())
         });
 
         return;
@@ -485,6 +495,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         editorMap.AudioChanged += () => clock.ChangeSource(loadMapTrack());
         editorMap.BackgroundChanged += () => backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
+
+        editorMap.ScriptWatcher.Enable();
     }
 
     protected override void Update()
@@ -502,6 +514,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         clock.Stop();
         BindableBackgroundDim.UnbindAll();
         BindableBackgroundBlur.UnbindAll();
+        editorMap.ScriptWatcher.Dispose();
     }
 
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
@@ -563,7 +576,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         switch (e.Action)
         {
             case EditorKeybinding.Save:
+                editorMap.ScriptWatcher.Disable();
                 save();
+                editorMap.ScriptWatcher.Enable();
                 return true;
 
             case EditorKeybinding.OpenFolder:

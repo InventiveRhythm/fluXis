@@ -1,4 +1,3 @@
-using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Map;
 using fluXis.Screens.Select.Info;
@@ -19,11 +18,13 @@ public partial class TestMapInfo : FluXisTestScene
         var info = new SelectMapInfo();
         Add(info);
 
-        AddStep("Set MapSet", () => setMap(maps.MapSets.First().LowestDifficulty));
-        AddStep("Set Lowest Difficulty", () => setMap(maps.MapSets.First().LowestDifficulty));
-        AddStep("Set Highest Difficulty", () => setMap(maps.MapSets.First().HighestDifficulty));
+        var random = CreateDummySet(4);
 
-        AddStep("Set Random MapSet", () => setMap(maps.GetRandom()?.LowestDifficulty));
+        AddStep("Set MapSet", () => setMap(random.LowestDifficulty));
+        AddStep("Set Lowest Difficulty", () => setMap(random.LowestDifficulty));
+        AddStep("Set Highest Difficulty", () => setMap(random.HighestDifficulty));
+
+        AddStep("Set Random MapSet", () => setMap(CreateDummySet()?.LowestDifficulty));
     }
 
     private void setMap(RealmMap map) => maps.CurrentMap = map;

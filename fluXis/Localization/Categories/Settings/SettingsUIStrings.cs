@@ -27,6 +27,9 @@ public class SettingsUIStrings : LocalizationCategory
     public TranslatableString ShowStoryboardVideo => Get("show-storyboard-video", "Show Storyboard and Video");
     public TranslatableString ShowStoryboardVideoDescription => Get("show-storyboard-video-description", "Displays storyboards and videos in most screens. (REQUIRES SUPPORTER, except song select)");
 
+    public TranslatableString RelativeMouseScroll => Get("relative-mouse-scroll", "Relative Mouse Scroll");
+    public TranslatableString RelativeMouseScrollDescription => Get("relative-mouse-scroll-description", "Holding middle mouse scrolls lists based on how far the mouse has been moved from the starting point. (like in web browsers)");
+
     #endregion
 
     #region Main Menu

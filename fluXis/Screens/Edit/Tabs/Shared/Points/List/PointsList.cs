@@ -14,6 +14,7 @@ using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Events;
 using fluXis.Screens.Edit.Tabs.Design.Points;
 using fluXis.UI;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
@@ -279,6 +280,17 @@ public abstract partial class PointsList : Container
 
     protected abstract PointListEntry CreateEntryFor(ITimedObject obj);
     protected abstract IEnumerable<DropdownEntry> CreateDropdownEntries();
+
+    protected DropdownEntry CreateDefaultDropdownEntry<T>(string name, Colour4 color, [CanBeNull] Action<T> create = null)
+        where T : class, ITimedObject, new()
+    {
+        return new DropdownEntry(name, color, () =>
+        {
+            var item = new T();
+            create?.Invoke(item);
+            Create(item);
+        }, x => x is T);
+    }
 
     protected void Create(ITimedObject obj, bool overrideTime = true, bool openSettings = true)
     {
