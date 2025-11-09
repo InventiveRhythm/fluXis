@@ -7,6 +7,7 @@ using fluXis.Map;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Users;
 using fluXis.Utils.Exceptions;
+using NLua.Exceptions;
 using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -123,6 +124,7 @@ public partial class SentryClient : Component
         {
             case SteamInitException:
             case APIException:
+            case LuaException:
                 return true;
 
             case WebException web:
