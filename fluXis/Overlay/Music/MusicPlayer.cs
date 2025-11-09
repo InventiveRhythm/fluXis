@@ -458,9 +458,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     {
         this.FadeOut(200);
         content.ScaleTo(.9f, 400, Easing.OutQuint);
-
-        this.TransformTo(nameof(animationProgress), 0f, 600, Easing.OutQuint);
-        fullscreen = false;
+        if (fullscreen) toggleFullscreen();
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
