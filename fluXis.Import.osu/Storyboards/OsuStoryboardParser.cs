@@ -52,8 +52,12 @@ public class OsuStoryboardParser
             }
         }
 
+        var i = 0;
+
         foreach (var element in storyboard.Elements)
         {
+            element.ZIndex = i++;
+
             var initialValues = new HashSet<StoryboardAnimationType>();
             var startTime = double.MaxValue;
             var endTime = double.MinValue;
@@ -386,6 +390,24 @@ public class OsuStoryboardParser
                             };
                             break;
                         }
+
+                        case "P":
+                        {
+                            var param = split[4];
+
+                            switch (param)
+                            {
+                                case "A":
+                                    currentElement.Blending = true;
+                                    break;
+                            }
+
+                            break;
+                        }
+
+                        default:
+                            Logger.Log($"Unknown command: {commandType}.", LoggingTarget.Runtime, LogLevel.Debug);
+                            break;
                     }
 
                     if (buffer is null || buffer.Length == 0)

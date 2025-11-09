@@ -306,12 +306,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                             {
                                                 Clock = GameplayClock
                                             },
-                                            new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
+                                            new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Background),
                                         }
                                     },
                                     new ComboBurst(RulesetContainer),
                                     clockContainer,
-                                    new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Foreground)
+                                    new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Foreground)
                                 }
                             },
                             hud = new Container
@@ -326,7 +326,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                 TargetDrawSize = new Vector2(1920, 1080),
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Child = new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Overlay)
+                                Child = new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Overlay)
                             }
                         }),
                         CreateTextOverlay(),

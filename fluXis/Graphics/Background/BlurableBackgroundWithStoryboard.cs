@@ -56,14 +56,14 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
             var layers = Enum.GetValues<StoryboardLayer>();
 
             foreach (var layer in layers)
-                yield return new DrawableStoryboardWrapper(framed, storyboard, layer);
+                yield return new DrawableStoryboardLayer(framed, storyboard, layer);
         }
     }
 
     protected override BufferedContainer CreateBlur(IEnumerable<Drawable> enu)
     {
         var children = enu.ToList();
-        var cache = !children.Any(x => x is Video or DrawableStoryboardWrapper);
+        var cache = !children.Any(x => x is Video or DrawableStoryboardLayer);
         return new BufferedContainer(cachedFrameBuffer: cache)
         {
             RelativeSizeAxes = Axes.Both,
