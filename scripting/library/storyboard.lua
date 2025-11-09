@@ -23,9 +23,14 @@ function StoryboardText() end
 ---@nodiscard
 function StoryboardCircle() end
 
----@return StoryboardCircle
+---@return StoryboardOutlineCircle
 ---@nodiscard
 function StoryboardOutlineCircle() end
+
+---@class settings
+---@field scrollspeed number
+---@field upscroll boolean
+settings = {}
 
 ---@class metadata
 ---@field title string the non-romanized title of the current map

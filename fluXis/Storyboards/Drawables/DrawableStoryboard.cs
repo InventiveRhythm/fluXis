@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using fluXis.Configuration;
 using fluXis.Map;
 using fluXis.Scripting;
+using fluXis.Scripting.Models;
 using fluXis.Scripting.Runners;
 using fluXis.Storyboards.Storage;
 using osu.Framework.Allocation;
@@ -15,6 +17,9 @@ namespace fluXis.Storyboards.Drawables;
 
 public partial class DrawableStoryboard : CompositeDrawable
 {
+    [Resolved]
+    private FluXisConfig config { get; set; }
+
     public Storyboard Storyboard { get; }
     private MapInfo map { get; }
     private string assetPath { get; }
@@ -59,7 +64,7 @@ public partial class DrawableStoryboard : CompositeDrawable
             return null;
 
         var raw = File.ReadAllText(full);
-        var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard);
+        var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard, new LuaSettings(config));
 
         try
         {
