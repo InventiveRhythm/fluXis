@@ -25,6 +25,7 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
     protected override bool IsDragging => base.IsDragging || isDragging;
 
     public bool AllowDragScrolling = true;
+    public bool HideScrollbarOnInactivity = false;
 
     public float ScrollbarMargin
     {
@@ -119,15 +120,22 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
 
     protected override bool OnKeyDown(KeyDownEvent e) => false;
 
-    protected override ScrollbarContainer CreateScrollbar(Direction direction) => new FluXisScrollBar(direction);
+    protected override ScrollbarContainer CreateScrollbar(Direction direction) => new FluXisScrollBar(direction, this);
 
     protected partial class FluXisScrollBar : ScrollbarContainer
     {
+        private readonly FluXisScrollContainer<T> parent;
         private Circle circle { get; }
 
-        public FluXisScrollBar(Direction direction)
+        private float lastY = -100;
+
+        public FluXisScrollBar(Direction direction, FluXisScrollContainer<T> parent)
             : base(direction)
         {
+            this.parent = parent;
+
+            AlwaysPresent = true;
+
             Child = circle = new Circle
             {
                 RelativeSizeAxes = direction == Direction.Vertical ? Axes.Y : Axes.X,
@@ -145,6 +153,7 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
                 [(int)ScrollDirection] = val
             };
             this.ResizeTo(size, duration, easing);
+            resetInactivity();
         }
 
         protected override void Update()
@@ -153,6 +162,32 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
 
             circle.Anchor = Anchor;
             circle.Origin = Origin;
+
+            if (lastY == Y)
+                return;
+
+            lastY = Y;
+            resetInactivity();
+        }
+
+        private void resetInactivity()
+        {
+            AlwaysPresent = true;
+            this.FadeIn(50);
+
+            if (!IsHovered && parent.HideScrollbarOnInactivity)
+                this.Delay(400).FadeOut(200);
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            resetInactivity();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            resetInactivity();
         }
     }
 }
