@@ -286,13 +286,22 @@ public partial class SelectMapInfoHeader : CompositeDrawable
 
         updateDifficultyValues(map, mods?.SelectedMods ?? new BindableList<IMod>());
 
-        var background = new MapBackground(map);
-        backgrounds.Add(background);
-        background.Show();
+        LoadComponentAsync(new MapBackground(map) { RelativeSizeAxes = Axes.Both }, background =>
+        {
+            background.FadeInFromZero(Styling.TRANSITION_FADE);
+            backgrounds.Add(background);
+        });
 
-        var cover = new MapCover(map.MapSet);
-        covers.Add(cover);
-        cover.Show();
+        LoadComponentAsync(new MapCover(map.MapSet)
+        {
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
+        }, cover =>
+        {
+            cover.FadeInFromZero(Styling.TRANSITION_FADE);
+            covers.Add(cover);
+        });
     }
 
     private void updateDifficultyValues(RealmMap map, IList<IMod> list)
