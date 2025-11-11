@@ -4,6 +4,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders.Types;
+using osu.Framework.Utils;
 using osuTK.Graphics;
 
 namespace fluXis.Graphics.Shaders.FishEye;
@@ -31,7 +32,7 @@ public partial class FishEyeContainer
         {
             base.PopulateContents(renderer);
 
-            if (strength != 0)
+            if (!Precision.AlmostEquals(strength, 0))
                 drawFrameBuffer(renderer);
         }
 
