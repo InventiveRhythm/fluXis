@@ -142,7 +142,7 @@ public partial class DrawableStoryboardLayer : DrawSizePreservingFillContainer
             var result = a.Element.ZIndex.CompareTo(b.Element.ZIndex);
             if (result != 0) return result;
 
-            result = -a.Element.StartTime.CompareTo(b.Element.StartTime);
+            result = a.Element.StartTime.CompareTo(b.Element.StartTime);
             if (result != 0) return result;
 
             return -a.GetHashCode().CompareTo(b.GetHashCode());
