@@ -45,6 +45,7 @@ public abstract partial class SettingsItem : Container
 
     private bool isDefault;
     private ResetButton resetButton;
+    private FluXisSpriteIcon rightIndicator;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -81,7 +82,15 @@ public abstract partial class SettingsItem : Container
                     }
                 }
             },
-            Content.WithChild(CreateContent())
+            rightIndicator = new FluXisSpriteIcon
+            {
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Icon = FontAwesome6.Solid.AngleLeft,
+                Size = new Vector2(16),
+                Alpha = 0
+            },
+            Content.WithChild(CreateContent()),
         };
     }
 
@@ -118,6 +127,17 @@ public abstract partial class SettingsItem : Container
     }
 
     protected abstract void Reset();
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        rightIndicator.MoveToX(32).FadeIn(50).MoveToX(24, 100, Easing.OutQuint);
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        rightIndicator.FadeOut(200).MoveToX(32, 400, Easing.OutQuint);
+    }
 
     private partial class ResetButton : Container
     {
