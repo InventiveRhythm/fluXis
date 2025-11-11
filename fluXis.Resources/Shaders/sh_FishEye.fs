@@ -19,13 +19,13 @@ vec2 FishEyeUV(vec2 uv)
     float corner = length(center);
     vec2 d = uv - 0.5;
     float r = length(d);
-    
-    if (g_Strength > 0.0001)
+
+    if (g_Strength > 0.0)
     {
         float fac = g_Strength * PI * 0.5;
         uv = vec2(0.5) + normalize(d) * tan(r * fac) * corner / tan(corner * fac);
     }
-    else if (g_Strength < -0.0001)
+    else
     {
         float fac = tan(g_Strength) * PI * 2;
         uv = vec2(0.5) + normalize(d) * atan(r * -fac) * 0.5 / atan (0.5 * -fac);
