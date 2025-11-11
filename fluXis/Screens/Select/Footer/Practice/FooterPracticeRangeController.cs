@@ -4,6 +4,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -22,18 +23,18 @@ public partial class FooterPracticeRangeController : Container
     [Resolved]
     private MapStore maps { get; set; }
 
-    public Bindable<double> LowerBound { get; set; } = new();
-    public Bindable<double> UpperBound { get; set; } = new();
+    public Bindable<double> LowerBound { get; } = new();
+    public Bindable<double> UpperBound { get; } = new();
 
     public float LowerBoundOffset { get; set; } = 0f;
     public float UpperBoundOffset { get; set; } = 0f;
 
-    private float lowerBoundOffsetRelative { get; set; } = 0f;
-    private float upperBoundOffsetRelative { get; set; } = 0f;
+    private float lowerBoundOffsetRelative { get; set; }
+    private float upperBoundOffsetRelative { get; set; }
 
     private RangePoint lowerBound;
     private RangePoint upperBound;
-    
+
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
 
@@ -49,7 +50,7 @@ public partial class FooterPracticeRangeController : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples)
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomLeft;
@@ -61,11 +62,11 @@ public partial class FooterPracticeRangeController : Container
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
-                OnDragBind = e =>
+                OnDragBind = _ =>
                 {
                     lowerBoundOffsetRelative = getRelativePosition(LowerBoundOffset);
                     float relativePos = getRelativePosition(lowerBound.X);
-                    
+
                     if (relativePos <= 0.01f)
                         start.Value = 0;
                     else
@@ -73,23 +74,20 @@ public partial class FooterPracticeRangeController : Container
                         float timeMs = (relativePos + lowerBoundOffsetRelative) * endTime;
                         start.Value = (int)(timeMs / 1000f);
                     }
-                    
+
                     LowerBound.Value = relativePos;
                 },
-                OnRightClickBind = e =>
-                {
-                    resetLowerBound();
-                },
+                OnRightClickBind = _ => resetLowerBound(),
             },
             upperBound = new RangePoint(this, end, false)
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
-                OnDragBind = e =>
+                OnDragBind = _ =>
                 {
                     upperBoundOffsetRelative = getRelativePosition(UpperBoundOffset);
                     float relativePos = getRelativePosition(upperBound.X);
-                    
+
                     if (relativePos >= 0.98f)
                         end.Value = (int)(endTime / 1000f);
                     else
@@ -97,68 +95,59 @@ public partial class FooterPracticeRangeController : Container
                         float timeMs = (relativePos + upperBoundOffsetRelative) * endTime;
                         end.Value = (int)(timeMs / 1000f);
                     }
-                    
+
                     UpperBound.Value = relativePos;
                 },
-                OnRightClickBind = e =>
-                {
-                    resetUpperBound();
-                },
+                OnRightClickBind = _ => resetUpperBound(),
             }
         };
 
         lowerBound.SetOtherPoint(upperBound);
         upperBound.SetOtherPoint(lowerBound);
-        
+
         start.BindValueChanged(v =>
         {
-            if (v.NewValue <= 0)
-            {
-                resetLowerBound();
-            }
-            else
+            if (v.NewValue > 0)
             {
                 float relativePos = Math.Clamp(v.NewValue * 1000f / endTime, 0f, 1f);
                 float newPos = getAbsolutePosition(relativePos);
-                
+
                 if (newPos < upperBound.X)
                 {
                     lowerBound.UpdatePosition(newPos);
                     LowerBound.Value = relativePos;
                 }
             }
+            else resetLowerBound();
         }, true);
 
         end.BindValueChanged(v =>
         {
-            if (v.NewValue * 1000 >= endTime)
-            {
-                resetUpperBound();
-            }
-            else
+            if (v.NewValue * 1000 < endTime)
             {
                 float relativePos = Math.Clamp(v.NewValue * 1000f / endTime, 0f, 1f);
                 float newPos = getAbsolutePosition(relativePos);
-                
+
                 if (newPos > lowerBound.X)
                 {
                     upperBound.UpdatePosition(newPos);
                     UpperBound.Value = relativePos;
                 }
             }
+            else resetUpperBound();
         }, true);
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        
+
         maps.MapBindable.BindValueChanged(mapChanged, true);
-        
+
         resetLowerBound();
         resetUpperBound();
     }
-    
+
     private void mapChanged(ValueChangedEvent<RealmMap> v)
     {
         var info = v.NewValue?.GetMapInfo();
@@ -171,10 +160,10 @@ public partial class FooterPracticeRangeController : Container
         {
             endTime = (int)info.EndTime;
         }
-        
+
         start.Value = 0;
         end.Value = (int)(endTime / 1000f);
-        
+
         resetLowerBound();
         resetUpperBound();
     }
@@ -198,8 +187,9 @@ public partial class FooterPracticeRangeController : Container
 
     private partial class RangePoint : CompositeDrawable
     {
+        private Bindable<double> samplePitch;
         private Sample dragSample;
-        private double lastSampleTime = 0;
+        private double lastSampleTime;
         private const int sample_interval = 50;
 
         private const float line_width = 3f;
@@ -215,28 +205,25 @@ public partial class FooterPracticeRangeController : Container
         public Action<DragEvent> OnDragBind;
         public Action<MouseDownEvent> OnRightClickBind;
 
-        private Box dragArea;
-
         public RangePoint(FooterPracticeRangeController parent, BindableNumber<int> bindableValue, bool isLowerBound)
         {
             this.parent = parent;
             this.isLowerBound = isLowerBound;
             BindableValue = bindableValue;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(ISampleStore samples)
+        {
+            dragSample = samples.Get("UI/slider-tick");
+            dragSample?.AddAdjustment(AdjustableProperty.Frequency, samplePitch = new Bindable<double>());
 
             RelativeSizeAxes = Axes.Y;
             Width = drag_area_width;
+            Colour = Theme.Text;
 
             InternalChildren = new Drawable[]
             {
-                dragArea = new Box
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0f,
-                    Colour = Color4.Transparent
-                },
-
                 new Box
                 {
                     Anchor = Anchor.Centre,
@@ -245,7 +232,6 @@ public partial class FooterPracticeRangeController : Container
                     Width = line_width,
                     Colour = Color4.White
                 },
-
                 new FluXisSpriteIcon
                 {
                     Anchor = Anchor.TopCentre,
@@ -254,7 +240,6 @@ public partial class FooterPracticeRangeController : Container
                     Size = new Vector2(triangle_size),
                     Colour = Color4.White,
                 },
-
                 new FluXisSpriteIcon
                 {
                     Anchor = Anchor.BottomCentre,
@@ -264,12 +249,6 @@ public partial class FooterPracticeRangeController : Container
                     Colour = Color4.White
                 }
             };
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(ISampleStore samples)
-        {
-            dragSample = samples.Get("UI/slider-tick");
         }
 
         public void SetOtherPoint(RangePoint other) => otherPoint = other;
@@ -292,15 +271,15 @@ public partial class FooterPracticeRangeController : Container
 
             var mousePos = e.ScreenSpaceMousePosition;
             var parentScreenSpace = Parent.ScreenSpaceDrawQuad;
-            
-            bool inBoundsX = mousePos.X >= parentScreenSpace.TopLeft.X && 
-                           mousePos.X <= parentScreenSpace.TopRight.X;
-            
+
+            bool inBoundsX = mousePos.X >= parentScreenSpace.TopLeft.X &&
+                             mousePos.X <= parentScreenSpace.TopRight.X;
+
             if (!inBoundsX) return;
 
             var mouseLocalPos = Parent.ToLocalSpace(mousePos);
             float newX = mouseLocalPos.X;
-            
+
             newX = Math.Clamp(newX, 0, Parent.DrawWidth);
 
             if (otherPoint != null)
@@ -319,9 +298,10 @@ public partial class FooterPracticeRangeController : Container
 
             X = newX;
             OnDragBind?.Invoke(e);
-            
+
             if (Clock.CurrentTime - lastSampleTime >= sample_interval)
             {
+                samplePitch.Value = .7f + (X / Parent.DrawWidth) * .6f;
                 dragSample?.Play();
                 lastSampleTime = Clock.CurrentTime;
             }
@@ -340,7 +320,7 @@ public partial class FooterPracticeRangeController : Container
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            this.FadeColour(Color4.White, 100);
+            this.FadeColour(Theme.Text, 100);
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
@@ -352,10 +332,6 @@ public partial class FooterPracticeRangeController : Container
         }
 
         protected override bool OnClick(ClickEvent e) => true;
-
-        protected override void OnMouseUp(MouseUpEvent e)
-        {
-            this.ScaleTo(1f, 100);
-        }
+        protected override void OnMouseUp(MouseUpEvent e) => this.ScaleTo(1f, 100);
     }
 }
