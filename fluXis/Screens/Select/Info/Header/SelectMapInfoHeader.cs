@@ -5,6 +5,7 @@ using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Graphics;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
@@ -37,9 +38,9 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     [Resolved(CanBeNull = true)]
     private ModsOverlay mods { get; set; }
 
-    private SpriteStack<MapBackground> backgrounds;
+    private SpriteStack<LoadWrapper<MapBackground>> backgrounds;
     private SectionedGradient gradient;
-    private SpriteStack<MapCover> covers;
+    private SpriteStack<LoadWrapper<MapCover>> covers;
     private TruncatingText title;
     private TruncatingText artist;
     private DifficultyChip difficulty;
@@ -93,7 +94,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                         Masking = true,
                         Children = new Drawable[]
                         {
-                            backgrounds = new SpriteStack<MapBackground>(),
+                            backgrounds = new SpriteStack<LoadWrapper<MapBackground>>(),
                             new SectionedGradient
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -123,7 +124,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                                             Size = new Vector2(sizeBind.Value),
                                             CornerRadius = 20,
                                             Masking = true,
-                                            Child = covers = new SpriteStack<MapCover>()
+                                            Child = covers = new SpriteStack<LoadWrapper<MapCover>>()
                                         },
                                         topFlow = new FillFlowContainer
                                         {
@@ -286,22 +287,27 @@ public partial class SelectMapInfoHeader : CompositeDrawable
 
         updateDifficultyValues(map, mods?.SelectedMods ?? new BindableList<IMod>());
 
-        LoadComponentAsync(new MapBackground(map) { RelativeSizeAxes = Axes.Both }, background =>
-        {
-            background.FadeInFromZero(Styling.TRANSITION_FADE);
-            backgrounds.Add(background);
-        });
-
-        LoadComponentAsync(new MapCover(map.MapSet)
+        var background = new LoadWrapper<MapBackground>
         {
             RelativeSizeAxes = Axes.Both,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre
-        }, cover =>
+            LoadContent = () => new MapBackground(map) { RelativeSizeAxes = Axes.Both },
+            OnComplete = background => background.FadeInFromZero(Styling.TRANSITION_FADE)
+        };
+        LoadComponent(background);
+        backgrounds.Add(background);
+        
+        var cover = new LoadWrapper<MapCover>
         {
-            cover.FadeInFromZero(Styling.TRANSITION_FADE);
-            covers.Add(cover);
-        });
+            LoadContent = () => new MapCover(map.MapSet) 
+            { 
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre 
+            },
+            OnComplete = cover => cover.FadeInFromZero(Styling.TRANSITION_FADE)
+        };
+        LoadComponent(cover);
+        covers.Add(cover);
     }
 
     private void updateDifficultyValues(RealmMap map, IList<IMod> list)
