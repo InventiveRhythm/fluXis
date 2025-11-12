@@ -4,8 +4,11 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
@@ -16,6 +19,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Settings;
@@ -30,6 +34,9 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
     [Resolved]
     private ScriptStorage scripts { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
 
     private Anchor[] validAnchors { get; } =
     {
@@ -306,12 +313,20 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
                     case StoryboardElementType.Script:
                         var path = item.GetParameter("path", "");
-
-                        drawables.Add(new PointSettingsTextBox
+                        var box = new PointSettingsScript(path)
                         {
-                            Text = "Path",
-                            DefaultText = path,
-                            TextBoxWidth = 320,
+                            EditExternally = () =>
+                            {
+                                if (!scripts.TryEditExternally(item.GetParameter("path", ""), out var ex))
+                                {
+                                    Logger.Error(ex, "Failed to open script externally.");
+                                    panels.Content = new SingleButtonPanel(
+                                        FontAwesome6.Solid.ExclamationTriangle,
+                                        "Failed to open!",
+                                        ex?.Message ?? "Unknown error"
+                                    );
+                                }
+                            },
                             OnTextChanged = t =>
                             {
                                 item.Parameters["path"] = t.Text;
@@ -322,17 +337,15 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 collectionChanged(null, null);
                                 map.Update(item);
                             }
-                        });
+                        };
+
+                        drawables.Add(box);
 
                         var script = scripts.Scripts.FirstOrDefault(x => x.Path.Replace("\\", "/").EqualsLower(path.Replace("\\", "/")));
 
                         if (script is null)
                         {
-                            drawables.Add(new FluXisSpriteText
-                            {
-                                Text = "Script could not be loaded.",
-                                Colour = Theme.Red
-                            });
+                            box.ErrorText = "Script could not be loaded.";
                             break;
                         }
 

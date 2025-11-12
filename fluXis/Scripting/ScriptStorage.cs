@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using fluXis.Utils;
@@ -72,6 +74,38 @@ public class ScriptStorage
         var runner = create(script);
         runners[file] = runner;
         return runner;
+    }
+
+    public bool TryEditExternally(string file, [CanBeNull] [NotNullWhen(false)] out Exception ex)
+    {
+        ex = null;
+
+        var full = Path.Combine(path, file);
+
+        if (!File.Exists(full))
+        {
+            ex = new FileNotFoundException();
+            return false;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "code",
+                Arguments = $"\"{path}\" \"{full}\"",
+                CreateNoWindow = true,
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            });
+
+            return true;
+        }
+        catch (Exception exc)
+        {
+            ex = exc;
+            return false;
+        }
     }
 
     private Env getEnv(string line)
