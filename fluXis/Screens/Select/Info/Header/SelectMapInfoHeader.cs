@@ -291,7 +291,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         {
             RelativeSizeAxes = Axes.Both,
             LoadContent = () => new MapBackground(map) { RelativeSizeAxes = Axes.Both },
-            OnComplete = background => background.FadeInFromZero(Styling.TRANSITION_FADE)
+            OnComplete = b => b.FadeInFromZero(Styling.TRANSITION_FADE)
         };
         LoadComponent(background);
         backgrounds.Add(background);
@@ -304,7 +304,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre 
             },
-            OnComplete = cover => cover.FadeInFromZero(Styling.TRANSITION_FADE)
+            OnComplete = c => c.FadeInFromZero(Styling.TRANSITION_FADE)
         };
         LoadComponent(cover);
         covers.Add(cover);
