@@ -70,8 +70,13 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
         ExportAction = m => Screen?.ExportMapSet(m)
     };
 
-    public void Bind() => Selection.MapSetBindable.BindValueChanged(mapSetChanged, true);
-    public void Unbind() => Selection.MapSetBindable.ValueChanged -= mapSetChanged;
+    public void Bind() => Selection?.MapSetBindable?.BindValueChanged(mapSetChanged, true);
+
+    public void Unbind()
+    {
+        if (Selection?.MapSetBindable != null)
+            Selection.MapSetBindable.ValueChanged -= mapSetChanged;
+    }
 
     public void Select(bool last = false)
     {
