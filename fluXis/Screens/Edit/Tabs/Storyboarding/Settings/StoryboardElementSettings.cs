@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using fluXis.Configuration;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -38,6 +39,9 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
     [Resolved]
     private ScriptStorage scripts { get; set; }
+
+    [Resolved]
+    private FluXisConfig config { get; set; }
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -323,7 +327,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         {
                             EditExternally = () =>
                             {
-                                if (!scripts.TryEditExternally(item.GetParameter("path", ""), out var ex))
+                                if (!scripts.TryEditExternally(item.GetParameter("path", ""), config, out var ex))
                                 {
                                     if (ex is FileNotFoundException)
                                     {

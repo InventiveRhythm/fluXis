@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
+using fluXis.Configuration;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Logging;
@@ -77,7 +78,7 @@ public class ScriptStorage
         return runner;
     }
 
-    public bool TryEditExternally(string file, [CanBeNull] [NotNullWhen(false)] out Exception ex)
+    public bool TryEditExternally(string file, FluXisConfig config, [CanBeNull] [NotNullWhen(false)] out Exception ex)
     {
         ex = null;
 
@@ -91,10 +92,18 @@ public class ScriptStorage
 
         try
         {
+            var template = config.Get<string>(FluXisSetting.ExternalEditorLaunch)
+                                 .Replace("%d", $"\"{path}\"")
+                                 .Replace("%f", $"\"{full}\"");
+
+            var idx = template.IndexOf(' ');
+            var filename = template[..idx];
+            var args = template[idx..];
+
             Process.Start(new ProcessStartInfo
             {
-                FileName = "code",
-                Arguments = $"\"{path}\" \"{full}\"",
+                FileName = filename,
+                Arguments = args,
                 CreateNoWindow = true,
                 UseShellExecute = true,
                 WindowStyle = ProcessWindowStyle.Hidden
