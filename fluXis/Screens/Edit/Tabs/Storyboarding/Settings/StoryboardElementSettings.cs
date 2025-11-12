@@ -6,15 +6,19 @@ using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
+using fluXis.Localization;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -313,17 +317,48 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
                     case StoryboardElementType.Script:
                         var path = item.GetParameter("path", "");
-                        var box = new PointSettingsScript(path)
+                        PointSettingsScript box = null!;
+
+                        box = new PointSettingsScript(path)
                         {
                             EditExternally = () =>
                             {
                                 if (!scripts.TryEditExternally(item.GetParameter("path", ""), out var ex))
                                 {
+                                    if (ex is FileNotFoundException)
+                                    {
+                                        panels.Content = new ButtonPanel
+                                        {
+                                            Text = "This file does not exist.",
+                                            SubText = "Do you want to create it?",
+                                            Icon = FontAwesome6.Solid.File,
+                                            Buttons = new ButtonData[]
+                                            {
+                                                new PrimaryButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
+                                                {
+                                                    // ReSharper disable once AccessToModifiedClosure
+                                                    if (!scripts.TryCreateNew(item.GetParameter("path", ""), ScriptStorage.Env.Storyboard, out var ex2))
+                                                        showError("Failed to create file!", ex2);
+                                                    else
+                                                        box?.EditExternally?.Invoke();
+                                                }),
+                                                new CancelButtonData()
+                                            }
+                                        };
+
+                                        return;
+                                    }
+
                                     Logger.Error(ex, "Failed to open script externally.");
+                                    showError("Failed to open!", ex);
+                                }
+
+                                void showError(string text, [CanBeNull] Exception e)
+                                {
                                     panels.Content = new SingleButtonPanel(
                                         FontAwesome6.Solid.ExclamationTriangle,
-                                        "Failed to open!",
-                                        ex?.Message ?? "Unknown error"
+                                        text,
+                                        e?.Message ?? "Unknown error"
                                     );
                                 }
                             },

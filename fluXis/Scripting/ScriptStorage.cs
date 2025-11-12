@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Logging;
@@ -99,6 +100,37 @@ public class ScriptStorage
                 WindowStyle = ProcessWindowStyle.Hidden
             });
 
+            return true;
+        }
+        catch (Exception exc)
+        {
+            ex = exc;
+            return false;
+        }
+    }
+
+    public bool TryCreateNew(string file, Env env, [CanBeNull] [NotNullWhen(false)] out Exception ex)
+    {
+        ex = null;
+        var full = Path.Combine(path, file);
+
+        if (File.Exists(full))
+        {
+            ex = new Exception("File already exists.");
+            return false;
+        }
+
+        try
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"---@env {(env == Env.Effect ? "effect" : "storyboard")}");
+            sb.AppendLine();
+            sb.AppendLine("---@param parent StoryboardElement");
+            sb.AppendLine("function process(parent)");
+            sb.AppendLine("    -- your code here");
+            sb.AppendLine("end");
+
+            File.WriteAllText(full, sb.ToString());
             return true;
         }
         catch (Exception exc)

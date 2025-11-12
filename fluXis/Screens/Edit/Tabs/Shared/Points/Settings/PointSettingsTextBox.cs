@@ -51,13 +51,6 @@ public partial class PointSettingsTextBox : PointSettingsBase, IHasTooltip
                     Height = 16
                 }
             },
-            new FluXisSpriteText
-            {
-                Text = Text,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                WebFontSize = 16
-            },
             new FillFlowContainer
             {
                 AutoSizeAxes = Axes.X,

@@ -50,7 +50,12 @@ public partial class PointSettingsScript : PointSettingsTextBox
         };
     }
 
-    protected override void UpdateLeftTextFlow(FillFlowContainer flow) => flow.Add(error);
+    protected override void UpdateLeftTextFlow(FillFlowContainer flow)
+    {
+        flow.Spacing = new Vector2(4);
+        flow.Add(error);
+    }
+
     protected override Drawable CreateExtraButton() => new EditScriptButton { Action = () => EditExternally?.Invoke() };
 
     private partial class EditScriptButton : Container, IHasTooltip
