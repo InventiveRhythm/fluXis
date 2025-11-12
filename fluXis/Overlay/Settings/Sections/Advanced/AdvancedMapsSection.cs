@@ -50,6 +50,13 @@ public partial class AdvancedMapsSection : SettingsSubSection
             },
             new SettingsButton
             {
+                Label = strings.UpdateAllMaps,
+                Description = strings.UpdateAllMapsDescription,
+                ButtonText = "Run",
+                Action = mapStore.UpdateAllMaps
+            },
+            new SettingsButton
+            {
                 Label = strings.CleanUpScores,
                 Description = strings.CleanUpScoresDescription,
                 ButtonText = "Run",
