@@ -141,6 +141,7 @@ public partial class StoryboardTab : EditorTab
     protected override void LoadComplete()
     {
         base.LoadComplete();
+        InvokeFullyLoaded();
 
         map.Storyboard.ElementAdded += queueRebuild;
         map.Storyboard.ElementRemoved += queueRebuild;

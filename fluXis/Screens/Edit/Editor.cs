@@ -38,6 +38,7 @@ using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Modding;
 using fluXis.Screens.Edit.Tabs;
 using fluXis.Screens.Edit.Tabs.Charting;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Screens.Edit.Tabs.Verify.Checks;
 using fluXis.Screens.Edit.UI;
@@ -113,7 +114,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorLoader loader { get; }
 
     private Container<EditorTab> tabs;
-    private int currentTab;
+    public Bindable<int> CurrentTab { get; private set; } = new();
 
     public Bindable<Waveform> Waveform { get; private set; }
     private EditorMap editorMap { get; }
@@ -229,6 +230,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         if (!Directory.Exists(MapSetPath))
             Directory.CreateDirectory(MapSetPath);
+
+        dependencies.CacheAs(new EditorTagDependencies(CurrentTab, changeTab));
 
         var scripts = new ScriptStorage(MapSetPath);
         editorMap.ScriptChanged += _ =>
@@ -480,7 +483,22 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (StartTabIndex != -1)
             idx = StartTabIndex;
 
-        changeTab(idx);
+        ScheduleAfterChildren(() =>
+        {
+            foreach (var tab in tabs.Children)
+            {
+                if (tab.TabName.Equals("Design", StringComparison.OrdinalIgnoreCase))
+                {
+                    tab.AlwaysPresent = true; // have design tab already loaded once
+                    tab.OnFullyLoaded = () =>
+                    {
+                        tab.AlwaysPresent = false;
+
+                        changeTab(idx);
+                    };
+                }
+            }
+        });
 
         if (!canSave)
         {
@@ -522,19 +540,19 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void changeTab(int to)
     {
-        currentTab = to;
+        CurrentTab.Value = to;
 
-        if (currentTab < 0)
-            currentTab = 0;
-        if (currentTab >= tabs.Count)
-            currentTab = tabs.Count - 1;
+        if (CurrentTab.Value < 0)
+            CurrentTab.Value = 0;
+        if (CurrentTab.Value >= tabs.Count)
+            CurrentTab.Value = tabs.Count - 1;
 
         for (var i = 0; i < tabs.Children.Count; i++)
         {
             var tab = tabs.Children[i];
 
-            if (i == currentTab)
-                tab.Show();
+            if (i == CurrentTab.Value)
+                tab.Show(); 
             else
                 tab.Hide();
         }

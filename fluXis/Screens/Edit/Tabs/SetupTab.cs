@@ -275,4 +275,6 @@ public partial class SetupTab : EditorTab
         // tabbing support
         metadata.OfType<SetupTextBox>().ForEach(textBox => textBox.TabbableContentContainer = metadata);
     }
+
+    protected override void LoadComplete() => InvokeFullyLoaded();
 }
