@@ -1,4 +1,8 @@
+using System;
 using System.Linq;
+using System.Numerics;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
@@ -8,10 +12,11 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Effect;
 
-public partial class EditorLaneSwitchEvent : FillFlowContainer
+public partial class EditorLaneSwitchEvent : Container
 {
     [Resolved]
     private EditorClock clock { get; set; }
@@ -27,11 +32,55 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
 
     public LaneSwitchEvent Event { get; }
 
+    public static Colour4 DefaultColor = Colour4.FromHex("#FF5555"); // Theme.LaneSwitch is a different color.
+    public static Colour4 HightlightColor = Theme.Aqua;
+
     private double length;
+    private int hoveredColumns = 0;
+    private bool allColumnsHidden = false;
+
+    private const float alpha_threshold = 0.05f; // definetely greater than 0.002
+    private const int fade_duration = 200;
+
+    private const float indicator_width = 8f;
+    private const float expanded_indicator_width = 20f;
+
+    private readonly FillFlowContainer columns;
+    private readonly SwitchIndicator leftIndicator;
+    private readonly SwitchIndicator rightIndicator;
 
     public EditorLaneSwitchEvent(LaneSwitchEvent laneSwitch)
     {
         Event = laneSwitch;
+        
+        InternalChildren = new Drawable[]
+        {
+            leftIndicator = new SwitchIndicator(false, expandIndicator, retractIndicator)
+            {
+                Width = indicator_width,
+                RelativeSizeAxes = Axes.Y,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Action = onIndicatorClick
+            },
+            columns = new FillFlowContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                RelativePositionAxes = Axes.X,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Direction = FillDirection.Horizontal,
+                X = indicator_width,
+            },
+            rightIndicator = new SwitchIndicator(true, expandIndicator, retractIndicator)
+            {
+                Width = indicator_width,
+                RelativeSizeAxes = Axes.Y,
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomRight,
+                Action = onIndicatorClick
+            }
+        };
     }
 
     [BackgroundDependencyLoader]
@@ -40,11 +89,13 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomLeft;
         Origin = Anchor.BottomLeft;
-        Direction = FillDirection.Horizontal;
 
         for (int i = 0; i < map.RealmMap.KeyCount; i++)
         {
-            Add(new Column());
+            columns.Add(new Column(
+                onHovered: () => setHighlight(true), 
+                onHoverLost: () => setHighlight(false)
+            ));
         }
     }
 
@@ -110,10 +161,12 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
         if (double.IsNaN(factor))
             factor = 0;
 
+        allColumnsHidden = true;
+
         for (int i = 0; i < map.RealmMap.KeyCount; i++)
         {
             var hidden = !current[i];
-            var column = Children[i] as Column;
+            var column = columns.Children[i] as Column;
             var state = states[i];
 
             if (column == null)
@@ -133,6 +186,26 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
                 column.Show();
                 column.SetDuration((float)factor, state == StateChange.NowShowing);
             }
+
+            if (hidden) 
+            {
+                allColumnsHidden = false;
+            }
+        }
+
+        if (allColumnsHidden)
+        {
+            leftIndicator.FadeIn(fade_duration);
+            rightIndicator.FadeIn(fade_duration);
+            columns.RelativeSizeAxes = Axes.Y;
+            columns.Width = 0;
+        }
+        else
+        {
+            leftIndicator.FadeOut(fade_duration);
+            rightIndicator.FadeOut(fade_duration);
+            columns.RelativeSizeAxes = Axes.Both;
+            columns.Width = 1f - 2 * indicator_width;
         }
     }
 
@@ -148,18 +221,99 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
     {
         Height = (float)(.5f * (length * settings.Zoom));
         Y = (float)(-.5f * ((Event.Time - clock.CurrentTime) * settings.Zoom));
-    }
+    } 
 
+    protected override bool OnMouseMove(MouseMoveEvent e)
+    {
+        if (!allColumnsHidden && Colour != Colour4.White)
+        {
+            this.FadeColour(Colour4.White, fade_duration);
+        }
+
+        return base.OnMouseMove(e);
+    }
+    
     protected override bool OnClick(ClickEvent e)
     {
-        points.ShowPoint(Event);
-        return true;
+        var mousePos = e.ScreenSpaceMousePosition;
+        
+        if (!allColumnsHidden)
+        {
+            foreach (var column in columns.Children.OfType<Column>())
+            {
+                if (column.Alpha < alpha_threshold) continue;
+                
+                bool clickedFull = column.Full.ScreenSpaceDrawQuad.Contains(mousePos);
+                bool clickedGradient = column.Gradient.ScreenSpaceDrawQuad.Contains(mousePos);
+
+                if (clickedFull || clickedGradient)
+                {
+                    points.ShowPoint(Event);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void onIndicatorClick()
+    {
+        if (allColumnsHidden)
+        {
+            points.ShowPoint(Event);
+        }
+    }
+    
+    private void expandIndicator()
+    {
+        if (!allColumnsHidden) return;
+        
+        rightIndicator.Expand();
+        leftIndicator.Expand();
+    }
+
+    private void retractIndicator()
+    {
+        if (!allColumnsHidden) return;
+
+        rightIndicator.Retract();
+        leftIndicator.Retract();
+    }
+
+    private void fadeAllColours(ColourInfo newColour, double duration = 0, Easing easing = Easing.None)
+    {
+        foreach (var column in columns.Children.OfType<Column>())
+            column.FadeColour(newColour, duration, easing);
+    }
+    
+    private void setHighlight(bool isHovered)
+    {
+        if (allColumnsHidden) return; 
+
+        hoveredColumns = isHovered ? hoveredColumns + 1 : Math.Max(0, hoveredColumns - 1);
+
+        bool shouldHighlight = hoveredColumns > 0;
+        
+        if (shouldHighlight && hoveredColumns == 1)
+            fadeAllColours(HightlightColor, fade_duration);
+        else if (!shouldHighlight && hoveredColumns == 0)
+            fadeAllColours(DefaultColor, fade_duration);
     }
 
     private partial class Column : CompositeDrawable
     {
-        private Box full;
-        private Box gradient;
+        public Box Full { get; private set; }
+        public Box Gradient { get; private set; }
+        
+        private readonly Action onHovered;
+        private readonly Action onHoverLost;
+        private bool isActuallyHovering = false; // Using regular hover isn't accurate as it triggers for the entire column.
+
+        public Column(Action onHovered, Action onHoverLost)
+        {
+            this.onHovered = onHovered;
+            this.onHoverLost = onHoverLost;
+        }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -168,16 +322,13 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
             RelativeSizeAxes = Axes.Y;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Colour = Colour4.FromHex("#FF5555");
+            Colour = DefaultColor;
             Masking = true;
 
             InternalChildren = new Drawable[]
             {
-                full = new Box
-                {
-                    RelativeSizeAxes = Axes.Both
-                },
-                gradient = new Box
+                Full = new Box { RelativeSizeAxes = Axes.Both },
+                Gradient = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = ColourInfo.GradientVertical(Colour4.White, Colour4.White.Opacity(0)),
@@ -191,19 +342,129 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
         {
             if (reverse)
             {
-                full.Height = 0;
-                gradient.Height = -factor;
-                gradient.Origin = Anchor.TopLeft;
+                Full.Height = 0;
+                Gradient.Height = -factor;
+                Gradient.Origin = Anchor.TopLeft;
                 return;
             }
 
-            full.Height = 1 - factor;
-            gradient.Height = factor;
-            gradient.Origin = Anchor.BottomLeft;
+            Full.Height = 1 - factor;
+            Gradient.Height = factor;
+            Gradient.Origin = Anchor.BottomLeft;
         }
 
         public override void Show() => this.FadeTo(0.6f);
         public override void Hide() => this.FadeTo(.0002f);
+        
+        protected override bool OnHover(HoverEvent e)
+        {
+            if (Alpha < alpha_threshold)
+                return base.OnHover(e);
+
+            bool hoveringFull = Full.ScreenSpaceDrawQuad.Contains(e.ScreenSpaceMousePosition);
+            bool hoveringGradient = Gradient.ScreenSpaceDrawQuad.Contains(e.ScreenSpaceMousePosition);
+            bool isHoveringVisible = hoveringFull || hoveringGradient;
+
+            if (isHoveringVisible && !isActuallyHovering)
+            {
+                isActuallyHovering = true;
+                onHovered?.Invoke(); 
+            }
+
+            return base.OnHover(e);
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            base.OnHoverLost(e);
+
+            if (isActuallyHovering)
+            {
+                isActuallyHovering = false;
+                onHoverLost?.Invoke(); 
+            }
+        }
+    }
+
+    private partial class SwitchIndicator : FillFlowContainer
+    {
+        private bool rightSide;
+        private readonly Action onHovered;
+        private readonly Action onHoverLost;
+        public Action Action;
+
+        private Box box;
+        private FluXisSpriteIcon arrow;
+
+        public SwitchIndicator(bool RightSide, Action onHovered, Action onHoverLost)
+        {
+            this.onHovered = onHovered;
+            this.onHoverLost = onHoverLost;
+            rightSide = RightSide;
+
+            RelativeSizeAxes = Axes.Y;
+            Direction = FillDirection.Vertical;
+            Masking = true;
+
+            InternalChild = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Children = new Drawable[]
+                {
+                    box = new Box { RelativeSizeAxes = Axes.Both, Colour = DefaultColor, Alpha = 0.4f },
+                    arrow = new FluXisSpriteIcon
+                    {
+                        Anchor = rightSide ? Anchor.CentreRight : Anchor.CentreLeft,
+                        Origin = Anchor.Centre,
+                        Icon = FontAwesome6.Solid.ArrowRight,
+                        Alpha = 0,
+                        Size = new osuTK.Vector2(10),
+                        Scale = rightSide ? new osuTK.Vector2(-1, 1) : new osuTK.Vector2(1, 1)
+                    }
+                }
+            };
+        }
+
+        public void Expand()
+        {
+            var expandBy = Math.Abs(expanded_indicator_width - indicator_width - (arrow.DrawWidth / 2)) / 2;
+            box.FadeTo(0.7f, 100);
+            arrow.ScaleTo(rightSide ? -3 : 3, 100, Easing.OutQuint)
+            .FadeIn(100)
+            .MoveToOffset(rightSide ? new osuTK.Vector2(-expandBy, 0) : new osuTK.Vector2(expandBy, 0), 100, Easing.OutQuint);
+            this.ResizeWidthTo(expanded_indicator_width, 100, Easing.OutQuint);
+        }
+
+        public void Retract()
+        {
+            box.FadeTo(0.4f, 100);
+            arrow.ScaleTo(rightSide ? 1 : 1, 100, Easing.OutQuint)
+            .FadeOut(100)
+            .MoveToX(0, 100, Easing.OutQuint);
+            this.ResizeWidthTo(indicator_width, 100, Easing.OutQuint);
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            base.OnHover(e);
+            onHovered?.Invoke();
+
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            base.OnHoverLost(e);
+
+            onHoverLost?.Invoke();
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            base.OnClick(e);
+            Action?.Invoke();
+            return true;
+        }
     }
 
     private enum StateChange
