@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Numerics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Events;
@@ -12,7 +11,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
-using osuTK;
+using Vector2 = osuTK.Vector2;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Effect;
 
@@ -32,15 +31,18 @@ public partial class EditorLaneSwitchEvent : Container
 
     public LaneSwitchEvent Event { get; }
 
-    public static Colour4 DefaultColor = Colour4.FromHex("#FF5555"); // Theme.LaneSwitch is a different color.
-    public static Colour4 HightlightColor = Theme.Aqua;
+    private static Colour4 defaultColor = Colour4.FromHex("#FF5555"); // Theme.LaneSwitch is a different color.
 
     private double length;
     private int hoveredColumns = 0;
     private bool allColumnsHidden = false;
 
+    private const float hidden_alpha = .0002f;
+    private const float visible_alpha = 0.6f;
+    private const float hovered_alpha = 0.8f;
+
     private const float alpha_threshold = 0.05f; // definetely greater than 0.002
-    private const int fade_duration = 200;
+    private const int fade_duration = 100;
 
     private const float indicator_width = 8f;
     private const float expanded_indicator_width = 20f;
@@ -259,9 +261,7 @@ public partial class EditorLaneSwitchEvent : Container
     private void onIndicatorClick()
     {
         if (allColumnsHidden)
-        {
             points.ShowPoint(Event);
-        }
     }
     
     private void expandIndicator()
@@ -280,10 +280,10 @@ public partial class EditorLaneSwitchEvent : Container
         leftIndicator.Retract();
     }
 
-    private void fadeAllColours(ColourInfo newColour, double duration = 0, Easing easing = Easing.None)
+    private void fadeAll(float newAlpha, double duration = 0, Easing easing = Easing.None)
     {
-        foreach (var column in columns.Children.OfType<Column>())
-            column.FadeColour(newColour, duration, easing);
+        foreach (var column in columns.Children.OfType<Column>().Where(c => c.Alpha > hidden_alpha))
+            column.FadeTo(newAlpha, duration, easing);
     }
     
     private void setHighlight(bool isHovered)
@@ -295,9 +295,9 @@ public partial class EditorLaneSwitchEvent : Container
         bool shouldHighlight = hoveredColumns > 0;
         
         if (shouldHighlight && hoveredColumns == 1)
-            fadeAllColours(HightlightColor, fade_duration);
+            fadeAll(hovered_alpha, fade_duration);
         else if (!shouldHighlight && hoveredColumns == 0)
-            fadeAllColours(DefaultColor, fade_duration);
+            fadeAll(visible_alpha, fade_duration);
     }
 
     private partial class Column : CompositeDrawable
@@ -322,7 +322,7 @@ public partial class EditorLaneSwitchEvent : Container
             RelativeSizeAxes = Axes.Y;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Colour = DefaultColor;
+            Colour = defaultColor;
             Masking = true;
 
             InternalChildren = new Drawable[]
@@ -353,8 +353,8 @@ public partial class EditorLaneSwitchEvent : Container
             Gradient.Origin = Anchor.BottomLeft;
         }
 
-        public override void Show() => this.FadeTo(0.6f);
-        public override void Hide() => this.FadeTo(.0002f);
+        public override void Show() => this.FadeTo(visible_alpha);
+        public override void Hide() => this.FadeTo(hidden_alpha);
         
         protected override bool OnHover(HoverEvent e)
         {
@@ -411,15 +411,15 @@ public partial class EditorLaneSwitchEvent : Container
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    box = new Box { RelativeSizeAxes = Axes.Both, Colour = DefaultColor, Alpha = 0.4f },
+                    box = new Box { RelativeSizeAxes = Axes.Both, Colour = defaultColor, Alpha = 0.4f },
                     arrow = new FluXisSpriteIcon
                     {
                         Anchor = rightSide ? Anchor.CentreRight : Anchor.CentreLeft,
                         Origin = Anchor.Centre,
-                        Icon = FontAwesome6.Solid.ArrowRight,
+                        Icon = rightSide ? FontAwesome6.Solid.AngleLeft : FontAwesome6.Solid.AngleRight,
                         Alpha = 0,
-                        Size = new osuTK.Vector2(10),
-                        Scale = rightSide ? new osuTK.Vector2(-1, 1) : new osuTK.Vector2(1, 1)
+                        Size = new Vector2(10),
+                        Margin = rightSide ? new MarginPadding { Right = 4 } : new MarginPadding { Left = 4 }
                     }
                 }
             };
@@ -427,18 +427,18 @@ public partial class EditorLaneSwitchEvent : Container
 
         public void Expand()
         {
-            var expandBy = Math.Abs(expanded_indicator_width - indicator_width - (arrow.DrawWidth / 2)) / 2;
-            box.FadeTo(0.7f, 100);
-            arrow.ScaleTo(rightSide ? -3 : 3, 100, Easing.OutQuint)
+            var expandBy = Math.Abs(expanded_indicator_width - indicator_width) / 2;
+            box.FadeTo(hovered_alpha, 100);
+            arrow.ScaleTo(2.5f, 100, Easing.OutQuint)
             .FadeIn(100)
-            .MoveToOffset(rightSide ? new osuTK.Vector2(-expandBy, 0) : new osuTK.Vector2(expandBy, 0), 100, Easing.OutQuint);
+            .MoveToX(rightSide ? -expandBy : expandBy, 100, Easing.OutQuint);
             this.ResizeWidthTo(expanded_indicator_width, 100, Easing.OutQuint);
         }
 
         public void Retract()
         {
             box.FadeTo(0.4f, 100);
-            arrow.ScaleTo(rightSide ? 1 : 1, 100, Easing.OutQuint)
+            arrow.ScaleTo(1, 100, Easing.OutQuint)
             .FadeOut(100)
             .MoveToX(0, 100, Easing.OutQuint);
             this.ResizeWidthTo(indicator_width, 100, Easing.OutQuint);
