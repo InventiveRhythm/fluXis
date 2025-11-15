@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
-using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Events;
+using fluXis.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -29,9 +30,14 @@ public partial class EditorLaneSwitchEvent : Container
     [Resolved]
     private PointsSidebar points { get; set; }
 
+    [Resolved]
+    private ChartingBlueprintContainer blueprintContainer { get; set; }
+
     public LaneSwitchEvent Event { get; }
 
     private static Colour4 defaultColor = Colour4.FromHex("#FF5555"); // Theme.LaneSwitch is a different color.
+
+    private bool canInteract => blueprintContainer.CurrentTool is SelectTool;
 
     private double length;
     private int hoveredColumns = 0;
@@ -51,13 +57,15 @@ public partial class EditorLaneSwitchEvent : Container
     private readonly SwitchIndicator leftIndicator;
     private readonly SwitchIndicator rightIndicator;
 
+    private bool anyIndicatorHovered => rightIndicator.IsHovered || leftIndicator.IsHovered;
+
     public EditorLaneSwitchEvent(LaneSwitchEvent laneSwitch)
     {
         Event = laneSwitch;
         
         InternalChildren = new Drawable[]
         {
-            leftIndicator = new SwitchIndicator(false, expandIndicator, retractIndicator)
+            leftIndicator = new SwitchIndicator(false, onHovered: () => setHighlight(true), onHoverLost: () => setHighlight(false))
             {
                 Width = indicator_width,
                 RelativeSizeAxes = Axes.Y,
@@ -74,7 +82,7 @@ public partial class EditorLaneSwitchEvent : Container
                 Direction = FillDirection.Horizontal,
                 X = indicator_width,
             },
-            rightIndicator = new SwitchIndicator(true, expandIndicator, retractIndicator)
+            rightIndicator = new SwitchIndicator(true, onHovered: () => setHighlight(true), onHoverLost: () => setHighlight(false))
             {
                 Width = indicator_width,
                 RelativeSizeAxes = Axes.Y,
@@ -105,6 +113,8 @@ public partial class EditorLaneSwitchEvent : Container
     {
         base.LoadComplete();
 
+        blueprintContainer.CurrentToolChanged += updateHightlight;
+
         map.RegisterAddListener<LaneSwitchEvent>(updateWrapper);
         map.RegisterUpdateListener<LaneSwitchEvent>(updateWrapper);
         map.RegisterRemoveListener<LaneSwitchEvent>(onRemove);
@@ -118,6 +128,8 @@ public partial class EditorLaneSwitchEvent : Container
 
         if (map == null)
             return;
+
+        blueprintContainer.CurrentToolChanged -= updateHightlight;
 
         map.DeregisterAddListener<LaneSwitchEvent>(updateWrapper);
         map.DeregisterUpdateListener<LaneSwitchEvent>(updateWrapper);
@@ -224,22 +236,12 @@ public partial class EditorLaneSwitchEvent : Container
         Height = (float)(.5f * (length * settings.Zoom));
         Y = (float)(-.5f * ((Event.Time - clock.CurrentTime) * settings.Zoom));
     } 
-
-    protected override bool OnMouseMove(MouseMoveEvent e)
-    {
-        if (!allColumnsHidden && Colour != Colour4.White)
-        {
-            this.FadeColour(Colour4.White, fade_duration);
-        }
-
-        return base.OnMouseMove(e);
-    }
     
     protected override bool OnClick(ClickEvent e)
     {
         var mousePos = e.ScreenSpaceMousePosition;
         
-        if (!allColumnsHidden)
+        if (canInteract)
         {
             foreach (var column in columns.Children.OfType<Column>())
             {
@@ -258,6 +260,8 @@ public partial class EditorLaneSwitchEvent : Container
         return false;
     }
 
+    #region Interaction
+
     private void onIndicatorClick()
     {
         if (allColumnsHidden)
@@ -266,7 +270,7 @@ public partial class EditorLaneSwitchEvent : Container
     
     private void expandIndicator()
     {
-        if (!allColumnsHidden) return;
+        if (!canInteract || !allColumnsHidden) return;
         
         rightIndicator.Expand();
         leftIndicator.Expand();
@@ -285,20 +289,52 @@ public partial class EditorLaneSwitchEvent : Container
         foreach (var column in columns.Children.OfType<Column>().Where(c => c.Alpha > hidden_alpha))
             column.FadeTo(newAlpha, duration, easing);
     }
-    
+
+    private void highlightAny(bool shouldHighlight)
+    {
+        if (allColumnsHidden)
+        {
+            if (shouldHighlight)
+                expandIndicator();
+            else
+                retractIndicator();
+        }
+        else
+        {
+            fadeAll(shouldHighlight ? hovered_alpha : visible_alpha, fade_duration);
+        }
+    }
+
+    private void updateHightlight()
+    {
+        bool isHovered = columns.Children.OfType<Column>().Any(c => c.IsActuallyHovering) || anyIndicatorHovered;
+        
+        hoveredColumns = 0;
+        
+        if (isHovered && canInteract)
+        {
+            hoveredColumns = 1;
+            highlightAny(true);
+        }
+        else
+        {
+            highlightAny(false);
+        }
+    }
+
     private void setHighlight(bool isHovered)
     {
-        if (allColumnsHidden) return; 
-
         hoveredColumns = isHovered ? hoveredColumns + 1 : Math.Max(0, hoveredColumns - 1);
 
         bool shouldHighlight = hoveredColumns > 0;
         
-        if (shouldHighlight && hoveredColumns == 1)
-            fadeAll(hovered_alpha, fade_duration);
+        if (shouldHighlight && hoveredColumns == 1 && canInteract)
+            highlightAny(true);
         else if (!shouldHighlight && hoveredColumns == 0)
-            fadeAll(visible_alpha, fade_duration);
+            highlightAny(false);
     }
+
+    #endregion
 
     private partial class Column : CompositeDrawable
     {
@@ -307,7 +343,7 @@ public partial class EditorLaneSwitchEvent : Container
         
         private readonly Action onHovered;
         private readonly Action onHoverLost;
-        private bool isActuallyHovering = false; // Using regular hover isn't accurate as it triggers for the entire column.
+        public bool IsActuallyHovering = false; // Using regular hover isn't accurate as it triggers for the entire column.
 
         public Column(Action onHovered, Action onHoverLost)
         {
@@ -365,9 +401,9 @@ public partial class EditorLaneSwitchEvent : Container
             bool hoveringGradient = Gradient.ScreenSpaceDrawQuad.Contains(e.ScreenSpaceMousePosition);
             bool isHoveringVisible = hoveringFull || hoveringGradient;
 
-            if (isHoveringVisible && !isActuallyHovering)
+            if (isHoveringVisible && !IsActuallyHovering)
             {
-                isActuallyHovering = true;
+                IsActuallyHovering = true;
                 onHovered?.Invoke(); 
             }
 
@@ -378,9 +414,9 @@ public partial class EditorLaneSwitchEvent : Container
         {
             base.OnHoverLost(e);
 
-            if (isActuallyHovering)
+            if (IsActuallyHovering)
             {
-                isActuallyHovering = false;
+                IsActuallyHovering = false;
                 onHoverLost?.Invoke(); 
             }
         }
