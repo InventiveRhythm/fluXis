@@ -211,6 +211,8 @@ public partial class EditorLaneSwitchEvent : Container
         {
             leftIndicator.FadeIn(fade_duration);
             rightIndicator.FadeIn(fade_duration);
+            leftIndicator.SetDuration((float)factor);
+            rightIndicator.SetDuration((float)factor);
             columns.RelativeSizeAxes = Axes.Y;
             columns.Width = 0;
         }
@@ -430,6 +432,7 @@ public partial class EditorLaneSwitchEvent : Container
         public Action Action;
 
         private Box box;
+        private Box gradient;
         private FluXisSpriteIcon arrow;
 
         public SwitchIndicator(bool RightSide, Action onHovered, Action onHoverLost)
@@ -445,9 +448,18 @@ public partial class EditorLaneSwitchEvent : Container
             InternalChild = new Container
             {
                 RelativeSizeAxes = Axes.Both,
+                Masking = true,
                 Children = new Drawable[]
                 {
                     box = new Box { RelativeSizeAxes = Axes.Both, Colour = defaultColor, Alpha = 0.4f },
+                    gradient = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = ColourInfo.GradientVertical(defaultColor, defaultColor.Opacity(0)),
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Alpha = 0.4f
+                    },
                     arrow = new FluXisSpriteIcon
                     {
                         Anchor = rightSide ? Anchor.CentreRight : Anchor.CentreLeft,
@@ -461,10 +473,26 @@ public partial class EditorLaneSwitchEvent : Container
             };
         }
 
+        public void SetDuration(float factor, bool reverse = false)
+        {
+            if (reverse)
+            {
+                box.Height = 0;
+                gradient.Height = -factor;
+                gradient.Origin = Anchor.TopLeft;
+                return;
+            }
+
+            box.Height = 1 - factor;
+            gradient.Height = factor;
+            gradient.Origin = Anchor.BottomLeft;
+        }
+
         public void Expand()
         {
             var expandBy = Math.Abs(expanded_indicator_width - indicator_width) / 2;
             box.FadeTo(hovered_alpha, 100);
+            gradient.FadeTo(hovered_alpha, 100);
             arrow.ScaleTo(2.5f, 100, Easing.OutQuint)
             .FadeIn(100)
             .MoveToX(rightSide ? -expandBy : expandBy, 100, Easing.OutQuint);
@@ -474,6 +502,7 @@ public partial class EditorLaneSwitchEvent : Container
         public void Retract()
         {
             box.FadeTo(0.4f, 100);
+            gradient.FadeTo(0.4f, 100);
             arrow.ScaleTo(1, 100, Easing.OutQuint)
             .FadeOut(100)
             .MoveToX(0, 100, Easing.OutQuint);
