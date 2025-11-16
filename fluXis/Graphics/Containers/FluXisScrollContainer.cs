@@ -172,6 +172,12 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
 
         private void resetInactivity()
         {
+            if (!parent.ScrollbarVisible)
+            {
+                this.FadeOut();
+                return;
+            }
+
             AlwaysPresent = true;
             this.FadeIn(50);
 
