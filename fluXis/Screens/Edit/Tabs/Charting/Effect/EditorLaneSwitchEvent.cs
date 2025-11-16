@@ -212,8 +212,8 @@ public partial class EditorLaneSwitchEvent : Container
         {
             leftIndicator.FadeIn(fade_duration);
             rightIndicator.FadeIn(fade_duration);
-            leftIndicator.SetDuration((float)factor);
-            rightIndicator.SetDuration((float)factor);
+            leftIndicator.SetDuration((float)factor, true); // to max is always reversed
+            rightIndicator.SetDuration((float)factor, true);
             columns.RelativeSizeAxes = Axes.Y;
             columns.Width = 0;
         }
