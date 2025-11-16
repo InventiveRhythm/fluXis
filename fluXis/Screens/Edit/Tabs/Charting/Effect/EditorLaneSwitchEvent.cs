@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Events;
@@ -433,7 +434,7 @@ public partial class EditorLaneSwitchEvent : Container
 
         private Box box;
         private Box gradient;
-        private FluXisSpriteIcon arrow;
+        private ArrowContainer arrowContainer;
 
         public SwitchIndicator(bool RightSide, Action onHovered, Action onHoverLost)
         {
@@ -460,14 +461,10 @@ public partial class EditorLaneSwitchEvent : Container
                         Origin = Anchor.BottomLeft,
                         Alpha = 0.4f
                     },
-                    arrow = new FluXisSpriteIcon
+                    arrowContainer = new ArrowContainer(rightSide)
                     {
-                        Anchor = rightSide ? Anchor.CentreRight : Anchor.CentreLeft,
-                        Origin = Anchor.Centre,
-                        Icon = rightSide ? FontAwesome6.Solid.AngleLeft : FontAwesome6.Solid.AngleRight,
+                        RelativeSizeAxes = Axes.Both,
                         Alpha = 0,
-                        Size = new Vector2(10),
-                        Margin = rightSide ? new MarginPadding { Right = 4 } : new MarginPadding { Left = 4 }
                     }
                 }
             };
@@ -486,6 +483,8 @@ public partial class EditorLaneSwitchEvent : Container
             box.Height = 1 - factor;
             gradient.Height = factor;
             gradient.Origin = Anchor.BottomLeft;
+
+            arrowContainer.UpdateLayout();
         }
 
         public void Expand()
@@ -493,9 +492,9 @@ public partial class EditorLaneSwitchEvent : Container
             var expandBy = Math.Abs(expanded_indicator_width - indicator_width) / 2;
             box.FadeTo(hovered_alpha, 100);
             gradient.FadeTo(hovered_alpha, 100);
-            arrow.ScaleTo(2.5f, 100, Easing.OutQuint)
-            .FadeIn(100)
-            .MoveToX(rightSide ? -expandBy : expandBy, 100, Easing.OutQuint);
+            arrowContainer.FadeIn(100)
+                .MoveToX(rightSide ? -expandBy : expandBy, 100, Easing.OutQuint);
+            arrowContainer.ScaleArrows(2f, 100);
             this.ResizeWidthTo(expanded_indicator_width, 100, Easing.OutQuint);
         }
 
@@ -503,9 +502,9 @@ public partial class EditorLaneSwitchEvent : Container
         {
             box.FadeTo(0.4f, 100);
             gradient.FadeTo(0.4f, 100);
-            arrow.ScaleTo(1, 100, Easing.OutQuint)
-            .FadeOut(100)
-            .MoveToX(0, 100, Easing.OutQuint);
+            arrowContainer.FadeOut(100)
+                .MoveToX(0, 100, Easing.OutQuint);
+            arrowContainer.ScaleArrows(1f, 100);
             this.ResizeWidthTo(indicator_width, 100, Easing.OutQuint);
         }
 
@@ -529,6 +528,84 @@ public partial class EditorLaneSwitchEvent : Container
             base.OnClick(e);
             Action?.Invoke();
             return true;
+        }
+
+        private partial class ArrowContainer : FillFlowContainer
+        {
+            private bool rightSide;
+            private const float arrow_size = 10f;
+            private const float arrow_spacing = 180f;
+
+            public ArrowContainer(bool rightSide)
+            {
+                this.rightSide = rightSide;
+                Direction = FillDirection.Vertical;
+            }
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
+                addArrows();
+            }
+
+            public void UpdateLayout()
+            {
+                if (arrowCount() != Children.Count)
+                    addArrows();
+            }
+
+            private int arrowCount()
+            {
+                if (DrawHeight <= 0)
+                    return 0;
+
+                return Math.Max(0, (int)((DrawHeight + arrow_spacing) / (arrow_size + arrow_spacing)));
+            }
+
+            private void addArrows()
+            {      
+                Clear();
+
+                for (int i = 0; i < arrowCount(); i++)
+                {
+                    Add(new FluXisSpriteIcon
+                    {
+                        Icon = rightSide ? FontAwesome6.Solid.AngleLeft : FontAwesome6.Solid.AngleRight,
+                        Size = new Vector2(arrow_size),
+                        Colour = Colour4.White,
+                        Anchor = rightSide ? Anchor.TopRight : Anchor.TopLeft,
+                        Origin = Anchor.Centre,
+                        Margin = rightSide ? new MarginPadding { Right = 4 } : new MarginPadding { Left = 4 }
+                    });
+                }
+            }
+
+            public void ScaleArrows(float scale, double duration)
+            {
+                foreach (var arrow in Children)
+                    arrow.ScaleTo(scale, duration, Easing.OutQuint);
+            }
+
+            protected override IEnumerable<Vector2> ComputeLayoutPositions()
+            {
+                if (DrawHeight > 0 && Children.Count > 0)
+                {
+                    float spacing = DrawHeight / (Children.Count + 1);
+
+                    int index = 0;
+                    foreach (var _ in Children)
+                    {
+                        float yPos = spacing * (index + 1);
+                        yield return new Vector2(0, yPos);
+                        index++;
+                    }
+                }
+                else
+                {
+                    foreach (var pos in base.ComputeLayoutPositions())
+                        yield return pos;
+                }
+            }
         }
     }
 
