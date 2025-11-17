@@ -13,6 +13,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using Vector2 = osuTK.Vector2;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Effect;
@@ -47,6 +48,8 @@ public partial class EditorLaneSwitchEvent : Container
     private const float hidden_alpha = .0002f;
     private const float visible_alpha = 0.6f;
     private const float hovered_alpha = 0.8f;
+    private const float ind_visible_alpha = 0.2f;
+    private const float ind_hovered_alpha = 0.4f;
 
     private const float alpha_threshold = 0.05f; // definetely greater than 0.002
     private const int fade_duration = 100;
@@ -208,12 +211,10 @@ public partial class EditorLaneSwitchEvent : Container
             }
         }
 
-        if (allColumnsHidden)
+        if (allColumnsHidden && Precision.AlmostEquals(Event.Duration, 0))
         {
             leftIndicator.FadeIn(fade_duration);
             rightIndicator.FadeIn(fade_duration);
-            leftIndicator.SetDuration((float)factor, true); // to max is always reversed
-            rightIndicator.SetDuration((float)factor, true);
             columns.RelativeSizeAxes = Axes.Y;
             columns.Width = 0;
         }
@@ -433,7 +434,6 @@ public partial class EditorLaneSwitchEvent : Container
         public Action Action;
 
         private Box box;
-        private Box gradient;
         private ArrowContainer arrowContainer;
 
         public SwitchIndicator(bool RightSide, Action onHovered, Action onHoverLost)
@@ -452,15 +452,7 @@ public partial class EditorLaneSwitchEvent : Container
                 Masking = true,
                 Children = new Drawable[]
                 {
-                    box = new Box { RelativeSizeAxes = Axes.Both, Colour = defaultColor, Alpha = 0.4f },
-                    gradient = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = ColourInfo.GradientVertical(defaultColor, defaultColor.Opacity(0)),
-                        Anchor = Anchor.BottomLeft,
-                        Origin = Anchor.BottomLeft,
-                        Alpha = 0.4f
-                    },
+                    box = new Box { RelativeSizeAxes = Axes.Both, Colour = defaultColor, Alpha = ind_visible_alpha },
                     arrowContainer = new ArrowContainer(rightSide)
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -470,28 +462,10 @@ public partial class EditorLaneSwitchEvent : Container
             };
         }
 
-        public void SetDuration(float factor, bool reverse = false)
-        {
-            if (reverse)
-            {
-                box.Height = 0;
-                gradient.Height = -factor;
-                gradient.Origin = Anchor.TopLeft;
-                return;
-            }
-
-            box.Height = 1 - factor;
-            gradient.Height = factor;
-            gradient.Origin = Anchor.BottomLeft;
-
-            arrowContainer.UpdateLayout();
-        }
-
         public void Expand()
         {
             var expandBy = Math.Abs(expanded_indicator_width - indicator_width) / 2;
-            box.FadeTo(hovered_alpha, 100);
-            gradient.FadeTo(hovered_alpha, 100);
+            box.FadeTo(ind_hovered_alpha, 100);
             arrowContainer.FadeIn(100)
                 .MoveToX(rightSide ? -expandBy : expandBy, 100, Easing.OutQuint);
             arrowContainer.ScaleArrows(2f, 100);
@@ -500,8 +474,7 @@ public partial class EditorLaneSwitchEvent : Container
 
         public void Retract()
         {
-            box.FadeTo(0.4f, 100);
-            gradient.FadeTo(0.4f, 100);
+            box.FadeTo(ind_visible_alpha, 100);
             arrowContainer.FadeOut(100)
                 .MoveToX(0, 100, Easing.OutQuint);
             arrowContainer.ScaleArrows(1f, 100);
