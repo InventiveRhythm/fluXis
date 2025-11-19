@@ -124,6 +124,7 @@ public partial class EditorKeymapOverlay : IconEntranceOverlay, IKeyBindingHandl
         yield return createScrollActionDropdown(strings.ScrollCtrlShiftAction, map.Scroll.ControlShift, EditorScrollAction.Rate, v => map.Scroll.ControlShift = v);
 
         yield return createToggle("Invert mouse scrolling", map.InvertScroll, false, v => map.InvertScroll = v);
+        yield return createToggle("LaneSwitch Interaction", map.LaneSwitchInteraction, true, v => map.LaneSwitchInteraction = v);
 
         foreach (var value in Enum.GetValues<EditorKeybinding>())
         {
