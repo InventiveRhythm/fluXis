@@ -38,7 +38,7 @@ public partial class EditorLaneSwitchEvent : Container
 
     private static Colour4 defaultColor = Colour4.FromHex("#FF5555"); // Theme.LaneSwitch is a different color.
 
-    private bool canInteract => blueprintContainer.CurrentTool is SelectTool;
+    private bool canInteract => blueprintContainer.CurrentTool is SelectTool && settings.LaneSwitchInteraction.Value;
 
     private double length;
     private int hoveredColumns = 0;
@@ -267,7 +267,7 @@ public partial class EditorLaneSwitchEvent : Container
 
     private void onIndicatorClick()
     {
-        if (allColumnsHidden)
+        if (allColumnsHidden && canInteract)
             points.ShowPoint(Event);
     }
     
