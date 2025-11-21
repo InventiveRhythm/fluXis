@@ -6,6 +6,7 @@ namespace fluXis.Online.API.Models.Scores;
 
 #nullable enable
 
+//TODO: support dual scores
 public class APIScore
 {
     [JsonProperty("id")]

@@ -96,15 +96,16 @@ public partial class MultiResultsScore : CompositeDrawable
                 Spacing = new Vector2(20),
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
+                //TODO: concider dual maps
                 Children = new Drawable[]
                 {
-                    new TextContainer(score.Flawless.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Flawless) },
-                    new TextContainer(score.Perfect.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Perfect) },
-                    new TextContainer(score.Great.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Great) },
-                    new TextContainer(score.Alright.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Alright) },
-                    new TextContainer(score.Okay.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Okay) },
-                    new TextContainer(score.Miss.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Miss) },
-                    new TextContainer($"{score.MaxCombo}x"),
+                    new TextContainer(score.Players[0].Flawless.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Flawless) },
+                    new TextContainer(score.Players[0].Perfect.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Perfect) },
+                    new TextContainer(score.Players[0].Great.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Great) },
+                    new TextContainer(score.Players[0].Alright.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Alright) },
+                    new TextContainer(score.Players[0].Okay.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Okay) },
+                    new TextContainer(score.Players[0].Miss.ToString()) { Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Miss) },
+                    new TextContainer($"{score.Players[0].MaxCombo}x"),
                     new ScoreAcc(score)
                 }
             }
@@ -140,18 +141,19 @@ public partial class MultiResultsScore : CompositeDrawable
             Direction = FillDirection.Vertical;
             Spacing = new Vector2(-8);
 
+            //TODO: concider dual maps
             InternalChildren = new Drawable[]
             {
                 new FluXisSpriteText
                 {
-                    Text = $"{score.Score:0000000}",
+                    Text = $"{score.Players[0].Score:0000000}",
                     WebFontSize = 24,
                     Anchor = Anchor.CentreRight,
                     Origin = Anchor.CentreRight
                 },
                 new FluXisSpriteText
                 {
-                    Text = $"{score.Accuracy.ToStringInvariant("00.00")}%",
+                    Text = $"{score.Players[0].Accuracy.ToStringInvariant("00.00")}%",
                     WebFontSize = 16,
                     Alpha = .8f,
                     Anchor = Anchor.CentreRight,

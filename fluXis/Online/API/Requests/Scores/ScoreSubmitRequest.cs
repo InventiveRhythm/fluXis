@@ -26,7 +26,13 @@ public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
 
     public ScoreSubmitRequest(ScoreInfo score, List<IMod> mods, Replay replay, string hash, string eHash, string sHash)
     {
-        if (score.HitResults is null)
+        if (score.Players is null)
+            throw new InvalidOperationException();
+
+        if (score.Players.Count == 0)
+            throw new InvalidOperationException();
+
+        if (score.Players[0].HitResults is null)
             throw new InvalidOperationException();
 
         this.score = score;
@@ -41,29 +47,31 @@ public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
     {
         var req = base.CreateWebRequest(url);
 
-        var results = score.HitResults.Select(x => new ScoreSubmissionPayload.Result
-        {
-            Difference = x.Difference,
-            HoldEnd = x.HoldEnd
-        });
-
         var payload = new ScoreSubmissionPayload
         {
             MapHash = mapHash,
             EffectHash = effectHash,
             StoryboardHash = storyboardHash,
             Mods = mods.Select(x => x.Acronym).ToList(),
-            Scores = new List<ScoreSubmissionPayload.Player>
-            {
-                new()
-                {
-                    UserID = score.PlayerID,
-                    ScrollSpeed = score.ScrollSpeed,
-                    Results = results.ToList()
-                }
-            },
-            Replay = replay
+            Replay = replay,
+            Scores = new List<ScoreSubmissionPayload.Player>()
         };
+
+        foreach (var playerScore in score.Players)
+        {
+            var results = playerScore.HitResults.Select(x => new ScoreSubmissionPayload.Result
+            {
+                Difference = x.Difference,
+                HoldEnd = x.HoldEnd
+            });
+
+            payload.Scores.Add(new ScoreSubmissionPayload.Player
+            {
+                UserID = playerScore.PlayerID,
+                ScrollSpeed = playerScore.ScrollSpeed,
+                Results = results.ToList()
+            });
+        }
 
         req.AddRaw(payload.Serialize());
 

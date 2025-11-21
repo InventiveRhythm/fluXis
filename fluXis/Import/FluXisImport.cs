@@ -210,6 +210,12 @@ public class FluXisImport : MapImporter
                     keys = Math.Max(keys, hitObject.Lane);
                 }
 
+                if (mapInfo.IsSplit)
+                {
+                    if (keys % 2 == 1) keys += 1;
+                    keys /= 2;
+                }
+
                 var map = new RealmMap
                 {
                     Metadata = new RealmMapMetadata
