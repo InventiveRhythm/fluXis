@@ -499,10 +499,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         // no fail was enabled, but the player never actually failed
         // so, we just remove the mod to make the score count normally
-        if (Mods.Any(m => m is NoFailMod) && !field.HealthProcessor.FailedAlready)
+        if (Mods.Any(m => m is NoFailMod) && !PlayfieldManager.Players.Any(p => p.HealthProcessor.FailedAlready))
         {
             Mods.RemoveAll(m => m is NoFailMod);
-            field.ScoreProcessor.Recalculate();
+
+            foreach (var player in PlayfieldManager.Players)
+            {
+                player.ScoreProcessor.Recalculate();
+            }
         }
 
         replayRecorder.IsRecording.Value = false;
@@ -513,7 +517,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         if (showingOverlay)
         {
-            fcOverlay.Show(field.ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
+            fcOverlay.Show(PlayfieldManager.Players.All(p => p.ScoreProcessor.FullFlawless) ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
             Scheduler.AddDelayed(() => fcOverlay.Hide(), 1400);
         }
 
@@ -524,14 +528,26 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Task.Run(() =>
         {
-            var bestScore = scores.GetCurrentTop(RealmMap.ID);
+            var bestScore = scores.GetCurrentTopScoreInfo(RealmMap.ID);
 
+            //use first player as base
             var score = field.ScoreProcessor.ToScoreInfo();
-            score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
 
-            var screen = new SoloResults(RealmMap, score, api.User.Value ?? APIUser.Default);
+            //put other players
+            for (int i = 1; i < PlayfieldManager.Players.Length; ++i)
+            {
+                score.Players.Add(PlayfieldManager.Players[i].ScoreProcessor.ToPlayerScoreInfo());
+            }
+
+            //TODO: if players can have different scroll speeds then we probably want to do this somewhere else
+            foreach (var playerScore in score.Players)
+            {
+                playerScore.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
+            }
+
+            var screen = new SoloResults(RealmMap, score);
             screen.OnRestart = OnRestart;
-            if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
+            if (bestScore != null) screen.ComparisonScore = bestScore; //TODO: logic to find best score on dual maps
 
             if (Mods.All(m => m.SaveScore) && SubmitScore && !RealmMap.MapSet.AutoImported)
             {

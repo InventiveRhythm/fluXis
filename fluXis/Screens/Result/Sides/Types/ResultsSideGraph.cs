@@ -27,11 +27,13 @@ public partial class ResultsSideGraph : ResultsSideContainer
 
     private ScoreInfo score { get; }
     private RealmMap map { get; }
+    private int selectedPlayer { get; }
 
-    public ResultsSideGraph(ScoreInfo score, RealmMap map)
+    public ResultsSideGraph(ScoreInfo score, RealmMap map, int selectedPlayer = 0)
     {
         this.score = score;
         this.map = map;
+        this.selectedPlayer = selectedPlayer;
     }
 
     protected override Drawable CreateContent() => new LoadWrapper<GraphContainer>
@@ -40,7 +42,7 @@ public partial class ResultsSideGraph : ResultsSideContainer
         AutoSizeAxes = Axes.Y,
         AutoSizeDuration = 400,
         AutoSizeEasing = Easing.Out,
-        LoadContent = () => new GraphContainer(score, map),
+        LoadContent = () => new GraphContainer(score, map, selectedPlayer),
         OnComplete = g => g.FadeInFromZero(400)
     };
 
@@ -48,11 +50,13 @@ public partial class ResultsSideGraph : ResultsSideContainer
     {
         private RealmMap map { get; }
         private ScoreInfo score { get; }
+        private int selectedPlayer { get; }
 
-        public GraphContainer(ScoreInfo score, RealmMap map)
+        public GraphContainer(ScoreInfo score, RealmMap map, int selectedPlayer = 0)
         {
             this.score = score;
             this.map = map;
+            this.selectedPlayer = selectedPlayer;
         }
 
         [BackgroundDependencyLoader]
@@ -76,7 +80,7 @@ public partial class ResultsSideGraph : ResultsSideContainer
                     AutoSizeAxes = Axes.Y,
                     Padding = new MarginPadding { Left = 15 },
                     Margin = new MarginPadding { Left = 10 },
-                    Child = new Graph(score, map)
+                    Child = new Graph(score, map, selectedPlayer)
                 },
                 new Container
                 {
@@ -161,11 +165,13 @@ public partial class ResultsSideGraph : ResultsSideContainer
 
         private RealmMap map { get; }
         private ScoreInfo score { get; }
+        private int selectedPlayer { get; }
 
-        public Graph(ScoreInfo score, RealmMap map)
+        public Graph(ScoreInfo score, RealmMap map, int selectedPlayer)
         {
             this.score = score;
             this.map = map;
+            this.selectedPlayer = selectedPlayer;
         }
 
         [BackgroundDependencyLoader]
@@ -188,20 +194,20 @@ public partial class ResultsSideGraph : ResultsSideContainer
                 var timing = timings[i];
                 var color = skins.SkinJson.GetColorForJudgement(timing.Judgement);
                 var lineColor = new Color(new Rgba32(color.Opacity(0.4f).Vector));
-                
+
                 var yEarly = miss - 1 - timing.Milliseconds;
                 if (yEarly >= 0)
                     image.Mutate(ctx => ctx.DrawLine(lineColor, 2, new PointF(0, yEarly), new PointF(image.Width, yEarly)));
-                
+
                 var yLate = miss - 1 + timing.Milliseconds;
                 if (yLate < image.Height)
                     image.Mutate(ctx => ctx.DrawLine(lineColor, 2, new PointF(0, yLate), new PointF(image.Width, yLate)));
             }
 
-            var start = score.HitResults.MinBy(x => x.Time).Time;
-            var end = score.HitResults.MaxBy(x => x.Time).Time - start;
+            var start = score.Players[selectedPlayer].HitResults.MinBy(x => x.Time).Time;
+            var end = score.Players[selectedPlayer].HitResults.MaxBy(x => x.Time).Time - start;
 
-            var misses = score.HitResults.Where(x => x.Judgement == Judgement.Miss).ToList();
+            var misses = score.Players[selectedPlayer].HitResults.Where(x => x.Judgement == Judgement.Miss).ToList();
 
             foreach (var result in misses)
             {
@@ -211,7 +217,7 @@ public partial class ResultsSideGraph : ResultsSideContainer
                 image.Mutate(ctx => ctx.Fill(new Color(new Rgba32(color.Opacity(.4f).Vector)), new RectangleF(x - 2, 0, 4, image.Height)));
             }
 
-            foreach (var result in score.HitResults)
+            foreach (var result in score.Players[selectedPlayer].HitResults)
             {
                 var color = skins.SkinJson.GetColorForJudgement(result.Judgement);
 

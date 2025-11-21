@@ -1,6 +1,7 @@
 ﻿using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
@@ -22,11 +23,22 @@ public partial class ResultsPlayer : CompositeDrawable
     private ScoreInfo score { get; set; }
 
     [Resolved]
-    private APIUser user { get; set; }
+    private Results results { get; set; }
+
+    private APIUser user;
+    private int playerIndex;
+
+    private FluXisSpriteText usernameText;
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay overlay { get; set; }
+
+    public ResultsPlayer(APIUser user, int playerIndex)
+    {
+        this.user = user;
+        this.playerIndex = playerIndex;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -34,6 +46,8 @@ public partial class ResultsPlayer : CompositeDrawable
         AutoSizeAxes = Axes.Both;
 
         var date = TimeUtils.GetFromSeconds(score.Timestamp);
+
+        var color = (playerIndex == results.SelectedPlayer.Value) ? Theme.Purple : Theme.Text;
 
         InternalChild = new FillFlowContainer
         {
@@ -81,11 +95,12 @@ public partial class ResultsPlayer : CompositeDrawable
                                     Origin = Anchor.CentreLeft,
                                     Shadow = true
                                 },
-                                new FluXisSpriteText
+                                usernameText = new FluXisSpriteText
                                 {
                                     Text = $" {user.Username}",
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
+                                    Colour = color,
                                     WebFontSize = 20,
                                     Shadow = true
                                 }
@@ -104,11 +119,19 @@ public partial class ResultsPlayer : CompositeDrawable
                 }
             }
         };
+
+        results.SelectedPlayer.BindValueChanged(v => onResultSelectedPlayerChange(v.NewValue));
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        overlay?.ShowUser(user.ID);
+        if (results.SelectedPlayer.Value == playerIndex) overlay?.ShowUser(user.ID);
+        else results.SelectedPlayer.Value = playerIndex;
         return true;
+    }
+
+    private void onResultSelectedPlayerChange(int newPlayerIndex)
+    {
+        usernameText.Colour = newPlayerIndex == playerIndex ? Theme.Purple : Theme.Text;
     }
 }

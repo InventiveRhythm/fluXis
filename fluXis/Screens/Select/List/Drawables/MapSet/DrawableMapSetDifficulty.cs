@@ -301,7 +301,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
             return;
 
         rank.Alpha = score is null ? 0 : 1;
-        rank.Rank = score?.Rank ?? ScoreRank.D;
+        rank.Rank = score?.Players?[0].Rank ?? ScoreRank.D; //TODO: handle dual maps, assume player 0 for now
     }
 
     protected override bool OnClick(ClickEvent e)

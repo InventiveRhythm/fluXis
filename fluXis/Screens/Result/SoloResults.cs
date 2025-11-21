@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using fluXis.Database.Maps;
-using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Scores;
 using fluXis.Scoring;
 using fluXis.Screens.Result.Sides.Types;
@@ -15,8 +14,8 @@ public partial class SoloResults : Results
 
     public ScoreSubmitRequest SubmitRequest { get; set; }
 
-    public SoloResults(RealmMap map, ScoreInfo score, APIUser player)
-        : base(map, score, player)
+    public SoloResults(RealmMap map, ScoreInfo score)
+        : base(map, score)
     {
     }
 

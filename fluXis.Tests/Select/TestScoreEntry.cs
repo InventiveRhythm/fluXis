@@ -32,18 +32,24 @@ public partial class TestScoreEntry : FluXisTestScene
                     DeleteAction = () => Logger.Log("Delete requested"),
                     ScoreInfo = new ScoreInfo
                     {
-                        Score = 1000000,
-                        MaxCombo = 100,
-                        Accuracy = 100,
                         Mods = new List<string> { "1.4x", "HD", "NF" },
-                        Rank = ScoreRank.X,
-                        Flawless = 100,
-                        Perfect = 100,
-                        Great = 100,
-                        Alright = 100,
-                        Okay = 100,
-                        Miss = 0,
                         Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                        Players = new List<PlayerScore>
+                        {
+                            new PlayerScore
+                            {
+                                Score = 1000000,
+                                MaxCombo = 100,
+                                Accuracy = 100,
+                                Rank = ScoreRank.X,
+                                Flawless = 100,
+                                Perfect = 100,
+                                Great = 100,
+                                Alright = 100,
+                                Okay = 100,
+                                Miss = 0,
+                            }
+                        }
                     }
                 }
             }

@@ -14,7 +14,6 @@ using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Localization.Stores;
-using fluXis.Online.API.Models.Users;
 using fluXis.Overlay.Achievements;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Browse;
@@ -377,12 +376,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public override void CloseOverlays() => overlayContainer.Children.ForEach(c => c.Hide());
 
-    public override void PresentScore(RealmMap map, ScoreInfo score, APIUser player, Action replayAction = null)
+    public override void PresentScore(RealmMap map, ScoreInfo score, Action replayAction = null)
     {
         if (map == null || score == null)
             throw new ArgumentNullException();
 
-        screenStack.Push(new Results(map, score, player) { ViewReplay = replayAction });
+        screenStack.Push(new Results(map, score) { ViewReplay = replayAction });
     }
 
     public void PresentUser(long id)
