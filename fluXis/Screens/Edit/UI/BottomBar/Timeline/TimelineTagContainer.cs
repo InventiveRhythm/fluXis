@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.UI.BottomBar.Timeline.Tags;
 using osu.Framework.Allocation;
@@ -42,27 +44,62 @@ public partial class TimelineTagContainer : Container
         };
     }
 
-    private void init()
-    {
-        foreach (var tp in map.MapInfo.TimingPoints)
-            timingPoints.Add(createTag(new TimelineTimingPointTag(clock, tp), tp.Time));
-
-        foreach (var note in map.MapInfo.MapEvents.NoteEvents)
-            notePoints.Add(createTag(new TimelineNoteTag(clock, note), note.Time));
-    }
-
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        ScheduleAfterChildren(init);
 
-        map.RegisterAddListener<TimingPoint>(updateTimingPoint);
-        map.RegisterUpdateListener<TimingPoint>(updateTimingPoint);
-        map.RegisterRemoveListener<TimingPoint>(updateTimingPoint);
+        registerListeners(
+            map.MapInfo.TimingPoints,
+            timingPoints,
+            tp => new TimelineTimingPointTag(clock, tp),
+            t => (TimingPoint)t.TimedObject
+        );
 
-        map.RegisterAddListener<NoteEvent>(updateNote);
-        map.RegisterUpdateListener<NoteEvent>(updateNote);
-        map.RegisterRemoveListener<NoteEvent>(updateNote);
+        registerListeners(
+            map.MapInfo.MapEvents.NoteEvents,
+            notePoints,
+            n => new TimelineNoteTag(clock, n),
+            t => (NoteEvent)t.TimedObject
+        );
+    }
+
+    private void registerListeners<TObject, TTag>(
+        System.Collections.Generic.List<TObject> items,
+        Container<TTag> container,
+        Func<TObject, TTag> f,
+        Func<TTag, TObject> getTimedObject)
+        where TObject : class, ITimedObject
+        where TTag : Drawable
+    {
+        map.RegisterAddListener<TObject>(obj => addTag(container, f, obj));
+        map.RegisterUpdateListener<TObject>(obj => updateTag(container, getTimedObject, obj));
+        map.RegisterRemoveListener<TObject>(obj => removeTag(container, getTimedObject, obj));
+        items.ForEach(obj => addTag(container, f, obj));
+    }
+
+    private void addTag<TObject, TTag>(Container<TTag> container, Func<TObject, TTag> f, TObject obj)
+        where TObject : class, ITimedObject
+        where TTag : Drawable
+    {
+        container.Add(createTag(f(obj), obj.Time));
+    }
+
+    private void updateTag<TObject, TTag>(Container<TTag> container, Func<TTag, TObject> getTimedObject, TObject obj)
+        where TObject : class, ITimedObject
+        where TTag : Drawable
+    {
+        var tag = container.FirstOrDefault(t => getTimedObject(t) == obj);
+        if (tag != null)
+            tag.X = calculatePosition(obj.Time);
+    }
+
+    private void removeTag<TObject, TTag>(Container<TTag> container, Func<TTag, TObject> getTimedObject, TObject obj)
+        where TObject : class, ITimedObject
+        where TTag : Drawable
+    {
+        var tag = container.FirstOrDefault(t => getTimedObject(t) == obj);
+        if (tag != null)
+            container.Remove(tag, true);
     }
 
     private T createTag<T>(T tag, double time) where T : Drawable
@@ -76,19 +113,5 @@ public partial class TimelineTagContainer : Container
         if (time == 0) return 0;
         var x = time / clock.TrackLength;
         return double.IsFinite(x) && !double.IsNaN(x) ? (float)x : 0;
-    }
-
-    private void updateTimingPoint(TimingPoint tp)
-    {
-        var tag = timingPoints.FirstOrDefault(t => t.TimedObject == tp);
-        if (tag != null)
-            tag.X = calculatePosition(tp.Time);
-    }
-
-    private void updateNote(NoteEvent n)
-    {
-        var tag = notePoints.FirstOrDefault(t => t.TimedObject == n);
-        if (tag != null)
-            tag.X = calculatePosition(n.Time);
     }
 }
