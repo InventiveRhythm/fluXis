@@ -19,8 +19,6 @@ public partial class EditorTimeline : Container
     private EditorMap map { get; set; }
 
     private TimelineIndicator indicator;
-    private Container chorusPoints;
-    private Container timingPoints;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -37,42 +35,10 @@ public partial class EditorTimeline : Container
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            chorusPoints = new Container
-            {
-                RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Height = 8,
-                Y = -20
-            },
-            timingPoints = new Container
-            {
-                Colour = Theme.Text,
-                RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Height = 8,
-                Y = -8
-            },
+            new TimelineTagContainer() { Offset = 10 },
             new TimelineDensity(),
             indicator = new TimelineIndicator()
         };
-
-        foreach (var timingPoint in map.MapInfo.TimingPoints)
-        {
-            var x = timingPoint.Time == 0 ? 0 : timingPoint.Time / clock.TrackLength;
-            if (!double.IsFinite(x) || double.IsNaN(x)) x = 0;
-
-            timingPoints.Add(new Triangle
-            {
-                RelativePositionAxes = Axes.X,
-                Size = new Vector2(8),
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.Centre,
-                Rotation = 180,
-                X = (float)x
-            });
-        }
     }
 
     protected override bool OnClick(ClickEvent e)
