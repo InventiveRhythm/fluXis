@@ -21,7 +21,7 @@ public partial class SpriteStack<T> : CompositeDrawable
     public void Add(T sprite, float duration = Styling.TRANSITION_FADE)
     {
         if (sprite is not IHasLoadedValue)
-            Current?.Delay(duration).FadeIn(duration).Expire();
+            Current?.Delay(duration).Expire();
 
         sprite.RelativeSizeAxes = Axes.Both;
         sprite.Anchor = sprite.Origin = Anchor.Centre;
