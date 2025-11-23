@@ -18,6 +18,7 @@ public class ScoreProcessor : JudgementDependant
 
     public HitWindows HitWindows { get; init; }
     public MapInfo MapInfo { get; init; }
+    public int MapMaxCombo { get; init; }
     public List<IMod> Mods { get; init; }
 
     public BindableFloat Accuracy { get; } = new(100);
@@ -76,8 +77,8 @@ public class ScoreProcessor : JudgementDependant
         var scoreMultiplier = 1f + Mods.Sum(mod => mod.ScoreMultiplier - 1f);
 
         var maxScore = 1000000 * scoreMultiplier;
-        var accBased = (int)(ratedNotes / MapInfo.MaxCombo * (maxScore * .9f));
-        var comboBased = (int)(MaxCombo / (float)MapInfo.MaxCombo * (maxScore * .1f));
+        var accBased = (int)(ratedNotes / MapMaxCombo * (maxScore * .9f));
+        var comboBased = (int)(MaxCombo / (float)MapMaxCombo * (maxScore * .1f));
         return accBased + comboBased;
     }
 

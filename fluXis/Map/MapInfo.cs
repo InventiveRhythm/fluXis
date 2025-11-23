@@ -73,7 +73,7 @@ public class MapInfo
     public double EndTime => HitObjects.Count == 0 ? 1000 : HitObjects[^1].EndTime;
 
     [JsonIgnore]
-    public int MaxCombo
+    public int MaxComboAllPlayers
     {
         get
         {
@@ -132,6 +132,16 @@ public class MapInfo
         TimingPoints = new List<TimingPoint> { new() { BPM = 120, Time = 0, Signature = 4 } }; // Add default timing point to avoid issues
         ScrollVelocities = new List<ScrollVelocity>();
         HitSoundFades = new List<HitSoundFade>();
+    }
+
+    public int MaxComboForPlayer(int playerIndex)
+    {
+        if (RealmEntry == null) return MaxComboAllPlayers; //probably shouldn't do that?
+
+        //the RealmEntry's KeyCount store the keycount for a single player
+        return HitObjects.Count(hitObject =>
+            hitObject.Lane >= 1 + playerIndex * RealmEntry.KeyCount &&
+            hitObject.Lane < 1 + (playerIndex + 1) * RealmEntry.KeyCount);
     }
 
     public bool Validate(out string issue)
