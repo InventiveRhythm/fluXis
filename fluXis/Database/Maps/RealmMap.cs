@@ -137,7 +137,7 @@ public class RealmMap : RealmObject
         }
         catch (Exception ex)
         {
-            Logger.Error(ex, "Failed up update local map info!");
+            Logger.Error(ex, "Failed to update local map info!");
         }
     }
 

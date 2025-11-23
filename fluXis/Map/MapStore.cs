@@ -452,7 +452,7 @@ public partial class MapStore : Component
         notifications.AddTask(notification);
     }
 
-    public void UpdateAllMaps()
+    public void UpdateAllMaps(bool includeLocal = false)
     {
         if (!api.CanUseOnline)
         {
@@ -512,7 +512,7 @@ public partial class MapStore : Component
 
                 var maps = updateContenders
                     .SelectMany(set => set.Maps
-                    .Where(map => map.StatusInt >= 0 && map.StatusInt < 3)) // we exclude pure maps also because they aren't updatable
+                    .Where(map => map.StatusInt >= (includeLocal ? -2 : 0) && map.StatusInt < 3)) // we exclude pure maps also because they aren't updatable
                     .ToList();
 
                 var mapIDs = maps.Select(x => x.OnlineID).ToList();

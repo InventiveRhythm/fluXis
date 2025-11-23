@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Database;
@@ -48,12 +49,15 @@ public partial class AdvancedMapsSection : SettingsSubSection
                 ButtonText = "Run",
                 Action = recalculateFilters
             },
-            new SettingsButton
+            new SettingsMultiButton
             {
                 Label = strings.UpdateAllMaps,
                 Description = strings.UpdateAllMapsDescription,
-                ButtonText = "Run",
-                Action = mapStore.UpdateAllMaps
+                Buttons = new (string, Action)[]
+                {
+                    ("Include Local", () => mapStore.UpdateAllMaps(true)),
+                    ("Run", () => mapStore.UpdateAllMaps(false))
+                }
             },
             new SettingsButton
             {
