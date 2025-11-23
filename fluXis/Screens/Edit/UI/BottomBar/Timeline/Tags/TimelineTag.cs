@@ -1,4 +1,5 @@
 using System;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
@@ -20,16 +21,17 @@ public partial class TimelineTag : Container
     protected FluXisSpriteText Text { get; private set; }
     protected virtual Action UpdateAction { get; set; }
     protected FluXisSpriteIcon Icon { get; private set; }
-    private Container textContainer { get; set; }
+    private HoverClickContainer textContainer { get; set; }
 
     public ITimedObject TimedObject { get; }
 
     private EditorClock clock;
 
     private Vector2 collapsedSize = new(10, 10);
-    private Vector2 expandedSize = new(30, 10);
+    private Vector2 expandedSize = new(14, 10 + text_margin);
 
     private const int string_limit = 30;
+    private const float text_margin = 2;
 
     public new float X
     {
@@ -64,17 +66,17 @@ public partial class TimelineTag : Container
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Rotation = 90,
-                X = -collapsedSize.X / 4,
                 Colour = TagColour
             },
-            textContainer = new Container
+            textContainer = new HoverClickContainer
             {
-                X = -collapsedSize.X / 4,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.BottomCentre,
                 Y = 0,
                 Size = new Vector2(0, 0),
                 Masking = true,
+                HoverLostAction = () => { if (!IsHovered) Retract(); },
+                Action = () => clock.SeekSmoothly(TimedObject.Time),
                 Children = new Drawable[]
                 {
                     new Box
@@ -132,12 +134,6 @@ public partial class TimelineTag : Container
         this.Delay(200).Then().ResizeTo(collapsedSize, 200, Easing.OutQuint);
     }
 
-    protected override bool OnClick(ClickEvent e)
-    {
-        clock.SeekSmoothly(TimedObject.Time);
-        return true;
-    }
-
     protected override bool OnHover(HoverEvent e)
     {
         Expand();
@@ -147,6 +143,7 @@ public partial class TimelineTag : Container
     protected override void OnHoverLost(HoverLostEvent e)
     {
         base.OnHoverLost(e);
-        Retract();
+        if (!textContainer.IsHovered)
+            Retract();
     }
 }
