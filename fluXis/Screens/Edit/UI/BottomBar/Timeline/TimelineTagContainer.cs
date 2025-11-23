@@ -24,7 +24,7 @@ public partial class TimelineTagContainer : Container
 
     public float Offset
     {
-        get => Y;
+        get => -Y;
         set => Y = -value;
     }
 
@@ -35,7 +35,7 @@ public partial class TimelineTagContainer : Container
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         Height = 8;
-        Y = Offset;
+        Y = -Offset;
 
         Children = new Drawable[]
         {

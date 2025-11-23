@@ -1,3 +1,4 @@
+using System;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
@@ -17,21 +18,27 @@ public partial class TimelineTag : Container
     public bool Expandable = true;
 
     protected FluXisSpriteText Text { get; private set; }
+    protected virtual Action UpdateAction { get; set; }
     protected FluXisSpriteIcon Icon { get; private set; }
-    protected Container TextContainer { get; private set; }
-    protected Box Background { get; private set; }
+    private Container textContainer { get; set; }
 
     public ITimedObject TimedObject { get; }
 
     private EditorClock clock;
 
-    private Vector2 collapsedSize = new Vector2(10, 10);
-    private Vector2 expandedSize = new Vector2(30, 10);
+    private Vector2 collapsedSize = new(10, 10);
+    private Vector2 expandedSize = new(30, 10);
+
+    private const int string_limit = 30;
 
     public new float X
     {
         get => base.X;
-        set => base.X = value + (collapsedSize.X / 4) / (Parent?.DrawWidth ?? 1f);
+        set
+        {
+            base.X = value + (collapsedSize.X / 4) / (Parent?.DrawWidth ?? 1f);
+            UpdateAction?.Invoke();
+        }
     }
 
     public TimelineTag(EditorClock clock, ITimedObject timedObject)
@@ -60,7 +67,7 @@ public partial class TimelineTag : Container
                 X = -collapsedSize.X / 4,
                 Colour = TagColour
             },
-            TextContainer = new Container
+            textContainer = new Container
             {
                 X = -collapsedSize.X / 4,
                 Anchor = Anchor.TopCentre,
@@ -70,7 +77,7 @@ public partial class TimelineTag : Container
                 Masking = true,
                 Children = new Drawable[]
                 {
-                    Background = new Box
+                    new Box
                     {
                         RelativeSizeAxes = Axes.Both,
                         Colour = TagColour
@@ -91,34 +98,38 @@ public partial class TimelineTag : Container
     private void trimText()
     {
         string textString = Text.Text.ToString();
-        Text.Text = textString.Length > 25 
-            ? textString[..22] + "..." 
+        Text.Text = textString.Length > string_limit
+            ? textString[..(string_limit - 3)] + "..."
             : textString;
     }
 
-    public void Expand()
+    protected virtual void Expand()
     {
         if (!Expandable)
             return;
+
+        UpdateAction?.Invoke();
         
         trimText();
 
         this.ResizeTo(expandedSize, 200, Easing.OutQuint);
 
-        TextContainer.Width = 16;
-        TextContainer.ResizeHeightTo(16, 100, Easing.In).Then().ResizeWidthTo(Text.DrawWidth + 6, 100, Easing.OutQuint);
+        textContainer.Width = 16;
+        textContainer.ResizeHeightTo(16, 100, Easing.In).Then().ResizeWidthTo(Text.DrawWidth + 6, 100, Easing.OutQuint);
         Text.FadeIn(150);
-        
-        OnExpand();
     }
 
-    public void Retract()
+    protected virtual void Retract()
     {   
+        if (!Expandable && !IsHovered)
+            return;
+
+        UpdateAction?.Invoke();
+
         trimText();
         Text.FadeOut(100);
-        TextContainer.ResizeWidthTo(10, 100, Easing.In).Then().ResizeHeightTo(0, 100, Easing.OutQuint);
+        textContainer.ResizeWidthTo(10, 100, Easing.In).Then().ResizeHeightTo(0, 100, Easing.OutQuint);
         this.Delay(200).Then().ResizeTo(collapsedSize, 200, Easing.OutQuint);
-        OnRetract();
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -138,7 +149,4 @@ public partial class TimelineTag : Container
         base.OnHoverLost(e);
         Retract();
     }
-
-    protected virtual void OnExpand() { }
-    protected virtual void OnRetract() { }
 }
