@@ -138,10 +138,20 @@ public class MapInfo
     {
         if (RealmEntry == null) return MaxComboAllPlayers; //probably shouldn't do that?
 
+        int maxCombo = 0;
+
         //the RealmEntry's KeyCount store the keycount for a single player
-        return HitObjects.Count(hitObject =>
-            hitObject.Lane >= 1 + playerIndex * RealmEntry.KeyCount &&
-            hitObject.Lane < 1 + (playerIndex + 1) * RealmEntry.KeyCount);
+        HitObjects.FindAll(hitObject =>
+                      hitObject.Lane >= 1 + playerIndex * RealmEntry.KeyCount &&
+                      hitObject.Lane < 1 + (playerIndex + 1) * RealmEntry.KeyCount)
+                  .ForEach(hitObject =>
+                  {
+                      maxCombo++;
+                      if (hitObject.LongNote)
+                          maxCombo++;
+                  });
+
+        return maxCombo;
     }
 
     public bool Validate(out string issue)
