@@ -5,11 +5,8 @@ using Realms;
 
 namespace fluXis.Database.Score;
 
-public class RealmPlayerScore : RealmObject
+public class RealmPlayerScore : EmbeddedObject
 {
-    [PrimaryKey]
-    public Guid ID { get; set; }
-
     public RealmScore RealmScore { get; set; } = null!;
 
     public float Accuracy { get; set; }
@@ -33,14 +30,8 @@ public class RealmPlayerScore : RealmObject
         set => Grade = value.ToString();
     }
 
-    public RealmPlayerScore()
-    {
-        ID = Guid.NewGuid();
-    }
-
     public static RealmPlayerScore FromPlayerScore(PlayerScore playerScore) => new()
     {
-        ID = Guid.NewGuid(),
         Accuracy = playerScore.Accuracy,
         PerformanceRating = playerScore.PerformanceRating,
         Rank = playerScore.Rank,
