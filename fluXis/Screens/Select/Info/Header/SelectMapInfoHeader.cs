@@ -290,19 +290,25 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         var background = new LoadWrapper<MapBackground>
         {
             RelativeSizeAxes = Axes.Both,
-            LoadContent = () => new MapBackground(map) { RelativeSizeAxes = Axes.Both },
+            LoadContent = () => new MapBackground(map)
+            {
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            },
             OnComplete = b => b.FadeInFromZero(Styling.TRANSITION_FADE)
         };
         LoadComponent(background);
         backgrounds.Add(background);
-        
+
         var cover = new LoadWrapper<MapCover>
         {
-            LoadContent = () => new MapCover(map.MapSet) 
-            { 
+            RelativeSizeAxes = Axes.Both,
+            LoadContent = () => new MapCover(map.MapSet)
+            {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre 
+                Origin = Anchor.Centre
             },
             OnComplete = c => c.FadeInFromZero(Styling.TRANSITION_FADE)
         };
