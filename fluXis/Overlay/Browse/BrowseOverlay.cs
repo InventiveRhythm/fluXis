@@ -20,6 +20,7 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.User.Header;
+using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -27,6 +28,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -61,6 +63,10 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     [Resolved(CanBeNull = true)]
     private GlobalClock clock { get; set; }
 
+    private InputManager input;
+    private IdleTracker idleTracker;
+
+    private FillFlowContainer filterFlow;
     private FullInputBlockingContainer searchContainer;
     private HeaderButton scrollTopButton;
     private Container content;
@@ -197,29 +203,14 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                             currentQuery = q;
                                             loadMapsets(reload: true);
                                         }),
-                                        new FillFlowContainer
+                                        filterFlow = new FillFlowContainer
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
                                             Padding = new MarginPadding { Horizontal = 16 },
                                             Spacing = new Vector2(12),
-                                            Children = new Drawable[]
-                                            {
-                                                new BrowseFilter<MapStatus>(
-                                                    "Status",
-                                                    filterStatus = new BindableList<MapStatus>(),
-                                                    Enum.GetValues<MapStatus>()
-                                                        .Where(x => x >= MapStatus.Unsubmitted)
-                                                        .Select(x => new BrowseFilter<MapStatus>.Option(x, x.ToString(), Theme.GetStatusColor((int)x)))
-                                                ),
-                                                new BrowseFilter<int>(
-                                                    "Keymode",
-                                                    filterKeymode = new BindableList<int>(),
-                                                    Enumerable.Range(4, 5)
-                                                              .Select(x => new BrowseFilter<int>.Option(x, $"{x}K", Theme.GetKeyCountColor(x)))
-                                                )
-                                            }
-                                        }
+                                        },
+                                        idleTracker = new IdleTracker(400, () => loadMapsets(reload: true)),
                                     }
                                 }
                             }
@@ -246,6 +237,33 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        input = GetContainingInputManager();
+        
+        filterStatus = new BindableList<MapStatus>();
+        filterKeymode = new BindableList<int>();
+        
+        filterFlow.AddRange(new Drawable[]
+        {
+            new BrowseFilter<MapStatus>(
+                "Status",
+                filterStatus,
+                Enum.GetValues<MapStatus>()
+                    .Where(x => x >= MapStatus.Unsubmitted)
+                    .Select(x => new BrowseFilter<MapStatus>.Option(x, x.ToString(), Theme.GetStatusColor((int)x))),
+                input
+            ) { DefaultFilter = new MapStatus[] {MapStatus.Pure}, ResetWhenFull = false },
+            new BrowseFilter<int>(
+                "Keymode",
+                filterKeymode,
+                Enumerable.Range(4, 5)
+                    .Select(x => new BrowseFilter<int>.Option(x, $"{x}K", Theme.GetKeyCountColor(x))),
+                input
+            ) { DefaultFilter = {}, ResetWhenFull = true }
+        });
+
+        filterStatus.BindCollectionChanged((_, _) => idleTracker.Reset());
+        filterKeymode.BindCollectionChanged((_, _) => idleTracker.Reset());
 
         scrollTopButton.Enabled.BindValueChanged(v =>
         {
