@@ -22,7 +22,7 @@ public class ToolbarStrings : LocalizationCategory
     public TranslatableString RankingDescription => Get("ranking-description", "See the top players.");
 
     public TranslatableString Dashboard => Get("dashboard", "Dashboard");
-    public TranslatableString DashboardDescription => Get("dashboard-description", "See news, updates, and more.");
+    public TranslatableString DashboardDescription => Get("dashboard-description", "Updates, Chats, news and more.");
 
     public TranslatableString Browse => Get("browse", "Browse");
     public TranslatableString BrowseDescription => Get("browse-description", "Download community-made maps.");
