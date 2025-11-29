@@ -185,7 +185,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         => ToScreenSpace(new Vector2(PositionAtTime(time), PositionAtZ(z) + 8));
 
     public double TimeAtPosition(float x) => (x - DrawWidth / 2) * 2 / settings.Zoom + clock.CurrentTime;
-    public int ZAtPosition(float y) => (int)(y / 48);
+    public int ZAtPosition(float y) => (int)(y / 48f + visualZ);
 
     public double TimeAtScreenSpacePosition(Vector2 pos) => TimeAtPosition(ToLocalSpace(pos).X);
     public int ZAtScreenSpacePosition(Vector2 pos) => ZAtPosition(ToLocalSpace(pos).Y);
