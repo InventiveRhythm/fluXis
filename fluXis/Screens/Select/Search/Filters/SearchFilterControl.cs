@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using fluXis.Audio;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
@@ -22,6 +23,9 @@ namespace fluXis.Screens.Select.Search.Filters;
 
 public partial class SearchFilterControl<T> : CompositeDrawable
 {
+    [Resolved]
+    private UISamples samples { get; set; }
+
     private LocalisableString title { get; }
     private T[] values { get; }
     private Bindable<T> bind { get; }
@@ -71,7 +75,7 @@ public partial class SearchFilterControl<T> : CompositeDrawable
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
                             Direction = FillDirection.Vertical,
-                            ChildrenEnumerable = values.Select(v => new Entry(v, GenerateItemText(v), GenerateItemIcon(v), () => bind.Value = v))
+                            ChildrenEnumerable = values.Select(v => new Entry(GenerateItemText(v), GenerateItemIcon(v), () => bind.Value = v))
                         }
                     }
                 }
@@ -94,8 +98,12 @@ public partial class SearchFilterControl<T> : CompositeDrawable
 
     private void updateDropdown(bool state)
     {
+        var loaded = LoadState >= LoadState.Loaded;
+
         if (state)
         {
+            if (loaded) samples.Dropdown(false);
+
             const float max_height = item_height * 8.5f;
 
             dropdown.ResizeHeightTo(Math.Min(item_height * values.Length, max_height), Styling.TRANSITION_MOVE, Easing.OutQuint)
@@ -103,6 +111,8 @@ public partial class SearchFilterControl<T> : CompositeDrawable
         }
         else
         {
+            if (loaded) samples.Dropdown(true);
+
             dropdown.ResizeHeightTo(0, Styling.TRANSITION_MOVE, Easing.OutQuint)
                     .FadeEdgeEffectTo(0, Styling.TRANSITION_FADE);
         }
@@ -195,10 +205,13 @@ public partial class SearchFilterControl<T> : CompositeDrawable
 
     protected partial class Entry : CompositeDrawable
     {
+        [Resolved]
+        private UISamples samples { get; set; }
+
         private Action action { get; }
         private HoverLayer hover { get; }
 
-        public Entry(T value, LocalisableString name, IconUsage icon, Action action)
+        public Entry(LocalisableString name, IconUsage icon, Action action)
         {
             this.action = action;
 
@@ -239,6 +252,7 @@ public partial class SearchFilterControl<T> : CompositeDrawable
 
         protected override bool OnHover(HoverEvent e)
         {
+            samples.Hover();
             hover.Show();
             return true;
         }
@@ -250,6 +264,7 @@ public partial class SearchFilterControl<T> : CompositeDrawable
 
         protected override bool OnClick(ClickEvent e)
         {
+            samples.Click();
             action();
             return true;
         }
