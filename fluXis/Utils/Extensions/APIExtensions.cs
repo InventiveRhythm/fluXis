@@ -55,7 +55,6 @@ public static class APIExtensions
         return user.Groups.Any(g => g.ID == "moderators");
     }
 
-    //TODO: support dual scores
     public static ScoreInfo ToScoreInfo(this APIScore score)
     {
         ScoreInfo scoreInfo = new ScoreInfo
@@ -66,6 +65,8 @@ public static class APIExtensions
         };
 
         scoreInfo.Players ??= new List<PlayerScore>();
+
+        //add main player
         scoreInfo.Players.Add(new PlayerScore
         {
             Accuracy = score.Accuracy,
@@ -82,6 +83,27 @@ public static class APIExtensions
             ScrollSpeed = score.ScrollSpeed,
             PlayerID = score.User.ID
         });
+
+        //add other players
+        foreach (var apiScoreExtraPlayer in score.ExtraPlayers)
+        {
+            scoreInfo.Players.Add(new PlayerScore
+            {
+                Accuracy = apiScoreExtraPlayer.Accuracy,
+                Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), apiScoreExtraPlayer.Rank),
+                Score = apiScoreExtraPlayer.TotalScore,
+                PerformanceRating = apiScoreExtraPlayer.PerformanceRating,
+                MaxCombo = apiScoreExtraPlayer.MaxCombo,
+                Flawless = apiScoreExtraPlayer.FlawlessCount,
+                Perfect = apiScoreExtraPlayer.PerfectCount,
+                Great = apiScoreExtraPlayer.GreatCount,
+                Alright = apiScoreExtraPlayer.AlrightCount,
+                Okay = apiScoreExtraPlayer.OkayCount,
+                Miss = apiScoreExtraPlayer.MissCount,
+                ScrollSpeed = apiScoreExtraPlayer.ScrollSpeed,
+                PlayerID = apiScoreExtraPlayer.User.ID,
+            });
+        }
 
         return scoreInfo;
     }

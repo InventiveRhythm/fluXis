@@ -117,6 +117,24 @@ public class MapInfo
     [JsonIgnore]
     public int KeyCount => HitObjects.Max(x => x.Lane);
 
+    //TODO: make this an actual json field that we would store inside the map file?
+    //TODO 2: handle mirrored
+    [JsonIgnore]
+    public int PlayerCount => IsSplit ? 2 : 1;
+
+    [JsonIgnore]
+    public int SinglePlayerKeyCount
+    {
+        get
+        {
+            if (PlayerCount == 1) return KeyCount;
+
+            int keyCount = KeyCount;
+            while (keyCount % PlayerCount != 0) ++keyCount;
+            return keyCount / PlayerCount;
+        }
+    }
+
     #endregion
 
     public MapInfo(MapMetadata metadata)
@@ -142,8 +160,8 @@ public class MapInfo
 
         //the RealmEntry's KeyCount store the keycount for a single player
         HitObjects.FindAll(hitObject =>
-                      hitObject.Lane >= 1 + playerIndex * RealmEntry.KeyCount &&
-                      hitObject.Lane < 1 + (playerIndex + 1) * RealmEntry.KeyCount)
+                      hitObject.Lane >= 1 + playerIndex * SinglePlayerKeyCount &&
+                      hitObject.Lane < 1 + (playerIndex + 1) * SinglePlayerKeyCount)
                   .ForEach(hitObject =>
                   {
                       maxCombo++;
@@ -152,6 +170,22 @@ public class MapInfo
                   });
 
         return maxCombo;
+    }
+
+    public int HitsForPlayer(int playerIndex)
+    {
+        return HitObjects.Count(h =>
+            h.HoldTime == 0 &&
+            h.Lane >= 1 + playerIndex * SinglePlayerKeyCount &&
+            h.Lane < 1 + (playerIndex + 1) * SinglePlayerKeyCount);
+    }
+
+    public int LongNotesForPlayer(int playerIndex)
+    {
+        return HitObjects.Count(h =>
+            h.HoldTime > 0 &&
+            h.Lane >= 1 + playerIndex * SinglePlayerKeyCount &&
+            h.Lane < 1 + (playerIndex + 1) * SinglePlayerKeyCount) * 2; //multiply by two because long notes give two judgments (if this gets removed then we need to multiply by 2 in ServerMapUtils)
     }
 
     public bool Validate(out string issue)

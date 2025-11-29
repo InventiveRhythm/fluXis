@@ -288,7 +288,7 @@ public partial class ScoreListTab : SelectInfoTab
             default:
                 if (map.OnlineID == -1)
                     replaceNoScores(LocalizationStrings.SongSelect.LeaderboardNotUploaded);
-                else if (tryFetchScores(type.Value, cancelToken, out var s)) //TODO: request dual maps
+                else if (tryFetchScores(type.Value, cancelToken, selectedPlayer.Value, out var s)) //TODO: request dual maps
                     scores.AddRange(s);
                 else
                     return;
@@ -345,7 +345,7 @@ public partial class ScoreListTab : SelectInfoTab
         }
     }
 
-    private bool tryFetchScores(ScoreListType type, CancellationToken cancelToken, out List<ScoreListEntry> scores)
+    private bool tryFetchScores(ScoreListType type, CancellationToken cancelToken, int playerIndex, out List<ScoreListEntry> scores)
     {
         scores = new List<ScoreListEntry>();
 
@@ -355,7 +355,7 @@ public partial class ScoreListTab : SelectInfoTab
             return false;
         }
 
-        var req = new MapLeaderboardRequest(type, map.OnlineID);
+        var req = new MapLeaderboardRequest(type, map.OnlineID, playerIndex);
         api.PerformRequest(req);
 
         if (cancelToken.IsCancellationRequested)
