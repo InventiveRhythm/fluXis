@@ -82,6 +82,7 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
         // addTab(new DashboardNewsTab());
         addTab(new DashboardFriendsTab());
         addTab(new DashboardClubTab());
+        addTab(new DashboardChatTab());
         addTab(new DashboardOnlineTab());
         addTab(new DashboardAccountTab());
     }
@@ -134,6 +135,8 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
         selectedTab?.Exit();
         selectedTab = tab;
         selectedTab.Enter();
+
+        content.ResizeWidthTo(selectedTab.DashboardWidth, 400, Easing.OutQuint);
     }
 
     public void Show(DashboardTabType type)

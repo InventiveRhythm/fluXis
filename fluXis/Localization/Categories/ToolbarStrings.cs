@@ -21,9 +21,6 @@ public class ToolbarStrings : LocalizationCategory
     public TranslatableString Ranking => Get("ranking", "Ranking");
     public TranslatableString RankingDescription => Get("ranking-description", "See the top players.");
 
-    public TranslatableString Chat => Get("chat", "Chat");
-    public TranslatableString ChatDescription => Get("chat-description", "Talk to other players.");
-
     public TranslatableString Dashboard => Get("dashboard", "Dashboard");
     public TranslatableString DashboardDescription => Get("dashboard-description", "See news, updates, and more.");
 

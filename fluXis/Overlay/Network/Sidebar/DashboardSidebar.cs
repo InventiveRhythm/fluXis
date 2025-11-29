@@ -16,7 +16,7 @@ public partial class DashboardSidebar : ExpandingContainer
     private const int padding = 5;
     private const int size_open = 200 + padding * 2;
 
-    protected override double HoverDelay => 200;
+    protected override double HoverDelay => 400;
 
     public Action<DashboardTab> SelectAction { get; init; }
 

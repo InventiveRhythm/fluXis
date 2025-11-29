@@ -7,7 +7,6 @@ using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Browse;
-using fluXis.Overlay.Chat;
 using fluXis.Overlay.Music;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
@@ -41,9 +40,6 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     private Dashboard dashboard { get; set; }
-
-    [Resolved]
-    private ChatOverlay chat { get; set; }
 
     [Resolved]
     private IAPIClient api { get; set; }
@@ -167,15 +163,6 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                         Origin = Anchor.CentreRight,
                         Children = new Drawable[]
                         {
-                            new ToolbarOverlayButton
-                            {
-                                TooltipTitle = LocalizationStrings.Toolbar.Chat,
-                                TooltipSub = LocalizationStrings.Toolbar.ChatDescription,
-                                Icon = FontAwesome6.Solid.Message,
-                                Overlay = chat,
-                                Keybind = FluXisGlobalKeybind.ToggleChat,
-                                RequireLogin = true
-                            },
                             new ToolbarOverlayButton
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Dashboard,

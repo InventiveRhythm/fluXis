@@ -1,5 +1,7 @@
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Overlay.Network.Sidebar;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -13,6 +15,7 @@ public abstract partial class DashboardTab : Container
     public abstract LocalisableString Title { get; }
     public abstract IconUsage Icon { get; }
     public abstract DashboardTabType Type { get; }
+    public virtual float DashboardWidth => 1200;
 
     protected Container Header { get; private set; }
     protected new Container Content { get; private set; }
@@ -22,7 +25,7 @@ public abstract partial class DashboardTab : Container
 
     protected DashboardTab()
     {
-        RelativeSizeAxes = Axes.Both;
+        RelativeSizeAxes = Axes.Y;
 
         InternalChildren = new Drawable[]
         {
@@ -90,6 +93,12 @@ public abstract partial class DashboardTab : Container
         };
     }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        Width = DashboardWidth - DashboardSidebar.SIZE_CLOSED - 12;
+    }
+
     public virtual void Enter() { }
     public virtual void Exit() { }
 }
@@ -100,6 +109,7 @@ public enum DashboardTabType
     News,
     Friends,
     Club,
+    Chat,
     Online,
     Account
 }

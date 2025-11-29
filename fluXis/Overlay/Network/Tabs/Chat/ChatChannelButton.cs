@@ -18,7 +18,7 @@ using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Overlay.Chat.UI;
+namespace fluXis.Overlay.Network.Tabs.Chat;
 
 public partial class ChatChannelButton : Container, IHasContextMenu
 {
