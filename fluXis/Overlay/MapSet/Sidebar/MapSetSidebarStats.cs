@@ -165,7 +165,7 @@ public partial class MapSetSidebarStats : FillFlowContainer
                 valueText.Text = format?.Invoke(val);
 
                 var progress = Math.Clamp(val / max, 0, 1);
-                var col = Theme.GetDifficultyColor(progress * 30);
+                var col = Theme.GetDifficultyColor(val);
                 background.Colour = col.Darken(.8f);
                 bar.Colour = col;
                 bar.Width = progress;
