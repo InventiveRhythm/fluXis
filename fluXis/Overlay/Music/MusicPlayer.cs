@@ -466,7 +466,10 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         switch (e.Action)
         {
             case FluXisGlobalKeybind.Back:
-                Hide();
+                if (fullscreen)
+                    toggleFullscreen();
+                else
+                    Hide();
                 return true;
         }
 
