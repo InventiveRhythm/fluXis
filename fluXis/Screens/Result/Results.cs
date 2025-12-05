@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Input;
+using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Screens.Result.Sides.Types;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -16,15 +18,19 @@ namespace fluXis.Screens.Result;
 
 public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
+    [Resolved]
+    private UserCache users { get; set; }
+
     public override float Zoom => 1.2f;
     public override float BackgroundDim => 0.75f;
     public override float BackgroundBlur => 0.2f;
 
     public ScoreInfo ComparisonScore { get; set; }
 
-    protected ScoreInfo Score { get; }
-    protected RealmMap Map { get; }
-    protected APIUser Player { get; }
+    protected ScoreInfo Score { get; set; }
+    public RealmMap Map { get; }
+    protected List<APIUser> Players { get; }
+    public Bindable<int> SelectedPlayer { get; set; }
 
     protected DependencyContainer ExtraDependencies { get; set; }
 
@@ -36,20 +42,27 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
     private ResultsContent content;
     private ResultsFooter footer;
 
-    public Results(RealmMap map, ScoreInfo score, APIUser player)
+    public Results(RealmMap map, ScoreInfo score)
     {
         Map = map;
         Score = score;
-        Player = player;
+        Players = new List<APIUser>();
+        SelectedPlayer = new Bindable<int>(0);
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        //maybe doing this here isn't a good idea
+        foreach (var scorePlayer in Score.Players)
+        {
+            Players.Add(users.Get(scorePlayer.PlayerID) ?? APIUser.CreateUnknown(scorePlayer.PlayerID));
+        }
+
         ExtraDependencies.CacheAs(this);
         ExtraDependencies.CacheAs(Score);
         ExtraDependencies.CacheAs(Map);
-        ExtraDependencies.CacheAs(Player ?? APIUser.Default);
+        ExtraDependencies.CacheAs(Players ?? new List<APIUser> { APIUser.Default });
 
         InternalChildren = new Drawable[]
         {
@@ -67,8 +80,8 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
     {
         var list = new List<Drawable>();
 
-        if (Score.HitResults is not null && Score.HitResults.Count > 0)
-            list.Add(new ResultsSideGraph(Score, Map));
+        if (SelectedPlayer.Value < Score.Players.Count && Score.Players[SelectedPlayer.Value].HitResults is not null && Score.Players[SelectedPlayer.Value].HitResults.Count > 0)
+            list.Add(new ResultsSideGraph(Score, Map, SelectedPlayer.Value));
 
         return list.ToArray();
     }
@@ -76,6 +89,24 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
     protected virtual Drawable[] CreateRightContent() => Array.Empty<Drawable>();
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => ExtraDependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    protected void SetScoreInfo(ScoreInfo score)
+    {
+        if (score == this.Score) return;
+
+        Score = score;
+
+        Players.Clear();
+
+        foreach (var scorePlayer in Score.Players)
+        {
+            Players.Add(users.Get(scorePlayer.PlayerID) ?? APIUser.CreateUnknown(scorePlayer.PlayerID));
+        }
+
+        //this is what actually reload the screen's content
+        if (SelectedPlayer.Value == 0) SelectedPlayer.TriggerChange();
+        else SelectedPlayer.Value = 0;
+    }
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
