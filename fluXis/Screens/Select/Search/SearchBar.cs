@@ -135,6 +135,15 @@ public partial class SearchBar : Container
         return true;
     }
 
+    protected override bool OnJoystickPress(JoystickPressEvent e)
+    {
+        if (e.Button != JoystickButton.Button9) // back
+            return false;
+
+        focus.ChangeFocus(textBox.HasFocus ? null : textBox);
+        return true;
+    }
+
     private void updateDropdownStatus()
     {
         if (dropdownOpen.Value) dropdown.Show();

@@ -56,9 +56,6 @@ public partial class SelectScreen
                 changeItemSelection(1);
                 return true;
 
-            case JoystickButton.Button9: // Back
-                return true;
-
             case JoystickButton.Button10: // Start
                 footer.OpenSettings();
                 return true;

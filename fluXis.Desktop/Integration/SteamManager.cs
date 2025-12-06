@@ -8,6 +8,7 @@ using fluXis.Online.Fluxel;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Logging;
 using Steamworks;
 
@@ -128,6 +129,16 @@ public partial class SteamManager : Component, ISteamManager
         SteamFriends.SetRichPresence(pchKey, value);
         rpc[pchKey] = value;
     }
+
+    public void OpenKeyboard(Quad size) => SteamUtils.ShowFloatingGamepadTextInput(
+        EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeSingleLine,
+        (int)size.TopLeft.X,
+        (int)size.TopLeft.Y,
+        (int)size.Width,
+        (int)size.Height
+    );
+
+    public void CloseKeyboard() => SteamUtils.DismissFloatingGamepadTextInput();
 
     public void UploadItem(IWorkshopItem item)
     {

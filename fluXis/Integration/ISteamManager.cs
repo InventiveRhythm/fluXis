@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using osu.Framework.Graphics.Primitives;
 
 namespace fluXis.Integration;
 
@@ -16,6 +17,9 @@ public interface ISteamManager
 
     void OpenLink(string url);
     void SetRichPresence(SteamRichPresenceKey key, string value);
+
+    void OpenKeyboard(Quad size);
+    void CloseKeyboard();
 
     void UploadItem(IWorkshopItem item);
     void UpdateItem(ulong id, IWorkshopItem item);
