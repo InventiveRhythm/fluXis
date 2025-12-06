@@ -19,13 +19,18 @@ public partial class LoadWrapper<T> : Container, IHasLoadedValue
         Reload();
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        Loaded = InternalChildren.Count >= 1 && InternalChildren[0].Alpha >= 1;
+    }
+
     public void Reload()
     {
         Clear();
         LoadComponentAsync(LoadContent(), drawable =>
         {
             Add(drawable);
-            Loaded = true;
             OnComplete?.Invoke(drawable);
         });
     }
