@@ -18,6 +18,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Select.Footer.Options;
 
@@ -105,6 +106,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             {
                                 Text = LocalizationStrings.SongSelect.OptionsSettings,
                                 Icon = FontAwesome6.Solid.Gear,
+                                Hotkey = Key.S,
                                 Action = () =>
                                 {
                                     settings.Show();
@@ -120,6 +122,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 Text = LocalizationStrings.SongSelect.OptionsDeleteSet,
                                 Icon = FontAwesome6.Solid.Trash,
                                 Color = Theme.Red,
+                                Hotkey = Key.D,
                                 Action = () =>
                                 {
                                     DeleteAction?.Invoke(maps.CurrentMapSet);
@@ -134,6 +137,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             {
                                 Text = LocalizationStrings.General.Edit,
                                 Icon = FontAwesome6.Solid.Pen,
+                                Hotkey = Key.E,
                                 Action = () =>
                                 {
                                     EditAction?.Invoke(maps.CurrentMap);
@@ -145,6 +149,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 Text = LocalizationStrings.SongSelect.OptionsWipeScores,
                                 Icon = FontAwesome6.Solid.Eraser,
                                 Color = Theme.Red,
+                                Hotkey = Key.W,
                                 Action = () =>
                                 {
                                     State.Value = Visibility.Hidden;
