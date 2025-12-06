@@ -29,8 +29,9 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     public Action<int, int>? PracticeAction { get; set; }
     public Action? PlayAction { get; init; }
 
-    public Action<RealmMapSet>? DeleteAction { get; init; }
+    public Action<RealmMapSet>? ExportAction { get; init; }
     public Action<RealmMap>? EditAction { get; init; }
+    public Action<RealmMapSet>? DeleteAction { get; init; }
     public Action? ScoresWiped { get; init; }
 
     private FooterButton randomButton = null!;
@@ -80,7 +81,8 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         {
             DeleteAction = DeleteAction,
             EditAction = EditAction,
-            ScoresWiped = ScoresWiped
+            ExportAction = ExportAction,
+            ScoresWiped = ScoresWiped,
         },
         practice = new FooterPractice
         {
