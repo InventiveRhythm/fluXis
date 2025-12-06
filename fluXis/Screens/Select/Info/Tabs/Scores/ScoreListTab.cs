@@ -18,12 +18,10 @@ using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Online;
 using fluXis.Online.API;
-using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Maps;
 using fluXis.Online.Fluxel;
 using fluXis.Scoring;
-using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -34,7 +32,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Screens.Select.Info.Tabs.Scores;
@@ -354,7 +351,7 @@ public partial class ScoreListTab : SelectInfoTab
             return false;
         }
 
-        updateLocalInfo(map, req.Response.Data.MapSet, req.Response.Data.Map);
+        RealmMap.UpdateLocalInfo(realm, map, req.Response.Data.MapSet, req.Response.Data.Map);
 
         if (!map.UpToDate)
             Schedule(() => outOfDate.FadeIn(300));
@@ -388,47 +385,6 @@ public partial class ScoreListTab : SelectInfoTab
         }));
 
         return true;
-    }
-
-    private void updateLocalInfo(RealmMap map, APIMapSet onlineSet, APIMap onlineMap)
-    {
-        try
-        {
-            realm?.RunWrite(r =>
-            {
-                var m = r.Find<RealmMap>(map.ID);
-
-                if (m == null)
-                    return;
-
-                var oldHash = map.OnlineHash;
-                m.OnlineHash = map.OnlineHash = onlineMap.SHA256Hash;
-
-                if (map.OnlineHash != oldHash)
-                    map.OnlineHashUpdated?.Invoke();
-
-                if (Math.Abs(m.Rating - onlineMap.Rating) > .001f)
-                {
-                    m.UpdateRating(onlineMap.Rating);
-                    map.UpdateRating(onlineMap.Rating);
-                }
-
-                m.LastOnlineUpdate = map.LastOnlineUpdate = TimeUtils.GetFromSeconds(onlineSet.LastUpdated);
-
-                if (onlineSet.DateRanked != null)
-                    m.MapSet.DateRanked = map.MapSet.DateRanked = TimeUtils.GetFromSeconds(onlineSet.DateRanked.Value);
-
-                if (m.StatusInt != onlineMap.Status)
-                {
-                    m.MapSet.SetStatus(onlineMap.Status);
-                    map.MapSet.SetStatus(onlineMap.Status);
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex, "Failed up update local map info!");
-        }
     }
 
     private void replaceNoScores(LocalisableString text) => Scheduler.ScheduleIfNeeded(() =>
