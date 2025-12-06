@@ -31,9 +31,9 @@ public partial class EditorLoader : FluXisScreen
     private MapInfo mapInfo { get; set; }
 
     /// <summary>
-    /// see <see cref="Editor.StartTabIndex"/>
+    /// see <see cref="Editor.StartTab"/>
     /// </summary>
-    public int StartTabIndex { get; set; } = -1;
+    public EditorTabType StartTabIndex { get; set; } = EditorTabType.None;
 
     public const float DURATION = 900;
     private const float circle_size = 2500;
@@ -114,7 +114,7 @@ public partial class EditorLoader : FluXisScreen
         if (editorMap != null && sb != null)
             editorMap.Storyboard = sb;
 
-        Schedule(() => LoadComponentAsync(new Editor(this, map, editorMap) { StartTabIndex = StartTabIndex }, s => this.Delay(DURATION).FadeIn().OnComplete(_ => this.Push(s))));
+        Schedule(() => LoadComponentAsync(new Editor(this, map, editorMap) { StartTab = StartTabIndex }, s => this.Delay(DURATION).FadeIn().OnComplete(_ => this.Push(s))));
         switching = false;
     });
 

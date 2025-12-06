@@ -12,6 +12,7 @@ public partial class ChartingTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome6.Solid.PenRuler;
     public override string TabName => "Charting";
+    public override EditorTabType Type => EditorTabType.Charting;
 
     private LoadingIcon loadingIcon;
 
@@ -35,7 +36,7 @@ public partial class ChartingTab : EditorTab
             loadingIcon.FadeOut(200);
 
             AddInternal(container);
-            container.FadeInFromZero(200);
+            container.FadeInFromZero(200).OnComplete( _ => InvokeFullyLoaded() );
         });
     }
 }

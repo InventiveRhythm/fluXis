@@ -43,7 +43,7 @@ public partial class TestEditor : FluXisTestScene
         {
             var map = GetTestMap(maps);
             var loader = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
-            loader.StartTabIndex = 4;
+            loader.StartTabIndex = EditorTabType.Setup;
             screenStack.Push(loader);
         });
 

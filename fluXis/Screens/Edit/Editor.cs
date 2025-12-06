@@ -38,6 +38,7 @@ using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Modding;
 using fluXis.Screens.Edit.Tabs;
 using fluXis.Screens.Edit.Tabs.Charting;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Screens.Edit.Tabs.Verify.Checks;
 using fluXis.Screens.Edit.UI;
@@ -106,14 +107,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     /// <summary>
     /// overwrites the tab the editor opens with
     /// </summary>
-    public int StartTabIndex { get; init; } = -1;
+    public EditorTabType StartTab { get; init; } = EditorTabType.None;
 
     private ITrackStore trackStore { get; set; }
 
     private EditorLoader loader { get; }
 
     private Container<EditorTab> tabs;
-    private int currentTab;
+    public Bindable<EditorTabType> CurrentTab { get; private set; } = new();
 
     public Bindable<Waveform> Waveform { get; private set; }
     private EditorMap editorMap { get; }
@@ -229,6 +230,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         if (!Directory.Exists(MapSetPath))
             Directory.CreateDirectory(MapSetPath);
+
+        dependencies.CacheAs(new EditorTagDependencies(CurrentTab, changeTab));
 
         var scripts = new ScriptStorage(MapSetPath);
         editorMap.ScriptChanged += _ =>
@@ -382,7 +385,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         },
                         new EditorTabSwitcher
                         {
-                            ChildrenEnumerable = tabs.Select(x => new EditorTabSwitcherButton(x.Icon, x.TabName, () => changeTab(tabs.IndexOf(x))))
+                            ChildrenEnumerable = tabs.Select(x => new EditorTabSwitcherButton(x.Icon, x.TabName, () => changeTab(x.Type)))
                         },
                         new EditorBottomBar()
                     }
@@ -475,12 +478,27 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         openTime = lastSaveTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-        var idx = isNewMap ? 0 : 1;
+        var tabType = isNewMap ? EditorTabType.Setup : EditorTabType.Charting;
 
-        if (StartTabIndex != -1)
-            idx = StartTabIndex;
+        if (StartTab != EditorTabType.None)
+            tabType = StartTab;
 
-        changeTab(idx);
+        ScheduleAfterChildren(() =>
+        {
+            foreach (var tab in tabs.Children)
+            {
+                if (tab.TabName.Equals("Design", StringComparison.OrdinalIgnoreCase))
+                {
+                    tab.AlwaysPresent = true; // have design tab already loaded once
+                    tab.OnFullyLoaded = () =>
+                    {
+                        tab.AlwaysPresent = false;
+
+                        changeTab(tabType);
+                    };
+                }
+            }
+        });
 
         if (!canSave)
         {
@@ -520,20 +538,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
     private void updateBlur(ValueChangedEvent<float> e) => backgrounds.SetBlur(e.NewValue);
 
-    private void changeTab(int to)
+    private void changeTab(EditorTabType to)
     {
-        currentTab = to;
+        CurrentTab.Value = to;
 
-        if (currentTab < 0)
-            currentTab = 0;
-        if (currentTab >= tabs.Count)
-            currentTab = tabs.Count - 1;
+        if (tabs.Children.All(x => x.Type != to))
+            CurrentTab.Value = tabs[0].Type;
 
         for (var i = 0; i < tabs.Children.Count; i++)
         {
             var tab = tabs.Children[i];
 
-            if (i == currentTab)
+            if (tab.Type == CurrentTab.Value)
                 tab.Show();
             else
                 tab.Hide();
@@ -562,7 +578,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 int index = e.Key - Key.Number1;
 
                 if (index < tabs.Count)
-                    changeTab(index);
+                    changeTab(tabs[index].Type);
 
                 return true;
             }

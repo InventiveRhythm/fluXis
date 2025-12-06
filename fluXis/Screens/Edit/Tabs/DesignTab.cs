@@ -12,6 +12,7 @@ public partial class DesignTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome6.Solid.Palette;
     public override string TabName => "Design";
+    public override EditorTabType Type => EditorTabType.Design;
 
     private LoadingIcon loadingIcon;
 
@@ -35,7 +36,7 @@ public partial class DesignTab : EditorTab
             loadingIcon.FadeOut(200);
 
             AddInternal(container);
-            container.FadeInFromZero(200);
+            container.FadeInFromZero(200).OnComplete( _ => InvokeFullyLoaded() );
         });
     }
 }

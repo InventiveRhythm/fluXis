@@ -18,6 +18,7 @@ public partial class SetupTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome6.Solid.ScrewdriverWrench;
     public override string TabName => "Setup";
+    public override EditorTabType Type => EditorTabType.Setup;
 
     private SetupSection metadata;
 
@@ -275,4 +276,6 @@ public partial class SetupTab : EditorTab
         // tabbing support
         metadata.OfType<SetupTextBox>().ForEach(textBox => textBox.TabbableContentContainer = metadata);
     }
+
+    protected override void LoadComplete() => InvokeFullyLoaded();
 }
