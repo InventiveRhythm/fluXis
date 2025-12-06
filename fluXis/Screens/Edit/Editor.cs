@@ -107,14 +107,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     /// <summary>
     /// overwrites the tab the editor opens with
     /// </summary>
-    public int StartTabIndex { get; init; } = -1;
+    public EditorTabType StartTab { get; init; } = EditorTabType.None;
 
     private ITrackStore trackStore { get; set; }
 
     private EditorLoader loader { get; }
 
     private Container<EditorTab> tabs;
-    public Bindable<int> CurrentTab { get; private set; } = new();
+    public Bindable<EditorTabType> CurrentTab { get; private set; } = new();
 
     public Bindable<Waveform> Waveform { get; private set; }
     private EditorMap editorMap { get; }
@@ -385,7 +385,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         },
                         new EditorTabSwitcher
                         {
-                            ChildrenEnumerable = tabs.Select(x => new EditorTabSwitcherButton(x.Icon, x.TabName, () => changeTab(tabs.IndexOf(x))))
+                            ChildrenEnumerable = tabs.Select(x => new EditorTabSwitcherButton(x.Icon, x.TabName, () => changeTab(x.Type)))
                         },
                         new EditorBottomBar()
                     }
@@ -478,10 +478,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         openTime = lastSaveTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-        var idx = isNewMap ? 0 : 1;
+        var tabType = isNewMap ? EditorTabType.Setup : EditorTabType.Charting;
 
-        if (StartTabIndex != -1)
-            idx = StartTabIndex;
+        if (StartTab != EditorTabType.None)
+            tabType = StartTab;
 
         ScheduleAfterChildren(() =>
         {
@@ -494,7 +494,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     {
                         tab.AlwaysPresent = false;
 
-                        changeTab(idx);
+                        changeTab(tabType);
                     };
                 }
             }
@@ -538,21 +538,19 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
     private void updateBlur(ValueChangedEvent<float> e) => backgrounds.SetBlur(e.NewValue);
 
-    private void changeTab(int to)
+    private void changeTab(EditorTabType to)
     {
         CurrentTab.Value = to;
 
-        if (CurrentTab.Value < 0)
-            CurrentTab.Value = 0;
-        if (CurrentTab.Value >= tabs.Count)
-            CurrentTab.Value = tabs.Count - 1;
+        if (tabs.Children.All(x => x.Type != to))
+            CurrentTab.Value = tabs[0].Type;
 
         for (var i = 0; i < tabs.Children.Count; i++)
         {
             var tab = tabs.Children[i];
 
-            if (i == CurrentTab.Value)
-                tab.Show(); 
+            if (tab.Type == CurrentTab.Value)
+                tab.Show();
             else
                 tab.Hide();
         }
@@ -580,7 +578,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 int index = e.Key - Key.Number1;
 
                 if (index < tabs.Count)
-                    changeTab(index);
+                    changeTab(tabs[index].Type);
 
                 return true;
             }

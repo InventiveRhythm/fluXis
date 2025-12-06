@@ -26,6 +26,7 @@ public partial class StoryboardTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome6.Solid.PaintBrush;
     public override string TabName => "Storyboard";
+    public override EditorTabType Type => EditorTabType.Storyboard;
 
     [Resolved]
     private EditorClock clock { get; set; }

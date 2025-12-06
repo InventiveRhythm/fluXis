@@ -9,6 +9,7 @@ public abstract partial class EditorTab : Container
 {
     public abstract IconUsage Icon { get; }
     public abstract string TabName { get; }
+    public abstract EditorTabType Type { get; }
 
     public Action OnFullyLoaded;
 
@@ -20,4 +21,14 @@ public abstract partial class EditorTab : Container
     }
 
     protected void InvokeFullyLoaded() => OnFullyLoaded?.Invoke();
+}
+
+public enum EditorTabType {
+    None,
+    Wip,
+    Setup,
+    Charting,
+    Design,
+    Storyboard,
+    Verify
 }

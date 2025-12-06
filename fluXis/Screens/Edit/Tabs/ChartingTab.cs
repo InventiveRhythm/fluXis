@@ -12,6 +12,7 @@ public partial class ChartingTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome6.Solid.PenRuler;
     public override string TabName => "Charting";
+    public override EditorTabType Type => EditorTabType.Charting;
 
     private LoadingIcon loadingIcon;
 

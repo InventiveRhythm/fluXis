@@ -20,6 +20,7 @@ public partial class VerifyTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome.Solid.CheckDouble;
     public override string TabName => "Verify";
+    public override EditorTabType Type => EditorTabType.Verify;
 
     public static readonly List<(string, float)> COLUMNS = new()
     {

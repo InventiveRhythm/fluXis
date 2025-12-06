@@ -93,7 +93,7 @@ public partial class DesignContainer : EditorTabContainer
     private void load(FluXisConfig config)
     {
         userScrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
-        tagDeps.DesignPointsSidebar = sidebar;
+        tagDeps.DesignPointsSidebar = (DesignSidebar)sidebar;
     }
 
     protected override IEnumerable<Drawable> CreateContent()

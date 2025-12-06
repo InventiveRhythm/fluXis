@@ -106,7 +106,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     [BackgroundDependencyLoader]
     private void load()
     {
-        tagDeps.ChartingPointsSidebar = sidebar;
+        tagDeps.ChartingPointsSidebar = (ChartingSidebar)sidebar;
     }
 
     protected override void LoadComplete()

@@ -12,6 +12,7 @@ public partial class DesignTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome6.Solid.Palette;
     public override string TabName => "Design";
+    public override EditorTabType Type => EditorTabType.Design;
 
     private LoadingIcon loadingIcon;
 

@@ -14,6 +14,7 @@ public partial class WipEditorTab : EditorTab
 {
     public override IconUsage Icon { get; }
     public override string TabName { get; }
+    public override EditorTabType Type => EditorTabType.Wip;
     private string description { get; }
 
     private Container content;

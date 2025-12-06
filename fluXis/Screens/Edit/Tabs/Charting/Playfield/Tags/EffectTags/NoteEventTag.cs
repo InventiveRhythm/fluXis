@@ -27,7 +27,7 @@ public partial class NoteEventTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        deps.ChartingPointsSidebar.ShowPoint(note);
+        deps.ShowPointFrom(deps.ChartingPointsSidebar, note);
         return true;
     }
 }
