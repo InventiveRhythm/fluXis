@@ -1,5 +1,4 @@
 using System.Linq;
-using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Input;
 using fluXis.Localization;
@@ -28,7 +27,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
     private readonly BindableBool showOtherModes = new(true);
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load()
     {
         AddRange(new Drawable[]
         {
@@ -36,17 +35,17 @@ public partial class InputKeybindingsSection : SettingsSubSection
             new SettingsRealmKeybind<FluXisGlobalKeybind>
             {
                 Label = strings.PreviousSelection,
-                Keybinds = new [] { FluXisGlobalKeybind.Previous }
+                Keybinds = new[] { FluXisGlobalKeybind.Previous }
             },
             new SettingsRealmKeybind<FluXisGlobalKeybind>
             {
                 Label = strings.NextSelection,
-                Keybinds = new [] { FluXisGlobalKeybind.Next }
+                Keybinds = new[] { FluXisGlobalKeybind.Next }
             },
             new SettingsRealmKeybind<FluXisGlobalKeybind>
             {
                 Label = strings.PreviousGroup,
-                Keybinds = new [] { FluXisGlobalKeybind.PreviousGroup }
+                Keybinds = new[] { FluXisGlobalKeybind.PreviousGroup }
             },
             new SettingsRealmKeybind<FluXisGlobalKeybind>
             {

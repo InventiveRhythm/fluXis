@@ -24,9 +24,9 @@ public partial class SettingsSidebarButton : Container
     private HoverLayer hover;
     private FlashLayer flash;
 
-    public SettingsSidebarButton(SettingsSubSection subSection)
+    public SettingsSidebarButton(SettingsSubSection section)
     {
-        section = subSection;
+        this.section = section;
     }
 
     [BackgroundDependencyLoader]
@@ -72,6 +72,12 @@ public partial class SettingsSidebarButton : Container
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        section.Visible.BindValueChanged(x => Alpha = x.NewValue ? 1f : 0f, true);
     }
 
     protected override bool OnClick(ClickEvent e)

@@ -89,4 +89,10 @@ public class SettingsInputStrings : LocalizationCategory
     public TranslatableString SensitivityDescription => Get("mouse-sensitivity-description", "This is only used when High Precision Mouse is enabled.");
 
     #endregion
+
+    #region Gamepad
+
+    public TranslatableString Gamepad => Get("gamepad-title", "Gamepad");
+
+    #endregion
 }

@@ -104,7 +104,7 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
     {
         foreach (var keybind in Keybinds)
         {
-            var defaultBinding = InputUtils.GetDefaultBindingFor<T>(keybind);
+            var defaultBinding = InputUtils.GetDefaultBindingFor(keybind);
             UpdateBinding(keybind, defaultBinding.KeyCombination);
         }
 

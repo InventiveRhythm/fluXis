@@ -68,7 +68,7 @@ public partial class SettingsSidebar : Container
 
                 foreach (var sub in subSection.OfType<SettingsSubSectionTitle>())
                 {
-                    flow.Add(new SettingsSidebarSubButton(sub)
+                    flow.Add(new SettingsSidebarSubButton(subSection, sub)
                     {
                         ClickAction = () => ScrollToSection?.Invoke(sub)
                     });
