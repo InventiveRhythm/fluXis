@@ -97,6 +97,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         dependencies.Cache(this);
         dependencies.CacheAs<ITimePositionProvider>(Playfields[0]);
         dependencies.CacheAs(sidebar = new ChartingSidebar());
+        dependencies.CacheAs(BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this });
     }
 
     protected override void LoadComplete()
@@ -130,7 +131,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             RelativeSizeAxes = Axes.Both,
             Content = new[] { Playfields }
         },
-        BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this }
+        BlueprintContainer
     };
 
     protected override Drawable CreateLeftSide() => new EditorToolbox()
