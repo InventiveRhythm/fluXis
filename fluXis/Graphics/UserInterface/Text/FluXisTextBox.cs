@@ -123,6 +123,7 @@ public partial class FluXisTextBox : BasicTextBox
     }
 
     public void NotifyError() => NotifyInputError();
+    public void RemoveFocus() => KillFocus();
 
     protected override void NotifyInputError()
     {
@@ -134,7 +135,7 @@ public partial class FluXisTextBox : BasicTextBox
     {
         base.OnFocus(e);
         OnFocusAction?.Invoke();
-        steam?.OpenKeyboard(ScreenSpaceDrawQuad);
+        steam?.OpenKeyboard(this);
     }
 
     protected override void OnFocusLost(FocusLostEvent e)

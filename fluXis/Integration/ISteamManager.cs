@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using fluXis.Graphics.UserInterface.Text;
 using JetBrains.Annotations;
-using osu.Framework.Graphics.Primitives;
 
 namespace fluXis.Integration;
 
@@ -18,7 +18,7 @@ public interface ISteamManager
     void OpenLink(string url);
     void SetRichPresence(SteamRichPresenceKey key, string value);
 
-    void OpenKeyboard(Quad size);
+    void OpenKeyboard(FluXisTextBox box);
     void CloseKeyboard();
 
     void UploadItem(IWorkshopItem item);

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Integration;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Fluxel;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Primitives;
 using osu.Framework.Logging;
 using Steamworks;
 
@@ -44,6 +44,7 @@ public partial class SteamManager : Component, ISteamManager
     private Callback<GetTicketForWebApiResponse_t> ticketCb { get; }
     private CallResult<CreateItemResult_t> createItemCb { get; }
     private CallResult<SubmitItemUpdateResult_t> submitItemCb { get; }
+    private Callback<FloatingGamepadTextInputDismissed_t> keyboardClose { get; }
 
     [CanBeNull]
     private IWorkshopItem currentItem;
@@ -61,6 +62,7 @@ public partial class SteamManager : Component, ISteamManager
             ticketCb = Callback<GetTicketForWebApiResponse_t>.Create(authTicketCallback);
             createItemCb = CallResult<CreateItemResult_t>.Create(createItemCallback);
             submitItemCb = CallResult<SubmitItemUpdateResult_t>.Create(onItemSubmitted);
+            keyboardClose = Callback<FloatingGamepadTextInputDismissed_t>.Create(onKeyboardClosed);
         }
         catch (Exception e)
         {
@@ -130,15 +132,30 @@ public partial class SteamManager : Component, ISteamManager
         rpc[pchKey] = value;
     }
 
-    public void OpenKeyboard(Quad size) => SteamUtils.ShowFloatingGamepadTextInput(
-        EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeSingleLine,
-        (int)size.TopLeft.X,
-        (int)size.TopLeft.Y,
-        (int)size.Width,
-        (int)size.Height
-    );
+    [CanBeNull]
+    private FluXisTextBox currentTextBox;
 
-    public void CloseKeyboard() => SteamUtils.DismissFloatingGamepadTextInput();
+    public void OpenKeyboard(FluXisTextBox box)
+    {
+        currentTextBox = box;
+        var size = box.ScreenSpaceDrawQuad;
+
+        SteamUtils.ShowFloatingGamepadTextInput(
+            EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeSingleLine,
+            (int)size.TopLeft.X,
+            (int)size.TopLeft.Y,
+            (int)size.Width,
+            (int)size.Height
+        );
+    }
+
+    public void CloseKeyboard()
+    {
+        currentTextBox = null;
+        SteamUtils.DismissFloatingGamepadTextInput();
+    }
+
+    private void onKeyboardClosed(FloatingGamepadTextInputDismissed_t param) => currentTextBox?.RemoveFocus();
 
     public void UploadItem(IWorkshopItem item)
     {
