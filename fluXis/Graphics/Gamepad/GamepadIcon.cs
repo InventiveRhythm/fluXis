@@ -1,8 +1,8 @@
 using osu.Framework.Allocation;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input;
-using osu.Framework.Logging;
 
 namespace fluXis.Graphics.Gamepad;
 
@@ -11,39 +11,31 @@ public partial class GamepadIcon : Sprite
     [Resolved]
     private TextureStore textures { get; set; }
 
-    public string ButtonName
+    private readonly string glyph;
+
+    public GamepadIcon(ButtonGlyph glyph)
     {
-        get => buttonName;
-        set
-        {
-            buttonName = value;
-            if (textures != null) updateIcon();
-        }
+        this.glyph = glyph.GetDescription();
     }
 
-    public JoystickButton Button
+    public GamepadIcon(JoystickButton button)
     {
-        set
+        var gl = button switch
         {
-            ButtonName = value switch
-            {
-                JoystickButton.Button1 => "X",
-                JoystickButton.Button2 => "A",
-                JoystickButton.Button3 => "B",
-                JoystickButton.Button4 => "Y",
-                JoystickButton.Button9 => "View",
-                _ => ""
-            };
+            JoystickButton.Button1 => ButtonGlyph.X,
+            JoystickButton.Button2 => ButtonGlyph.A,
+            JoystickButton.Button3 => ButtonGlyph.B,
+            JoystickButton.Button4 => ButtonGlyph.Y,
+            JoystickButton.Button9 => ButtonGlyph.View,
+            JoystickButton.Button10 => ButtonGlyph.Menu,
+            _ => ButtonGlyph.None
+        };
 
-            if (string.IsNullOrEmpty(ButtonName))
-                Logger.Log($"missing button name for {value}");
-        }
+        glyph = gl.GetDescription();
     }
-
-    private string buttonName;
 
     [BackgroundDependencyLoader]
     private void load() => updateIcon();
 
-    private void updateIcon() => Texture = textures.Get($"ButtonIcons/Xbox/{buttonName}");
+    private void updateIcon() => Texture = textures.Get($"ButtonIcons/Xbox/{glyph}");
 }

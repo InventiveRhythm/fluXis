@@ -11,6 +11,8 @@ namespace fluXis.Input.Bindings;
 public abstract partial class RealmKeyBindingContainer<T> : KeyBindingContainer<T>
     where T : struct
 {
+    protected virtual List<KeyBinding> GamepadBinds { get; } = new();
+
     private readonly FluXisRealm realm;
 
     protected RealmKeyBindingContainer(FluXisRealm realm, SimultaneousBindingMode simultaneousMode = SimultaneousBindingMode.None,
@@ -41,11 +43,8 @@ public abstract partial class RealmKeyBindingContainer<T> : KeyBindingContainer<
     protected void ReloadMappings(IQueryable<RealmKeybind> keybindings)
     {
         var realmBindings = keybindings.AsEnumerable();
-        var bindings = convertKeybindings(realmBindings).Where(k => DefaultKeyBindings.Any(d => d.Action.Equals(k.Action)));
-
-        KeyBindings = bindings.Any()
-            ? bindings
-            : DefaultKeyBindings;
+        var bindings = convertKeybindings(realmBindings).Where(k => DefaultKeyBindings.Any(d => d.Action.Equals(k.Action))).ToList();
+        KeyBindings = (bindings.Count != 0 ? bindings : DefaultKeyBindings).Concat(GamepadBinds);
     }
 
     private IEnumerable<IKeyBinding> convertKeybindings(IEnumerable<RealmKeybind> bindings)

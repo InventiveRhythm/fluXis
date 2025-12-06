@@ -1,4 +1,4 @@
-using System;
+using System.ComponentModel;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Allocation;
@@ -11,9 +11,14 @@ namespace fluXis.Graphics.Gamepad;
 
 public partial class GamepadTooltip : FillFlowContainer
 {
-    public LocalisableString Text { get; init; } = string.Empty;
-    public string[] Icons { get; init; } = Array.Empty<string>();
-    public string Icon { init => Icons = new[] { value }; }
+    public LocalisableString Text { get; }
+    public ButtonGlyph[] Icons { get; }
+
+    public GamepadTooltip(LocalisableString text, params ButtonGlyph[] icons)
+    {
+        Text = text;
+        Icons = icons;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -23,9 +28,8 @@ public partial class GamepadTooltip : FillFlowContainer
         Spacing = new Vector2(4);
         Anchor = Origin = Anchor.CentreLeft;
 
-        InternalChildren = Icons.Select<string, Drawable>(i => new GamepadIcon
+        InternalChildren = Icons.Select<ButtonGlyph, Drawable>(i => new GamepadIcon(i)
         {
-            ButtonName = i,
             Size = new Vector2(30)
         }).Append(new FluXisSpriteText
         {
@@ -37,3 +41,48 @@ public partial class GamepadTooltip : FillFlowContainer
     }
 }
 
+public enum ButtonGlyph
+{
+    None = -1,
+
+    A,
+    B,
+    X,
+    Y,
+
+    [Description("Dpad")]
+    Pad,
+
+    [Description("DpadDown")]
+    PadDown,
+
+    [Description("DpadUp")]
+    PadUp,
+
+    [Description("DpadLeft")]
+    PadLeft,
+
+    [Description("DpadRight")]
+    PadRight,
+
+    [Description("LB")]
+    LeftBump,
+
+    [Description("RB")]
+    RightBump,
+
+    [Description("LT")]
+    LeftTrigger,
+
+    [Description("RT")]
+    RightTrigger,
+
+    LeftStick,
+    RightStick,
+    LeftStickClick,
+    RightStickClick,
+
+    Menu,
+    View,
+    Share
+}
