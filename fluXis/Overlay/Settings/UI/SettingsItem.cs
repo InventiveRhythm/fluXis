@@ -3,6 +3,7 @@ using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Input.Focus;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -15,7 +16,7 @@ using osuTK;
 
 namespace fluXis.Overlay.Settings.UI;
 
-public abstract partial class SettingsItem : Container
+public abstract partial class SettingsItem : Container, IFocusable
 {
     public LocalisableString Label { get; init; } = string.Empty;
     public LocalisableString Description { get; init; } = string.Empty;
@@ -235,4 +236,17 @@ public abstract partial class SettingsItem : Container
             content.ScaleTo(1, 1000, Easing.OutElastic);
         }
     }
+
+    #region IFocusable
+
+    protected bool HoldingFocus { get; set; } = false;
+    bool IFocusable.HoldingFocus => HoldingFocus;
+
+    protected virtual bool ActivateFocus() => false;
+    protected virtual void DeactivateFocus() { }
+
+    bool IFocusable.Activate() => ActivateFocus();
+    void IFocusable.Deactivate() => DeactivateFocus();
+
+    #endregion
 }

@@ -34,6 +34,8 @@ public partial class SettingsCategoryTab : Container
     private void load()
     {
         Size = new Vector2(70);
+        Anchor = Anchor.CentreLeft;
+        Origin = Anchor.CentreLeft;
 
         InternalChild = scalingContainer = new Container
         {

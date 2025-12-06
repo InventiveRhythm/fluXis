@@ -16,4 +16,10 @@ public partial class SettingsToggle : SettingsItem
     };
 
     protected override void Reset() => Bindable.SetDefault();
+
+    protected override bool ActivateFocus()
+    {
+        Bindable.Value = !Bindable.Value;
+        return true;
+    }
 }

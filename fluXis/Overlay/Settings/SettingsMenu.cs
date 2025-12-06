@@ -53,6 +53,8 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
         OpenSample = samples.Get("UI/Settings/open");
         CloseSample = samples.Get("UI/Settings/close");
         tabSwitch = samples.Get("UI/Settings/change-tab");
+
+        Content.ItemFocused += i => scrollContainer.ScrollTo(i as Drawable);
     }
 
     protected override Drawable[] CreateContent() => new Drawable[]
