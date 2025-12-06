@@ -1,5 +1,4 @@
 using fluXis.Overlay.Browse;
-using fluXis.Overlay.Chat;
 using fluXis.Overlay.Music;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
@@ -30,7 +29,6 @@ public partial class TestToolbar : FluXisTestScene
             TestDependencies.Cache(new SettingsMenu());
             TestDependencies.Cache(new FluXisScreenStack());
 
-            TestDependencies.Cache(new ChatOverlay());
             TestDependencies.Cache(new Dashboard());
             TestDependencies.Cache(new BrowseOverlay());
             TestDependencies.Cache(new WikiOverlay());

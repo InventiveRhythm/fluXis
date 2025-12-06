@@ -30,7 +30,7 @@ public class EditorMap : IVerifyContext
     public EditorMapInfo MapInfo { get; set; }
     public RealmMap RealmMap { get; set; }
 
-    public FileWatcher ScriptWatcher { get; }
+    public FileWatcher ScriptWatcher { get; private set; }
 
     public MapEvents MapEvents => MapInfo.MapEvents;
     public Storyboard Storyboard => MapInfo.Storyboard;
@@ -56,8 +56,11 @@ public class EditorMap : IVerifyContext
 
         this.loadComponent = loadComponent;
         this.scheduler = scheduler;
+    }
 
-        ScriptWatcher = new FileWatcher(map.MapSet, "*.lua");
+    public void SetupWatcher()
+    {
+        ScriptWatcher = new FileWatcher(RealmMap.MapSet, "*.lua");
         ScriptWatcher.Changed += (_, e) => Schedule(() => ScriptChanged?.Invoke(e.Name));
     }
 

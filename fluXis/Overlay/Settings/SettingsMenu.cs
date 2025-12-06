@@ -39,7 +39,6 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
         new GraphicsSection(),
         new PluginsSection(),
         new MaintenanceSection(),
-        new DebugSection(),
         new ExperimentsSection()
     };
 
@@ -104,6 +103,7 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
                                         RelativeSizeAxes = Axes.Both,
                                         ScrollbarAnchor = Anchor.TopRight,
                                         Masking = false,
+                                        HideScrollbarOnInactivity = true,
                                         Child = new Container<SettingsSection>
                                         {
                                             RelativeSizeAxes = Axes.X,

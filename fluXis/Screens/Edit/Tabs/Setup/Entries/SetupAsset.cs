@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using fluXis.Database;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Files;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Utils;
@@ -14,7 +15,8 @@ namespace fluXis.Screens.Edit.Tabs.Setup.Entries;
 
 public partial class SetupAsset : SetupEntry, IDragDropHandler
 {
-    protected override float ContentSpacing => -3;
+    protected override float ContentSpacing => -2;
+    protected override bool ShowHoverFlash => true;
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -30,41 +32,23 @@ public partial class SetupAsset : SetupEntry, IDragDropHandler
 
     public Action<FileInfo> OnChange { get; init; } = _ => { };
 
-    public string Path
-    {
-        set
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                value = "Click to select file...";
-                empty = true;
-            }
-
-            path = value;
-
-            if (text != null)
-            {
-                text.Text = path;
-                text.Alpha = empty ? .6f : 1;
-            }
-        }
-    }
-
     private TruncatingText text;
-    private string path = string.Empty;
-    private bool empty;
 
-    public SetupAsset(string title)
+    private bool empty => string.IsNullOrEmpty(path);
+    private string path;
+
+    public SetupAsset(string title, string path = "")
         : base(title)
     {
+        this.path = path;
     }
 
     protected override Drawable CreateContent() => text = new TruncatingText
     {
         RelativeSizeAxes = Axes.X,
-        Text = path,
+        Text = empty ? "Click to select file..." : path,
         WebFontSize = 18,
-        Alpha = empty ? .6f : 1
+        Colour = empty ? Theme.Foreground : Theme.Text
     };
 
     protected override bool OnClick(ClickEvent e)
@@ -84,8 +68,11 @@ public partial class SetupAsset : SetupEntry, IDragDropHandler
 
     private void setPath(FileInfo file)
     {
-        Path = file.Name;
+        path = file.Name;
         OnChange.Invoke(file);
+
+        text.Colour = Theme.Text;
+        text.Text = file.Name;
     }
 
     public bool OnDragDrop(string file)

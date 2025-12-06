@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Database.Maps;
@@ -7,20 +9,24 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Screens;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Overlay.Music;
 
@@ -36,27 +42,61 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     private MapStore maps { get; set; }
 
     [Resolved]
+    private Toolbar.Toolbar toolbar { get; set; }
+
+    [Resolved]
+    private GlobalBackground globalBackground { get; set; }
+
+    [Resolved]
     private FluXisScreenStack screens { get; set; }
 
-    private const int inner_padding = 40;
-    private const int rounding = 20;
+    private const float cover_small = 288;
+    private const float cover_big = 144;
 
+    private const int inner_padding = 8;
+    private const int rounding = 16;
+
+    private Container contentPad;
     private Container content;
+
+    private Box dim;
+    private BufferedContainer blur;
     private SpriteStack<MapBackground> backgrounds;
     private BackgroundVideo video;
+
+    private Container coversContainer;
     private SpriteStack<MapCover> covers;
+
+    private Container trackInfoContainer;
+    private FillFlowContainer metadata;
     private FluXisSpriteText title;
     private FluXisSpriteText artist;
+
+    private FillFlowContainer<MusicPlayerButton> buttons;
     private MusicPlayerButton pausePlay;
+    private MusicPlayerButton fullscreenToggle;
 
     private Container gradient;
-    private Container metadataContainer;
+    private VerticalSectionedGradient colorGradient;
+    private Box progress;
 
     protected override bool StartHidden => true;
+
+    [UsedImplicitly]
+    private float animationProgress;
+
+    private float lastProgress = -1;
+    private bool fullscreen;
+
+    private double metadataCountdown;
+    private bool metadataVisible;
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        // to shut up msbuild
+        animationProgress = 0;
+
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
@@ -65,31 +105,37 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
             new FullInputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
+                Allow = new List<Type> { typeof(MouseMoveEvent) },
+                GenericHandle = e =>
+                {
+                    if (e is not KeyDownEvent kde) return false;
+                    if (kde.Key != Key.F || kde.Repeat) return false;
+
+                    toggleFullscreen();
+                    return true;
+                },
                 Child = new ClickableContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Action = Hide,
-                    Child = new Box
+                    Child = dim = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black,
-                        Alpha = .5f
+                        Colour = Colour4.Black.Opacity(0.5f)
                     }
                 }
             },
-            new Container
+            contentPad = new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Horizontal = 150, Bottom = 150, Top = 20 },
+                Padding = new MarginPadding { Right = 20, Top = 70 },
                 Child = content = new HoverClickContainer
                 {
-                    RelativeSizeAxes = Axes.Both,
                     Masking = true,
                     CornerRadius = rounding,
-                    Y = -50,
                     EdgeEffect = Styling.ShadowLarge,
-                    HoverAction = showMetadata,
-                    HoverLostAction = hideMetadata,
+                    Anchor = Anchor.TopRight,
+                    Origin = Anchor.TopRight,
                     Children = new Drawable[]
                     {
                         new Box
@@ -97,132 +143,138 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                             RelativeSizeAxes = Axes.Both,
                             Colour = Theme.Background2
                         },
-                        backgrounds = new SpriteStack<MapBackground>(),
-                        video = new BackgroundVideo
+                        blur = new BufferedContainer
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Clock = globalClock,
-                            PlaybackStarted = hideMetadata
+                            RedrawOnScale = false,
+                            Children = new Drawable[]
+                            {
+                                backgrounds = new SpriteStack<MapBackground>(),
+                                video = new BackgroundVideo
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Clock = globalClock
+                                },
+                            }
                         },
                         gradient = new Container
                         {
                             RelativeSizeAxes = Axes.Both,
                             Alpha = .5f,
-                            Children = new Box[]
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Children = new Drawable[]
                             {
-                                new()
+                                colorGradient = new VerticalSectionedGradient
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Height = .8f,
-                                    Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(0), Colour4.Black)
+                                    EndAlpha = 0,
+                                    Colour = Theme.Highlight,
+                                    Alpha = 0.5f
                                 },
-                                new()
+                                new VerticalSectionedGradient
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Height = .2f,
-                                    Colour = Colour4.Black,
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft
-                                }
+                                    EndAlpha = 0,
+                                    Colour = Colour4.Black
+                                },
                             }
                         },
                         new MusicVisualiser(),
-                        metadataContainer = new Container
+                        trackInfoContainer = new Container
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding { Horizontal = inner_padding, Bottom = inner_padding, Top = rounding + inner_padding },
+                            Padding = new MarginPadding(inner_padding),
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
                             AlwaysPresent = true,
                             Children = new Drawable[]
                             {
-                                new FillFlowContainer
+                                coversContainer = new Container
+                                {
+                                    Size = new Vector2(96),
+                                    Masking = true,
+                                    CornerRadius = 8,
+                                    EdgeEffect = Styling.ShadowSmall,
+                                    Child = covers = new SpriteStack<MapCover>()
+                                },
+                                metadata = new FillFlowContainer
                                 {
                                     AutoSizeAxes = Axes.Both,
-                                    Direction = FillDirection.Horizontal,
-                                    Spacing = new Vector2(20, 0),
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft,
+                                    Direction = FillDirection.Vertical,
                                     Children = new Drawable[]
                                     {
-                                        new Container
+                                        title = new TruncatingText
                                         {
-                                            Size = new Vector2(150),
-                                            Masking = true,
-                                            CornerRadius = 20,
-                                            Anchor = Anchor.CentreLeft,
-                                            Origin = Anchor.CentreLeft,
-                                            EdgeEffect = Styling.ShadowMedium,
-                                            Child = covers = new SpriteStack<MapCover>()
+                                            Text = "Song Title",
+                                            WebFontSize = 20,
+                                            Shadow = true
                                         },
-                                        new FillFlowContainer
+                                        artist = new TruncatingText
+                                        {
+                                            Text = "by Artist",
+                                            WebFontSize = 14,
+                                            Shadow = true
+                                        },
+                                        buttons = new FillFlowContainer<MusicPlayerButton>
                                         {
                                             AutoSizeAxes = Axes.Both,
-                                            Direction = FillDirection.Vertical,
-                                            Anchor = Anchor.CentreLeft,
-                                            Origin = Anchor.CentreLeft,
-                                            Children = new Drawable[]
+                                            Direction = FillDirection.Horizontal,
+                                            Spacing = new Vector2(12),
+                                            Margin = new MarginPadding { Top = 12 },
+                                            Children = new[]
                                             {
-                                                title = new FluXisSpriteText
+                                                new()
                                                 {
-                                                    Text = "Song Title",
-                                                    FontSize = 36,
-                                                    Shadow = true
-                                                },
-                                                artist = new FluXisSpriteText
-                                                {
-                                                    Text = "by Artist",
-                                                    Colour = Theme.Text2,
-                                                    FontSize = 32,
-                                                    Shadow = true
-                                                },
-                                                new FillFlowContainer
-                                                {
-                                                    AutoSizeAxes = Axes.Both,
-                                                    Direction = FillDirection.Horizontal,
-                                                    Spacing = new Vector2(10, 0),
-                                                    Margin = new MarginPadding { Top = 20 },
-                                                    Children = new Drawable[]
+                                                    Icon = FontAwesome6.Solid.BackwardStep,
+                                                    Action = () =>
                                                     {
-                                                        new MusicPlayerButton
-                                                        {
-                                                            Icon = FontAwesome6.Solid.BackwardStep,
-                                                            Action = () =>
-                                                            {
-                                                                if (screens.AllowMusicControl)
-                                                                    game.PreviousSong();
-                                                            }
-                                                        },
-                                                        pausePlay = new MusicPlayerButton
-                                                        {
-                                                            Icon = FontAwesome6.Solid.Play,
-                                                            Action = () =>
-                                                            {
-                                                                if (!screens.AllowMusicPausing)
-                                                                    return;
-
-                                                                if (globalClock.IsRunning)
-                                                                    globalClock.Stop();
-                                                                else
-                                                                    globalClock.Start();
-                                                            }
-                                                        },
-                                                        new MusicPlayerButton
-                                                        {
-                                                            Icon = FontAwesome6.Solid.ForwardStep,
-                                                            Action = () =>
-                                                            {
-                                                                if (screens.AllowMusicControl)
-                                                                    game.NextSong();
-                                                            }
-                                                        }
+                                                        if (screens.AllowMusicControl)
+                                                            game.PreviousSong();
                                                     }
+                                                },
+                                                pausePlay = new MusicPlayerButton
+                                                {
+                                                    Icon = FontAwesome6.Solid.Play,
+                                                    Action = () =>
+                                                    {
+                                                        if (!screens.AllowMusicPausing)
+                                                            return;
+
+                                                        if (globalClock.IsRunning)
+                                                            globalClock.Stop();
+                                                        else
+                                                            globalClock.Start();
+                                                    }
+                                                },
+                                                new()
+                                                {
+                                                    Icon = FontAwesome6.Solid.ForwardStep,
+                                                    Action = () =>
+                                                    {
+                                                        if (screens.AllowMusicControl)
+                                                            game.NextSong();
+                                                    }
+                                                },
+                                                fullscreenToggle = new MusicPlayerButton
+                                                {
+                                                    Icon = FontAwesome6.Solid.UpRightAndDownLeftFromCenter,
+                                                    Action = toggleFullscreen
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
+                        },
+                        progress = new Box
+                        {
+                            Size = new Vector2(0, 4),
+                            RelativeSizeAxes = Axes.X,
+                            Colour = Theme.Text,
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft
                         }
                     }
                 }
@@ -235,6 +287,69 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         base.LoadComplete();
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        globalBackground.Alpha = screens.Alpha = dim.Alpha = animationProgress >= 1f ? 0 : 1;
+        backgrounds.Alpha = video.Alpha >= 1f ? 0 : 1;
+
+        progress.Width = (float)((globalClock.CurrentTrack?.CurrentTime ?? 0) / (globalClock.CurrentTrack?.Length ?? 1000));
+
+        pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome6.Solid.Pause : FontAwesome6.Solid.Play;
+        fullscreenToggle.IconSprite.Icon = fullscreen ? FontAwesome6.Solid.DownLeftAndUpRightToCenter : FontAwesome6.Solid.UpRightAndDownLeftFromCenter;
+
+        if (video.IsPlaying && fullscreen) metadataCountdown -= Time.Elapsed;
+        if (metadataCountdown <= 0) hideMetadata();
+
+        // needs to be outside to react to toolbar movement
+        contentPad.Padding = new MarginPadding
+        {
+            Top = Interpolation.ValueAt(animationProgress, toolbar.DrawHeight + toolbar.Y + 20, 0, 0, 1),
+            Right = Interpolation.ValueAt(animationProgress, 20, 0, 0, 1)
+        };
+
+        title.MaxWidth = artist.MaxWidth = Interpolation.ValueAt(animationProgress, cover_small, DrawWidth - 36 * 2 - 12 - cover_big, 0, 1);
+
+        title.Margin = new MarginPadding { Left = Interpolation.ValueAt(animationProgress, cover_small / 2f - Math.Min(title.DrawWidth, title.MaxWidth) / 2f, 0, 0, 1) };
+        artist.Margin = new MarginPadding { Left = Interpolation.ValueAt(animationProgress, cover_small / 2f - Math.Min(artist.DrawWidth, artist.MaxWidth) / 2f, 0, 0, 1) };
+
+        if (lastProgress == animationProgress)
+            return;
+
+        lastProgress = animationProgress;
+
+        var blurVal = Interpolation.ValueAt(animationProgress, .5f, 0f, 0, 1);
+        blur.BlurSigma = new Vector2(blurVal * 12);
+        blur.FrameBufferScale = new Vector2(1 - blurVal * .5f);
+
+        gradient.Height = Interpolation.ValueAt(animationProgress, 2f, 1f, 0, 1);
+
+        content.Width = Interpolation.ValueAt(animationProgress, cover_small + inner_padding * 2, DrawWidth, 0, 1);
+        content.Height = Interpolation.ValueAt(animationProgress, 444, DrawHeight, 0, 1);
+        content.CornerRadius = Interpolation.ValueAt(animationProgress, rounding, 0, 0, 1);
+
+        trackInfoContainer.Width = Interpolation.ValueAt(animationProgress, cover_small + inner_padding * 2, DrawWidth, 0, 1);
+        trackInfoContainer.Height = Interpolation.ValueAt(animationProgress, 444, cover_big + 36 * 2, 0, 1);
+        trackInfoContainer.Padding = new MarginPadding(Interpolation.ValueAt(animationProgress, inner_padding, 36, 0, 1));
+
+        metadata.X = Interpolation.ValueAt(animationProgress, 0, cover_big + 12, 0, 1);
+        metadata.Y = Interpolation.ValueAt(animationProgress, cover_small + 20, cover_big / 2f - 58, 0, 1);
+
+        coversContainer.Size = new Vector2(Interpolation.ValueAt(animationProgress, cover_small, cover_big, 0, 1));
+
+        title.WebFontSize = Interpolation.ValueAt(animationProgress, 20, 24, 0, 1);
+        artist.WebFontSize = Interpolation.ValueAt(animationProgress, 14, 16, 0, 1);
+
+        buttons.Margin = new MarginPadding
+        {
+            Top = Interpolation.ValueAt(animationProgress, 12, 20, 0, 1),
+            Left = Interpolation.ValueAt(animationProgress, cover_small / 2f - 196 / 2f, 0, 0, 1)
+        };
+
+        progress.Height = Interpolation.ValueAt(animationProgress, 4, 8, 0, 1);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -253,6 +368,16 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         if (next == null) return;
 
         video.Stop();
+
+        var color = next.Metadata.Color;
+        var hue = color.ToHSL().X;
+        var accent = Colour4.FromHSL(hue, .6f, .9f);
+
+        title.FadeColour(accent, 400);
+        artist.FadeColour(accent, 400);
+        progress.FadeColour(accent, 400);
+        buttons.ForEach(x => x.IconSprite.FadeColour(accent, 400));
+        colorGradient.FadeColour(accent, 400);
 
         title.Text = next.Metadata.LocalizedTitle;
         artist.Text = next.Metadata.LocalizedArtist;
@@ -285,39 +410,55 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
 
     private void showMetadata()
     {
-        metadataContainer.ClearTransforms();
-        metadataContainer.FadeIn(200);
+        metadataCountdown = 4000;
+        if (metadataVisible) return;
+
+        metadataVisible = true;
+
+        trackInfoContainer.ClearTransforms();
+        trackInfoContainer.FadeIn(200);
 
         gradient.ClearTransforms();
         gradient.FadeTo(.5f, 200);
+
+        progress.ClearTransforms();
+        progress.FadeIn(200);
     }
 
     private void hideMetadata()
     {
-        if (!video.IsPlaying) return;
+        if (!metadataVisible) return;
 
-        metadataContainer.Delay(1000).FadeOut(800);
+        metadataVisible = false;
+
+        trackInfoContainer.Delay(1000).FadeOut(800);
         gradient.Delay(1000).FadeOut(800);
+        progress.Delay(1000).FadeOut(800);
     }
 
-    protected override void Update()
+    private void toggleFullscreen()
     {
-        base.Update();
+        fullscreen = !fullscreen;
+        this.TransformTo(nameof(animationProgress), fullscreen ? 1f : 0f, 600, Easing.OutQuint);
 
-        pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome6.Solid.Pause : FontAwesome6.Solid.Play;
+        if (fullscreen)
+            toolbar.Hide();
+        else
+            toolbar.Show();
     }
 
     protected override void PopIn()
     {
         this.FadeIn(200);
-        content.MoveToY(0, 400, Easing.OutQuint);
+        content.ScaleTo(.9f).ScaleTo(1f, 800, Easing.OutElasticHalf);
         showMetadata();
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
-        content.MoveToY(-50, 400, Easing.OutQuint);
+        content.ScaleTo(.9f, 400, Easing.OutQuint);
+        if (fullscreen) toggleFullscreen();
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
@@ -325,7 +466,10 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         switch (e.Action)
         {
             case FluXisGlobalKeybind.Back:
-                Hide();
+                if (fullscreen)
+                    toggleFullscreen();
+                else
+                    Hide();
                 return true;
         }
 
@@ -333,4 +477,10 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
+
+    protected override bool OnMouseMove(MouseMoveEvent e)
+    {
+        showMetadata();
+        return true;
+    }
 }

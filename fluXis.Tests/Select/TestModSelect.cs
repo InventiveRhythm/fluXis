@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using fluXis.Graphics.UserInterface;
 using fluXis.Mods;
@@ -59,27 +60,25 @@ public partial class TestModSelect : FluXisManualInputTestScene
     {
         ModSelectRate rate = null!;
         SliderBar<float> slider = null!;
+        ModSelectRate.SliderTickMark mark = null!;
 
         showAndWait();
         AddStep("change rate", () =>
         {
             rate = mods.ChildrenOfType<ModSelectRate>().First();
             slider = rate.ChildrenOfType<SliderBar<float>>().First();
+            mark = rate.ChildrenOfType<ModSelectRate.SliderTickMark>().First(x => Math.Abs(x.Value - 1f) < 0.01f);
 
-            Input.MoveMouseTo(slider);
-            Input.PressButton(MouseButton.Left);
             Input.MoveMouseTo(slider, new Vector2(250, 0));
-            Input.ReleaseButton(MouseButton.Left);
+            Input.Click(MouseButton.Left);
         });
         AddAssert("mods has rate", () => mods.SelectedMods.Any(x => x is RateMod));
         AddStep("move to reset", () =>
         {
-            var w = slider.DrawWidth;
-            var progress = (rate.RateBindable.Default - rate.RateBindable.MinValue) / (rate.RateBindable.MaxValue - rate.RateBindable.MinValue);
-
-            Input.PressButton(MouseButton.Left);
-            Input.MoveMouseTo(slider, new Vector2(-(w * (0.5f - progress)), 0));
-            Input.ReleaseButton(MouseButton.Left);
+            var x = mark.ScreenSpaceDrawQuad.Centre.X;
+            var y = slider.ScreenSpaceDrawQuad.Centre.Y;
+            Input.MoveMouseTo(new Vector2(x, y));
+            Input.Click(MouseButton.Left);
         });
         AddAssert("mods no longer has rate", () => !mods.SelectedMods.Any(x => x is RateMod));
     }

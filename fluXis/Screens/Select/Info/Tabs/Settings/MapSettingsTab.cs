@@ -126,7 +126,7 @@ public partial class MapSettingsTab : SelectInfoTab
         {
             Label = title,
             Description = description,
-            Step = Convert.ToSingle(step),
+            Step = step,
             Bindable = bind,
             SmallReset = true
         };

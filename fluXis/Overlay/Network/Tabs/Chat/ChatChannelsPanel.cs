@@ -16,7 +16,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Overlay.Chat;
+namespace fluXis.Overlay.Network.Tabs.Chat;
 
 public partial class ChatChannelsPanel : Panel, ICloseable
 {

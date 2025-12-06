@@ -13,26 +13,28 @@ using osu.Framework.Utils;
 
 namespace fluXis.Screens.Select.List.Drawables.MapSet;
 
+#nullable enable
+
 public partial class DrawableMapSetItem : CompositeDrawable
 {
-    public Action SelectAction;
-    public Action<RealmMap> EditAction;
-    public Action<RealmMapSet> ExportAction;
-    public Action<RealmMapSet> DeleteAction;
+    public Action? SelectAction;
+    public Action<RealmMap>? EditAction;
+    public Action<RealmMapSet>? ExportAction;
+    public Action<RealmMapSet>? DeleteAction;
 
-    private MapSetItem item { get; }
-    public RealmMapSet MapSet { get; private set; }
+    private readonly MapSetItem item;
+    private readonly RealmMapSet set;
     private readonly List<RealmMap> maps;
 
     private SelectedState selectedState = SelectedState.Deselected;
 
-    private DrawableMapSetHeader header;
-    private Container<DrawableMapSetDifficulty> difficultyFlow;
+    private DrawableMapSetHeader header = null!;
+    private Container<DrawableMapSetDifficulty> difficultyFlow = null!;
 
-    public DrawableMapSetItem(MapSetItem item, RealmMapSet mapSet, List<RealmMap> maps)
+    public DrawableMapSetItem(MapSetItem item, RealmMapSet set, List<RealmMap> maps)
     {
-        MapSet = mapSet;
         this.item = item;
+        this.set = set;
         this.maps = maps;
     }
 
@@ -52,7 +54,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
                 AutoSizeAxes = Axes.Y,
                 Padding = new MarginPadding { Horizontal = 10 }
             },
-            header = new DrawableMapSetHeader(this, MapSet)
+            header = new DrawableMapSetHeader(this, set)
         };
 
         foreach (var map in maps)
@@ -109,8 +111,6 @@ public partial class DrawableMapSetItem : CompositeDrawable
         EditAction = null;
         ExportAction = null;
         DeleteAction = null;
-
-        MapSet = null;
     }
 
     private void updateSelected(ValueChangedEvent<SelectedState> v)

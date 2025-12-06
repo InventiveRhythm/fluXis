@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
+using fluXis.Map.Drawables;
 using fluXis.Storyboards;
 using fluXis.Storyboards.Drawables;
 using JetBrains.Annotations;
@@ -25,9 +26,13 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
     protected override IEnumerable<Drawable> CreateContent()
     {
         var info = Map?.GetMapInfo();
+        MapBackground background = null;
 
         foreach (var drawable in base.CreateContent())
+        {
+            background ??= drawable as MapBackground;
             yield return drawable;
+        }
 
         if (info is null)
             yield break;
@@ -38,6 +43,8 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
 
         if (stream != null)
         {
+            if (background != null) background.Alpha = 0;
+
             yield return video = new Video(stream)
             {
                 RelativeSizeAxes = Axes.Both,
@@ -56,14 +63,14 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
             var layers = Enum.GetValues<StoryboardLayer>();
 
             foreach (var layer in layers)
-                yield return new DrawableStoryboardWrapper(framed, storyboard, layer);
+                yield return new DrawableStoryboardLayer(framed, storyboard, layer);
         }
     }
 
     protected override BufferedContainer CreateBlur(IEnumerable<Drawable> enu)
     {
         var children = enu.ToList();
-        var cache = !children.Any(x => x is Video or DrawableStoryboardWrapper);
+        var cache = !children.Any(x => x is Video or DrawableStoryboardLayer);
         return new BufferedContainer(cachedFrameBuffer: cache)
         {
             RelativeSizeAxes = Axes.Both,

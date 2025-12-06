@@ -55,7 +55,8 @@ public abstract partial class EditorHitObject : CompositeDrawable
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Colour = Theme.Background2,
+                    Colour = Theme.TextDark,
+                    WebFontSize = 14,
                     Alpha = 0
                 }
             }
@@ -68,7 +69,7 @@ public abstract partial class EditorHitObject : CompositeDrawable
     {
         base.Update();
 
-        text.Text = Data.HitSound?.Replace(".wav", "") ?? "";
+        text.Text = Data.HitSound?.Replace(".wav", "") ?? ":normal";
         text.Alpha = settings.ShowSamples.Value ? 1 : 0;
 
         X = Playfield.HitObjectContainer.PositionFromLane(Data.Lane);

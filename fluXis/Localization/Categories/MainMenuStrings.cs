@@ -19,7 +19,7 @@ public class MainMenuStrings : LocalizationCategory
     public TranslatableString MultiplayerDescription => new(GetKey("multiplayer-description"), "Play with others");
 
     public TranslatableString DashboardText => new(GetKey("dashboard-text"), "Dashboard");
-    public TranslatableString DashboardDescription => new(GetKey("dashboard-description"), "See updates, news and more");
+    public TranslatableString DashboardDescription => new(GetKey("dashboard-description"), "Updates, Chats, news and more");
 
     public TranslatableString BrowseText => new(GetKey("browse-text"), "Browse");
     public TranslatableString BrowseDescription => new(GetKey("browse-description"), "Download community-made maps");

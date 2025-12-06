@@ -55,9 +55,9 @@ public partial class TestStoryboard : FluXisTestScene
             Masking = true,
             Children = new Drawable[]
             {
-                new DrawableStoryboardWrapper(GlobalClock, drawable, StoryboardLayer.Background),
-                new DrawableStoryboardWrapper(GlobalClock, drawable, StoryboardLayer.Foreground),
-                new DrawableStoryboardWrapper(GlobalClock, drawable, StoryboardLayer.Overlay)
+                new DrawableStoryboardLayer(GlobalClock, drawable, StoryboardLayer.Background),
+                new DrawableStoryboardLayer(GlobalClock, drawable, StoryboardLayer.Foreground),
+                new DrawableStoryboardLayer(GlobalClock, drawable, StoryboardLayer.Overlay)
             }
         });
 

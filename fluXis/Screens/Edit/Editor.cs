@@ -200,6 +200,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         editorMap.MapInfo.MapEvents ??= new MapEvents();
         editorMap.MapInfo.Storyboard ??= new Storyboard();
 
+        editorMap.SetupWatcher();
         editorMap.SetupNotifiers();
 
         backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
@@ -593,9 +594,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         switch (e.Action)
         {
             case EditorKeybinding.Save:
-                editorMap.ScriptWatcher.Disable();
                 save();
-                editorMap.ScriptWatcher.Enable();
                 return true;
 
             case EditorKeybinding.OpenFolder:
@@ -736,6 +735,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return true;
         }
 
+        editorMap.ScriptWatcher.Disable();
+
         var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         editorMap.MapInfo.TimeInEditor += now - lastSaveTime;
 
@@ -746,6 +747,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         updateStateHash();
         notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
         lastSaveTime = now;
+        
+        editorMap.ScriptWatcher.Enable();
         return true;
     }
 

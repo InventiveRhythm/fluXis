@@ -11,6 +11,7 @@ using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using Humanizer;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -50,6 +51,11 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
 
     private Container<TimelineElement> elementContainer;
     public TimelineBlueprintContainer Blueprints { get; set; } = new();
+
+    [UsedImplicitly]
+    private float visualZ = 0;
+
+    private float targetZ = 0;
 
     private bool dragging;
 
@@ -173,13 +179,13 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         => elementContainer.FirstOrDefault(e => e.Element == element);
 
     public float PositionAtTime(double time) => (float)(DrawWidth / 2 + .5f * ((time - clock.CurrentTime) * settings.Zoom));
-    public float PositionAtZ(long index) => index * 48;
+    public float PositionAtZ(long index) => (index - visualZ) * 48;
 
     public Vector2 ScreenSpacePositionAtTime(double time, int z)
         => ToScreenSpace(new Vector2(PositionAtTime(time), PositionAtZ(z) + 8));
 
     public double TimeAtPosition(float x) => (x - DrawWidth / 2) * 2 / settings.Zoom + clock.CurrentTime;
-    public int ZAtPosition(float y) => (int)(y / 48);
+    public int ZAtPosition(float y) => (int)(y / 48f + visualZ);
 
     public double TimeAtScreenSpacePosition(Vector2 pos) => TimeAtPosition(ToLocalSpace(pos).X);
     public int ZAtScreenSpacePosition(Vector2 pos) => ZAtPosition(ToLocalSpace(pos).Y);
@@ -189,7 +195,12 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         var scroll = e.ShiftPressed ? e.ScrollDelta.X : e.ScrollDelta.Y;
         var delta = scroll > 0 ? 1 : -1;
 
-        if (e.ControlPressed)
+        if (e.ShiftPressed)
+        {
+            targetZ = (float)Math.Max(0, Math.Round(targetZ - (delta * 2)) - 0.35f);
+            this.TransformTo(nameof(visualZ), targetZ, 300, Easing.OutQuint);
+        }
+        else if (e.ControlPressed)
         {
             settings.Zoom = Math.Clamp(settings.Zoom += delta * .1f, 1f, 5f);
             overlayText.Text = $"Zoom: {(settings.Zoom / 2f).ToStringInvariant("0.00")}x";

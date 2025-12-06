@@ -45,7 +45,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 items.Add(new MenuActionItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => selection.Select(mapset.LowestDifficulty)));
 
             if (mapset.OnlineID > 0)
-                items.Add(new MenuActionItem("View Online", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)) { IsEnabled = () => api.CanUseOnline });
+                items.Add(new MenuActionItem(LocalizationStrings.General.ViewOnline, FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)) { IsEnabled = () => api.CanUseOnline });
 
             items.Add(new MenuActionItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset))
                 { IsEnabled = () => !mapset.AutoImported });

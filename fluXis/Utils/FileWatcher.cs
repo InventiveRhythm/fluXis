@@ -13,6 +13,9 @@ public class FileWatcher : FileSystemWatcher
 
     public FileWatcher(string path, string filter = "*.*", NotifyFilters filters = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName)
     {
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
         Path = path;
         NotifyFilter = filters;
         Filter = filter;

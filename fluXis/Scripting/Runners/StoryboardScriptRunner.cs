@@ -18,7 +18,7 @@ public class StoryboardScriptRunner : ScriptRunner
     [LuaGlobal(Name = "screen")]
     public LuaVector2 ScreenResolution { get; }
 
-    public StoryboardScriptRunner(MapInfo map, Storyboard storyboard)
+    public StoryboardScriptRunner(MapInfo map, Storyboard storyboard, LuaSettings settings)
     {
         this.storyboard = storyboard;
         Map = map;
@@ -26,6 +26,7 @@ public class StoryboardScriptRunner : ScriptRunner
         ScreenResolution = new LuaVector2(storyboard.Resolution);
         AddField("screen", ScreenResolution);
         AddField("metadata", new LuaMetadata(map));
+        AddField("settings", settings);
 
         AddFunction("Add", add);
 

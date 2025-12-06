@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Drawables;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -182,7 +184,8 @@ public partial class FluXisTextBox : BasicTextBox
 
     public partial class FluXisCaret : Caret
     {
-        [Resolved]
+        [CanBeNull]
+        [Resolved(CanBeNull = true)]
         private IBeatSyncProvider beatSync { get; set; }
 
         private bool shouldPulse = true;
@@ -213,11 +216,13 @@ public partial class FluXisTextBox : BasicTextBox
 
             base.LoadComplete();
 
-            beatSync.OnBeat += onBeat;
+            if (beatSync != null)
+                beatSync.OnBeat += onBeat;
         }
 
         private void onBeat(int beat, bool finish)
         {
+            Debug.Assert(beatSync != null);
             if (!shouldPulse) return;
 
             this.FadeIn().FadeTo(.5f, beatSync.BeatTime);
@@ -256,7 +261,9 @@ public partial class FluXisTextBox : BasicTextBox
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
-            beatSync.OnBeat -= onBeat;
+
+            if (beatSync != null)
+                beatSync.OnBeat -= onBeat;
         }
     }
 }

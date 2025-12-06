@@ -181,7 +181,7 @@ public partial class StoryboardTab : EditorTab
                 Alpha = editor.BindableBackgroundDim.Value
             }
         });
-        aspect.AddRange(Enum.GetValues<StoryboardLayer>().Select(x => new DrawableStoryboardWrapper(clock, draw, x)).ToArray());
+        aspect.AddRange(Enum.GetValues<StoryboardLayer>().Select(x => new DrawableStoryboardLayer(clock, draw, x)).ToArray());
         ScheduleAfterChildren(() => loading.FadeOut(300));
     }
 

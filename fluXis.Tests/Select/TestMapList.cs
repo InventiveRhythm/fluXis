@@ -6,39 +6,38 @@ using fluXis.Screens.Select.List;
 using fluXis.Screens.Select.List.Items;
 using fluXis.Utils;
 using NUnit.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 
 namespace fluXis.Tests.Select;
 
 public partial class TestMapList : FluXisTestScene
 {
-    private bool cached = false;
     private MapList list;
 
-    [SetUp]
-    public void Setup() => Schedule(() =>
+    [BackgroundDependencyLoader]
+    private void load()
     {
-        Clear();
+        CreateClock();
 
-        if (!cached)
-        {
-            CreateClock();
+        TestDependencies.Cache(new GlobalBackground());
+        TestDependencies.Cache(new PanelContainer());
+        TestDependencies.Cache(new SettingsMenu());
 
-            TestDependencies.Cache(new GlobalBackground());
-            TestDependencies.Cache(new PanelContainer());
-            TestDependencies.Cache(new SettingsMenu());
+        var screen = new SoloSelectScreen();
+        TestDependencies.CacheAs<SelectScreen>(screen);
+        LoadComponent(screen);
 
-            var screen = new SoloSelectScreen();
-            TestDependencies.CacheAs<SelectScreen>(screen);
-            LoadComponent(screen);
-        }
-
-        cached = true;
-
-        list = new MapList(new Bindable<MapUtils.SortingMode>());
-        Add(list);
+        Add(list = new MapList(new Bindable<MapUtils.SortingMode>()));
+        TestDependencies.CacheAs<ISelectionManager>(list);
         list.Show();
-    });
+    }
+
+    [SetUp]
+    public void Setup()
+    {
+        list?.Clear();
+    }
 
     [Test]
     public void TestSingleSet()
@@ -51,17 +50,17 @@ public partial class TestMapList : FluXisTestScene
     }
 
     [Test]
-    public void TestManyMaps()
-    {
-        createMapsCount(80000);
-    }
-
-    [Test]
     public void TestSorting()
     {
         createMapsCount(25);
         AddStep("Change Sorting to Title", () => list.SetSorting(MapUtils.SortingMode.Title));
         AddStep("Change Sorting to Difficulty", () => list.SetSorting(MapUtils.SortingMode.Difficulty));
+    }
+
+    [Test]
+    public void TestManyMaps()
+    {
+        createMapsCount(20000);
     }
 
     private void createMapsCount(int count)

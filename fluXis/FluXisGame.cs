@@ -18,7 +18,6 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Overlay.Achievements;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Browse;
-using fluXis.Overlay.Chat;
 using fluXis.Overlay.Club;
 using fluXis.Overlay.Exit;
 using fluXis.Overlay.FPS;
@@ -138,7 +137,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(dashboard = new Dashboard(), overlayContainer.Add, true);
-        loadComponent(new ChatOverlay(), overlayContainer.Add, true);
         loadComponent(new BrowseOverlay(), overlayContainer.Add, true);
         loadComponent(mapSetOverlay = new MapSetOverlay(), overlayContainer.Add, true);
         loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
