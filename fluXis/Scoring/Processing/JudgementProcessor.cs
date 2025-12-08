@@ -22,9 +22,9 @@ public class JudgementProcessor
         }
     }
 
-    public void ApplyMap(MapInfo map)
+    public void ApplyMap(MapInfo map, int playerIndex)
     {
-        dependants.ForEach(d => d.ApplyMap(map));
+        dependants.ForEach(d => d.ApplyMap(map, playerIndex));
     }
 
     public void AddResult(HitResult result)

@@ -62,7 +62,7 @@ public class HealthProcessor : JudgementDependant
             Health.Value = Health.MinValue;
     }
 
-    public override void ApplyMap(MapInfo map) => Map = map;
+    public override void ApplyMap(MapInfo map, int playerIndex) => Map = map;
 
     public override void AddResult(HitResult result)
     {

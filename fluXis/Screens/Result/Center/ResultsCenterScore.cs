@@ -9,17 +9,28 @@ namespace fluXis.Screens.Result.Center;
 
 public partial class ResultsCenterScore : CompositeDrawable
 {
+    [Resolved]
+    private Results results { get; set; }
+
+    [Resolved]
+    private ScoreInfo score { get; set; }
+
+    private ForcedHeightText scoreText;
+    private ForcedHeightText differenceText;
+
     [BackgroundDependencyLoader]
-    private void load(Results results, ScoreInfo score)
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Margin = new MarginPadding { Top = 36 };
 
+        int playerIndex = results.SelectedPlayer.Value;
+
         var difference = "";
 
         if (results.ComparisonScore != null)
-            difference = $"{score.Score - results.ComparisonScore.Score:+#0;-#0}";
+            difference = $"{score.Players[playerIndex].Score - results.ComparisonScore.Players[0].Score:+#0;-#0}"; //TODO: better logic for dual maps
 
         InternalChild = new FillFlowContainer
         {
@@ -39,16 +50,16 @@ public partial class ResultsCenterScore : CompositeDrawable
                     Origin = Anchor.Centre,
                     Alpha = .8f
                 },
-                new ForcedHeightText
+                scoreText = new ForcedHeightText
                 {
-                    Text = $"{score.Score:000000}",
+                    Text = $"{score.Players[playerIndex].Score:000000}",
                     WebFontSize = 64,
                     Height = 48,
                     Shadow = true,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 },
-                new ForcedHeightText
+                differenceText = new ForcedHeightText
                 {
                     Text = difference,
                     WebFontSize = 24,
@@ -60,5 +71,18 @@ public partial class ResultsCenterScore : CompositeDrawable
                 }
             }
         };
+
+        results.SelectedPlayer.BindValueChanged(v => updateContentForPlayer(v.NewValue));
+    }
+
+    private void updateContentForPlayer(int playerIndex)
+    {
+        var difference = "";
+
+        if (results.ComparisonScore != null)
+            difference = $"{score.Players[playerIndex].Score - results.ComparisonScore.Players[0].Score:+#0;-#0}"; //TODO: better logic for dual maps
+
+        scoreText.Text = $"{score.Players[playerIndex].Score:000000}";
+        differenceText.Text = difference;
     }
 }

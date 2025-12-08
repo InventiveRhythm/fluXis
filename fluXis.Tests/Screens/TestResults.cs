@@ -5,7 +5,6 @@ using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Scores;
-using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Scores;
 using fluXis.Online.API.Responses.Scores;
 using fluXis.Replays;
@@ -57,31 +56,38 @@ public partial class TestResults : FluXisTestScene
 
     private ScoreInfo getScore() => new()
     {
-        Accuracy = 98.661736f,
-        Rank = ScoreRank.S,
-        PerformanceRating = 8,
-        Score = 1139289,
-        MaxCombo = 1218,
-        Flawless = 898,
-        Perfect = 290,
-        Great = 30,
-        Alright = 0,
-        Okay = 0,
-        Miss = 0,
-        Mods = new List<string> { "1.5x" }
+        Mods = new List<string> { "1.5x" },
+        Players = new List<PlayerScore>
+        {
+            new PlayerScore
+            {
+                PlayerID = -1,
+                Accuracy = 98.661736f,
+                Rank = ScoreRank.S,
+                PerformanceRating = 8,
+                Score = 1139289,
+                MaxCombo = 1218,
+                Flawless = 898,
+                Perfect = 290,
+                Great = 30,
+                Alright = 0,
+                Okay = 0,
+                Miss = 0,
+            }
+        }
     };
 
     [Test]
     public void Normal()
     {
-        AddStep("Push", () => stack.Push(new Results(getMap(), getScore(), APIUser.Dummy)));
+        AddStep("Push", () => stack.Push(new Results(getMap(), getScore())));
     }
 
     [Test]
     public void WithRequestFromGameplay()
     {
         var score = getScore();
-        AddStep("Push With Request", () => stack.Push(new SoloResults(getMap(), score, APIUser.Dummy)
+        AddStep("Push With Request", () => stack.Push(new SoloResults(getMap(), score)
         {
             SubmitRequest = new SimulatedScoreRequest(score, new List<IMod>(), new Replay(), "", "", "")
         }));
@@ -90,7 +96,7 @@ public partial class TestResults : FluXisTestScene
     [Test]
     public void WithRestart()
     {
-        AddStep("Push With Restart", () => stack.Push(new Results(getMap(), getScore(), APIUser.Dummy) { OnRestart = () => Logger.Log("Restart pressed.") }));
+        AddStep("Push With Restart", () => stack.Push(new Results(getMap(), getScore()) { OnRestart = () => Logger.Log("Restart pressed.") }));
     }
 
     private class SimulatedScoreRequest : ScoreSubmitRequest

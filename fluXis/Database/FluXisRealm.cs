@@ -11,7 +11,8 @@ using osu.Framework.Development;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using Realms;
-using Realms.Dynamic;
+
+//using Realms.Dynamic;
 
 namespace fluXis.Database;
 
@@ -123,6 +124,8 @@ public class FluXisRealm : IDisposable
 
                 break;
 
+            //TODO: make this work again
+            /*
             case 8:
                 var newScores2 = migration.NewRealm.All<RealmScore>().ToList();
 
@@ -152,6 +155,7 @@ public class FluXisRealm : IDisposable
                 }
 
                 break;
+            */
 
             case 10:
                 var mapsets = migration.OldRealm.DynamicApi.All("RealmMapSet").ToList();
@@ -286,6 +290,8 @@ public class FluXisRealm : IDisposable
                 maps.ForEach(x => x.Settings = new RealmMapUserSettings());
                 break;
             }
+
+            //TODO: dual score migration
         }
     }
 

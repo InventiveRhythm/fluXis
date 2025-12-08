@@ -52,6 +52,8 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay profileOverlay { get; set; }
 
+    public int PlayerIndex { get; set; } = 0;
+
     public MenuItem[] ContextMenuItems
     {
         get
@@ -130,7 +132,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                 rankBackground = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = DrawableScoreRank.GetColor(ScoreInfo.Rank, true)
+                    Colour = DrawableScoreRank.GetColor(ScoreInfo.Players[PlayerIndex].Rank, true)
                 },
                 new Container
                 {
@@ -292,14 +294,14 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                                                     {
                                                         new FluXisSpriteText
                                                         {
-                                                            Text = ScoreInfo.Accuracy.ToString("00.00").Replace(",", ".") + "%",
+                                                            Text = ScoreInfo.Players[PlayerIndex].Accuracy.ToString("00.00").Replace(",", ".") + "%",
                                                             WebFontSize = 12,
                                                             Anchor = Anchor.CentreLeft,
                                                             Origin = Anchor.CentreLeft
                                                         },
                                                         new FluXisSpriteText
                                                         {
-                                                            Text = $"{ScoreInfo.MaxCombo}x",
+                                                            Text = $"{ScoreInfo.Players[PlayerIndex].MaxCombo}x",
                                                             WebFontSize = 12,
                                                             Anchor = Anchor.CentreLeft,
                                                             Origin = Anchor.CentreLeft,
@@ -321,14 +323,14 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                                             {
                                                 new FluXisSpriteText
                                                 {
-                                                    Text = $"{ScoreInfo.PerformanceRating.ToStringInvariant("00.00")}pr",
+                                                    Text = $"{ScoreInfo.Players[PlayerIndex].PerformanceRating.ToStringInvariant("00.00")}pr",
                                                     WebFontSize = 20,
                                                     Anchor = Anchor.CentreRight,
                                                     Origin = Anchor.CentreRight
                                                 },
                                                 new FluXisSpriteText
                                                 {
-                                                    Text = ScoreInfo.Score.ToString("0000000"),
+                                                    Text = ScoreInfo.Players[PlayerIndex].Score.ToString("0000000"),
                                                     WebFontSize = 14,
                                                     Anchor = Anchor.CentreRight,
                                                     Origin = Anchor.CentreRight,
@@ -349,7 +351,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                     Origin = Anchor.CentreRight,
                     Child = new DrawableScoreRank
                     {
-                        Rank = ScoreInfo.Rank,
+                        Rank = ScoreInfo.Players[PlayerIndex].Rank,
                         FontSize = FluXisSpriteText.GetWebFontSize(28),
                         Shadow = false,
                         AlternateColor = true,
@@ -378,7 +380,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                .Then((Place - 1) * 50)
                .MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
 
-        if (ScoreInfo.Rank == ScoreRank.X)
+        if (ScoreInfo.Players[PlayerIndex].Rank == ScoreRank.X)
             rankBackground.Rainbow();
     }
 
@@ -511,12 +513,13 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
         }
     }
 
-    private void viewDetails() => game.PresentScore(Map, ScoreInfo, Player, ReplayAction);
+    private void viewDetails() => game.PresentScore(Map, ScoreInfo, ReplayAction);
 
-    public ITooltip<ScoreInfo> GetCustomTooltip() => new ScoreListEntryTooltip();
+    public ITooltip<ScoreInfo> GetCustomTooltip() => new ScoreListEntryTooltip(PlayerIndex);
 
     private partial class ScoreListEntryTooltip : CustomTooltipContainer<ScoreInfo>
     {
+        private int playerIndex;
         private ForcedHeightText dateText { get; }
         private ForcedHeightText dateAgoText { get; }
         private TooltipRow flawlessText { get; }
@@ -526,8 +529,10 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
         private TooltipRow okayText { get; }
         private TooltipRow missText { get; }
 
-        public ScoreListEntryTooltip()
+        public ScoreListEntryTooltip(int playerIndex)
         {
+            this.playerIndex = playerIndex;
+
             CornerRadius = 10;
             Child = new FillFlowContainer
             {
@@ -590,17 +595,19 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
         public override void SetContent(ScoreInfo score)
         {
+            if (score.Players == null || playerIndex >= score.Players.Count) return;
+
             var date = TimeUtils.GetFromSeconds(score.Timestamp);
 
             dateText.Text = $"{date:dd MMMM yyyy} @ {date:HH:mm}";
             dateAgoText.Text = TimeUtils.Ago(date);
 
-            flawlessText.Text = $"{score.Flawless}";
-            perfectText.Text = $"{score.Perfect}";
-            greatText.Text = $"{score.Great}";
-            alrightText.Text = $"{score.Alright}";
-            okayText.Text = $"{score.Okay}";
-            missText.Text = $"{score.Miss}";
+            flawlessText.Text = $"{score.Players[playerIndex].Flawless}";
+            perfectText.Text = $"{score.Players[playerIndex].Perfect}";
+            greatText.Text = $"{score.Players[playerIndex].Great}";
+            alrightText.Text = $"{score.Players[playerIndex].Alright}";
+            okayText.Text = $"{score.Players[playerIndex].Okay}";
+            missText.Text = $"{score.Players[playerIndex].Miss}";
         }
     }
 
