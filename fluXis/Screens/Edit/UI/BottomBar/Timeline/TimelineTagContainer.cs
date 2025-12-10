@@ -64,6 +64,28 @@ public partial class TimelineTagContainer : Container
         );
     }
 
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        if (map == null)
+            return;
+
+        deRegisterListeners(
+            map.MapInfo.TimingPoints,
+            timingPoints,
+            tp => new TimelineTimingPointTag(clock, tp),
+            t => (TimingPoint)t.TimedObject
+        );
+
+        deRegisterListeners(
+            map.MapInfo.MapEvents.NoteEvents,
+            notePoints,
+            n => new TimelineNoteTag(clock, n),
+            t => (NoteEvent)t.TimedObject
+        );
+    }
+
     private void registerListeners<TObject, TTag>(
         System.Collections.Generic.List<TObject> items,
         Container<TTag> container,
@@ -76,6 +98,19 @@ public partial class TimelineTagContainer : Container
         map.RegisterUpdateListener<TObject>(obj => updateTag(container, getTimedObject, obj));
         map.RegisterRemoveListener<TObject>(obj => removeTag(container, getTimedObject, obj));
         items.ForEach(obj => addTag(container, f, obj));
+    }
+
+    private void deRegisterListeners<TObject, TTag>(
+        System.Collections.Generic.List<TObject> items,
+        Container<TTag> container,
+        Func<TObject, TTag> f,
+        Func<TTag, TObject> getTimedObject)
+        where TObject : class, ITimedObject
+        where TTag : Drawable
+    {
+        map.DeregisterAddListener<TObject>(obj => addTag(container, f, obj));
+        map.DeregisterUpdateListener<TObject>(obj => updateTag(container, getTimedObject, obj));
+        map.DeregisterRemoveListener<TObject>(obj => removeTag(container, getTimedObject, obj));
     }
 
     private void addTag<TObject, TTag>(Container<TTag> container, Func<TObject, TTag> f, TObject obj)
