@@ -130,7 +130,7 @@ public partial class TimelineTag : Container
 
         trimText();
         Text.FadeOut(100);
-        textContainer.ResizeWidthTo(10, 100, Easing.In).Then().ResizeHeightTo(0, 100, Easing.OutQuint);
+        textContainer.ResizeWidthTo(collapsedSize.X, 100, Easing.In).Then().ResizeHeightTo(0, 100, Easing.OutQuint);
         this.Delay(200).Then().ResizeTo(collapsedSize, 200, Easing.OutQuint);
     }
 

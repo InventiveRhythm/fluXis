@@ -37,10 +37,11 @@ public partial class TimelineTagContainer : Container
         Height = 8;
         Y = -Offset;
 
+        // children order is important for priorety - first: lowest, last: highest
         Children = new Drawable[]
         {
-            timingPoints = new() { RelativeSizeAxes = Axes.Both },
             notePoints = new() { RelativeSizeAxes = Axes.Both },
+            timingPoints = new() { RelativeSizeAxes = Axes.Both },
         };
     }
 
