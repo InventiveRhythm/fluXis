@@ -6,6 +6,7 @@ using fluXis.Localization.Categories.Settings;
 using fluXis.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
+using osu.Framework.Configuration;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;
@@ -25,11 +26,18 @@ public partial class AudioDeviceSection : SettingsSubSection
     private AudioDropdown deviceDropdown;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FrameworkConfigManager fwConfig)
     {
         Add(deviceDropdown = new AudioDropdown
         {
             Label = strings.OutputDevice
+        });
+
+        Add(new SettingsToggle
+        {
+            Label = "Use WASAPI (Experimental)",
+            Description = "Makes the audio library use WASAPI on Windows. Experimental and needs adjustment to offset after changing.",
+            Bindable = fwConfig.GetBindable<bool>(FrameworkSetting.AudioUseExperimentalWasapi)
         });
 
         updateDeviceDropdown();

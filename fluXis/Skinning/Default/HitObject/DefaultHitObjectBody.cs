@@ -10,16 +10,17 @@ namespace fluXis.Skinning.Default.HitObject;
 
 public partial class DefaultHitObjectBody : ColorableSkinDrawable, ICanHaveSnapColor
 {
+    public Box BoxSprite { get; }
+
     public DefaultHitObjectBody(SkinJson skinJson, MapColor index)
         : base(skinJson, index)
     {
-        RelativeSizeAxes = Axes.X;
-        Width = 0.9f;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
-        InternalChild = new Box
+        InternalChild = BoxSprite = new Box
         {
             RelativeSizeAxes = Axes.Both,
+            Width = 0.9f,
+            Anchor = Anchor.BottomCentre,
+            Origin = Anchor.BottomCentre,
             Colour = ColourInfo.GradientVertical(Colour4.White.Darken(.4f), Colour4.White)
         };
     }

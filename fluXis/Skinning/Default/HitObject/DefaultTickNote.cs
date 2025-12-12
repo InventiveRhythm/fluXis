@@ -10,9 +10,6 @@ public partial class DefaultTickNote : CompositeDrawable
     {
         Width = small ? 0.8f : 1f;
 
-        RelativeSizeAxes = Axes.X;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
         Colour = Colour4.FromHex("#F2C979");
         Height = 20;
         CornerRadius = 10;

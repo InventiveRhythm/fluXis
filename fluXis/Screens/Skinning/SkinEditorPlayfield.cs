@@ -64,10 +64,12 @@ public partial class SkinEditorPlayfield : Container
             receptorContainer.Add(receptor);
             receptor.Width = 1f / KeyMode;
 
-            var hitObject = Skin.GetHitObject(i + 1, KeyMode);
-            hitObject.Anchor = Anchor.BottomLeft;
-            hitObject.Origin = Anchor.BottomLeft;
-            hitObjectContainer.Add(hitObject);
+            hitObjectContainer.Add(Skin.GetHitObject(i + 1, KeyMode).With(h =>
+            {
+                h.RelativeSizeAxes = Axes.X;
+                h.Anchor = Anchor.BottomLeft;
+                h.Origin = Anchor.BottomLeft;
+            }));
         }
     }
 
