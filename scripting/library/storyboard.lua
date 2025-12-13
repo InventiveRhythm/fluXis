@@ -87,6 +87,8 @@ local __StoryboardOutlineCircle = {}
 
 ---@class StoryboardSkinSprite: StoryboardElement
 ---@field sprite number
+---@field lane number
+---@field keycount number
 local __StoryboardSkinSprite = {}
 
 ---@class StoryboardSprite: StoryboardElement

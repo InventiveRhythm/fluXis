@@ -19,15 +19,17 @@ public partial class DrawableStoryboardSkinSprite : DrawableStoryboardElement
     private void load(ISkin skin)
     {
         var spr = Element.GetParameter("sprite", SkinSprite.HitObject);
+        var lane = Element.GetParameter("lane", 0);
+        var keycount = Element.GetParameter("keycount", 0);
 
         InternalChild = spr switch
         {
-            SkinSprite.HitObject => getSprite(skin.GetHitObject(0, 0)).With(x => x.RelativeSizeAxes = Axes.X),
-            SkinSprite.LongNoteStart => getSprite(skin.GetLongNoteStart(0, 0)).With(x => x.RelativeSizeAxes = Axes.X),
-            SkinSprite.LongNoteBody => getSprite(skin.GetLongNoteBody(0, 0)).With(x => x.RelativeSizeAxes = Axes.Both),
-            SkinSprite.LongNoteEnd => getSprite(skin.GetLongNoteStart(0, 0)).With(x => x.RelativeSizeAxes = Axes.X),
-            SkinSprite.TickNote => getSprite(skin.GetTickNote(0, 0, false)).With(x => x.RelativeSizeAxes = Axes.X),
-            SkinSprite.TickNoteSmall => getSprite(skin.GetTickNote(0, 0, true)).With(t =>
+            SkinSprite.HitObject => getSprite(skin.GetHitObject(lane, keycount)).With(x => x.RelativeSizeAxes = Axes.X),
+            SkinSprite.LongNoteStart => getSprite(skin.GetLongNoteStart(lane, keycount)).With(x => x.RelativeSizeAxes = Axes.X),
+            SkinSprite.LongNoteBody => getSprite(skin.GetLongNoteBody(lane, keycount)).With(x => x.RelativeSizeAxes = Axes.Both),
+            SkinSprite.LongNoteEnd => getSprite(skin.GetLongNoteStart(lane, keycount)).With(x => x.RelativeSizeAxes = Axes.X),
+            SkinSprite.TickNote => getSprite(skin.GetTickNote(lane, keycount, false)).With(x => x.RelativeSizeAxes = Axes.X),
+            SkinSprite.TickNoteSmall => getSprite(skin.GetTickNote(lane, keycount, true)).With(t =>
             {
                 t.RelativeSizeAxes = Axes.X;
 
@@ -35,7 +37,7 @@ public partial class DrawableStoryboardSkinSprite : DrawableStoryboardElement
                 var y = Origin & (Anchor.y0 | Anchor.y1 | Anchor.y2);
                 t.Anchor = t.Origin = y | Anchor.x1;
             }),
-            SkinSprite.Receptor => getSprite(skin.GetReceptor(0, 0, false))
+            SkinSprite.Receptor => getSprite(skin.GetReceptor(lane, keycount, false))
                 .With(r => r.RelativeSizeAxes = r is DefaultReceptorUp ? Axes.Both : Axes.X),
 
             SkinSprite.StageBackground => getSprite(skin.GetStageBackgroundPart(Anchor.Centre)),
