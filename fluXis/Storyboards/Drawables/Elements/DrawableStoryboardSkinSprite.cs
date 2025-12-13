@@ -3,6 +3,7 @@ using fluXis.Skinning;
 using fluXis.Skinning.Default.Receptor;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osuTK;
 
 namespace fluXis.Storyboards.Drawables.Elements;
 
@@ -37,8 +38,16 @@ public partial class DrawableStoryboardSkinSprite : DrawableStoryboardElement
                 var y = Origin & (Anchor.y0 | Anchor.y1 | Anchor.y2);
                 t.Anchor = t.Origin = y | Anchor.x1;
             }),
-            SkinSprite.Receptor => getSprite(skin.GetReceptor(lane, keycount, false))
-                .With(r => r.RelativeSizeAxes = r is DefaultReceptorUp ? Axes.Both : Axes.X),
+            SkinSprite.Receptor => getSprite(skin.GetReceptor(lane, keycount, false)).With(r =>
+            {
+                if (r is DefaultReceptorUp)
+                {
+                    r.RelativeSizeAxes = Axes.Both;
+                    r.Size = new Vector2(1);
+                }
+                else
+                    r.RelativeSizeAxes = Axes.X;
+            }),
 
             SkinSprite.StageBackground => getSprite(skin.GetStageBackgroundPart(Anchor.Centre)),
             SkinSprite.StageBackgroundTop => getSprite(skin.GetStageBackgroundPart(Anchor.TopCentre)),
