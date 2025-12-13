@@ -108,7 +108,10 @@ public enum StoryboardElementType
     Circle = 4,
 
     [Icon(0xf111, Regular = true)]
-    OutlineCircle = 5
+    OutlineCircle = 5,
+
+    [Icon(0xf1fc)]
+    SkinSprite = 6
 }
 
 public enum StoryboardLayer
@@ -116,4 +119,14 @@ public enum StoryboardLayer
     Background = 0,
     Foreground = 1,
     Overlay = 2
+}
+
+public enum SkinSprite
+{
+    HitObject,
+    LongNoteStart,
+    LongNoteBody,
+    LongNoteEnd,
+    TickNote,
+    TickNoteSmall
 }

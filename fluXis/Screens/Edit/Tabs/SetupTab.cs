@@ -175,7 +175,7 @@ public partial class SetupTab : EditorTab
                                                                 map.MapEvents.LaneSwitchEvents.ForEach(map.Update);
                                                             }
                                                         },
-                                                        new SetupSlider<int>("Extra Playfields", map.MapInfo.ExtraPlayfields, 0, 5, 1)
+                                                        new SetupSlider<int>("Extra Playfields", map.MapInfo.ExtraPlayfields, 0, 9, 1)
                                                         {
                                                             Format = "0",
                                                             OnChange = value => map.MapInfo.ExtraPlayfields = value

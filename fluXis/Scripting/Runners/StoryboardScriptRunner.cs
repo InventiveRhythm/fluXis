@@ -43,6 +43,7 @@ public class StoryboardScriptRunner : ScriptRunner
         AddFunction("StoryboardText", newText);
         AddFunction("StoryboardCircle", newCircle);
         AddFunction("StoryboardOutlineCircle", newOutlineCircle);
+        AddFunction("StoryboardSkinSprite", newSkinSprite);
     }
 
     public void Process(StoryboardElement element)
@@ -83,4 +84,8 @@ public class StoryboardScriptRunner : ScriptRunner
 
     [LuaGlobal(Name = "StoryboardOutlineCircle")]
     private LuaStoryboardOutlineCircle newOutlineCircle() => new();
+
+    [LuaGlobal(Name = "StoryboardSkinSprite")]
+    private LuaStoryboardSkinSprite newSkinSprite([LuaCustomType(typeof(SkinSprite))] string str)
+        => new(Enum.TryParse<SkinSprite>(str, out var s) ? s : SkinSprite.HitObject);
 }
