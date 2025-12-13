@@ -149,7 +149,10 @@ public partial class RulesetContainer : CompositeDrawable
             else
             {
                 foreach (var group in ev.Groups)
-                    ev.Apply(scrolls[group]);
+                {
+                    if (scrolls.TryGetValue(group, out var scroll))
+                        ev.Apply(scroll);
+                }
             }
         }
 
