@@ -7,6 +7,7 @@ using fluXis.Map;
 using fluXis.Scripting;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Runners;
+using fluXis.Skinning;
 using fluXis.Storyboards.Storage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
@@ -19,6 +20,9 @@ public partial class DrawableStoryboard : CompositeDrawable
 {
     [Resolved]
     private FluXisConfig config { get; set; }
+
+    [Resolved]
+    private ISkin skin { get; set; }
 
     public Storyboard Storyboard { get; }
     private MapInfo map { get; }
@@ -64,7 +68,7 @@ public partial class DrawableStoryboard : CompositeDrawable
             return null;
 
         var raw = File.ReadAllText(full);
-        var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard, new LuaSettings(config));
+        var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard, new LuaSettings(config), skin);
 
         try
         {
