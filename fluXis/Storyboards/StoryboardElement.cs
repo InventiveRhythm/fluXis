@@ -128,5 +128,16 @@ public enum SkinSprite
     LongNoteBody,
     LongNoteEnd,
     TickNote,
-    TickNoteSmall
+    TickNoteSmall,
+    Receptor,
+
+    StageBackground,
+    StageBackgroundTop,
+    StageBackgroundBottom,
+    StageLeftTop,
+    StageLeft,
+    StageLeftBottom,
+    StageRightTop,
+    StageRight,
+    StageRightBottom,
 }

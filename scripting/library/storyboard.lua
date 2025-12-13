@@ -112,6 +112,21 @@ local __StoryboardText = {}
 
 ---@alias SkinSprite string
 ---| "HitObject"
+---| "LongNoteStart"
+---| "LongNoteBody"
+---| "LongNoteEnd"
+---| "TickNote"
+---| "TickNoteSmall"
+---| "Receptor"
+---| "StageBackground"
+---| "StageBackgroundTop"
+---| "StageBackgroundBottom"
+---| "StageLeftTop"
+---| "StageLeft"
+---| "StageLeftBottom"
+---| "StageRightTop"
+---| "StageRight"
+---| "StageRightBottom"
 
 ---@alias LayerName string
 ---| "Background"

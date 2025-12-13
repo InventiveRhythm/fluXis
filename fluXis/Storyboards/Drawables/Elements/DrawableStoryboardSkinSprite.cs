@@ -1,5 +1,6 @@
 ﻿using System;
 using fluXis.Skinning;
+using fluXis.Skinning.Default.Receptor;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
@@ -34,6 +35,19 @@ public partial class DrawableStoryboardSkinSprite : DrawableStoryboardElement
                 var y = Origin & (Anchor.y0 | Anchor.y1 | Anchor.y2);
                 t.Anchor = t.Origin = y | Anchor.x1;
             }),
+            SkinSprite.Receptor => getSprite(skin.GetReceptor(0, 0, false))
+                .With(r => r.RelativeSizeAxes = r is DefaultReceptorUp ? Axes.Both : Axes.X),
+
+            SkinSprite.StageBackground => getSprite(skin.GetStageBackgroundPart(Anchor.Centre)),
+            SkinSprite.StageBackgroundTop => getSprite(skin.GetStageBackgroundPart(Anchor.TopCentre)),
+            SkinSprite.StageBackgroundBottom => getSprite(skin.GetStageBackgroundPart(Anchor.BottomCentre)),
+            SkinSprite.StageLeft => getSprite(skin.GetStageBackgroundPart(Anchor.CentreLeft)),
+            SkinSprite.StageLeftTop => getSprite(skin.GetStageBackgroundPart(Anchor.TopLeft)),
+            SkinSprite.StageLeftBottom => getSprite(skin.GetStageBackgroundPart(Anchor.BottomLeft)),
+            SkinSprite.StageRight => getSprite(skin.GetStageBackgroundPart(Anchor.CentreRight)),
+            SkinSprite.StageRightTop => getSprite(skin.GetStageBackgroundPart(Anchor.TopRight)),
+            SkinSprite.StageRightBottom => getSprite(skin.GetStageBackgroundPart(Anchor.BottomRight)),
+
             _ => throw new ArgumentException()
         };
 
