@@ -116,21 +116,40 @@ public partial class ChatChannelButton : Container, IHasContextMenu
 
     private Drawable createIcon()
     {
-        if (Channel.Type == APIChannelType.Private)
+        switch (Channel.Type)
         {
-            var other = Channel.APIChannel.OtherUser(client.Self.ID);
-            if (other is null) return Empty();
-
-            channelName = other.PreferredName;
-
-            return new LoadWrapper<DrawableAvatar>
+            case APIChannelType.Private:
             {
-                Size = new Vector2(32),
-                CornerRadius = 4,
-                Masking = true,
-                LoadContent = () => new DrawableAvatar(other) { RelativeSizeAxes = Axes.Both },
-                OnComplete = d => d.FadeInFromZero(400)
-            };
+                var other = Channel.APIChannel.OtherUser(client.Self.ID);
+                if (other is null) return Empty();
+
+                channelName = other.PreferredName;
+
+                return new LoadWrapper<DrawableAvatar>
+                {
+                    Size = new Vector2(32),
+                    CornerRadius = 4,
+                    Masking = true,
+                    LoadContent = () => new DrawableAvatar(other) { RelativeSizeAxes = Axes.Both },
+                    OnComplete = d => d.FadeInFromZero(400)
+                };
+            }
+
+            case APIChannelType.Club:
+            {
+                if (Channel.APIChannel.Club is null) return Empty();
+
+                channelName = Channel.APIChannel.Club.Name;
+
+                return new LoadWrapper<DrawableClubIcon>
+                {
+                    Size = new Vector2(32),
+                    CornerRadius = 4,
+                    Masking = true,
+                    LoadContent = () => new DrawableClubIcon(Channel.APIChannel.Club) { RelativeSizeAxes = Axes.Both },
+                    OnComplete = d => d.FadeInFromZero(400)
+                };
+            }
         }
 
         return new FluXisSpriteIcon

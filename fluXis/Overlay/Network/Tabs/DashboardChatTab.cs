@@ -15,6 +15,7 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.Network.Tabs.Chat;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -78,6 +79,7 @@ public partial class DashboardChatTab : DashboardTab
                                 Padding = new MarginPadding { Bottom = 50 + 16 },
                                 Spacing = new Vector2(8),
                                 ChildrenEnumerable = Enum.GetValues<APIChannelType>()
+                                                         .GetValuesInOrder()
                                                          .Select(x => new ChatChannelSection(x, Channel.GetBoundCopy()))
                             },
                             new FluXisButton
