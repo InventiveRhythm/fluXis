@@ -20,4 +20,7 @@ public partial class BlueprintNotePiece : Container
             Colour = Theme.Selection
         };
     }
+
+    public void MouseDown() => this.ResizeWidthTo(0.75f, 150, Easing.OutBack);
+    public void MouseUp() => this.ResizeWidthTo(0.5f, 300, Easing.OutQuint);
 }

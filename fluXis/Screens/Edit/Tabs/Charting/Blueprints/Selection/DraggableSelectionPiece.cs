@@ -11,12 +11,14 @@ public partial class DraggableSelectionPiece : Container
 {
     public Action<Vector2> DragAction { get; init; }
 
+    private readonly BlueprintNotePiece piece;
+
     public DraggableSelectionPiece()
     {
         RelativeSizeAxes = Axes.X;
         Height = 42;
 
-        Child = new BlueprintNotePiece
+        Child = piece = new BlueprintNotePiece
         {
             RelativeSizeAxes = Axes.X,
             Anchor = Anchor.Centre,
@@ -37,5 +39,16 @@ public partial class DraggableSelectionPiece : Container
     {
         DragAction?.Invoke(e.ScreenSpaceMousePosition);
         base.OnDrag(e);
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        piece.MouseDown();
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        piece.MouseUp();
     }
 }
