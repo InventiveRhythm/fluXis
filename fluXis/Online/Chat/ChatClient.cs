@@ -100,6 +100,9 @@ public partial class ChatClient : Component
 
     private void addChannel(APIChatChannel channel) => Scheduler.ScheduleIfNeeded(() =>
     {
+        if (channels.ContainsKey(channel.Name))
+            return;
+
         var chan = new ChatChannel(channel, api);
         channels.Add(channel.Name, chan);
         ChannelJoined?.Invoke(chan);
