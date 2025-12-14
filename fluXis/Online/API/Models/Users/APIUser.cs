@@ -76,7 +76,7 @@ public class APIUser
     public APIActivity? Activity { get; set; }
 
     [JsonProperty("following")]
-    public bool? Following { get; set; }
+    public UserFollowState? Following { get; set; }
 
     [JsonProperty("email")]
     public string? Email { get; set; }

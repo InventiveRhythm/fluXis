@@ -38,6 +38,9 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                 new MenuActionItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
 
+            if (user.Following is UserFollowState.Mutual)
+                list.Add(new MenuActionItem("Message", FontAwesome6.Solid.Message, MenuItemType.Normal, () => { }));
+
             if (user.SteamID is not null)
                 list.Add(new MenuActionItem("View Steam Profile", FontAwesome6.Brands.Steam, MenuItemType.Normal, () => game?.OpenLink(StringUtils.FormatSteamProfile(user.SteamID!.Value), true)));
 
