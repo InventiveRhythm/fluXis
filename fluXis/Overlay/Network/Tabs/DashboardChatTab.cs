@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
@@ -42,7 +43,7 @@ public partial class DashboardChatTab : DashboardTab
 
     public Bindable<string> Channel { get; } = new("general");
 
-    private FillFlowContainer<ChatChannelButton> channels;
+    private FillFlowContainer<ChatChannelSection> channels;
 
     private FluXisScrollContainer scroll;
     private FillFlowContainer<DrawableChatMessage> flow;
@@ -71,11 +72,13 @@ public partial class DashboardChatTab : DashboardTab
                         RelativeSizeAxes = Axes.Both,
                         Children = new Drawable[]
                         {
-                            channels = new FillFlowContainer<ChatChannelButton>
+                            channels = new FillFlowContainer<ChatChannelSection>
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Padding = new MarginPadding { Bottom = 50 + 16 },
-                                Spacing = new Vector2(8)
+                                Spacing = new Vector2(8),
+                                ChildrenEnumerable = Enum.GetValues<APIChannelType>()
+                                                         .Select(x => new ChatChannelSection(x, Channel.GetBoundCopy()))
                             },
                             new FluXisButton
                             {
@@ -165,6 +168,17 @@ public partial class DashboardChatTab : DashboardTab
         });
     }
 
+    public void WaitForChannel(string ch)
+    {
+        if (client.Channels.Any(x => x.Name == ch))
+        {
+            Channel.Value = ch;
+            return;
+        }
+
+        ScheduleAfterChildren(() => WaitForChannel(ch));
+    }
+
     private void updateStatus(ValueChangedEvent<ConnectionStatus> e) => Schedule(() =>
     {
         switch (e.NewValue)
@@ -182,7 +196,7 @@ public partial class DashboardChatTab : DashboardTab
 
     private void addChannel(ChatChannel channel)
     {
-        channels.Add(new ChatChannelButton(channel, Channel.GetBoundCopy()));
+        channels.First(x => x.Type == channel.Type).AddChannel(channel);
 
         channel.Messages.ForEach(addMessage);
         channel.OnMessage += addMessage;
@@ -191,14 +205,10 @@ public partial class DashboardChatTab : DashboardTab
 
     private void removeChannel(ChatChannel channel)
     {
-        var button = channels.FirstOrDefault(x => x.Channel == channel);
-
-        if (button is null)
-            return;
+        channels.First(x => x.Type == channel.Type).RemoveChannel(channel);
 
         channel.OnMessage -= addMessage;
         channel.OnMessageRemoved -= removeMessage;
-        channels.Remove(button, true);
     }
 
     private void addMessage(APIChatMessage message) => Schedule(() =>

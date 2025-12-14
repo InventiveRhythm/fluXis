@@ -1,4 +1,5 @@
-﻿using fluXis.Online.API.Models.Users;
+﻿using System.ComponentModel;
+using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Models.Chat;
@@ -27,6 +28,9 @@ public class APIChatChannel
 
 public enum APIChannelType
 {
+    [Description("Public Channels")]
     Public = 0,
+
+    [Description("Direct Messages")]
     Private = 1
 }

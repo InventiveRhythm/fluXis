@@ -150,6 +150,20 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
         Show();
     }
 
+    public T Show<T>()
+        where T : DashboardTab
+    {
+        var tab = tabsContainer.FirstOrDefault(t => t is T);
+
+        if (tab == null)
+            throw new InvalidOperationException($"Cannot show a tab of type {nameof(T)} as it is not added to the {nameof(Dashboard)}.");
+
+        selectTab(tab);
+        Show();
+
+        return tab as T;
+    }
+
     protected override void PopIn()
     {
         selectedTab.Enter();
