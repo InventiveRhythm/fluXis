@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using fluXis.Online.API.Models.Chat;
+using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Chat;
 using fluXis.Online.Fluxel;
 using fluXis.Utils.Extensions;
@@ -21,6 +22,7 @@ public partial class ChatClient : Component
     public event Action<ChatChannel> ChannelJoined;
     public event Action<ChatChannel> ChannelParted;
 
+    public APIUser Self => api.User.Value;
     public IReadOnlyList<ChatChannel> Channels => channels.Values.ToImmutableList();
 
     private Dictionary<string, ChatChannel> channels { get; } = new();
@@ -74,14 +76,14 @@ public partial class ChatClient : Component
     private void fetchJoinedChannels()
     {
         var req = new ChatJoinedChannelsRequest();
-        req.Success += res => res.Data.ForEach(c => addChannel(c.Name));
+        req.Success += res => res.Data.ForEach(addChannel);
         api.PerformRequestAsync(req);
     }
 
-    private void addChannel(string name) => Scheduler.ScheduleIfNeeded(() =>
+    private void addChannel(APIChatChannel channel) => Scheduler.ScheduleIfNeeded(() =>
     {
-        var chan = new ChatChannel(name, api);
-        channels.Add(name, chan);
+        var chan = new ChatChannel(channel, api);
+        channels.Add(channel.Name, chan);
         ChannelJoined?.Invoke(chan);
     });
 

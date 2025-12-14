@@ -25,7 +25,7 @@ public interface INotificationClient
 
     Task ReceiveChatMessage(APIChatMessage message);
     Task DeleteChatMessage(string channel, string id);
-    Task AddToChatChannel(string channel);
+    Task AddToChatChannel(APIChatChannel channel);
     Task RemoveFromChatChannel(string channel);
 
     Task CollectionUpdated(string id, List<CollectionItem> added, List<CollectionItem> changed, List<string> removed);

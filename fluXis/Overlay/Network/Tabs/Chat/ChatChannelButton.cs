@@ -1,11 +1,15 @@
+using System.Collections.Generic;
 using fluXis.Audio;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
+using fluXis.Online.API.Models.Chat;
 using fluXis.Online.Chat;
+using fluXis.Online.Drawables.Images;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -25,10 +29,18 @@ public partial class ChatChannelButton : Container, IHasContextMenu
     public ChatChannel Channel { get; }
     public IconUsage Icon { get; set; } = FontAwesome6.Solid.Hashtag;
 
-    public MenuItem[] ContextMenuItems => new MenuItem[]
+    public MenuItem[] ContextMenuItems
     {
-        new MenuActionItem("Leave Channel", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, leave)
-    };
+        get
+        {
+            var list = new List<MenuItem>();
+
+            if (publicChannel)
+                list.Add(new MenuActionItem("Leave Channel", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, leave));
+
+            return list.ToArray();
+        }
+    }
 
     private Bindable<string> bind { get; }
 
@@ -42,6 +54,9 @@ public partial class ChatChannelButton : Container, IHasContextMenu
     private FlashLayer flash;
     private Container content;
 
+    private string channelName;
+    private bool publicChannel => Channel.Type == APIChannelType.Public;
+
     public ChatChannelButton(ChatChannel channel, Bindable<string> bind)
     {
         Channel = channel;
@@ -53,6 +68,8 @@ public partial class ChatChannelButton : Container, IHasContextMenu
     {
         RelativeSizeAxes = Axes.X;
         Height = 48;
+
+        channelName = Channel.Name;
 
         InternalChildren = new Drawable[]
         {
@@ -77,21 +94,15 @@ public partial class ChatChannelButton : Container, IHasContextMenu
                         AutoSizeAxes = Axes.Both,
                         Direction = FillDirection.Horizontal,
                         Spacing = new Vector2(8),
-                        Padding = new MarginPadding(14),
+                        Padding = new MarginPadding(6),
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        Children = new Drawable[]
+                        Children = new[]
                         {
-                            new FluXisSpriteIcon
-                            {
-                                Icon = Icon,
-                                Size = new Vector2(20),
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft
-                            },
+                            createIcon().With(x => x.Anchor = x.Origin = Anchor.CentreLeft),
                             new FluXisSpriteText
                             {
-                                Text = Channel.Name,
+                                Text = channelName,
                                 WebFontSize = 14,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
@@ -100,6 +111,33 @@ public partial class ChatChannelButton : Container, IHasContextMenu
                     }
                 }
             }
+        };
+    }
+
+    private Drawable createIcon()
+    {
+        if (Channel.Type == APIChannelType.Private)
+        {
+            var other = Channel.APIChannel.OtherUser(client.Self.ID);
+            if (other is null) return Empty();
+
+            channelName = other.PreferredName;
+
+            return new LoadWrapper<DrawableAvatar>
+            {
+                Size = new Vector2(32),
+                CornerRadius = 4,
+                Masking = true,
+                LoadContent = () => new DrawableAvatar(other) { RelativeSizeAxes = Axes.Both },
+                OnComplete = d => d.FadeInFromZero(400)
+            };
+        }
+
+        return new FluXisSpriteIcon
+        {
+            Icon = Icon,
+            Size = new Vector2(20),
+            Margin = new MarginPadding(6)
         };
     }
 

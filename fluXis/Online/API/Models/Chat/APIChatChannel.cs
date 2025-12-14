@@ -1,6 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using fluXis.Online.API.Models.Users;
+using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Models.Chat;
+
+#nullable enable
 
 public class APIChatChannel
 {
@@ -12,6 +15,14 @@ public class APIChatChannel
 
     [JsonProperty("count")]
     public long UserCount { get; init; }
+
+    [JsonProperty("target-1")]
+    public APIUser? Target1 { get; init; }
+
+    [JsonProperty("target-2")]
+    public APIUser? Target2 { get; init; }
+
+    public APIUser? OtherUser(long self) => Target1?.ID == self ? Target2 : Target1;
 }
 
 public enum APIChannelType
