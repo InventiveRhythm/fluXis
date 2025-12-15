@@ -1,6 +1,7 @@
 using System;
 using fluXis.Graphics.Shaders;
 using fluXis.Map.Structures.Bases;
+using fluXis.Utils.Attributes;
 using fluXis.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -58,6 +59,35 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
 
         [JsonProperty("strength3")]
         public float Strength3 { get; set; }
+
+        public void Set(int index, float val)
+        {
+            switch (index)
+            {
+                case 1:
+                    Strength = val;
+                    break;
+
+                case 2:
+                    Strength2 = val;
+                    break;
+
+                case 3:
+                    Strength3 = val;
+                    break;
+
+                default:
+                    throw new IndexOutOfRangeException();
+            }
+        }
+
+        public float Get(int index) => index switch
+        {
+            1 => Strength,
+            2 => Strength2,
+            3 => Strength3,
+            _ => throw new ArgumentOutOfRangeException(nameof(index), index, null)
+        };
     }
 
     public void Apply(ShaderTransformHandler shader)
@@ -83,14 +113,29 @@ public enum ShaderType
     Bloom,
     Greyscale,
     Invert,
+
+    [ShaderStrength(1, Max = 20f, Step = 1f)]
     Chromatic,
     Mosaic,
     Noise,
     Vignette,
     Retro,
     HueShift,
+
+    [ShaderStrength(1, ParamName = "X Strength", Tooltip = "The strength of the glitch effect on the x-axis.")]
+    [ShaderStrength(2, ParamName = "Y Strength", Tooltip = "The strength of the glitch effect on the y-axis.")]
+    [ShaderStrength(3, ParamName = "Block Size", Tooltip = "The size of the glitch blocks.")]
     Glitch,
+
+    [ShaderStrength(1)]
+    [ShaderStrength(2, Max = 16f, Step = 1f, ParamName = "Splits X", Tooltip = "Amount of splits on X axis.", Single = true)]
+    [ShaderStrength(3, Max = 16f, Step = 1f, ParamName = "Splits Y", Tooltip = "Amount of splits on Y axis.", Single = true)]
     SplitScreen,
+
+    [ShaderStrength(1, Min = -1f)]
     FishEye,
+
+    [ShaderStrength(1)]
+    [ShaderStrength(2, ParamName = "Scale", Tooltip = "Scale factor of each consecutive reflection.")]
     Reflections
 }
