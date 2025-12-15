@@ -19,6 +19,7 @@ using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using fluXis.Utils.Attributes;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -217,61 +218,58 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     }
                 };
 
+                if (item.Type.HasAttribute<StoryboardElementType, WidthHeightAttribute>())
+                {
+                    drawables.AddRange(new Drawable[]
+                    {
+                        new PointSettingsTextBox
+                        {
+                            Text = "Width",
+                            DefaultText = item.Width.ToStringInvariant(),
+                            OnTextChanged = box =>
+                            {
+                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
+                                    item.Width = result;
+                                else
+                                    box.NotifyError();
+
+                                map.Update(item);
+                            }
+                        },
+                        new PointSettingsTextBox
+                        {
+                            Text = "Height",
+                            DefaultText = item.Height.ToStringInvariant(),
+                            OnTextChanged = box =>
+                            {
+                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
+                                    item.Height = result;
+                                else
+                                    box.NotifyError();
+
+                                map.Update(item);
+                            }
+                        },
+                    });
+                }
+
                 switch (item.Type)
                 {
-                    case StoryboardElementType.Box:
-                    case StoryboardElementType.Circle:
                     case StoryboardElementType.OutlineCircle:
-                        drawables.AddRange(new Drawable[]
+                        drawables.Add(new PointSettingsTextBox
                         {
-                            new PointSettingsTextBox
+                            Text = "Border Width",
+                            DefaultText = item.GetParameter("border", 4f).ToStringInvariant(),
+                            OnTextChanged = box =>
                             {
-                                Text = "Width",
-                                DefaultText = item.Width.ToStringInvariant(),
-                                OnTextChanged = box =>
-                                {
-                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                        item.Width = result;
-                                    else
-                                        box.NotifyError();
+                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
+                                    item.Parameters["border"] = result;
+                                else
+                                    box.NotifyError();
 
-                                    map.Update(item);
-                                }
-                            },
-                            new PointSettingsTextBox
-                            {
-                                Text = "Height",
-                                DefaultText = item.Height.ToStringInvariant(),
-                                OnTextChanged = box =>
-                                {
-                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                        item.Height = result;
-                                    else
-                                        box.NotifyError();
-
-                                    map.Update(item);
-                                }
-                            },
+                                map.Update(item);
+                            }
                         });
-
-                        if (item.Type == StoryboardElementType.OutlineCircle)
-                        {
-                            drawables.Add(new PointSettingsTextBox
-                            {
-                                Text = "Border Width",
-                                DefaultText = item.GetParameter("border", 4f).ToStringInvariant(),
-                                OnTextChanged = box =>
-                                {
-                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                        item.Parameters["border"] = result;
-                                    else
-                                        box.NotifyError();
-
-                                    map.Update(item);
-                                }
-                            });
-                        }
-
                         break;
 
                     case StoryboardElementType.Sprite:
@@ -316,6 +314,49 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     map.Update(item);
                                 }
                             },
+                        });
+                        break;
+
+                    case StoryboardElementType.SkinSprite:
+                        drawables.AddRange(new Drawable[]
+                        {
+                            new PointSettingsDropdown<SkinSprite>
+                            {
+                                Text = "Sprite",
+                                CurrentValue = item.GetParameter("sprite", SkinSprite.HitObject),
+                                Items = Enum.GetValues<SkinSprite>().ToList(),
+                                OnValueChanged = l =>
+                                {
+                                    item.Parameters["sprite"] = (int)l;
+                                    map.Update(item);
+                                }
+                            },
+                            new PointSettingsNumber<int>
+                            {
+                                Text = "Lane",
+                                DefaultValue = item.GetParameter("lane", 0),
+                                Step = 1,
+                                Min = 0,
+                                Max = 8,
+                                OnValueChanged = v =>
+                                {
+                                    item.Parameters["lane"] = v;
+                                    map.Update(item);
+                                }
+                            },
+                            new PointSettingsNumber<int>
+                            {
+                                Text = "Key Count",
+                                DefaultValue = item.GetParameter("keycount", 0),
+                                Step = 1,
+                                Min = 0,
+                                Max = 8,
+                                OnValueChanged = v =>
+                                {
+                                    item.Parameters["keycount"] = v;
+                                    map.Update(item);
+                                }
+                            }
                         });
                         break;
 

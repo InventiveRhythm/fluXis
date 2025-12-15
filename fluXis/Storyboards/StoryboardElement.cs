@@ -93,6 +93,7 @@ public class StoryboardElement : ITimedObject
 public enum StoryboardElementType
 {
     [Icon(0xf0c8)]
+    [WidthHeight]
     Box = 0,
 
     [Icon(0xf03e)]
@@ -105,12 +106,15 @@ public enum StoryboardElementType
     Script = 3,
 
     [Icon(0xf111)]
+    [WidthHeight]
     Circle = 4,
 
     [Icon(0xf111, Regular = true)]
+    [WidthHeight]
     OutlineCircle = 5,
 
     [Icon(0xf1fc)]
+    [WidthHeight]
     SkinSprite = 6
 }
 
