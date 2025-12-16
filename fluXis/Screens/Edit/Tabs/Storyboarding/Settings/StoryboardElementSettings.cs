@@ -3,19 +3,29 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using fluXis.Configuration;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Types;
+using fluXis.Localization;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using fluXis.Utils.Attributes;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Settings;
@@ -30,6 +40,12 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
     [Resolved]
     private ScriptStorage scripts { get; set; }
+
+    [Resolved]
+    private FluXisConfig config { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
 
     private Anchor[] validAnchors { get; } =
     {
@@ -202,61 +218,58 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     }
                 };
 
+                if (item.Type.HasAttribute<StoryboardElementType, WidthHeightAttribute>())
+                {
+                    drawables.AddRange(new Drawable[]
+                    {
+                        new PointSettingsTextBox
+                        {
+                            Text = "Width",
+                            DefaultText = item.Width.ToStringInvariant(),
+                            OnTextChanged = box =>
+                            {
+                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
+                                    item.Width = result;
+                                else
+                                    box.NotifyError();
+
+                                map.Update(item);
+                            }
+                        },
+                        new PointSettingsTextBox
+                        {
+                            Text = "Height",
+                            DefaultText = item.Height.ToStringInvariant(),
+                            OnTextChanged = box =>
+                            {
+                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
+                                    item.Height = result;
+                                else
+                                    box.NotifyError();
+
+                                map.Update(item);
+                            }
+                        },
+                    });
+                }
+
                 switch (item.Type)
                 {
-                    case StoryboardElementType.Box:
-                    case StoryboardElementType.Circle:
                     case StoryboardElementType.OutlineCircle:
-                        drawables.AddRange(new Drawable[]
+                        drawables.Add(new PointSettingsTextBox
                         {
-                            new PointSettingsTextBox
+                            Text = "Border Width",
+                            DefaultText = item.GetParameter("border", 4f).ToStringInvariant(),
+                            OnTextChanged = box =>
                             {
-                                Text = "Width",
-                                DefaultText = item.Width.ToStringInvariant(),
-                                OnTextChanged = box =>
-                                {
-                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                        item.Width = result;
-                                    else
-                                        box.NotifyError();
+                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
+                                    item.Parameters["border"] = result;
+                                else
+                                    box.NotifyError();
 
-                                    map.Update(item);
-                                }
-                            },
-                            new PointSettingsTextBox
-                            {
-                                Text = "Height",
-                                DefaultText = item.Height.ToStringInvariant(),
-                                OnTextChanged = box =>
-                                {
-                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                        item.Height = result;
-                                    else
-                                        box.NotifyError();
-
-                                    map.Update(item);
-                                }
-                            },
+                                map.Update(item);
+                            }
                         });
-
-                        if (item.Type == StoryboardElementType.OutlineCircle)
-                        {
-                            drawables.Add(new PointSettingsTextBox
-                            {
-                                Text = "Border Width",
-                                DefaultText = item.GetParameter("border", 4f).ToStringInvariant(),
-                                OnTextChanged = box =>
-                                {
-                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                        item.Parameters["border"] = result;
-                                    else
-                                        box.NotifyError();
-
-                                    map.Update(item);
-                                }
-                            });
-                        }
-
                         break;
 
                     case StoryboardElementType.Sprite:
@@ -304,14 +317,96 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         });
                         break;
 
+                    case StoryboardElementType.SkinSprite:
+                        drawables.AddRange(new Drawable[]
+                        {
+                            new PointSettingsDropdown<SkinSprite>
+                            {
+                                Text = "Sprite",
+                                CurrentValue = item.GetParameter("sprite", SkinSprite.HitObject),
+                                Items = Enum.GetValues<SkinSprite>().ToList(),
+                                OnValueChanged = l =>
+                                {
+                                    item.Parameters["sprite"] = (int)l;
+                                    map.Update(item);
+                                }
+                            },
+                            new PointSettingsNumber<int>
+                            {
+                                Text = "Lane",
+                                DefaultValue = item.GetParameter("lane", 0),
+                                Step = 1,
+                                Min = 0,
+                                Max = 8,
+                                OnValueChanged = v =>
+                                {
+                                    item.Parameters["lane"] = v;
+                                    map.Update(item);
+                                }
+                            },
+                            new PointSettingsNumber<int>
+                            {
+                                Text = "Key Count",
+                                DefaultValue = item.GetParameter("keycount", 0),
+                                Step = 1,
+                                Min = 0,
+                                Max = 8,
+                                OnValueChanged = v =>
+                                {
+                                    item.Parameters["keycount"] = v;
+                                    map.Update(item);
+                                }
+                            }
+                        });
+                        break;
+
                     case StoryboardElementType.Script:
                         var path = item.GetParameter("path", "");
+                        PointSettingsScript box = null!;
 
-                        drawables.Add(new PointSettingsTextBox
+                        box = new PointSettingsScript(path)
                         {
-                            Text = "Path",
-                            DefaultText = path,
-                            TextBoxWidth = 320,
+                            EditExternally = () =>
+                            {
+                                if (!scripts.TryEditExternally(item.GetParameter("path", ""), config, out var ex))
+                                {
+                                    if (ex is FileNotFoundException)
+                                    {
+                                        panels.Content = new ButtonPanel
+                                        {
+                                            Text = "This file does not exist.",
+                                            SubText = "Do you want to create it?",
+                                            Icon = FontAwesome6.Solid.File,
+                                            Buttons = new ButtonData[]
+                                            {
+                                                new PrimaryButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
+                                                {
+                                                    // ReSharper disable once AccessToModifiedClosure
+                                                    if (!scripts.TryCreateNew(item.GetParameter("path", ""), ScriptStorage.Env.Storyboard, out var ex2))
+                                                        showError("Failed to create file!", ex2);
+                                                    else
+                                                        box?.EditExternally?.Invoke();
+                                                }),
+                                                new CancelButtonData()
+                                            }
+                                        };
+
+                                        return;
+                                    }
+
+                                    Logger.Error(ex, "Failed to open script externally.");
+                                    showError("Failed to open!", ex);
+                                }
+
+                                void showError(string text, [CanBeNull] Exception e)
+                                {
+                                    panels.Content = new SingleButtonPanel(
+                                        FontAwesome6.Solid.ExclamationTriangle,
+                                        text,
+                                        e?.Message ?? "Unknown error"
+                                    );
+                                }
+                            },
                             OnTextChanged = t =>
                             {
                                 item.Parameters["path"] = t.Text;
@@ -322,17 +417,15 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 collectionChanged(null, null);
                                 map.Update(item);
                             }
-                        });
+                        };
+
+                        drawables.Add(box);
 
                         var script = scripts.Scripts.FirstOrDefault(x => x.Path.Replace("\\", "/").EqualsLower(path.Replace("\\", "/")));
 
                         if (script is null)
                         {
-                            drawables.Add(new FluXisSpriteText
-                            {
-                                Text = "Script could not be loaded.",
-                                Colour = Theme.Red
-                            });
+                            box.ErrorText = "Script could not be loaded.";
                             break;
                         }
 

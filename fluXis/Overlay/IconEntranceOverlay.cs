@@ -2,6 +2,7 @@
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Input.Focus;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -33,7 +34,7 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
 
     private ClickableContainer scaling;
     private Container iconContainer;
-    private Container content;
+    protected new FocusContainer Content { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -89,7 +90,7 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
                                 Icon = Icon
                             }
                         },
-                        content = new Container
+                        Content = new FocusContainer
                         {
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
@@ -126,7 +127,7 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
                      .Delay(scale_duration)
                      .FadeOut(200).RotateTo(IconRotation, scale_duration, Easing.OutQuint);
 
-        content.FadeOut().Then(scale_duration + 400).FadeIn(200);
+        Content.FadeOut().Then(scale_duration + 400).FadeIn(200);
         this.FadeInFromZero(200);
     }
 

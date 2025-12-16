@@ -17,8 +17,12 @@ public partial class EditorTickNote : EditorHitObject
 
     protected override IEnumerable<Drawable> CreateContent() => new[]
     {
-        tickNoteGhost = new DefaultTickNote(false).With(d => d.Alpha = .2f),
-        tickNotePiece = new DefaultTickNote(false)
+        tickNoteGhost = new DefaultTickNote(false).With(d =>
+        {
+            d.Alpha = .2f;
+            d.RelativeSizeAxes = Axes.X;
+        }),
+        tickNotePiece = new DefaultTickNote(false).With(d => d.RelativeSizeAxes = Axes.X)
     };
 
     protected override void Update()

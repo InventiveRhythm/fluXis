@@ -32,14 +32,24 @@ public partial class PointSettingsTextBox : PointSettingsBase, IHasTooltip
         RelativeSizeAxes = Axes.X;
         Height = 32;
 
+        FillFlowContainer leftText;
+
         InternalChildren = new Drawable[]
         {
-            new FluXisSpriteText
+            leftText = new FillFlowContainer
             {
-                Text = Text,
+                AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                WebFontSize = 16
+                Direction = FillDirection.Vertical,
+                Child = new ForcedHeightText
+                {
+                    Text = Text,
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreLeft,
+                    WebFontSize = 16,
+                    Height = 16
+                }
             },
             new FillFlowContainer
             {
@@ -86,6 +96,8 @@ public partial class PointSettingsTextBox : PointSettingsBase, IHasTooltip
                 }
             }
         };
+
+        UpdateLeftTextFlow(leftText);
     }
 
     protected override void LoadComplete()
@@ -96,4 +108,5 @@ public partial class PointSettingsTextBox : PointSettingsBase, IHasTooltip
     }
 
     protected virtual Drawable CreateExtraButton() => Empty().With(d => d.Alpha = 0);
+    protected virtual void UpdateLeftTextFlow(FillFlowContainer flow) { }
 }

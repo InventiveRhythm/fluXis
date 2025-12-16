@@ -22,6 +22,10 @@ public partial class EditorTimeline : Container
     private Container chorusPoints;
     private Container timingPoints;
 
+    private const double debounce = 50;
+
+    private double? lastSeekTime;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -75,12 +79,25 @@ public partial class EditorTimeline : Container
         }
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        if (!IsDragged)
+        {
+            var x = clock.CurrentTime / clock.TrackLength;
+            if (!double.IsFinite(x) || double.IsNaN(x)) x = 0;
+
+            indicator.X = (float)x;
+        }
+    }
+
     protected override bool OnClick(ClickEvent e)
     {
         if (e.Button != MouseButton.Left)
             return false;
 
-        seekToMousePosition(e.MousePosition);
+        seekToMousePosition(e.MousePosition, instant: true);
         return true;
     }
 
@@ -89,25 +106,33 @@ public partial class EditorTimeline : Container
         if (e.Button != MouseButton.Left)
             return false;
 
-        seekToMousePosition(e.MousePosition);
+        seekToMousePosition(e.MousePosition, instant: false);
         return true;
     }
 
-    protected override void OnDrag(DragEvent e) => seekToMousePosition(e.MousePosition);
+    protected override void OnDrag(DragEvent e) => seekToMousePosition(e.MousePosition, instant: false);
 
-    private void seekToMousePosition(Vector2 position)
+    protected override void OnDragEnd(DragEndEvent e)
+    {
+        base.OnDragEnd(e);
+        seekToMousePosition(e.MousePosition, instant: true);
+    }
+
+    private void seekToMousePosition(Vector2 position, bool instant)
     {
         // why is there a 20px offset??
         float x = Math.Clamp(position.X - 20, 0, DrawWidth);
         float progress = x / DrawWidth;
-        clock.SeekSmoothly(progress * clock.TrackLength);
-    }
+        double targetTime = progress * clock.TrackLength;
 
-    protected override void Update()
-    {
-        var x = clock.CurrentTime / clock.TrackLength;
-        if (!double.IsFinite(x) || double.IsNaN(x)) x = 0;
+        var indicatorPos = targetTime / clock.TrackLength;
+        if (!double.IsFinite(indicatorPos) || double.IsNaN(indicatorPos)) indicatorPos = 0;
+        indicator.X = (float)indicatorPos;
 
-        indicator.X = (float)x;
+        if (!instant && lastSeekTime != null && Time.Current - lastSeekTime < debounce)
+            return;
+
+        clock.SeekSmoothly(targetTime);
+        lastSeekTime = instant ? null : Time.Current;
     }
 }

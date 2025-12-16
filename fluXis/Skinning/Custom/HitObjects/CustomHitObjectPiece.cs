@@ -20,10 +20,7 @@ public partial class CustomHitObjectPiece : ColorableSkinDrawable, ICanHaveSnapC
         this.mode = mode;
         isEnd = end;
 
-        RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
 
         InternalChild = sprite = new SkinnableSprite
         {

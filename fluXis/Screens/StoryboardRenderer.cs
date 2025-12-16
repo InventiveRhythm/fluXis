@@ -64,7 +64,7 @@ public partial class StoryboardRenderer : FluXisScreen
 
         foreach (var layer in layers)
         {
-            var wrapper = new DrawableStoryboardWrapper(clock, sb, layer);
+            var wrapper = new DrawableStoryboardLayer(clock, sb, layer);
             AddInternal(wrapper);
         }
     }

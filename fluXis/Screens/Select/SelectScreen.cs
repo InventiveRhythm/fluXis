@@ -268,6 +268,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         PlayAction = Accept,
         DeleteAction = DeleteMapSet,
         EditAction = EditMap,
+        ExportAction = ExportMapSet,
         ScoresWiped = () => selectMapInfo.ScoreList?.Refresh()
     };
 

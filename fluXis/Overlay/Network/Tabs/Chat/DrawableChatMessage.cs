@@ -24,7 +24,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
-namespace fluXis.Overlay.Chat;
+namespace fluXis.Overlay.Network.Tabs.Chat;
 
 public partial class DrawableChatMessage : Container
 {

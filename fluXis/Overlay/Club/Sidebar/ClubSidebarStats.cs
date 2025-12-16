@@ -1,5 +1,6 @@
 ﻿using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Clubs;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -24,6 +25,9 @@ public partial class ClubSidebarStats : FillFlowContainer
         Direction = FillDirection.Vertical;
         Spacing = new Vector2(8);
 
+        if (club.Statistics is null)
+            return;
+
         InternalChildren = new Drawable[]
         {
             new FluXisSpriteText
@@ -38,10 +42,11 @@ public partial class ClubSidebarStats : FillFlowContainer
                 Direction = FillDirection.Vertical,
                 Children = new Drawable[]
                 {
-                    new StatsEntry("Rank", "#-"),
-                    new StatsEntry("Overall Rating", $"{club.Statistics!.OverallRating}"),
-                    new StatsEntry("Total Score", "---,---"),
-                    new StatsEntry("Average Rank", "#-"),
+                    new StatsEntry("Rank", $"#{club.Statistics.Rank}"),
+                    new StatsEntry("Overall Rating", club.Statistics.OverallRating.ToStringInvariant("0.00")),
+                    new StatsEntry("Total Score", club.Statistics.TotalScore.ToString("n0")),
+                    new StatsEntry("Claimed Maps", $"{club.Statistics.TotalClaims}"),
+                    new StatsEntry("Claimed%", $"{club.Statistics.ClaimPercentage.ToStringInvariant("0.00")}%"),
                 }
             }
         };

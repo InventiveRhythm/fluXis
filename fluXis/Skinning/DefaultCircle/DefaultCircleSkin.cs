@@ -38,6 +38,7 @@ public class DefaultCircleSkin : DefaultSkin
     {
         var index = Theme.GetLaneColorIndex(lane, keyCount);
         var body = new DefaultCircleHitObjectBody(SkinJson, (MapColor)index);
+        body.BoxSprite.Width = 1f;
         body.UpdateColor(lane, keyCount);
         return body;
     }

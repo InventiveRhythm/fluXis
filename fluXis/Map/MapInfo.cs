@@ -54,7 +54,7 @@ public class MapInfo
     public int ExtraPlayfields
     {
         get => extraPlayfields;
-        set => extraPlayfields = Math.Clamp(value, 0, 5);
+        set => extraPlayfields = Math.Clamp(value, 0, 9);
     }
 
     [JsonIgnore]

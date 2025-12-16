@@ -11,9 +11,6 @@ public partial class DefaultCircleTickNote : CompositeDrawable
 
     public DefaultCircleTickNote(bool small)
     {
-        RelativeSizeAxes = Axes.X;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
         Colour = Colour4.FromHex("#F2C979");
 
         InternalChild = progress = new CircularProgress

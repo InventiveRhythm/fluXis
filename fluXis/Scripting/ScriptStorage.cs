@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
+using fluXis.Configuration;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Logging;
@@ -72,6 +76,77 @@ public class ScriptStorage
         var runner = create(script);
         runners[file] = runner;
         return runner;
+    }
+
+    public bool TryEditExternally(string file, FluXisConfig config, [CanBeNull] [NotNullWhen(false)] out Exception ex)
+    {
+        ex = null;
+
+        var full = Path.Combine(path, file);
+
+        if (!File.Exists(full))
+        {
+            ex = new FileNotFoundException();
+            return false;
+        }
+
+        try
+        {
+            var template = config.Get<string>(FluXisSetting.ExternalEditorLaunch)
+                                 .Replace("%d", $"\"{path}\"")
+                                 .Replace("%f", $"\"{full}\"");
+
+            var idx = template.IndexOf(' ');
+            var filename = template[..idx];
+            var args = template[idx..];
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = filename,
+                Arguments = args,
+                CreateNoWindow = true,
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            });
+
+            return true;
+        }
+        catch (Exception exc)
+        {
+            ex = exc;
+            return false;
+        }
+    }
+
+    public bool TryCreateNew(string file, Env env, [CanBeNull] [NotNullWhen(false)] out Exception ex)
+    {
+        ex = null;
+        var full = Path.Combine(path, file);
+
+        if (File.Exists(full))
+        {
+            ex = new Exception("File already exists.");
+            return false;
+        }
+
+        try
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"---@env {(env == Env.Effect ? "effect" : "storyboard")}");
+            sb.AppendLine();
+            sb.AppendLine("---@param parent StoryboardElement");
+            sb.AppendLine("function process(parent)");
+            sb.AppendLine("    -- your code here");
+            sb.AppendLine("end");
+
+            File.WriteAllText(full, sb.ToString());
+            return true;
+        }
+        catch (Exception exc)
+        {
+            ex = exc;
+            return false;
+        }
     }
 
     private Env getEnv(string line)

@@ -43,7 +43,7 @@ public interface IAPIClient
     event Action<ServerMessage> MessageReceived;
     event Action NameChangeRequested;
 
-    event Action<string> ChatChannelAdded;
+    event Action<APIChatChannel> ChatChannelAdded;
     event Action<string> ChatChannelRemoved;
     event Action<APIChatMessage> ChatMessageReceived;
     event Action<string, string> ChatMessageRemoved;

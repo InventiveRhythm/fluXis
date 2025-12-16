@@ -93,6 +93,7 @@ public class StoryboardElement : ITimedObject
 public enum StoryboardElementType
 {
     [Icon(0xf0c8)]
+    [WidthHeight]
     Box = 0,
 
     [Icon(0xf03e)]
@@ -105,10 +106,16 @@ public enum StoryboardElementType
     Script = 3,
 
     [Icon(0xf111)]
+    [WidthHeight]
     Circle = 4,
 
     [Icon(0xf111, Regular = true)]
-    OutlineCircle = 5
+    [WidthHeight]
+    OutlineCircle = 5,
+
+    [Icon(0xf1fc)]
+    [WidthHeight]
+    SkinSprite = 6
 }
 
 public enum StoryboardLayer
@@ -116,4 +123,25 @@ public enum StoryboardLayer
     Background = 0,
     Foreground = 1,
     Overlay = 2
+}
+
+public enum SkinSprite
+{
+    HitObject,
+    LongNoteStart,
+    LongNoteBody,
+    LongNoteEnd,
+    TickNote,
+    TickNoteSmall,
+    Receptor,
+
+    StageBackground,
+    StageBackgroundTop,
+    StageBackgroundBottom,
+    StageLeftTop,
+    StageLeft,
+    StageLeftBottom,
+    StageRightTop,
+    StageRight,
+    StageRightBottom,
 }

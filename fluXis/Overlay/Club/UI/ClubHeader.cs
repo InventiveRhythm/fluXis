@@ -3,6 +3,7 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Clubs;
+using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -89,21 +90,41 @@ public partial class ClubHeader : CompositeDrawable
                             Origin = Anchor.CentreLeft,
                             Children = new Drawable[]
                             {
-                                new FluXisSpriteText
+                                new FillFlowContainer
                                 {
-                                    Text = club.Name,
-                                    WebFontSize = 30,
-                                    Shadow = true,
+                                    AutoSizeAxes = Axes.X,
+                                    Height = 36,
                                     Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft
+                                    Origin = Anchor.CentreLeft,
+                                    Spacing = new Vector2(6),
+                                    Children = new Drawable[]
+                                    {
+                                        new ClubTag(club)
+                                        {
+                                            WebFontSize = 18,
+                                            Shadow = true,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft
+                                        },
+                                        new FluXisSpriteText
+                                        {
+                                            Text = club.Name,
+                                            WebFontSize = 30,
+                                            Shadow = true,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft
+                                        }
+                                    }
                                 },
-                                new FluXisSpriteText
+                                new ForcedHeightText
                                 {
-                                    Text = $"{club.Members!.Count} members",
+                                    Text = $"{club.Members!.Count} member{(club.MemberCount != 1 ? "s" : "")}",
                                     WebFontSize = 16,
+                                    Height = 24,
                                     Shadow = true,
                                     Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft
+                                    Origin = Anchor.CentreLeft,
+                                    Alpha = .8f
                                 }
                             }
                         }

@@ -19,14 +19,16 @@ public partial class SettingsSidebarSubButton : Container
     [Resolved]
     private UISamples samples { get; set; }
 
+    private SettingsSubSection section { get; }
     private SettingsSubSectionTitle sub { get; }
 
     private Container content;
     private HoverLayer hover;
     private FlashLayer flash;
 
-    public SettingsSidebarSubButton(SettingsSubSectionTitle sub)
+    public SettingsSidebarSubButton(SettingsSubSection section, SettingsSubSectionTitle sub)
     {
+        this.section = section;
         this.sub = sub;
     }
 
@@ -80,6 +82,12 @@ public partial class SettingsSidebarSubButton : Container
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        section.Visible.BindValueChanged(x => Alpha = x.NewValue ? 1f : 0f, true);
     }
 
     protected override bool OnClick(ClickEvent e)

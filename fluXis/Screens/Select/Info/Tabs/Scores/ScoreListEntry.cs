@@ -105,7 +105,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
             if (Player.ID == api.User.Value?.ID && ShowSelfOutline)
                 color = Colour4.FromHex("#55ff55");
-            else if (Player.Following ?? false)
+            else if (Player.Following is >= UserFollowState.Following)
                 color = Colour4.Plum;
 
             return ColourInfo.GradientHorizontal(color, color.Opacity(0));

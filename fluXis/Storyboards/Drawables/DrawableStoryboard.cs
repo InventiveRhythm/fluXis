@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using fluXis.Configuration;
 using fluXis.Map;
 using fluXis.Scripting;
+using fluXis.Scripting.Models;
 using fluXis.Scripting.Runners;
+using fluXis.Skinning;
 using fluXis.Storyboards.Storage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
@@ -15,11 +18,17 @@ namespace fluXis.Storyboards.Drawables;
 
 public partial class DrawableStoryboard : CompositeDrawable
 {
+    [Resolved]
+    private FluXisConfig config { get; set; }
+
+    [Resolved]
+    private ISkin skin { get; set; }
+
     public Storyboard Storyboard { get; }
     private MapInfo map { get; }
     private string assetPath { get; }
 
-    private StoryboardStorage storage { get; set; }
+    public StoryboardStorage Storage { get; private set; }
     private Dictionary<string, StoryboardScriptRunner> scripts { get; } = new();
 
     public DrawableStoryboard(MapInfo map, Storyboard storyboard, string assetPath)
@@ -32,7 +41,7 @@ public partial class DrawableStoryboard : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load(GameHost host)
     {
-        storage = new StoryboardStorage(host, assetPath);
+        Storage = new StoryboardStorage(host, assetPath);
 
         var elements = Storyboard.Elements.Where(e => e.Type == StoryboardElementType.Script).ToList();
 
@@ -53,13 +62,13 @@ public partial class DrawableStoryboard : CompositeDrawable
         if (scripts.TryGetValue(path, out var script))
             return script;
 
-        var full = storage.Storage.GetFullPath(path);
+        var full = Storage.Storage.GetFullPath(path);
 
         if (!File.Exists(full))
             return null;
 
         var raw = File.ReadAllText(full);
-        var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard);
+        var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard, new LuaSettings(config), skin);
 
         try
         {
@@ -72,7 +81,4 @@ public partial class DrawableStoryboard : CompositeDrawable
 
         return runner;
     }
-
-    public DrawableStoryboardLayer GetLayer(StoryboardLayer layer, int z)
-        => new(storage, Storyboard.Elements.Where(e => e.Layer == layer && e.ZIndex == z).ToList());
 }

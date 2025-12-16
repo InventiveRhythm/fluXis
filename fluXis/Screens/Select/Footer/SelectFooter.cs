@@ -29,8 +29,9 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     public Action<int, int>? PracticeAction { get; set; }
     public Action? PlayAction { get; init; }
 
-    public Action<RealmMapSet>? DeleteAction { get; init; }
+    public Action<RealmMapSet>? ExportAction { get; init; }
     public Action<RealmMap>? EditAction { get; init; }
+    public Action<RealmMapSet>? DeleteAction { get; init; }
     public Action? ScoresWiped { get; init; }
 
     private FooterButton randomButton = null!;
@@ -80,7 +81,8 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         {
             DeleteAction = DeleteAction,
             EditAction = EditAction,
-            ScoresWiped = ScoresWiped
+            ExportAction = ExportAction,
+            ScoresWiped = ScoresWiped,
         },
         practice = new FooterPractice
         {
@@ -135,44 +137,17 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         ShowBackground = false,
         TooltipsLeft = new GamepadTooltip[]
         {
-            new()
-            {
-                Text = LocalizationStrings.General.Back,
-                Icon = "B"
-            },
-            new()
-            {
-                Text = LocalizationStrings.SongSelect.FooterMods,
-                Icon = "X"
-            },
-            new()
-            {
-                Text = LocalizationStrings.SongSelect.FooterRandom,
-                Icon = "Y"
-            },
-            new()
-            {
-                Text = LocalizationStrings.SongSelect.FooterOptions,
-                Icon = "Menu"
-            }
+            new(LocalizationStrings.General.Back, ButtonGlyph.B),
+            new(LocalizationStrings.SongSelect.FooterMods, ButtonGlyph.X),
+            new(LocalizationStrings.SongSelect.FooterRandom, ButtonGlyph.Y),
+            new(LocalizationStrings.SongSelect.FooterOptions, ButtonGlyph.Menu),
+            new("Search", ButtonGlyph.View)
         },
         TooltipsRight = new GamepadTooltip[]
         {
-            new()
-            {
-                Text = "Change Map",
-                Icons = new[] { "DpadLeft", "DpadRight" }
-            },
-            new()
-            {
-                Text = "Change Difficulty",
-                Icons = new[] { "DpadUp", "DpadDown" }
-            },
-            new()
-            {
-                Text = LocalizationStrings.General.Play,
-                Icon = "A"
-            }
+            new("Change Map", ButtonGlyph.PadLeft, ButtonGlyph.PadRight),
+            new("Change Difficulty", ButtonGlyph.PadUp, ButtonGlyph.PadDown),
+            new(LocalizationStrings.General.Play, ButtonGlyph.A)
         }
     };
 

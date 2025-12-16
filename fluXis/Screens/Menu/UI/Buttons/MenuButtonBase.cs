@@ -106,10 +106,9 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
                     })
                 }
             },
-            gamepadIcon = new GamepadIcon
+            gamepadIcon = new GamepadIcon(GamepadButton)
             {
                 Size = new Vector2(48),
-                Button = GamepadButton,
                 Origin = Anchor.Centre,
                 Shear = new Vector2(-SHEAR_AMOUNT, 0)
             }

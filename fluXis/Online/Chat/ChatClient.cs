@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading.Tasks;
 using fluXis.Online.API.Models.Chat;
+using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Chat;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Network;
+using fluXis.Overlay.Network.Tabs;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -18,9 +22,14 @@ public partial class ChatClient : Component
     [Resolved]
     private IAPIClient api { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private Dashboard dashboard { get; set; }
+
     public event Action<ChatChannel> ChannelJoined;
     public event Action<ChatChannel> ChannelParted;
 
+    public APIUser Self => api.User.Value;
     public IReadOnlyList<ChatChannel> Channels => channels.Values.ToImmutableList();
 
     private Dictionary<string, ChatChannel> channels { get; } = new();
@@ -55,7 +64,18 @@ public partial class ChatClient : Component
 
     [CanBeNull]
     public ChatChannel GetChannel(string channel)
-        => !channels.TryGetValue(channel, out var chan) ? null : chan;
+        => channels.GetValueOrDefault(channel);
+
+    public async Task CreatePrivateChannel(long target)
+    {
+        var req = new ChatCreateChannelRequest(target);
+        await api.PerformRequestAsync(req);
+
+        if (!req.Response.Success)
+            return;
+
+        dashboard?.Show<DashboardChatTab>().WaitForChannel(req.Response.Data);
+    }
 
     private void statusChanged(ValueChangedEvent<ConnectionStatus> e) => Schedule(() =>
     {
@@ -74,14 +94,17 @@ public partial class ChatClient : Component
     private void fetchJoinedChannels()
     {
         var req = new ChatJoinedChannelsRequest();
-        req.Success += res => res.Data.ForEach(c => addChannel(c.Name));
+        req.Success += res => res.Data.ForEach(addChannel);
         api.PerformRequestAsync(req);
     }
 
-    private void addChannel(string name) => Scheduler.ScheduleIfNeeded(() =>
+    private void addChannel(APIChatChannel channel) => Scheduler.ScheduleIfNeeded(() =>
     {
-        var chan = new ChatChannel(name, api);
-        channels.Add(name, chan);
+        if (channels.ContainsKey(channel.Name))
+            return;
+
+        var chan = new ChatChannel(channel, api);
+        channels.Add(channel.Name, chan);
         ChannelJoined?.Invoke(chan);
     });
 

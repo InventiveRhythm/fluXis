@@ -40,6 +40,7 @@ public partial class MultiLobbyPlayerList : FluXisContextMenuContainer
                     new FluXisScrollContainer
                     {
                         RelativeSizeAxes = Axes.Both,
+                        ScrollbarVisible = false,
                         Child = playerList = new FillFlowContainer<PlayerListEntry>
                         {
                             RelativeSizeAxes = Axes.X,

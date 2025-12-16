@@ -33,8 +33,8 @@ public class LuaMath : ILuaModel
 
     /// <summary>
     /// Returns an integer that indicates the sign of a number.
-    /// -1 value is less than zero | 
-    /// 0 value is equal to zero | 
+    /// -1 value is less than zero |
+    /// 0 value is equal to zero |
     /// 1 value is greater than zero
     /// </summary>
     [LuaMember(Name = "sign")]
@@ -263,7 +263,7 @@ public class LuaMath : ILuaModel
     public bool VecIsNorm(LuaVector2 v, double acceptableDifference = double.Epsilon)
     {
         var length = VecLength(v);
-        return Math.Abs(length - 1.0) <= acceptableDifference ;
+        return Math.Abs(length - 1.0) <= acceptableDifference;
     }
 
     /// <summary>Checks if the vector is a zero vector.</summary>

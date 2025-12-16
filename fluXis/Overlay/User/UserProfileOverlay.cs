@@ -159,7 +159,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
-                Padding = new MarginPadding { Horizontal = 10, Bottom = 20 },
+                Padding = new MarginPadding { Horizontal = 12, Bottom = 12 },
                 Spacing = new Vector2(20),
                 Children = new Drawable[]
                 {
@@ -170,8 +170,8 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                         AutoSizeAxes = Axes.Y,
                         ColumnDimensions = new[]
                         {
-                            new Dimension(GridSizeMode.Absolute, 300),
-                            new Dimension(GridSizeMode.Absolute, 20),
+                            new Dimension(GridSizeMode.Absolute, 320),
+                            new Dimension(GridSizeMode.Absolute, 18),
                             new Dimension()
                         },
                         RowDimensions = new[]
@@ -191,7 +191,9 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                     Children = new Drawable[]
                                     {
                                         new ProfileSidebarClub(user.Club),
-                                        new ProfileFollowerList(user.ID),
+                                        new ProfileAboutMe(user.AboutMe),
+                                        new ProfileSocials(user.Socials),
+                                        new ProfileFollowerList(user.ID)
                                     }
                                 },
                                 Empty(),

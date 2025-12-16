@@ -88,7 +88,7 @@ public abstract partial class Footer : CompositeDrawable
         gamepadTooltips = CreateGamepadTooltips();
 
         if (gamepadTooltips != null)
-            AddInternal(gamepadTooltips);
+            AddInternal(gamepadTooltips.With(x => x.Y = 80));
     }
 
     protected override void LoadComplete()
@@ -134,6 +134,7 @@ public abstract partial class Footer : CompositeDrawable
         LeftButton?.Show();
         RightButton?.Show();
         background.MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        gamepadTooltips?.MoveToY(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
         Buttons.MoveToY(0);
         Buttons.ForEach(b => b.Show());
     }
@@ -143,6 +144,7 @@ public abstract partial class Footer : CompositeDrawable
         LeftButton?.Hide();
         RightButton?.Hide();
         background.MoveToY(80, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        gamepadTooltips?.MoveToY(80, Styling.TRANSITION_MOVE, Easing.OutQuint);
         Buttons.MoveToY(100, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 

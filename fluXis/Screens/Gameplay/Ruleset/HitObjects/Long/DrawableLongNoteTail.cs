@@ -18,10 +18,6 @@ public partial class DrawableLongNoteTail : DrawableLongNotePart
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = Skin.GetLongNoteEnd(VisualLane, ObjectManager.KeyCount).With(d =>
-        {
-            d.Anchor = Anchor.BottomCentre;
-            d.Origin = Anchor.BottomCentre;
-        });
+        InternalChild = Skin.GetLongNoteEnd(VisualLane, ObjectManager.KeyCount).With(d => d.RelativeSizeAxes = Axes.X);
     }
 }

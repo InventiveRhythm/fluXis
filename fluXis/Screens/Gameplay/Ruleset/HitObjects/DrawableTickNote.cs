@@ -35,7 +35,7 @@ public partial class DrawableTickNote : DrawableHitObject
     {
         InternalChildren = new[]
         {
-            followLine = new Circle()
+            followLine = new Circle
             {
                 BypassAutoSizeAxes = Axes.Both,
                 Colour = Colour4.FromHex("#F2C979").Opacity(.4f),
@@ -43,7 +43,7 @@ public partial class DrawableTickNote : DrawableHitObject
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            Skin.GetTickNote(VisualLane, ObjectManager.KeyCount, Data.HoldTime > 0)
+            Skin.GetTickNote(VisualLane, ObjectManager.KeyCount, Data.HoldTime > 0).With(x => x.RelativeSizeAxes = Axes.X)
         };
     }
 

@@ -12,15 +12,17 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Select.Footer.Options;
 
 public partial class FooterOptionButton : Container
 {
-    public LocalisableString Text { get; set; }
-    public IconUsage Icon { get; set; }
-    public Action Action { get; set; }
-    public Colour4 Color { get; set; } = Theme.Text;
+    public LocalisableString Text { get; init; }
+    public IconUsage Icon { get; init; }
+    public Action Action { get; init; }
+    public Colour4 Color { get; init; } = Theme.Text;
+    public Key Hotkey { get; init; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -124,5 +126,14 @@ public partial class FooterOptionButton : Container
     protected override void OnHoverLost(HoverLostEvent e)
     {
         hover.Hide();
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.Key != Hotkey)
+            return false;
+
+        TriggerClick();
+        return true;
     }
 }

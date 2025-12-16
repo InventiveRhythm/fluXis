@@ -30,4 +30,13 @@ public partial class SettingsButton : SettingsItem
     protected override void Reset()
     {
     }
+
+    protected override bool ActivateFocus()
+    {
+        if (!Enabled)
+            return true;
+
+        Action?.Invoke();
+        return true;
+    }
 }

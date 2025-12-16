@@ -68,6 +68,12 @@ public partial class AdvancedFilesSection : SettingsSubSection
                 Description = strings.StreamFileBrowserDescription,
                 Bindable = config.GetBindable<bool>(FluXisSetting.StreamFileBrowser)
             },
+            new SettingsTextBox
+            {
+                Label = "External Editor Arguments",
+                Description = "The command to launch an external editor. %d for directory, %f for file path.",
+                Bindable = config.GetBindable<string>(FluXisSetting.ExternalEditorLaunch)
+            }
         });
     }
 }

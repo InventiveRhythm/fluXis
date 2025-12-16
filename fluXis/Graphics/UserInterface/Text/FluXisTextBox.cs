@@ -5,6 +5,7 @@ using fluXis.Audio;
 using fluXis.Graphics.Drawables;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Integration;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -19,6 +20,10 @@ namespace fluXis.Graphics.UserInterface.Text;
 
 public partial class FluXisTextBox : BasicTextBox
 {
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private ISteamManager steam { get; set; }
+
     protected override Color4 SelectionColour => Theme.Background6;
     protected override Color4 InputErrorColour => Theme.ButtonRed;
     protected override float LeftRightPadding => SidePadding;
@@ -118,6 +123,7 @@ public partial class FluXisTextBox : BasicTextBox
     }
 
     public void NotifyError() => NotifyInputError();
+    public void RemoveFocus() => KillFocus();
 
     protected override void NotifyInputError()
     {
@@ -129,12 +135,14 @@ public partial class FluXisTextBox : BasicTextBox
     {
         base.OnFocus(e);
         OnFocusAction?.Invoke();
+        steam?.OpenKeyboard(this);
     }
 
     protected override void OnFocusLost(FocusLostEvent e)
     {
         base.OnFocusLost(e);
         OnFocusLostAction?.Invoke();
+        steam?.CloseKeyboard();
     }
 
     protected override Drawable GetDrawableCharacter(char c)

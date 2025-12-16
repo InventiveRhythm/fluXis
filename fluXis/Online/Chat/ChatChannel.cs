@@ -9,7 +9,10 @@ namespace fluXis.Online.Chat;
 
 public class ChatChannel
 {
-    public string Name { get; }
+    public string Name => APIChannel.Name;
+    public APIChannelType Type => APIChannel.Type;
+
+    public APIChatChannel APIChannel { get; }
     private IAPIClient api { get; }
 
     public event Action<APIChatMessage> OnMessage;
@@ -19,9 +22,10 @@ public class ChatChannel
 
     private List<APIChatMessage> messages { get; } = new();
 
-    public ChatChannel(string name, IAPIClient api)
+    public ChatChannel(APIChatChannel channel, IAPIClient api)
     {
-        Name = name;
+        APIChannel = channel;
+
         this.api = api;
 
         loadMessages();

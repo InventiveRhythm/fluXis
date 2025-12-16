@@ -35,4 +35,25 @@ public partial class SettingsTextBox : SettingsItem
     }
 
     protected override void Reset() => Bindable.SetDefault();
+
+    protected override void Update()
+    {
+        base.Update();
+        HoldingFocus = box.HasFocus;
+    }
+
+    protected override bool ActivateFocus()
+    {
+        if (!Enabled) return false;
+
+        GetContainingFocusManager()?.ChangeFocus(box);
+        return true;
+    }
+
+    protected override void DeactivateFocus()
+    {
+        if (!box.HasFocus) return;
+
+        GetContainingFocusManager()?.ChangeFocus(null);
+    }
 }

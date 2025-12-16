@@ -34,14 +34,21 @@ public partial class EditorLongNote : EditorHitObject
 
     protected override IEnumerable<Drawable> CreateContent() => new[]
     {
-        head = new DefaultHitObjectPiece(null, 0),
+        head = new DefaultHitObjectPiece(null, 0).With(h =>
+        {
+            h.RelativeSizeAxes = Axes.X;
+            h.Anchor = Anchor.BottomCentre;
+            h.Origin = Anchor.BottomCentre;
+        }),
         body = new DefaultHitObjectBody(null, 0).With(b =>
         {
+            b.RelativeSizeAxes = Axes.X;
             b.Anchor = Anchor.BottomCentre;
             b.Origin = Anchor.BottomCentre;
         }),
         End = new DefaultHitObjectEnd(null, 0).With(e =>
         {
+            e.RelativeSizeAxes = Axes.X;
             e.Anchor = Anchor.BottomCentre;
             e.Origin = Anchor.BottomCentre;
         }),

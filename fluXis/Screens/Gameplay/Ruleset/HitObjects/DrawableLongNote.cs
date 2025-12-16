@@ -44,6 +44,7 @@ public partial class DrawableLongNote : DrawableHitObject
         {
             bodyPiece = Skin.GetLongNoteBody(VisualLane, ObjectManager.KeyCount).With(d =>
             {
+                d.RelativeSizeAxes = Axes.X;
                 d.Anchor = Anchor.BottomCentre;
                 d.Origin = Anchor.BottomCentre;
             }),

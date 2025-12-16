@@ -21,9 +21,6 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
     {
         this.mode = mode;
 
-        RelativeSizeAxes = Axes.X;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
         InternalChild = sprite = new Sprite
         {
             RelativeSizeAxes = Axes.Both,

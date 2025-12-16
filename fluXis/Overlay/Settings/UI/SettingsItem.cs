@@ -3,6 +3,7 @@ using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Input.Focus;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -15,7 +16,7 @@ using osuTK;
 
 namespace fluXis.Overlay.Settings.UI;
 
-public abstract partial class SettingsItem : Container
+public abstract partial class SettingsItem : Container, IFocusable
 {
     public LocalisableString Label { get; init; } = string.Empty;
     public LocalisableString Description { get; init; } = string.Empty;
@@ -45,6 +46,7 @@ public abstract partial class SettingsItem : Container
 
     private bool isDefault;
     private ResetButton resetButton;
+    private FluXisSpriteIcon rightIndicator;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -81,7 +83,15 @@ public abstract partial class SettingsItem : Container
                     }
                 }
             },
-            Content.WithChild(CreateContent())
+            rightIndicator = new FluXisSpriteIcon
+            {
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Icon = FontAwesome6.Solid.AngleLeft,
+                Size = new Vector2(16),
+                Alpha = 0
+            },
+            Content.WithChild(CreateContent()),
         };
     }
 
@@ -118,6 +128,17 @@ public abstract partial class SettingsItem : Container
     }
 
     protected abstract void Reset();
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        rightIndicator.MoveToX(32).FadeIn(50).MoveToX(24, 100, Easing.OutQuint);
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        rightIndicator.FadeOut(200).MoveToX(32, 400, Easing.OutQuint);
+    }
 
     private partial class ResetButton : Container
     {
@@ -215,4 +236,17 @@ public abstract partial class SettingsItem : Container
             content.ScaleTo(1, 1000, Easing.OutElastic);
         }
     }
+
+    #region IFocusable
+
+    protected bool HoldingFocus { get; set; } = false;
+    bool IFocusable.HoldingFocus => HoldingFocus;
+
+    protected virtual bool ActivateFocus() => false;
+    protected virtual void DeactivateFocus() { }
+
+    bool IFocusable.Activate() => ActivateFocus();
+    void IFocusable.Deactivate() => DeactivateFocus();
+
+    #endregion
 }

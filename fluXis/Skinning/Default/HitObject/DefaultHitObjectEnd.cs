@@ -17,9 +17,7 @@ public partial class DefaultHitObjectEnd : ColorableSkinDrawable, ICanHaveSnapCo
         CornerRadius = 10;
         Masking = true;
         Height = 42;
-        RelativeSizeAxes = Axes.X;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
+
         InternalChild = box = new Box
         {
             RelativeSizeAxes = Axes.Both

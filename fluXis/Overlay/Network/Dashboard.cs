@@ -82,6 +82,7 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
         // addTab(new DashboardNewsTab());
         addTab(new DashboardFriendsTab());
         addTab(new DashboardClubTab());
+        addTab(new DashboardChatTab());
         addTab(new DashboardOnlineTab());
         addTab(new DashboardAccountTab());
     }
@@ -134,6 +135,8 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
         selectedTab?.Exit();
         selectedTab = tab;
         selectedTab.Enter();
+
+        content.ResizeWidthTo(selectedTab.DashboardWidth, 400, Easing.OutQuint);
     }
 
     public void Show(DashboardTabType type)
@@ -145,6 +148,20 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
 
         selectTab(tab);
         Show();
+    }
+
+    public T Show<T>()
+        where T : DashboardTab
+    {
+        var tab = tabsContainer.FirstOrDefault(t => t is T);
+
+        if (tab == null)
+            throw new InvalidOperationException($"Cannot show a tab of type {nameof(T)} as it is not added to the {nameof(Dashboard)}.");
+
+        selectTab(tab);
+        Show();
+
+        return tab as T;
     }
 
     protected override void PopIn()

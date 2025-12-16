@@ -20,7 +20,7 @@ public partial class ProfileMapsSection : FillFlowContainer
             noMaps.Alpha = empty ? .8f : 0;
             flow.Alpha = empty ? 0 : 1;
 
-            flow.ChildrenEnumerable = value.Select(map => new MapCard(map) { CardWidth = 454 });
+            flow.ChildrenEnumerable = value.Select(map => new MapCard(map) { CardWidth = 450 });
         }
     }
 

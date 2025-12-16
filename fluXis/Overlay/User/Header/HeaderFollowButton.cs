@@ -1,3 +1,4 @@
+using System;
 using fluXis.Audio;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
@@ -27,7 +28,7 @@ public partial class HeaderFollowButton : CompositeDrawable
     private UISamples samples { get; set; }
 
     private APIUser user { get; }
-    private bool following => user.Following!.Value;
+    private bool following => user.Following is >= UserFollowState.Following;
 
     private Box background;
     private FlashLayer flash;
@@ -83,7 +84,7 @@ public partial class HeaderFollowButton : CompositeDrawable
                     },
                     text = new FluXisSpriteText
                     {
-                        Text = user.Following!.Value ? "Following" : "Follow",
+                        Text = following ? "Following" : "Follow",
                         WebFontSize = 16
                     }
                 }
@@ -99,10 +100,18 @@ public partial class HeaderFollowButton : CompositeDrawable
         var req = new UserFollowRequest(user.ID, following);
         api.PerformRequestAsync(req);
 
-        user.Following = !following;
-        text.Text = user.Following!.Value ? "Unfollow" : "Follow";
-        background.FadeColour(user.Following!.Value ? Theme.Red : Theme.Primary, 200);
-        icon.Icon = user.Following!.Value ? FontAwesome6.Solid.HeartCrack : FontAwesome6.Solid.Heart;
+        user.Following = user.Following switch
+        {
+            UserFollowState.None => UserFollowState.Following,
+            UserFollowState.Followed => UserFollowState.Mutual,
+            UserFollowState.Following => UserFollowState.None,
+            UserFollowState.Mutual => UserFollowState.Followed,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        text.Text = following ? "Unfollow" : "Follow";
+        background.FadeColour(following ? Theme.Red : Theme.Primary, 200);
+        icon.Icon = following ? FontAwesome6.Solid.HeartCrack : FontAwesome6.Solid.Heart;
 
         return base.OnClick(e);
     }
@@ -129,7 +138,7 @@ public partial class HeaderFollowButton : CompositeDrawable
     protected override void OnHoverLost(HoverLostEvent e)
     {
         icon.Icon = FontAwesome6.Solid.Heart;
-        text.Text = user.Following!.Value ? "Following" : "Follow";
+        text.Text = following ? "Following" : "Follow";
 
         if (following)
             background.FadeColour(Theme.Primary, 200);

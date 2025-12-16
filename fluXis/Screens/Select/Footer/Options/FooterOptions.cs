@@ -11,6 +11,7 @@ using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Overlay.Settings;
 using fluXis.Scoring;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -18,6 +19,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Select.Footer.Options;
 
@@ -26,8 +28,9 @@ public partial class FooterOptions : FocusedOverlayContainer
     protected override bool StartHidden => true;
     public FooterButton Button { get; set; }
 
-    public Action<RealmMapSet> DeleteAction { get; init; }
+    public Action<RealmMapSet> ExportAction { get; init; }
     public Action<RealmMap> EditAction { get; init; }
+    public Action<RealmMapSet> DeleteAction { get; init; }
     public Action ScoresWiped { get; init; }
 
     [Resolved]
@@ -42,7 +45,14 @@ public partial class FooterOptions : FocusedOverlayContainer
     [Resolved]
     private PanelContainer panels { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private FluXisGame game { get; set; }
+
     private FooterOptionSection setSection;
+    private FooterOptionButton viewOnlineButton;
+    private FooterOptionButton exportButton;
+
     private FooterOptionSection mapSection;
 
     [BackgroundDependencyLoader]
@@ -105,6 +115,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             {
                                 Text = LocalizationStrings.SongSelect.OptionsSettings,
                                 Icon = FontAwesome6.Solid.Gear,
+                                Hotkey = Key.S,
                                 Action = () =>
                                 {
                                     settings.Show();
@@ -115,11 +126,34 @@ public partial class FooterOptions : FocusedOverlayContainer
                             {
                                 Title = LocalizationStrings.SongSelect.OptionsForAll
                             },
+                            viewOnlineButton = new FooterOptionButton
+                            {
+                                Text = LocalizationStrings.General.ViewOnline,
+                                Icon = FontAwesome6.Solid.EarthAmericas,
+                                Hotkey = Key.O,
+                                Action = () =>
+                                {
+                                    game?.PresentMapSet(maps.CurrentMapSet.OnlineID);
+                                    State.Value = Visibility.Hidden;
+                                }
+                            },
+                            exportButton = new FooterOptionButton
+                            {
+                                Text = LocalizationStrings.General.Export,
+                                Icon = FontAwesome6.Solid.BoxOpen,
+                                Hotkey = Key.X,
+                                Action = () =>
+                                {
+                                    ExportAction?.Invoke(maps.CurrentMapSet);
+                                    State.Value = Visibility.Hidden;
+                                }
+                            },
                             new FooterOptionButton
                             {
                                 Text = LocalizationStrings.SongSelect.OptionsDeleteSet,
                                 Icon = FontAwesome6.Solid.Trash,
                                 Color = Theme.Red,
+                                Hotkey = Key.D,
                                 Action = () =>
                                 {
                                     DeleteAction?.Invoke(maps.CurrentMapSet);
@@ -134,6 +168,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             {
                                 Text = LocalizationStrings.General.Edit,
                                 Icon = FontAwesome6.Solid.Pen,
+                                Hotkey = Key.E,
                                 Action = () =>
                                 {
                                     EditAction?.Invoke(maps.CurrentMap);
@@ -145,6 +180,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 Text = LocalizationStrings.SongSelect.OptionsWipeScores,
                                 Icon = FontAwesome6.Solid.Eraser,
                                 Color = Theme.Red,
+                                Hotkey = Key.W,
                                 Action = () =>
                                 {
                                     State.Value = Visibility.Hidden;
@@ -159,8 +195,6 @@ public partial class FooterOptions : FocusedOverlayContainer
                                             new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
                                             {
                                                 scores.WipeFromMap(maps.CurrentMap.ID);
-
-
                                                 ScoresWiped?.Invoke();
                                             }, true),
                                             new CancelButtonData()
@@ -185,6 +219,9 @@ public partial class FooterOptions : FocusedOverlayContainer
     private void mapChanged(ValueChangedEvent<RealmMap> e)
     {
         var map = e.NewValue;
+
+        viewOnlineButton.Alpha = map.MapSet.OnlineID > 0 ? 1f : 0f;
+        exportButton.Alpha = !map.MapSet.AutoImported ? 1f : 0f;
 
         setSection.SubTitle = $"{map.Metadata.LocalizedArtist} - {map.Metadata.LocalizedTitle}";
         mapSection.SubTitle = map.Difficulty;

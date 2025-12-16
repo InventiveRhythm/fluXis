@@ -70,6 +70,23 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
         new KeyBinding(InputKey.Space, FluXisGlobalKeybind.ReplayPause)
     };
 
+    protected override List<KeyBinding> GamepadBinds => new()
+    {
+        new KeyBinding(InputKey.Joystick2, FluXisGlobalKeybind.Select),
+        new KeyBinding(InputKey.Joystick3, FluXisGlobalKeybind.Back),
+        new KeyBinding(InputKey.JoystickHat1Up, FluXisGlobalKeybind.Previous),
+        new KeyBinding(InputKey.JoystickHat1Down, FluXisGlobalKeybind.Next),
+        new KeyBinding(InputKey.JoystickHat1Left, FluXisGlobalKeybind.PreviousGroup),
+        new KeyBinding(InputKey.JoystickHat1Right, FluXisGlobalKeybind.NextGroup),
+
+        new KeyBinding(InputKey.Joystick2, FluXisGlobalKeybind.Skip),
+        new KeyBinding(InputKey.Joystick9, FluXisGlobalKeybind.QuickRestart),
+        new KeyBinding(InputKey.Joystick10, FluXisGlobalKeybind.GameplayPause),
+        new KeyBinding(InputKey.JoystickHat1Left, FluXisGlobalKeybind.SeekBackward),
+        new KeyBinding(InputKey.JoystickHat1Right, FluXisGlobalKeybind.SeekForward),
+        new KeyBinding(InputKey.Joystick2, FluXisGlobalKeybind.ReplayPause)
+    };
+
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e) => handler?.OnPressed(e) ?? false;
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) => handler?.OnReleased(e);
 }

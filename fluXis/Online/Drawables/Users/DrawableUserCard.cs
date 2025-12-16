@@ -7,6 +7,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Chat;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
@@ -38,6 +39,9 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                 new MenuActionItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
 
+            if (user.Following is UserFollowState.Mutual)
+                list.Add(new MenuActionItem("Message", FontAwesome6.Solid.Message, MenuItemType.Normal, () => chat?.CreatePrivateChannel(user.ID)));
+
             if (user.SteamID is not null)
                 list.Add(new MenuActionItem("View Steam Profile", FontAwesome6.Brands.Steam, MenuItemType.Normal, () => game?.OpenLink(StringUtils.FormatSteamProfile(user.SteamID!.Value), true)));
 
@@ -54,6 +58,10 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay profile { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private ChatClient chat { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
