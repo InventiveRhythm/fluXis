@@ -38,6 +38,11 @@
 ---| "InOutBounce"
 ---| "OutPow10"
 
+---@param input Easing
+---@return number
+---@nodiscard
+function Easing(input) end
+
 ---@alias AnchorName string
 ---| "TopLeft"
 ---| "TopCentre"

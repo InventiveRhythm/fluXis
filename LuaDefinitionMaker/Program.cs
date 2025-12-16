@@ -47,7 +47,7 @@ internal class Program
             typeList.Add(new BasicType(type, name, attr));
         }
 
-        typeList.Add(new EnumType<Easing>(false));
+        typeList.Add(new EnumType<Easing>(true, ctorName: "Easing", enumName: "Easing"));
         typeList.Add(new EnumType<Anchor>(true)
         {
             Values = new[]
