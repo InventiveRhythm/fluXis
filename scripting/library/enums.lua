@@ -54,6 +54,29 @@
 ---@nodiscard
 function Anchor(input) end
 
+---@alias MapEffectTypeName string
+---| "ScrollVelocity"
+---| "LaneSwitch"
+---| "Flash"
+---| "Pulse"
+---| "PlayfieldMove"
+---| "PlayfieldScale"
+---| "PlayfieldRotate"
+---| "PlayfieldFade"
+---| "Shake"
+---| "Shader"
+---| "BeatPulse"
+---| "LayerFade"
+---| "HitObjectEase"
+---| "ScrollMultiply"
+---| "TimeOffset"
+---| "ColorFade"
+
+---@param input MapEffectTypeName
+---@return number
+---@nodiscard
+function MapEffectType(input) end
+
 ---@alias ParameterDefinitionType string
 ---| "string"
 ---| "int"

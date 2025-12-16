@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using fluXis;
+using fluXis.Online.API.Models.Maps;
 using fluXis.Scripting.Attributes;
 using fluXis.Storyboards;
 using osu.Framework.Graphics;
@@ -56,12 +57,27 @@ internal class Program
                 Anchor.BottomLeft, Anchor.BottomCentre, Anchor.BottomRight
             }
         });
+        typeList.Add(new EnumType<MapEffectType>(true));
 
         // yes this is stupid but i don't want to figure out how to make it right
         typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\""));
         typeList.Add(new EnumType<StoryboardAnimationType>(false, "AnimationType", "storyboard"));
         typeList.Add(new EnumType<SkinSprite>(false, nameof(SkinSprite), "storyboard"));
         typeList.Add(new EnumType<StoryboardLayer>(true, "Layer", "storyboard"));
+
+        typeList.Add(new NamespaceTypes(
+            types, 
+            "fluXis.Map.Structures.Events", 
+            "events",
+            useJsonFallback: true
+        ));
+
+        typeList.Add(new NamespaceTypes(
+            types, 
+            "fluXis.Map.Structures", 
+            "struct",
+            useJsonFallback: true
+        ));
 
         foreach (var type in typeList)
         {
@@ -93,33 +109,42 @@ internal class Program
             File.WriteAllText($"{out_dir}/{name}.lua", content.ToString().Trim());
     }
 
-    public static string GetLuaType(Type type, bool enumToNumber = true)
+    public static string GetLuaType(Type type, bool enumToNumber = true, Type? fallback = null)
     {
-        string? name = type.FullName switch
+        string? name = getLuaTypeName(type);
+        
+        if (name is null)
+        {
+            var t = typeList.FirstOrDefault(x => x.BaseType == type);
+            
+            if (t is not null)
+                name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
+        }
+        
+        if (name is not null) return name;
+        
+        string fallbackType = getLuaTypeName(fallback) ?? fallback?.Name ?? type.Name;
+        Warn($"Failed to find matching lua type for '{type.FullName}', using '{fallbackType}' as fallback.");
+        return fallbackType;
+    }
+
+    private static string? getLuaTypeName(Type? type)
+    {
+        return type?.FullName switch
         {
             "System.Single" => "number",
             "System.Double" => "number",
             "System.Int32" => "number",
+            "System.Int64" => "number",
             "System.UInt32" => "number",
+            "System.UInt64" => "number",
             "fluXis.Storyboards.StoryboardLayer" => "number",
             "System.Boolean" => "boolean",
             "System.String" => "string",
+            "NLua.LuaTable" => "table",
             "System.Object" => "any",
             _ => null
         };
-
-        if (name is null)
-        {
-            var t = typeList.FirstOrDefault(x => x.BaseType == type);
-
-            if (t is not null)
-                name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
-        }
-
-        if (name is not null) return name;
-
-        Warn($"Failed to find matching lua type for '{type}'.");
-        return type.Name;
     }
 
     private static XmlDocument? loadXml(string file)

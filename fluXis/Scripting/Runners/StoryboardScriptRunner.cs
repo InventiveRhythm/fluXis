@@ -1,5 +1,6 @@
 ﻿using System;
 using fluXis.Map;
+using fluXis.Online.API.Models.Maps;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Models.Skinning;
@@ -30,12 +31,14 @@ public class StoryboardScriptRunner : ScriptRunner
         AddField("metadata", new LuaMetadata(map));
         AddField("settings", settings);
         AddField("skin", new LuaSkin(skin));
+        AddField("map", new LuaMap(map, Lua));
 
         AddFunction("Add", add);
 
         // enums
         AddFunction("Layer", (string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
         AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
+        AddFunction("MapEffectType", (string str) => Enum.TryParse(str, out MapEffectType effectType) ? (ulong)effectType : ulong.MaxValue);
 
         // elements
         AddFunction("StoryboardBox", newBox);

@@ -5,6 +5,7 @@ using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using JetBrains.Annotations;
 using NLua;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Utils;
 
@@ -30,6 +31,7 @@ public class ScriptRunner
 
         AddFunction("print", print);
         AddFunction("RandomRange", randomRange);
+        AddFunction("Easing", (string str) => Enum.TryParse(str, out Easing easing) ? easing : Easing.None);
         AddFunction("Vector2", (float x, float y) => new LuaVector2(x, y));
         AddFunction("Vector2Zero", () => new LuaVector2(0, 0));
         AddFunction("Vector2One", () => new LuaVector2(1, 1));
