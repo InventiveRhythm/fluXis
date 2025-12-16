@@ -9,9 +9,6 @@ public partial class DefaultCircleLandmine : CompositeDrawable
 {
     public DefaultCircleLandmine()
     {
-        RelativeSizeAxes = Axes.X;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
         Colour = Colour4.FromHex("#FF5252");
         InternalChild = new OutlinedCircle
         {

@@ -16,7 +16,7 @@ public partial class EditorLandmine : EditorHitObject
 
     protected override IEnumerable<Drawable> CreateContent() => new[]
     {
-        landminePiece = new DefaultLandmine()
+        landminePiece = new DefaultLandmine().With(d => d.RelativeSizeAxes = Axes.X)
     };
 
     protected override void Update()

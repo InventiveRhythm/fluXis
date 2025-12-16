@@ -8,9 +8,6 @@ public partial class DefaultLandmine : CompositeDrawable
 {
     public DefaultLandmine()
     {
-        RelativeSizeAxes = Axes.X;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
         Colour = Colour4.FromHex("#FF5252");
         Height = 42;
         InternalChild = new OutlinedSquare

@@ -3,6 +3,7 @@ using fluXis.Map.Structures;
 using fluXis.Scoring.Enums;
 using fluXis.Screens.Gameplay.Input;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
 
@@ -43,7 +44,7 @@ public partial class DrawableLandmine : DrawableHitObject
         //Masking = false; //needed for using the cross in bar skin
         InternalChildren = new[]
         {
-            Skin.GetLandmine(VisualLane, ObjectManager.KeyCount)
+            Skin.GetLandmine(VisualLane, ObjectManager.KeyCount).With(d => d.RelativeSizeAxes = Axes.X),
         };
 
         AlwaysPresent = true;
