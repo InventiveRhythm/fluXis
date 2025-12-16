@@ -34,7 +34,7 @@ public partial class ProfileSocials : FillFlowContainer
         if (!string.IsNullOrWhiteSpace(socials.Twitter))
             AddInternal(new SocialEntry(FontAwesome.Brands.Twitter, socials.Twitter, $"https://twitter.com/{socials.Twitter}"));
         if (!string.IsNullOrWhiteSpace(socials.Twitch))
-            AddInternal(new SocialEntry(FontAwesome6.Brands.Discord, socials.Twitch, $"https://twitch.tv/{socials.Twitch}"));
+            AddInternal(new SocialEntry(FontAwesome.Brands.Twitch, socials.Twitch, $"https://twitch.tv/{socials.Twitch}"));
         if (!string.IsNullOrWhiteSpace(socials.YouTube))
             AddInternal(new SocialEntry(FontAwesome.Brands.Youtube, socials.YouTube, $"https://youtube.com/@{socials.YouTube}"));
         if (!string.IsNullOrWhiteSpace(socials.Discord))
