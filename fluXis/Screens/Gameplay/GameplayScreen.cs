@@ -11,6 +11,7 @@ using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Background;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Shaders;
 using fluXis.Graphics.Shaders.Bloom;
 using fluXis.Graphics.Shaders.Chromatic;
@@ -279,62 +280,68 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
                     Samples,
                     dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }),
-                    shaders.AddContent(new[]
+                    shaders.AddContent(new Drawable[]
                     {
-                        camera.WithChildren(new Drawable[]
+                        new AspectRatioContainer(Map.Force16By9)
                         {
-                            new DrawSizePreservingFillContainer
+                            Children = new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                TargetDrawSize = new Vector2(1920, 1080),
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Children = new Drawable[]
+                                camera.WithChildren(new Drawable[]
                                 {
-                                    new Container
+                                    new DrawSizePreservingFillContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = ColourInfo.GradientHorizontal(Color4.White, Color4.Black).Interpolate(new Vector2(BackgroundDim, 0)),
+                                        TargetDrawSize = new Vector2(1920, 1080),
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
                                         Children = new Drawable[]
                                         {
-                                            background = new GlobalBackground
+                                            new Container
                                             {
-                                                DefaultMap = RealmMap,
-                                                InitialBlur = BackgroundBlur
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = ColourInfo.GradientHorizontal(Color4.White, Color4.Black).Interpolate(new Vector2(BackgroundDim, 0)),
+                                                Children = new Drawable[]
+                                                {
+                                                    background = new GlobalBackground
+                                                    {
+                                                        DefaultMap = RealmMap,
+                                                        InitialBlur = BackgroundBlur
+                                                    },
+                                                    backgroundVideo = new BackgroundVideo
+                                                    {
+                                                        Clock = GameplayClock
+                                                    },
+                                                    new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Background),
+                                                }
                                             },
-                                            backgroundVideo = new BackgroundVideo
-                                            {
-                                                Clock = GameplayClock
-                                            },
-                                            new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Background),
+                                            new ComboBurst(RulesetContainer),
+                                            clockContainer,
+                                            new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Foreground)
                                         }
                                     },
-                                    new ComboBurst(RulesetContainer),
-                                    clockContainer,
-                                    new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Foreground)
-                                }
-                            },
-                            hud = new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = DisplayHUD ? 1 : 0,
-                                Child = new GameplayHUD(RulesetContainer)
-                            },
-                            new DrawSizePreservingFillContainer
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                TargetDrawSize = new Vector2(1920, 1080),
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Child = new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Overlay)
+                                    hud = new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Alpha = DisplayHUD ? 1 : 0,
+                                        Child = new GameplayHUD(RulesetContainer)
+                                    },
+                                    new DrawSizePreservingFillContainer
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        TargetDrawSize = new Vector2(1920, 1080),
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Child = new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Overlay)
+                                    }
+                                }),
+                                new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
+                                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
                             }
-                        }),
-                        CreateTextOverlay(),
-                        new DangerHealthOverlay(),
-                        new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
-                        new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
-                        new SkipOverlay(),
+                        }
                     }),
+                    CreateTextOverlay(),
+                    new DangerHealthOverlay(),
+                    new SkipOverlay(),
                     failMenu = new FailMenu(),
                     fcOverlay = new FullComboOverlay(),
                     quickActionOverlay = new QuickActionOverlay(),
