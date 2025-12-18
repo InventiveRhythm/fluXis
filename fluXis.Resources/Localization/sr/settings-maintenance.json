@@ -1,4 +1,13 @@
 {
     "title": "Напредно",
-    "files-title": "Датотеке"
+    "files-title": "Датотеке",
+    "files-clean-up": "Очисти датотеке",
+    "files-clean-up-description": "Избриши све датотеке која ниједна мапа не користи.",
+    "stream-file-browser": "Стримовање датотека у прегледачу датотека.",
+    "stream-file-browser-description": "Стримује датотеке и фасцикле за велике директоријуме. Гашење ове опције може довести до замрзавања игре при отварању великог директоријума.",
+    "maps-title": "Мапе",
+    "maps-recalculate-filters": "Рекалкулиши филтере",
+    "maps-recalculate-filters-description": "Рекалкулиши све филтере за све мапе.",
+    "maps-scores-clean-up": "Очисти резултате",
+    "maps-scores-clean-up-description": "Уклања резултате са мапа које више немате."
 }
