@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Edit.Tabs.Verify;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -34,11 +38,14 @@ public partial class VerifyTab : EditorTab
 
     private ForcedHeightText totalIssuesText;
     private ForcedHeightText problematicIssuesText;
-    private FillFlowContainer<VerifyIssueEntry> issuesContainer;
-
+    private FillFlowContainer issuesContainer;
+    private LoadingIcon loadingIcon;
     private readonly List<IVerifyCheck> checks = new();
 
     private readonly List<VerifyIssue> issues = new();
+    private CancellationTokenSource cancellationTokenSource;
+
+    public BindableBool IsRunning { get; private set; } = new();
     public IReadOnlyList<VerifyIssue> Issues => issues;
 
     public int TotalIssues => issues.Count;
@@ -89,11 +96,22 @@ public partial class VerifyTab : EditorTab
                                         Origin = Anchor.CentreLeft,
                                         Children = new Drawable[]
                                         {
-                                            totalIssuesText = new ForcedHeightText
+                                            new FillFlowContainer
                                             {
-                                                Text = "{} total issues",
-                                                WebFontSize = 20,
-                                                Height = 15
+                                                Direction = FillDirection.Horizontal,
+                                                AutoSizeAxes = Axes.X,
+                                                Spacing = new Vector2(8),
+                                                Height = 15,
+                                                Children = new Drawable[]
+                                                {
+                                                    totalIssuesText = new ForcedHeightText
+                                                    {
+                                                        Text = "{} total issues",
+                                                        WebFontSize = 20,
+                                                        Height = 15
+                                                    },
+                                                    loadingIcon = new LoadingIcon { Size = new Vector2(20) }
+                                                }
                                             },
                                             problematicIssuesText = new ForcedHeightText
                                             {
@@ -156,7 +174,7 @@ public partial class VerifyTab : EditorTab
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 ScrollbarVisible = false,
-                                Child = issuesContainer = new FillFlowContainer<VerifyIssueEntry>
+                                Child = issuesContainer = new FillFlowContainer
                                 {
                                     RelativeSizeAxes = Axes.X,
                                     AutoSizeAxes = Axes.Y,
@@ -168,6 +186,16 @@ public partial class VerifyTab : EditorTab
                 }
             }
         };
+
+        IsRunning.BindValueChanged(e => {
+            if (e.NewValue)
+            {
+                loadingIcon.Show();
+                totalIssuesText.Text = $"Running Checks..";
+            }
+            else
+                loadingIcon.Hide();
+        }, false);
     }
 
     protected override void LoadComplete()
@@ -198,24 +226,73 @@ public partial class VerifyTab : EditorTab
         }
     }
 
-    public void RefreshIssues()
+    public async void RefreshIssues()
     {
-        issues.Clear();
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
+        cancellationTokenSource = new CancellationTokenSource();
 
-        var results = RunVerify(map);
+        IsRunning.Value = true;
 
-        issues.AddRange(results.Issues);
+        try
+        {
+            issues.Clear();
+            
+            var results = await Task.Run(() => RunVerifyAsync(map, cancellationTokenSource.Token), cancellationTokenSource.Token);
+            
+            if (!cancellationTokenSource.Token.IsCancellationRequested)
+            {
+                Schedule(() =>
+                {
+                    issues.AddRange(results.Issues);
 
-        issuesContainer.Clear();
-        issuesContainer.AddRange(issues.Select(x => new VerifyIssueEntry(x)));
+                    issuesContainer.Clear();
+                    issuesContainer.AddRange(issues.Select(x => new VerifyIssueEntry(x)));
 
-        totalIssuesText.Text = $"{TotalIssues} total issues";
-        problematicIssuesText.Text = $"{ProblematicIssues} problematic";
+                    totalIssuesText.Text = $"{TotalIssues} total issues";
+                    problematicIssuesText.Text = $"{ProblematicIssues} problematic";
+                });
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.Log("Verification cancelled", LoggingTarget.Runtime, LogLevel.Debug);
+        }
+        catch (Exception ex)
+        {
+            Logger.Log($"Error during verification: {ex.Message}", LoggingTarget.Runtime, LogLevel.Error);
+        }
+        finally
+        {
+            IsRunning.Value = false;
+        }
     }
 
-    public VerifyResults RunVerify(IVerifyContext ctx)
+    public async Task<VerifyResults> RunVerifyAsync(IVerifyContext ctx, CancellationToken cancellationToken = default)
     {
-        var list = checks.SelectMany(x => x.Check(ctx)).ToList();
+        var checkTasks = checks.Select(check => Task.Run(() =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            try
+            {
+                return check.Check(ctx);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Error running check {check.GetType().Name}: {ex.Message}", LoggingTarget.Runtime, LogLevel.Error);
+                return Enumerable.Empty<VerifyIssue>();
+            }
+        }, cancellationToken)).ToArray();
+
+        var results = await Task.WhenAll(checkTasks);
+        
+        var list = results.SelectMany(x => x).ToList();
+        
         list.Sort((a, b) =>
         {
             if (a.Time != b.Time)
@@ -228,5 +305,14 @@ public partial class VerifyTab : EditorTab
         });
 
         return new VerifyResults(list);
+    }
+
+    public VerifyResults RunVerify(IVerifyContext ctx) => RunVerifyAsync(ctx).GetAwaiter().GetResult();
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
     }
 }
