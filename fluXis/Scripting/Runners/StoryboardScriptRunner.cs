@@ -1,5 +1,6 @@
 ﻿using System;
 using fluXis.Map;
+using fluXis.Online.API.Models.Maps;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Models.Skinning;
@@ -30,6 +31,7 @@ public class StoryboardScriptRunner : ScriptRunner
         AddField("metadata", new LuaMetadata(map));
         AddField("settings", settings);
         AddField("skin", new LuaSkin(skin));
+        AddField("map", new LuaMap(map, Lua));
 
         AddFunction("Add", add);
 

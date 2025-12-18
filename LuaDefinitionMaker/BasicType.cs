@@ -2,15 +2,56 @@
 using System.Text;
 using fluXis.Scripting;
 using fluXis.Scripting.Attributes;
+using fluXis.Utils;
+using Newtonsoft.Json;
 using NLua;
 
 namespace LuaDefinitionMaker;
 
 public class BasicType : LuaType
 {
-    public BasicType(Type baseType, string name, LuaDefinitionAttribute attribute)
-        : base(baseType, name, attribute)
+    private readonly Type? fallbackType;
+    private readonly Dictionary<string, string>? overrideTypes;
+
+    public BasicType(Type baseType, string name, LuaDefinitionAttribute attribute, bool useJsonFallback = false, Type? fallbackType = null, Dictionary<string, string>? overrideTypes = null)
+        : base(baseType, name, attribute, useJsonFallback)
     {
+        this.fallbackType = fallbackType;
+        this.overrideTypes = overrideTypes;
+    }
+
+    private string getOverrideType(MethodInfo method, string defaultType)
+    {
+        if (overrideTypes == null) return defaultType;
+
+        var m = $"{BaseType.Name}.{method.Name}";
+        if (overrideTypes.TryGetValue(m, out var overrideType))
+            return overrideType;
+        
+        m = $"{BaseType.Name}.{method.Name}():{defaultType}";
+        if (overrideTypes.TryGetValue(m, out overrideType))
+            return overrideType;
+        
+        return defaultType;
+    }
+
+    private string getOverrideTypeParameter(MethodInfo method, ParameterInfo parameter, string defaultType)
+    {
+        if (overrideTypes == null) return defaultType;
+
+        var m = $"{BaseType.Name}.{method.Name}({parameter.Name}):{parameter.ParameterType.Name}";
+        if (overrideTypes.TryGetValue(m, out var overrideType))
+            return overrideType;
+        
+        m = $"{BaseType.Name}.{method.Name}({parameter.Name})";
+        if (overrideTypes.TryGetValue(m, out overrideType))
+            return overrideType;
+        
+        m = $"{parameter.ParameterType.Name}";
+        if (overrideTypes.TryGetValue(m, out overrideType))
+            return overrideType;
+        
+        return defaultType;
     }
 
     public override void Write(StringBuilder sb)
@@ -26,7 +67,7 @@ public class BasicType : LuaType
                 var b = BaseType.BaseType;
 
                 if (b != typeof(ILuaModel) && b != typeof(object))
-                    sb.Append($": {Program.GetLuaType(b)}");
+                    sb.Append($": {Program.GetLuaType(b, fallback: fallbackType)}");
             }
 
             sb.AppendLine();
@@ -34,9 +75,25 @@ public class BasicType : LuaType
             foreach (var prop in BaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
             {
                 var memberAttr = prop.GetCustomAttribute<LuaMemberAttribute>();
-                if (memberAttr is null) continue;
+                
+                string? fieldName = null;
+                
+                if (memberAttr is not null)
+                {
+                    fieldName = memberAttr.Name;
+                }
+                else if (UseJsonFallback)
+                {
+                    var jsonAttr = prop.GetCustomAttribute<JsonPropertyAttribute>();
+                    var ignoreAttr = prop.GetCustomAttribute<JsonIgnoreAttribute>();
+                    
+                    if (jsonAttr is not null && ignoreAttr is null)
+                        fieldName = jsonAttr.PropertyName ?? prop.Name;
+                }
+                
+                if (fieldName is null) continue;
 
-                sb.Append($"---@field {memberAttr.Name} {Program.GetLuaType(prop.PropertyType)}");
+                sb.Append($"---@field {StringUtils.ToCamelCase(fieldName)} {Program.GetLuaType(prop.PropertyType, fallback: fallbackType)}");
 
                 var sum = Documentation.GetPropertySummary(prop);
                 if (sum is not null) sb.Append($" {sum.ReplaceLineEndings(" ")}");
@@ -57,7 +114,7 @@ public class BasicType : LuaType
             var globalAttr = property.GetCustomAttribute<LuaGlobalAttribute>();
             if (globalAttr is null) continue;
 
-            sb.AppendLine($"---@type {Program.GetLuaType(property.PropertyType)}");
+            sb.AppendLine($"---@type {Program.GetLuaType(property.PropertyType, fallback: fallbackType)}");
             sb.AppendLine($"---@diagnostic disable-next-line: missing-fields");
             sb.AppendLine($"{globalAttr.Name ?? property.Name} = {{}}");
             sb.AppendLine();
@@ -71,7 +128,7 @@ public class BasicType : LuaType
             foreach (var parameter in ctor.GetParameters())
             {
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
-                sb.AppendLine($"---@param {parameter.Name} {Program.GetLuaType(pType)}");
+                sb.AppendLine($"---@param {parameter.Name} {Program.GetLuaType(pType, fallback: fallbackType)}");
             }
 
             sb.AppendLine($"---@return {Name}");
@@ -97,8 +154,9 @@ public class BasicType : LuaType
             foreach (var parameter in method.GetParameters())
             {
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
-                var lua = Program.GetLuaType(pType, false);
-                sb.Append($"---@param {parameter.Name} {lua}");
+                var defaultLuaType = Program.GetLuaType(pType, false, fallback: fallbackType);
+                var luaType = getOverrideTypeParameter(method, parameter, defaultLuaType);
+                sb.Append($"---@param {parameter.Name} {luaType}");
 
                 var desc = doc.GetParameterDescription(parameter.Name!);
                 if (desc is not null) sb.Append($" {desc.ReplaceLineEndings(" ")}");
@@ -110,7 +168,9 @@ public class BasicType : LuaType
 
             if (ret != typeof(void))
             {
-                var r = $"---@return {Program.GetLuaType(method.ReturnType)}";
+                var defaultReturnType = Program.GetLuaType(method.ReturnType, fallback: fallbackType);
+                var returnType = getOverrideType(method, defaultReturnType);
+                var r = $"---@return {returnType}";
 
                 if (doc.Returns is not null)
                     r += $" # {doc.Returns.ReplaceLineEndings(" ")}";

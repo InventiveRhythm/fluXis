@@ -43,10 +43,13 @@ internal class Program
             if (attr is null) continue;
 
             var name = attr.Name ?? type.Name.Replace("Lua", "");
-            typeList.Add(new BasicType(type, name, attr));
+            typeList.Add(new BasicType(type, name, attr, overrideTypes: new Dictionary<string, string>
+            {
+                {"LuaMap.GetEventsInRange(eventType)", "EventType"}, // I have no idea for a better way to do this
+            }));
         }
 
-        typeList.Add(new EnumType<Easing>(false));
+        typeList.Add(new EnumType<Easing>(true, ctorName: "Easing", enumName: "Easing"));
         typeList.Add(new EnumType<Anchor>(true)
         {
             Values = new[]
@@ -57,11 +60,40 @@ internal class Program
             }
         });
 
+        typeList.Add(new NamespaceEnumTypes(
+            types, 
+            new[]
+            {
+                "fluXis.Map.Structures.Events",
+                "fluXis.Map.Structures.Events.Scrolling",
+                "fluXis.Map.Structures.Events.Playfields",
+                "fluXis.Map.Structures.Events.Camera"
+            },
+            false,
+            useJsonFallback: true,
+            enumName: "EventType",
+            suffixTrim: "Event"
+        ));
+
         // yes this is stupid but i don't want to figure out how to make it right
         typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\""));
         typeList.Add(new EnumType<StoryboardAnimationType>(false, "AnimationType", "storyboard"));
         typeList.Add(new EnumType<SkinSprite>(false, nameof(SkinSprite), "storyboard"));
         typeList.Add(new EnumType<StoryboardLayer>(true, "Layer", "storyboard"));
+
+        typeList.Add(new NamespaceTypes(
+            types, 
+            "fluXis.Map.Structures.Events", 
+            "events",
+            useJsonFallback: true
+        ));
+
+        typeList.Add(new NamespaceTypes(
+            types, 
+            "fluXis.Map.Structures", 
+            "struct",
+            useJsonFallback: true
+        ));
 
         foreach (var type in typeList)
         {
@@ -93,33 +125,42 @@ internal class Program
             File.WriteAllText($"{out_dir}/{name}.lua", content.ToString().Trim());
     }
 
-    public static string GetLuaType(Type type, bool enumToNumber = true)
+    public static string GetLuaType(Type type, bool enumToNumber = true, Type? fallback = null)
     {
-        string? name = type.FullName switch
+        string? name = getLuaTypeName(type);
+        
+        if (name is null)
+        {
+            var t = typeList.FirstOrDefault(x => x.BaseType == type);
+            
+            if (t is not null)
+                name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
+        }
+        
+        if (name is not null) return name;
+        
+        string fallbackType = getLuaTypeName(fallback) ?? fallback?.Name ?? type.Name;
+        Warn($"Failed to find matching lua type for '{type.FullName}', using '{fallbackType}' as fallback.");
+        return fallbackType;
+    }
+
+    private static string? getLuaTypeName(Type? type)
+    {
+        return type?.FullName switch
         {
             "System.Single" => "number",
             "System.Double" => "number",
             "System.Int32" => "number",
+            "System.Int64" => "number",
             "System.UInt32" => "number",
+            "System.UInt64" => "number",
             "fluXis.Storyboards.StoryboardLayer" => "number",
             "System.Boolean" => "boolean",
             "System.String" => "string",
+            "NLua.LuaTable" => "table",
             "System.Object" => "any",
             _ => null
         };
-
-        if (name is null)
-        {
-            var t = typeList.FirstOrDefault(x => x.BaseType == type);
-
-            if (t is not null)
-                name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
-        }
-
-        if (name is not null) return name;
-
-        Warn($"Failed to find matching lua type for '{type}'.");
-        return type.Name;
     }
 
     private static XmlDocument? loadXml(string file)
