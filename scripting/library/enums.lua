@@ -59,28 +59,26 @@ function Easing(input) end
 ---@nodiscard
 function Anchor(input) end
 
----@alias MapEffectTypeName string
----| "ScrollVelocity"
----| "LaneSwitch"
----| "Flash"
----| "Pulse"
----| "PlayfieldMove"
----| "PlayfieldScale"
----| "PlayfieldRotate"
----| "PlayfieldFade"
----| "Shake"
----| "Shader"
+---@alias EventType string
 ---| "BeatPulse"
----| "LayerFade"
----| "HitObjectEase"
----| "ScrollMultiply"
----| "TimeOffset"
 ---| "ColorFade"
-
----@param input MapEffectTypeName
----@return number
----@nodiscard
-function MapEffectType(input) end
+---| "Flash"
+---| "LaneSwitch"
+---| "LayerFade"
+---| "Note"
+---| "Pulse"
+---| "Script"
+---| "Shader"
+---| "Shake"
+---| "HitObjectEase"
+---| "ScrollMultiplier"
+---| "TimeOffset"
+---| "PlayfieldMove"
+---| "PlayfieldRotate"
+---| "PlayfieldScale"
+---| "CameraMove"
+---| "CameraRotate"
+---| "CameraScale"
 
 ---@alias ParameterDefinitionType string
 ---| "string"

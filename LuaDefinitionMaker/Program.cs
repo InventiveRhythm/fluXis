@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using fluXis;
-using fluXis.Online.API.Models.Maps;
 using fluXis.Scripting.Attributes;
 using fluXis.Storyboards;
 using osu.Framework.Graphics;
@@ -44,7 +43,10 @@ internal class Program
             if (attr is null) continue;
 
             var name = attr.Name ?? type.Name.Replace("Lua", "");
-            typeList.Add(new BasicType(type, name, attr));
+            typeList.Add(new BasicType(type, name, attr, overrideTypes: new Dictionary<string, string>
+            {
+                {"LuaMap.GetEventsInRange(eventType)", "EventType"}, // I have no idea for a better way to do this
+            }));
         }
 
         typeList.Add(new EnumType<Easing>(true, ctorName: "Easing", enumName: "Easing"));
@@ -57,7 +59,21 @@ internal class Program
                 Anchor.BottomLeft, Anchor.BottomCentre, Anchor.BottomRight
             }
         });
-        typeList.Add(new EnumType<MapEffectType>(true));
+
+        typeList.Add(new NamespaceEnumTypes(
+            types, 
+            new[]
+            {
+                "fluXis.Map.Structures.Events",
+                "fluXis.Map.Structures.Events.Scrolling",
+                "fluXis.Map.Structures.Events.Playfields",
+                "fluXis.Map.Structures.Events.Camera"
+            },
+            false,
+            useJsonFallback: true,
+            enumName: "EventType",
+            suffixTrim: "Event"
+        ));
 
         // yes this is stupid but i don't want to figure out how to make it right
         typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\""));

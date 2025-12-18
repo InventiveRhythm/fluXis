@@ -29,7 +29,7 @@ function map:HitSoundFadesInRange(startTime, endTime) end
 
 ---@param startTime number
 ---@param endTime number
----@param effectTypeValue number
+---@param eventType EventType
 ---@return table
 ---@nodiscard
-function map:EffectsInRange(startTime, endTime, effectTypeValue) end
+function map:EventsInRange(startTime, endTime, eventType) end

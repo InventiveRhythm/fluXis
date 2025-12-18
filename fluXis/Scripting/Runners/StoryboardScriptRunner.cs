@@ -38,7 +38,6 @@ public class StoryboardScriptRunner : ScriptRunner
         // enums
         AddFunction("Layer", (string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
         AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
-        AddFunction("MapEffectType", (string str) => Enum.TryParse(str, out MapEffectType effectType) ? (ulong)effectType : ulong.MaxValue);
 
         // elements
         AddFunction("StoryboardBox", newBox);
