@@ -1,5 +1,12 @@
 {
     "title": "Графике",
     "layout-title": "Распоред",
-    "window-mode": "Режим Прозора"
+    "window-mode": "Режим Прозора",
+    "rendering-title": "Рендеровање",
+    "renderer": "Renderer",
+    "renderer-description": "Потребно је поново покренути да би се промене поступиле.",
+    "frame-limiter": "Ограничивач фрејмова",
+    "threading-mode": "Threading Mode",
+    "show-fps": "Прикажи FPS",
+    "show-fps-description": "Приказује тренутне вредности DrawsPerSecond и UpdatesPerSecond у доњем десном углу."
 }
