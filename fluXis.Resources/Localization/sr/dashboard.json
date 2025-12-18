@@ -1,1 +1,5 @@
-{}
+{
+    "notifications": "Обавештења",
+    "notifications-empty": "Овде ништа...",
+    "news": "Новости"
+}
