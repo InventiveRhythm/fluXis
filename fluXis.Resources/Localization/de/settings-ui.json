@@ -1,1 +1,16 @@
-{}
+{
+    "general-title": "Allgemein",
+    "title": "Benutzeroberfläche",
+    "ui-scale": "UI-Skalierung",
+    "ui-scale-description": "Passe die Größe der Benutzeroberfläche an.",
+    "confirm-duration-description": "Wie lange ein Button gedrückt gehalten werden muss, um eine Aktion zu bestätigen.",
+    "skip-warning": "Überspringe Warnung",
+    "skip-warning-description": "Überspringt die Epilepsie-Warnung zu Beginn des Spiels.",
+    "parallax-description": "Aktiviere den Parallax-Effekt für Hintergründe und Ähnliches.",
+    "show-storyboard-video": "Storyboard und Video anzeigen",
+    "show-storyboard-video-description": "Zeigt Storyboards und Videos auf den meisten Bildschirmen an. (BRAUCHT SUPPORTER, außer für die Songauswahl)",
+    "relative-mouse-scroll-description": "Durch Gedrückthalten der mittleren Maustaste werden Listen entsprechend der Mausbewegung vom Ausgangspunkt aus gescrollt (ähnlich wie in Webbrowsern)",
+    "main-menu-title": "Hauptmenü",
+    "intro-music": "fluXis-Intromusik",
+    "intro-music-description": "Spielt die fluXis-Intromusik beim Starten des Spiels. Wenn deaktiviert, wird ein zufälliger Song aus deiner Bibliothek abgespielt."
+}
