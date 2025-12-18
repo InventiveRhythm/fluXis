@@ -1,1 +1,9 @@
-{}
+{
+    "notifications": "Benachrichtigungen",
+    "news": "Neuigkeiten",
+    "friends": "Freunde",
+    "club": "Klub",
+    "online": "Online",
+    "account": "Konto",
+    "notifications-empty": "Nichts hier..."
+}
