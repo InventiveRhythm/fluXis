@@ -1,5 +1,21 @@
 {
     "title": "Звук",
     "device-title": "Уређај",
-    "output-device": "Излазни уређај"
+    "output-device": "Излазни уређај",
+    "volume-title": "Јачина звука",
+    "master-volume": "Главна јачина звука",
+    "master-volume-inactive": "Главна јачина звука (неактивна)",
+    "master-volume-inactive-description": "Јачина звука када је игра неактивна (помножена са главном јачином звука)",
+    "music-volume": "Јачина музике",
+    "effect-volume": "Јачина ефекта",
+    "hit-sound-volume": "Јачина звука при hit-а",
+    "offset-title": "Офсет",
+    "audio-offset": "Аудио офсет",
+    "audio-offset-description": "Мења аудио офсет за све песме. Већи офсет значи да се објекти појављују касније.",
+    "disable-offset-in-replay": "Онемогући офсет у репризама",
+    "disable-offset-in-replay-description": "Онемогућава офсет звука приликом гледања репризе. Ово је корисно за снимање видео снимака репризе.",
+    "open-offset-wizard": "Отвори чаробњак офсета :3",
+    "panning-title": "Померање",
+    "ui-panning": "Кориснички интерфејс",
+    "ui-panning-description": "Мења померање за звукове клика и лебдења на основу положаја миша."
 }
