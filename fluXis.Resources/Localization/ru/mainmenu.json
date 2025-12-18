@@ -1,11 +1,13 @@
 {
     "play-text": "Играть",
     "play-description": "{0:0} карт(ы) загружено",
-    "multiplayer-text": "Многопользовательская",
+    "multiplayer-text": "С друзьями",
     "multiplayer-description": "Играть против других игроков",
     "browse-text": "Искать",
     "browse-description": "Загрузить карты созданные сообществом",
     "edit-text": "Редактировать",
     "edit-description": "Создайте свою собственную карту",
-    "press-any-key": "Нажмите любую клавишу."
+    "press-any-key": "Нажмите любую клавишу.",
+    "dashboard-text": "Главная страница",
+    "dashboard-description": "Обновления, чаты, новости и более"
 }
