@@ -1,5 +1,15 @@
 {
     "general": "Опште",
     "back": "Назад",
-    "play": "Играј"
+    "play": "Играј",
+    "edit": "Измени",
+    "select": "Изабери",
+    "delete": "Избриши",
+    "export": "Извези",
+    "refresh": "Освежи",
+    "panel-generic-confirm": "Разумем.",
+    "panel-generic-cancel": "Нема везе.",
+    "panel-confirm-exit": "Да ли сте сигурни да желите да изађете?",
+    "can-not-be-undone": "Ова радња се не може поништити.",
+    "login-to-use": "Пријавите се да бисте користили ову функцију."
 }
