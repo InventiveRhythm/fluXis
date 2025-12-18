@@ -1,4 +1,22 @@
 {
     "settings": "Подешавања",
-    "settings-description": "Промени подешавања."
+    "settings-description": "Промени подешавања.",
+    "home": "Почетак",
+    "home-description": "Вратите се на главни мени.",
+    "maps": "Мапе",
+    "maps-description": "Прегледајте своје мапе.",
+    "multiplayer": "Више играча",
+    "multiplayer-description": "Играј са осталима.",
+    "ranking": "Рангирање",
+    "ranking-description": "Погледајте најбоље играче.",
+    "chat": "Ћаскање",
+    "chat-description": "Ћаскај са осталим играчима.",
+    "dashboard": "Контролна табла",
+    "dashboard-description": "Ажурирања, ћаскања, новости итд.",
+    "browse": "Прегледај",
+    "browse-description": "Преузмите мапе које је направила заједница.",
+    "wiki": "Вики",
+    "wiki-description": "Сазнајте о игри.",
+    "music": "Музички плејер",
+    "music-description": "Слушајте своју музику."
 }
