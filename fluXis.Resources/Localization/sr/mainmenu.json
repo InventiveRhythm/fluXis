@@ -6,5 +6,8 @@
     "multiplayer-description": "Играј са осталима",
     "dashboard-text": "Контролна табла",
     "dashboard-description": "Ажурирања, ћаскања, вести итд",
-    "browse-text": "Прегледај"
+    "browse-text": "Прегледај",
+    "browse-description": "Преузми мапе од осталих играча",
+    "edit-text": "Измени",
+    "edit-description": "Направи своју мапу"
 }
