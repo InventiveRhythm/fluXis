@@ -1,4 +1,10 @@
 {
     "title": "Општо",
-    "language-title": "Језик"
+    "language-title": "Језик",
+    "language-current": "Тренутан језик",
+    "original-meta": "Преферирај оригиналне метаподатке",
+    "original-meta-description": "Приказује метаподатке песме на оригиналном језику.",
+    "folders-title": "Фасцикле",
+    "open-folder": "Отвори fluXis фасциклу",
+    "change-folder": "Промени локацију фасцикле"
 }
