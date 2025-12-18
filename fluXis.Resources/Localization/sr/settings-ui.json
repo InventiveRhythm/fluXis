@@ -1,4 +1,27 @@
 {
     "title": "Кориснички интерфејс",
-    "general-title": "Општо"
+    "general-title": "Општо",
+    "ui-scale": "Скала корисничког интерфејса",
+    "ui-scale-description": "Промените величину интерфејса.",
+    "confirm-duration": "Држите да потврдите трајање",
+    "confirm-duration-description": "Колико дуго држати дугме да би се потврдила радња.",
+    "skip-warning": "Игнориши упозорење",
+    "skip-warning-description": "Прескаче упозорење о епилепсији на почетку игре.",
+    "parallax": "Паралакса",
+    "parallax-description": "Омогућите ефекат паралаксе на позадинама и слично.",
+    "show-storyboard-video": "Прикажи Storyboard и видео",
+    "show-storyboard-video-description": "Приказује storyboard-ове и видео записе на већини екрана. (ПОТРЕБАН ЈЕ \"SUPPORTER\", осим за избор песме)",
+    "relative-mouse-scroll-description": "Док држите средњи тастер миша померате листе на основу тога колико је миш померен од почетне тачке (као у веб прегледачима)",
+    "main-menu-title": "Глави мени",
+    "intro-music": "Уводна песма fluXis-а",
+    "intro-music-description": "Пусти уводну песму за fluXis при покретању. Онемогућавањем ове опције, уместо тога ће се пуштати насумична песма из ваше библиотеке.",
+    "force-snow": "Укључи снег",
+    "force-snow-description": "Чини снег увек видљивим, не само зими.",
+    "bubble-visualizer-description": "Укључује визуализатор у главном менију.",
+    "song-select-title": "Избор песме",
+    "song-select-blur": "Замућење позадине",
+    "song-select-blur-description": "Замутите позадину екрана за избор песме.",
+    "loop-mode-description": "Како ће се изабрана песма понављати.",
+    "header-height": "Висина заглавља",
+    "header-height-description": "Мења величину слике у горњем десном углу екрана."
 }
