@@ -1,1 +1,10 @@
-{}
+{
+    "press-any-key": "Притисни неки тастер.",
+    "play-text": "Играј",
+    "play-description": "{0:0} мапа учитано",
+    "multiplayer-text": "Више играча",
+    "multiplayer-description": "Играј са осталима",
+    "dashboard-text": "Контролна табла",
+    "dashboard-description": "Ажурирања, ћаскања, вести итд",
+    "browse-text": "Прегледај"
+}
