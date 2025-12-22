@@ -208,6 +208,25 @@ public class CustomSkin : ISkin
         return null;
     }
 
+    public Drawable GetLandmine(int lane, int keyCount)
+    {
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/Landmine/{keyCount}k-{lane}") + ".png";
+
+        if (storage.Exists(path))
+        {
+            return new SkinnableSprite
+            {
+                Texture = textures.Get(path),
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                RelativeSizeAxes = Axes.X,
+                Width = 1
+            };
+        }
+
+        return null;
+    }
+
     public Drawable GetLongNoteStart(int lane, int keyCount)
     {
         var path = SkinJson.GetOverrideOrDefault($"HitObjects/LongNoteStart/{keyCount}k-{lane}");
