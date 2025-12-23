@@ -93,7 +93,7 @@ internal class Program
             File.WriteAllText($"{out_dir}/{name}.lua", content.ToString().Trim());
     }
 
-    public static string GetLuaType(Type type, bool enumToNumber = true)
+    public static string GetLuaType(Type type, bool enumToNumber = true, bool nullable = false)
     {
         string? name = type.FullName switch
         {
@@ -116,10 +116,11 @@ internal class Program
                 name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
         }
 
-        if (name is not null) return name;
+        if (name is not null) 
+            return nullable ? $"{name}?" : name;
 
         Warn($"Failed to find matching lua type for '{type}'.");
-        return type.Name;
+        return nullable ? $"{type.Name}?" : type.Name;
     }
 
     private static XmlDocument? loadXml(string file)

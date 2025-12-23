@@ -97,7 +97,9 @@ public class BasicType : LuaType
             foreach (var parameter in method.GetParameters())
             {
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
-                var lua = Program.GetLuaType(pType, false);
+                bool isNullable = parameter.HasDefaultValue && parameter.DefaultValue == null ||
+                          Nullable.GetUnderlyingType(pType) != null;
+                var lua = Program.GetLuaType(pType, false, isNullable);
                 sb.Append($"---@param {parameter.Name} {lua}");
 
                 var desc = doc.GetParameterDescription(parameter.Name!);
