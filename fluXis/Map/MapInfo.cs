@@ -192,6 +192,25 @@ public class MapInfo
         HitSoundFades?.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
+    [CanBeNull]
+    public string GetFileString(string fileName)
+    {
+        if (RealmEntry == null)
+            return null;
+
+        var file = RealmEntry.MapSet.GetPathForFile(fileName);
+
+        if (string.IsNullOrEmpty(file))
+            return null;
+
+        var path = MapFiles.GetFullPath(file);
+
+        if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            return null;
+
+        return File.ReadAllText(path);
+    }
+
     public MapEvents GetMapEvents(List<IMod> mods)
     {
         var events = GetMapEvents<MapEvents>();
@@ -205,42 +224,52 @@ public class MapInfo
     public MapEvents GetMapEvents() => GetMapEvents<MapEvents>();
 
     public virtual T GetMapEvents<T>()
-        where T : MapEvents, new()
+    where T : MapEvents, new()
     {
         var events = new T();
+        var content = GetFileString(EffectFile);
 
-        if (RealmEntry == null)
+        if (content == null)
             return events;
 
-        var effectFile = RealmEntry.MapSet.GetPathForFile(EffectFile);
-
-        if (string.IsNullOrEmpty(effectFile))
-            return events;
-
-        if (!File.Exists(MapFiles.GetFullPath(effectFile)))
-            return events;
-
-        var content = File.ReadAllText(MapFiles.GetFullPath(effectFile));
         EffectHash = MapUtils.GetHash(content);
         return MapEvents.Load<T>(content);
     }
 
     [CanBeNull]
+    public string GetEffectHash()
+    {
+        var content = GetFileString(EffectFile);
+        
+        if (content == null)
+            return null;
+
+        EffectHash = MapUtils.GetHash(content);
+        return EffectHash;
+    }
+
+    [CanBeNull]
     public virtual Storyboard GetStoryboard()
     {
-        var file = RealmEntry?.MapSet.GetPathForFile(StoryboardFile);
+        var json = GetFileString(StoryboardFile);
 
-        if (string.IsNullOrEmpty(file))
+        if (json == null)
             return null;
 
-        var path = MapFiles.GetFullPath(file);
-
-        if (string.IsNullOrEmpty(path) || !File.Exists(path))
-            return null;
-
-        var json = File.ReadAllText(path);
         StoryboardHash = MapUtils.GetHash(json);
         return json.Deserialize<Storyboard>();
+    }
+
+    [CanBeNull]
+    public string GetStoryboardHash()
+    {
+        var content = GetFileString(StoryboardFile);
+        
+        if (content == null)
+            return null;
+
+        StoryboardHash = MapUtils.GetHash(content);
+        return StoryboardHash;
     }
 
     [CanBeNull]
