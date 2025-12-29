@@ -128,11 +128,6 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         storyboard.ElementRemoved += remove;
         storyboard.ElementUpdated += update;
         storyboard.Elements.ForEach(add);
-
-        foreach (var element in storyboard.Elements)
-        {
-            elementContainer.Add(new TimelineElement(element));
-        }
     }
 
     public void CloneElement(StoryboardElement element)
