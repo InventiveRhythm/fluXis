@@ -14,25 +14,25 @@ function Vector2(x, y) end
 ---@field time number
 ---@field lane number
 ---@field visualLane number the visual position of the note. (only applies to tick notes)
----@field holdtime number
----@field hitsound string
+---@field holdTime number
+---@field hitSound string
 ---@field group string
 ---@field type number 0 = Normal / Long             1 = Tick
 HitObject = {}
 
 ---@class HitSoundFade
 ---@field time number The time at which the volume change should start.
----@field sound string The sound to change the volume of.
+---@field hitSound string The sound to change the volume of.
 ---@field volume number The volume to fade to.
 ---@field duration number The duration of the fade.
----@field ease number The easing function to use for the fade.
+---@field easing number The easing function to use for the fade.
 HitSoundFade = {}
 
 ---@class ScrollVelocity
 ---@field time number
 ---@field multiplier number
 ---@field groups string
----@field mask string
+---@field laneMask string
 ScrollVelocity = {}
 
 ---@class TimingPoint

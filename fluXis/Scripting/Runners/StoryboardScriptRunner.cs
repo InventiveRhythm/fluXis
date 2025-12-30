@@ -1,6 +1,5 @@
 ﻿using System;
 using fluXis.Map;
-using fluXis.Online.API.Models.Maps;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Models.Skinning;

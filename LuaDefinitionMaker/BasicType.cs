@@ -3,6 +3,7 @@ using System.Text;
 using fluXis.Scripting;
 using fluXis.Scripting.Attributes;
 using fluXis.Utils;
+using Humanizer;
 using Newtonsoft.Json;
 using NLua;
 
@@ -11,47 +12,11 @@ namespace LuaDefinitionMaker;
 public class BasicType : LuaType
 {
     private readonly Type? fallbackType;
-    private readonly Dictionary<string, string>? overrideTypes;
 
-    public BasicType(Type baseType, string name, LuaDefinitionAttribute attribute, bool useJsonFallback = false, Type? fallbackType = null, Dictionary<string, string>? overrideTypes = null)
-        : base(baseType, name, attribute, useJsonFallback)
+    public BasicType(Type baseType, string name, LuaDefinitionAttribute attribute, Type? fallbackType = null)
+        : base(baseType, name, attribute)
     {
         this.fallbackType = fallbackType;
-        this.overrideTypes = overrideTypes;
-    }
-
-    private string getOverrideType(MethodInfo method, string defaultType)
-    {
-        if (overrideTypes == null) return defaultType;
-
-        var m = $"{BaseType.Name}.{method.Name}";
-        if (overrideTypes.TryGetValue(m, out var overrideType))
-            return overrideType;
-        
-        m = $"{BaseType.Name}.{method.Name}():{defaultType}";
-        if (overrideTypes.TryGetValue(m, out overrideType))
-            return overrideType;
-        
-        return defaultType;
-    }
-
-    private string getOverrideTypeParameter(MethodInfo method, ParameterInfo parameter, string defaultType)
-    {
-        if (overrideTypes == null) return defaultType;
-
-        var m = $"{BaseType.Name}.{method.Name}({parameter.Name}):{parameter.ParameterType.Name}";
-        if (overrideTypes.TryGetValue(m, out var overrideType))
-            return overrideType;
-        
-        m = $"{BaseType.Name}.{method.Name}({parameter.Name})";
-        if (overrideTypes.TryGetValue(m, out overrideType))
-            return overrideType;
-        
-        m = $"{parameter.ParameterType.Name}";
-        if (overrideTypes.TryGetValue(m, out overrideType))
-            return overrideType;
-        
-        return defaultType;
     }
 
     public override void Write(StringBuilder sb)
@@ -75,23 +40,17 @@ public class BasicType : LuaType
             foreach (var prop in BaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
             {
                 var memberAttr = prop.GetCustomAttribute<LuaMemberAttribute>();
-                
+
                 string? fieldName = null;
-                
+
                 if (memberAttr is not null)
-                {
                     fieldName = memberAttr.Name;
-                }
-                else if (UseJsonFallback)
-                {
-                    var jsonAttr = prop.GetCustomAttribute<JsonPropertyAttribute>();
-                    var ignoreAttr = prop.GetCustomAttribute<JsonIgnoreAttribute>();
-                    
-                    if (jsonAttr is not null && ignoreAttr is null)
-                        fieldName = jsonAttr.PropertyName ?? prop.Name;
-                }
-                
-                if (fieldName is null) continue;
+
+                if (prop.GetCustomAttribute<JsonPropertyAttribute>() != null)
+                    fieldName = prop.Name.IsUpperCase() ? prop.Name.ToLower() : prop.Name.Camelize();
+
+                if (fieldName is null)
+                    continue;
 
                 sb.Append($"---@field {StringUtils.ToCamelCase(fieldName)} {Program.GetLuaType(prop.PropertyType, fallback: fallbackType)}");
 
@@ -154,8 +113,7 @@ public class BasicType : LuaType
             foreach (var parameter in method.GetParameters())
             {
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
-                var defaultLuaType = Program.GetLuaType(pType, false, fallback: fallbackType);
-                var luaType = getOverrideTypeParameter(method, parameter, defaultLuaType);
+                var luaType = Program.GetLuaType(pType, false, fallback: fallbackType);
                 sb.Append($"---@param {parameter.Name} {luaType}");
 
                 var desc = doc.GetParameterDescription(parameter.Name!);
@@ -168,9 +126,7 @@ public class BasicType : LuaType
 
             if (ret != typeof(void))
             {
-                var defaultReturnType = Program.GetLuaType(method.ReturnType, fallback: fallbackType);
-                var returnType = getOverrideType(method, defaultReturnType);
-                var r = $"---@return {returnType}";
+                var r = $"---@return {Program.GetLuaType(method.ReturnType, fallback: fallbackType)}";
 
                 if (doc.Returns is not null)
                     r += $" # {doc.Returns.ReplaceLineEndings(" ")}";

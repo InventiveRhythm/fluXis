@@ -3,7 +3,7 @@
 ---@class BeatPulseEvent
 ---@field time number
 ---@field strength number
----@field zoom number How much of the length should be used to zoom in. (in %)
+---@field zoomIn number How much of the length should be used to zoom in. (in %)
 ---@field interval number
 BeatPulseEvent = {}
 
@@ -16,26 +16,26 @@ BeatPulseEvent = {}
 ---@field fadeMiddle boolean
 ---@field middle string
 ---@field duration number
----@field ease number
----@field playfield number
----@field subfield number
+---@field easing number
+---@field playfieldIndex number
+---@field playfieldSubIndex number
 ColorFadeEvent = {}
 
 ---@class FlashEvent
 ---@field time number
 ---@field duration number
----@field background boolean
----@field ease number
+---@field inBackground boolean
+---@field easing number
 ---@field startColor string
----@field startAlpha number
+---@field startOpacity number
 ---@field endColor string
----@field endAlpha number
+---@field endOpacity number
 FlashEvent = {}
 
 ---@class LaneSwitchEvent
 ---@field time number
 ---@field count number
----@field speed number
+---@field duration number
 ---@field easing number
 LaneSwitchEvent = {}
 
@@ -43,10 +43,10 @@ LaneSwitchEvent = {}
 ---@field time number
 ---@field duration number
 ---@field alpha number
----@field ease number
+---@field easing number
 ---@field layer string
----@field playfield number
----@field subfield number
+---@field playfieldIndex number
+---@field playfieldSubIndex number
 LayerFadeEvent = {}
 
 ---@class NoteEvent
@@ -64,19 +64,19 @@ PulseEvent = {}
 
 ---@class ScriptEvent
 ---@field time number
----@field path string
----@field params string
+---@field scriptPath string
+---@field parameters string
 ScriptEvent = {}
 
 ---@class ShaderEvent
 ---@field time number
----@field shader string
+---@field shaderName string
 ---@field duration number
----@field ease number
----@field useStart boolean
----@field startParams string
----@field endParams string
----@field params string
+---@field easing number
+---@field useStartParams boolean
+---@field startParameters string
+---@field endParameters string
+---@field parameters string
 ShaderEvent = {}
 
 ---@class ShaderParameters
