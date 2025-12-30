@@ -15,7 +15,7 @@ public enum Language
     de,
 
     [Description("español")]
-    es_ES,
+    es,
 
     [Description("Suomi")]
     fi,
