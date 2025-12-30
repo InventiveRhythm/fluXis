@@ -9,11 +9,16 @@ public partial class AspectRatioContainer : Container
 {
     public Vector2 TargetSize { get; set; } = new(1920, 1080);
 
-    private readonly Bindable<bool> enabled;
+    public Bindable<bool> Enabled { get; }
+
+    public AspectRatioContainer(bool enabled)
+        : this(new Bindable<bool>(enabled))
+    {
+    }
 
     public AspectRatioContainer(Bindable<bool> enabled)
     {
-        this.enabled = enabled;
+        Enabled = enabled;
 
         RelativeSizeAxes = Axes.None;
         Anchor = Anchor.Centre;
@@ -35,7 +40,7 @@ public partial class AspectRatioContainer : Container
 
         Size = new Vector2(pW, pH);
 
-        if (!enabled.Value) return;
+        if (!Enabled.Value) return;
 
         var targetAspect = TargetSize.X / TargetSize.Y;
         var currentAspect = pW / pH;

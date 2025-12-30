@@ -1,10 +1,11 @@
 {
-  "title": "Allgemein",
-  "language-title": "Sprache",
-  "language-current": "Aktuelle Sprache",
-  "folders-title": "Ordner",
-  "open-folder": "fluXis-Ordner öffnen",
-  "export-logs": "Logdateien exportieren",
-  "export-logs-description": "Komprimiert alle Logdateien zur besseren Freigabe in ein einziges ZIP-Archiv.",
-  "change-folder": "Speicherort ändern"
+    "title": "Allgemein",
+    "language-title": "Sprache",
+    "language-current": "Aktuelle Sprache",
+    "folders-title": "Ordner",
+    "open-folder": "fluXis-Ordner öffnen",
+    "export-logs": "Logdateien exportieren",
+    "export-logs-description": "Komprimiert alle Logdateien zur besseren Freigabe in ein einziges ZIP-Archiv.",
+    "change-folder": "Speicherort ändern",
+    "original-meta": "Bevorzuge Original-Metadata"
 }

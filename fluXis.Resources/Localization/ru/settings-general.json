@@ -1,8 +1,10 @@
 {
-  "title": "Основные",
-  "language-title": "Язык",
-  "language-current": "Текущий язык",
-  "folders-title": "Пути",
-  "open-folder": "Открыть папку fluXis",
-  "change-folder": "Изменить путь"
+    "title": "Основные",
+    "language-title": "Язык",
+    "language-current": "Текущий язык",
+    "folders-title": "Пути",
+    "open-folder": "Открыть папку fluXis",
+    "change-folder": "Изменить путь",
+    "original-meta": "Предпочитать оригинальные метаданные",
+    "original-meta-description": "Отображает данные о треке в оригинальном языке."
 }

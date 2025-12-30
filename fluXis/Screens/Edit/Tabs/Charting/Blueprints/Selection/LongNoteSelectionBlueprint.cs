@@ -2,6 +2,7 @@ using System;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -15,6 +16,7 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 
     private DraggableSelectionPiece head;
     private DraggableSelectionPiece end;
+    private Sample sample;
 
     private EditorLongNote drawable => Drawable as EditorLongNote;
 
@@ -26,8 +28,10 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
+        sample = samples.Get("UI/slider-tick");
+
         Anchor = Origin = Anchor.BottomLeft;
         InternalChildren = new Drawable[]
         {
@@ -75,6 +79,9 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         if (newLen <= 10)
             return;
 
+        if (Math.Abs(Object.Time - newTime) > 0.1f)
+            sample?.Play();
+
         Object.Time = newTime;
         Object.HoldTime = newLen;
     }
@@ -87,6 +94,9 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 
         if (newLen <= 10)
             return;
+
+        if (Math.Abs(Object.EndTime - newTime) > 0.1f)
+            sample?.Play();
 
         Object.EndTime = newTime;
     }

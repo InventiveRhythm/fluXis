@@ -16,5 +16,6 @@
     "nsv-name": "Sin SV",
     "nsv-description": "Remueve todos los cambios de velocidad.",
     "pa-name": "Pausado",
-    "pa-description": "Juego pausado durante la canción."
+    "pa-description": "Juego pausado durante la canción.",
+    "nev-description": "Remueve todos los efectos visuales."
 }

@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics;
 
@@ -5,7 +6,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags.EffectTags;
 
 public partial class NoteEventTag : EditorTag
 {
-    public override Colour4 TagColour => Colour4.FromHex("#235284");
+    public override Colour4 TagColour => Theme.NoteTag;
 
     private NoteEvent note => (NoteEvent)TimedObject;
 

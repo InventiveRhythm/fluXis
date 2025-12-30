@@ -54,5 +54,6 @@
   "mouse-high-precision": "High Precision Mouse",
   "mouse-high-precision-description": "Uses raw input from the mouse instead of the cursor position.",
   "mouse-sensitivity": "Sensitivity",
-  "mouse-sensitivity-description": "This is only used when High Precision Mouse is enabled."
+  "mouse-sensitivity-description": "This is only used when High Precision Mouse is enabled.",
+  "gamepad-title": "Gamepad"
 }

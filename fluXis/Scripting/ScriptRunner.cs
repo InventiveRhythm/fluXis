@@ -19,7 +19,7 @@ public class ScriptRunner
     [CanBeNull]
     protected MapInfo Map { get; set; }
 
-    public Action<string, string, string> DefineParameter;
+    public Action<string, string, string, object> DefineParameter;
     protected Lua Lua { get; }
 
     protected ScriptRunner()
@@ -75,8 +75,10 @@ public class ScriptRunner
         return point.BPM;
     }
 
+    #nullable enable
     [LuaGlobal(Name = "DefineParameter")]
-    private void defineParameter(string key, string title, [LuaCustomType(typeof(ParameterDefinitionType))] string type) => DefineParameter?.Invoke(key, title, type);
+    private void defineParameter(string key, string title, [LuaCustomType(typeof(ParameterDefinitionType))] string type, object? fallback = default) => DefineParameter?.Invoke(key, title, type, fallback);
+    #nullable disable
 
     [LuaGlobal]
     private void print(string text) => Logger.Add($"[Script] {text}");

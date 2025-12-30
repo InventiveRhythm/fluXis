@@ -1,14 +1,15 @@
 {
-  "general": "Allgemein",
-  "back": "Zurück",
-  "play": "Spielen",
-  "edit": "Bearbeiten",
-  "select": "Auswählen",
-  "delete": "Löschen",
-  "export": "Exportieren",
-  "panel-generic-confirm": "Ja, tu es.",
-  "panel-generic-cancel": "Warte, lieber doch nicht.",
-  "panel-confirm-exit": "Bist du sicher das du gehen möchtest?",
-  "can-not-be-undone": "Dies kann nicht rückgängig gemacht werden.",
-  "login-to-use": "Melde dich an, um diese Funktion zu nutzen."
+    "general": "Allgemein",
+    "back": "Zurück",
+    "play": "Spielen",
+    "edit": "Bearbeiten",
+    "select": "Auswählen",
+    "delete": "Löschen",
+    "export": "Exportieren",
+    "panel-generic-confirm": "Ja, tu es.",
+    "panel-generic-cancel": "Warte, lieber doch nicht.",
+    "panel-confirm-exit": "Bist du sicher das du gehen möchtest?",
+    "can-not-be-undone": "Dies kann nicht rückgängig gemacht werden.",
+    "login-to-use": "Melde dich an, um diese Funktion zu nutzen.",
+    "refresh": "Aktualisieren"
 }

@@ -166,6 +166,10 @@ public partial class SetupTab : EditorTab
                                                 {
                                                     Entries = new Drawable[]
                                                     {
+                                                        new SetupToggle("Force 16:9 Aspect Ratio", map.MapInfo.Force16By9)
+                                                        {
+                                                            OnChange = value => map.MapInfo.Force16By9 = value
+                                                        },
                                                         new SetupToggle("New Lane Switch Layout", map.MapInfo.NewLaneSwitchLayout)
                                                         {
                                                             TooltipText = "Improves the 6k and 8k layouts for lane switches",

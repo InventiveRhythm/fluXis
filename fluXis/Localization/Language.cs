@@ -15,7 +15,7 @@ public enum Language
     de,
 
     [Description("español")]
-    es_ES,
+    es,
 
     [Description("Suomi")]
     fi,
@@ -53,8 +53,11 @@ public enum Language
     [Description("Русский")]
     ru,
 
+    [Description("Српски")]
+    sr,
+
     [Description("Svenska")]
-    sv_SE,
+    sv,
 
     [Description("Tagalog")]
     tl,

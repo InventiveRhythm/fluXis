@@ -115,9 +115,11 @@ public class BasicType : LuaType
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
                 bool isNullable = parameter.HasDefaultValue && parameter.DefaultValue == null ||
                           Nullable.GetUnderlyingType(pType) != null;
+
                 var luaType = Program.GetLuaType(pType, false, typeof(string), isNullable);
                 
                 sb.Append($"---@param {parameter.Name} {luaType}");
+
 
                 var desc = doc.GetParameterDescription(parameter.Name!);
                 if (desc is not null) sb.Append($" {desc.ReplaceLineEndings(" ")}");
