@@ -1,14 +1,19 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Humanizer;
 using NLua;
+using osu.Framework.Logging;
 
 namespace fluXis.Utils.Extensions;
 
 public static class LuaExtensions
 {
+    private static readonly ConcurrentDictionary<Type, LuaTypeCache> reflection_cache = new();
+
     public static LuaTable ToLuaTable(this IEnumerable collection, Lua lua)
     {
         ArgumentNullException.ThrowIfNull(lua);
@@ -40,10 +45,46 @@ public static class LuaExtensions
         if (obj == null)
             return null;
 
-        var itemTable = lua.DoString("return {}")[0] as LuaTable;
         var type = obj.GetType();
 
+        var typeCache = reflection_cache.GetOrAdd(type, generateTypeCache);
+
+        var itemTable = lua.DoString("return {}")[0] as LuaTable;
         Debug.Assert(itemTable != null);
+
+        foreach (var cachedProp in typeCache.Properties)
+        {
+            try
+            {
+                var value = cachedProp.Property.GetValue(obj);
+                itemTable[cachedProp.LuaName] = value;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Failed to get property {cachedProp.Property.Name} for {type.Name}: {ex.Message}");
+            }
+        }
+
+        foreach (var cachedField in typeCache.Fields)
+        {
+            try
+            {
+                var value = cachedField.Field.GetValue(obj);
+                itemTable[cachedField.LuaName] = value;
+                itemTable[cachedField.OriginalName] = value;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Failed to get field {cachedField.Field.Name} for {type.Name}: {ex.Message}");
+            }
+        }
+
+        return itemTable;
+    }
+
+    private static LuaTypeCache generateTypeCache(Type type)
+    {
+        var typeCache = new LuaTypeCache();
 
         var properties = type.GetProperties(
             BindingFlags.Public |
@@ -53,27 +94,18 @@ public static class LuaExtensions
 
         foreach (var prop in properties)
         {
-            try
-            {
-                if (prop.GetIndexParameters().Length > 0)
-                    continue;
+            if (prop.GetIndexParameters().Length > 0)
+                continue;
 
-                var value = prop.GetValue(obj);
-                var attr = prop.GetCustomAttribute<LuaMemberAttribute>(true);
+            var attr = prop.GetCustomAttribute<LuaMemberAttribute>(true);
+            string luaName;
 
-                string luaName;
+            if (attr != null)
+                luaName = attr.Name;
+            else
+                luaName = prop.Name.IsUpperCase() ? prop.Name.ToLower() : prop.Name.Camelize();
 
-                if (attr != null)
-                    luaName = attr.Name;
-                else
-                    luaName = prop.Name.IsUpperCase() ? prop.Name.ToLower() : prop.Name.Camelize();
-
-                itemTable[luaName] = value;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to get property {prop.Name} for {type.Name}: {ex.Message}");
-            }
+            typeCache.Properties.Add(new LuaPropertiesCache(prop, luaName));
         }
 
         var fields = type.GetFields(
@@ -83,19 +115,19 @@ public static class LuaExtensions
 
         foreach (var field in fields)
         {
-            try
-            {
-                var value = field.GetValue(obj);
-                string luaName = char.ToLowerInvariant(field.Name[0]) + field.Name[1..];
-                itemTable[luaName] = value;
-                itemTable[field.Name] = value;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to get field {field.Name} for {type.Name}: {ex.Message}");
-            }
+            string luaName = char.ToLowerInvariant(field.Name[0]) + field.Name[1..];
+            typeCache.Fields.Add(new LuaFieldsCache(field, luaName, field.Name));
         }
 
-        return itemTable;
+        return typeCache;
     }
+
+    private class LuaTypeCache
+    {
+        public List<LuaPropertiesCache> Properties { get; } = new();
+        public List<LuaFieldsCache> Fields { get; } = new();
+    }
+
+    private record struct LuaPropertiesCache(PropertyInfo Property, string LuaName);
+    private record struct LuaFieldsCache(FieldInfo Field, string LuaName, string OriginalName);
 }
