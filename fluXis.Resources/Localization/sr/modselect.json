@@ -1,0 +1,11 @@
+{
+    "title": "Модификатори",
+    "description": "Учините игру тежом или лакшом за себе!",
+    "section-rate": "Оцена",
+    "section-difficulty-increase": "Повећање тежине",
+    "section-difficulty-decrease": "Смањење тежине",
+    "section-misc": "Разно",
+    "section-automation": "Аутоматизација",
+    "max-score": "Макс резултат: {0:0}%",
+    "incompatible-mods": "Некомпатибилни модификатори:"
+}

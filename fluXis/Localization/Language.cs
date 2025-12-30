@@ -53,6 +53,9 @@ public enum Language
     [Description("Русский")]
     ru,
 
+    [Description("Српски")]
+    sr,
+
     [Description("Svenska")]
     sv_SE,
 
