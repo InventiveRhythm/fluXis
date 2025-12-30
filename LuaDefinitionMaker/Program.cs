@@ -116,7 +116,7 @@ internal class Program
             File.WriteAllText($"{out_dir}/{name}.lua", content.ToString().Trim());
     }
 
-    public static string GetLuaType(Type type, bool enumToNumber = true, Type? fallback = null)
+    public static string GetLuaType(Type type, bool enumToNumber = true, Type? fallback = null, bool nullable = false)
     {
         string? name = getLuaTypeName(type);
 
@@ -130,14 +130,14 @@ internal class Program
 
         if (name is not null) return name;
 
-        string fallbackType = getLuaTypeName(fallback) ?? fallback?.Name ?? type.Name;
+        string fallbackType = getLuaTypeName(fallback, nullable) ?? fallback?.Name ?? type.Name;
         Warn($"Failed to find matching lua type for '{type.FullName}', using '{fallbackType}' as fallback.");
         return fallbackType;
     }
 
-    private static string? getLuaTypeName(Type? type)
+    private static string? getLuaTypeName(Type? type, bool nullable = false)
     {
-        return type?.FullName switch
+        string? name = type?.FullName switch
         {
             "System.Single" => "number",
             "System.Double" => "number",
@@ -153,6 +153,10 @@ internal class Program
             "System.Object" => "any",
             _ => null
         };
+
+        if (name is null) return name; // nulls are handled by the caller
+
+        return nullable ? $"{type?.Name}?" : type?.Name;
     }
 
     private static XmlDocument? loadXml(string file)
