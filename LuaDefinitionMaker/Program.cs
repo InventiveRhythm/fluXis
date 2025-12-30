@@ -65,7 +65,7 @@ internal class Program
 
         var eventSb = new StringBuilder();
         eventSb.AppendLine("---@alias EventType string");
-        eventTypes.ForEach(x => eventSb.AppendLine($"---| {x.Name.Replace("Event", "")}"));
+        eventTypes.ForEach(x => eventSb.AppendLine($"---| \"{x.Name.Replace("Event", "")}\""));
         typeList.Add(new CustomTextType("enums", eventSb.ToString()));
 
         // yes this is stupid but i don't want to figure out how to make it right

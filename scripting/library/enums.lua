@@ -60,23 +60,23 @@ function Easing(input) end
 function Anchor(input) end
 
 ---@alias EventType string
----| BeatPulse
----| ColorFade
----| Flash
----| LaneSwitch
----| LayerFade
----| Pulse
----| Shader
----| Shake
----| HitObjectEase
----| ScrollMultiplier
----| TimeOffset
----| PlayfieldMove
----| PlayfieldRotate
----| PlayfieldScale
----| CameraMove
----| CameraRotate
----| CameraScale
+---| "BeatPulse"
+---| "ColorFade"
+---| "Flash"
+---| "LaneSwitch"
+---| "LayerFade"
+---| "Pulse"
+---| "Shader"
+---| "Shake"
+---| "HitObjectEase"
+---| "ScrollMultiplier"
+---| "TimeOffset"
+---| "PlayfieldMove"
+---| "PlayfieldRotate"
+---| "PlayfieldScale"
+---| "CameraMove"
+---| "CameraRotate"
+---| "CameraScale"
 
 ---@alias ParameterDefinitionType string
 ---| "string"
