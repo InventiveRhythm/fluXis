@@ -57,7 +57,7 @@ public enum Language
     sr,
 
     [Description("Svenska")]
-    sv_SE,
+    sv,
 
     [Description("Tagalog")]
     tl,
