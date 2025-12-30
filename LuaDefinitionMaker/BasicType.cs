@@ -120,7 +120,6 @@ public class BasicType : LuaType
                 
                 sb.Append($"---@param {parameter.Name} {luaType}");
 
-
                 var desc = doc.GetParameterDescription(parameter.Name!);
                 if (desc is not null) sb.Append($" {desc.ReplaceLineEndings(" ")}");
 

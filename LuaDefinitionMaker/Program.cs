@@ -76,7 +76,13 @@ internal class Program
 
         typeList.Add(new NamespaceTypes(
             types,
-            "fluXis.Map.Structures.Events",
+            new[]
+            {
+                "fluXis.Map.Structures.Events",
+                "fluXis.Map.Structures.Events.Playfields",
+                "fluXis.Map.Structures.Events.Camera",
+                "fluXis.Map.Structures.Events.Scrolling"
+            },
             "events"
         ));
 
@@ -128,7 +134,8 @@ internal class Program
                 name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
         }
 
-        if (name is not null) return name;
+        if (name is not null) 
+            return nullable ? $"{name}?" : name;
 
         string fallbackType = getLuaTypeName(fallback, nullable) ?? fallback?.Name ?? type.Name;
         Warn($"Failed to find matching lua type for '{type.FullName}', using '{fallbackType}' as fallback.");
@@ -154,9 +161,7 @@ internal class Program
             _ => null
         };
 
-        if (name is null) return name; // nulls are handled by the caller
-
-        return nullable ? $"{type?.Name}?" : type?.Name;
+        return nullable ? $"{name}?" : name;
     }
 
     private static XmlDocument? loadXml(string file)

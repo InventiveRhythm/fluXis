@@ -90,3 +90,77 @@ ShaderParameters = {}
 ---@field duration number
 ---@field magnitude number
 ShakeEvent = {}
+
+---@class HitObjectEaseEvent
+---@field time number
+---@field easing number
+HitObjectEaseEvent = {}
+
+---@class ScrollMultiplierEvent
+---@field time number
+---@field duration number
+---@field multiplier number
+---@field easing number
+---@field groups string
+ScrollMultiplierEvent = {}
+
+---@class TimeOffsetEvent
+---@field time number
+---@field duration number
+---@field useStartValue boolean
+---@field startOffset number
+---@field targetOffset number
+---@field easing number
+TimeOffsetEvent = {}
+
+---@class PlayfieldMoveEvent
+---@field time number
+---@field offsetX number
+---@field offsetY number
+---@field offsetZ number
+---@field duration number
+---@field easing number
+---@field playfieldIndex number
+---@field playfieldSubIndex number
+PlayfieldMoveEvent = {}
+
+---@class PlayfieldRotateEvent
+---@field time number
+---@field roll number
+---@field duration number
+---@field easing number
+---@field playfieldIndex number
+---@field playfieldSubIndex number
+PlayfieldRotateEvent = {}
+
+---@class PlayfieldScaleEvent
+---@field time number
+---@field scaleX number
+---@field scaleY number
+---@field duration number
+---@field easing number
+---@field playfieldIndex number
+---@field playfieldSubIndex number
+PlayfieldScaleEvent = {}
+
+---@class CameraMoveEvent
+---@field time number
+---@field x number
+---@field y number
+---@field duration number
+---@field easing number
+CameraMoveEvent = {}
+
+---@class CameraRotateEvent
+---@field time number
+---@field roll number
+---@field duration number
+---@field easing number
+CameraRotateEvent = {}
+
+---@class CameraScaleEvent
+---@field time number
+---@field scale number
+---@field duration number
+---@field easing number
+CameraScaleEvent = {}

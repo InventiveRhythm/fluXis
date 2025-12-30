@@ -7,15 +7,20 @@ namespace LuaDefinitionMaker;
 public class NamespaceTypes : LuaType
 {
     private readonly IEnumerable<Type> types;
-    private readonly string namespaceName;
+    private readonly string[] namespaces;
     private readonly List<BasicType> luaTypes = new();
 
-    public NamespaceTypes(Type[] types, string namespaceName, string fileName)
-        : base(typeof(object), namespaceName, new LuaDefinitionAttribute(fileName) { Hide = true })
+    public NamespaceTypes(Type[] types, string[] namespaces, string fileName)
+        : base(typeof(object), string.Join(", ", namespaces), new LuaDefinitionAttribute(fileName) { Hide = true })
     {
-        this.types = types.Where(t => t.Namespace == namespaceName && t.IsClass && !t.IsAbstract);
-        this.namespaceName = namespaceName;
+        this.types = types.Where(t => t.IsClass && !t.IsAbstract && namespaces.Contains(t.Namespace));
+        this.namespaces = namespaces;
         loadTypes();
+    }
+
+    public NamespaceTypes(Type[] types, string namespaceName, string fileName)
+        : this(types, new[] { namespaceName }, fileName)
+    {
     }
 
     private void loadTypes()
@@ -44,7 +49,7 @@ public class NamespaceTypes : LuaType
 
     public override void Write(StringBuilder sb)
     {
-        Program.Write($"Namespace: {namespaceName} ({luaTypes.Count} types)");
+        Program.Write($"Namespaces: {string.Join(", ", namespaces)} ({luaTypes.Count} types)");
 
         foreach (var type in luaTypes)
         {
