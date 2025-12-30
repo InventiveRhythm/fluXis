@@ -137,14 +137,14 @@ internal class Program
         if (name is not null) 
             return nullable ? $"{name}?" : name;
 
-        string fallbackType = getLuaTypeName(fallback, nullable) ?? fallback?.Name ?? type.Name;
+        string fallbackType = getLuaTypeName(fallback) ?? fallback?.Name ?? type.Name;
         Warn($"Failed to find matching lua type for '{type.FullName}', using '{fallbackType}' as fallback.");
         return fallbackType;
     }
 
-    private static string? getLuaTypeName(Type? type, bool nullable = false)
+    private static string? getLuaTypeName(Type? type)
     {
-        string? name = type?.FullName switch
+        return type?.FullName switch
         {
             "System.Single" => "number",
             "System.Double" => "number",
@@ -160,8 +160,6 @@ internal class Program
             "System.Object" => "any",
             _ => null
         };
-
-        return nullable ? $"{name}?" : name;
     }
 
     private static XmlDocument? loadXml(string file)
