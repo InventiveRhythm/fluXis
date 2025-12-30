@@ -3,7 +3,9 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using fluXis;
+using fluXis.Map.Structures.Events;
 using fluXis.Scripting.Attributes;
+using fluXis.Scripting.Models.Storyboarding;
 using fluXis.Storyboards;
 using osu.Framework.Graphics;
 
@@ -46,7 +48,7 @@ internal class Program
             typeList.Add(new BasicType(type, name, attr));
         }
 
-        typeList.Add(new EnumType<Easing>(false));
+        typeList.Add(new EnumType<Easing>(true, ctorName: "Easing", enumName: "Easing"));
         typeList.Add(new EnumType<Anchor>(true)
         {
             Values = new[]
@@ -57,11 +59,38 @@ internal class Program
             }
         });
 
+        var eventTypes = LuaMap.GetMapEventTypes();
+        eventTypes.Remove(typeof(ScriptEvent));
+        eventTypes.Remove(typeof(NoteEvent));
+
+        var eventSb = new StringBuilder();
+        eventSb.AppendLine("---@alias EventType string");
+        eventTypes.ForEach(x => eventSb.AppendLine($"---| \"{x.Name.Replace("Event", "")}\""));
+        typeList.Add(new CustomTextType("enums", eventSb.ToString()));
+
         // yes this is stupid but i don't want to figure out how to make it right
         typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\""));
         typeList.Add(new EnumType<StoryboardAnimationType>(false, "AnimationType", "storyboard"));
         typeList.Add(new EnumType<SkinSprite>(false, nameof(SkinSprite), "storyboard"));
         typeList.Add(new EnumType<StoryboardLayer>(true, "Layer", "storyboard"));
+
+        typeList.Add(new NamespaceTypes(
+            types,
+            new[]
+            {
+                "fluXis.Map.Structures.Events",
+                "fluXis.Map.Structures.Events.Playfields",
+                "fluXis.Map.Structures.Events.Camera",
+                "fluXis.Map.Structures.Events.Scrolling"
+            },
+            "events"
+        ));
+
+        typeList.Add(new NamespaceTypes(
+            types,
+            "fluXis.Map.Structures",
+            "struct"
+        ));
 
         foreach (var type in typeList)
         {
@@ -93,20 +122,9 @@ internal class Program
             File.WriteAllText($"{out_dir}/{name}.lua", content.ToString().Trim());
     }
 
-    public static string GetLuaType(Type type, bool enumToNumber = true, bool nullable = false)
+    public static string GetLuaType(Type type, bool enumToNumber = true, Type? fallback = null, bool nullable = false)
     {
-        string? name = type.FullName switch
-        {
-            "System.Single" => "number",
-            "System.Double" => "number",
-            "System.Int32" => "number",
-            "System.UInt32" => "number",
-            "fluXis.Storyboards.StoryboardLayer" => "number",
-            "System.Boolean" => "boolean",
-            "System.String" => "string",
-            "System.Object" => "any",
-            _ => null
-        };
+        string? name = getLuaTypeName(type);
 
         if (name is null)
         {
@@ -119,8 +137,29 @@ internal class Program
         if (name is not null) 
             return nullable ? $"{name}?" : name;
 
-        Warn($"Failed to find matching lua type for '{type}'.");
-        return nullable ? $"{type.Name}?" : type.Name;
+        string fallbackType = getLuaTypeName(fallback) ?? fallback?.Name ?? type.Name;
+        Warn($"Failed to find matching lua type for '{type.FullName}', using '{fallbackType}' as fallback.");
+        return fallbackType;
+    }
+
+    private static string? getLuaTypeName(Type? type)
+    {
+        return type?.FullName switch
+        {
+            "System.Single" => "number",
+            "System.Double" => "number",
+            "System.Int32" => "number",
+            "System.Int64" => "number",
+            "System.UInt32" => "number",
+            "System.UInt64" => "number",
+            "fluXis.Storyboards.StoryboardLayer" => "number",
+            "fluXis.Map.Structures.Bases.IMapEvent" => "EventType",
+            "System.Boolean" => "boolean",
+            "System.String" => "string",
+            "NLua.LuaTable" => "table",
+            "System.Object" => "any",
+            _ => null
+        };
     }
 
     private static XmlDocument? loadXml(string file)
