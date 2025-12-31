@@ -75,6 +75,9 @@ public partial class ScoreListTab : SelectInfoTab
     private FillFlowContainer outOfDate;
 
     private RealmMap map;
+    private readonly Bindable<int> selectedPlayer = new(0);
+    private readonly Bindable<int> playerCount = new(1);
+
     private readonly Bindable<ScoreListType> type = new();
     private readonly Bindable<string> username = new();
 
@@ -229,6 +232,8 @@ public partial class ScoreListTab : SelectInfoTab
         if (map is null) return;
 
         cancel = cancelSource.Token;
+        selectedPlayer.Value = 0;
+        playerCount.Value = 1;
         Task.Run(() => loadScores(cancel), cancel);
     }
 
@@ -239,12 +244,19 @@ public partial class ScoreListTab : SelectInfoTab
         switch (type.Value)
         {
             case ScoreListType.Local:
-                scores.AddRange(scoreManager.OnMap(map.ID).Select(x =>
+                scores.AddRange(scoreManager.OnMap(map.ID).Select(pair =>
                 {
-                    var info = x.ToScoreInfo();
-                    var detach = x.Detach();
+                    var info = pair.ScoreInfo;
+                    var detach = pair.RealmScore.Detach();
 
-                    var player = users.Get(info.PlayerID);
+                    if (info.Players == null) throw new Exception("no players");
+
+                    if (info.Players.Count > playerCount.Value) playerCount.Value = info.Players.Count;
+
+                    //FIXME: if one of the score in the middle of the list is invalid this might cause issues
+                    if (selectedPlayer.Value >= info.Players.Count) selectedPlayer.Value = 0;
+
+                    var player = users.Get(info.Players[selectedPlayer.Value].PlayerID);
 
                     if (player is null)
                     {
@@ -261,13 +273,14 @@ public partial class ScoreListTab : SelectInfoTab
                         ScoreInfo = info,
                         Map = map,
                         Player = player,
+                        PlayerIndex = selectedPlayer.Value,
                         ShowSelfOutline = false,
                         DeleteAction = () =>
                         {
                             scoreManager.Delete(detach.ID);
                             Refresh();
                         },
-                        ReplayAction = replays.Exists(x.ID) ? () => screen?.ViewReplay(map, detach) : null
+                        ReplayAction = replays.Exists(pair.RealmScore.ID) ? () => screen?.ViewReplay(map, detach) : null
                     };
                 }));
                 break;
@@ -275,7 +288,7 @@ public partial class ScoreListTab : SelectInfoTab
             default:
                 if (map.OnlineID == -1)
                     replaceNoScores(LocalizationStrings.SongSelect.LeaderboardNotUploaded);
-                else if (tryFetchScores(type.Value, cancelToken, out var s))
+                else if (tryFetchScores(type.Value, cancelToken, selectedPlayer.Value, out var s)) //TODO: request dual maps
                     scores.AddRange(s);
                 else
                     return;
@@ -290,8 +303,8 @@ public partial class ScoreListTab : SelectInfoTab
 
             scores.Sort((a, b) =>
             {
-                var res = b.ScoreInfo.PerformanceRating.CompareTo(a.ScoreInfo.PerformanceRating);
-                return res == 0 ? b.ScoreInfo.Score.CompareTo(a.ScoreInfo.Score) : res;
+                var res = b.ScoreInfo.Players[selectedPlayer.Value].PerformanceRating.CompareTo(a.ScoreInfo.Players[selectedPlayer.Value].PerformanceRating);
+                return res == 0 ? b.ScoreInfo.Players[selectedPlayer.Value].Score.CompareTo(a.ScoreInfo.Players[selectedPlayer.Value].Score) : res;
             });
 
             currentEntries.Clear();
@@ -332,7 +345,7 @@ public partial class ScoreListTab : SelectInfoTab
         }
     }
 
-    private bool tryFetchScores(ScoreListType type, CancellationToken cancelToken, out List<ScoreListEntry> scores)
+    private bool tryFetchScores(ScoreListType type, CancellationToken cancelToken, int playerIndex, out List<ScoreListEntry> scores)
     {
         scores = new List<ScoreListEntry>();
 
@@ -342,7 +355,7 @@ public partial class ScoreListTab : SelectInfoTab
             return false;
         }
 
-        var req = new MapLeaderboardRequest(type, map.OnlineID);
+        var req = new MapLeaderboardRequest(type, map.OnlineID, playerIndex);
         api.PerformRequest(req);
 
         if (cancelToken.IsCancellationRequested)

@@ -12,5 +12,7 @@ public class MultiplayerParticipant
     [JsonProperty("state")]
     public MultiplayerUserState State { get; set; }
 
+    //TODO: make it possible to select someone else in the room to play dual maps?
+
     public long ID => Player.ID;
 }
