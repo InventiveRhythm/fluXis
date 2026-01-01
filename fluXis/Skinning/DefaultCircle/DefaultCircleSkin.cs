@@ -66,6 +66,7 @@ public class DefaultCircleSkin : DefaultSkin
     }
 
     public override Drawable GetTickNote(int lane, int keyCount, bool small) => new DefaultCircleTickNote(small);
+    public override Drawable GetLandmine(int lane, int keyCount) => new DefaultCircleLandmine();
     public override VisibilityContainer GetColumnLighting(int lane, int keyCount) => new DefaultCircleColumnLighting();
 
     public override Drawable GetReceptor(int lane, int keyCount, bool down)

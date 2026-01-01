@@ -33,15 +33,22 @@ public class HitObject : ITimedObject
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
+    [JsonProperty("hidden")]
+    public bool Hidden { get; set; }
+
     /// <summary>
     /// 0 = Normal / Long
     /// 1 = Tick
+    /// 2 = Landmine
     /// </summary>
     [JsonProperty("type")]
     public int Type { get; set; }
 
     [JsonIgnore]
     public bool LongNote => HoldTime > 0 && Type == 0;
+
+    [JsonIgnore]
+    public bool Landmine => Type == 2;
 
     [JsonIgnore]
     public double EndTime

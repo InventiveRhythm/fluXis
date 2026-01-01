@@ -125,9 +125,14 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
         while (ruleset.AllowReverting && PastHitObjects.Count > 0)
         {
-            var result = PastHitObjects.Peek().Result;
+            HitObject pastHitObject = PastHitObjects.Peek();
+            var result = pastHitObject.Result;
 
-            if (result is null || Clock.CurrentTime >= result.Value.Time)
+            //landmines might not have a result, but we still need to revert them in case we seek back in a replay or in the editor.
+            //use the object's time as a fallback if it doesn't have a result.
+            double comparisonTime = result?.Time ?? pastHitObject.Time;
+
+            if (Clock.CurrentTime >= comparisonTime)
                 break;
 
             revertHitObject(PastHitObjects.Pop());
@@ -246,8 +251,13 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
         // since judged is only set after hitting the tail this works
         var isHoldEnd = hitObject is DrawableLongNote { Judged: true };
+        var isLandmine = hitObject is DrawableLandmine;
 
-        var hitWindows = isHoldEnd ? ruleset.ReleaseWindows : ruleset.HitWindows;
+        var hitWindows =
+            isHoldEnd ? ruleset.ReleaseWindows :
+            isLandmine ? ruleset.LandmineWindows :
+            ruleset.HitWindows;
+
         var judgement = hitWindows.JudgementFor(difference);
 
         if (player.HealthProcessor.Failed)
