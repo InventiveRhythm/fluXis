@@ -153,7 +153,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
         flow.Show();
         flow.Children = new Drawable[]
         {
-            new ProfileHeader(user),
+            new ProfileHeader(user, this),
             new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
