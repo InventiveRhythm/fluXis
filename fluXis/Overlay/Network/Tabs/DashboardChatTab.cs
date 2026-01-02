@@ -73,14 +73,22 @@ public partial class DashboardChatTab : DashboardTab
                         RelativeSizeAxes = Axes.Both,
                         Children = new Drawable[]
                         {
-                            channels = new FillFlowContainer<ChatChannelSection>
+                            new FluXisScrollContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
+                                ScrollbarAnchor = Anchor.TopRight,
                                 Padding = new MarginPadding { Bottom = 50 + 16 },
-                                Spacing = new Vector2(8),
-                                ChildrenEnumerable = Enum.GetValues<APIChannelType>()
-                                                         .GetValuesInOrder()
-                                                         .Select(x => new ChatChannelSection(x, Channel.GetBoundCopy()))
+                                HideScrollbarOnInactivity = true,
+                                Child = channels = new FillFlowContainer<ChatChannelSection>
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Padding = new MarginPadding { Right = 16 },
+                                    Spacing = new Vector2(8),
+                                    ChildrenEnumerable = Enum.GetValues<APIChannelType>()
+                                                             .GetValuesInOrder()
+                                                             .Select(x => new ChatChannelSection(x, Channel.GetBoundCopy()))
+                                },
                             },
                             new FluXisButton
                             {
