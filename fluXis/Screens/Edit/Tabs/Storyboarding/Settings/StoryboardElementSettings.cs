@@ -140,6 +140,12 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         Text = $"{item.Type}",
                         WebFontSize = 20
                     },
+                    new PointSettingsTextBox
+                    {
+                        Text = "Label",
+                        DefaultText = item.Label,
+                        OnTextChanged = box => item.Label = box.Text
+                    },
                     new PointSettingsTime(map, item)
                     {
                         TimeChanged = (oldTime, newTime) =>
@@ -277,7 +283,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         {
                             Text = "Texture",
                             DefaultText = item.GetParameter("file", ""),
-                            TextBoxWidth = 320,
+                            TextBoxWidth = 280,
                             OnTextChanged = t =>
                             {
                                 item.Parameters["file"] = t.Text;

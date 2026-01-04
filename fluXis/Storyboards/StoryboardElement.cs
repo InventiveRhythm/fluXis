@@ -10,6 +10,12 @@ namespace fluXis.Storyboards;
 public class StoryboardElement : ITimedObject
 {
     /// <summary>
+    /// Custom label for this element, only gets used in the editor.
+    /// </summary>
+    [JsonProperty("label")]
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>
     /// The type of the element.
     /// </summary>
     [JsonProperty("type")]

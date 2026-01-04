@@ -73,13 +73,19 @@ public partial class StoryboardTab : EditorTab
                             RelativeSizeAxes = Axes.Both,
                             ColumnDimensions = new Dimension[]
                             {
+                                new(GridSizeMode.Absolute, 500),
                                 new(),
-                                new(GridSizeMode.Absolute, 700)
+                                new(GridSizeMode.Absolute, 500)
                             },
                             Content = new[]
                             {
                                 new Drawable[]
                                 {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = Theme.Background2
+                                    },
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
