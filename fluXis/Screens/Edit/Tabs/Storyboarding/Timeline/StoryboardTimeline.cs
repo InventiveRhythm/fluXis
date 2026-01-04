@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
@@ -31,14 +32,35 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     private const float min_height = 200;
     private const float max_height = 600;
 
-    public MenuItem[] ContextMenuItems => new MenuItem[]
+    public MenuItem[] ContextMenuItems
     {
-        new MenuExpandItem(
-            "Create new...",
-            FontAwesome6.Solid.Plus,
-            Enum.GetValues<StoryboardElementType>()
-                .Select(x => new MenuActionItem($"{x.Humanize(LetterCasing.Title)}", x.GetIcon(), () => create(x))))
-    };
+        get
+        {
+            rightClickPosition = GetContainingInputManager()!.CurrentState.Mouse.Position;
+
+            var types = Enum.GetValues<StoryboardElementType>();
+            var groups = types.OrderBy(x => x.ToString()).GroupBy(x => x.Humanize(LetterCasing.Title).Split(" ").Last());
+
+            return new MenuItem[]
+            {
+                new MenuExpandItem(
+                    "Create new...",
+                    FontAwesome6.Solid.Plus,
+                    groups.Select<IGrouping<string, StoryboardElementType>, FluXisMenuItem>(x =>
+                    {
+                        var items = x.OrderBy(y => y).ToList();
+                        var first = items.First();
+
+                        if (items.Count == 1)
+                            return createForEntry(first);
+
+                        return new MenuExpandItem(x.Key, first.GetIcon(), items.Select(createForEntry));
+
+                        MenuActionItem createForEntry(StoryboardElementType t) => new($"{t.Humanize(LetterCasing.Title)}", t.GetIcon(), () => create(t)) { Color = TimelineElement.GetColor(t) };
+                    }))
+            };
+        }
+    }
 
     [Resolved]
     private EditorMap map { get; set; }
@@ -60,6 +82,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     private float targetZ = 0;
 
     private bool dragging;
+    private Vector2 rightClickPosition = Vector2.Zero;
 
     private FluXisSpriteText overlayText;
 
@@ -151,7 +174,8 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         {
             Type = type,
             StartTime = clock.CurrentTime,
-            EndTime = clock.CurrentTime + clock.BeatTime
+            EndTime = clock.CurrentTime + clock.BeatTime,
+            ZIndex = Math.Max(0, ZAtScreenSpacePosition(rightClickPosition))
         };
 
         storyboard.Add(element);

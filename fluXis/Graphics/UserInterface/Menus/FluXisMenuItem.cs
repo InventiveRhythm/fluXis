@@ -1,4 +1,5 @@
 using System;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;
@@ -9,6 +10,7 @@ public abstract class FluXisMenuItem : MenuItem
 {
     public MenuItemType Type { get; }
     public IconUsage Icon { get; }
+    public Colour4? Color { get; init; }
 
     public Func<bool> IsEnabled { get; init; } = () => true;
 

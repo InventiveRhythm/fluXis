@@ -52,7 +52,7 @@ public partial class TimelineElement : CompositeDrawable
     {
         Height = HEIGHT;
 
-        var color = getColor(Element.Type);
+        var color = GetColor(Element.Type);
         var textColor = Theme.IsBright(color) ? Theme.TextDark : Theme.Text;
 
         InternalChildren = new Drawable[]
@@ -152,7 +152,7 @@ public partial class TimelineElement : CompositeDrawable
         }
     }
 
-    private Colour4 getColor(StoryboardElementType type) => type switch
+    public static Colour4 GetColor(StoryboardElementType type) => type switch
     {
         StoryboardElementType.Box => Theme.Red,
         StoryboardElementType.Sprite => Theme.Orange,
