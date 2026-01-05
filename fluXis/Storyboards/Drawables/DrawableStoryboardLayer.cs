@@ -97,7 +97,7 @@ public partial class DrawableStoryboardLayer : DrawSizePreservingFillContainer
 
         var toRemove = container.Children.Where(c => c.Element.EndTime < clock.CurrentTime).ToList();
 
-        foreach (var drawable in toRemove.OrderByDescending(x => x.Element.EndTime))
+        foreach (var drawable in toRemove.OrderBy(x => x.Element.EndTime))
         {
             container.Remove(drawable, false);
             past.Push(drawable);
