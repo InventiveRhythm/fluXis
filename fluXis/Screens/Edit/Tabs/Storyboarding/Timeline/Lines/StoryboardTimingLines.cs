@@ -6,6 +6,9 @@ namespace fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Lines;
 
 public partial class StoryboardTimingLines : EditorTimingLines<StoryboardTimingLines.StoryboardLine>
 {
+    public Anchor LineAnchor { get; init; } = Anchor.BottomLeft;
+    public Anchor LineOrigin { get; init; } = Anchor.BottomCentre;
+
     private StoryboardTimeline timeline { get; }
 
     public StoryboardTimingLines(StoryboardTimeline timeline)
@@ -19,7 +22,7 @@ public partial class StoryboardTimingLines : EditorTimingLines<StoryboardTimingL
         Colour = color
     };
 
-    protected override Vector2 GetPosition(double time) => new(timeline.PositionAtTime(time), 0);
+    protected override Vector2 GetPosition(double time) => new(timeline.PositionAtTime(time, DrawWidth), 0);
 
     public partial class StoryboardLine : Line
     {
@@ -36,8 +39,8 @@ public partial class StoryboardTimingLines : EditorTimingLines<StoryboardTimingL
             Width = 2;
             RelativeSizeAxes = Axes.Y;
 
-            Anchor = Anchor.BottomLeft;
-            Origin = Anchor.BottomCentre;
+            Anchor = parent.LineAnchor;
+            Origin = parent.LineOrigin;
         }
     }
 }

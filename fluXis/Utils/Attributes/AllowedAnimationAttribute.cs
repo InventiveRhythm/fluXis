@@ -3,7 +3,7 @@ using fluXis.Storyboards;
 
 namespace fluXis.Utils.Attributes;
 
-[AttributeUsage(AttributeTargets.Field)]
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 public class AllowedAnimationAttribute : Attribute
 {
     public StoryboardAnimationType Type { get; }

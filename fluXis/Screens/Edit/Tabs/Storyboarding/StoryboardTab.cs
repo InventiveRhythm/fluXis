@@ -5,6 +5,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Drawables;
+using fluXis.Screens.Edit.Tabs.Storyboarding.Animations;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Settings;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
 using fluXis.Storyboards;
@@ -81,11 +82,7 @@ public partial class StoryboardTab : EditorTab
                             {
                                 new Drawable[]
                                 {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = Theme.Background2
-                                    },
+                                    new StoryboardAnimationsList(timeline),
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,

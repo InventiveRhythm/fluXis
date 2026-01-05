@@ -201,7 +201,8 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     public TimelineElement GetDrawable(StoryboardElement element)
         => elementContainer.FirstOrDefault(e => e.Element == element);
 
-    public float PositionAtTime(double time) => (float)(DrawWidth / 2 + .5f * ((time - clock.CurrentTime) * settings.Zoom));
+    public float PositionAtTime(double time, float w) => (float)(w / 2 + .5f * ((time - clock.CurrentTime) * settings.Zoom));
+    public float PositionAtTime(double time) => PositionAtTime(time, DrawWidth);
     public float PositionAtZ(long index) => (index - visualZ) * (TimelineElement.HEIGHT + ELEMENT_SPACING);
 
     public Vector2 ScreenSpacePositionAtTime(double time, int z)

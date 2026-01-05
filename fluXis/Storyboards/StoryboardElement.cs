@@ -100,6 +100,8 @@ public enum StoryboardElementType
 {
     [Icon(0xf0c8)]
     [WidthHeight]
+    [AllowedAnimation(StoryboardAnimationType.Width)]
+    [AllowedAnimation(StoryboardAnimationType.Height)]
     Box = 0,
 
     [Icon(0xf03e)]
@@ -113,14 +115,23 @@ public enum StoryboardElementType
 
     [Icon(0xf111)]
     [WidthHeight]
+    [AllowedAnimation(StoryboardAnimationType.Width)]
+    [AllowedAnimation(StoryboardAnimationType.Height)]
+    [AllowedAnimation(StoryboardAnimationType.Rotate, true)]
     Circle = 4,
 
     [Icon(0xf111, Regular = true)]
     [WidthHeight]
+    [AllowedAnimation(StoryboardAnimationType.Width)]
+    [AllowedAnimation(StoryboardAnimationType.Height)]
+    [AllowedAnimation(StoryboardAnimationType.Border)]
+    [AllowedAnimation(StoryboardAnimationType.Rotate, true)]
     OutlineCircle = 5,
 
     [Icon(0xf1fc)]
     [WidthHeight]
+    [AllowedAnimation(StoryboardAnimationType.Width)]
+    [AllowedAnimation(StoryboardAnimationType.Height)]
     SkinSprite = 6
 }
 
