@@ -79,7 +79,9 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         if (newLen <= 10)
             return;
 
-        if (Math.Abs(Object.Time - newTime) > 0.1f)
+        double diff = Math.Abs(Math.Clamp(Object.Time, 0, EditorClock.TrackLength) - Math.Clamp(newTime, 0, EditorClock.TrackLength));
+
+        if (diff >= Snaps.CurrentStep / Snaps.SnapDivisor)
             sample?.Play();
 
         Object.Time = newTime;
@@ -95,7 +97,9 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         if (newLen <= 10)
             return;
 
-        if (Math.Abs(Object.EndTime - newTime) > 0.1f)
+        double diff = Math.Abs(Math.Clamp(Object.EndTime, 0, EditorClock.TrackLength) - Math.Clamp(newTime, 0, EditorClock.TrackLength));
+
+        if (diff >= Snaps.CurrentStep / Snaps.SnapDivisor)
             sample?.Play();
 
         Object.EndTime = newTime;
