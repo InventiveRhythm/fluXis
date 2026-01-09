@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
 using fluXis.Storyboards;
+using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
@@ -103,7 +105,9 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                     DefaultText = Animation.ValueStart,
                     OnTextChanged = t =>
                     {
-                        Animation.ValueStart = t.Text;
+                        if (validate(t.Text)) Animation.ValueStart = t.Text;
+                        else t.NotifyError();
+
                         map.Update(Animation);
                     }
                 },
@@ -113,7 +117,9 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                     DefaultText = Animation.ValueEnd,
                     OnTextChanged = t =>
                     {
-                        Animation.ValueEnd = t.Text;
+                        if (validate(t.Text)) Animation.ValueEnd = t.Text;
+                        else t.NotifyError();
+
                         map.Update(Animation);
                     }
                 },
@@ -121,4 +127,32 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             }
         }
     };
+
+    private bool validate(string input)
+    {
+        switch (Animation.Type)
+        {
+            case StoryboardAnimationType.MoveX:
+            case StoryboardAnimationType.MoveY:
+            case StoryboardAnimationType.Scale:
+            case StoryboardAnimationType.Width:
+            case StoryboardAnimationType.Height:
+            case StoryboardAnimationType.Rotate:
+            case StoryboardAnimationType.Fade:
+            case StoryboardAnimationType.Border:
+                return input.TryParseFloatInvariant(out _);
+
+            case StoryboardAnimationType.ScaleVector:
+                var split = input.Split(",");
+                if (split.Length != 2) return false;
+
+                return split.All(x => x.TryParseFloatInvariant(out _));
+
+            case StoryboardAnimationType.Color:
+                return Colour4.TryParseHex(input, out _);
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
 }
