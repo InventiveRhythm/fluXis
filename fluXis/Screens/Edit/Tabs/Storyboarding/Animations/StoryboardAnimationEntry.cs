@@ -11,6 +11,7 @@ using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -33,6 +34,8 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     public StoryboardAnimation Animation { get; }
     private readonly StoryboardAnimationRow row;
 
+    private readonly Circle length;
+
     public StoryboardAnimationEntry(StoryboardAnimation animation, StoryboardAnimationRow row, Colour4 color)
     {
         Animation = animation;
@@ -42,14 +45,26 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
         Origin = Anchor.Centre;
 
         Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT);
-        InternalChild = new FluXisSpriteIcon
+        InternalChildren = new Drawable[]
         {
-            Icon = FontAwesome6.Solid.Diamond,
-            RelativeSizeAxes = Axes.Both,
-            Size = new Vector2(0.6f),
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Colour = color
+            new FluXisSpriteIcon
+            {
+                Icon = FontAwesome6.Solid.Diamond,
+                RelativeSizeAxes = Axes.Both,
+                Size = new Vector2(0.6f),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Colour = color
+            },
+            length = new Circle
+            {
+                RelativeSizeAxes = Axes.Y,
+                Height = 0.5f,
+                Colour = color,
+                Alpha = 0.5f,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.CentreLeft,
+            }
         };
     }
 
@@ -58,6 +73,9 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
         base.Update();
 
         X = Math.Clamp(timeline.PositionAtTime(Animation.StartTime, Parent!.DrawWidth), -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
+
+        var endX = timeline.PositionAtTime(Animation.EndTime, Parent!.DrawWidth);
+        length.Width = Math.Max(endX - X, 0);
     }
 
     protected override bool OnClick(ClickEvent e)
