@@ -5,6 +5,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
 using fluXis.Storyboards;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
@@ -24,14 +25,17 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     [Resolved]
     private StoryboardTimeline timeline { get; set; }
 
-    private float beatLength => map.MapInfo.GetTimingPoint(animation.StartTime).MsPerBeat;
+    private float beatLength => map.MapInfo.GetTimingPoint(Animation.StartTime).MsPerBeat;
 
-    private readonly StoryboardAnimation animation;
+    [CanBeNull]
+    public Action<StoryboardAnimation> RequestRemove { get; init; }
+
+    public StoryboardAnimation Animation { get; }
     private readonly StoryboardAnimationRow row;
 
     public StoryboardAnimationEntry(StoryboardAnimation animation, StoryboardAnimationRow row, Colour4 color)
     {
-        this.animation = animation;
+        Animation = animation;
         this.row = row;
 
         Anchor = Anchor.CentreLeft;
@@ -53,7 +57,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     {
         base.Update();
 
-        X = Math.Clamp(timeline.PositionAtTime(animation.StartTime, Parent!.DrawWidth), -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
+        X = Math.Clamp(timeline.PositionAtTime(Animation.StartTime, Parent!.DrawWidth), -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -72,29 +76,30 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             Spacing = new Vector2(12),
             Children = new Drawable[]
             {
-                new PointSettingsTime(map, animation),
-                new PointSettingsLength<StoryboardAnimation>(map, animation, beatLength),
+                new PointSettingsTitle(Animation.Type.GetDescription(), () => RequestRemove?.Invoke(Animation), false),
+                new PointSettingsTime(map, Animation),
+                new PointSettingsLength<StoryboardAnimation>(map, Animation, beatLength),
                 new PointSettingsTextBox
                 {
                     Text = "Start Value",
-                    DefaultText = animation.ValueStart,
+                    DefaultText = Animation.ValueStart,
                     OnTextChanged = t =>
                     {
-                        animation.ValueStart = t.Text;
-                        map.Update(animation);
+                        Animation.ValueStart = t.Text;
+                        map.Update(Animation);
                     }
                 },
                 new PointSettingsTextBox
                 {
                     Text = "End Value",
-                    DefaultText = animation.ValueEnd,
+                    DefaultText = Animation.ValueEnd,
                     OnTextChanged = t =>
                     {
-                        animation.ValueEnd = t.Text;
-                        map.Update(animation);
+                        Animation.ValueEnd = t.Text;
+                        map.Update(Animation);
                     }
                 },
-                new PointSettingsEasing<StoryboardAnimation>(map, animation),
+                new PointSettingsEasing<StoryboardAnimation>(map, Animation),
             }
         }
     };
