@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Text;
 
 namespace fluXis.Utils;
 
@@ -40,6 +41,24 @@ public static class StringUtils
         }
 
         return $"{adjust:0.0}{size_suffixes[m]}";
+    }
+
+    public static string TruncateBytes(string value, int maxBytes)
+    {
+        if (string.IsNullOrEmpty(value))
+            return value ?? "";
+        
+        var encoding = Encoding.UTF8;
+        if (encoding.GetByteCount(value) <= maxBytes)
+            return value;
+        
+        var bytes = encoding.GetBytes(value);
+        var truncated = encoding.GetString(bytes, 0, Math.Min(bytes.Length, maxBytes));
+        
+        while (encoding.GetByteCount(truncated) > maxBytes && truncated.Length > 0)
+            truncated = truncated[..^1];
+        
+        return truncated;
     }
 
     public static string CensorEmail(string mail)
