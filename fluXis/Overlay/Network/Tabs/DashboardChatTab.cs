@@ -13,6 +13,7 @@ using fluXis.Online.API.Models.Chat;
 using fluXis.Online.Chat;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Network.Tabs.Chat;
+using fluXis.Overlay.User.Header;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.EnumExtensions;
@@ -51,6 +52,8 @@ public partial class DashboardChatTab : DashboardTab
     private FluXisTextBox textBox;
 
     private LoadingIcon loading;
+
+    private HeaderButton scrollBottomButton;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -119,6 +122,19 @@ public partial class DashboardChatTab : DashboardTab
                                     Spacing = new Vector2(12)
                                 }
                             },
+                            scrollBottomButton = new HeaderButton
+                            {
+                                Margin = new MarginPadding{ Horizontal = 20, Vertical = 60 },
+                                Anchor = Anchor.BottomRight,
+                                Origin = Anchor.BottomRight,
+                                Icon = FontAwesome6.Solid.AngleDown,
+                                UseAutoSize = false,
+                                Size = new Vector2(64),
+                                IconSize = new Vector2(24),
+                                BackgroundColour = Theme.Background3,
+                                Action = () => scroll.ScrollToEnd(),
+                                Alpha = 0
+                            },
                             textBox = new FluXisTextBox
                             {
                                 BackgroundActive = Theme.Background3,
@@ -150,6 +166,13 @@ public partial class DashboardChatTab : DashboardTab
     {
         base.LoadComplete();
 
+        scrollBottomButton.Enabled.BindValueChanged(v =>
+        {
+            scrollBottomButton.ScaleTo(v.NewValue ? 1f : 0.8f, 400, Easing.OutQuint)
+                           .FadeTo(v.NewValue ? 1f : 0f, 200);
+        }, true);
+        scrollBottomButton.FinishTransforms(true);
+
         textBox.OnCommit += (sender, _) =>
         {
             client.GetChannel(Channel.Value)?.SendMessage(sender.Text);
@@ -175,6 +198,12 @@ public partial class DashboardChatTab : DashboardTab
             var chanButton = getChannelButton(e.NewValue);
             scroll.ScrollTo(chanButton.LastScrollPosition);
         });
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        scrollBottomButton.Enabled.Value = scroll.Current <= scroll.DrawHeight - 50;
     }
 
     public void WaitForChannel(string ch)
