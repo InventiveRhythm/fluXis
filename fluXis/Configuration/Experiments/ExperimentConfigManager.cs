@@ -14,13 +14,11 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
 
     protected override void InitialiseDefaults()
     {
-        SetDefault(ExperimentConfig.StoryboardTab, false);
         SetDefault(ExperimentConfig.ModView, false);
     }
 }
 
 public enum ExperimentConfig
 {
-    StoryboardTab,
     ModView
 }
