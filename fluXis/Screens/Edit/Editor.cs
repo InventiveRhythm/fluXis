@@ -729,7 +729,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         updateStateHash();
         notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
         lastSaveTime = now;
-        
+
         editorMap.ScriptWatcher.Enable();
         return true;
     }
