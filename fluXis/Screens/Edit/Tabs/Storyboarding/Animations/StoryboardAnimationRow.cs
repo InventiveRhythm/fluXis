@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Storyboards;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -29,25 +31,43 @@ public partial class StoryboardAnimationRow : GridContainer
             new()
         };
 
+        var color = getColor(type);
+
         Content = new[]
         {
             new Drawable[]
             {
                 new FluXisSpriteText
                 {
-                    Text = $"{type}",
+                    Text = $"{type.GetDescription()}",
                     WebFontSize = 12,
                     Margin = new MarginPadding { Horizontal = 8 },
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
+                    Colour = color
                 },
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
-                    ChildrenEnumerable = item.Animations.Where(x => x.Type == type).Select(x => new StoryboardAnimationEntry(x, this))
+                    ChildrenEnumerable = item.Animations.Where(x => x.Type == type).Select(x => new StoryboardAnimationEntry(x, this, color))
                 }
             }
         };
     }
+
+    private static Colour4 getColor(StoryboardAnimationType type) => type switch
+    {
+        StoryboardAnimationType.MoveX => Theme.Red,
+        StoryboardAnimationType.MoveY => Theme.Orange,
+        StoryboardAnimationType.Scale => Theme.Yellow,
+        StoryboardAnimationType.ScaleVector => Theme.Lime,
+        StoryboardAnimationType.Width => Theme.Green,
+        StoryboardAnimationType.Height => Theme.Aqua,
+        StoryboardAnimationType.Rotate => Theme.Cyan,
+        StoryboardAnimationType.Fade => Theme.Blue,
+        StoryboardAnimationType.Color => Theme.Purple,
+        StoryboardAnimationType.Border => Theme.Pink,
+        _ => Theme.Text
+    };
 }

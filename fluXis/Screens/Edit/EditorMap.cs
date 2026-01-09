@@ -113,6 +113,7 @@ public class EditorMap : IVerifyContext
             new ChangeNotifier<CameraRotateEvent>(MapEvents.CameraRotateEvents),
             new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents),
+            new ChangeNotifier<StoryboardAnimation>(new List<StoryboardAnimation>()),
             MapInfo.Storyboard
         };
 
