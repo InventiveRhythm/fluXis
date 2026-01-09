@@ -18,7 +18,7 @@ public partial class ChatChannelSection : FillFlowContainer
 
     public APIChannelType Type { get; }
 
-    private readonly List<ChatChannelButton> channels = new();
+    public readonly List<ChatChannelButton> Channels = new();
 
     public ChatChannelSection(APIChannelType type, Bindable<string> bind)
     {
@@ -54,20 +54,20 @@ public partial class ChatChannelSection : FillFlowContainer
     public void AddChannel(ChatChannel channel)
     {
         var ch = new ChatChannelButton(channel, bind);
-        channels.Add(ch);
+        Channels.Add(ch);
         AddInternal(ch);
         updateVisibility();
     }
 
     public void RemoveChannel(ChatChannel channel)
     {
-        var button = channels.FirstOrDefault(x => x.Channel == channel);
+        var button = Channels.FirstOrDefault(x => x.Channel == channel);
         if (button == null) return;
 
-        channels.Remove(button);
+        Channels.Remove(button);
         Remove(button, true);
         updateVisibility();
     }
 
-    private void updateVisibility() => Alpha = channels.Count != 0 ? 1f : 0f;
+    private void updateVisibility() => Alpha = Channels.Count != 0 ? 1f : 0f;
 }

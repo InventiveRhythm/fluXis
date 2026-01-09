@@ -164,9 +164,16 @@ public partial class DashboardChatTab : DashboardTab
 
         Channel.BindValueChanged(e =>
         {
+            var oldChanButton = getChannelButton(e.OldValue);
+            oldChanButton.LastScrollPosition = scroll.Current;
+
             flow.Clear();
+
             var chan = client.GetChannel(e.NewValue);
             chan?.Messages.ForEach(addMessage);
+
+            var chanButton = getChannelButton(e.NewValue);
+            scroll.ScrollTo(chanButton.LastScrollPosition);
         });
     }
 
@@ -179,6 +186,13 @@ public partial class DashboardChatTab : DashboardTab
         }
 
         ScheduleAfterChildren(() => WaitForChannel(ch));
+    }
+
+    private ChatChannelButton getChannelButton(string ch)
+    {
+        return channels
+        .SelectMany(chSection => chSection.Channels)
+        .FirstOrDefault(c => c.Channel.Name == ch);
     }
 
     private void updateStatus(ValueChangedEvent<ConnectionStatus> e) => Schedule(() =>

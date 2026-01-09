@@ -29,6 +29,8 @@ public partial class ChatChannelButton : Container, IHasContextMenu
     public ChatChannel Channel { get; }
     public IconUsage Icon { get; set; } = FontAwesome6.Solid.Hashtag;
 
+    public double LastScrollPosition = double.MaxValue;
+
     public MenuItem[] ContextMenuItems
     {
         get
