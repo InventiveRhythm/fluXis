@@ -20,6 +20,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
@@ -78,7 +79,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
 
     private Container gradient;
     private VerticalSectionedGradient colorGradient;
-    private Box progress;
+    private Progress progress;
 
     protected override bool StartHidden => true;
 
@@ -268,13 +269,12 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                 }
                             }
                         },
-                        progress = new Box
+                        progress = new Progress(globalClock)
                         {
-                            Size = new Vector2(0, 4),
-                            RelativeSizeAxes = Axes.X,
-                            Colour = Theme.Text,
                             Anchor = Anchor.BottomLeft,
-                            Origin = Anchor.BottomLeft
+                            Origin = Anchor.BottomLeft,
+                            RelativeSizeAxes = Axes.X,
+                            Width = 1f
                         }
                     }
                 }
@@ -295,8 +295,6 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         globalBackground.Alpha = screens.Alpha = dim.Alpha = animationProgress >= 1f ? 0 : 1;
         backgrounds.Alpha = video.Alpha >= 1f ? 0 : 1;
-
-        progress.Width = (float)((globalClock.CurrentTrack?.CurrentTime ?? 0) / (globalClock.CurrentTrack?.Length ?? 1000));
 
         pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome6.Solid.Pause : FontAwesome6.Solid.Play;
         fullscreenToggle.IconSprite.Icon = fullscreen ? FontAwesome6.Solid.DownLeftAndUpRightToCenter : FontAwesome6.Solid.UpRightAndDownLeftFromCenter;
@@ -348,8 +346,6 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
             Top = Interpolation.ValueAt(animationProgress, 12, 20, 0, 1),
             Left = Interpolation.ValueAt(animationProgress, cover_small / 2f - 196 / 2f, 0, 0, 1)
         };
-
-        progress.Height = Interpolation.ValueAt(animationProgress, 4, 8, 0, 1);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -482,5 +478,96 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     {
         showMetadata();
         return true;
+    }
+
+    private partial class Progress : Container
+    {
+        private const float collapsed_height = 6;
+        private const float expanded_height = 10;
+
+        private readonly GlobalClock clock;
+
+        private Box fill;
+        private Box background;
+        private SeekContainer seekContainer;
+
+        public Progress(GlobalClock clock)
+        {
+            this.clock = clock;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            Anchor = Anchor.BottomLeft;
+            Origin = Anchor.BottomLeft;
+            RelativeSizeAxes = Axes.X;
+            Width = 1f; 
+            Height = collapsed_height;
+
+            Child = seekContainer = new SeekContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                IsPlaying = () => clock.IsRunning,
+                AlwaysDebounce = true,
+                OnSeek = onSeek,
+                Children = new Drawable[]
+                {
+                    background = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Colour4.White,
+                        Alpha = 0.1f 
+                    },
+                    fill = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Width = 0, 
+                        Colour = Theme.Text,
+                    }
+                }
+            };
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (seekContainer.IsDragged)
+            {
+                fill.Width = seekContainer.Progress.Value;
+            }
+            else
+            {
+                var width = clock.CurrentTime / clock.CurrentTrack.Length;
+                if (!double.IsFinite(width) || double.IsNaN(width)) width = 0;
+
+                fill.Width = (float)width;
+            }
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            this.ResizeHeightTo(expanded_height, 200, Easing.OutQuad);
+            return base.OnHover(e);
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            base.OnHoverLost(e);
+            this.ResizeHeightTo(collapsed_height, 300, Easing.OutQuad);
+        }
+
+        public void FadeColour(ColourInfo colour, double duration = 0, Easing easing = Easing.None)
+        {
+            fill.FadeColour(colour, duration, easing);
+        }
+
+        private void onSeek(float progress)
+        {
+            if (clock.CurrentTrack == null) return;
+            double targetTime = progress * clock.CurrentTrack.Length;
+            clock.Seek(targetTime);
+        }
     }
 }

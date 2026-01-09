@@ -12,6 +12,8 @@ public partial class SeekContainer : Container
     public Action<float> OnSeek { get; set; }
     public Func<bool> IsPlaying { get; set; }
 
+    public bool AlwaysDebounce { get; set; } = false; // debounce regardless of playing state
+
     public float HorizontalOffset { get; set; } = 0;
     public double DebounceTime { get; set; } = Styling.SEEK_DEBOUNCE;
 
@@ -47,7 +49,7 @@ public partial class SeekContainer : Container
 
         Progress.Value = progress;
 
-        bool shouldDebounce = IsPlaying != null && IsPlaying() && DebounceTime > 0;
+        bool shouldDebounce = IsPlaying != null && IsPlaying() && DebounceTime > 0 || AlwaysDebounce;
         
         if (shouldDebounce && lastSeekTime != null && Time.Current - lastSeekTime < DebounceTime)
             return;
