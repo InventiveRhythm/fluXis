@@ -168,7 +168,18 @@ public class QuaverImport : MapImporter
                         LongNoteCount = longNoteCount,
                         NotesPerSecond = (noteCount + longNoteCount) / (songLength / 1000)
                     },
-                    KeyCount = mode == 1 ? 4 : 7,
+                    KeyCount = mode switch {
+                        1 => 4,
+                        2 => 7,
+                        3 => 1,
+                        4 => 2,
+                        5 => 3,
+                        6 => 5,
+                        7 => 6,
+                        8 => 8,
+                        9 => 9,
+                        10 => 10,
+                    },
                     Rating = 0
                 };
 
