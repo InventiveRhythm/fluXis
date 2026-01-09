@@ -293,6 +293,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
             LoadContent = () => new MapBackground(map)
             {
                 RelativeSizeAxes = Axes.Both,
+                FillMode = FillMode.Fit,
+                FillAspectRatio = 1f,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
