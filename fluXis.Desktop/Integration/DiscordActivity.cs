@@ -86,9 +86,9 @@ public class DiscordActivity
             Details = truncateWithLog(rpc.Details, 128, "Details"),
             Assets = new Assets
             {
-                LargeImageKey = truncateWithLog(rpc.LargeImage, 32, "LargeImageKey"),
+                LargeImageKey = truncateWithLog(rpc.LargeImage, 300, "LargeImageKey"),
                 LargeImageText = truncateWithLog(rpc.LargeImageText, 128, "LargeImageText"),
-                SmallImageKey = truncateWithLog(rpc.SmallImage, 32, "SmallImageKey"),
+                SmallImageKey = truncateWithLog(rpc.SmallImage, 300, "SmallImageKey"),
                 SmallImageText = truncateWithLog(rpc.SmallImageText, 128, "SmallImageText")
             },
             Timestamps = new Timestamps()
