@@ -179,6 +179,7 @@ public class QuaverImport : MapImporter
                         8 => 8,
                         9 => 9,
                         10 => 10,
+                        _ => 7,
                     },
                     Rating = 0
                 };
