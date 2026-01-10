@@ -38,6 +38,11 @@
 ---| "InOutBounce"
 ---| "OutPow10"
 
+---@param input Easing
+---@return number
+---@nodiscard
+function Easing(input) end
+
 ---@alias AnchorName string
 ---| "TopLeft"
 ---| "TopCentre"
@@ -53,6 +58,25 @@
 ---@return number
 ---@nodiscard
 function Anchor(input) end
+
+---@alias EventType string
+---| "BeatPulse"
+---| "ColorFade"
+---| "Flash"
+---| "LaneSwitch"
+---| "LayerFade"
+---| "Pulse"
+---| "Shader"
+---| "Shake"
+---| "HitObjectEase"
+---| "ScrollMultiplier"
+---| "TimeOffset"
+---| "PlayfieldMove"
+---| "PlayfieldRotate"
+---| "PlayfieldScale"
+---| "CameraMove"
+---| "CameraRotate"
+---| "CameraScale"
 
 ---@alias ParameterDefinitionType string
 ---| "string"
