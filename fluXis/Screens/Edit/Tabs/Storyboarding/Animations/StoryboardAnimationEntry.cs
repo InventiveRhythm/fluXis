@@ -34,14 +34,14 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     public Action<StoryboardAnimation> RequestRemove { get; init; }
 
     public StoryboardAnimation Animation { get; }
-    private readonly StoryboardAnimationRow row;
+    public readonly StoryboardAnimationRow Row;
 
     private readonly Circle length;
 
     public StoryboardAnimationEntry(StoryboardAnimation animation, StoryboardAnimationRow row, Colour4 color)
     {
         Animation = animation;
-        this.row = row;
+        Row = row;
 
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;

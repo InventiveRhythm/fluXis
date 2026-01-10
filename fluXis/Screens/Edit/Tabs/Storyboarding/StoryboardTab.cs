@@ -48,11 +48,14 @@ public partial class StoryboardTab : EditorTab
     private void load()
     {
         var timeline = new StoryboardTimeline();
+        var animationList = new StoryboardAnimationsList(timeline);
 
         dependencies.CacheAs(map.Storyboard);
         dependencies.CacheAs(timeline);
+        dependencies.CacheAs(animationList);
         dependencies.CacheAs<ITimePositionProvider>(timeline);
         dependencies.CacheAs(timeline.Blueprints);
+        dependencies.CacheAs(animationList.Blueprints);
 
         InternalChildren = new Drawable[]
         {
@@ -82,7 +85,7 @@ public partial class StoryboardTab : EditorTab
                             {
                                 new Drawable[]
                                 {
-                                    new StoryboardAnimationsList(timeline),
+                                    animationList,
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,

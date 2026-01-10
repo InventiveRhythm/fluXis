@@ -114,10 +114,24 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     public void AddBlueprint(T info)
     {
+        addBlueprintExtra(info);
+    }
+
+    public void AddBlueprint(T info, params object[] extra)
+    {
+        addBlueprintExtra(info, extra);
+    }
+
+    private void addBlueprintExtra(T info, params object[] extra)
+    {
         if (blueprints.ContainsKey(info))
             return;
 
-        var blueprint = CreateBlueprint(info);
+        var blueprint = CreateBlueprintExtra(info, extra);
+        
+        if (blueprint == null)
+            return;
+
         blueprints[info] = blueprint;
         blueprint.Selected += onSelected;
         blueprint.Deselected += onDeselected;
@@ -126,6 +140,16 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     public void RemoveBlueprint(T obj)
     {
+        removeBlueprintExtra(obj);
+    }
+
+    public void RemoveBlueprint(T obj, params object[] extra)
+    {
+        removeBlueprintExtra(obj, extra);
+    }
+
+    private void removeBlueprintExtra(T obj, params object[] extra)
+    {
         if (!blueprints.Remove(obj, out var blueprint))
             return;
 
@@ -133,9 +157,33 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
         blueprint.Selected -= onSelected;
         blueprint.Deselected -= onDeselected;
         SelectionBlueprints.Remove(blueprint, true);
+        
+        OnBlueprintRemoved(obj, extra);
+    }
+
+    public void RemoveAllBlueprints()
+    {
+        var blueprints = this.blueprints.Keys.ToList();
+        blueprints.ForEach(RemoveBlueprint);
+    }
+
+    protected virtual void OnBlueprintRemoved(T obj, params object[] extra) { }
+
+    protected virtual SelectionBlueprint<T> CreateBlueprintExtra(T obj, params object[] extra)
+    {
+        if (extra != null && extra.Length > 0)
+        {
+            var blueprint = CreateBlueprint(obj, extra);
+            if (blueprint != null)
+                return blueprint;
+        }
+        
+        return CreateBlueprint(obj);
     }
 
     protected virtual SelectionBlueprint<T> CreateBlueprint(T obj) => null!;
+
+    protected virtual SelectionBlueprint<T> CreateBlueprint(T obj, params object[] extra) => null!;
 
     private bool selectByClick(MouseButtonEvent e)
     {

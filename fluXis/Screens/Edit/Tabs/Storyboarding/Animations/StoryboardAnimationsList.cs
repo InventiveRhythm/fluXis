@@ -4,30 +4,50 @@ using System.Collections.Specialized;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Screens.Edit.Tabs.Storyboarding.Animations.Blueprints;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Lines;
 using fluXis.Storyboards;
+using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Animations;
 
-public partial class StoryboardAnimationsList : CompositeDrawable
+public partial class StoryboardAnimationsList : CompositeDrawable, ITimePositionProvider
 {
     public const float ROW_HEIGHT = 24;
     public const float SIDE_WIDTH = 140;
 
     [Resolved]
-    private TimelineBlueprintContainer blueprints { get; set; }
+    private EditorMap map { get; set; }
+
+    [Resolved]
+    private EditorClock clock { get; set; }
+
+    [Resolved]
+    private EditorSettings settings { get; set; }
+
+    [Resolved]
+    private TimelineBlueprintContainer timelineBlueprints { get; set; }
+    public StoryboardAnimationBluepintContainer Blueprints { get; set; } = new();
 
     private readonly StoryboardTimeline timeline;
-    private FillFlowContainer flow;
+    private FillFlowContainer<StoryboardAnimationRow> rowsFlow;
+    public IEnumerable<(StoryboardAnimationRow Row, StoryboardAnimationEntry Entry)> AnimationsEnumerable => 
+        rowsFlow.Children.SelectMany(r => r.GetEntries().Select(entry => (Row: r, Entry: entry)));
     private Box dim;
     private FluXisSpriteText text;
+
+    public event Action<StoryboardAnimation, StoryboardAnimationRow> AnimationAdded;
+    public event Action<StoryboardAnimation, StoryboardAnimationRow> AnimationRemoved;
+    public event Action<StoryboardAnimation, StoryboardAnimationRow> AnimationUpdated;
+    public event Action<bool> FocusedElement;
 
     public StoryboardAnimationsList(StoryboardTimeline timeline)
     {
@@ -96,11 +116,19 @@ public partial class StoryboardAnimationsList : CompositeDrawable
                     }
                 }
             },
-            flow = new FillFlowContainer
+            new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Top = ROW_HEIGHT },
-                Direction = FillDirection.Vertical
+                Children = new Drawable[]
+                {
+                    rowsFlow = new()
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Padding = new MarginPadding { Top = ROW_HEIGHT },
+                        Direction = FillDirection.Vertical
+                    },
+                    Blueprints
+                }
             },
             dim = new Box
             {
@@ -120,13 +148,63 @@ public partial class StoryboardAnimationsList : CompositeDrawable
     {
         base.LoadComplete();
 
-        blueprints.SelectionHandler.SelectedObjects.BindCollectionChanged(collectionChanged, true);
+        timelineBlueprints.SelectionHandler.SelectedObjects.BindCollectionChanged(collectionChanged, true);
+
+        map.RegisterAddListener<StoryboardAnimation>(TriggerAnimationAdded);
+        map.RegisterUpdateListener<StoryboardAnimation>(TriggerAnimationUpdated);
     }
 
-    private void collectionChanged(object _, NotifyCollectionChangedEventArgs __)
+    public void CloneAnimation(StoryboardAnimation anim, StoryboardAnimationRow row)
     {
-        var collection = blueprints.SelectionHandler.SelectedObjects;
-        flow.Clear();
+        var copy = anim.JsonCopy();
+
+        copy.StartTime = clock.CurrentTime;
+
+        row.Add(copy);
+    }
+
+    public StoryboardAnimationEntry GetDrawable(StoryboardAnimation anim)
+        => AnimationsEnumerable.FirstOrDefault(e => e.Entry.Animation == anim).Entry;
+
+    public StoryboardAnimationRow GetAnimationRow(StoryboardAnimation anim)
+        => rowsFlow.Children.FirstOrDefault(row => row.GetEntries().Any(e => e.Animation == anim));
+
+    public int GetRowIndex(StoryboardAnimationRow row)
+        => rowsFlow.IndexOf(row);
+
+    public float PositionAtTime(double time, float w)
+    {
+        var timelineWidth = w - SIDE_WIDTH;
+        var timelineCenter = SIDE_WIDTH + timelineWidth / 2;
+        return (float)(timelineCenter + .5f * ((time - clock.CurrentTime) * settings.Zoom));
+    }
+
+    public float PositionAtTime(double time) => PositionAtTime(time, DrawWidth);
+
+    public Vector2 ScreenSpacePositionAtTime(double time, int rowIdx)
+        => ToScreenSpace(new Vector2(PositionAtTime(time), (rowIdx * ROW_HEIGHT) + ROW_HEIGHT));
+
+    public double TimeAtPosition(float x)
+    {
+        var timelineWidth = DrawWidth - SIDE_WIDTH;
+        var timelineCenter = SIDE_WIDTH + timelineWidth / 2;
+        return (x - timelineCenter) * 2 / settings.Zoom + clock.CurrentTime;
+    }
+
+    public double TimeAtScreenSpacePosition(Vector2 pos) => TimeAtPosition(ToLocalSpace(pos).X);
+
+    public void TriggerAnimationAdded(StoryboardAnimation anim) => AnimationAdded?.Invoke(anim, GetDrawable(anim).Row);
+
+    public void TriggerAnimationRemoved(StoryboardAnimation anim) => AnimationRemoved?.Invoke(anim, GetDrawable(anim).Row);
+
+    public void TriggerAnimationUpdated(StoryboardAnimation anim) => AnimationUpdated?.Invoke(anim, GetDrawable(anim).Row);
+
+    private void collectionChanged(object _, NotifyCollectionChangedEventArgs e)
+    {
+        var collection = timelineBlueprints.SelectionHandler.SelectedObjects;
+        
+        rowsFlow.Clear();
+
         text.Text = "";
         dim.FadeOut(200);
 
@@ -135,6 +213,7 @@ public partial class StoryboardAnimationsList : CompositeDrawable
             case 0:
                 text.Text = "Nothing selected.";
                 dim.FadeIn(200);
+                FocusedElement?.Invoke(false);
                 break;
 
             case 1:
@@ -158,12 +237,14 @@ public partial class StoryboardAnimationsList : CompositeDrawable
                 var rem = attrs.Where(x => x.IsDeny).ToList();
                 rem.ForEach(x => attrs.RemoveAll(y => y.Type == x.Type));
 
-                flow.ChildrenEnumerable = attrs.Select(x => new StoryboardAnimationRow(item, x.Type));
+                rowsFlow.ChildrenEnumerable = attrs.Select(x => new StoryboardAnimationRow(item, x.Type));
+                FocusedElement?.Invoke(true);
                 break;
 
             default:
                 text.Text = "Too many selections.";
                 dim.FadeIn(200);
+                FocusedElement?.Invoke(false);
                 break;
         }
     }
