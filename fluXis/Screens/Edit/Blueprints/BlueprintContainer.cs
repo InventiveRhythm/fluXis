@@ -19,6 +19,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 {
     protected virtual bool HorizontalSelection => false;
     protected virtual bool InArea => false;
+    protected virtual bool OnlySelectOnDrag => false;
 
     protected readonly BindableList<T> SelectedObjects = new();
 
@@ -79,7 +80,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        var foundByClick = selectByClick(e);
+        var foundByClick = OnlySelectOnDrag ? false : selectByClick(e);
         var canMove = prepareMovement(e);
 
         var handle = foundByClick || canMove;

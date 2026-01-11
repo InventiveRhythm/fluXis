@@ -32,7 +32,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
 
     private float beatLength => map.MapInfo.GetTimingPoint(Animation.StartTime).MsPerBeat;
 
-    private BindableBool isSelected = new(false);
+    public BindableBool IsSelected = new(false);
 
     [CanBeNull]
     public Action<StoryboardAnimation> RequestRemove { get; init; }
@@ -99,7 +99,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        isSelected.BindValueChanged(e =>
+        IsSelected.BindValueChanged(e =>
         {
             outlineDiamond.Alpha = e.NewValue ? 1f : 0f;
             outlineLength.Alpha = e.NewValue ? 1f : 0f;
@@ -121,13 +121,13 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     protected override bool OnClick(ClickEvent e)
     {
         this.ShowPopover();
-        isSelected.Value = true;
+        IsSelected.Value = true;
         return true;
     }
 
     public Popover GetPopover() => new FluXisPopover
     {
-        OnClose = () => isSelected.Value = false,
+        OnClose = () => IsSelected.Value = false,
         Child = new FillFlowContainer
         {
             Width = 380,

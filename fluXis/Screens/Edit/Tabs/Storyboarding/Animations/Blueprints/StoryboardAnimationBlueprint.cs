@@ -4,19 +4,14 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Blueprints.Selection;
-using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 using fluXis.Storyboards;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Animations.Blueprints;
 
@@ -33,9 +28,12 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
 
     public StoryboardAnimationRow Row;
 
+    private StoryboardAnimationEntry drawable;
+
     public MenuItem[] ContextMenuItems => new List<MenuItem>
     {
         new MenuActionItem("Clone", FontAwesome6.Solid.Clone, MenuItemType.Normal, clone),
+        new MenuActionItem("Edit", FontAwesome6.Solid.Pencil, MenuItemType.Normal, edit),
         new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete),
     }.ToArray();
 
@@ -51,32 +49,15 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
 
         Height = 15f;
         Anchor = Origin = Anchor.CentreLeft;
+    }
 
-        InternalChildren = new Drawable[]
-        {
-            new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                CornerRadius = 6,
-                Masking = true,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = .2f
-                }
-            },
-            new BlueprintHandle
-            {
-                DragAction = vec =>
-                {
-                    var newTime = animationList.TimeAtScreenSpacePosition(vec);
-                    newTime = snaps.SnapTime(newTime);
-                    var len = Math.Max(newTime - Object.StartTime, snaps.CurrentStep);
-                    Object.Duration = len;
-                },
-                StopAction = () => Row.UpdateAnim(anim)
-            }
-        };
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        drawable = animationList.GetDrawable(Object);
+
+        Selected += _ => drawable.IsSelected.Value = true;
+        Deselected += _ => drawable.IsSelected.Value = false;
     }
 
     protected override void Update()
@@ -91,9 +72,10 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
         var endX = animationList.PositionAtTime(Object.StartTime + Object.Duration);
 
         var row_height = StoryboardAnimationsList.ROW_HEIGHT;
+        var diamondSize = 24f;
 
-        Position = new Vector2(startX - 12f, (rowIndex * row_height) + row_height + 12f);
-        Width = Math.Max(TimelineElement.HEIGHT, endX - startX);
+        Position = new Vector2(startX - diamondSize/4 - diamondSize/6, (rowIndex * row_height) + row_height + diamondSize/2);
+        Width = Math.Max(TimelineElement.HEIGHT - diamondSize/2, endX - startX);
     }
 
     private void clone()
@@ -101,34 +83,14 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
         animationList.CloneAnimation(Object, Row);
     }
 
+    private void edit()
+    {
+        drawable.ShowPopover();
+        drawable.IsSelected.Value = true;
+    }
+
     private void delete()
     {
         Row.Remove(Object);
-    }
-
-    private partial class BlueprintHandle : Drawable
-    {
-        public Action<Vector2> DragAction { get; init; }
-        public Action StopAction { get; init; }
-
-        public BlueprintHandle()
-        {
-            // Size = new Vector2(28, 36);
-            Anchor = Origin = Anchor.CentreRight;
-        }
-
-        protected override bool OnDragStart(DragStartEvent e) => e.Button == MouseButton.Left;
-
-        protected override void OnDrag(DragEvent e)
-        {
-            DragAction?.Invoke(e.ScreenSpaceMousePosition);
-            base.OnDrag(e);
-        }
-
-        protected override void OnDragEnd(DragEndEvent e)
-        {
-            StopAction?.Invoke();
-            base.OnDragEnd(e);
-        }
     }
 }

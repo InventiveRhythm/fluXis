@@ -2,14 +2,10 @@ using System;
 using System.Linq;
 using fluXis.Screens.Edit.Blueprints;
 using fluXis.Screens.Edit.Blueprints.Selection;
-using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
-using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Storyboards;
-using Humanizer;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Animations.Blueprints;
@@ -17,6 +13,7 @@ namespace fluXis.Screens.Edit.Tabs.Storyboarding.Animations.Blueprints;
 public partial class StoryboardAnimationBluepintContainer : BlueprintContainer<StoryboardAnimation>
 {
     protected override bool HorizontalSelection => true;
+    protected override bool OnlySelectOnDrag => true;
 
     [Resolved]
     private Storyboard storyboard { get; set; }
@@ -40,7 +37,6 @@ public partial class StoryboardAnimationBluepintContainer : BlueprintContainer<S
             {
                 animationList.AnimationAdded += onAnimationAdded;
                 animationList.AnimationRemoved += onAnimationRemoved;
-                // animationList.AnimationUpdated += onAnimationUpdated;
 
                 animationList.AnimationsEnumerable.ForEach(anim => AddBlueprint(anim.Entry.Animation, anim.Row));
             }
@@ -59,7 +55,6 @@ public partial class StoryboardAnimationBluepintContainer : BlueprintContainer<S
         {
             animationList.AnimationAdded -= onAnimationAdded;
             animationList.AnimationRemoved -= onAnimationRemoved;
-            // animationList.AnimationUpdated -= onAnimationUpdated;
         }
     }
 
@@ -72,12 +67,6 @@ public partial class StoryboardAnimationBluepintContainer : BlueprintContainer<S
     {
         RemoveBlueprint(anim);
     }
-
-    // private void onAnimationUpdated(StoryboardAnimation anim, StoryboardAnimationRow row)
-    // {
-    //     RemoveBlueprint(anim);
-    //     AddBlueprint(anim, row);
-    // }
 
     protected override SelectionBlueprint<StoryboardAnimation> CreateBlueprint(StoryboardAnimation anim, params object[] extra)
     {
