@@ -6,6 +6,7 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
@@ -79,7 +80,9 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         if (newLen <= 10)
             return;
 
-        if (Math.Abs(Object.Time - newTime) > 0.1f)
+        double diff = Math.Abs(Math.Clamp(Object.Time, 0, EditorClock.TrackLength) - Math.Clamp(newTime, 0, EditorClock.TrackLength));
+
+        if (Precision.DefinitelyBigger(diff, float.NegativeZero))
             sample?.Play();
 
         Object.Time = newTime;
@@ -95,7 +98,9 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         if (newLen <= 10)
             return;
 
-        if (Math.Abs(Object.EndTime - newTime) > 0.1f)
+        double diff = Math.Abs(Math.Clamp(Object.EndTime, 0, EditorClock.TrackLength) - Math.Clamp(newTime, 0, EditorClock.TrackLength));
+
+        if (Precision.DefinitelyBigger(diff, float.NegativeZero))
             sample?.Play();
 
         Object.EndTime = newTime;
