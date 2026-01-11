@@ -100,7 +100,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
             title += " - ";
 
-            if (usingOriginalMetadata || string.IsNullOrWhiteSpace(Map.Metadata.TitleRomanized))
+            if (Game.UsingOriginalMetadata || string.IsNullOrWhiteSpace(Map.Metadata.TitleRomanized))
                 title += Map.Metadata.Title;
             else
                 title += Map.Metadata.TitleRomanized;
