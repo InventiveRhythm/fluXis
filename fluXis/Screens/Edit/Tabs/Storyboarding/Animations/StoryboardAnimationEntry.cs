@@ -52,7 +52,6 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
 
-        Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT);
         InternalChildren = new Drawable[]
         {
             length = new Circle
@@ -116,6 +115,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
         var clamped = Math.Max(endX - X, 0);
         length.Width = clamped;
         outlineLength.Width = clamped;
+        Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT + length.DrawWidth, StoryboardAnimationsList.ROW_HEIGHT);
     }
 
     protected override bool OnClick(ClickEvent e)
