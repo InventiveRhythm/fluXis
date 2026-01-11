@@ -148,11 +148,15 @@ public partial class StoryboardTab : EditorTab
         map.Storyboard.ElementAdded += queueRebuild;
         map.Storyboard.ElementRemoved += queueRebuild;
         map.Storyboard.ElementUpdated += queueRebuild;
+        map.RegisterAddListener<StoryboardAnimation>(queueRebuild);
+        map.RegisterUpdateListener<StoryboardAnimation>(queueRebuild);
+        map.RegisterRemoveListener<StoryboardAnimation>(queueRebuild);
 
         map.ScriptChanged += queueRebuild;
     }
 
     private void queueRebuild(StoryboardElement _) => queueRebuild();
+    private void queueRebuild(StoryboardAnimation _) => queueRebuild();
     private void queueRebuild(string _) => queueRebuild();
 
     private void queueRebuild()

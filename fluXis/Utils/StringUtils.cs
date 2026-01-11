@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace fluXis.Utils;
@@ -85,6 +86,8 @@ public static class StringUtils
         return $"{nameCensored}@{domainNameCensored}.{tld}";
     }
 
+    public static bool IsUpperCase(this string str) => str.All(char.IsUpper);
+
     public static string NumberWithOrderSuffix(this int number) => NumberWithOrderSuffix((long)number);
 
     public static string NumberWithOrderSuffix(this long number)
@@ -101,5 +104,32 @@ public static class StringUtils
             return $"{number}rd";
 
         return $"{number}th";
+    }
+
+    public static string ToCamelCase(string str)
+    {
+        if (string.IsNullOrEmpty(str))
+            return str;
+
+        string[] split = str.Split(new[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
+
+        if (split.Length == 0)
+            return string.Empty;
+
+        StringBuilder result = new StringBuilder();
+
+        result.Append(char.ToLower(split[0][0]));
+        result.Append(split[0].AsSpan(1));
+
+        for (int i = 1; i < split.Length; i++)
+        {
+            if (split[i].Length > 0)
+            {
+                result.Append(char.ToUpper(split[i][0]));
+                result.Append(split[i].AsSpan(1));
+            }
+        }
+
+        return result.ToString();
     }
 }

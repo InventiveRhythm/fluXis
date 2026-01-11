@@ -89,9 +89,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         get
         {
             var title = "";
-            bool usingOriginalMetadata = Game?.UsingOriginalMetadata ?? false;
 
-            if (usingOriginalMetadata || string.IsNullOrWhiteSpace(Map.Metadata.ArtistRomanized))
+            if (Game is null)
+                return title;
+
+            if (Game.UsingOriginalMetadata || string.IsNullOrWhiteSpace(Map.Metadata.ArtistRomanized))
                 title += Map.Metadata.Artist;
             else
                 title += Map.Metadata.ArtistRomanized;
