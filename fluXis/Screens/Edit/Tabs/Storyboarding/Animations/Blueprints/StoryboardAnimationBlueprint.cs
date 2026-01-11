@@ -75,7 +75,7 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
         var diamondSize = 24f;
 
         Position = new Vector2(startX - diamondSize/4 - diamondSize/6, (rowIndex * row_height) + row_height + diamondSize/2);
-        Width = Math.Max(TimelineElement.HEIGHT - diamondSize/2, endX - startX);
+        Width = Math.Max(StoryboardAnimationsList.ROW_HEIGHT - diamondSize/6, endX - startX + diamondSize/2);
     }
 
     private void clone()
