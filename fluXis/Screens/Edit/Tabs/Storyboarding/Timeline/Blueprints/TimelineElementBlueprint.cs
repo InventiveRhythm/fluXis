@@ -22,6 +22,7 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 {
     [Resolved]
     private StoryboardTimeline timeline { get; set; }
+    private TimelineBlueprintContainer blueprints => timeline.Blueprints;
 
     [Resolved]
     private EditorSnapProvider snaps { get; set; }
@@ -89,12 +90,12 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 
     private void clone()
     {
-        timeline.CloneElement(Object);
+        blueprints.CloneSelection();
     }
 
     private void delete()
     {
-        storyboard.Remove(Object);
+        blueprints.DeleteSelection();
     }
 
     private partial class BlueprintHandle : Drawable

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Overlay.Mouse;
@@ -5,6 +6,7 @@ using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
@@ -19,6 +21,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 {
     protected virtual bool HorizontalSelection => false;
     protected virtual bool InArea => false;
+    protected virtual bool OnlySelectOnDrag => false;
 
     protected readonly BindableList<T> SelectedObjects = new();
 
@@ -59,6 +62,35 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
         InputManager = GetContainingInputManager();
     }
 
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (!SelectionHandler.Selected.Any())
+            return base.OnKeyDown(e);
+
+        if (!IsHovered)
+            return base.OnKeyDown(e);
+        
+        if (e.Key == Key.Delete)
+        {
+            DeleteSelection();
+            return true;
+        }
+
+        if (e.ControlPressed && e.Key == Key.D)
+        {
+            SelectionHandler.DeselectAll();
+            return true;
+        }
+
+        if (e.AltPressed && e.Key == Key.D)
+        {
+            CloneSelection();
+            return true;
+        }
+
+        return base.OnKeyDown(e);
+    }
+
     protected override bool OnDragStart(DragStartEvent e)
     {
         if (e.Button != MouseButton.Left) return false;
@@ -79,7 +111,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        var foundByClick = selectByClick(e);
+        var foundByClick = OnlySelectOnDrag ? false : selectByClick(e);
         var canMove = prepareMovement(e);
 
         var handle = foundByClick || canMove;
@@ -114,10 +146,24 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     public void AddBlueprint(T info)
     {
+        addBlueprintExtra(info);
+    }
+
+    public void AddBlueprint(T info, params object[] extra)
+    {
+        addBlueprintExtra(info, extra);
+    }
+
+    private void addBlueprintExtra(T info, params object[] extra)
+    {
         if (blueprints.ContainsKey(info))
             return;
 
-        var blueprint = CreateBlueprint(info);
+        var blueprint = CreateBlueprintExtra(info, extra);
+        
+        if (blueprint == null)
+            return;
+
         blueprints[info] = blueprint;
         blueprint.Selected += onSelected;
         blueprint.Deselected += onDeselected;
@@ -126,6 +172,16 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     public void RemoveBlueprint(T obj)
     {
+        removeBlueprintExtra(obj);
+    }
+
+    public void RemoveBlueprint(T obj, params object[] extra)
+    {
+        removeBlueprintExtra(obj, extra);
+    }
+
+    private void removeBlueprintExtra(T obj, params object[] extra)
+    {
         if (!blueprints.Remove(obj, out var blueprint))
             return;
 
@@ -133,9 +189,33 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
         blueprint.Selected -= onSelected;
         blueprint.Deselected -= onDeselected;
         SelectionBlueprints.Remove(blueprint, true);
+        
+        OnBlueprintRemoved(obj, extra);
+    }
+
+    public void RemoveAllBlueprints()
+    {
+        var blueprints = this.blueprints.Keys.ToList();
+        blueprints.ForEach(RemoveBlueprint);
+    }
+
+    protected virtual void OnBlueprintRemoved(T obj, params object[] extra) { }
+
+    protected virtual SelectionBlueprint<T> CreateBlueprintExtra(T obj, params object[] extra)
+    {
+        if (extra != null && extra.Length > 0)
+        {
+            var blueprint = CreateBlueprint(obj, extra);
+            if (blueprint != null)
+                return blueprint;
+        }
+        
+        return CreateBlueprint(obj);
     }
 
     protected virtual SelectionBlueprint<T> CreateBlueprint(T obj) => null!;
+
+    protected virtual SelectionBlueprint<T> CreateBlueprint(T obj, params object[] extra) => null!;
 
     private bool selectByClick(MouseButtonEvent e)
     {
@@ -212,5 +292,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     protected virtual void StartedMoving() { }
     protected virtual void MoveSelection(DragEvent e) { }
+    public virtual void CloneSelection() { }
+    public virtual void DeleteSelection() { }
     protected virtual void FinishedMoving() { }
 }
