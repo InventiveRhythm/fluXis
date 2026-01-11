@@ -26,7 +26,7 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
     private UserCache users { get; set; }
 
     private GameplayLeaderboard leaderboard { get; }
-    private ScoreInfo score { get; }
+    private PlayerScore score { get; }
 
     public float TargetY { get; set; }
 
@@ -35,7 +35,7 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
     private float lastScore;
     private double lastPr;
 
-    public LeaderboardEntry(GameplayLeaderboard leaderboard, ScoreInfo score)
+    public LeaderboardEntry(GameplayLeaderboard leaderboard, PlayerScore score)
     {
         this.leaderboard = leaderboard;
         this.score = score;

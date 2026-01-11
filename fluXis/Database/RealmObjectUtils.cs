@@ -15,7 +15,10 @@ public static class RealmObjectUtils
         c.ShouldMapField = _ => false;
         c.ShouldMapProperty = pi => pi.SetMethod?.IsPublic == true;
 
-        c.CreateMap<RealmScore, RealmScore>();
+        c.CreateMap<RealmScore, RealmScore>()
+         .ForMember(s => s.Players, cc => cc.Ignore());
+        c.CreateMap<RealmPlayerScore, RealmPlayerScore>()
+         .ForMember(s => s.RealmScore, cc => cc.Ignore());
         c.CreateMap<RealmMapMetadata, RealmMapMetadata>();
         c.CreateMap<RealmMapUserSettings, RealmMapUserSettings>();
         c.CreateMap<RealmMapFilters, RealmMapFilters>();

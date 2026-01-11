@@ -29,37 +29,49 @@ public partial class TestMultiResults : FluXisTestScene
         {
             new()
             {
-                Accuracy = 99f,
-                Combo = 100,
-                MaxCombo = 100,
                 Mods = new List<string>(),
-                Rank = ScoreRank.SS,
-                Score = 1000000,
-                Flawless = 100,
-                Perfect = 100,
-                Great = 0,
-                Alright = 0,
-                Okay = 0,
-                Miss = 0,
-                PlayerID = 1,
-                MapID = map.OnlineID
+                MapID = map.OnlineID,
+                Players = new List<PlayerScore>
+                {
+                    new PlayerScore
+                    {
+                        Accuracy = 99f,
+                        Combo = 100,
+                        MaxCombo = 100,
+                        Rank = ScoreRank.SS,
+                        Score = 1000000,
+                        Flawless = 100,
+                        Perfect = 100,
+                        Great = 0,
+                        Alright = 0,
+                        Okay = 0,
+                        Miss = 0,
+                        PlayerID = 1,
+                    }
+                }
             },
             new()
             {
-                Accuracy = 100f,
-                Combo = 100,
-                MaxCombo = 100,
                 Mods = new List<string>(),
-                Rank = ScoreRank.X,
-                Score = 1100000,
-                Flawless = 100,
-                Perfect = 100,
-                Great = 0,
-                Alright = 0,
-                Okay = 0,
-                Miss = 0,
-                PlayerID = 2,
-                MapID = map.OnlineID
+                MapID = map.OnlineID,
+                Players = new List<PlayerScore>
+                {
+                    new PlayerScore
+                    {
+                        Accuracy = 100f,
+                        Combo = 100,
+                        MaxCombo = 100,
+                        Rank = ScoreRank.X,
+                        Score = 1100000,
+                        Flawless = 100,
+                        Perfect = 100,
+                        Great = 0,
+                        Alright = 0,
+                        Okay = 0,
+                        Miss = 0,
+                        PlayerID = 2,
+                    }
+                }
             }
         };
 

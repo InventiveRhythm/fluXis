@@ -34,8 +34,11 @@ public partial class PlayfieldPlayer : CompositeDrawable, IHUDDependencyProvider
 
     private DependencyContainer dependencies;
 
+    private readonly int index;
+
     public PlayfieldPlayer(int index, int subCount)
     {
+        this.index = index;
         MainPlayfield = new Playfield(index, 0);
         SubPlayfields = Enumerable.Range(1, subCount).Select(x => new Playfield(index, x)).ToArray();
     }
@@ -55,6 +58,7 @@ public partial class PlayfieldPlayer : CompositeDrawable, IHUDDependencyProvider
                 Player = ruleset.CurrentPlayer ?? APIUser.Default,
                 HitWindows = ruleset.HitWindows,
                 MapInfo = ruleset.MapInfo,
+                MapMaxCombo = ruleset.MapInfo.MaxComboForPlayer(index),
                 Mods = ruleset.Mods
             }
         });
@@ -71,7 +75,7 @@ public partial class PlayfieldPlayer : CompositeDrawable, IHUDDependencyProvider
     {
         base.LoadComplete();
 
-        JudgementProcessor.ApplyMap(ruleset.MapInfo);
+        JudgementProcessor.ApplyMap(ruleset.MapInfo, index);
         HealthProcessor.OnSavedDeath += () => samples?.EarlyFail();
         ScoreProcessor.OnComboBreak += () =>
         {

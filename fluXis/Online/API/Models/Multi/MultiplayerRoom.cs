@@ -30,5 +30,5 @@ public class MultiplayerRoom
     [JsonProperty("mods")]
     public List<string> Mods { get; set; } = new();
 
-    public List<ScoreInfo> Scores { get; set; } = new();
+    public List<ScoreInfo> Scores { get; set; } = new(); //TODO: replace this by List<PlayerScore>?
 }

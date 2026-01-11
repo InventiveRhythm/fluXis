@@ -18,6 +18,12 @@ public partial class ResultsContent : CompositeDrawable
     [Resolved]
     private ScoreInfo score { get; set; }
 
+    [Resolved]
+    private Results results { get; set; }
+
+    [Resolved]
+    private ISkin skin { get; set; }
+
     private Drawable[] leftContent { get; }
     private Drawable[] rightContent { get; }
 
@@ -37,19 +43,23 @@ public partial class ResultsContent : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISkin skin)
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
         Padding = new MarginPadding(20) { Bottom = 100 };
 
         InternalChildren = new[]
         {
-            rank = skin.GetResultsScoreRank(score.Rank).With(d =>
+            rank = new Container
             {
-                d.RelativePositionAxes = Axes.X;
-                d.X = 0.5f;
-                d.Origin = Anchor.Centre;
-            }),
+                RelativePositionAxes = Axes.X,
+                X = 0.5f,
+                Origin = Anchor.Centre,
+                Child = skin.GetResultsScoreRank(score.Players[results.SelectedPlayer.Value].Rank).With(d =>
+                {
+                    d.Origin = Anchor.Centre;
+                })
+            },
             new GridContainer
             {
                 RelativeSizeAxes = Axes.Both,
@@ -84,8 +94,8 @@ public partial class ResultsContent : CompositeDrawable
                                     {
                                         ChildrenEnumerable = new Drawable[]
                                         {
-                                            new ResultsSideJudgements(skin, score),
-                                            new ResultsSideMore(score)
+                                            new ResultsSideJudgements(skin, score, results.SelectedPlayer.Value),
+                                            new ResultsSideMore(score, results.SelectedPlayer.Value)
                                         }.Concat(leftContent)
                                     },
                                     center = new ResultsCenter(),
@@ -100,6 +110,8 @@ public partial class ResultsContent : CompositeDrawable
                 }
             }
         };
+
+        results.SelectedPlayer.BindValueChanged(v => updateContentForPlayer(v.NewValue));
     }
 
     protected override void LoadComplete()
@@ -130,6 +142,29 @@ public partial class ResultsContent : CompositeDrawable
         }
 
         rank.Y = (float)Interpolation.Lerp(y, rank.Y, Math.Exp(-0.002 * Time.Elapsed));
+    }
+
+    private void updateContentForPlayer(int playerIndex)
+    {
+        ((Container)rank).Child = skin.GetResultsScoreRank(score.Players[playerIndex].Rank).With(d =>
+        {
+            d.Origin = Anchor.Centre;
+        });
+
+        Drawable[] newLeft =
+        {
+            new ResultsSideJudgements(skin, score, playerIndex),
+            new ResultsSideMore(score, playerIndex),
+        };
+
+        if (score.Players[playerIndex].HitResults != null && score.Players[playerIndex].HitResults.Count > 0)
+        {
+            left.ChildrenEnumerable = newLeft.Concat(new Drawable[] { new ResultsSideGraph(score, results.Map, playerIndex) });
+        }
+        else
+        {
+            left.ChildrenEnumerable = newLeft;
+        }
     }
 
     public void Show(bool fromGameplay = false)
