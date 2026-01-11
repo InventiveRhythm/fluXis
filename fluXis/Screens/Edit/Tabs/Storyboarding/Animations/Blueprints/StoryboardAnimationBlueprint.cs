@@ -27,8 +27,7 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
     [Resolved]
     private Storyboard storyboard { get; set; }
 
-    public StoryboardAnimationRow Row;
-
+    private StoryboardAnimationRow row;
     private StoryboardAnimationEntry drawable;
 
     public MenuItem[] ContextMenuItems => new List<MenuItem>
@@ -43,10 +42,10 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
 
     public override Vector2 ScreenSpaceSelectionPoint => Drawable.ScreenSpaceDrawQuad.TopLeft;
 
-    public StoryboardAnimationBlueprint(StoryboardAnimation anim, StoryboardAnimationRow row)
-        : base(anim)
+    public StoryboardAnimationBlueprint(StoryboardAnimationEntry anim)
+        : base(anim.Animation)
     {
-        Row = row;
+        row = anim.Row;
 
         Height = 15f;
         Anchor = Origin = Anchor.CentreLeft;
@@ -68,7 +67,7 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
         if (Parent == null)
             return;
 
-        var rowIndex = animationList.GetRowIndex(Row);
+        var rowIndex = animationList.GetRowIndex(row);
         var startX = animationList.PositionAtTime(Object.StartTime);
         var endX = animationList.PositionAtTime(Object.StartTime + Object.Duration);
 
@@ -92,7 +91,7 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
 
     private void delete()
     {
-        Row.Remove(Object);
+        row.Remove(Object);
         blueprints.DeleteSelection();
     }
 }

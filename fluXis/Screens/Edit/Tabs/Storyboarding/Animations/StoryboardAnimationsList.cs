@@ -39,14 +39,14 @@ public partial class StoryboardAnimationsList : CompositeDrawable, ITimePosition
 
     private readonly StoryboardTimeline timeline;
     private FillFlowContainer<StoryboardAnimationRow> rowsFlow;
-    public IEnumerable<(StoryboardAnimationRow Row, StoryboardAnimationEntry Entry)> AnimationsEnumerable => 
-        rowsFlow.Children.SelectMany(r => r.GetEntries().Select(entry => (Row: r, Entry: entry)));
+    public IEnumerable<StoryboardAnimationEntry> AnimationsEnumerable => 
+        rowsFlow.Children.SelectMany(r => r.GetEntries());
     private Box dim;
     private FluXisSpriteText text;
 
-    public event Action<StoryboardAnimation, StoryboardAnimationRow> AnimationAdded;
-    public event Action<StoryboardAnimation, StoryboardAnimationRow> AnimationRemoved;
-    public event Action<StoryboardAnimation, StoryboardAnimationRow> AnimationUpdated;
+    public event Action<StoryboardAnimationEntry> AnimationAdded;
+    public event Action<StoryboardAnimationEntry> AnimationRemoved;
+    public event Action<StoryboardAnimationEntry> AnimationUpdated;
     public event Action<bool> FocusedElement;
 
     public StoryboardAnimationsList(StoryboardTimeline timeline)
@@ -164,7 +164,7 @@ public partial class StoryboardAnimationsList : CompositeDrawable, ITimePosition
     }
 
     public StoryboardAnimationEntry GetDrawable(StoryboardAnimation anim)
-        => AnimationsEnumerable.FirstOrDefault(e => e.Entry.Animation == anim).Entry;
+        => AnimationsEnumerable.FirstOrDefault(e => e.Animation == anim);
 
     public StoryboardAnimationRow GetAnimationRow(StoryboardAnimation anim)
         => rowsFlow.Children.FirstOrDefault(row => row.GetEntries().Any(e => e.Animation == anim));
@@ -193,11 +193,9 @@ public partial class StoryboardAnimationsList : CompositeDrawable, ITimePosition
 
     public double TimeAtScreenSpacePosition(Vector2 pos) => TimeAtPosition(ToLocalSpace(pos).X);
 
-    public void TriggerAnimationAdded(StoryboardAnimation anim) => AnimationAdded?.Invoke(anim, GetDrawable(anim).Row);
-
-    public void TriggerAnimationRemoved(StoryboardAnimation anim) => AnimationRemoved?.Invoke(anim, GetDrawable(anim).Row);
-
-    public void TriggerAnimationUpdated(StoryboardAnimation anim) => AnimationUpdated?.Invoke(anim, GetDrawable(anim).Row);
+    public void TriggerAnimationAdded(StoryboardAnimation anim) => AnimationAdded?.Invoke(GetDrawable(anim));
+    public void TriggerAnimationRemoved(StoryboardAnimation anim) => AnimationRemoved?.Invoke(GetDrawable(anim));
+    public void TriggerAnimationUpdated(StoryboardAnimation anim) => AnimationUpdated?.Invoke(GetDrawable(anim));
 
     private void collectionChanged(object _, NotifyCollectionChangedEventArgs e)
     {

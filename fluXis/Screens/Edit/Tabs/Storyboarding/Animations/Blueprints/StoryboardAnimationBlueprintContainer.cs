@@ -38,7 +38,7 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
                 animationList.AnimationAdded += onAnimationAdded;
                 animationList.AnimationRemoved += onAnimationRemoved;
 
-                animationList.AnimationsEnumerable.ForEach(anim => AddBlueprint(anim.Entry.Animation, anim.Row));
+                animationList.AnimationsEnumerable.ForEach(anim => onAnimationAdded(anim));
             }
             else
             {
@@ -58,23 +58,17 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
         }
     }
 
-    private void onAnimationAdded(StoryboardAnimation anim, StoryboardAnimationRow row)
-    {
-        AddBlueprint(anim, row);
-    }
+    private void onAnimationAdded(StoryboardAnimationEntry anim) => AddBlueprint(anim.Animation, anim);
 
-    private void onAnimationRemoved(StoryboardAnimation anim, StoryboardAnimationRow _)
-    {
-        RemoveBlueprint(anim);
-    }
+    private void onAnimationRemoved(StoryboardAnimationEntry anim) => RemoveBlueprint(anim.Animation, anim);
 
     protected override SelectionBlueprint<StoryboardAnimation> CreateBlueprint(StoryboardAnimation anim, params object[] extra)
     {
-        var row = extra.Length > 0 ? (StoryboardAnimationRow)extra[0]
-            : throw new ArgumentException("Animation Row is required");
-        
-        var bp = new StoryboardAnimationBlueprint(anim, row);
-        bp.Drawable = animationList.GetDrawable(anim);
+        var drawable = extra.Length > 0 ? (StoryboardAnimationEntry)extra[0]
+            : animationList.GetDrawable(anim);
+
+        var bp = new StoryboardAnimationBlueprint(drawable);
+        bp.Drawable = drawable;
         return bp;
     }
 
