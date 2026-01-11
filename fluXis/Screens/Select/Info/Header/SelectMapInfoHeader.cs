@@ -94,7 +94,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                         Masking = true,
                         Children = new Drawable[]
                         {
-                            backgrounds = new SpriteStack<LoadWrapper<MapBackground>>(),
+                            backgrounds = new SpriteStack<LoadWrapper<MapBackground>> { AutoFill = false },
                             new SectionedGradient
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -293,8 +293,6 @@ public partial class SelectMapInfoHeader : CompositeDrawable
             LoadContent = () => new MapBackground(map)
             {
                 RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fit,
-                FillAspectRatio = 1f,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
