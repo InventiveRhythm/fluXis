@@ -35,7 +35,7 @@ public partial class StoryboardAnimationsList : CompositeDrawable, ITimePosition
 
     [Resolved]
     private TimelineBlueprintContainer timelineBlueprints { get; set; }
-    public StoryboardAnimationBluepintContainer Blueprints { get; set; } = new();
+    public StoryboardAnimationBlueprintContainer Blueprints { get; set; } = new();
 
     private readonly StoryboardTimeline timeline;
     private FillFlowContainer<StoryboardAnimationRow> rowsFlow;
@@ -154,11 +154,11 @@ public partial class StoryboardAnimationsList : CompositeDrawable, ITimePosition
         map.RegisterUpdateListener<StoryboardAnimation>(TriggerAnimationUpdated);
     }
 
-    public void CloneAnimation(StoryboardAnimation anim, StoryboardAnimationRow row)
+    public void CloneAnimation(StoryboardAnimation anim, StoryboardAnimationRow row, float offset = 0)
     {
         var copy = anim.JsonCopy();
 
-        copy.StartTime = clock.CurrentTime;
+        copy.StartTime = clock.CurrentTime + offset;
 
         row.Add(copy);
     }

@@ -19,6 +19,7 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
 {
     [Resolved]
     private StoryboardAnimationsList animationList { get; set; }
+    private StoryboardAnimationBlueprintContainer blueprints => animationList.Blueprints;
 
     [Resolved]
     private EditorSnapProvider snaps { get; set; }
@@ -80,7 +81,7 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
 
     private void clone()
     {
-        animationList.CloneAnimation(Object, Row);
+        blueprints.CloneSelection();
     }
 
     private void edit()
@@ -92,5 +93,6 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
     private void delete()
     {
         Row.Remove(Object);
+        blueprints.DeleteSelection();
     }
 }

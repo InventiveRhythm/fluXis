@@ -66,4 +66,29 @@ public partial class TimelineBlueprintContainer : BlueprintContainer<StoryboardE
             storyboard.Update(blueprint.Object);
         }
     }
+
+    public override void CloneSelection()
+    {
+        var orderedBlueprints = SelectionHandler.SelectedObjects.OrderBy(b => b.StartTime).ToList();
+        
+        if (orderedBlueprints.Count == 0) return;
+        
+        float firstStartTime = (float)orderedBlueprints[0].StartTime;
+        
+        foreach (var blueprint in orderedBlueprints)
+        {
+            float normalizedTime = (float)blueprint.StartTime - firstStartTime;
+            timeline.CloneElement(blueprint, normalizedTime);
+        }
+    }
+
+    public override void DeleteSelection()
+    {
+        var blueprintsToDelete = SelectionHandler.SelectedObjects.ToList();
+        
+        foreach (var blueprint in blueprintsToDelete)
+        {
+            storyboard.Remove(blueprint);
+        }
+    }
 }

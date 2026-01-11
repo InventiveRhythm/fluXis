@@ -10,7 +10,7 @@ using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Animations.Blueprints;
 
-public partial class StoryboardAnimationBluepintContainer : BlueprintContainer<StoryboardAnimation>
+public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<StoryboardAnimation>
 {
     protected override bool HorizontalSelection => true;
     protected override bool OnlySelectOnDrag => true;
@@ -96,6 +96,33 @@ public partial class StoryboardAnimationBluepintContainer : BlueprintContainer<S
         {
             blueprint.Object.StartTime += timeDelta;
             map.Update(blueprint.Object);
+        }
+    }
+
+    public override void CloneSelection()
+    {
+        var orderedBlueprints = SelectionHandler.SelectedObjects.OrderBy(b => b.StartTime).ToList();
+        
+        if (orderedBlueprints.Count == 0) return;
+        
+        float firstStartTime = (float)orderedBlueprints[0].StartTime;
+        
+        foreach (var blueprint in orderedBlueprints)
+        {
+            var drawable = animationList.GetDrawable(blueprint);
+            float normalizedTime = (float)blueprint.StartTime - firstStartTime;
+            animationList.CloneAnimation(blueprint, drawable.Row, normalizedTime);
+        }
+    }
+
+    public override void DeleteSelection()
+    {
+        var blueprintsToDelete = SelectionHandler.SelectedObjects.ToList();
+        
+        foreach (var blueprint in blueprintsToDelete)
+        {
+            var drawable = animationList.GetDrawable(blueprint);
+            drawable.Row.Remove(blueprint);
         }
     }
 }

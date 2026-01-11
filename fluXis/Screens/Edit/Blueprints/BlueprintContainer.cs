@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Overlay.Mouse;
@@ -5,6 +6,7 @@ using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
@@ -58,6 +60,35 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     protected override void LoadComplete()
     {
         InputManager = GetContainingInputManager();
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (!SelectionHandler.Selected.Any())
+            return base.OnKeyDown(e);
+
+        if (!IsHovered)
+            return base.OnKeyDown(e);
+        
+        if (e.Key == Key.Delete)
+        {
+            DeleteSelection();
+            return true;
+        }
+
+        if (e.ControlPressed && e.Key == Key.D)
+        {
+            SelectionHandler.DeselectAll();
+            return true;
+        }
+
+        if (e.AltPressed && e.Key == Key.D)
+        {
+            CloneSelection();
+            return true;
+        }
+
+        return base.OnKeyDown(e);
     }
 
     protected override bool OnDragStart(DragStartEvent e)
@@ -261,5 +292,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     protected virtual void StartedMoving() { }
     protected virtual void MoveSelection(DragEvent e) { }
+    public virtual void CloneSelection() { }
+    public virtual void DeleteSelection() { }
     protected virtual void FinishedMoving() { }
 }
