@@ -165,6 +165,8 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         copy.StartTime = clock.CurrentTime + offset;
         copy.EndTime = copy.StartTime + length;
 
+        copy.Animations.ForEach(anim => anim.StartTime += copy.StartTime - element.StartTime);
+
         storyboard.Add(copy);
     }
 

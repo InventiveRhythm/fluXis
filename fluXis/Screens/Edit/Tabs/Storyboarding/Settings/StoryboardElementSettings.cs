@@ -149,7 +149,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     new PointSettingsTime(map, item)
                     {
                         TimeChanged = (oldTime, newTime) =>
-                            item.EndTime -= oldTime - newTime
+                        {
+                            var timeDelta = newTime - oldTime;
+                            item.EndTime += timeDelta;
+                            item.Animations.ForEach(anim => anim.StartTime += timeDelta);
+                        }
                     },
                     new PointSettingsTextBox
                     {
