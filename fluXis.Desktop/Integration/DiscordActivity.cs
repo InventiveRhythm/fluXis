@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Text;
 using DiscordRPC;
@@ -6,7 +5,6 @@ using DiscordRPC.Message;
 using fluXis.Integration;
 using fluXis.Online.Fluxel;
 using fluXis.Utils;
-using Humanizer;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 using EventType = DiscordRPC.EventType;
@@ -66,15 +64,15 @@ public class DiscordActivity
             Logger.Log($"Discord RPC {field} is empty or null.", LoggingTarget.Network, LogLevel.Verbose);
             return value ?? "";
         }
-        
+
         var bytes = Encoding.UTF8.GetByteCount(value);
-        
+
         if (bytes > maxBytes)
         {
             Logger.Log($"Discord RPC {field} exceeded {maxBytes} bytes (was {bytes} bytes), truncating...", LoggingTarget.Network, LogLevel.Verbose);
             return StringUtils.TruncateBytes(value, maxBytes);
         }
-        
+
         return value;
     }
 
