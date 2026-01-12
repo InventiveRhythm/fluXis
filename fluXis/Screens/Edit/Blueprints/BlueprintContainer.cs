@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Overlay.Mouse;
 using fluXis.Screens.Edit.Blueprints.Selection;
+using fluXis.Screens.Edit.Input;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Blueprints;
 
-public partial class BlueprintContainer<T> : Container, ICursorDrag
+public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBindingHandler<EditorKeybinding>
     where T : class
 {
     protected virtual bool HorizontalSelection => false;
@@ -62,34 +63,29 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
         InputManager = GetContainingInputManager();
     }
 
-    protected override bool OnKeyDown(KeyDownEvent e)
+    public bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
     {
         if (!SelectionHandler.Selected.Any())
-            return base.OnKeyDown(e);
+            return false;
 
         if (!IsHovered)
-            return base.OnKeyDown(e);
-        
-        if (e.Key == Key.Delete)
+            return false;
+
+        switch (e.Action)
         {
-            DeleteSelection();
-            return true;
+            case EditorKeybinding.DeleteSelection:
+                DeleteSelection();
+                return true;
+
+            case EditorKeybinding.CloneSelection:
+                CloneSelection();
+                return true;
         }
 
-        if (e.ControlPressed && e.Key == Key.D)
-        {
-            SelectionHandler.DeselectAll();
-            return true;
-        }
-
-        if (e.AltPressed && e.Key == Key.D)
-        {
-            CloneSelection();
-            return true;
-        }
-
-        return base.OnKeyDown(e);
+        return false;
     }
+
+    public void OnReleased(KeyBindingReleaseEvent<EditorKeybinding> e) { }
 
     protected override bool OnDragStart(DragStartEvent e)
     {
@@ -117,7 +113,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
         var handle = foundByClick || canMove;
 
         if (!handle && !InArea)
-            SelectionHandler.DeselectAll();
+            DeselectAll();
 
         return handle;
     }
@@ -270,6 +266,8 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     public void SelectAll()
         => SelectionHandler.HandleSelection(SelectionBlueprints.All);
+
+    public void DeselectAll() => SelectionHandler.DeselectAll();
 
     private void onSelected(SelectionBlueprint<T> blueprint) => SelectionHandler.HandleSelection(blueprint);
     private void onDeselected(SelectionBlueprint<T> blueprint) => SelectionHandler.HandleDeselection(blueprint);
