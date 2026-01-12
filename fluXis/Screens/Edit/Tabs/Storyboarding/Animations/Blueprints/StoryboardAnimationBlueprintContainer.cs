@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using fluXis.Screens.Edit.Blueprints;
 using fluXis.Screens.Edit.Blueprints.Selection;
@@ -68,7 +67,6 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
             : animationList.GetDrawable(anim);
 
         var bp = new StoryboardAnimationBlueprint(drawable);
-        bp.Drawable = drawable;
         return bp;
     }
 
@@ -95,28 +93,27 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
 
     public override void CloneSelection()
     {
-        var orderedBlueprints = SelectionHandler.SelectedObjects.OrderBy(b => b.StartTime).ToList();
+        var orderedBlueprints = SelectionHandler.Selected.OrderBy(b => b.Object.StartTime).ToList();
         
         if (orderedBlueprints.Count == 0) return;
         
-        float firstStartTime = (float)orderedBlueprints[0].StartTime;
+        float firstStartTime = (float)orderedBlueprints[0].Object.StartTime;
         
-        foreach (var blueprint in orderedBlueprints)
+        foreach (var blueprint in orderedBlueprints.Cast<StoryboardAnimationBlueprint>())
         {
-            var drawable = animationList.GetDrawable(blueprint);
-            float normalizedTime = (float)blueprint.StartTime - firstStartTime;
-            animationList.CloneAnimation(blueprint, drawable.Row, normalizedTime);
+            float normalizedTime = (float)blueprint.Object.StartTime - firstStartTime;
+            animationList.CloneAnimation(blueprint.Object, blueprint.DrawableEntry.Row, normalizedTime);
         }
     }
 
     public override void DeleteSelection()
     {
-        var blueprintsToDelete = SelectionHandler.SelectedObjects.ToList();
+        var blueprintsToDelete = SelectionHandler.Selected.ToList();
         
-        foreach (var blueprint in blueprintsToDelete)
+        foreach (var blueprint in blueprintsToDelete.Cast<StoryboardAnimationBlueprint>())
         {
-            var drawable = animationList.GetDrawable(blueprint);
-            drawable.Row.Remove(blueprint);
+            var drawable = blueprint.DrawableEntry;
+            drawable.Row.Remove(blueprint.Object);
         }
     }
 }

@@ -4,7 +4,6 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Blueprints.Selection;
-using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 using fluXis.Storyboards;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
@@ -27,8 +26,8 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
     [Resolved]
     private Storyboard storyboard { get; set; }
 
-    private StoryboardAnimationRow row;
-    private StoryboardAnimationEntry drawable;
+    private StoryboardAnimationRow row => DrawableEntry.Row;
+    public StoryboardAnimationEntry DrawableEntry { get; private set; }
 
     public MenuItem[] ContextMenuItems => new List<MenuItem>
     {
@@ -40,12 +39,12 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
     public override double FirstComparer => Object.StartTime;
     public override double SecondComparer => Object.EndTime;
 
-    public override Vector2 ScreenSpaceSelectionPoint => Drawable.ScreenSpaceDrawQuad.TopLeft;
+    public override Vector2 ScreenSpaceSelectionPoint => DrawableEntry.ScreenSpaceDrawQuad.TopLeft;
 
     public StoryboardAnimationBlueprint(StoryboardAnimationEntry anim)
         : base(anim.Animation)
     {
-        row = anim.Row;
+        DrawableEntry = anim;
 
         Height = 15f;
         Anchor = Origin = Anchor.CentreLeft;
@@ -54,10 +53,9 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        drawable = animationList.GetDrawable(Object);
 
-        Selected += _ => drawable.IsSelected.Value = true;
-        Deselected += _ => drawable.IsSelected.Value = false;
+        Selected += _ => DrawableEntry.IsSelected.Value = true;
+        Deselected += _ => DrawableEntry.IsSelected.Value = false;
     }
 
     protected override void Update()
@@ -80,18 +78,23 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
 
     private void clone()
     {
-        blueprints.CloneSelection();
+        if (blueprints.SelectionHandler.SelectedObjects.Count > 0)
+            blueprints.CloneSelection();
+        else
+            animationList.CloneAnimation(Object, row);
     }
 
     private void edit()
     {
-        drawable.ShowPopover();
-        drawable.IsSelected.Value = true;
+        DrawableEntry.ShowPopover();
+        DrawableEntry.IsSelected.Value = true;
     }
 
     private void delete()
     {
-        row.Remove(Object);
-        blueprints.DeleteSelection();
+        if (blueprints.SelectionHandler.SelectedObjects.Count > 0)
+            blueprints.DeleteSelection();
+        else
+            row.Remove(Object);
     }
 }

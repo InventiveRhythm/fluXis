@@ -90,12 +90,18 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 
     private void clone()
     {
-        blueprints.CloneSelection();
+        if (blueprints.SelectionHandler.SelectedObjects.Count > 0)
+            blueprints.CloneSelection();
+        else
+            timeline.CloneElement(Object);
     }
 
     private void delete()
     {
-        blueprints.DeleteSelection();
+        if (blueprints.SelectionHandler.SelectedObjects.Count > 0)
+            blueprints.DeleteSelection();
+        else
+            storyboard.Remove(Object);
     }
 
     private partial class BlueprintHandle : Drawable
