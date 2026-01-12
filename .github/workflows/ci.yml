@@ -28,7 +28,7 @@ jobs:
           dotnet tool install --global JetBrains.ReSharper.GlobalTools --version 2025.3.1
 
       - name: inspect/dotnet
-        run: dotnet build fluXis.Desktop.slnf -c Debug -warnaserror -p:EnforceCodeStyleInBuild=true
+        run: dotnet build fluXis.Desktop -c Debug -warnaserror -p:EnforceCodeStyleInBuild=true
 
       - name: inspect/jetbrains
         run: dotnet jb inspectcode $(pwd)/fluXis.Desktop.slnf --no-build --output="inspectcodereport.xml" --verbosity=WARN

@@ -188,6 +188,8 @@ csharp_style_prefer_index_operator = true:warning
 csharp_style_prefer_range_operator = true:warning
 csharp_style_prefer_switch_expression = false:none
 
+dotnet_style_prefer_collection_expression = false
+
 #Supressing roslyn built-in analyzers
 # Suppress: EC112
 
