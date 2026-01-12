@@ -23,9 +23,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: install tools
-        run: |
-          dotnet tool install --global NVika --version 4.0.0
-          dotnet tool install --global JetBrains.ReSharper.GlobalTools --version 2025.3.1
+        run: dotnet tool restore
 
       - name: inspect/dotnet
         run: dotnet build fluXis.Desktop -c Debug -warnaserror -p:EnforceCodeStyleInBuild=true
