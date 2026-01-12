@@ -26,8 +26,8 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
     [Resolved]
     private Storyboard storyboard { get; set; }
 
-    private StoryboardAnimationRow row => DrawableEntry.Row;
-    public StoryboardAnimationEntry DrawableEntry { get; private set; }
+    private StoryboardAnimationRow row => Drawable.Row;
+    public new StoryboardAnimationEntry Drawable { get; internal set; } // hiding base member so we don't cast from Drawable every time
 
     public MenuItem[] ContextMenuItems => new List<MenuItem>
     {
@@ -39,12 +39,12 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
     public override double FirstComparer => Object.StartTime;
     public override double SecondComparer => Object.EndTime;
 
-    public override Vector2 ScreenSpaceSelectionPoint => DrawableEntry.ScreenSpaceDrawQuad.TopLeft;
+    public override Vector2 ScreenSpaceSelectionPoint => Drawable.ScreenSpaceDrawQuad.TopLeft;
 
     public StoryboardAnimationBlueprint(StoryboardAnimationEntry anim)
         : base(anim.Animation)
     {
-        DrawableEntry = anim;
+        Drawable = anim;
 
         Height = 15f;
         Anchor = Origin = Anchor.CentreLeft;
@@ -54,8 +54,8 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
     {
         base.LoadComplete();
 
-        Selected += _ => DrawableEntry.IsSelected.Value = true;
-        Deselected += _ => DrawableEntry.IsSelected.Value = false;
+        Selected += _ => Drawable.IsSelected.Value = true;
+        Deselected += _ => Drawable.IsSelected.Value = false;
     }
 
     protected override void Update()
@@ -86,8 +86,8 @@ public partial class StoryboardAnimationBlueprint : SelectionBlueprint<Storyboar
 
     private void edit()
     {
-        DrawableEntry.ShowPopover();
-        DrawableEntry.IsSelected.Value = true;
+        Drawable.ShowPopover();
+        Drawable.IsSelected.Value = true;
     }
 
     private void delete()

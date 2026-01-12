@@ -30,7 +30,7 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
     {
         base.LoadComplete();
 
-        animationList.FocusedElement += (isSelected) =>
+        animationList.FocusedElement += isSelected =>
         {
             if (isSelected)
             {
@@ -44,17 +44,6 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
                 RemoveAllBlueprints();
             }
         };
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-        base.Dispose(isDisposing);
-        
-        if (animationList is not null)
-        {
-            animationList.AnimationAdded -= onAnimationAdded;
-            animationList.AnimationRemoved -= onAnimationRemoved;
-        }
     }
 
     private void onAnimationAdded(StoryboardAnimationEntry anim) => AddBlueprint(anim.Animation, anim);
@@ -102,7 +91,7 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
         foreach (var blueprint in orderedBlueprints.Cast<StoryboardAnimationBlueprint>())
         {
             float normalizedTime = (float)blueprint.Object.StartTime - firstStartTime;
-            animationList.CloneAnimation(blueprint.Object, blueprint.DrawableEntry.Row, normalizedTime);
+            animationList.CloneAnimation(blueprint.Object, blueprint.Drawable.Row, normalizedTime);
         }
     }
 
@@ -112,8 +101,19 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
         
         foreach (var blueprint in blueprintsToDelete.Cast<StoryboardAnimationBlueprint>())
         {
-            var drawable = blueprint.DrawableEntry;
+            var drawable = blueprint.Drawable;
             drawable.Row.Remove(blueprint.Object);
+        }
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        
+        if (animationList is not null)
+        {
+            animationList.AnimationAdded -= onAnimationAdded;
+            animationList.AnimationRemoved -= onAnimationRemoved;
         }
     }
 }

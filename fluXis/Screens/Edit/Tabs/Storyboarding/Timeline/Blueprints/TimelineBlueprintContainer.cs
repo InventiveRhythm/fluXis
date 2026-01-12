@@ -82,14 +82,4 @@ public partial class TimelineBlueprintContainer : BlueprintContainer<StoryboardE
             timeline.CloneElement(blueprint, normalizedTime);
         }
     }
-
-    public override void DeleteSelection()
-    {
-        var blueprintsToDelete = SelectionHandler.SelectedObjects.ToList();
-        
-        foreach (var blueprint in blueprintsToDelete)
-        {
-            storyboard.Remove(blueprint);
-        }
-    }
 }

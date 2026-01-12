@@ -293,6 +293,6 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     protected virtual void StartedMoving() { }
     protected virtual void MoveSelection(DragEvent e) { }
     public virtual void CloneSelection() { }
-    public virtual void DeleteSelection() { }
+    public virtual void DeleteSelection() => SelectionHandler.DeleteSelected();
     protected virtual void FinishedMoving() { }
 }
