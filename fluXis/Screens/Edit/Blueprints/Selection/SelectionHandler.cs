@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Input;
@@ -19,8 +20,15 @@ public partial class SelectionHandler<T> : Container, IKeyBindingHandler<FluXisG
 
     public readonly BindableList<T> SelectedObjects = new();
 
+    public Func<bool> HighlightPredicate;
+
     private SelectionOutline outline;
     private bool wasVisible;
+
+    public SelectionHandler()
+    {
+        HighlightPredicate = () => SelectedObjects.Count > 0;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -90,7 +98,7 @@ public partial class SelectionHandler<T> : Container, IKeyBindingHandler<FluXisG
 
     private void updateVisibility()
     {
-        outline.FadeTo(SelectedObjects.Count > 0 ? 1 : 0, 100);
+        outline.FadeTo(HighlightPredicate() ? 1 : 0, 100);
 
         if (SelectedObjects.Count == 0) wasVisible = false;
     }
