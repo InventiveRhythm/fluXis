@@ -19,6 +19,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
+using Realms;
 
 namespace fluXis.Scoring;
 
@@ -108,11 +109,20 @@ public partial class ScoreManager : CompositeDrawable
         return rScore;
     }
 
-    public IEnumerable<RealmScore> OnMap(Guid map) => realm.Run(r =>
+    public IEnumerable<ScorePair> OnMap(Guid map) => realm.Run(r =>
     {
-        return r.All<RealmScore>()
-                .Where(s => s.MapID == map).ToList()
-                .Select(s => s.Detach()).ToList();
+        var realmScores = r.All<RealmScore>()
+                           .Where(s => s.MapID == map).ToList()
+                           .Select(s => s.Detach()).ToList();
+
+        var scoreInfos = new List<ScorePair>();
+
+        foreach (var realmScore in realmScores)
+        {
+            scoreInfos.Add(new ScorePair(realmScore.ToScoreInfo(), realmScore));
+        }
+
+        return scoreInfos;
     });
 
     public void Delete(Guid id) => realm.RunWrite(r =>
@@ -163,18 +173,37 @@ public partial class ScoreManager : CompositeDrawable
         return null;
     }
 
+    public ScoreInfo? GetCurrentTopScoreInfo(Guid map)
+    {
+        if (highestScores.TryGetValue(map, out var top))
+        {
+            return realm.Run(r =>
+            {
+                var result = r.Find<RealmScore>(top).Detach();
+                return result?.ToScoreInfo();
+            });
+        }
+
+        return null;
+    }
+
     private void processMap(Guid map) => realm.Run(r =>
     {
         var player = api.User.Value?.ID ?? 0;
-        var scores = r.All<RealmScore>().Where(s => s.MapID == map && s.PlayerID == player).ToList();
+
+        //unsure about this, hopefully this actually queries all the score the current player
+        var scores = r.All<RealmScore>()
+                      .Filter("MapID == $0 AND Players.PlayerID == $1", map, player)
+                      .ToList();
 
         RealmScore? top = null;
 
+        //TODO: we might have two top score for dual maps in the future, just assume player 0 for now
         foreach (var score in scores)
         {
             if (top is null)
                 top = score;
-            else if (top.Score < score.Score)
+            else if (top.Players[0].Score < score.Players[0].Score)
                 top = score;
         }
 
@@ -212,17 +241,23 @@ public partial class ScoreManager : CompositeDrawable
                     return;
 
                 var mods = score.Mods.Split(' ').Select(ModUtils.GetFromAcronym).ToList();
-                score.PerformanceRating = ScoreProcessor.CalculatePerformance(
-                    map.Rating,
-                    score.Accuracy,
-                    score.Flawless,
-                    score.Perfect,
-                    score.Great,
-                    score.Alright,
-                    score.Okay,
-                    score.Miss,
-                    mods
-                );
+
+                foreach (var realmPlayerScore in score.Players)
+                {
+                    //TODO: might need some more work if dual maps have different max PR values for each sides
+                    realmPlayerScore.PerformanceRating = ScoreProcessor.CalculatePerformance(
+                        map.Rating,
+                        realmPlayerScore.Accuracy,
+                        realmPlayerScore.Flawless,
+                        realmPlayerScore.Perfect,
+                        realmPlayerScore.Great,
+                        realmPlayerScore.Alright,
+                        realmPlayerScore.Okay,
+                        realmPlayerScore.Miss,
+                        mods
+                    );
+                }
+
                 break;
             }
         }

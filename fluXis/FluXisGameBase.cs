@@ -25,7 +25,6 @@ using fluXis.IO;
 using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Online;
-using fluXis.Online.API.Models.Users;
 using fluXis.Online.Chat;
 using fluXis.Online.Collections;
 using fluXis.Online.Fluxel;
@@ -458,7 +457,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public virtual void CloseOverlays() { }
     public virtual void UpdateWindowTitle(string title) { }
-    public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUser player, Action replayAction = null) { }
+    public virtual void PresentScore(RealmMap map, ScoreInfo score, Action replayAction = null) { }
     public virtual void ShowMap(RealmMapSet map) { }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => GameDependencies = new DependencyContainer(base.CreateChildDependencies(parent));

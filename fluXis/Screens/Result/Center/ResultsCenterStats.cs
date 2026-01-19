@@ -13,12 +13,28 @@ namespace fluXis.Screens.Result.Center;
 
 public partial class ResultsCenterStats : CompositeDrawable
 {
+    [Resolved]
+    private Results results { get; set; }
+
+    [Resolved]
+    private RealmMap map { get; set; }
+
+    [Resolved]
+    private ScoreInfo score { get; set; }
+
     [BackgroundDependencyLoader]
-    private void load(RealmMap map, ScoreInfo score)
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
         Height = 38;
 
+        makeContentForPlayer(results.SelectedPlayer.Value);
+
+        results.SelectedPlayer.BindValueChanged(v => makeContentForPlayer(v.NewValue));
+    }
+
+    private void makeContentForPlayer(int playerIndex)
+    {
         InternalChild = new GridContainer
         {
             RelativeSizeAxes = Axes.Both,
@@ -26,17 +42,17 @@ public partial class ResultsCenterStats : CompositeDrawable
             {
                 new Drawable[]
                 {
-                    new Statistic("Accuracy", $"{score.Accuracy.ToStringInvariant("00.00")}%"),
+                    new Statistic("Accuracy", $"{score.Players[playerIndex].Accuracy.ToStringInvariant("00.00")}%"),
                     new Statistic("Combo", "", flow =>
                     {
-                        flow.AddText($"{score.MaxCombo}x");
+                        flow.AddText($"{score.Players[playerIndex].MaxCombo}x");
                         flow.AddText<FluXisSpriteText>($"/{map.Filters.NoteCount + map.Filters.LongNoteCount * 2}x", text =>
                         {
                             text.WebFontSize = 14;
                             text.Alpha = .6f;
                         });
                     }),
-                    new Statistic("Performance", $"{score.PerformanceRating.ToStringInvariant("0.00")}"),
+                    new Statistic("Performance", $"{score.Players[playerIndex].PerformanceRating.ToStringInvariant("0.00")}"),
                 }
             }
         };

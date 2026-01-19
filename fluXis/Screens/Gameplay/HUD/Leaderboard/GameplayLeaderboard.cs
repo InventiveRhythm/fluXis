@@ -44,7 +44,11 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
         Padding = new MarginPadding(20);
         AlwaysPresent = true;
 
-        InternalChildrenEnumerable = scores.Take(10).Select(s => new LeaderboardEntry(this, s)).OrderDescending();
+        InternalChildrenEnumerable = scores.Take(10).Select(s =>
+        {
+            //TODO: find a way to select both players for dual map, or only select one side?
+            return new LeaderboardEntry(this, s.Players[0]);
+        }).OrderDescending();
 
         playfields.Players.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
     }

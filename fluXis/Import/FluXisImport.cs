@@ -189,7 +189,7 @@ public class FluXisImport : MapImporter
                 var mapInfo = json.Deserialize<MapInfo>();
 
                 var length = 0f;
-                var keys = 0;
+                var keys = mapInfo.SinglePlayerKeyCount;
                 var bpmMin = float.MaxValue;
                 var bpmMax = float.MinValue;
 
@@ -207,7 +207,6 @@ public class FluXisImport : MapImporter
                         time += hitObject.HoldTime;
 
                     length = (float)Math.Max(length, time);
-                    keys = Math.Max(keys, hitObject.Lane);
                 }
 
                 var map = new RealmMap

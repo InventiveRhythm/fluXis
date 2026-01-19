@@ -75,12 +75,13 @@ public partial class MultiGameplayScreen : GameplayScreen
     {
         Scheduler.ScheduleIfNeeded(() =>
         {
-            var si = client.Room?.Scores?.FirstOrDefault(s => s.PlayerID == user);
+            var si = client.Room?.Scores?.FirstOrDefault(s => s.Players.Any(p => p.PlayerID == user));
 
             if (si is null)
                 return;
 
-            si.Score = score;
+            var playerScore = si.Players.First(p => p.PlayerID == user);
+            playerScore.Score = score;
         });
     }
 

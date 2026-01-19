@@ -21,10 +21,10 @@ public class DrainHealthProcessor : HealthProcessor
     {
     }
 
-    public override void ApplyMap(MapInfo map)
+    public override void ApplyMap(MapInfo map, int playerIndex)
     {
-        base.ApplyMap(map);
-        maxCombo = map.MaxCombo;
+        base.ApplyMap(map, playerIndex);
+        maxCombo = map.MaxComboForPlayer(playerIndex);
         endTime = map.EndTime;
         factor = 0.008f + 80f / maxCombo;
     }

@@ -18,6 +18,7 @@ public class ScoreProcessor : JudgementDependant
 
     public HitWindows HitWindows { get; init; }
     public MapInfo MapInfo { get; init; }
+    public int MapMaxCombo { get; init; }
     public List<IMod> Mods { get; init; }
 
     public BindableFloat Accuracy { get; } = new(100);
@@ -76,12 +77,39 @@ public class ScoreProcessor : JudgementDependant
         var scoreMultiplier = 1f + Mods.Sum(mod => mod.ScoreMultiplier - 1f);
 
         var maxScore = 1000000 * scoreMultiplier;
-        var accBased = (int)(ratedNotes / MapInfo.MaxCombo * (maxScore * .9f));
-        var comboBased = (int)(MaxCombo / (float)MapInfo.MaxCombo * (maxScore * .1f));
+        var accBased = (int)(ratedNotes / MapMaxCombo * (maxScore * .9f));
+        var comboBased = (int)(MaxCombo / (float)MapMaxCombo * (maxScore * .1f));
         return accBased + comboBased;
     }
 
     public ScoreInfo ToScoreInfo() => new()
+    {
+        MapID = MapInfo.RealmEntry!.OnlineID,
+        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+        Mods = Mods.Select(m => m.Acronym).ToList(),
+        Players = new List<PlayerScore>
+        {
+            new()
+            {
+                Accuracy = Accuracy.Value,
+                PerformanceRating = PerformanceRating.Value,
+                Rank = Rank.Value,
+                Score = Score,
+                Combo = Combo.Value,
+                MaxCombo = MaxCombo,
+                Flawless = Flawless,
+                Perfect = Perfect,
+                Great = Great,
+                Alright = Alright,
+                Okay = Okay,
+                Miss = Miss,
+                HitResults = JudgementProcessor.Results,
+                PlayerID = Player.ID,
+            }
+        }
+    };
+
+    public PlayerScore ToPlayerScoreInfo() => new()
     {
         Accuracy = Accuracy.Value,
         PerformanceRating = PerformanceRating.Value,
@@ -96,10 +124,7 @@ public class ScoreProcessor : JudgementDependant
         Okay = Okay,
         Miss = Miss,
         HitResults = JudgementProcessor.Results,
-        MapID = MapInfo.RealmEntry!.OnlineID,
-        PlayerID = Player.ID,
-        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-        Mods = Mods.Select(m => m.Acronym).ToList()
+        PlayerID = Player.ID
     };
 
     public static double CalculatePerformance(float rating, float accuracy, int flawless, int perfect, int great, int alright, int okay, int miss, List<IMod> mods)

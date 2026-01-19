@@ -14,9 +14,10 @@ public partial class MultiResultsScores : FluXisScrollContainer
 {
     private List<ScoreInfo> scores { get; }
 
+    //TODO: concider dual maps (maybe we want to use the sum of the score of both sides)
     public MultiResultsScores(List<ScoreInfo> scores)
     {
-        this.scores = scores.OrderByDescending(score => score.Score).ToList();
+        this.scores = scores.OrderByDescending(score => score.Players[0].Score).ToList();
     }
 
     [BackgroundDependencyLoader]
@@ -32,7 +33,7 @@ public partial class MultiResultsScores : FluXisScrollContainer
             Direction = FillDirection.Vertical,
             Padding = new MarginPadding(40),
             Spacing = new Vector2(0, 10),
-            ChildrenEnumerable = scores.Select(score => new MultiResultsScore(score, users.Get(score.PlayerID), scores.IndexOf(score) + 1))
+            ChildrenEnumerable = scores.Select(score => new MultiResultsScore(score, users.Get(score.Players[0].PlayerID), scores.IndexOf(score) + 1)) //TODO: pass both players for dual maps?
         };
     }
 }

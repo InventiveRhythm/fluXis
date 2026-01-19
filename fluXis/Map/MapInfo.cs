@@ -76,7 +76,7 @@ public class MapInfo
     public double EndTime => HitObjects.Count == 0 ? 1000 : HitObjects[^1].EndTime;
 
     [JsonIgnore]
-    public int MaxCombo
+    public int MaxComboAllPlayers
     {
         get
         {
@@ -120,6 +120,24 @@ public class MapInfo
     [JsonIgnore]
     public int KeyCount => HitObjects.Max(x => x.Lane);
 
+    //TODO: make this an actual json field that we would store inside the map file?
+    //TODO 2: handle mirrored
+    [JsonIgnore]
+    public int PlayerCount => IsSplit ? 2 : 1;
+
+    [JsonIgnore]
+    public int SinglePlayerKeyCount
+    {
+        get
+        {
+            if (PlayerCount == 1) return KeyCount;
+
+            int keyCount = KeyCount;
+            while (keyCount % PlayerCount != 0) ++keyCount;
+            return keyCount / PlayerCount;
+        }
+    }
+
     #endregion
 
     public MapInfo(MapMetadata metadata)
@@ -135,6 +153,42 @@ public class MapInfo
         TimingPoints = new List<TimingPoint> { new() { BPM = 120, Time = 0, Signature = 4 } }; // Add default timing point to avoid issues
         ScrollVelocities = new List<ScrollVelocity>();
         HitSoundFades = new List<HitSoundFade>();
+    }
+
+    public int MaxComboForPlayer(int playerIndex)
+    {
+        if (RealmEntry == null) return MaxComboAllPlayers; //probably shouldn't do that?
+
+        int maxCombo = 0;
+
+        //the RealmEntry's KeyCount store the keycount for a single player
+        HitObjects.FindAll(hitObject =>
+                      hitObject.Lane >= 1 + playerIndex * SinglePlayerKeyCount &&
+                      hitObject.Lane < 1 + (playerIndex + 1) * SinglePlayerKeyCount)
+                  .ForEach(hitObject =>
+                  {
+                      maxCombo++;
+                      if (hitObject.LongNote)
+                          maxCombo++;
+                  });
+
+        return maxCombo;
+    }
+
+    public int HitsForPlayer(int playerIndex)
+    {
+        return HitObjects.Count(h =>
+            h.HoldTime == 0 &&
+            h.Lane >= 1 + playerIndex * SinglePlayerKeyCount &&
+            h.Lane < 1 + (playerIndex + 1) * SinglePlayerKeyCount);
+    }
+
+    public int LongNotesForPlayer(int playerIndex)
+    {
+        return HitObjects.Count(h =>
+            h.HoldTime > 0 &&
+            h.Lane >= 1 + playerIndex * SinglePlayerKeyCount &&
+            h.Lane < 1 + (playerIndex + 1) * SinglePlayerKeyCount) * 2; //multiply by two because long notes give two judgments (if this gets removed then we need to multiply by 2 in ServerMapUtils)
     }
 
     public bool Validate(out string issue)

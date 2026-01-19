@@ -15,11 +15,13 @@ public partial class ResultsSideJudgements : ResultsSideContainer
 
     private ISkin skin { get; }
     private ScoreInfo score { get; }
+    private int selectedPlayer { get; set; }
 
-    public ResultsSideJudgements(ISkin skin, ScoreInfo score)
+    public ResultsSideJudgements(ISkin skin, ScoreInfo score, int selectedPlayer)
     {
         this.score = score;
         this.skin = skin;
+        this.selectedPlayer = (selectedPlayer >= score.Players.Count) ? 0 : selectedPlayer;
     }
 
     protected override Drawable CreateContent() => new FillFlowContainer
@@ -30,12 +32,12 @@ public partial class ResultsSideJudgements : ResultsSideContainer
         Spacing = new Vector2(16),
         Children = new Drawable[]
         {
-            new ResultsSideDoubleText("Flawless", $"{score.Flawless}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Flawless) },
-            new ResultsSideDoubleText("Perfect", $"{score.Perfect}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Perfect) },
-            new ResultsSideDoubleText("Great", $"{score.Great}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Great) },
-            new ResultsSideDoubleText("Alright", $"{score.Alright}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Alright) },
-            new ResultsSideDoubleText("Okay", $"{score.Okay}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Okay) },
-            new ResultsSideDoubleText("Miss", $"{score.Miss}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Miss) },
+            new ResultsSideDoubleText("Flawless", $"{score.Players[selectedPlayer].Flawless}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Flawless) },
+            new ResultsSideDoubleText("Perfect", $"{score.Players[selectedPlayer].Perfect}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Perfect) },
+            new ResultsSideDoubleText("Great", $"{score.Players[selectedPlayer].Great}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Great) },
+            new ResultsSideDoubleText("Alright", $"{score.Players[selectedPlayer].Alright}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Alright) },
+            new ResultsSideDoubleText("Okay", $"{score.Players[selectedPlayer].Okay}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Okay) },
+            new ResultsSideDoubleText("Miss", $"{score.Players[selectedPlayer].Miss}") { Colour = skin.SkinJson.GetColorForJudgement(Judgement.Miss) },
         }
     };
 }

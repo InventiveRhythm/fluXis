@@ -55,23 +55,56 @@ public static class APIExtensions
         return user.Groups.Any(g => g.ID == "moderators");
     }
 
-    public static ScoreInfo ToScoreInfo(this APIScore score) => new()
+    public static ScoreInfo ToScoreInfo(this APIScore score)
     {
-        Accuracy = score.Accuracy,
-        Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), score.Rank),
-        Score = score.TotalScore,
-        PerformanceRating = score.PerformanceRating,
-        MaxCombo = score.MaxCombo,
-        Flawless = score.FlawlessCount,
-        Perfect = score.PerfectCount,
-        Great = score.GreatCount,
-        Alright = score.AlrightCount,
-        Okay = score.OkayCount,
-        Miss = score.MissCount,
-        MapID = score.Map?.ID ?? -1,
-        ScrollSpeed = score.ScrollSpeed,
-        Timestamp = score.Time,
-        Mods = score.Mods.Split(",").ToList(),
-        PlayerID = score.User.ID
-    };
+        ScoreInfo scoreInfo = new ScoreInfo
+        {
+            MapID = score.Map?.ID ?? -1,
+            Timestamp = score.Time,
+            Mods = score.Mods.Split(",").ToList(),
+        };
+
+        scoreInfo.Players ??= new List<PlayerScore>();
+
+        //add main player
+        scoreInfo.Players.Add(new PlayerScore
+        {
+            Accuracy = score.Accuracy,
+            Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), score.Rank),
+            Score = score.TotalScore,
+            PerformanceRating = score.PerformanceRating,
+            MaxCombo = score.MaxCombo,
+            Flawless = score.FlawlessCount,
+            Perfect = score.PerfectCount,
+            Great = score.GreatCount,
+            Alright = score.AlrightCount,
+            Okay = score.OkayCount,
+            Miss = score.MissCount,
+            ScrollSpeed = score.ScrollSpeed,
+            PlayerID = score.User.ID
+        });
+
+        //add other players
+        foreach (var apiScoreExtraPlayer in score.ExtraPlayers)
+        {
+            scoreInfo.Players.Add(new PlayerScore
+            {
+                Accuracy = apiScoreExtraPlayer.Accuracy,
+                Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), apiScoreExtraPlayer.Rank),
+                Score = apiScoreExtraPlayer.TotalScore,
+                PerformanceRating = apiScoreExtraPlayer.PerformanceRating,
+                MaxCombo = apiScoreExtraPlayer.MaxCombo,
+                Flawless = apiScoreExtraPlayer.FlawlessCount,
+                Perfect = apiScoreExtraPlayer.PerfectCount,
+                Great = apiScoreExtraPlayer.GreatCount,
+                Alright = apiScoreExtraPlayer.AlrightCount,
+                Okay = apiScoreExtraPlayer.OkayCount,
+                Miss = apiScoreExtraPlayer.MissCount,
+                ScrollSpeed = apiScoreExtraPlayer.ScrollSpeed,
+                PlayerID = apiScoreExtraPlayer.User.ID,
+            });
+        }
+
+        return scoreInfo;
+    }
 }

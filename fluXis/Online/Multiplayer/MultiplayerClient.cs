@@ -132,7 +132,14 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Schedule(() =>
         {
             Room.Scores = new List<ScoreInfo>();
-            Room.Scores.AddRange(Room.Participants.Where(p => p.ID != Player.ID).Select(p => new ScoreInfo { PlayerID = p.ID }));
+
+            //TODO: consider dual maps
+            Room.Scores.AddRange(Room.Participants.Where(p => p.ID != Player.ID).Select(p =>
+            {
+                ScoreInfo scoreInfo = new ScoreInfo();
+                scoreInfo.Players.Add(new PlayerScore { PlayerID = p.ID });
+                return scoreInfo;
+            }));
 
             OnStart?.Invoke();
         });
