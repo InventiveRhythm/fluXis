@@ -82,7 +82,7 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 
         double diff = Math.Abs(Math.Clamp(Object.Time, 0, EditorClock.TrackLength) - Math.Clamp(newTime, 0, EditorClock.TrackLength));
 
-        if (Precision.DefinitelyBigger(diff, float.NegativeZero))
+        if (diff > 0.1f)
             sample?.Play();
 
         Object.Time = newTime;
@@ -100,7 +100,7 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 
         double diff = Math.Abs(Math.Clamp(Object.EndTime, 0, EditorClock.TrackLength) - Math.Clamp(newTime, 0, EditorClock.TrackLength));
 
-        if (Precision.DefinitelyBigger(diff, float.NegativeZero))
+        if (diff > 0.1f)
             sample?.Play();
 
         Object.EndTime = newTime;
