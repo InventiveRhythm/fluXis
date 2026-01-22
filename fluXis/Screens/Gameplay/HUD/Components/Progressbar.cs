@@ -142,12 +142,8 @@ public partial class Progressbar : GameplayHUDComponent
 
             var startTime = Progressbar.Deps.MapInfo.StartTime;
             var endTime = Progressbar.Deps.MapInfo.EndTime;
-            double previousTime = Progressbar.Deps.CurrentTime;
             double newTime = startTime + (endTime - startTime) * progress;
-
-            // TODO: fix thsinsaegdskdjsgghshughgs
-            // Progressbar.Screen.OnSeek?.Invoke(previousTime, newTime);
-
+            Progressbar.Deps.Ruleset.ParentClock.Seek(newTime);
             return true;
         }
     }
