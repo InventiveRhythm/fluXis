@@ -14,6 +14,8 @@ namespace fluXis.Screens.Gameplay.Replays;
 
 public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock, IAdjustableClock
 {
+    public override bool AsyncScoreCalculations => true;
+
     public Replay Replay { get; }
 
     private List<ReplayFrame> frames { get; }
@@ -85,11 +87,13 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
             skippedFrames++;
 
             var sw = new Stopwatch();
+
             sw.Start();
             base.UpdateSubTree();
-
             sw.Stop();
-            skipElapsed += sw.ElapsedMilliseconds;
+
+            var el = sw.ElapsedTicks / TimeSpan.TicksPerMillisecond;
+            skipElapsed += el;
 
             UpdateSubTree();
             return true;

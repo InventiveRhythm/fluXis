@@ -60,7 +60,7 @@ public partial class Progressbar : GameplayHUDComponent
         int timeLeft = (int)((Deps.MapInfo.EndTime - Deps.CurrentTime) / Deps.PlaybackRate);
         int totalTime = (int)((Deps.MapInfo.EndTime - Deps.MapInfo.StartTime) / Deps.PlaybackRate);
 
-        int currentTime = (int)((Deps.CurrentTime - Deps.MapInfo.StartTime) / Deps.PlaybackRate);
+        int currentTime = (int)((Deps.Ruleset.ParentClock.CurrentTime - Deps.MapInfo.StartTime) / Deps.PlaybackRate);
         int catchupTime = (int)((Deps.CurrentTime - Deps.MapInfo.StartTime) / Deps.PlaybackRate);
 
         float percent = (float)currentTime / totalTime;
@@ -95,9 +95,6 @@ public partial class Progressbar : GameplayHUDComponent
                 if (value > 1) value = 1;
 
                 catchup.ResizeWidthTo(value, 200);
-
-                var delta = Math.Abs(bar.Width - value);
-                catchup.FadeTo(delta > 0.004f ? .4f : 0, 200);
             }
         }
 
@@ -105,6 +102,7 @@ public partial class Progressbar : GameplayHUDComponent
 
         private Circle bar;
         private Circle catchup;
+        private bool catchingUp;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -132,6 +130,20 @@ public partial class Progressbar : GameplayHUDComponent
                     Colour = Theme.Highlight
                 }
             };
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            var delta = Math.Abs(bar.Width - catchup.Width);
+            var shouldShow = delta > 0.004f;
+
+            if (shouldShow == catchingUp)
+                return;
+
+            catchingUp = shouldShow;
+            catchup.FadeTo(catchingUp ? .8f : 0, 200);
         }
 
         protected override bool OnClick(ClickEvent e)
