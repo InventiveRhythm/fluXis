@@ -4,6 +4,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Blueprints.Selection;
+using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 using fluXis.Storyboards;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -42,7 +43,7 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
     public TimelineElementBlueprint(StoryboardElement element)
         : base(element)
     {
-        Height = 36;
+        Height = TimelineElement.HEIGHT;
         Anchor = Origin = Anchor.TopLeft;
 
         InternalChildren = new Drawable[]

@@ -69,7 +69,7 @@ public partial class Hitsounding : CompositeDrawable
 
             s.Frequency.BindTo(rate);
             s.AddAdjustment(AdjustableProperty.Balance, PlayfieldPanning);
-            var fade = fades.Where(x => x.HitSound == sample).ToList();
+            var fade = fades.Where(x => x.HitSound == $"{DEFAULT_PREFIX}{sample}").ToList();
             channels.Add(new HitSoundChannel($"{DEFAULT_PREFIX}{sample}", s, volume, fade));
         }
 

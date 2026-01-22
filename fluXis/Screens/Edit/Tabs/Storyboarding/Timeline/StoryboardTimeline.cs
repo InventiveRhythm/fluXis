@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
@@ -26,17 +27,40 @@ namespace fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
 
 public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvider, IHasContextMenu
 {
+    public const float ELEMENT_SPACING = 3;
+    private const float padding_top = 8;
     private const float min_height = 200;
     private const float max_height = 600;
 
-    public MenuItem[] ContextMenuItems => new MenuItem[]
+    public MenuItem[] ContextMenuItems
     {
-        new MenuExpandItem(
-            "Create new...",
-            FontAwesome6.Solid.Plus,
-            Enum.GetValues<StoryboardElementType>()
-                .Select(x => new MenuActionItem($"{x.Humanize(LetterCasing.Title)}", x.GetIcon(), () => create(x))))
-    };
+        get
+        {
+            rightClickPosition = GetContainingInputManager()!.CurrentState.Mouse.Position;
+
+            var types = Enum.GetValues<StoryboardElementType>();
+            var groups = types.OrderBy(x => x.ToString()).GroupBy(x => x.Humanize(LetterCasing.Title).Split(" ").Last());
+
+            return new MenuItem[]
+            {
+                new MenuExpandItem(
+                    "Create new...",
+                    FontAwesome6.Solid.Plus,
+                    groups.Select<IGrouping<string, StoryboardElementType>, FluXisMenuItem>(x =>
+                    {
+                        var items = x.OrderBy(y => y).ToList();
+                        var first = items.First();
+
+                        if (items.Count == 1)
+                            return createForEntry(first);
+
+                        return new MenuExpandItem(x.Key, first.GetIcon(), items.Select(createForEntry));
+
+                        MenuActionItem createForEntry(StoryboardElementType t) => new($"{t.Humanize(LetterCasing.Title)}", t.GetIcon(), () => create(t)) { Color = TimelineElement.GetColor(t) };
+                    }))
+            };
+        }
+    }
 
     [Resolved]
     private EditorMap map { get; set; }
@@ -58,6 +82,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     private float targetZ = 0;
 
     private bool dragging;
+    private Vector2 rightClickPosition = Vector2.Zero;
 
     private FluXisSpriteText overlayText;
 
@@ -65,7 +90,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 400;
+        Height = 445;
         Masking = true;
 
         InternalChildren = new Drawable[]
@@ -75,18 +100,20 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
                 RelativeSizeAxes = Axes.Both,
                 Colour = Theme.Background2
             },
+            new StoryboardLayerLines { Padding = new MarginPadding { Top = padding_top } },
             new Box
             {
                 Width = 4,
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Alpha = .5f
+                Alpha = .5f,
+                Colour = Theme.Text
             },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Top = 8, Bottom = 24 },
+                Padding = new MarginPadding { Top = padding_top, Bottom = 24 },
                 Children = new Drawable[]
                 {
                     elementContainer = new Container<TimelineElement>
@@ -128,11 +155,6 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         storyboard.ElementRemoved += remove;
         storyboard.ElementUpdated += update;
         storyboard.Elements.ForEach(add);
-
-        foreach (var element in storyboard.Elements)
-        {
-            elementContainer.Add(new TimelineElement(element));
-        }
     }
 
     public void CloneElement(StoryboardElement element)
@@ -152,7 +174,8 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         {
             Type = type,
             StartTime = clock.CurrentTime,
-            EndTime = clock.CurrentTime + clock.BeatTime
+            EndTime = clock.CurrentTime + clock.BeatTime,
+            ZIndex = Math.Max(0, ZAtScreenSpacePosition(rightClickPosition))
         };
 
         storyboard.Add(element);
@@ -178,14 +201,15 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     public TimelineElement GetDrawable(StoryboardElement element)
         => elementContainer.FirstOrDefault(e => e.Element == element);
 
-    public float PositionAtTime(double time) => (float)(DrawWidth / 2 + .5f * ((time - clock.CurrentTime) * settings.Zoom));
-    public float PositionAtZ(long index) => (index - visualZ) * 48;
+    public float PositionAtTime(double time, float w) => (float)(w / 2 + .5f * ((time - clock.CurrentTime) * settings.Zoom));
+    public float PositionAtTime(double time) => PositionAtTime(time, DrawWidth);
+    public float PositionAtZ(long index) => (index - visualZ) * (TimelineElement.HEIGHT + ELEMENT_SPACING);
 
     public Vector2 ScreenSpacePositionAtTime(double time, int z)
-        => ToScreenSpace(new Vector2(PositionAtTime(time), PositionAtZ(z) + 8));
+        => ToScreenSpace(new Vector2(PositionAtTime(time), PositionAtZ(z) + padding_top));
 
     public double TimeAtPosition(float x) => (x - DrawWidth / 2) * 2 / settings.Zoom + clock.CurrentTime;
-    public int ZAtPosition(float y) => (int)(y / 48f + visualZ);
+    public int ZAtPosition(float y) => (int)(y / (TimelineElement.HEIGHT + ELEMENT_SPACING) + visualZ);
 
     public double TimeAtScreenSpacePosition(Vector2 pos) => TimeAtPosition(ToLocalSpace(pos).X);
     public int ZAtScreenSpacePosition(Vector2 pos) => ZAtPosition(ToLocalSpace(pos).Y);
@@ -202,7 +226,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         }
         else if (e.ControlPressed)
         {
-            settings.Zoom = Math.Clamp(settings.Zoom += delta * .1f, 1f, 5f);
+            settings.Zoom = Math.Clamp(settings.Zoom += delta * .1f, .5f, 5f);
             overlayText.Text = $"Zoom: {(settings.Zoom / 2f).ToStringInvariant("0.00")}x";
             overlayText.FadeIn().Delay(600).FadeOut(200);
         }

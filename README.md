@@ -5,6 +5,7 @@
 <p align="center">
 <a href="https://github.com/InventiveRhythm/fluXis/releases"><img src="https://img.shields.io/github/v/release/InventiveRhythm/fluXis" alt="github release badge"></a>
 <a href="https://github.com/InventiveRhythm/fluXis/blob/main/LICENSE.md"><img src="https://img.shields.io/github/license/InventiveRhythm/fluXis" alt="license badge"></a>
+<a href="http://weblate.flux.moe/engage/fluxis/"><img src="http://weblate.flux.moe/widget/fluxis/svg-badge.svg" alt="Translation status" /></a>
 </p>
 
 ## Downloading and playing the game

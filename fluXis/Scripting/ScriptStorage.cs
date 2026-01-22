@@ -190,7 +190,8 @@ public class ScriptStorage
             Content = content;
         }
 
-        public void AddParam(string name, string title, string type)
+        #nullable enable
+        public void AddParam(string name, string title, string type, object? fallback)
         {
             try
             {
@@ -205,13 +206,30 @@ public class ScriptStorage
                     _ => throw new ArgumentOutOfRangeException(nameof(type))
                 };
 
-                param.Add(new ParameterDefinition(name, title, t));
+                object defaultFallback = parseDefault(type, fallback?.ToString() ?? "");
+                param.Add(new ParameterDefinition(name, title, t, defaultFallback));
             }
             catch (Exception ex)
             {
                 ScriptRunner.Logger.Add($"Failed to add parameter '{name}' in '{Path}': {ex.Message}", LogLevel.Error);
             }
         }
+
+        private static object parseDefault(string type, string? defaultFallback = default)
+        {
+            var isEmpty = string.IsNullOrWhiteSpace(defaultFallback);
+
+            return type switch
+            {
+                "string" => defaultFallback ?? string.Empty,
+                "int" => isEmpty ? 0 : 
+                    int.TryParse(defaultFallback, out var intValue) ? intValue : 0,
+                "float" => isEmpty ? 0f : 
+                    float.TryParse(defaultFallback, out var floatValue) ? floatValue : 0f,
+                _ => throw new ArgumentOutOfRangeException(nameof(type))
+            };
+        }
+        #nullable disable
     }
 
     public class ParameterDefinition
@@ -219,12 +237,17 @@ public class ScriptStorage
         public string Key { get; }
         public string Title { get; }
         public Type Type { get; }
+        
+        private readonly object defaultFallback;
+        
+        public T GetDefaultFallback<T>() => (T)defaultFallback ?? default;
 
-        public ParameterDefinition(string key, string title, Type type)
+        public ParameterDefinition(string key, string title, Type type, object defaultFallback = default)
         {
             Key = key;
             Title = title;
             Type = type;
+            this.defaultFallback = defaultFallback;
         }
     }
 

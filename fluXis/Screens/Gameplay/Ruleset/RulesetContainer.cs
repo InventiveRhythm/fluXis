@@ -32,6 +32,7 @@ public partial class RulesetContainer : CompositeDrawable
     public GameplayInput Input { get; }
     public PlayfieldManager PlayfieldManager { get; }
 
+    public virtual bool AsyncScoreCalculations => false;
     public HitWindows HitWindows { get; private set; }
     public ReleaseWindows ReleaseWindows { get; private set; }
     public LandmineWindows LandmineWindows { get; private set; }

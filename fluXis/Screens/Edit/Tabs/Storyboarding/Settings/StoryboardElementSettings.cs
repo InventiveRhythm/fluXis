@@ -140,6 +140,12 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         Text = $"{item.Type}",
                         WebFontSize = 20
                     },
+                    new PointSettingsTextBox
+                    {
+                        Text = "Label",
+                        DefaultText = item.Label,
+                        OnTextChanged = box => item.Label = box.Text
+                    },
                     new PointSettingsTime(map, item)
                     {
                         TimeChanged = (oldTime, newTime) =>
@@ -277,7 +283,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         {
                             Text = "Texture",
                             DefaultText = item.GetParameter("file", ""),
-                            TextBoxWidth = 320,
+                            TextBoxWidth = 280,
                             OnTextChanged = t =>
                             {
                                 item.Parameters["file"] = t.Text;
@@ -436,7 +442,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 drawables.Add(new PointSettingsTextBox
                                 {
                                     Text = parameter.Title,
-                                    DefaultText = item.GetParameter(parameter.Key, ""),
+                                    DefaultText = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<string>()),
                                     OnTextChanged = t =>
                                     {
                                         item.Parameters[parameter.Key] = t.Text;
@@ -449,7 +455,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 drawables.Add(new PointSettingsTextBox
                                 {
                                     Text = parameter.Title,
-                                    DefaultText = item.GetParameter(parameter.Key, 0).ToString(),
+                                    DefaultText = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<int>()).ToString(),
                                     OnTextChanged = box =>
                                     {
                                         if (box.Text.TryParseIntInvariant(out var result))
@@ -466,7 +472,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 drawables.Add(new PointSettingsTextBox
                                 {
                                     Text = parameter.Title,
-                                    DefaultText = item.GetParameter(parameter.Key, 0f).ToStringInvariant(),
+                                    DefaultText = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<float>()).ToStringInvariant(),
                                     OnTextChanged = box =>
                                     {
                                         if (box.Text.TryParseFloatInvariant(out var result))

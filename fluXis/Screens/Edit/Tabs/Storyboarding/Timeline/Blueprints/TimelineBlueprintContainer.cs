@@ -63,6 +63,7 @@ public partial class TimelineBlueprintContainer : BlueprintContainer<StoryboardE
             blueprint.Object.StartTime += timeDelta;
             blueprint.Object.EndTime += timeDelta;
             blueprint.Object.ZIndex += zDelta;
+            storyboard.Update(blueprint.Object);
         }
     }
 }

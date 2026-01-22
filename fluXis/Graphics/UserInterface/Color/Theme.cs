@@ -71,6 +71,7 @@ public static class Theme
     public static Colour4 CameraRotate => Colour4.FromHex("#CC9666");
     public static Colour4 Script => Colour4.FromHex("#c58a7b");
     public static Colour4 Note => Text;
+    public static Colour4 NoteTag => Colour4.FromHex("#235284");
     public static Colour4 Shader => Colour4.FromHex("#D65C5C");
 
     public static Colour4 Selection => Highlight;

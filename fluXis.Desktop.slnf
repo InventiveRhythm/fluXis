@@ -7,7 +7,6 @@
       "fluXis.Import.Quaver\\fluXis.Import.Quaver.csproj",
       "fluXis.Import.Stepmania\\fluXis.Import.Stepmania.csproj",
       "fluXis.Resources\\fluXis.Resources.csproj",
-      "fluXis.Shared\\fluXis.Shared.csproj",
       "fluXis.Tests\\fluXis.Tests.csproj",
       "fluXis\\fluXis.csproj",
       "Framework\\osu.Framework\\osu.Framework.csproj",

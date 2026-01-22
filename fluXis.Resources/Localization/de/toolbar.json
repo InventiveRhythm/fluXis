@@ -1,0 +1,19 @@
+{
+    "settings": "Einstellungen",
+    "settings-description": "Ändere deine Einstellungen.",
+    "home": "Hauptmenü",
+    "maps": "Maps",
+    "multiplayer": "Mehrspieler",
+    "multiplayer-description": "Spiele mit anderen.",
+    "ranking": "Rangliste",
+    "ranking-description": "Seh dir die besten spieler an.",
+    "chat": "Chat",
+    "chat-description": "Rede mit anderen spielern.",
+    "dashboard-description": "Updates, Chats, Neuigkeiten und mehr.",
+    "browse-description": "Lade von der Community erstellte Maps herunter.",
+    "wiki": "Wiki",
+    "wiki-description": "Lerne über das Spiel.",
+    "music": "Musikspieler",
+    "music-description": "Hör dir deine Musik an.",
+    "home-description": "Zurück zum Hauptmenü."
+}

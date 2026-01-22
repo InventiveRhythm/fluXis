@@ -5,6 +5,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Drawables;
+using fluXis.Screens.Edit.Tabs.Storyboarding.Animations;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Settings;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
 using fluXis.Storyboards;
@@ -73,13 +74,15 @@ public partial class StoryboardTab : EditorTab
                             RelativeSizeAxes = Axes.Both,
                             ColumnDimensions = new Dimension[]
                             {
+                                new(GridSizeMode.Absolute, 500),
                                 new(),
-                                new(GridSizeMode.Absolute, 700)
+                                new(GridSizeMode.Absolute, 500)
                             },
                             Content = new[]
                             {
                                 new Drawable[]
                                 {
+                                    new StoryboardAnimationsList(timeline),
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -145,11 +148,15 @@ public partial class StoryboardTab : EditorTab
         map.Storyboard.ElementAdded += queueRebuild;
         map.Storyboard.ElementRemoved += queueRebuild;
         map.Storyboard.ElementUpdated += queueRebuild;
+        map.RegisterAddListener<StoryboardAnimation>(queueRebuild);
+        map.RegisterUpdateListener<StoryboardAnimation>(queueRebuild);
+        map.RegisterRemoveListener<StoryboardAnimation>(queueRebuild);
 
         map.ScriptChanged += queueRebuild;
     }
 
     private void queueRebuild(StoryboardElement _) => queueRebuild();
+    private void queueRebuild(StoryboardAnimation _) => queueRebuild();
     private void queueRebuild(string _) => queueRebuild();
 
     private void queueRebuild()

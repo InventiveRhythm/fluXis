@@ -119,7 +119,6 @@ public partial class FluXisDropdown<T> : Dropdown<T>
         {
             MaskingContainer.CornerRadius = 10;
             BackgroundColour = Theme.Background2;
-            Margin = new MarginPadding { Top = 8 };
             ScrollbarVisible = false;
         }
 

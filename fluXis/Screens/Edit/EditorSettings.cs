@@ -23,7 +23,7 @@ public class EditorSettings
 
     public BindableDouble ZoomBindable { get; } = new(2f)
     {
-        MinValue = 1f,
+        MinValue = .5f,
         MaxValue = 5f,
         Default = 2f,
         Precision = .1f

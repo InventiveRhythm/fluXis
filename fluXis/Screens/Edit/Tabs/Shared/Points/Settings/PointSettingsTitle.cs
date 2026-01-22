@@ -20,9 +20,11 @@ public partial class PointSettingsTitle : CompositeDrawable
 
     private string title { get; }
     private Action deleteAction { get; }
+    private bool showWiki { get; }
 
-    public PointSettingsTitle(string title, Action deleteAction)
+    public PointSettingsTitle(string title, Action deleteAction, bool showWiki = true)
     {
+        this.showWiki = showWiki;
         this.title = title;
         this.deleteAction = deleteAction;
     }
@@ -48,6 +50,7 @@ public partial class PointSettingsTitle : CompositeDrawable
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 X = -40,
+                Alpha = showWiki ? 1 : 0
             },
             new DeleteButton(deleteAction)
             {

@@ -37,7 +37,7 @@ public partial class PointSettingsScript : PointSettingsTextBox
     {
         Text = "Path";
         DefaultText = path;
-        TextBoxWidth = 320;
+        TextBoxWidth = 280;
 
         error = new ForcedHeightText
         {

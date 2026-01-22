@@ -5,6 +5,7 @@ using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using JetBrains.Annotations;
 using NLua;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Utils;
 
@@ -18,7 +19,7 @@ public class ScriptRunner
     [CanBeNull]
     protected MapInfo Map { get; set; }
 
-    public Action<string, string, string> DefineParameter;
+    public Action<string, string, string, object> DefineParameter;
     protected Lua Lua { get; }
 
     protected ScriptRunner()
@@ -30,6 +31,7 @@ public class ScriptRunner
 
         AddFunction("print", print);
         AddFunction("RandomRange", randomRange);
+        AddFunction("Easing", (string str) => Enum.TryParse(str, out Easing easing) ? easing : Easing.None);
         AddFunction("Vector2", (float x, float y) => new LuaVector2(x, y));
         AddFunction("Vector2Zero", () => new LuaVector2(0, 0));
         AddFunction("Vector2One", () => new LuaVector2(1, 1));
@@ -73,8 +75,10 @@ public class ScriptRunner
         return point.BPM;
     }
 
+    #nullable enable
     [LuaGlobal(Name = "DefineParameter")]
-    private void defineParameter(string key, string title, [LuaCustomType(typeof(ParameterDefinitionType))] string type) => DefineParameter?.Invoke(key, title, type);
+    private void defineParameter(string key, string title, [LuaCustomType(typeof(ParameterDefinitionType))] string type, object? fallback = default) => DefineParameter?.Invoke(key, title, type, fallback);
+    #nullable disable
 
     [LuaGlobal]
     private void print(string text) => Logger.Add($"[Script] {text}");
