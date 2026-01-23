@@ -19,12 +19,16 @@ public readonly struct HitResult : IEquatable<HitResult>
     [JsonProperty("holdend")]
     public bool HoldEnd { get; init; }
 
-    public HitResult(double time, double diff, Judgement jud, bool end)
+    [JsonProperty("landmine")]
+    public bool Landmine { get; init; }
+
+    public HitResult(double time, double diff, Judgement jud, bool end, bool landmine)
     {
         Time = time;
         Difference = diff;
         Judgement = jud;
         HoldEnd = end;
+        Landmine = landmine;
     }
 
     [JsonConstructor]

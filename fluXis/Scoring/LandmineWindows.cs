@@ -11,7 +11,7 @@ public class LandmineWindows : HitWindows
 
     protected override Timing[] CreateTimings(float difficulty, float multiplier) => new Timing[]
     {
-        new(Judgement.Miss, difficulty, multiplier, 64, 49, 34) //matches "Perfect" judgement from regular HitWindows
-        //"None" timing here, or add a dedicated "Ignored" judgement for landmines?
+        new(Judgement.Miss, difficulty, multiplier, 64, 49, 34), //matches "Perfect" judgement from regular HitWindows
+        new(Judgement.Flawless, difficulty, multiplier, 188, 173, 158)
     };
 }

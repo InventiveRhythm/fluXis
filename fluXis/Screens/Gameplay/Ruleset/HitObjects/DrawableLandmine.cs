@@ -73,8 +73,7 @@ public partial class DrawableLandmine : DrawableHitObject
                 return;
             }
 
-            //don't give any judgement the landmine if it isn't triggered by the user
-            //TODO (?) : dedicated "Ignored" judgement, or use "None" judgement?
+            ApplyResult(-Ruleset.LandmineWindows.TimingFor(Judgement.Flawless));
             return;
         }
 

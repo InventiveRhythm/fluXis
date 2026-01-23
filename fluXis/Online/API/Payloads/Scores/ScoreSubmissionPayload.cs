@@ -43,5 +43,8 @@ public class ScoreSubmissionPayload
 
         [JsonProperty("end")]
         public bool HoldEnd { get; set; }
+
+        [JsonProperty("landmine")]
+        public bool Landmine { get; set; }
     }
 }

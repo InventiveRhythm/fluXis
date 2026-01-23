@@ -263,7 +263,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         if (player.HealthProcessor.Failed)
             return;
 
-        var result = new HitResult(Time.Current, difference, judgement, isHoldEnd);
+        var result = new HitResult(Time.Current, difference, judgement, isHoldEnd, isLandmine);
         judgementProcessor.AddResult(result);
 
         if (isHoldEnd)

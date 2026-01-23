@@ -16,6 +16,11 @@ public partial class ResultsCenterStats : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load(RealmMap map, ScoreInfo score)
     {
+        int noteCount = map.Filters.NoteCount + (score.Mods.Contains("NLN") ? map.Filters.LongNoteCount : 0);
+        int longNoteCount = score.Mods.Contains("NLN") ? 0 : map.Filters.LongNoteCount;
+        int landmineCount = score.Mods.Contains("NMN") ? 0 : map.Filters.LandmineCount;
+        int mapMaxCombo = noteCount + longNoteCount * 2 + landmineCount;
+
         RelativeSizeAxes = Axes.X;
         Height = 38;
 
@@ -30,7 +35,7 @@ public partial class ResultsCenterStats : CompositeDrawable
                     new Statistic("Combo", "", flow =>
                     {
                         flow.AddText($"{score.MaxCombo}x");
-                        flow.AddText<FluXisSpriteText>($"/{map.Filters.NoteCount + map.Filters.LongNoteCount * 2}x", text =>
+                        flow.AddText<FluXisSpriteText>($"/{mapMaxCombo}x", text =>
                         {
                             text.WebFontSize = 14;
                             text.Alpha = .6f;

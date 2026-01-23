@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Scoring.Enums;
 using fluXis.Scoring.Structs;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
@@ -115,6 +116,9 @@ public partial class HitErrorBar : GameplayHUDComponent
 
     private void addHit(HitResult result)
     {
+        // don't display landmines that haven't been triggered
+        if (result.Landmine && result.Judgement == Judgement.Flawless) return;
+
         var time = -result.Difference;
         var judgement = result.Judgement;
         time /= Deps.PlaybackRate;
@@ -142,12 +146,12 @@ public partial class HitErrorBar : GameplayHUDComponent
            .FadeOut(300)
            .Expire();
 
-        updateAverage();
+        if (!result.Landmine) updateAverage();
     }
 
     private void updateAverage()
     {
-        var avg = JudgementProcessor.Results.Average(h => h.Difference);
+        var avg = JudgementProcessor.Results.Where(h => h.Landmine == false).Average(h => h.Difference);
         var judgement = HitWindows.JudgementFor(avg);
         avg /= Deps.PlaybackRate;
 
