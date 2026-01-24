@@ -519,6 +519,20 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
     private void updateBlur(ValueChangedEvent<float> e) => backgrounds.SetBlur(e.NewValue);
 
+    public void ChangeToTab<T>([CanBeNull] Action<T> act = null) where T : EditorTab =>
+        ChangeToTab(typeof(T), x => act?.Invoke(x as T));
+
+    public void ChangeToTab(Type tab, [CanBeNull] Action<EditorTab> act = null)
+    {
+        var target = tabs.FirstOrDefault(x => x.GetType() == tab) ?? throw new InvalidOperationException("Tab not in editor.");
+        changeTab(tabs.IndexOf(target));
+
+        if (target.HasLoading)
+            target.ScheduleAfterLoad(() => act?.Invoke(target));
+        else
+            act?.Invoke(target);
+    }
+
     private void changeTab(int to)
     {
         currentTab = to;
