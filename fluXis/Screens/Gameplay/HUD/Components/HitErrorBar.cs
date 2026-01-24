@@ -117,7 +117,7 @@ public partial class HitErrorBar : GameplayHUDComponent
     private void addHit(HitResult result)
     {
         // don't display landmines that haven't been triggered
-        if (result.Landmine && result.Judgement == Judgement.Flawless) return;
+        if (result.Type == ResultType.Landmine && result.Judgement == Judgement.Flawless) return;
 
         var time = -result.Difference;
         var judgement = result.Judgement;
@@ -146,12 +146,12 @@ public partial class HitErrorBar : GameplayHUDComponent
            .FadeOut(300)
            .Expire();
 
-        if (!result.Landmine) updateAverage();
+        if (result.Type != ResultType.Landmine) updateAverage();
     }
 
     private void updateAverage()
     {
-        var avg = JudgementProcessor.Results.Where(h => h.Landmine == false).Average(h => h.Difference);
+        var avg = JudgementProcessor.Results.Where(h => h.Type != ResultType.Landmine).Average(h => h.Difference);
         var judgement = HitWindows.JudgementFor(avg);
         avg /= Deps.PlaybackRate;
 

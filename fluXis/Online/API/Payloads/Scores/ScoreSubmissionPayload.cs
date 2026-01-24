@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using fluXis.Replays;
+using fluXis.Scoring.Enums;
 using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Payloads.Scores;
@@ -41,10 +42,7 @@ public class ScoreSubmissionPayload
         [JsonProperty("diff")]
         public double Difference { get; set; }
 
-        [JsonProperty("end")]
-        public bool HoldEnd { get; set; }
-
-        [JsonProperty("landmine")]
-        public bool Landmine { get; set; }
+        [JsonProperty("type")]
+        public ResultType Type { get; set; }
     }
 }

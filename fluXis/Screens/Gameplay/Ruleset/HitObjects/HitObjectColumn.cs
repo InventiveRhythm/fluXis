@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Structs;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
@@ -251,6 +252,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
         // since judged is only set after hitting the tail this works
         var isHoldEnd = hitObject is DrawableLongNote { Judged: true };
+
         var isLandmine = hitObject is DrawableLandmine;
 
         var hitWindows =
@@ -263,7 +265,12 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         if (player.HealthProcessor.Failed)
             return;
 
-        var result = new HitResult(Time.Current, difference, judgement, isHoldEnd, isLandmine);
+        var resultType =
+            isHoldEnd ? ResultType.HoldEnd :
+            isLandmine ? ResultType.Landmine :
+            ResultType.Hit;
+
+        var result = new HitResult(Time.Current, difference, judgement, resultType);
         judgementProcessor.AddResult(result);
 
         if (isHoldEnd)

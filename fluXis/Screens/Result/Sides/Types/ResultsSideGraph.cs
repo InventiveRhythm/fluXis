@@ -220,7 +220,7 @@ public partial class ResultsSideGraph : ResultsSideContainer
 
                 if (!float.IsFinite(x))
                     x = image.Width / 2f;
-                if (result.Judgement == Judgement.Miss || result.Landmine)
+                if (result.Judgement == Judgement.Miss || result.Type == ResultType.Landmine)
                     y = image.Height / 2f;
 
                 var poly = new EllipsePolygon(x, y, 4);
