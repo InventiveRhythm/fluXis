@@ -126,14 +126,9 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
         while (ruleset.AllowReverting && PastHitObjects.Count > 0)
         {
-            HitObject pastHitObject = PastHitObjects.Peek();
-            var result = pastHitObject.Result;
+            var result = PastHitObjects.Peek().Result;
 
-            //landmines might not have a result, but we still need to revert them in case we seek back in a replay or in the editor.
-            //use the object's time as a fallback if it doesn't have a result.
-            double comparisonTime = result?.Time ?? pastHitObject.Time;
-
-            if (Clock.CurrentTime >= comparisonTime)
+            if (result is null || Clock.CurrentTime >= result.Value.Time)
                 break;
 
             revertHitObject(PastHitObjects.Pop());
