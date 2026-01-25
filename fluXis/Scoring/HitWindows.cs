@@ -34,10 +34,10 @@ public class HitWindows
     {
         milliseconds = Math.Abs(milliseconds);
 
-        for (var result = Judgement.Flawless; result >= Judgement.Miss; --result)
+        foreach (var timing in Timings)
         {
-            if (milliseconds <= TimingFor(result))
-                return result;
+            if (milliseconds <= timing.Milliseconds)
+                return timing.Judgement;
         }
 
         return Judgement.Miss;

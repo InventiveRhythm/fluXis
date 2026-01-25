@@ -31,6 +31,7 @@ public interface ISkin : IDisposable
 
     Drawable GetHitObject(int lane, int keyCount);
     Drawable GetTickNote(int lane, int keyCount, bool small);
+    Drawable GetLandmine(int lane, int keyCount);
     Drawable GetLongNoteStart(int lane, int keyCount);
     Drawable GetLongNoteBody(int lane, int keyCount);
     Drawable GetLongNoteEnd(int lane, int keyCount);

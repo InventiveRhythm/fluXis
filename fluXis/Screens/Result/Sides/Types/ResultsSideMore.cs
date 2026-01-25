@@ -40,7 +40,7 @@ public partial class ResultsSideMore : ResultsSideContainer
 
         if (score.HitResults is { Count: > 0 })
         {
-            var nonMiss = score.HitResults.Where(r => r.Judgement > Judgement.Miss).ToList();
+            var nonMiss = score.HitResults.Where(r => r is { Judgement: > Judgement.Miss, Type: not ResultType.Landmine }).ToList();
             var avg = nonMiss.Count > 1 ? nonMiss.Average(x => x.Difference) : 0;
             flow.Add(new ResultsSideDoubleText("Mean", $"{(int)-avg}ms"));
         }

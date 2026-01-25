@@ -233,6 +233,7 @@ public partial class ModsOverlay : VisibilityContainer
                                                             {
                                                                 new NoSvMod(),
                                                                 new NoLnMod(),
+                                                                new NoMineMod(),
                                                                 new NoEventMod(),
                                                                 new MirrorMod()
                                                             })

@@ -188,11 +188,11 @@ public partial class ResultsSideGraph : ResultsSideContainer
                 var timing = timings[i];
                 var color = skins.SkinJson.GetColorForJudgement(timing.Judgement);
                 var lineColor = new Color(new Rgba32(color.Opacity(0.4f).Vector));
-                
+
                 var yEarly = miss - 1 - timing.Milliseconds;
                 if (yEarly >= 0)
                     image.Mutate(ctx => ctx.DrawLine(lineColor, 2, new PointF(0, yEarly), new PointF(image.Width, yEarly)));
-                
+
                 var yLate = miss - 1 + timing.Milliseconds;
                 if (yLate < image.Height)
                     image.Mutate(ctx => ctx.DrawLine(lineColor, 2, new PointF(0, yLate), new PointF(image.Width, yLate)));
@@ -220,7 +220,7 @@ public partial class ResultsSideGraph : ResultsSideContainer
 
                 if (!float.IsFinite(x))
                     x = image.Width / 2f;
-                if (result.Judgement == Judgement.Miss)
+                if (result.Judgement == Judgement.Miss || result.Type == ResultType.Landmine)
                     y = image.Height / 2f;
 
                 var poly = new EllipsePolygon(x, y, 4);

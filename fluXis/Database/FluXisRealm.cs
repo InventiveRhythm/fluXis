@@ -38,8 +38,9 @@ public class FluXisRealm : IDisposable
     /// 17 - Romanizable Title and Artist
     /// 18 - Reset online score IDs
     /// 19 - Add `RealmMapUserSettings`
+    /// 20 - Add `LandmineCount` to `RealmMapFilters`
     /// </summary>
-    private const int schema_version = 19;
+    private const int schema_version = 20;
 
     private Realm updateRealm;
 
@@ -284,6 +285,13 @@ public class FluXisRealm : IDisposable
             {
                 var maps = migration.NewRealm.All<RealmMap>().ToList();
                 maps.ForEach(x => x.Settings = new RealmMapUserSettings());
+                break;
+            }
+
+            case 20:
+            {
+                var maps = migration.NewRealm.All<RealmMap>().ToList();
+                maps.ForEach(x => x.Filters.LandmineCount = 0);
                 break;
             }
         }
