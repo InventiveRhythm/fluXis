@@ -103,7 +103,7 @@ public class AutoGenerator
 
             for (int i = 0; i < objects.Count; i++)
             {
-                var currentObject = map.HitObjects[i];
+                var currentObject = objects[i];
 
                 if (currentObject.Time < blockedUntil)
                     continue;
