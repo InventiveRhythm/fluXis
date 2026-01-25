@@ -104,7 +104,7 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         Recalculate();
     }
 
-    public void Recalculate()
+    public void Recalculate(bool instant = false)
     {
         float acc = 0;
         float pr = 0;
@@ -140,9 +140,9 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         });
 
         var maxCombo = Math.Max(nowCombo, MaxCombo);
-        var score = getScore();
+        var score = getScore(acc / 100, maxCombo);
 
-        if (asyncCalculations)
+        if (asyncCalculations && !instant)
             schedule.Invoke(set);
         else
             set();
@@ -161,13 +161,13 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         }
     }
 
-    private int getScore()
+    private int getScore(double acc, int maxCombo)
     {
         var scoreMultiplier = 1f + Mods.Sum(mod => mod.ScoreMultiplier - 1f);
 
         var maxScore = 1000000 * scoreMultiplier;
-        var accBased = (int)(ratedNotes / MapInfo.MaxCombo * (maxScore * .9f));
-        var comboBased = (int)(MaxCombo / (float)MapInfo.MaxCombo * (maxScore * .1f));
+        var accBased = (int)(acc * (maxScore * .9f));
+        var comboBased = (int)(maxCombo / (float)MapInfo.MaxCombo * (maxScore * .1f));
         return accBased + comboBased;
     }
 

@@ -66,6 +66,7 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     protected override void End()
     {
+        player.ScoreProcessor.Recalculate(true);
         client.Finish(player.ScoreProcessor.ToScoreInfo());
     }
 

@@ -19,6 +19,7 @@ public partial class CourseGameplayScreen : GameplayScreen
 
     protected override void End()
     {
+        PlayfieldManager.FirstPlayer.ScoreProcessor.Recalculate(true);
         OnResults?.Invoke(PlayfieldManager.FirstPlayer.ScoreProcessor.ToScoreInfo());
         this.Exit();
     }

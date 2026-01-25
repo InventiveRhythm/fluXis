@@ -536,6 +536,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             var bestScore = scores.GetCurrentTop(RealmMap.ID);
 
+            field.ScoreProcessor.Recalculate(true);
             var score = field.ScoreProcessor.ToScoreInfo();
             score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
 
