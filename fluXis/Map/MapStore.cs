@@ -34,6 +34,7 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
@@ -75,6 +76,8 @@ public partial class MapStore : Component
 
     public Bindable<RealmMap> MapBindable { get; } = new();
     public Bindable<RealmMapSet> MapSetBindable { get; } = new();
+
+    private bool updateAllMapsIsRunning = false;
 
     public RealmMap CurrentMap
     {
@@ -447,6 +450,120 @@ public partial class MapStore : Component
         api.PerformRequestAsync(req);
 
         notifications.AddTask(notification);
+    }
+
+    public void UpdateAllMaps(bool includeLocal = false)
+    {
+        if (!api.CanUseOnline)
+        {
+            panels.Content = new ButtonPanel
+            {
+                Text = "Can't update all maps!",
+                SubText = "You need to be logged in to use this feaure!",
+                Icon = FontAwesome6.Solid.ExclamationTriangle,
+                Buttons = new ButtonData[]
+                {
+                    new PrimaryButtonData("Okay", () => {}),
+                }
+            };
+            
+            return;
+        };
+
+        if (updateAllMapsIsRunning) return;
+
+        updateAllMapsIsRunning = true;
+
+        var notification = new TaskNotificationData
+        {
+            Text = "Checking for map updates",
+            TextWorking = "Checking...",
+            TextFinished = "Update check complete!"
+        };
+
+        notifications.AddTask(notification);
+
+        void noMaps()
+        {
+            Schedule(() =>
+            {
+                notification.Progress = 1f;
+                notification.TextFinished = "No maps found to update.";
+                notification.State = LoadingState.Complete;
+            });
+            updateAllMapsIsRunning = false;
+        }
+
+        Task.Run(() =>
+        {
+            try
+            {
+                notification.Progress = 0f;
+
+                var updateContenders = MapSets
+                    .Where(set => set is { OnlineID: > 0 })
+                    .ToList();
+
+                if (updateContenders.Count == 0)
+                {
+                    noMaps();
+                    return;
+                }  
+
+                var maps = updateContenders
+                    .SelectMany(set => set.Maps
+                    .Where(map => map.StatusInt >= (includeLocal ? -2 : 0) && map.StatusInt < 3)) // we exclude pure maps also because they aren't updatable
+                    .ToList();
+
+                var mapIDs = maps.Select(x => x.OnlineID).ToList();
+
+                notification.Progress = 0.1f;
+
+                var req = new MapHashesRequest(mapIDs);
+                req.Progress += (current, total) => notification.Progress = 0.2f + (0.4f * ((float)current / total));
+                req.Success += _ => notification.Progress = 0.6f;
+                req.Failure += ex => throw ex;
+                api.PerformRequest(req);
+
+                var hashes = req.Response.Data.SplitHashes();
+
+                var setsToUpdate = new HashSet<RealmMapSet>();
+
+                int processed = 0;
+                foreach (var (hash, map) in hashes.Zip(maps))
+                {
+                    if (hash.IsEmpty()) continue;
+
+                    var mapInfo = map.GetMapInfo();
+
+                    if (!hash.Equals(map.Hash, mapInfo.GetEffectHash(), mapInfo.GetStoryboardHash()))
+                        setsToUpdate.Add(map.MapSet);
+
+                    processed++;
+                    notification.Progress = 0.6f + (0.4f * ((float)processed / maps.Count));
+                }
+
+                if (setsToUpdate.Count == 0)
+                {
+                    noMaps();
+                    return;
+                }
+
+                notification.Progress = 1f;
+                notification.State = LoadingState.Complete;
+
+                setsToUpdate.ForEach(s => DownloadMapSetUpdate(s));
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Failed to check for updates: {ex.Message}", LoggingTarget.Network);
+                notification.State = LoadingState.Failed;
+            }
+            finally
+            {
+                updateAllMapsIsRunning = false;
+            }
+        });
     }
 
     public void DownloadMapSetUpdate(RealmMapSet set)
