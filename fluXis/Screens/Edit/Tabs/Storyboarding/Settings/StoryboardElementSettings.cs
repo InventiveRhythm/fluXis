@@ -12,6 +12,7 @@ using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Localization;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
@@ -133,19 +134,25 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
             case 1:
                 var item = collection.First();
+
+                var title = new FluXisTextBox
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 32,
+                    PlaceholderText = item.Type.ToString(),
+                    SidePadding = 10,
+                    TextContainerHeight = .7f,
+                    CommitOnFocusLost = true,
+                    BackgroundInactive = Theme.Background3,
+                    BackgroundActive = Theme.Background4,
+                    Text = item.Label
+                };
+
+                title.OnTextChanged += () => item.Label = title.Text;
+
                 var drawables = new List<Drawable>
                 {
-                    new FluXisSpriteText
-                    {
-                        Text = $"{item.Type}",
-                        WebFontSize = 20
-                    },
-                    new PointSettingsTextBox
-                    {
-                        Text = "Label",
-                        DefaultText = item.Label,
-                        OnTextChanged = box => item.Label = box.Text
-                    },
+                    title,
                     new PointSettingsTime(map, item)
                     {
                         TimeChanged = (oldTime, newTime) =>
