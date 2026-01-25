@@ -171,26 +171,31 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         return accBased + comboBased;
     }
 
-    public ScoreInfo ToScoreInfo() => new()
+    public ScoreInfo ToScoreInfo()
     {
-        Accuracy = Accuracy.Value,
-        PerformanceRating = PerformanceRating.Value,
-        Rank = Rank.Value,
-        Score = Score,
-        Combo = Combo.Value,
-        MaxCombo = MaxCombo,
-        Flawless = Flawless,
-        Perfect = Perfect,
-        Great = Great,
-        Alright = Alright,
-        Okay = Okay,
-        Miss = Miss,
-        HitResults = JudgementProcessor.Results,
-        MapID = MapInfo.RealmEntry!.OnlineID,
-        PlayerID = Player.ID,
-        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-        Mods = Mods.Select(m => m.Acronym).ToList()
-    };
+        Recalculate(true);
+
+        return new ScoreInfo
+        {
+            Accuracy = Accuracy.Value,
+            PerformanceRating = PerformanceRating.Value,
+            Rank = Rank.Value,
+            Score = Score,
+            Combo = Combo.Value,
+            MaxCombo = MaxCombo,
+            Flawless = Flawless,
+            Perfect = Perfect,
+            Great = Great,
+            Alright = Alright,
+            Okay = Okay,
+            Miss = Miss,
+            HitResults = JudgementProcessor.Results,
+            MapID = MapInfo.RealmEntry!.OnlineID,
+            PlayerID = Player.ID,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            Mods = Mods.Select(m => m.Acronym).ToList()
+        };
+    }
 
     public static double CalculatePerformance(float rating, float accuracy, int flawless, int perfect, int great, int alright, int okay, int miss, List<IMod> mods)
     {
