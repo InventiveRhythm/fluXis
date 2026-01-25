@@ -58,17 +58,18 @@ public class AutoGenerator
             return;
 
         var actions = generateActions().GroupBy(a => a.Time).OrderBy(g => g.First().Time);
-
         var currentKeys = new List<FluXisGameplayKeybind>();
 
         foreach (var action in actions)
         {
             foreach (var point in action)
             {
+                var key = keys[point.Lane - 1];
+
                 switch (point)
                 {
                     case PressAction:
-                        currentKeys.Add(keys[point.Lane - 1]);
+                        currentKeys.Add(key);
 
                         if (dual && !split)
                             currentKeys.Add(keys[point.Lane - 1 + mode]);
@@ -76,7 +77,7 @@ public class AutoGenerator
                         break;
 
                     case ReleaseAction:
-                        currentKeys.Remove(keys[point.Lane - 1]);
+                        currentKeys.Remove(key);
 
                         if (dual && !split)
                             currentKeys.Remove(keys[point.Lane - 1 + mode]);
@@ -89,45 +90,51 @@ public class AutoGenerator
         }
     }
 
+#nullable enable
     private IEnumerable<IAction> generateActions()
     {
-        var down = new bool[mode * (split ? 2 : 1)];
+        var columns = map.HitObjects.GroupBy(x => x.Lane);
 
-        for (int i = 0; i < map.HitObjects.Count; i++)
+        foreach (var column in columns)
         {
-            var currentObject = map.HitObjects[i];
-            var nextObjectInColumn = getNextObject(i);
-            var releaseTime = calculateReleaseTime(currentObject, nextObjectInColumn);
+            var objects = column.OrderBy(x => x.Time).ToList();
+            var pressed = false;
+            double blockedUntil = 0;
 
-            if (!down[currentObject.Lane - 1])
+            for (int i = 0; i < objects.Count; i++)
             {
-                down[currentObject.Lane - 1] = true;
-                yield return new PressAction { Time = currentObject.Time, Lane = currentObject.Lane };
-            }
+                var currentObject = map.HitObjects[i];
 
-            if (releaseTime is not null)
-            {
-                down[currentObject.Lane - 1] = false;
-                yield return new ReleaseAction { Time = releaseTime.Value, Lane = currentObject.Lane };
+                if (currentObject.Time < blockedUntil)
+                    continue;
+
+                HitObject? nextObjectInColumn = objects.Count == i + 1 ? null : objects[i + 1];
+                var releaseTime = calculateReleaseTime(currentObject, nextObjectInColumn);
+
+                if (!pressed)
+                {
+                    pressed = true;
+                    yield return new PressAction { Time = currentObject.Time, Lane = currentObject.Lane };
+                }
+
+                if (releaseTime is not null)
+                {
+                    pressed = false;
+                    blockedUntil = releaseTime.Value;
+                    yield return new ReleaseAction { Time = releaseTime.Value, Lane = currentObject.Lane };
+                }
             }
         }
     }
-
-    private HitObject getNextObject(int currentIndex)
-    {
-        var desiredColumn = map.HitObjects[currentIndex].Lane;
-
-        for (var i = currentIndex + 1; i < map.HitObjects.Count; i++)
-        {
-            if (map.HitObjects[i].Lane == desiredColumn)
-                return map.HitObjects[i];
-        }
-
-        return null;
-    }
+#nullable disable
 
     private double? calculateReleaseTime(HitObject currentObject, HitObject nextObject)
     {
+        var endTime = currentObject.EndTime;
+
+        if (currentObject.LongNote)
+            return endTime;
+
         if (nextObject?.Type == 1)
         {
             var diff = nextObject.Time - currentObject.Time;
@@ -135,11 +142,6 @@ public class AutoGenerator
             if (diff < 200)
                 return null;
         }
-
-        var endTime = currentObject.EndTime;
-
-        if (currentObject.LongNote)
-            return endTime;
 
         var enoughTimeToRelease = nextObject == null || nextObject.Time > endTime + key_down_time;
         return endTime + (enoughTimeToRelease ? key_down_time : (nextObject.Time - endTime) * 0.9f);
