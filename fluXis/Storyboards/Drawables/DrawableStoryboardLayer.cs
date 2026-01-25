@@ -67,7 +67,6 @@ public partial class DrawableStoryboardLayer : DrawSizePreservingFillContainer
             Size = TargetDrawSize,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Masking = true,
             Clock = clock
         };
 
