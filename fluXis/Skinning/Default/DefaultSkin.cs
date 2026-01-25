@@ -52,18 +52,16 @@ public class DefaultSkin : ISkin
     public virtual Texture GetIcon() => Textures.Get("Skins/default.png");
     public Texture GetDefaultBackground() => Textures.Get("Backgrounds/default.png");
 
-    public Sample GetUISample(UISamples.SampleType type)
+    public Sample GetUISample(UISamples.SampleType type) => type switch
     {
-        return type switch
-        {
-            UISamples.SampleType.Back => samples.Get("UI/back"),
-            UISamples.SampleType.Select => samples.Get("UI/accept"),
-            UISamples.SampleType.Hover => samples.Get("UI/hover"),
-            UISamples.SampleType.Click => samples.Get("UI/click"),
-            UISamples.SampleType.ClickDisabled => samples.Get("UI/click-disabled"),
-            _ => null
-        };
-    }
+        UISamples.SampleType.Back => samples.Get("UI/back"),
+        UISamples.SampleType.Select => samples.Get("UI/accept"),
+        UISamples.SampleType.Hover => samples.Get("UI/hover"),
+        UISamples.SampleType.Click => samples.Get("UI/click"),
+        UISamples.SampleType.ClickDisabled => samples.Get("UI/click-disabled"),
+        UISamples.SampleType.SkinSelectClick => samples.Get("UI/click"),
+        _ => null
+    };
 
     public Sample GetCourseSample(CourseScreen.SampleType type)
     {

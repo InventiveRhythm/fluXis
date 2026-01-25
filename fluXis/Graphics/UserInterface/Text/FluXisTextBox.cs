@@ -53,7 +53,7 @@ public partial class FluXisTextBox : BasicTextBox
         set => BackgroundFocused = value;
     }
 
-    private KeyboardSamples samples { get; set; } = new();
+    private KeyboardSamples samples { get; } = new();
 
     public FluXisTextBox()
     {
