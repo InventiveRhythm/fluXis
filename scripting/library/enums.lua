@@ -82,3 +82,4 @@ function Anchor(input) end
 ---| "string"
 ---| "int"
 ---| "float"
+---| "boolean"

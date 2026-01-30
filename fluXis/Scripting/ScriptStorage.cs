@@ -203,6 +203,7 @@ public class ScriptStorage
                     "string" => typeof(string),
                     "int" => typeof(int),
                     "float" => typeof(float),
+                    "boolean" => typeof(bool),
                     _ => throw new ArgumentOutOfRangeException(nameof(type))
                 };
 
@@ -222,10 +223,12 @@ public class ScriptStorage
             return type switch
             {
                 "string" => defaultFallback ?? string.Empty,
-                "int" => isEmpty ? 0 : 
+                "int" => isEmpty ? 0 :
                     int.TryParse(defaultFallback, out var intValue) ? intValue : 0,
-                "float" => isEmpty ? 0f : 
+                "float" => isEmpty ? 0f :
                     float.TryParse(defaultFallback, out var floatValue) ? floatValue : 0f,
+                "boolean" => isEmpty ? false :
+                    bool.TryParse(defaultFallback, out var boolValue) ? boolValue : false,
                 _ => throw new ArgumentOutOfRangeException(nameof(type))
             };
         }
@@ -237,9 +240,9 @@ public class ScriptStorage
         public string Key { get; }
         public string Title { get; }
         public Type Type { get; }
-        
+
         private readonly object defaultFallback;
-        
+
         public T GetDefaultFallback<T>() => (T)defaultFallback ?? default;
 
         public ParameterDefinition(string key, string title, Type type, object defaultFallback = default)
