@@ -243,11 +243,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             new SetupTab(),
             new ChartingTab(),
             new DesignTab(),
-            new StoryboardTab()
+            new StoryboardTab(),
+            new VerifyTab()
             // new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
         };
 
-        tabList.Add(verifyTab = new VerifyTab());
+        verifyTab = tabList.OfType<VerifyTab>().First();
 
         keybinds = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host);
         dependencies.CacheAs(keybinds);
@@ -517,6 +518,20 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
     private void updateBlur(ValueChangedEvent<float> e) => backgrounds.SetBlur(e.NewValue);
+
+    public void ChangeToTab<T>([CanBeNull] Action<T> act = null) where T : EditorTab =>
+        ChangeToTab(typeof(T), x => act?.Invoke(x as T));
+
+    public void ChangeToTab(Type tab, [CanBeNull] Action<EditorTab> act = null)
+    {
+        var target = tabs.FirstOrDefault(x => x.GetType() == tab) ?? throw new InvalidOperationException("Tab not in editor.");
+        changeTab(tabs.IndexOf(target));
+
+        if (target.HasLoading)
+            target.ScheduleAfterLoad(() => act?.Invoke(target));
+        else
+            act?.Invoke(target);
+    }
 
     private void changeTab(int to)
     {

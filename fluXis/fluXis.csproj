@@ -4,10 +4,6 @@
     <AssemblyName>fluXis.Shared</AssemblyName>
     <PackageId>fluXis.Shared</PackageId>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <!-- I really don't like the default suggestions from C# 12 -->
-    <!-- So until I figure out how to change them using DotSettings or .editorconfig, -->
-    <!-- I will keep this here -->
-    <LangVersion>11</LangVersion>
     <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>

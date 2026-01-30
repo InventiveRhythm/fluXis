@@ -1,5 +1,5 @@
-using System;
 using System.Linq;
+using System.Text;
 using DiscordRPC;
 using DiscordRPC.Message;
 using fluXis.Integration;
@@ -55,18 +55,39 @@ public class DiscordActivity
         game.JoinMultiplayerRoom(secret.ID, secret.Password);
     }
 
+    private static string truncateWithLog(string value, int maxBytes, string fieldName = null)
+    {
+        string field = !string.IsNullOrEmpty(fieldName) ? $"{fieldName}" : "";
+
+        if (string.IsNullOrEmpty(value))
+        {
+            Logger.Log($"Discord RPC {field} is empty or null.", LoggingTarget.Network, LogLevel.Verbose);
+            return value ?? "";
+        }
+
+        var bytes = Encoding.UTF8.GetByteCount(value);
+
+        if (bytes > maxBytes)
+        {
+            Logger.Log($"Discord RPC {field} exceeded {maxBytes} bytes (was {bytes} bytes), truncating...", LoggingTarget.Network, LogLevel.Verbose);
+            return StringUtils.TruncateBytes(value, maxBytes);
+        }
+
+        return value;
+    }
+
     private static RichPresence build(DiscordRichPresence rpc)
     {
         var discord = new RichPresence
         {
-            State = rpc.State[..Math.Min(rpc.State.Length, 128)],
-            Details = rpc.Details[..Math.Min(rpc.Details.Length, 128)],
+            State = truncateWithLog(rpc.State, 128, "State"),
+            Details = truncateWithLog(rpc.Details, 128, "Details"),
             Assets = new Assets
             {
-                LargeImageKey = rpc.LargeImage,
-                LargeImageText = rpc.LargeImageText,
-                SmallImageKey = rpc.SmallImage,
-                SmallImageText = rpc.SmallImageText
+                LargeImageKey = truncateWithLog(rpc.LargeImage, 300, "LargeImageKey"),
+                LargeImageText = truncateWithLog(rpc.LargeImageText, 128, "LargeImageText"),
+                SmallImageKey = truncateWithLog(rpc.SmallImage, 300, "SmallImageKey"),
+                SmallImageText = truncateWithLog(rpc.SmallImageText, 128, "SmallImageText")
             },
             Timestamps = new Timestamps()
         };

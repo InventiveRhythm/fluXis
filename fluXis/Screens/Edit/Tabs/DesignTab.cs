@@ -1,3 +1,4 @@
+using System;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Screens.Edit.Tabs.Design;
@@ -12,12 +13,15 @@ public partial class DesignTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome6.Solid.Palette;
     public override string TabName => "Design";
+    public override bool HasLoading => true;
 
     private LoadingIcon loadingIcon;
+    public DesignContainer Container { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        Container = new DesignContainer();
         Child = loadingIcon = new LoadingIcon
         {
             Anchor = Anchor.Centre,
@@ -30,12 +34,20 @@ public partial class DesignTab : EditorTab
     {
         base.LoadComplete();
 
-        LoadComponentAsync(new DesignContainer(), container =>
+        LoadComponentAsync(Container, container =>
         {
             loadingIcon.FadeOut(200);
 
             AddInternal(container);
             container.FadeInFromZero(200);
         });
+    }
+
+    public override void ScheduleAfterLoad(Action act)
+    {
+        if (Container.IsLoaded)
+            act.Invoke();
+        else
+            Container.OnLoadComplete += _ => act();
     }
 }

@@ -154,6 +154,15 @@ public abstract partial class EditorTimingLines<T> : Container<T>
         }
 
         protected override void Update() => Position = Parent.GetPosition(Time);
-        public int CompareTo(Line other) => Time.CompareTo(other.Time);
+        
+        public int CompareTo(Line other)
+        {
+            int cmp = Time.CompareTo(other.Time);
+            if (cmp != 0)
+                return cmp;
+            
+            return this.GetHashCode()
+                    .CompareTo(other.GetHashCode());
+        }
     }
 }
