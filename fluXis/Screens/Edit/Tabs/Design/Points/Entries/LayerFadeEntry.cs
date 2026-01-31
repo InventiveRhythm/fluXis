@@ -33,7 +33,7 @@ public partial class LayerFadeEntry : PointListEntry
     {
         var str = $"{fade.Layer.ToString()} {(fade.Alpha * 100).ToStringInvariant()}% {(int)fade.Duration}ms";
 
-        if (fade.Layer == LayerFadeEvent.FadeLayer.Playfield)
+        if (fade.Layer != LayerFadeEvent.FadeLayer.HUD)
             str += $" P{fade.PlayfieldIndex}S{fade.PlayfieldSubIndex}";
 
         return new FluXisSpriteText
