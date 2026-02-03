@@ -132,7 +132,14 @@ public enum StoryboardElementType
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
-    SkinSprite = 6
+    SkinSprite = 6,
+
+    [Icon(0xf0c8, Regular = true)]
+    [WidthHeight]
+    [AllowedAnimation(StoryboardAnimationType.Width)]
+    [AllowedAnimation(StoryboardAnimationType.Height)]
+    [AllowedAnimation(StoryboardAnimationType.Border)]
+    OutlineBox = 7,
 }
 
 public enum StoryboardLayer

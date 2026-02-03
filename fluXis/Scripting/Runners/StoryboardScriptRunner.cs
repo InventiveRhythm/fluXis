@@ -40,6 +40,7 @@ public class StoryboardScriptRunner : ScriptRunner
 
         // elements
         AddFunction("StoryboardBox", newBox);
+        AddFunction("StoryboardOutlineBox", newOutlineBox);
         AddFunction("StoryboardSprite", newSprite);
         AddFunction("StoryboardText", newText);
         AddFunction("StoryboardCircle", newCircle);
@@ -73,6 +74,9 @@ public class StoryboardScriptRunner : ScriptRunner
 
     [LuaGlobal(Name = "StoryboardBox")]
     private LuaStoryboardBox newBox() => new();
+
+    [LuaGlobal(Name = "StoryboardOutlineBox")]
+    private LuaStoryboardOutlineBox newOutlineBox() => new();
 
     [LuaGlobal(Name = "StoryboardSprite")]
     private LuaStoryboardSprite newSprite() => new();

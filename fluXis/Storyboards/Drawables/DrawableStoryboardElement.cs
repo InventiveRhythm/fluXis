@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -33,7 +34,9 @@ public partial class DrawableStoryboardElement : CompositeDrawable
         if (Element.Blending)
             Blending = BlendingParameters.Additive;
 
-        foreach (var animation in Element.Animations)
+        var anims = Element.Animations.OrderBy(x => x.StartTime).ToList();
+
+        foreach (var animation in anims)
         {
             using (BeginAbsoluteSequence(animation.StartTime))
             {

@@ -269,6 +269,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 switch (item.Type)
                 {
                     case StoryboardElementType.OutlineCircle:
+                    case StoryboardElementType.OutlineBox:
                         drawables.Add(new PointSettingsTextBox
                         {
                             Text = "Border Width",

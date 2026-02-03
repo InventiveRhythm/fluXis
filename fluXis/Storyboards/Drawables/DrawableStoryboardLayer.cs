@@ -50,6 +50,7 @@ public partial class DrawableStoryboardLayer : DrawSizePreservingFillContainer
                 StoryboardElementType.Circle => new DrawableStoryboardCircle(element),
                 StoryboardElementType.OutlineCircle => new DrawableStoryboardOutlineCircle(element),
                 StoryboardElementType.SkinSprite => new DrawableStoryboardSkinSprite(element),
+                StoryboardElementType.OutlineBox => new DrawableStoryboardOutlineBox(element),
                 _ => new DrawableStoryboardElement(element)
             };
 
