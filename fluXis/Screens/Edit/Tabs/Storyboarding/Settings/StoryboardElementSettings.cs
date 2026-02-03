@@ -158,31 +158,25 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         TimeChanged = (oldTime, newTime) =>
                             item.EndTime -= oldTime - newTime
                     },
-                    new PointSettingsTextBox
+                    new PointSettingsNumber<float>
                     {
                         Text = "Start X",
-                        DefaultText = item.StartX.ToStringInvariant(),
-                        OnTextChanged = box =>
+                        DefaultValue = item.StartX,
+                        Step = 10,
+                        OnValueChanged = v =>
                         {
-                            if (box.Text.TryParseFloatInvariant(out var result))
-                                item.StartX = result;
-                            else
-                                box.NotifyError();
-
+                            item.StartX = v;
                             map.Update(item);
                         }
                     },
-                    new PointSettingsTextBox
+                    new PointSettingsNumber<float>
                     {
                         Text = "Start Y",
-                        DefaultText = item.StartY.ToStringInvariant(),
-                        OnTextChanged = box =>
+                        DefaultValue = item.StartY,
+                        Step = 10,
+                        OnValueChanged = v =>
                         {
-                            if (box.Text.TryParseFloatInvariant(out var result))
-                                item.StartY = result;
-                            else
-                                box.NotifyError();
-
+                            item.StartY = v;
                             map.Update(item);
                         }
                     },
@@ -235,31 +229,25 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 {
                     drawables.AddRange(new Drawable[]
                     {
-                        new PointSettingsTextBox
+                        new PointSettingsNumber<float>
                         {
                             Text = "Width",
-                            DefaultText = item.Width.ToStringInvariant(),
-                            OnTextChanged = box =>
+                            DefaultValue = item.Width,
+                            Step = 10,
+                            OnValueChanged = v =>
                             {
-                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                    item.Width = result;
-                                else
-                                    box.NotifyError();
-
+                                item.Width = v;
                                 map.Update(item);
                             }
                         },
-                        new PointSettingsTextBox
+                        new PointSettingsNumber<float>
                         {
                             Text = "Height",
-                            DefaultText = item.Height.ToStringInvariant(),
-                            OnTextChanged = box =>
+                            DefaultValue = item.Height,
+                            Step = 10,
+                            OnValueChanged = v =>
                             {
-                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                    item.Height = result;
-                                else
-                                    box.NotifyError();
-
+                                item.Height = v;
                                 map.Update(item);
                             }
                         },
@@ -270,17 +258,14 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 {
                     case StoryboardElementType.OutlineCircle:
                     case StoryboardElementType.OutlineBox:
-                        drawables.Add(new PointSettingsTextBox
+                        drawables.Add(new PointSettingsNumber<float>
                         {
                             Text = "Border Width",
-                            DefaultText = item.GetParameter("border", 4f).ToStringInvariant(),
-                            OnTextChanged = box =>
+                            DefaultValue = item.GetParameter("border", 4f),
+                            Step = 1,
+                            OnValueChanged = v =>
                             {
-                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                    item.Parameters["border"] = result;
-                                else
-                                    box.NotifyError();
-
+                                item.Parameters["border"] = v;
                                 map.Update(item);
                             }
                         });
@@ -314,17 +299,15 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     map.Update(item);
                                 }
                             },
-                            new PointSettingsTextBox
+                            new PointSettingsNumber<float>
                             {
                                 Text = "Font Size",
-                                DefaultText = item.GetParameter("size", 20f).ToStringInvariant(),
-                                OnTextChanged = box =>
+                                DefaultValue = item.GetParameter("size", 20f),
+                                Min = 0,
+                                Step = 1,
+                                OnValueChanged = v =>
                                 {
-                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 1)
-                                        item.Parameters["size"] = result;
-                                    else
-                                        box.NotifyError();
-
+                                    item.Parameters["size"] = v;
                                     map.Update(item);
                                 }
                             },
