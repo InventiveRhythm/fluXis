@@ -58,6 +58,7 @@ internal class Program
                 Anchor.BottomLeft, Anchor.BottomCentre, Anchor.BottomRight
             }
         });
+        typeList.Add(new EnumType<DefaultBlendingParameters>(true, ctorName: "BlendMode", enumName: "BlendMode"));
 
         var eventTypes = LuaMap.GetMapEventTypes();
         eventTypes.Remove(typeof(ScriptEvent));
@@ -134,7 +135,7 @@ internal class Program
                 name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
         }
 
-        if (name is not null) 
+        if (name is not null)
             return nullable ? $"{name}?" : name;
 
         string fallbackType = getLuaTypeName(fallback) ?? fallback?.Name ?? type.Name;

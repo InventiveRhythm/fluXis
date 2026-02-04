@@ -62,6 +62,9 @@ public class StoryboardElement : ITimedObject
     [JsonProperty("blend")]
     public bool Blending { get; set; }
 
+    [JsonProperty("blend-mode")]
+    public DefaultBlendingParameters BlendingMode { get; set; } = DefaultBlendingParameters.Add;
+
     [JsonProperty("width")]
     public float Width { get; set; }
 
