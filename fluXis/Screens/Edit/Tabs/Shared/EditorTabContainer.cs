@@ -46,7 +46,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     protected virtual MarginPadding ContentPadding => new() { Vertical = 16 };
 
     private ClickableContainer sidebarClickHandler;
-    private PointsSidebar sidebar;
+    public PointsSidebar Sidebar { get; private set; }
 
     private Bindable<ScrollDirection> scrollDirection;
 
@@ -100,11 +100,11 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
                                 sidebarClickHandler = new ClickableContainer
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Action = () => sidebar.OnWrapperClick?.Invoke()
+                                    Action = () => Sidebar.OnWrapperClick?.Invoke()
                                 }
                             }
                         },
-                        sidebar = CreatePointsSidebar()
+                        Sidebar = CreatePointsSidebar()
                     }
                 }
             }
@@ -117,7 +117,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     {
         base.LoadComplete();
 
-        sidebar.Expanded.BindValueChanged(v => sidebarClickHandler.FadeTo(v.NewValue ? 1 : 0), true);
+        Sidebar.Expanded.BindValueChanged(v => sidebarClickHandler.FadeTo(v.NewValue ? 1 : 0), true);
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
@@ -241,7 +241,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
             {
                 var note = new NoteEvent { Time = EditorClock.CurrentTime };
                 ActionStack.Add(new EventPlaceAction(note));
-                sidebar.ShowPoint(note);
+                Sidebar.ShowPoint(note);
                 return true;
             }
         }

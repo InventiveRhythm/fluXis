@@ -10,19 +10,25 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Graphics.UserInterface.Text;
 
-public partial class FluXisTextBox : BasicTextBox
+public partial class FluXisTextBox : BasicTextBox, IHasCursorType
 {
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private ISteamManager steam { get; set; }
+
+    CursorType IHasCursorType.Cursor =>
+        /* fix for dropdowns because they are set to AlwaysVisible */
+        Parent!.Alpha > 0 ? CursorType.TextSelection : CursorType.Ignore;
 
     protected override Color4 SelectionColour => Theme.Background6;
     protected override Color4 InputErrorColour => Theme.ButtonRed;
@@ -53,7 +59,7 @@ public partial class FluXisTextBox : BasicTextBox
         set => BackgroundFocused = value;
     }
 
-    private KeyboardSamples samples { get; set; } = new();
+    private KeyboardSamples samples { get; } = new();
 
     public FluXisTextBox()
     {

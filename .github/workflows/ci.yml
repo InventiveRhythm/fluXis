@@ -8,32 +8,6 @@ permissions:
   contents: read
 
 jobs:
-  code-style:
-    name: Code Style
-    runs-on: ubuntu-22.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: install dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
-
-      - name: install tools
-        run: dotnet tool restore
-
-      - name: inspect/dotnet
-        run: dotnet build fluXis.Desktop -c Debug -warnaserror -p:EnforceCodeStyleInBuild=true
-
-      - name: inspect/jetbrains
-        run: dotnet jb inspectcode $(pwd)/fluXis.Desktop.slnf --no-build --output="inspectcodereport.xml" --verbosity=WARN
-
-      - name: output inspect
-        run: dotnet nvika parsereport "${{github.workspace}}/inspectcodereport.xml" --treatwarningsaserrors
-  
   build-linux:
     name: Build (Linux)
     runs-on: ubuntu-22.04

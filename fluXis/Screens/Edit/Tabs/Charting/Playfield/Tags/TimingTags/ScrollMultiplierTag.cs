@@ -1,9 +1,7 @@
 using System;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Events.Scrolling;
-using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Utils;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 
@@ -13,10 +11,7 @@ public partial class ScrollMultiplierTag : EditorTag
 {
     public override Colour4 TagColour => Theme.ScrollMultiply;
 
-    [Resolved]
-    private PointsSidebar points { get; set; }
-
-    public ScrollMultiplierEvent ScrollMultiplier => (ScrollMultiplierEvent)TimedObject;
+    private ScrollMultiplierEvent mult => (ScrollMultiplierEvent)TimedObject;
 
     private bool isHovered;
     private MarginPadding originalPadding;
@@ -37,11 +32,11 @@ public partial class ScrollMultiplierTag : EditorTag
     protected override void Update()
     {
         base.Update();
-        
+
         if (isHovered)
-            Text.Text = $"{ScrollMultiplier.Multiplier.ToStringInvariant("0.####")}x {Math.Floor(ScrollMultiplier.Duration)}ms | {ScrollMultiplier.Easing}";
+            Text.Text = $"{mult.Multiplier.ToStringInvariant("0.####")}x {Math.Floor(mult.Duration)}ms | {mult.Easing}";
         else
-            Text.Text = $"{ScrollMultiplier.Multiplier.ToStringInvariant("0.####")}x {Math.Floor(ScrollMultiplier.Duration)}ms";
+            Text.Text = $"{mult.Multiplier.ToStringInvariant("0.####")}x {Math.Floor(mult.Duration)}ms";
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -60,7 +55,7 @@ public partial class ScrollMultiplierTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        points.ShowPoint(ScrollMultiplier);
+        Editor.ChangeToTab<DesignTab>(x => x.Container.Sidebar.ShowPoint(mult));
         return true;
     }
 }

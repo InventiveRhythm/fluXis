@@ -5,14 +5,18 @@ using fluXis.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsNumber<T> : PointSettingsTextBox
+public partial class PointSettingsNumber<T> : PointSettingsTextBox, IHasCursorType
     where T : struct, INumber<T>, IMinMaxValue<T>
 {
+    public CursorType Cursor => CursorType.SizeHorizontal;
+
     // hide
     public new Action<FluXisTextBox> OnTextChanged { get; private set; }
     public new Action<FluXisTextBox> OnCommit { get; private set; }

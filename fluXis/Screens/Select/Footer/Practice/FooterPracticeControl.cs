@@ -129,6 +129,7 @@ public partial class FooterPracticeControl : GridContainer
     {
         [Resolved]
         private UISamples samples { get; set; }
+
         private Sample holdSample;
 
         private Func<bool> action { get; }
@@ -172,7 +173,7 @@ public partial class FooterPracticeControl : GridContainer
 
         [BackgroundDependencyLoader]
         private void load(ISampleStore samples)
-        { 
+        {
             holdSample = samples.Get("UI/slider-tick");
         }
 
@@ -201,7 +202,7 @@ public partial class FooterPracticeControl : GridContainer
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
-        {   
+        {
             isMouseDown = true;
             mouseDownTime = Clock.CurrentTime;
             lastClickTime = Clock.CurrentTime;

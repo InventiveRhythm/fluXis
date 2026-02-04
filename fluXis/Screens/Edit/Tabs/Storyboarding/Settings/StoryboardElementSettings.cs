@@ -12,6 +12,7 @@ using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Localization;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
@@ -136,49 +137,48 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 var item = collection.First();
                 var blendingEnabled = new BindableBool(item.Blending);
 
+                var title = new FluXisTextBox
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 32,
+                    PlaceholderText = item.Type.ToString(),
+                    SidePadding = 10,
+                    TextContainerHeight = .7f,
+                    CommitOnFocusLost = true,
+                    BackgroundInactive = Theme.Background3,
+                    BackgroundActive = Theme.Background4,
+                    Text = item.Label
+                };
+
+                title.OnTextChanged += () => item.Label = title.Text;
+
                 var drawables = new List<Drawable>
                 {
-                    new FluXisSpriteText
-                    {
-                        Text = $"{item.Type}",
-                        WebFontSize = 20
-                    },
-                    new PointSettingsTextBox
-                    {
-                        Text = "Label",
-                        DefaultText = item.Label,
-                        OnTextChanged = box => item.Label = box.Text
-                    },
+                    title,
                     new PointSettingsTime(map, item)
                     {
                         TimeChanged = (oldTime, newTime) =>
                             item.EndTime -= oldTime - newTime
                     },
-                    new PointSettingsTextBox
+                    new PointSettingsNumber<float>
                     {
                         Text = "Start X",
-                        DefaultText = item.StartX.ToStringInvariant(),
-                        OnTextChanged = box =>
+                        DefaultValue = item.StartX,
+                        Step = 10,
+                        OnValueChanged = v =>
                         {
-                            if (box.Text.TryParseFloatInvariant(out var result))
-                                item.StartX = result;
-                            else
-                                box.NotifyError();
-
+                            item.StartX = v;
                             map.Update(item);
                         }
                     },
-                    new PointSettingsTextBox
+                    new PointSettingsNumber<float>
                     {
                         Text = "Start Y",
-                        DefaultText = item.StartY.ToStringInvariant(),
-                        OnTextChanged = box =>
+                        DefaultValue = item.StartY,
+                        Step = 10,
+                        OnValueChanged = v =>
                         {
-                            if (box.Text.TryParseFloatInvariant(out var result))
-                                item.StartY = result;
-                            else
-                                box.NotifyError();
-
+                            item.StartY = v;
                             map.Update(item);
                         }
                     },
@@ -255,31 +255,25 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 {
                     drawables.AddRange(new Drawable[]
                     {
-                        new PointSettingsTextBox
+                        new PointSettingsNumber<float>
                         {
                             Text = "Width",
-                            DefaultText = item.Width.ToStringInvariant(),
-                            OnTextChanged = box =>
+                            DefaultValue = item.Width,
+                            Step = 10,
+                            OnValueChanged = v =>
                             {
-                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                    item.Width = result;
-                                else
-                                    box.NotifyError();
-
+                                item.Width = v;
                                 map.Update(item);
                             }
                         },
-                        new PointSettingsTextBox
+                        new PointSettingsNumber<float>
                         {
                             Text = "Height",
-                            DefaultText = item.Height.ToStringInvariant(),
-                            OnTextChanged = box =>
+                            DefaultValue = item.Height,
+                            Step = 10,
+                            OnValueChanged = v =>
                             {
-                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                    item.Height = result;
-                                else
-                                    box.NotifyError();
-
+                                item.Height = v;
                                 map.Update(item);
                             }
                         },
@@ -289,17 +283,15 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 switch (item.Type)
                 {
                     case StoryboardElementType.OutlineCircle:
-                        drawables.Add(new PointSettingsTextBox
+                    case StoryboardElementType.OutlineBox:
+                        drawables.Add(new PointSettingsNumber<float>
                         {
                             Text = "Border Width",
-                            DefaultText = item.GetParameter("border", 4f).ToStringInvariant(),
-                            OnTextChanged = box =>
+                            DefaultValue = item.GetParameter("border", 4f),
+                            Step = 1,
+                            OnValueChanged = v =>
                             {
-                                if (box.Text.TryParseFloatInvariant(out var result) && result >= 0)
-                                    item.Parameters["border"] = result;
-                                else
-                                    box.NotifyError();
-
+                                item.Parameters["border"] = v;
                                 map.Update(item);
                             }
                         });
@@ -333,17 +325,15 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     map.Update(item);
                                 }
                             },
-                            new PointSettingsTextBox
+                            new PointSettingsNumber<float>
                             {
                                 Text = "Font Size",
-                                DefaultText = item.GetParameter("size", 20f).ToStringInvariant(),
-                                OnTextChanged = box =>
+                                DefaultValue = item.GetParameter("size", 20f),
+                                Min = 0,
+                                Step = 1,
+                                OnValueChanged = v =>
                                 {
-                                    if (box.Text.TryParseFloatInvariant(out var result) && result >= 1)
-                                        item.Parameters["size"] = result;
-                                    else
-                                        box.NotifyError();
-
+                                    item.Parameters["size"] = v;
                                     map.Update(item);
                                 }
                             },
