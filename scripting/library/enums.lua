@@ -98,3 +98,4 @@ function BlendMode(input) end
 ---| "string"
 ---| "int"
 ---| "float"
+---| "boolean"

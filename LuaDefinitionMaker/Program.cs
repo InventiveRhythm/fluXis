@@ -70,7 +70,7 @@ internal class Program
         typeList.Add(new CustomTextType("enums", eventSb.ToString()));
 
         // yes this is stupid but i don't want to figure out how to make it right
-        typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\""));
+        typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\"\n---| \"boolean\""));
         typeList.Add(new EnumType<StoryboardAnimationType>(false, "AnimationType", "storyboard"));
         typeList.Add(new EnumType<SkinSprite>(false, nameof(SkinSprite), "storyboard"));
         typeList.Add(new EnumType<StoryboardLayer>(true, "Layer", "storyboard"));

@@ -501,6 +501,19 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     }
                                 });
                             }
+                            else if (parameter.Type == typeof(bool))
+                            {
+                                drawables.Add(new PointSettingsToggle
+                                {
+                                    Text = parameter.Title,
+                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<bool>()),
+                                    OnStateChanged = enabled =>
+                                    {
+                                        item.Parameters[parameter.Key] = enabled;
+                                        map.Update(item);
+                                    }
+                                });
+                            }
                         }
 
                         break;
