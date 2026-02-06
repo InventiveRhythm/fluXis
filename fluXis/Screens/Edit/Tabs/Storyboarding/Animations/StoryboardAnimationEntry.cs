@@ -50,7 +50,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
         Row = row;
 
         Anchor = Anchor.CentreLeft;
-        Origin = Anchor.Centre;
+        Origin = Anchor.CentreLeft;
 
         InternalChildren = new Drawable[]
         {
@@ -60,7 +60,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                 Height = 0.5f,
                 Colour = color,
                 Alpha = 0.5f,
-                Anchor = Anchor.Centre,
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
             },
             outlineLength = new OutlinedCircle
@@ -68,17 +68,16 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                 RelativeSizeAxes = Axes.Y,
                 Height = 0.5f,
                 BorderThickness = 2f,
-                Anchor = Anchor.Centre,
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Colour = color.Lighten(2f),
                 Alpha = 0
             },
-            outlineDiamond =new FluXisSpriteIcon
+            outlineDiamond = new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
-                RelativeSizeAxes = Axes.Both,
-                Size = new Vector2(0.75f),
-                Anchor = Anchor.Centre,
+                Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT * 0.75f),
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 Colour = color.Lighten(1.5f),
                 Alpha = 0
@@ -86,9 +85,8 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
-                RelativeSizeAxes = Axes.Both,
-                Size = new Vector2(0.6f),
-                Anchor = Anchor.Centre,
+                Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT * 0.6f),
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 Colour = color
             },

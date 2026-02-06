@@ -36,7 +36,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
     private readonly Dictionary<T, SelectionBlueprint<T>> blueprints = new();
 
     // movement
-    private bool isDragging;
+    private bool isDraggingBlueprints;
     protected SelectionBlueprint<T>[] DraggedBlueprints { get; set; }
     protected Vector2[] DraggedBlueprintsPositions { get; set; }
 
@@ -98,7 +98,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
 
         if (DraggedBlueprints != null)
         {
-            isDragging = true;
+            isDraggingBlueprints = true;
             StartedMoving();
             return true;
         }
@@ -125,7 +125,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
     {
         lastDragEvent = e;
 
-        if (isDragging)
+        if (isDraggingBlueprints)
             MoveSelection(e);
     }
 
@@ -134,11 +134,11 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
 
     private void clearDragStuff()
     {
-        if (isDragging)
+        if (isDraggingBlueprints)
             FinishedMoving();
 
         lastDragEvent = null;
-        isDragging = false;
+        isDraggingBlueprints = false;
         DraggedBlueprints = null;
         SelectionBox.Hide();
     }
@@ -159,7 +159,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
             return;
 
         var blueprint = CreateBlueprintExtra(info, extra);
-        
+
         if (blueprint == null)
             return;
 
@@ -188,7 +188,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
         blueprint.Selected -= onSelected;
         blueprint.Deselected -= onDeselected;
         SelectionBlueprints.Remove(blueprint, true);
-        
+
         OnBlueprintRemoved(obj, extra);
     }
 
@@ -208,7 +208,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
             if (blueprint != null)
                 return blueprint;
         }
-        
+
         return CreateBlueprint(obj);
     }
 

@@ -39,7 +39,7 @@ public partial class StoryboardAnimationsList : CompositeDrawable, ITimePosition
 
     private readonly StoryboardTimeline timeline;
     private FillFlowContainer<StoryboardAnimationRow> rowsFlow;
-    public IEnumerable<StoryboardAnimationEntry> AnimationsEnumerable => 
+    public IEnumerable<StoryboardAnimationEntry> AnimationsEnumerable =>
         rowsFlow.Children.SelectMany(r => r.GetEntries());
     private Box dim;
     private FluXisSpriteText text;
@@ -200,7 +200,7 @@ public partial class StoryboardAnimationsList : CompositeDrawable, ITimePosition
     private void collectionChanged(object _, NotifyCollectionChangedEventArgs e)
     {
         var collection = timelineBlueprints.SelectionHandler.SelectedObjects;
-        
+
         rowsFlow.Clear();
 
         text.Text = "";
