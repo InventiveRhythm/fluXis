@@ -22,7 +22,8 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
 {
     protected virtual bool HorizontalSelection => false;
     protected virtual bool InArea => false;
-    protected virtual bool OnlySelectOnDrag => false;
+    protected virtual bool OnlyHighlightOnDrag => false;
+    protected virtual bool BypassClickHandler => false;
 
     protected readonly BindableList<T> SelectedObjects = new();
 
@@ -48,7 +49,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
         SelectionHandler = CreateSelectionHandler();
         SelectionHandler.SelectedObjects.BindTo(SelectedObjects);
 
-        if (OnlySelectOnDrag)
+        if (OnlyHighlightOnDrag)
             SelectionHandler.HighlightPredicate = () => SelectedObjects?.Count > 1 || (SelectedObjects?.Count > 0 && IsDragged);
 
         InternalChildren = new Drawable[]
@@ -118,7 +119,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag, IKeyBinding
         if (!handle && !InArea)
             DeselectAll();
 
-        return OnlySelectOnDrag ? base.OnMouseDown(e) : handle;
+        return BypassClickHandler ? base.OnMouseDown(e) : handle;
     }
 
     protected override void OnDrag(DragEvent e)

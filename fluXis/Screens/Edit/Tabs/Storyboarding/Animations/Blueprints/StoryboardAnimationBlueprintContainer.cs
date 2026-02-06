@@ -12,10 +12,8 @@ namespace fluXis.Screens.Edit.Tabs.Storyboarding.Animations.Blueprints;
 public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<StoryboardAnimation>
 {
     protected override bool HorizontalSelection => true;
-    protected override bool OnlySelectOnDrag => true;
-
-    [Resolved]
-    private Storyboard storyboard { get; set; }
+    protected override bool OnlyHighlightOnDrag => true;
+    protected override bool BypassClickHandler => true;
 
     [Resolved]
     private EditorMap map { get; set; }
@@ -83,11 +81,11 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
     public override void CloneSelection()
     {
         var orderedBlueprints = SelectionHandler.Selected.OrderBy(b => b.Object.StartTime).ToList();
-        
+
         if (orderedBlueprints.Count == 0) return;
-        
+
         float firstStartTime = (float)orderedBlueprints[0].Object.StartTime;
-        
+
         foreach (var blueprint in orderedBlueprints.Cast<StoryboardAnimationBlueprint>())
         {
             float normalizedTime = (float)blueprint.Object.StartTime - firstStartTime;
@@ -98,7 +96,7 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
     public override void DeleteSelection()
     {
         var blueprintsToDelete = SelectionHandler.Selected.ToList();
-        
+
         foreach (var blueprint in blueprintsToDelete.Cast<StoryboardAnimationBlueprint>())
         {
             var drawable = blueprint.Drawable;
@@ -109,7 +107,7 @@ public partial class StoryboardAnimationBlueprintContainer : BlueprintContainer<
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
-        
+
         if (animationList is not null)
         {
             animationList.AnimationAdded -= onAnimationAdded;
