@@ -62,6 +62,9 @@ public class StoryboardElement : ITimedObject
     [JsonProperty("blend")]
     public bool Blending { get; set; }
 
+    [JsonProperty("blend-mode")]
+    public DefaultBlendingParameters BlendingMode { get; set; } = DefaultBlendingParameters.Add;
+
     [JsonProperty("width")]
     public float Width { get; set; }
 
@@ -132,7 +135,14 @@ public enum StoryboardElementType
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
-    SkinSprite = 6
+    SkinSprite = 6,
+
+    [Icon(0xf0c8, Regular = true)]
+    [WidthHeight]
+    [AllowedAnimation(StoryboardAnimationType.Width)]
+    [AllowedAnimation(StoryboardAnimationType.Height)]
+    [AllowedAnimation(StoryboardAnimationType.Border)]
+    OutlineBox = 7,
 }
 
 public enum StoryboardLayer

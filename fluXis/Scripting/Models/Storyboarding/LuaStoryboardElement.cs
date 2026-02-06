@@ -42,6 +42,9 @@ public class LuaStoryboardElement : ILuaModel
     [LuaMember(Name = "blend")]
     public bool Blending { get; set; }
 
+    [LuaMember(Name = "blendMode")]
+    public DefaultBlendingParameters BlendingMode { get; set; } = DefaultBlendingParameters.Add;
+
     [LuaMember(Name = "width")]
     public float Width { get; set; }
 
@@ -117,6 +120,7 @@ public class LuaStoryboardElement : ILuaModel
         StartX = element.StartX,
         StartY = element.StartY,
         Blending = element.Blending,
+        BlendingMode = element.BlendingMode,
         Width = element.Width,
         Height = element.Height,
         Color = element.Color,

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
@@ -10,7 +12,7 @@ using osu.Framework.Bindables;
 
 namespace fluXis.Scoring.Processing;
 
-public class ScoreProcessor : JudgementDependant
+public class ScoreProcessor : JudgementDependant, IDisposable
 {
     public event Action OnComboBreak;
 
@@ -42,14 +44,81 @@ public class ScoreProcessor : JudgementDependant
     private int totalNotes => Flawless + Perfect + Great + Alright + Okay + Miss;
     private float ratedNotes => Flawless + Perfect * 0.98f + Great * 0.65f + Alright * 0.25f + Okay * 0.1f;
 
-    public override void AddResult(HitResult result) => Recalculate();
-    public override void RevertResult(HitResult result) => Recalculate();
+    public override void AddResult(HitResult result) => recalc();
+    public override void RevertResult(HitResult result) => recalc();
 
-    public void Recalculate()
+    private readonly Action<Action> schedule;
+    private readonly bool asyncCalculations;
+    private readonly object recalcLock = new { };
+    private bool needsToRecalc;
+
+    private bool disposed;
+
+    public ScoreProcessor(Action<Action> schedule, bool asyncCalculations = false)
     {
-        Accuracy.Value = totalNotes == 0 ? 100 : ratedNotes / totalNotes * 100;
-        PerformanceRating.Value = (float)CalculatePerformance(mapRating, Accuracy.Value, Flawless, Perfect, Great, Alright, Okay, Miss, Mods);
-        Rank.Value = Accuracy.Value switch
+        this.schedule = schedule;
+        this.asyncCalculations = asyncCalculations;
+
+        if (asyncCalculations)
+        {
+            Task.Run(() =>
+            {
+                while (!disposed)
+                {
+                    bool st;
+
+                    lock (recalcLock)
+                        st = needsToRecalc;
+
+                    if (!st)
+                    {
+                        Thread.Sleep(2);
+                        continue;
+                    }
+
+                    lock (recalcLock)
+                        needsToRecalc = false;
+
+                    try
+                    {
+                        Recalculate();
+                    }
+                    catch
+                    {
+                    }
+                }
+            });
+        }
+    }
+
+    private void recalc()
+    {
+        if (asyncCalculations)
+        {
+            lock (recalcLock)
+                needsToRecalc = true;
+
+            return;
+        }
+
+        Recalculate();
+    }
+
+    public void Recalculate(bool instant = false)
+    {
+        float acc = 0;
+        float pr = 0;
+
+        JudgementProcessor.RunLocked(() =>
+        {
+            int total = totalNotes;
+            float rated = ratedNotes;
+
+            acc = total == 0 ? 100 : rated / total * 100;
+            pr = (float)CalculatePerformance(mapRating, Accuracy.Value, Flawless, Perfect, Great, Alright, Okay, Miss, Mods);
+        });
+
+        var rank = acc switch
         {
             100 => ScoreRank.X,
             >= 99 => ScoreRank.SS,
@@ -62,45 +131,71 @@ public class ScoreProcessor : JudgementDependant
         };
 
         var curCombo = Combo.Value == 0 ? 1 : Combo.Value;
-        int lastMissIndex = JudgementProcessor.Results.FindLastIndex(x => x.Judgement <= HitWindows.ComboBreakJudgement);
-        Combo.Value = lastMissIndex == -1 ? JudgementProcessor.Results.Count : JudgementProcessor.Results.Count - lastMissIndex - 1;
-        MaxCombo = Math.Max(Combo.Value, MaxCombo);
-        Score = getScore();
+        int nowCombo = 0;
 
-        if (curCombo > Combo.Value)
-            OnComboBreak?.Invoke();
+        JudgementProcessor.RunLocked(() =>
+        {
+            var lastMissIndex = JudgementProcessor.Results.FindLastIndex(x => x.Judgement <= HitWindows.ComboBreakJudgement);
+            nowCombo = lastMissIndex == -1 ? JudgementProcessor.Results.Count : JudgementProcessor.Results.Count - lastMissIndex - 1;
+        });
+
+        var maxCombo = Math.Max(nowCombo, MaxCombo);
+        var score = getScore(acc / 100, maxCombo);
+
+        if (asyncCalculations && !instant)
+            schedule.Invoke(set);
+        else
+            set();
+
+        void set()
+        {
+            if (curCombo > nowCombo)
+                OnComboBreak?.Invoke();
+
+            Accuracy.Value = acc;
+            PerformanceRating.Value = pr;
+            Rank.Value = rank;
+            Combo.Value = nowCombo;
+            MaxCombo = maxCombo;
+            Score = score;
+        }
     }
 
-    private int getScore()
+    private int getScore(double acc, int maxCombo)
     {
         var scoreMultiplier = 1f + Mods.Sum(mod => mod.ScoreMultiplier - 1f);
 
         var maxScore = 1000000 * scoreMultiplier;
-        var accBased = (int)(ratedNotes / MapInfo.MaxCombo * (maxScore * .9f));
-        var comboBased = (int)(MaxCombo / (float)MapInfo.MaxCombo * (maxScore * .1f));
+        var accBased = (int)(acc * (maxScore * .9f));
+        var comboBased = (int)(maxCombo / (float)MapInfo.MaxCombo * (maxScore * .1f));
         return accBased + comboBased;
     }
 
-    public ScoreInfo ToScoreInfo() => new()
+    public ScoreInfo ToScoreInfo()
     {
-        Accuracy = Accuracy.Value,
-        PerformanceRating = PerformanceRating.Value,
-        Rank = Rank.Value,
-        Score = Score,
-        Combo = Combo.Value,
-        MaxCombo = MaxCombo,
-        Flawless = Flawless,
-        Perfect = Perfect,
-        Great = Great,
-        Alright = Alright,
-        Okay = Okay,
-        Miss = Miss,
-        HitResults = JudgementProcessor.Results,
-        MapID = MapInfo.RealmEntry!.OnlineID,
-        PlayerID = Player.ID,
-        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-        Mods = Mods.Select(m => m.Acronym).ToList()
-    };
+        Recalculate(true);
+
+        return new ScoreInfo
+        {
+            Accuracy = Accuracy.Value,
+            PerformanceRating = PerformanceRating.Value,
+            Rank = Rank.Value,
+            Score = Score,
+            Combo = Combo.Value,
+            MaxCombo = MaxCombo,
+            Flawless = Flawless,
+            Perfect = Perfect,
+            Great = Great,
+            Alright = Alright,
+            Okay = Okay,
+            Miss = Miss,
+            HitResults = JudgementProcessor.Results,
+            MapID = MapInfo.RealmEntry!.OnlineID,
+            PlayerID = Player.ID,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            Mods = Mods.Select(m => m.Acronym).ToList()
+        };
+    }
 
     public static double CalculatePerformance(float rating, float accuracy, int flawless, int perfect, int great, int alright, int okay, int miss, List<IMod> mods)
     {
@@ -138,5 +233,11 @@ public class ScoreProcessor : JudgementDependant
             val *= 0.4;
 
         return val;
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        disposed = true;
     }
 }

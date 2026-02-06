@@ -1,10 +1,10 @@
 using System;
+using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
 using osu.Framework.Allocation;
-using osu.Framework.Audio;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -187,10 +187,7 @@ public partial class FooterPracticeRangeController : Container
 
     private partial class RangePoint : CompositeDrawable
     {
-        private Bindable<double> samplePitch;
-        private Sample dragSample;
-        private double lastSampleTime;
-        private const int sample_interval = 50;
+        private DebouncedSample dragSample;
 
         private const float line_width = 3f;
         private const float triangle_size = 15f;
@@ -215,8 +212,7 @@ public partial class FooterPracticeRangeController : Container
         [BackgroundDependencyLoader]
         private void load(ISampleStore samples)
         {
-            dragSample = samples.Get("UI/slider-tick");
-            dragSample?.AddAdjustment(AdjustableProperty.Frequency, samplePitch = new Bindable<double>());
+            dragSample = new DebouncedSample(new PitchVariatedSample(samples.Get("UI/slider-tick"), 0.3f));
 
             RelativeSizeAxes = Axes.Y;
             Width = drag_area_width;
@@ -224,6 +220,7 @@ public partial class FooterPracticeRangeController : Container
 
             InternalChildren = new Drawable[]
             {
+                dragSample,
                 new Box
                 {
                     Anchor = Anchor.Centre,
@@ -298,13 +295,7 @@ public partial class FooterPracticeRangeController : Container
 
             X = newX;
             OnDragBind?.Invoke(e);
-
-            if (Clock.CurrentTime - lastSampleTime >= sample_interval)
-            {
-                samplePitch.Value = .7f + (X / Parent.DrawWidth) * .6f;
-                dragSample?.Play();
-                lastSampleTime = Clock.CurrentTime;
-            }
+            dragSample?.Play();
         }
 
         protected override void OnDragEnd(DragEndEvent e)

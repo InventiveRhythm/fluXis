@@ -56,6 +56,7 @@ metadata = {}
 ---@field y number
 ---@field z number
 ---@field blend boolean
+---@field blendMode number
 ---@field width number
 ---@field height number
 ---@field color number

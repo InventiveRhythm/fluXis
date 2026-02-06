@@ -58,6 +58,7 @@ internal class Program
                 Anchor.BottomLeft, Anchor.BottomCentre, Anchor.BottomRight
             }
         });
+        typeList.Add(new EnumType<DefaultBlendingParameters>(true, ctorName: "BlendMode", enumName: "BlendMode"));
 
         var eventTypes = LuaMap.GetMapEventTypes();
         eventTypes.Remove(typeof(ScriptEvent));
@@ -69,7 +70,7 @@ internal class Program
         typeList.Add(new CustomTextType("enums", eventSb.ToString()));
 
         // yes this is stupid but i don't want to figure out how to make it right
-        typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\""));
+        typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\"\n---| \"boolean\""));
         typeList.Add(new EnumType<StoryboardAnimationType>(false, "AnimationType", "storyboard"));
         typeList.Add(new EnumType<SkinSprite>(false, nameof(SkinSprite), "storyboard"));
         typeList.Add(new EnumType<StoryboardLayer>(true, "Layer", "storyboard"));
@@ -134,7 +135,7 @@ internal class Program
                 name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
         }
 
-        if (name is not null) 
+        if (name is not null)
             return nullable ? $"{name}?" : name;
 
         string fallbackType = getLuaTypeName(fallback) ?? fallback?.Name ?? type.Name;

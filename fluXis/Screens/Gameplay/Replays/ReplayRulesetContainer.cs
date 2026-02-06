@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using fluXis.Input;
 using fluXis.Map;
@@ -13,6 +14,8 @@ namespace fluXis.Screens.Gameplay.Replays;
 
 public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock, IAdjustableClock
 {
+    public override bool AsyncScoreCalculations => true;
+
     public Replay Replay { get; }
 
     private List<ReplayFrame> frames { get; }
@@ -47,6 +50,9 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
 
     protected override GameplayInput CreateInput() => new ReplayInput(IsPaused.GetBoundCopy(), MapInfo.RealmEntry!.KeyCount, MapInfo.IsDual);
 
+    private int skippedFrames = 0;
+    private double skipElapsed = 0;
+
     public override bool UpdateSubTree()
     {
         var target = ParentClock.CurrentTime;
@@ -75,6 +81,26 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
         }
 
         CurrentTime = target;
+
+        if (Math.Abs(ParentClock.CurrentTime - CurrentTime) > 40 && skippedFrames < 100 && skipElapsed < 10)
+        {
+            skippedFrames++;
+
+            var sw = new Stopwatch();
+
+            sw.Start();
+            base.UpdateSubTree();
+            sw.Stop();
+
+            var el = sw.ElapsedTicks / TimeSpan.TicksPerMillisecond;
+            skipElapsed += el;
+
+            UpdateSubTree();
+            return true;
+        }
+
+        skippedFrames = 0;
+        skipElapsed = 0;
         return base.UpdateSubTree();
     }
 
