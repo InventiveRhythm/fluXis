@@ -46,6 +46,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Input;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
@@ -235,10 +236,13 @@ public partial class FluXisGameBase : osu.Framework.Game
                     {
                         keybinds = new GlobalKeybindContainer(this, Realm)
                         {
-                            Child = CursorOverlay.WithChild(content = new GlobalTooltipContainer(CursorOverlay.Cursor)
+                            Child = new CursorTypeContainer
                             {
                                 RelativeSizeAxes = Axes.Both
-                            })
+                            }.WithChild(CursorOverlay.WithChild(content = new GlobalTooltipContainer(CursorOverlay.Cursor)
+                            {
+                                RelativeSizeAxes = Axes.Both
+                            }))
                         },
                         new GamepadHandler()
                     }

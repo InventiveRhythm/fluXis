@@ -104,7 +104,7 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         Recalculate();
     }
 
-    public void Recalculate()
+    public void Recalculate(bool instant = false)
     {
         float acc = 0;
         float pr = 0;
@@ -140,9 +140,9 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         });
 
         var maxCombo = Math.Max(nowCombo, MaxCombo);
-        var score = getScore();
+        var score = getScore(acc / 100, maxCombo);
 
-        if (asyncCalculations)
+        if (asyncCalculations && !instant)
             schedule.Invoke(set);
         else
             set();
@@ -161,36 +161,41 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         }
     }
 
-    private int getScore()
+    private int getScore(double acc, int maxCombo)
     {
         var scoreMultiplier = 1f + Mods.Sum(mod => mod.ScoreMultiplier - 1f);
 
         var maxScore = 1000000 * scoreMultiplier;
-        var accBased = (int)(ratedNotes / MapInfo.MaxCombo * (maxScore * .9f));
-        var comboBased = (int)(MaxCombo / (float)MapInfo.MaxCombo * (maxScore * .1f));
+        var accBased = (int)(acc * (maxScore * .9f));
+        var comboBased = (int)(maxCombo / (float)MapInfo.MaxCombo * (maxScore * .1f));
         return accBased + comboBased;
     }
 
-    public ScoreInfo ToScoreInfo() => new()
+    public ScoreInfo ToScoreInfo()
     {
-        Accuracy = Accuracy.Value,
-        PerformanceRating = PerformanceRating.Value,
-        Rank = Rank.Value,
-        Score = Score,
-        Combo = Combo.Value,
-        MaxCombo = MaxCombo,
-        Flawless = Flawless,
-        Perfect = Perfect,
-        Great = Great,
-        Alright = Alright,
-        Okay = Okay,
-        Miss = Miss,
-        HitResults = JudgementProcessor.Results,
-        MapID = MapInfo.RealmEntry!.OnlineID,
-        PlayerID = Player.ID,
-        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-        Mods = Mods.Select(m => m.Acronym).ToList()
-    };
+        Recalculate(true);
+
+        return new ScoreInfo
+        {
+            Accuracy = Accuracy.Value,
+            PerformanceRating = PerformanceRating.Value,
+            Rank = Rank.Value,
+            Score = Score,
+            Combo = Combo.Value,
+            MaxCombo = MaxCombo,
+            Flawless = Flawless,
+            Perfect = Perfect,
+            Great = Great,
+            Alright = Alright,
+            Okay = Okay,
+            Miss = Miss,
+            HitResults = JudgementProcessor.Results,
+            MapID = MapInfo.RealmEntry!.OnlineID,
+            PlayerID = Player.ID,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            Mods = Mods.Select(m => m.Acronym).ToList()
+        };
+    }
 
     public static double CalculatePerformance(float rating, float accuracy, int flawless, int perfect, int great, int alright, int okay, int miss, List<IMod> mods)
     {

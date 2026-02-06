@@ -5,9 +5,9 @@ using NLua;
 namespace fluXis.Scripting.Models.Storyboarding.Elements;
 
 [LuaDefinition("storyboard")]
-public class LuaStoryboardOutlineCircle : LuaStoryboardElement
+public class LuaStoryboardOutlineBox : LuaStoryboardElement
 {
-    protected override StoryboardElementType Type => StoryboardElementType.OutlineCircle;
+    protected override StoryboardElementType Type => StoryboardElementType.OutlineBox;
 
     [LuaMember(Name = "border")]
     public float Border { get; set; }

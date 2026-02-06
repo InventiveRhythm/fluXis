@@ -399,6 +399,7 @@ public class OsuStoryboardParser
                             {
                                 case "A":
                                     currentElement.Blending = true;
+                                    currentElement.BlendingMode = DefaultBlendingParameters.Add;
                                     break;
                             }
 
