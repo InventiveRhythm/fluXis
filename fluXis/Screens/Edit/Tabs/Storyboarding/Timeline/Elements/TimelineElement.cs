@@ -149,12 +149,11 @@ public partial class TimelineElement : CompositeDrawable
 
     public static Colour4 GetColor(StoryboardElementType type) => type switch
     {
-        StoryboardElementType.Box => Theme.Red,
+        StoryboardElementType.Box or StoryboardElementType.OutlineBox => Theme.Red,
         StoryboardElementType.Sprite => Theme.Orange,
         StoryboardElementType.Text => Theme.Yellow,
         StoryboardElementType.Script => Theme.Lime,
-        StoryboardElementType.Circle => Theme.Green,
-        StoryboardElementType.OutlineCircle => Theme.Green,
+        StoryboardElementType.Circle or StoryboardElementType.OutlineCircle => Theme.Green,
         StoryboardElementType.SkinSprite => Theme.Aqua,
         _ => Theme.Highlight
     };
