@@ -23,6 +23,7 @@ using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -134,6 +135,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
             case 1:
                 var item = collection.First();
+                var blendingEnabled = new BindableBool(item.Blending);
 
                 var title = new FluXisTextBox
                 {
@@ -220,6 +222,30 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         OnValueChanged = o =>
                         {
                             item.Origin = o;
+                            map.Update(item);
+                        }
+                    },
+                    new PointSettingsToggle
+                    {
+                        Text = "Blend",
+                        CurrentValue = item.Blending,
+                        OnStateChanged = enabled =>
+                        {
+                            blendingEnabled.Value = enabled;
+                            item.Blending = enabled;
+                            map.Update(item);
+                        }
+                    },
+                    new PointSettingsDropdown<DefaultBlendingParameters>
+                    {
+                        Text = "Blend Mode",
+                        CurrentValue = item.BlendingMode,
+                        Items = Enum.GetValues<DefaultBlendingParameters>().ToList(),
+                        Enabled = blendingEnabled,
+                        HideWhenDisabled = true,
+                        OnValueChanged = mode =>
+                        {
+                            item.BlendingMode = mode;
                             map.Update(item);
                         }
                     }

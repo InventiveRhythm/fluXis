@@ -22,6 +22,9 @@ public partial class PointSettingsDropdown<T> : PointSettingsBase, IHasTooltip
 
     public Bindable<T> Bindable { get; set; }
 
+    public Bindable<bool> Enabled { get; init; } = new(true);
+    public bool HideWhenDisabled { get; init; } = false;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -59,6 +62,9 @@ public partial class PointSettingsDropdown<T> : PointSettingsBase, IHasTooltip
         base.LoadComplete();
 
         Bindable.BindValueChanged(valueChanged);
+
+        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200), true);
+        FinishTransforms();
     }
 
     protected override void Dispose(bool isDisposing)
