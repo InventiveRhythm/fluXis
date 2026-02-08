@@ -32,13 +32,13 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
 
     private float beatLength => map.MapInfo.GetTimingPoint(Animation.StartTime).MsPerBeat;
 
-    private BindableBool isSelected = new(false);
+    public BindableBool IsSelected = new(false);
 
     [CanBeNull]
     public Action<StoryboardAnimation> RequestRemove { get; init; }
 
     public StoryboardAnimation Animation { get; }
-    private readonly StoryboardAnimationRow row;
+    public readonly StoryboardAnimationRow Row;
 
     private readonly Circle length;
     private readonly OutlinedCircle outlineLength;
@@ -47,12 +47,11 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     public StoryboardAnimationEntry(StoryboardAnimation animation, StoryboardAnimationRow row, Colour4 color)
     {
         Animation = animation;
-        this.row = row;
+        Row = row;
 
         Anchor = Anchor.CentreLeft;
-        Origin = Anchor.Centre;
+        Origin = Anchor.CentreLeft;
 
-        Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT);
         InternalChildren = new Drawable[]
         {
             length = new Circle
@@ -61,7 +60,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                 Height = 0.5f,
                 Colour = color,
                 Alpha = 0.5f,
-                Anchor = Anchor.Centre,
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
             },
             outlineLength = new OutlinedCircle
@@ -69,17 +68,16 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                 RelativeSizeAxes = Axes.Y,
                 Height = 0.5f,
                 BorderThickness = 2f,
-                Anchor = Anchor.Centre,
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Colour = color.Lighten(2f),
                 Alpha = 0
             },
-            outlineDiamond =new FluXisSpriteIcon
+            outlineDiamond = new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
-                RelativeSizeAxes = Axes.Both,
-                Size = new Vector2(0.75f),
-                Anchor = Anchor.Centre,
+                Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT * 0.75f),
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 Colour = color.Lighten(1.5f),
                 Alpha = 0
@@ -87,9 +85,8 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
-                RelativeSizeAxes = Axes.Both,
-                Size = new Vector2(0.6f),
-                Anchor = Anchor.Centre,
+                Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT * 0.6f),
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 Colour = color
             },
@@ -99,7 +96,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        isSelected.BindValueChanged(e =>
+        IsSelected.BindValueChanged(e =>
         {
             outlineDiamond.Alpha = e.NewValue ? 1f : 0f;
             outlineLength.Alpha = e.NewValue ? 1f : 0f;
@@ -116,18 +113,19 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
         var clamped = Math.Max(endX - X, 0);
         length.Width = clamped;
         outlineLength.Width = clamped;
+        Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT + length.DrawWidth, StoryboardAnimationsList.ROW_HEIGHT);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
         this.ShowPopover();
-        isSelected.Value = true;
+        IsSelected.Value = true;
         return true;
     }
 
     public Popover GetPopover() => new FluXisPopover
     {
-        OnClose = () => isSelected.Value = false,
+        OnClose = () => IsSelected.Value = false,
         Child = new FillFlowContainer
         {
             Width = 380,

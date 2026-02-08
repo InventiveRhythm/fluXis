@@ -164,13 +164,15 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         storyboard.Elements.ForEach(add);
     }
 
-    public void CloneElement(StoryboardElement element)
+    public void CloneElement(StoryboardElement element, float offset = 0)
     {
         var copy = element.JsonCopy();
         var length = element.EndTime - element.StartTime;
 
-        copy.StartTime = clock.CurrentTime;
+        copy.StartTime = clock.CurrentTime + offset;
         copy.EndTime = copy.StartTime + length;
+
+        copy.Animations.ForEach(anim => anim.StartTime += copy.StartTime - element.StartTime);
 
         storyboard.Add(copy);
     }
