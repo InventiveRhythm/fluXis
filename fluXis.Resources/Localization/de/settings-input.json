@@ -1,5 +1,7 @@
 {
     "title": "Eingabe",
     "keybindings-title": "Tastenkombinationen",
-    "keybindings-navigation": "Navigation"
+    "keybindings-navigation": "Navigation",
+    "keybindings-next-selection": "Nächste Auswahl",
+    "keybindings-previous-selection": "Vorherige Auswahl"
 }
