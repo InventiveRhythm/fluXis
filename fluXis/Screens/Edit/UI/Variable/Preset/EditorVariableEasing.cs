@@ -3,12 +3,12 @@ using System.Linq;
 using fluXis.Map.Structures.Bases;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+namespace fluXis.Screens.Edit.UI.Variable.Preset;
 
-public partial class PointSettingsEasing<T> : PointSettingsDropdown<Easing>
+public partial class EditorVariableEasing<T> : EditorVariableDropdown<Easing>
     where T : class, ITimedObject, IHasEasing
 {
-    public PointSettingsEasing(EditorMap map, T obj)
+    public EditorVariableEasing(EditorMap map, T obj)
     {
         Text = "Easing";
         TooltipText = "The easing function used to interpolate between scales.";

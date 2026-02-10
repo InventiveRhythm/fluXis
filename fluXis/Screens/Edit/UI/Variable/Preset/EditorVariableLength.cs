@@ -1,8 +1,8 @@
 using fluXis.Map.Structures.Bases;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+namespace fluXis.Screens.Edit.UI.Variable.Preset;
 
-public partial class PointSettingsLength<T> : PointSettingsBeats<T>
+public partial class EditorVariableLength<T> : EditorVariableBeats<T>
     where T : class, ITimedObject, IHasDuration
 {
     protected override double Value
@@ -11,7 +11,7 @@ public partial class PointSettingsLength<T> : PointSettingsBeats<T>
         set => Object.Duration = value;
     }
 
-    public PointSettingsLength(EditorMap map, T obj, float beatLength)
+    public EditorVariableLength(EditorMap map, T obj, float beatLength)
         : base(map, obj, beatLength)
     {
         Text = "Animation Length";

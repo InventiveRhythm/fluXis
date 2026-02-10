@@ -6,8 +6,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -49,8 +49,8 @@ public partial class LayerFadeEntry : PointListEntry
 
         return base.CreateSettings().Concat(new Drawable[]
         {
-            new PointSettingsLength<LayerFadeEvent>(Map, fade, BeatLength),
-            new PointSettingsSlider<float>
+            new EditorVariableLength<LayerFadeEvent>(Map, fade, BeatLength),
+            new EditorVariableSlider<float>
             {
                 Text = "Alpha",
                 TooltipText = "The opacity of the hitobjects.",
@@ -63,8 +63,8 @@ public partial class LayerFadeEntry : PointListEntry
                     Map.Update(fade);
                 }
             },
-            new PointSettingsEasing<LayerFadeEvent>(Map, fade),
-            new PointSettingsDropdown<LayerFadeEvent.FadeLayer>
+            new EditorVariableEasing<LayerFadeEvent>(Map, fade),
+            new EditorVariableDropdown<LayerFadeEvent.FadeLayer>
             {
                 Text = "Layer",
                 TooltipText = "The layer to adjust the opacity of.",
@@ -77,7 +77,7 @@ public partial class LayerFadeEntry : PointListEntry
                     Map.Update(fade);
                 }
             },
-            new PointSettingsSlider<int>
+            new EditorVariableSlider<int>
             {
                 Text = "Player Index",
                 TooltipText = "The player to apply this to.",
@@ -93,7 +93,7 @@ public partial class LayerFadeEntry : PointListEntry
                     Map.Update(fade);
                 }
             },
-            new PointSettingsSlider<int>
+            new EditorVariableSlider<int>
             {
                 Text = "Subfield Index",
                 TooltipText = "The subfield to apply this to.",

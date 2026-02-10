@@ -6,31 +6,25 @@ using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Localisation;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable;
 
-public partial class PointSettingsSlider<T> : PointSettingsBase, IHasTooltip
+public partial class EditorVariableSlider<T> : EditorVariableBase
     where T : struct, INumber<T>, IMinMaxValue<T>
 {
     public override bool PropagateNonPositionalInputSubTree => Enabled.Value;
     public override bool PropagatePositionalInputSubTree => Enabled.Value;
 
-    public string Text { get; init; }
-    public LocalisableString TooltipText { get; init; } = string.Empty;
-    public string Formatting { get; init; } = "0.##";
     public T CurrentValue { get; init; }
     public Action<T> OnValueChanged { get; init; }
+
+    public string Formatting { get; init; } = "0.##";
 
     public T Step { get; init; } = (T)Convert.ChangeType(0.1f, typeof(T));
     public T Min { get; init; }
     public T Max { get; init; }
 
     public Bindable<T> Bindable { get; set; }
-
-    public Bindable<bool> Enabled { get; init; } = new(true);
-    public bool HideWhenDisabled { get; init; } = false;
 
     private FluXisSpriteText valText;
     private FluXisSlider<T> slider;
@@ -80,12 +74,8 @@ public partial class PointSettingsSlider<T> : PointSettingsBase, IHasTooltip
 
     protected override void LoadComplete()
     {
-        base.LoadComplete();
-
         Bindable.BindValueChanged(valueChanged, true);
-
-        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200), true);
-        FinishTransforms();
+        base.LoadComplete();
     }
 
     protected override void Update()

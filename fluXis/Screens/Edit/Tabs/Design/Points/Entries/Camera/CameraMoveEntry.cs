@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events.Camera;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,12 +35,12 @@ public partial class CameraMoveEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<CameraMoveEvent>(Map, camera, BeatLength),
-        new PointSettingsNumber<float>
+        new EditorVariableLength<CameraMoveEvent>(Map, camera, BeatLength),
+        new EditorVariableNumber<float>
         {
             Text = "Target X",
             TooltipText = "The horizontal offset of the camera.",
-            DefaultValue = camera.X,
+            CurrentValue = camera.X,
             Step = 10,
             OnValueChanged = v =>
             {
@@ -48,11 +48,11 @@ public partial class CameraMoveEntry : PointListEntry
                 Map.Update(camera);
             }
         },
-        new PointSettingsNumber<float>
+        new EditorVariableNumber<float>
         {
             Text = "Target Y",
             TooltipText = "The vertical offset of the camera.",
-            DefaultValue = camera.Y,
+            CurrentValue = camera.Y,
             Step = 10,
             OnValueChanged = v =>
             {
@@ -60,6 +60,6 @@ public partial class CameraMoveEntry : PointListEntry
                 Map.Update(camera);
             }
         },
-        new PointSettingsEasing<CameraMoveEvent>(Map, camera),
+        new EditorVariableEasing<CameraMoveEvent>(Map, camera),
     });
 }

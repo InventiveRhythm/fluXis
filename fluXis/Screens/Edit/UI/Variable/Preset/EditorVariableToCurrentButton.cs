@@ -12,9 +12,9 @@ using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+namespace fluXis.Screens.Edit.UI.Variable.Preset;
 
-public partial class PointSettingsToCurrentButton : Container, IHasTooltip
+public partial class EditorVariableToCurrentButton : Container, IHasTooltip
 {
     public LocalisableString TooltipText => "Move to current time.";
 

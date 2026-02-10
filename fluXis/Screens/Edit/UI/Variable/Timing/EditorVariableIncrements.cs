@@ -11,11 +11,11 @@ using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable.Timing;
 
-public partial class PointSettingsIncrements : GridContainer
+public partial class EditorVariableIncrements : GridContainer
 {
-    public PointSettingsIncrements(EditorMap map, TimingPoint point)
+    public EditorVariableIncrements(EditorMap map, TimingPoint point)
     {
         RelativeSizeAxes = Axes.X;
         Height = 48;

@@ -5,9 +5,9 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+namespace fluXis.Screens.Edit.UI.Variable.Preset;
 
-public abstract partial class PointSettingsBeats<T> : PointSettingsNumber<double>
+public abstract partial class EditorVariableBeats<T> : EditorVariableNumber<double>
     where T : class, ITimedObject
 {
     [CanBeNull]
@@ -20,7 +20,7 @@ public abstract partial class PointSettingsBeats<T> : PointSettingsNumber<double
 
     protected abstract double Value { get; set; }
 
-    protected PointSettingsBeats(EditorMap map, T obj, float beatLength)
+    protected EditorVariableBeats(EditorMap map, T obj, float beatLength)
     {
         this.map = map;
         Object = obj;
@@ -29,7 +29,7 @@ public abstract partial class PointSettingsBeats<T> : PointSettingsNumber<double
         ExtraText = "beat(s)";
         TextBoxWidth = 100;
         Formatting = "0.##";
-        DefaultValue = Value / beatLength;
+        CurrentValue = Value / beatLength;
         Min = 0;
         OnValueChanged = v =>
         {
@@ -46,7 +46,7 @@ public abstract partial class PointSettingsBeats<T> : PointSettingsNumber<double
         };
     }
 
-    protected override Drawable CreateExtraButton() => new PointSettingsToCurrentButton
+    protected override Drawable CreateExtraButton() => new EditorVariableToCurrentButton
     {
         Action = t =>
         {

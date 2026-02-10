@@ -3,9 +3,9 @@ using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Outline;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using JetBrains.Annotations;
@@ -136,14 +136,14 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             Spacing = new Vector2(12),
             Children = new Drawable[]
             {
-                new PointSettingsTitle(Animation.Type.GetDescription(), () => RequestRemove?.Invoke(Animation), false),
-                new PointSettingsTime(map, Animation),
-                new PointSettingsLength<StoryboardAnimation>(map, Animation, beatLength),
-                new PointSettingsTextBox
+                new EditorVariableTitle(Animation.Type.GetDescription(), () => RequestRemove?.Invoke(Animation), false),
+                new EditorVariableTime(map, Animation),
+                new EditorVariableLength<StoryboardAnimation>(map, Animation, beatLength),
+                new EditorVariableTextBox
                 {
                     Text = "Start Value",
-                    DefaultText = Animation.ValueStart,
-                    OnTextChanged = t =>
+                    CurrentValue = Animation.ValueStart,
+                    OnValueChanged = t =>
                     {
                         if (validate(t.Text)) Animation.ValueStart = t.Text;
                         else t.NotifyError();
@@ -151,11 +151,11 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                         map.Update(Animation);
                     }
                 },
-                new PointSettingsTextBox
+                new EditorVariableTextBox
                 {
                     Text = "End Value",
-                    DefaultText = Animation.ValueEnd,
-                    OnTextChanged = t =>
+                    CurrentValue = Animation.ValueEnd,
+                    OnValueChanged = t =>
                     {
                         if (validate(t.Text)) Animation.ValueEnd = t.Text;
                         else t.NotifyError();
@@ -163,7 +163,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                         map.Update(Animation);
                     }
                 },
-                new PointSettingsEasing<StoryboardAnimation>(map, Animation),
+                new EditorVariableEasing<StoryboardAnimation>(map, Animation),
             }
         }
     };

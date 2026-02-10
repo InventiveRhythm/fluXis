@@ -4,17 +4,14 @@ using fluXis.Graphics.UserInterface;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Localisation;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable;
 
-public partial class PointSettingsToggle : PointSettingsBase, IHasTooltip
+public partial class EditorVariableToggle : EditorVariableBase
 {
-    public string Text { get; init; }
-    public LocalisableString TooltipText { get; init; } = string.Empty;
     public bool CurrentValue { get; init; }
-    public Action<bool> OnStateChanged { get; init; }
+    public Action<bool> OnValueChanged { get; init; }
+
     public Bindable<bool> Bindable { get; set; }
 
     [BackgroundDependencyLoader]
@@ -57,5 +54,5 @@ public partial class PointSettingsToggle : PointSettingsBase, IHasTooltip
         Bindable.ValueChanged -= valueChanged;
     }
 
-    private void valueChanged(ValueChangedEvent<bool> e) => OnStateChanged?.Invoke(e.NewValue);
+    private void valueChanged(ValueChangedEvent<bool> e) => OnValueChanged?.Invoke(e.NewValue);
 }

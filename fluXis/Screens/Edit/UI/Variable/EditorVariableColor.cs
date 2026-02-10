@@ -10,24 +10,23 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Localisation;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable;
 
-public partial class PointSettingsColor : PointSettingsBase, IHasPopover, IHasTooltip
+public partial class EditorVariableColor : EditorVariableBase, IHasPopover
 {
-    public string Text { get; set; } = "Color";
-    public LocalisableString TooltipText { get; init; } = string.Empty;
-    public Colour4 Color { get; set; } = Colour4.White;
-    public Action<Colour4> OnColorChanged { get; set; } = _ => { };
+    public Colour4 CurrentValue { get; set; } = Colour4.White;
+    public Action<Colour4> OnValueChanged { get; set; } = _ => { };
     public Bindable<Colour4> Bindable { get; set; }
-
-    public Bindable<bool> Enabled { get; init; } = new(true);
-    public bool HideWhenDisabled { get; init; } = false;
 
     private ClickableContainer colorContainer;
     private Circle textBackground;
     private FluXisSpriteText text;
+
+    public EditorVariableColor()
+    {
+        Text = "Color";
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -35,7 +34,7 @@ public partial class PointSettingsColor : PointSettingsBase, IHasPopover, IHasTo
         RelativeSizeAxes = Axes.X;
         Height = 32;
 
-        Bindable ??= new Bindable<Colour4>(Color);
+        Bindable ??= new Bindable<Colour4>(CurrentValue);
 
         InternalChildren = new Drawable[]
         {
@@ -72,17 +71,14 @@ public partial class PointSettingsColor : PointSettingsBase, IHasPopover, IHasTo
 
     protected override void LoadComplete()
     {
-        base.LoadComplete();
-
-        updateColors(Color);
+        updateColors(CurrentValue);
         Bindable.BindValueChanged(valueChanged);
-        Enabled.BindValueChanged(e =>
-        {
-            this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200);
-            colorContainer.Action = e.NewValue ? this.ShowPopover : () => {};
-        }, true);
-        FinishTransforms();
+
+        base.LoadComplete();
     }
+
+    protected override void UpdateEnabledState(bool state)
+        => colorContainer.Action = state ? this.ShowPopover : () => { };
 
     protected override void Dispose(bool isDisposing)
     {
@@ -94,7 +90,7 @@ public partial class PointSettingsColor : PointSettingsBase, IHasPopover, IHasTo
     private void valueChanged(ValueChangedEvent<Colour4> e)
     {
         updateColors(e.NewValue);
-        OnColorChanged?.Invoke(e.NewValue);
+        OnValueChanged?.Invoke(e.NewValue);
     }
 
     private void updateColors(Colour4 color)

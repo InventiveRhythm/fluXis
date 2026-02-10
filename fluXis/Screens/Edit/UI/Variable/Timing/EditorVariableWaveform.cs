@@ -11,9 +11,9 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Waveform;
+namespace fluXis.Screens.Edit.UI.Variable.Timing;
 
-public partial class WaveformDisplay : Container
+public partial class EditorVariableWaveform : Container
 {
     private const int count = 7;
 
@@ -33,7 +33,7 @@ public partial class WaveformDisplay : Container
     private Sample metronomeSample;
     private Sample metronomeEndSample;
 
-    public WaveformDisplay(TimingPoint point)
+    public EditorVariableWaveform(TimingPoint point)
     {
         this.point = point;
     }

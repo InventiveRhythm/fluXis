@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,8 +35,8 @@ public partial class PulseEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<PulseEvent>(Map, pulse, BeatLength),
-        new PointSettingsSlider<float>
+        new EditorVariableLength<PulseEvent>(Map, pulse, BeatLength),
+        new EditorVariableSlider<float>
         {
             Text = "Width",
             TooltipText = "How many pixels in width the pulse should have.",
@@ -50,7 +50,7 @@ public partial class PulseEntry : PointListEntry
                 Map.Update(pulse);
             }
         },
-        new PointSettingsSlider<float>
+        new EditorVariableSlider<float>
         {
             Text = "In %",
             TooltipText = "How much of the animation should be used for going to the width.",
@@ -64,6 +64,6 @@ public partial class PulseEntry : PointListEntry
                 Map.Update(pulse);
             }
         },
-        new PointSettingsEasing<PulseEvent>(Map, pulse)
+        new EditorVariableEasing<PulseEvent>(Map, pulse)
     });
 }

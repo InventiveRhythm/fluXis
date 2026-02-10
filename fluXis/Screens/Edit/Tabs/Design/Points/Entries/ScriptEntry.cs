@@ -6,7 +6,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Scripting;
 using fluXis.Utils;
 using Newtonsoft.Json.Linq;
@@ -59,11 +59,11 @@ public partial class ScriptEntry : PointListEntry
     {
         var settings = base.CreateSettings().Concat(new Drawable[]
         {
-            new PointSettingsTextBox
+            new EditorVariableTextBox
             {
                 Text = "Path",
-                DefaultText = script.ScriptPath,
-                OnTextChanged = t => script.ScriptPath = t.Text,
+                CurrentValue = script.ScriptPath,
+                OnValueChanged = t => script.ScriptPath = t.Text,
                 OnCommit = _ =>
                 {
                     RequestClose?.Invoke();
@@ -82,11 +82,11 @@ public partial class ScriptEntry : PointListEntry
         {
             if (parameter.Type == typeof(string))
             {
-                settings.Add(new PointSettingsTextBox
+                settings.Add(new EditorVariableTextBox
                 {
                     Text = parameter.Title,
-                    DefaultText = script.TryGetParameter<string>(parameter.Key, out var v) ? v : "",
-                    OnTextChanged = t =>
+                    CurrentValue = script.TryGetParameter<string>(parameter.Key, out var v) ? v : "",
+                    OnValueChanged = t =>
                     {
                         script.Parameters[parameter.Key] = t.Text;
                         Map.Update(script);

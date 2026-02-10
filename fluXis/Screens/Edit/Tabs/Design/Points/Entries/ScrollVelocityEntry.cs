@@ -5,7 +5,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -34,20 +34,20 @@ public partial class ScrollVelocityEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsNumber<double>
+        new EditorVariableNumber<double>
         {
             Text = "Multiplier",
             TooltipText = "The speed to multiply the scroll velocity by.",
             ExtraText = "x",
             TextBoxWidth = 195,
             Formatting = "0.0000",
-            DefaultValue = sv.Multiplier,
+            CurrentValue = sv.Multiplier,
             OnValueChanged = v =>
             {
                 sv.Multiplier = v;
                 Map.Update(sv);
             }
         },
-        new PointSettingsLaneMask(Map, sv)
+        new EditorVariableLaneMask(Map, sv)
     });
 }

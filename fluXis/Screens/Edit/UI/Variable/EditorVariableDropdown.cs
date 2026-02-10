@@ -6,24 +6,17 @@ using fluXis.Graphics.UserInterface.Menus;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Localisation;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable;
 
-public partial class PointSettingsDropdown<T> : PointSettingsBase, IHasTooltip
+public partial class EditorVariableDropdown<T> : EditorVariableBase
 {
-    public string Text { get; init; }
-    public LocalisableString TooltipText { get; init; } = string.Empty;
     public T CurrentValue { get; init; }
     public List<T> Items { get; init; }
     public Action<T> OnValueChanged { get; set; }
 
     public Bindable<T> Bindable { get; set; }
-
-    public Bindable<bool> Enabled { get; init; } = new(true);
-    public bool HideWhenDisabled { get; init; } = false;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -59,12 +52,8 @@ public partial class PointSettingsDropdown<T> : PointSettingsBase, IHasTooltip
 
     protected override void LoadComplete()
     {
-        base.LoadComplete();
-
         Bindable.BindValueChanged(valueChanged);
-
-        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200), true);
-        FinishTransforms();
+        base.LoadComplete();
     }
 
     protected override void Dispose(bool isDisposing)

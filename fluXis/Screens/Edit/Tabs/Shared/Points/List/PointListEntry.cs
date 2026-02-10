@@ -11,8 +11,8 @@ using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Events;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.UI;
 using fluXis.Utils;
 using osu.Framework.Allocation;
@@ -210,8 +210,8 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     {
         return new Drawable[]
         {
-            new PointSettingsTitle(Text, () => delete()),
-            new PointSettingsTime(Map, Object)
+            new EditorVariableTitle(Text, () => delete()),
+            new EditorVariableTime(Map, Object)
         };
     }
 

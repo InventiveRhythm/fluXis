@@ -10,19 +10,17 @@ using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osuTK.Input;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable;
 
-public partial class PointSettingsNumber<T> : PointSettingsTextBox, IHasCursorType
+public partial class EditorVariableNumber<T> : EditorVariableTextBox, IHasCursorType
     where T : struct, INumber<T>, IMinMaxValue<T>
 {
     public CursorType Cursor => CursorType.SizeHorizontal;
 
     // hide
-    public new Action<FluXisTextBox> OnTextChanged { get; private set; }
     public new Action<FluXisTextBox> OnCommit { get; private set; }
-    public new string DefaultText { get; private init; }
 
-    public T DefaultValue
+    public new T CurrentValue
     {
         set
         {
@@ -37,7 +35,7 @@ public partial class PointSettingsNumber<T> : PointSettingsTextBox, IHasCursorTy
     private T stepValue => FetchStepValue?.Invoke() ?? Step;
 
     public string Formatting { get; set; } = "0";
-    public Action<T> OnValueChanged { get; init; }
+    public new Action<T> OnValueChanged { get; init; }
 
     public T? Min { get; init; }
     public T? Max { get; init; }
@@ -47,9 +45,9 @@ public partial class PointSettingsNumber<T> : PointSettingsTextBox, IHasCursorTy
     private Sample changeSample;
     private double lastSampleTime;
 
-    public PointSettingsNumber()
+    public EditorVariableNumber()
     {
-        base.OnTextChanged += t =>
+        base.OnValueChanged += t =>
         {
             if (T.TryParse(t.Text, CultureInfo.InvariantCulture, out var val))
                 updateValue(val, true);

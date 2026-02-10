@@ -4,9 +4,9 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+namespace fluXis.Screens.Edit.UI.Variable.Preset;
 
-public partial class PointSettingsTime : PointSettingsNumber<double>
+public partial class EditorVariableTime : EditorVariableNumber<double>
 {
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -17,14 +17,14 @@ public partial class PointSettingsTime : PointSettingsNumber<double>
 
     public Action<double, double> TimeChanged { get; init; }
 
-    public PointSettingsTime(EditorMap map, ITimedObject obj)
+    public EditorVariableTime(EditorMap map, ITimedObject obj)
     {
         this.map = map;
         this.obj = obj;
 
         Text = "Time";
         TooltipText = "The time in milliseconds when the event should trigger.";
-        DefaultValue = obj.Time;
+        CurrentValue = obj.Time;
         FetchStepValue = () => snaps?.CurrentStep ?? 1;
         OnValueChanged = v =>
         {
@@ -35,12 +35,12 @@ public partial class PointSettingsTime : PointSettingsNumber<double>
         };
     }
 
-    protected override Drawable CreateExtraButton() => new PointSettingsToCurrentButton
+    protected override Drawable CreateExtraButton() => new EditorVariableToCurrentButton
     {
         Action = t =>
         {
             var old = obj.Time;
-            DefaultValue = obj.Time = t;
+            CurrentValue = obj.Time = t;
             TimeChanged?.Invoke(old, t);
             map.Update(obj);
         }

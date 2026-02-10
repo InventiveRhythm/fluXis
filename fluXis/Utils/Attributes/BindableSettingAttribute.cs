@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+using fluXis.Screens.Edit.UI.Variable;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -83,7 +83,7 @@ public static class BindableSettingExtensions
             switch (info.Bindable.GetBoundCopy())
             {
                 case Bindable<bool> toggle:
-                    yield return new PointSettingsToggle
+                    yield return new EditorVariableToggle
                     {
                         Text = name,
                         TooltipText = description,
@@ -94,12 +94,12 @@ public static class BindableSettingExtensions
                     break;
 
                 case Bindable<string> text:
-                    yield return new PointSettingsTextBox
+                    yield return new EditorVariableTextBox
                     {
                         Text = name,
                         TooltipText = description,
-                        DefaultText = text.Value,
-                        OnTextChanged = t => text.Value = t.Text
+                        CurrentValue = text.Value,
+                        OnValueChanged = t => text.Value = t.Text
                     };
 
                     break;
@@ -108,7 +108,7 @@ public static class BindableSettingExtensions
                 {
                     if (num is BindableNumber<double> { HasDefinedRange: true } range)
                     {
-                        yield return new PointSettingsSlider<double>
+                        yield return new EditorVariableSlider<double>
                         {
                             Text = name,
                             TooltipText = description,
@@ -122,7 +122,7 @@ public static class BindableSettingExtensions
                         continue;
                     }
 
-                    yield return new PointSettingsTextBox
+                    yield return new EditorVariableTextBox
                     {
                         Text = name,
                         TooltipText = description
@@ -135,7 +135,7 @@ public static class BindableSettingExtensions
                 {
                     if (num is BindableNumber<float> { HasDefinedRange: true } range)
                     {
-                        yield return new PointSettingsSlider<float>
+                        yield return new EditorVariableSlider<float>
                         {
                             Text = name,
                             TooltipText = description,
@@ -149,7 +149,7 @@ public static class BindableSettingExtensions
                         continue;
                     }
 
-                    yield return new PointSettingsTextBox
+                    yield return new EditorVariableTextBox
                     {
                         Text = name,
                         TooltipText = description
@@ -162,7 +162,7 @@ public static class BindableSettingExtensions
                 {
                     if (num is BindableNumber<long> { HasDefinedRange: true } range)
                     {
-                        yield return new PointSettingsSlider<long>
+                        yield return new EditorVariableSlider<long>
                         {
                             Text = name,
                             TooltipText = description,
@@ -176,7 +176,7 @@ public static class BindableSettingExtensions
                         continue;
                     }
 
-                    yield return new PointSettingsTextBox
+                    yield return new EditorVariableTextBox
                     {
                         Text = name,
                         TooltipText = description
@@ -189,7 +189,7 @@ public static class BindableSettingExtensions
                 {
                     if (num is BindableNumber<int> { HasDefinedRange: true } range)
                     {
-                        yield return new PointSettingsSlider<int>
+                        yield return new EditorVariableSlider<int>
                         {
                             Text = name,
                             TooltipText = description,
@@ -203,7 +203,7 @@ public static class BindableSettingExtensions
                         continue;
                     }
 
-                    yield return new PointSettingsTextBox
+                    yield return new EditorVariableTextBox
                     {
                         Text = name,
                         TooltipText = description
@@ -234,13 +234,13 @@ public static class BindableSettingExtensions
                         foreach (var enumValue in enumValues)
                             addMethod?.Invoke(items, new[] { enumValue });
 
-                        var dropdownType = typeof(PointSettingsDropdown<>).MakeGenericType(bindableType);
+                        var dropdownType = typeof(EditorVariableDropdown<>).MakeGenericType(bindableType);
                         var dropdown = (Drawable)Activator.CreateInstance(dropdownType)!;
 
-                        dropdownType.GetProperty(nameof(PointSettingsDropdown<object>.Text))?.SetValue(dropdown, name);
-                        dropdownType.GetProperty(nameof(PointSettingsDropdown<object>.TooltipText))?.SetValue(dropdown, (LocalisableString)description);
-                        dropdownType.GetProperty(nameof(PointSettingsDropdown<object>.Bindable))?.SetValue(dropdown, info.Bindable.GetBoundCopy());
-                        dropdownType.GetProperty(nameof(PointSettingsDropdown<object>.Items))?.SetValue(dropdown, items);
+                        dropdownType.GetProperty(nameof(EditorVariableDropdown<object>.Text))?.SetValue(dropdown, name);
+                        dropdownType.GetProperty(nameof(EditorVariableDropdown<object>.TooltipText))?.SetValue(dropdown, (LocalisableString)description);
+                        dropdownType.GetProperty(nameof(EditorVariableDropdown<object>.Bindable))?.SetValue(dropdown, info.Bindable.GetBoundCopy());
+                        dropdownType.GetProperty(nameof(EditorVariableDropdown<object>.Items))?.SetValue(dropdown, items);
 
                         yield return dropdown;
                     }

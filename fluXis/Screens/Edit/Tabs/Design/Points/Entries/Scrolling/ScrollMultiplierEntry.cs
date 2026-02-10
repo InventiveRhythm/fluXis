@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,12 +35,12 @@ public partial class ScrollMultiplierEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<ScrollMultiplierEvent>(Map, scroll, BeatLength),
-        new PointSettingsNumber<float>()
+        new EditorVariableLength<ScrollMultiplierEvent>(Map, scroll, BeatLength),
+        new EditorVariableNumber<float>()
         {
             Text = "Multiplier",
             Formatting = "0.0#",
-            DefaultValue = scroll.Multiplier,
+            CurrentValue = scroll.Multiplier,
             Step = 0.1f,
             OnValueChanged = v =>
             {
@@ -48,7 +48,7 @@ public partial class ScrollMultiplierEntry : PointListEntry
                 Map.Update(scroll);
             }
         },
-        new PointSettingsEasing<ScrollMultiplierEvent>(Map, scroll),
-        new PointSettingsLaneMask(Map, scroll)
+        new EditorVariableEasing<ScrollMultiplierEvent>(Map, scroll),
+        new EditorVariableLaneMask(Map, scroll)
     });
 }

@@ -5,7 +5,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -34,20 +34,20 @@ public partial class BeatPulseEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsNumber<float>
+        new EditorVariableNumber<float>
         {
             Text = "Strength",
             TooltipText = "The strength of the pulse effect.",
             Formatting = "0.0##",
             Step = .01f,
-            DefaultValue = pulse.Strength,
+            CurrentValue = pulse.Strength,
             OnValueChanged = v =>
             {
                 pulse.Strength = v;
                 Map.Update(pulse);
             }
         },
-        new PointSettingsSlider<float>
+        new EditorVariableSlider<float>
         {
             Text = "Zoom in %",
             TooltipText = "How much of the animation should be used for zooming in.",
@@ -61,12 +61,12 @@ public partial class BeatPulseEntry : PointListEntry
                 Map.Update(pulse);
             }
         },
-        new PointSettingsNumber<float>
+        new EditorVariableNumber<float>
         {
             Text = "Interval",
             TooltipText = "How many beats pass until the next pulse.",
             Formatting = "0.#####",
-            DefaultValue = pulse.Interval,
+            CurrentValue = pulse.Interval,
             FetchStepValue = () => 1f / Settings.SnapDivisor,
             OnValueChanged = v =>
             {

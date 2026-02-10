@@ -10,9 +10,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable;
 
-public partial class PointSettingsTitle : CompositeDrawable
+public partial class EditorVariableTitle : CompositeDrawable
 {
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -22,7 +22,7 @@ public partial class PointSettingsTitle : CompositeDrawable
     private Action deleteAction { get; }
     private bool showWiki { get; }
 
-    public PointSettingsTitle(string title, Action deleteAction, bool showWiki = true)
+    public EditorVariableTitle(string title, Action deleteAction, bool showWiki = true)
     {
         this.showWiki = showWiki;
         this.title = title;

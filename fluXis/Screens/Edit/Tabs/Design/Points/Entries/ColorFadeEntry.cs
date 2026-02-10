@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -61,36 +61,36 @@ public partial class ColorFadeEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings()
     {
-        var primaryToggle = new PointSettingsToggle
+        var primaryToggle = new EditorVariableToggle
         {
             Text = "Fade Primary",
             TooltipText = "Enables whether Primary color should be faded.",
             Bindable = new Bindable<bool>(colorFade.FadePrimary),
-            OnStateChanged = enabled =>
+            OnValueChanged = enabled =>
             {
                 colorFade.FadePrimary = enabled;
                 Map.Update(colorFade);
             }
         };
 
-        var secondaryToggle = new PointSettingsToggle
+        var secondaryToggle = new EditorVariableToggle
         {
             Text = "Fade secondary",
             TooltipText = "Enables whether secondary color should be faded.",
             Bindable = new Bindable<bool>(colorFade.FadeSecondary),
-            OnStateChanged = enabled =>
+            OnValueChanged = enabled =>
             {
                 colorFade.FadeSecondary = enabled;
                 Map.Update(colorFade);
             }
         };
 
-        var middleToggle = new PointSettingsToggle
+        var middleToggle = new EditorVariableToggle
         {
             Text = "Fade middle",
             TooltipText = "Enables whether middle color should be faded.",
             Bindable = new Bindable<bool>(colorFade.FadeMiddle),
-            OnStateChanged = enabled =>
+            OnValueChanged = enabled =>
             {
                 colorFade.FadeMiddle = enabled;
                 Map.Update(colorFade);
@@ -99,48 +99,48 @@ public partial class ColorFadeEntry : PointListEntry
 
         return base.CreateSettings().Concat(new Drawable[]
         {
-            new PointSettingsLength<ColorFadeEvent>(Map, colorFade, BeatLength),
+            new EditorVariableLength<ColorFadeEvent>(Map, colorFade, BeatLength),
             primaryToggle,
-            new PointSettingsColor
+            new EditorVariableColor
             {
                 Enabled = primaryToggle.Bindable,
                 Text = "Primary",
                 TooltipText = "Color of the primary lane, left stage border & Health top gradient.",
-                Color = colorFade.Primary,
-                OnColorChanged = c =>
+                CurrentValue = colorFade.Primary,
+                OnValueChanged = c =>
                 {
                     colorFade.Primary = c;
                     Map.Update(colorFade);
                 }
             },
             secondaryToggle,
-            new PointSettingsColor
+            new EditorVariableColor
             {
                 Enabled = secondaryToggle.Bindable,
                 Text = "Secondary",
                 TooltipText = "Color of the secondary lane, right stage border & Health Bottom gradient.",
-                Color = colorFade.Secondary,
-                OnColorChanged = c =>
+                CurrentValue = colorFade.Secondary,
+                OnValueChanged = c =>
                 {
                     colorFade.Secondary = c;
                     Map.Update(colorFade);
                 }
             },
             middleToggle,
-            new PointSettingsColor
+            new EditorVariableColor
             {
                 Enabled = middleToggle.Bindable,
                 Text = "Middle",
                 TooltipText = "Color of the middle lane.",
-                Color = colorFade.Middle,
-                OnColorChanged = c =>
+                CurrentValue = colorFade.Middle,
+                OnValueChanged = c =>
                 {
                     colorFade.Middle = c;
                     Map.Update(colorFade);
                 }
             },
-            new PointSettingsEasing<ColorFadeEvent>(Map, colorFade),
-            new PointSettingsSlider<int>
+            new EditorVariableEasing<ColorFadeEvent>(Map, colorFade),
+            new EditorVariableSlider<int>
             {
                 Text = "Player Index",
                 TooltipText = "The player to apply this to.",
@@ -154,7 +154,7 @@ public partial class ColorFadeEntry : PointListEntry
                     Map.Update(colorFade);
                 }
             },
-            new PointSettingsSlider<int>
+            new EditorVariableSlider<int>
             {
                 Text = "Subfield Index",
                 TooltipText = "The subfield to apply this to.",

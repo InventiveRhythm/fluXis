@@ -8,14 +8,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable;
 
-public partial class PointSettingsLaneMask : PointSettingsBase
+public partial class EditorVariableLaneMask : EditorVariableBase
 {
     private EditorMap map { get; }
     private IHasGroups groups { get; }
 
-    public PointSettingsLaneMask(EditorMap map, IHasGroups groups)
+    public EditorVariableLaneMask(EditorMap map, IHasGroups groups)
     {
         this.map = map;
         this.groups = groups;

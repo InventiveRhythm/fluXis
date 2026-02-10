@@ -4,7 +4,6 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -15,9 +14,9 @@ using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Tabs.Storyboarding.Settings;
+namespace fluXis.Screens.Edit.UI.Variable.Preset;
 
-public partial class PointSettingsScript : PointSettingsTextBox
+public partial class EditorVariableScript : EditorVariableTextBox
 {
     private readonly ForcedHeightText error;
 
@@ -33,10 +32,10 @@ public partial class PointSettingsScript : PointSettingsTextBox
     [CanBeNull]
     public Action EditExternally { get; set; }
 
-    public PointSettingsScript(string path)
+    public EditorVariableScript(string path)
     {
         Text = "Path";
-        DefaultText = path;
+        CurrentValue = path;
         TextBoxWidth = 280;
 
         error = new ForcedHeightText

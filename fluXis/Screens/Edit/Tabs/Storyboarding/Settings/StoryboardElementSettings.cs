@@ -14,9 +14,9 @@ using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Localization;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
@@ -155,15 +155,15 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 var drawables = new List<Drawable>
                 {
                     title,
-                    new PointSettingsTime(map, item)
+                    new EditorVariableTime(map, item)
                     {
                         TimeChanged = (oldTime, newTime) =>
                             item.EndTime -= oldTime - newTime
                     },
-                    new PointSettingsNumber<float>
+                    new EditorVariableNumber<float>
                     {
                         Text = "Start X",
-                        DefaultValue = item.StartX,
+                        CurrentValue = item.StartX,
                         Step = 10,
                         OnValueChanged = v =>
                         {
@@ -171,10 +171,10 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             map.Update(item);
                         }
                     },
-                    new PointSettingsNumber<float>
+                    new EditorVariableNumber<float>
                     {
                         Text = "Start Y",
-                        DefaultValue = item.StartY,
+                        CurrentValue = item.StartY,
                         Step = 10,
                         OnValueChanged = v =>
                         {
@@ -182,17 +182,17 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             map.Update(item);
                         }
                     },
-                    new PointSettingsColor
+                    new EditorVariableColor
                     {
                         Text = "Color",
-                        Color = Colour4.FromRGBA(item.Color),
-                        OnColorChanged = c =>
+                        CurrentValue = Colour4.FromRGBA(item.Color),
+                        OnValueChanged = c =>
                         {
                             item.Color = c.ToRGBA();
                             map.Update(item);
                         }
                     },
-                    new PointSettingsDropdown<StoryboardLayer>
+                    new EditorVariableDropdown<StoryboardLayer>
                     {
                         Text = "Layer",
                         CurrentValue = item.Layer,
@@ -203,7 +203,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             map.Update(item);
                         }
                     },
-                    new PointSettingsDropdown<Anchor>
+                    new EditorVariableDropdown<Anchor>
                     {
                         Text = "Anchor",
                         CurrentValue = item.Anchor,
@@ -214,7 +214,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             map.Update(item);
                         }
                     },
-                    new PointSettingsDropdown<Anchor>
+                    new EditorVariableDropdown<Anchor>
                     {
                         Text = "Origin",
                         CurrentValue = item.Origin,
@@ -225,18 +225,18 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             map.Update(item);
                         }
                     },
-                    new PointSettingsToggle
+                    new EditorVariableToggle
                     {
                         Text = "Blend",
                         CurrentValue = item.Blending,
-                        OnStateChanged = enabled =>
+                        OnValueChanged = enabled =>
                         {
                             blendingEnabled.Value = enabled;
                             item.Blending = enabled;
                             map.Update(item);
                         }
                     },
-                    new PointSettingsDropdown<DefaultBlendingParameters>
+                    new EditorVariableDropdown<DefaultBlendingParameters>
                     {
                         Text = "Blend Mode",
                         CurrentValue = item.BlendingMode,
@@ -255,10 +255,10 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 {
                     drawables.AddRange(new Drawable[]
                     {
-                        new PointSettingsNumber<float>
+                        new EditorVariableNumber<float>
                         {
                             Text = "Width",
-                            DefaultValue = item.Width,
+                            CurrentValue = item.Width,
                             Step = 10,
                             OnValueChanged = v =>
                             {
@@ -266,10 +266,10 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 map.Update(item);
                             }
                         },
-                        new PointSettingsNumber<float>
+                        new EditorVariableNumber<float>
                         {
                             Text = "Height",
-                            DefaultValue = item.Height,
+                            CurrentValue = item.Height,
                             Step = 10,
                             OnValueChanged = v =>
                             {
@@ -284,10 +284,10 @@ public partial class StoryboardElementSettings : CompositeDrawable
                 {
                     case StoryboardElementType.OutlineCircle:
                     case StoryboardElementType.OutlineBox:
-                        drawables.Add(new PointSettingsNumber<float>
+                        drawables.Add(new EditorVariableNumber<float>
                         {
                             Text = "Border Width",
-                            DefaultValue = item.GetParameter("border", 4f),
+                            CurrentValue = item.GetParameter("border", 4f),
                             Step = 1,
                             OnValueChanged = v =>
                             {
@@ -298,12 +298,12 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         break;
 
                     case StoryboardElementType.Sprite:
-                        drawables.Add(new PointSettingsTextBox
+                        drawables.Add(new EditorVariableTextBox
                         {
                             Text = "Texture",
-                            DefaultText = item.GetParameter("file", ""),
+                            CurrentValue = item.GetParameter("file", ""),
                             TextBoxWidth = 280,
-                            OnTextChanged = t =>
+                            OnValueChanged = t =>
                             {
                                 item.Parameters["file"] = t.Text;
                                 map.Update(item);
@@ -314,21 +314,21 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     case StoryboardElementType.Text:
                         drawables.AddRange(new Drawable[]
                         {
-                            new PointSettingsTextBox
+                            new EditorVariableTextBox
                             {
                                 Text = "Text",
-                                DefaultText = item.GetParameter("text", ""),
+                                CurrentValue = item.GetParameter("text", ""),
                                 TextBoxWidth = 420,
-                                OnTextChanged = t =>
+                                OnValueChanged = t =>
                                 {
                                     item.Parameters["text"] = t.Text;
                                     map.Update(item);
                                 }
                             },
-                            new PointSettingsNumber<float>
+                            new EditorVariableNumber<float>
                             {
                                 Text = "Font Size",
-                                DefaultValue = item.GetParameter("size", 20f),
+                                CurrentValue = item.GetParameter("size", 20f),
                                 Min = 0,
                                 Step = 1,
                                 OnValueChanged = v =>
@@ -343,7 +343,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     case StoryboardElementType.SkinSprite:
                         drawables.AddRange(new Drawable[]
                         {
-                            new PointSettingsDropdown<SkinSprite>
+                            new EditorVariableDropdown<SkinSprite>
                             {
                                 Text = "Sprite",
                                 CurrentValue = item.GetParameter("sprite", SkinSprite.HitObject),
@@ -354,10 +354,10 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     map.Update(item);
                                 }
                             },
-                            new PointSettingsNumber<int>
+                            new EditorVariableNumber<int>
                             {
                                 Text = "Lane",
-                                DefaultValue = item.GetParameter("lane", 0),
+                                CurrentValue = item.GetParameter("lane", 0),
                                 Step = 1,
                                 Min = 0,
                                 Max = 8,
@@ -367,10 +367,10 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     map.Update(item);
                                 }
                             },
-                            new PointSettingsNumber<int>
+                            new EditorVariableNumber<int>
                             {
                                 Text = "Key Count",
-                                DefaultValue = item.GetParameter("keycount", 0),
+                                CurrentValue = item.GetParameter("keycount", 0),
                                 Step = 1,
                                 Min = 0,
                                 Max = 8,
@@ -385,9 +385,9 @@ public partial class StoryboardElementSettings : CompositeDrawable
 
                     case StoryboardElementType.Script:
                         var path = item.GetParameter("path", "");
-                        PointSettingsScript box = null!;
+                        EditorVariableScript box = null!;
 
-                        box = new PointSettingsScript(path)
+                        box = new EditorVariableScript(path)
                         {
                             EditExternally = () =>
                             {
@@ -430,7 +430,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     );
                                 }
                             },
-                            OnTextChanged = t =>
+                            OnValueChanged = t =>
                             {
                                 item.Parameters["path"] = t.Text;
                                 map.Update(item);
@@ -456,11 +456,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         {
                             if (parameter.Type == typeof(string))
                             {
-                                drawables.Add(new PointSettingsTextBox
+                                drawables.Add(new EditorVariableTextBox
                                 {
                                     Text = parameter.Title,
-                                    DefaultText = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<string>()),
-                                    OnTextChanged = t =>
+                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<string>()),
+                                    OnValueChanged = t =>
                                     {
                                         item.Parameters[parameter.Key] = t.Text;
                                         map.Update(item);
@@ -469,11 +469,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             }
                             else if (parameter.Type == typeof(int))
                             {
-                                drawables.Add(new PointSettingsTextBox
+                                drawables.Add(new EditorVariableTextBox
                                 {
                                     Text = parameter.Title,
-                                    DefaultText = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<int>()).ToString(),
-                                    OnTextChanged = box =>
+                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<int>()).ToString(),
+                                    OnValueChanged = box =>
                                     {
                                         if (box.Text.TryParseIntInvariant(out var result))
                                             item.Parameters[parameter.Key] = result;
@@ -486,11 +486,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             }
                             else if (parameter.Type == typeof(float))
                             {
-                                drawables.Add(new PointSettingsTextBox
+                                drawables.Add(new EditorVariableTextBox
                                 {
                                     Text = parameter.Title,
-                                    DefaultText = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<float>()).ToStringInvariant(),
-                                    OnTextChanged = box =>
+                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<float>()).ToStringInvariant(),
+                                    OnValueChanged = box =>
                                     {
                                         if (box.Text.TryParseFloatInvariant(out var result))
                                             item.Parameters[parameter.Key] = result;
@@ -503,11 +503,11 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             }
                             else if (parameter.Type == typeof(bool))
                             {
-                                drawables.Add(new PointSettingsToggle
+                                drawables.Add(new EditorVariableToggle
                                 {
                                     Text = parameter.Title,
                                     CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<bool>()),
-                                    OnStateChanged = enabled =>
+                                    OnValueChanged = enabled =>
                                     {
                                         item.Parameters[parameter.Key] = enabled;
                                         map.Update(item);

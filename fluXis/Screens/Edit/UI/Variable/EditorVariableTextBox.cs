@@ -3,28 +3,22 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Localisation;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+namespace fluXis.Screens.Edit.UI.Variable;
 
-public partial class PointSettingsTextBox : PointSettingsBase, IHasTooltip
+public partial class EditorVariableTextBox : EditorVariableBase
 {
-    public string Text { get; init; }
-    public LocalisableString TooltipText { get; init; } = string.Empty;
-    public string DefaultText { get; init; }
-    public string ExtraText { get; init; }
-    public int TextBoxWidth { get; init; } = 210;
-    public Action<FluXisTextBox> OnTextChanged { get; set; }
+    public string CurrentValue { get; init; }
+    public Action<FluXisTextBox> OnValueChanged { get; set; }
     public Action<FluXisTextBox> OnCommit { get; set; }
 
-    public FluXisTextBox TextBox { get; private set; }
+    public string ExtraText { get; init; }
+    public int TextBoxWidth { get; init; } = 210;
 
-    public Bindable<bool> Enabled { get; init; } = new(true);
+    public FluXisTextBox TextBox { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -67,16 +61,16 @@ public partial class PointSettingsTextBox : PointSettingsBase, IHasTooltip
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        Text = DefaultText,
+                        Text = CurrentValue,
                         SidePadding = 10,
                         TextContainerHeight = .7f,
                         CommitOnFocusLost = true,
                         BackgroundInactive = Theme.Background3,
                         BackgroundActive = Theme.Background4,
-                        OnTextChanged = () => OnTextChanged?.Invoke(TextBox),
+                        OnTextChanged = () => OnValueChanged?.Invoke(TextBox),
                         OnCommitAction = () =>
                         {
-                            OnTextChanged?.Invoke(TextBox);
+                            OnValueChanged?.Invoke(TextBox);
                             OnCommit?.Invoke(TextBox);
                         }
                     },
@@ -98,13 +92,6 @@ public partial class PointSettingsTextBox : PointSettingsBase, IHasTooltip
         };
 
         UpdateLeftTextFlow(leftText);
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : .4f, 200), true);
     }
 
     protected virtual Drawable CreateExtraButton() => Empty().With(d => d.Alpha = 0);

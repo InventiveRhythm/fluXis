@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events.Camera;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,13 +35,13 @@ public partial class CameraScaleEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<CameraScaleEvent>(Map, camera, BeatLength),
-        new PointSettingsNumber<float>
+        new EditorVariableLength<CameraScaleEvent>(Map, camera, BeatLength),
+        new EditorVariableNumber<float>
         {
             Text = "ScaleX",
             TooltipText = "The horizontal scale of the playfield.",
             Formatting = "0.0##",
-            DefaultValue = camera.Scale,
+            CurrentValue = camera.Scale,
             Step = 0.05f,
             OnValueChanged = v =>
             {
@@ -49,6 +49,6 @@ public partial class CameraScaleEntry : PointListEntry
                 Map.Update(camera);
             }
         },
-        new PointSettingsEasing<CameraScaleEvent>(Map, camera),
+        new EditorVariableEasing<CameraScaleEvent>(Map, camera),
     });
 }
