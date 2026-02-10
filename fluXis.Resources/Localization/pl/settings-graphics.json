@@ -1,12 +1,12 @@
 {
   "title": "Grafika",
   "layout-title": "Układ",
-  "window-mode": "Tryb okienkowy",
+  "window-mode": "Tryb wyświetlania",
   "rendering-title": "Renderowanie",
   "renderer": "Renderer",
-  "renderer-description": "Wymaga restartu żeby zadziałał.",
+  "renderer-description": "Wymaga restartu, żeby zadziałał.",
   "frame-limiter": "Ogranicznik klatek",
-  "threading-mode": "Tryb wielowątkowy",
+  "threading-mode": "Tryb wątkowości",
   "show-fps": "Wyświetl ilość klatek na sekundę (FPS)",
   "show-fps-description": "Pokazuje aktualne wartości DrawsPerSecond i UpdatesPerSecond w prawym dolnym rogu."
 }
