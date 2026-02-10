@@ -1,1 +1,11 @@
-{}
+{
+  "title": "Modyfikatory rozgrywki",
+  "description": "Ułatw lub utrudnij sobie życie!",
+  "section-rate": "Prędkość",
+  "section-difficulty-increase": "Utrudniające",
+  "section-difficulty-decrease": "Ułatwiające",
+  "section-misc": "Różnorodne",
+  "section-automation": "Automatyzujące",
+  "max-score": "Wynik maksymalny: {0:0}%",
+  "incompatible-mods": "Niekompatybilne modyfikatory:"
+}

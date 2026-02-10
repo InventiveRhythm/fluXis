@@ -1,1 +1,16 @@
-{}
+{
+  "general": "Ogólne",
+  "back": "Cofnij",
+  "play": "Zagraj",
+  "edit": "Edytuj",
+  "select": "Wybierz",
+  "delete": "Usuń",
+  "export": "Eksportuj",
+  "refresh": "Odśwież",
+  "view-online": "Wyświetl online",
+  "panel-generic-confirm": "Tak, zrób to.",
+  "panel-generic-cancel": "Czekaj, jednak nie.",
+  "panel-confirm-exit": "Czy na pewno chcesz wyjść?",
+  "can-not-be-undone": "Tego nie da rady cofnąć.",
+  "login-to-use": "Zaloguj się, żeby użyć tej funkcji."
+}

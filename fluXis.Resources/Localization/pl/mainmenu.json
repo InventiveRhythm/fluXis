@@ -1,1 +1,13 @@
-{}
+{
+  "press-any-key": "Naciśnij dowolny klawisz.",
+  "play-text": "Zagraj",
+  "play-description": "{0:0} załadowanych map",
+  "multiplayer-text": "Wieloosobowa",
+  "multiplayer-description": "Graj z innymi",
+  "dashboard-text": "Panel",
+  "dashboard-description": "Aktualizacje, Czat, nowości i więcej",
+  "browse-text": "Przeglądaj",
+  "browse-description": "Pobierz mapy społeczności",
+  "edit-text": "Edytuj",
+  "edit-description": "Stwórz własne mapy"
+}

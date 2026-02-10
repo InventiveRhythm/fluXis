@@ -1,1 +1,23 @@
-{}
+{
+  "title": "Dźwięk",
+  "device-title": "Urządzenie",
+  "output-device": "Urządzenie wyjściowe",
+  "volume-title": "Głośność",
+  "master-volume": "Ogólna",
+  "master-volume-inactive": "Ogólna (nieaktywne okno gry)",
+  "master-volume-inactive-description": "Głośność, gdy okno gry jest nieaktywne (mnożona przez głośność ogólną).",
+  "music-volume": "Muzyka",
+  "effect-volume": "Efekty dźwiękowe",
+  "hit-sound-volume": "Dźwięk trafienia",
+  "offset-title": "Przesunięcie",
+  "audio-offset": "Przesunięcie dźwięku",
+  "audio-offset-description": "Zmienia przesunięcie dźwięku dla wszystkich utworów. Wyższa wartość powoduje późniejsze pojawianie się obiektów.",
+  "disable-offset-in-replay": "Wyłącz przesunięcie w powtórkach",
+  "disable-offset-in-replay-description": "Wyłącza przesunięcie dźwięku podczas oglądania powtórek. Przydatne przy nagrywaniu filmów z powtórek.",
+  "open-offset-wizard": "Otwórz kreator przesunięcia",
+  "panning-title": "Panoramowanie",
+  "ui-panning": "Interfejs użytkownika",
+  "ui-panning-description": "Zmienia panoramowanie dźwięków kliknięcia i najechania w zależności od położenia kursora.",
+  "hitsound-panning": "Dźwięki trafień",
+  "hitsound-panning-description": "Zmienia panoramowanie dźwięków trafień w zależności od położenia na polu gry."
+}

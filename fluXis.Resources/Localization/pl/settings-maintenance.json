@@ -1,1 +1,13 @@
-{}
+{
+  "title": "Zaawansowane",
+  "files-title": "Pliki",
+  "files-clean-up": "Wyczyść pliki",
+  "files-clean-up-description": "Usuń wszystkie pliki, które nie są używane przez żadną mapę.",
+  "stream-file-browser": "Strumieniuj pliki w przeglądarce plików",
+  "stream-file-browser-description": "Strumieniuje pliki i foldery w dużych katalogach. Wyłączenie tej opcji może spowodować zawieszenie gry podczas otwierania dużych folderów.",
+  "maps-title": "Mapy",
+  "maps-recalculate-filters": "Przelicz filtry",
+  "maps-recalculate-filters-description": "Przelicza wszystkie filtry dla wszystkich map.",
+  "maps-scores-clean-up": "Wyczyść wyniki",
+  "maps-scores-clean-up-description": "Usuwa wyniki z map, których już nie posiadasz."
+}
