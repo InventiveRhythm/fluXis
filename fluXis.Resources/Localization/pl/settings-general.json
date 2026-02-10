@@ -1,0 +1,12 @@
+{
+  "title": "Ogólne",
+  "language-title": "Język",
+  "language-current": "Aktualny język",
+  "original-meta": "Preferuj oryginalne metadane",
+  "original-meta-description": "Wyświetla metadane utworu w oryginalnym języku.",
+  "folders-title": "Foldery",
+  "open-folder": "Otwórz folder fluXis",
+  "export-logs": "Eksportuj dziennik zdarzeń",
+  "export-logs-description": "Kompresuje wszystkie pliki dziennika zdarzeń do jednego archiwum ZIP w celu łatwiejszego udostępniania.",
+  "change-folder": "Zmień lokalizację folderu"
+}
