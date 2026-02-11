@@ -6,6 +6,7 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Groups;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Chat;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
@@ -23,15 +24,22 @@ namespace fluXis.Overlay.User;
 
 public partial class ProfileHeader : Container
 {
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private ChatClient chat { get; set; }
+
     private APIUser user { get; }
 
     private bool showUsername => user.Username != user.PreferredName;
     private bool showPronouns => !string.IsNullOrEmpty(user.Pronouns);
     private bool showBottomRow => showUsername || showPronouns;
 
-    public ProfileHeader(APIUser user)
+    private UserProfileOverlay overlay;
+
+    public ProfileHeader(APIUser user, UserProfileOverlay overlay)
     {
         this.user = user;
+        this.overlay = overlay;
     }
 
     [BackgroundDependencyLoader(true)]
@@ -235,17 +243,7 @@ public partial class ProfileHeader : Container
                                 Spacing = new Vector2(10),
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight,
-                                Children = new Drawable[]
-                                {
-                                    new HeaderButton
-                                    {
-                                        Icon = FontAwesome6.Solid.ShareNodes,
-                                        Action = () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}"),
-                                    },
-                                    api.User.Value?.ID == user.ID
-                                        ? new HeaderEditButton()
-                                        : new HeaderFollowButton(user)
-                                }
+                                ChildrenEnumerable = createHeaderButtons(api, game)
                             }
                         }
                     }
@@ -257,6 +255,27 @@ public partial class ProfileHeader : Container
     protected override void Update()
     {
         Height = DrawWidth / 3f; // 3:1 aspect ratio
+    }
+
+    private IEnumerable<Drawable> createHeaderButtons(IAPIClient api, [CanBeNull] FluXisGame game)
+    {
+        yield return new HeaderButton
+        {
+            Icon = FontAwesome6.Solid.ShareNodes,
+            Action = () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}"),
+        };
+
+        if (user.Following is UserFollowState.Mutual && api.User.Value?.ID != user.ID)
+            yield return new HeaderButton
+            {
+                Icon = FontAwesome6.Solid.Message,
+                Text = "Message",
+                Action = () => { chat?.CreatePrivateChannel(user.ID); overlay.Hide(); },
+            };
+
+        yield return api.User.Value?.ID == user.ID
+                ? new HeaderEditButton()
+                : new HeaderFollowButton(user);
     }
 
     private IEnumerable<Drawable> createGroups()
