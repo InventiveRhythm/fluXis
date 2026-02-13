@@ -59,8 +59,10 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     {
         this.set = set;
         this.maps = maps ?? set.MapsSorted;
-        this.maps.Sort((a, b) => MapUtils.CompareMap(a, b, MapUtils.SortingMode.Difficulty));
+        sortMaps();
     }
+
+    private void sortMaps() => maps.Sort((a, b) => MapUtils.CompareMap(a, b, MapUtils.SortingMode.Difficulty));
 
     public Drawable CreateDrawable() => Drawable = new DrawableMapSetItem(this, set, maps)
     {
@@ -97,8 +99,11 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
 
     public bool MatchesFilter(SearchFilters filters)
     {
-        var first = maps.FirstOrDefault(filters.Matches);
-        return first is not null;
+        var matched = maps.Where(filters.Matches).ToList();
+        maps.Clear();
+        maps.AddRange(matched);
+        sortMaps();
+        return matched.Count > 0;
     }
 
     public bool ChangeChild(int by)

@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -37,12 +37,12 @@ public partial class PlayfieldMoveEntry : PointListEntry
     {
         return base.CreateSettings().Concat(new Drawable[]
         {
-            new PointSettingsLength<PlayfieldMoveEvent>(Map, move, BeatLength),
-            new PointSettingsNumber<float>
+            new EditorVariableLength<PlayfieldMoveEvent>(Map, move, BeatLength),
+            new EditorVariableNumber<float>
             {
                 Text = "Offset X",
                 TooltipText = "The horizontal offset of the playfield.",
-                DefaultValue = move.OffsetX,
+                CurrentValue = move.OffsetX,
                 Step = 10,
                 OnValueChanged = v =>
                 {
@@ -50,11 +50,11 @@ public partial class PlayfieldMoveEntry : PointListEntry
                     Map.Update(move);
                 }
             },
-            new PointSettingsNumber<float>
+            new EditorVariableNumber<float>
             {
                 Text = "Offset Y",
                 TooltipText = "The vertical offset of the playfield.",
-                DefaultValue = move.OffsetY,
+                CurrentValue = move.OffsetY,
                 Step = 10,
                 OnValueChanged = v =>
                 {
@@ -62,11 +62,11 @@ public partial class PlayfieldMoveEntry : PointListEntry
                     Map.Update(move);
                 }
             },
-            new PointSettingsNumber<float>
+            new EditorVariableNumber<float>
             {
                 Text = "Offset Z",
                 TooltipText = "The depth of the playfield.",
-                DefaultValue = move.OffsetZ,
+                CurrentValue = move.OffsetZ,
                 Step = 10,
                 OnValueChanged = v =>
                 {
@@ -74,8 +74,8 @@ public partial class PlayfieldMoveEntry : PointListEntry
                     Map.Update(move);
                 }
             },
-            new PointSettingsEasing<PlayfieldMoveEvent>(Map, move),
-            new PointSettingsSlider<int>
+            new EditorVariableEasing<PlayfieldMoveEvent>(Map, move),
+            new EditorVariableSlider<int>
             {
                 Text = "Player Index",
                 TooltipText = "The player to apply this to.",
@@ -89,7 +89,7 @@ public partial class PlayfieldMoveEntry : PointListEntry
                     Map.Update(move);
                 }
             },
-            new PointSettingsSlider<int>
+            new EditorVariableSlider<int>
             {
                 Text = "Subfield Index",
                 TooltipText = "The subfield to apply this to.",

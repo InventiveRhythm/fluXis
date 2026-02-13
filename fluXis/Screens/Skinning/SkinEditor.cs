@@ -12,8 +12,8 @@ using fluXis.Input;
 using fluXis.Overlay.Notifications;
 using fluXis.Scoring.Enums;
 using fluXis.Screens.Edit.Input;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.UI.MenuBar;
+using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Skinning;
 using fluXis.Skinning.Json;
 using fluXis.Utils;
@@ -55,10 +55,10 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     private SkinEditorPlayfield playfield;
 
-    private PointSettingsTextBox hitPositionTextBox;
-    private PointSettingsTextBox columnWidthTextBox;
-    private PointSettingsToggle receptorsFirstToggle;
-    private PointSettingsTextBox receptorsPositionTextBox;
+    private EditorVariableTextBox hitPositionTextBox;
+    private EditorVariableTextBox columnWidthTextBox;
+    private EditorVariableToggle receptorsFirstToggle;
+    private EditorVariableTextBox receptorsPositionTextBox;
 
     [BackgroundDependencyLoader]
     private void load(GameHost host, FluXisConfig config)
@@ -138,11 +138,11 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                             Text = "Keymode-specific",
                                                             WebFontSize = 20
                                                         },
-                                                        hitPositionTextBox = new PointSettingsTextBox
+                                                        hitPositionTextBox = new EditorVariableTextBox
                                                         {
                                                             Text = "Hit Position",
-                                                            DefaultText = skinJson.GetKeymode(keyMode.Value).HitPosition.ToString(),
-                                                            OnTextChanged = box =>
+                                                            CurrentValue = skinJson.GetKeymode(keyMode.Value).HitPosition.ToString(),
+                                                            OnValueChanged = box =>
                                                             {
                                                                 if (box.Text.TryParseIntInvariant(out var y))
                                                                     skinJson.GetKeymode(keyMode.Value).HitPosition = y;
@@ -150,11 +150,11 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                                     box.NotifyError();
                                                             }
                                                         },
-                                                        columnWidthTextBox = new PointSettingsTextBox
+                                                        columnWidthTextBox = new EditorVariableTextBox
                                                         {
                                                             Text = "Column Width",
-                                                            DefaultText = skinJson.GetKeymode(keyMode.Value).ColumnWidth.ToString(),
-                                                            OnTextChanged = box =>
+                                                            CurrentValue = skinJson.GetKeymode(keyMode.Value).ColumnWidth.ToString(),
+                                                            OnValueChanged = box =>
                                                             {
                                                                 if (box.Text.TryParseIntInvariant(out var w))
                                                                     skinJson.GetKeymode(keyMode.Value).ColumnWidth = w;
@@ -162,18 +162,18 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                                     box.NotifyError();
                                                             }
                                                         },
-                                                        receptorsFirstToggle = new PointSettingsToggle
+                                                        receptorsFirstToggle = new EditorVariableToggle
                                                         {
                                                             Text = "Receptors First",
                                                             TooltipText = "Layers the receptors first. (Behind the notes)",
                                                             CurrentValue = skinJson.GetKeymode(keyMode.Value).ReceptorsFirst,
-                                                            OnStateChanged = v => skinJson.GetKeymode(keyMode.Value).ReceptorsFirst = v
+                                                            OnValueChanged = v => skinJson.GetKeymode(keyMode.Value).ReceptorsFirst = v
                                                         },
-                                                        receptorsPositionTextBox = new PointSettingsTextBox
+                                                        receptorsPositionTextBox = new EditorVariableTextBox
                                                         {
                                                             Text = "Receptor Offset",
-                                                            DefaultText = skinJson.GetKeymode(keyMode.Value).ReceptorOffset.ToString(),
-                                                            OnTextChanged = box =>
+                                                            CurrentValue = skinJson.GetKeymode(keyMode.Value).ReceptorOffset.ToString(),
+                                                            OnValueChanged = box =>
                                                             {
                                                                 if (box.Text.TryParseIntInvariant(out var w))
                                                                     skinJson.GetKeymode(keyMode.Value).ReceptorOffset = w;
@@ -186,94 +186,94 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                             Text = "Judgements",
                                                             WebFontSize = 20
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "Flawless",
-                                                            Color = skinJson.GetColorForJudgement(Judgement.Flawless),
-                                                            OnColorChanged = c => skinJson.Judgements.Flawless = c.ToHex()
+                                                            CurrentValue = skinJson.GetColorForJudgement(Judgement.Flawless),
+                                                            OnValueChanged = c => skinJson.Judgements.Flawless = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "Perfect",
-                                                            Color = skinJson.GetColorForJudgement(Judgement.Perfect),
-                                                            OnColorChanged = c => skinJson.Judgements.Perfect = c.ToHex()
+                                                            CurrentValue = skinJson.GetColorForJudgement(Judgement.Perfect),
+                                                            OnValueChanged = c => skinJson.Judgements.Perfect = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "Great",
-                                                            Color = skinJson.GetColorForJudgement(Judgement.Great),
-                                                            OnColorChanged = c => skinJson.Judgements.Great = c.ToHex()
+                                                            CurrentValue = skinJson.GetColorForJudgement(Judgement.Great),
+                                                            OnValueChanged = c => skinJson.Judgements.Great = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "Alright",
-                                                            Color = skinJson.GetColorForJudgement(Judgement.Alright),
-                                                            OnColorChanged = c => skinJson.Judgements.Alright = c.ToHex()
+                                                            CurrentValue = skinJson.GetColorForJudgement(Judgement.Alright),
+                                                            OnValueChanged = c => skinJson.Judgements.Alright = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "Okay",
-                                                            Color = skinJson.GetColorForJudgement(Judgement.Okay),
-                                                            OnColorChanged = c => skinJson.Judgements.Okay = c.ToHex()
+                                                            CurrentValue = skinJson.GetColorForJudgement(Judgement.Okay),
+                                                            OnValueChanged = c => skinJson.Judgements.Okay = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "Miss",
-                                                            Color = skinJson.GetColorForJudgement(Judgement.Miss),
-                                                            OnColorChanged = c => skinJson.Judgements.Miss = c.ToHex()
+                                                            CurrentValue = skinJson.GetColorForJudgement(Judgement.Miss),
+                                                            OnValueChanged = c => skinJson.Judgements.Miss = c.ToHex()
                                                         },
                                                         new FluXisSpriteText
                                                         {
                                                             Text = "Snap Colors",
                                                             WebFontSize = 20
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "1/1",
-                                                            Color = skinJson.SnapColors.GetColor(0),
-                                                            OnColorChanged = c => skinJson.SnapColors.Third = c.ToHex()
+                                                            CurrentValue = skinJson.SnapColors.GetColor(0),
+                                                            OnValueChanged = c => skinJson.SnapColors.Third = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "1/2",
-                                                            Color = skinJson.SnapColors.GetColor(1),
-                                                            OnColorChanged = c => skinJson.SnapColors.Fourth = c.ToHex()
+                                                            CurrentValue = skinJson.SnapColors.GetColor(1),
+                                                            OnValueChanged = c => skinJson.SnapColors.Fourth = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "1/3",
-                                                            Color = skinJson.SnapColors.GetColor(2),
-                                                            OnColorChanged = c => skinJson.SnapColors.Sixth = c.ToHex()
+                                                            CurrentValue = skinJson.SnapColors.GetColor(2),
+                                                            OnValueChanged = c => skinJson.SnapColors.Sixth = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "1/4",
-                                                            Color = skinJson.SnapColors.GetColor(3),
-                                                            OnColorChanged = c => skinJson.SnapColors.Eighth = c.ToHex()
+                                                            CurrentValue = skinJson.SnapColors.GetColor(3),
+                                                            OnValueChanged = c => skinJson.SnapColors.Eighth = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "1/6",
-                                                            Color = skinJson.SnapColors.GetColor(4),
-                                                            OnColorChanged = c => skinJson.SnapColors.Twelfth = c.ToHex()
+                                                            CurrentValue = skinJson.SnapColors.GetColor(4),
+                                                            OnValueChanged = c => skinJson.SnapColors.Twelfth = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "1/8",
-                                                            Color = skinJson.SnapColors.GetColor(5),
-                                                            OnColorChanged = c => skinJson.SnapColors.Sixteenth = c.ToHex()
+                                                            CurrentValue = skinJson.SnapColors.GetColor(5),
+                                                            OnValueChanged = c => skinJson.SnapColors.Sixteenth = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "1/12",
-                                                            Color = skinJson.SnapColors.GetColor(6),
-                                                            OnColorChanged = c => skinJson.SnapColors.TwentyFourth = c.ToHex()
+                                                            CurrentValue = skinJson.SnapColors.GetColor(6),
+                                                            OnValueChanged = c => skinJson.SnapColors.TwentyFourth = c.ToHex()
                                                         },
-                                                        new PointSettingsColor
+                                                        new EditorVariableColor
                                                         {
                                                             Text = "1/16 and unsnapped",
-                                                            Color = skinJson.SnapColors.GetColor(7),
-                                                            OnColorChanged = c => skinJson.SnapColors.FortyEighth = c.ToHex()
+                                                            CurrentValue = skinJson.SnapColors.GetColor(7),
+                                                            OnValueChanged = c => skinJson.SnapColors.FortyEighth = c.ToHex()
                                                         }
                                                     }
                                                 }

@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Map;
-using fluXis.Screens;
-using fluXis.Screens.Edit;
 using fluXis.Scripting;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Runners;
@@ -25,12 +23,6 @@ public partial class DrawableStoryboard : CompositeDrawable
 
     [Resolved]
     private ISkin skin { get; set; }
-
-    [Resolved]
-    private FluXisScreenStack screens { get; set; }
-
-    [Resolved(CanBeNull = true)]
-    private EditorMap editorMap { get; set; }
 
     public Storyboard Storyboard { get; }
     private MapInfo map { get; }
@@ -74,11 +66,9 @@ public partial class DrawableStoryboard : CompositeDrawable
 
         if (!File.Exists(full))
             return null;
-        
-        var mapInfo = screens.CurrentScreen is Editor ? (editorMap?.MapInfo ?? map) : map;
 
         var raw = File.ReadAllText(full);
-        var runner = scripts[path] = new StoryboardScriptRunner(mapInfo, Storyboard, new LuaSettings(config), skin);
+        var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard, new LuaSettings(config), skin);
 
         try
         {

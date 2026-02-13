@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events.Camera;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,12 +35,12 @@ public partial class CameraRotateEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<CameraRotateEvent>(Map, camera, BeatLength),
-        new PointSettingsNumber<float>
+        new EditorVariableLength<CameraRotateEvent>(Map, camera, BeatLength),
+        new EditorVariableNumber<float>
         {
             Text = "Rotation",
             TooltipText = "The rotation of the playfield.",
-            DefaultValue = camera.Roll,
+            CurrentValue = camera.Roll,
             Step = 2,
             OnValueChanged = v =>
             {
@@ -48,6 +48,6 @@ public partial class CameraRotateEntry : PointListEntry
                 Map.Update(camera);
             }
         },
-        new PointSettingsEasing<CameraRotateEvent>(Map, camera),
+        new EditorVariableEasing<CameraRotateEvent>(Map, camera),
     });
 }

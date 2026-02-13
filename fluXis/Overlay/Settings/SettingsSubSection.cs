@@ -21,7 +21,7 @@ public partial class SettingsSubSection : FillFlowContainer
 
     public BindableBool Visible { get; } = new(true);
 
-    protected Container RightSide { get; private set; }
+    protected FillFlowContainer RightSide { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -63,11 +63,13 @@ public partial class SettingsSubSection : FillFlowContainer
                         }
                     }
                 },
-                RightSide = new Container
+                RightSide = new FillFlowContainer
                 {
                     AutoSizeAxes = Axes.Both,
                     Anchor = Anchor.CentreRight,
                     Origin = Anchor.CentreRight,
+                    Direction = FillDirection.Horizontal,
+                    Spacing = new Vector2(8)
                 }
             }
         };

@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -51,19 +51,19 @@ public partial class FlashEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<FlashEvent>(Map, flash, BeatLength),
-        new PointSettingsToggle
+        new EditorVariableLength<FlashEvent>(Map, flash, BeatLength),
+        new EditorVariableToggle
         {
             Text = "In Background",
             TooltipText = "Whether the flash should be drawn behind the playfield and hud.",
             CurrentValue = flash.InBackground,
-            OnStateChanged = b =>
+            OnValueChanged = b =>
             {
                 flash.InBackground = b;
                 Map.Update(flash);
             }
         },
-        new PointSettingsSlider<float>
+        new EditorVariableSlider<float>
         {
             Text = "Start Alpha",
             TooltipText = "The starting opacity of the flash.",
@@ -77,18 +77,18 @@ public partial class FlashEntry : PointListEntry
                 Map.Update(flash);
             }
         },
-        new PointSettingsColor
+        new EditorVariableColor
         {
             Text = "Start Color",
             TooltipText = "The starting color of the flash.",
-            Color = flash.StartColor,
-            OnColorChanged = c =>
+            CurrentValue = flash.StartColor,
+            OnValueChanged = c =>
             {
                 flash.StartColor = c;
                 Map.Update(flash);
             }
         },
-        new PointSettingsSlider<float>
+        new EditorVariableSlider<float>
         {
             Text = "End Alpha",
             TooltipText = "The ending opacity of the flash.",
@@ -102,17 +102,17 @@ public partial class FlashEntry : PointListEntry
                 Map.Update(flash);
             }
         },
-        new PointSettingsColor
+        new EditorVariableColor
         {
             Text = "End Color",
             TooltipText = "The ending color of the flash.",
-            Color = flash.EndColor,
-            OnColorChanged = c =>
+            CurrentValue = flash.EndColor,
+            OnValueChanged = c =>
             {
                 flash.EndColor = c;
                 Map.Update(flash);
             }
         },
-        new PointSettingsEasing<FlashEvent>(Map, flash)
+        new EditorVariableEasing<FlashEvent>(Map, flash)
     });
 }

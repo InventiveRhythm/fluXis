@@ -6,9 +6,9 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Waveform;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
+using fluXis.Screens.Edit.UI.Variable.Timing;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;
@@ -25,10 +25,10 @@ public partial class TimingPointEntry : PointListEntry
     private TimingPoint timing => Object as TimingPoint;
 
     [CanBeNull]
-    private PointSettingsTime timeBox;
+    private EditorVariableTime timeBox;
 
     [CanBeNull]
-    private PointSettingsTextBox bpmBox;
+    private EditorVariableTextBox bpmBox;
 
     public TimingPointEntry(TimingPoint timing)
         : base(timing)
@@ -53,15 +53,15 @@ public partial class TimingPointEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Take(1).Concat(new Drawable[]
     {
-        timeBox = new PointSettingsTime(Map, Object),
-        new WaveformDisplay(timing),
-        new PointSettingsIncrements(Map, timing),
-        bpmBox = new PointSettingsTextBox
+        timeBox = new EditorVariableTime(Map, Object),
+        new EditorVariableWaveform(timing),
+        new EditorVariableIncrements(Map, timing),
+        bpmBox = new EditorVariableTextBox
         {
             Text = "BPM",
             TooltipText = "The beats per minute of the timing point.",
-            DefaultText = timing.BPM.ToStringInvariant("0.##"),
-            OnTextChanged = box =>
+            CurrentValue = timing.BPM.ToStringInvariant("0.##"),
+            OnValueChanged = box =>
             {
                 if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var result) && result > 0)
                     timing.BPM = result;
@@ -71,14 +71,14 @@ public partial class TimingPointEntry : PointListEntry
                 Map.Update(timing);
             }
         },
-        new PointSettingsTextBox
+        new EditorVariableTextBox
         {
             Text = "Time Signature",
             TooltipText = "The time signature of the timing point.",
             ExtraText = "/ 4",
             TextBoxWidth = 50,
-            DefaultText = timing.Signature.ToString(),
-            OnTextChanged = box =>
+            CurrentValue = timing.Signature.ToString(),
+            OnValueChanged = box =>
             {
                 if (int.TryParse(box.Text, CultureInfo.InvariantCulture, out var result))
                     timing.Signature = result;
@@ -88,12 +88,12 @@ public partial class TimingPointEntry : PointListEntry
                 Map.Update(timing);
             }
         },
-        new PointSettingsToggle
+        new EditorVariableToggle
         {
             Text = "Hide Lines",
             TooltipText = "Hides the lines that appear every 4 beats during gameplay.",
             Bindable = new Bindable<bool>(timing.HideLines),
-            OnStateChanged = enabled =>
+            OnValueChanged = enabled =>
             {
                 timing.HideLines = enabled;
                 Map.Update(timing);

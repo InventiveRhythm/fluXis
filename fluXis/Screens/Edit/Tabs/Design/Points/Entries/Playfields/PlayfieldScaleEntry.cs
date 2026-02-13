@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,13 +35,13 @@ public partial class PlayfieldScaleEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<PlayfieldScaleEvent>(Map, scale, BeatLength),
-        new PointSettingsNumber<float>
+        new EditorVariableLength<PlayfieldScaleEvent>(Map, scale, BeatLength),
+        new EditorVariableNumber<float>
         {
             Text = "ScaleX",
             TooltipText = "The horizontal scale of the playfield.",
             Formatting = "0.0##",
-            DefaultValue = scale.ScaleX,
+            CurrentValue = scale.ScaleX,
             Step = 0.05f,
             OnValueChanged = v =>
             {
@@ -49,12 +49,12 @@ public partial class PlayfieldScaleEntry : PointListEntry
                 Map.Update(scale);
             }
         },
-        new PointSettingsNumber<float>
+        new EditorVariableNumber<float>
         {
             Text = "ScaleY",
             TooltipText = "The vertical scale of the playfield.",
             Formatting = "0.0##",
-            DefaultValue = scale.ScaleY,
+            CurrentValue = scale.ScaleY,
             Step = 0.05f,
             OnValueChanged = v =>
             {
@@ -62,8 +62,8 @@ public partial class PlayfieldScaleEntry : PointListEntry
                 Map.Update(scale);
             }
         },
-        new PointSettingsEasing<PlayfieldScaleEvent>(Map, scale),
-        new PointSettingsSlider<int>
+        new EditorVariableEasing<PlayfieldScaleEvent>(Map, scale),
+        new EditorVariableSlider<int>
         {
             Text = "Player Index",
             TooltipText = "The player to apply this to.",
@@ -77,7 +77,7 @@ public partial class PlayfieldScaleEntry : PointListEntry
                 Map.Update(scale);
             }
         },
-        new PointSettingsSlider<int>
+        new EditorVariableSlider<int>
         {
             Text = "Subfield Index",
             TooltipText = "The subfield to apply this to.",

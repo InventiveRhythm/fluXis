@@ -14,6 +14,7 @@ using fluXis.Utils.Attributes;
 using Humanizer;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -54,7 +55,13 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
                         if (items.Count == 1)
                             return createForEntry(first);
 
-                        return new MenuExpandItem(x.Key, first.GetIcon(), items.Select(createForEntry));
+                        var entries = items.Select(createForEntry).ToList();
+                        Colour4? color = null;
+
+                        if (entries.AllTheSame(e => e.Color))
+                            color = entries.First().Color;
+
+                        return new MenuExpandItem(x.Key, first.GetIcon(), entries) { Color = color };
 
                         MenuActionItem createForEntry(StoryboardElementType t) => new($"{t.Humanize(LetterCasing.Title)}", t.GetIcon(), () => create(t)) { Color = TimelineElement.GetColor(t) };
                     }))

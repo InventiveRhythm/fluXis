@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,13 +35,13 @@ public partial class LaneSwitchEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsNumber<int>
+        new EditorVariableNumber<int>
         {
             Text = "Key Count",
             TooltipText = "The number of keys to switch to.",
             ExtraText = "K",
             TextBoxWidth = 50,
-            DefaultValue = laneSwitch.Count,
+            CurrentValue = laneSwitch.Count,
             Min = 1,
             Max = Map.RealmMap.KeyCount,
             OnValueChanged = v =>
@@ -50,7 +50,7 @@ public partial class LaneSwitchEntry : PointListEntry
                 Map.Update(laneSwitch);
             }
         },
-        new PointSettingsLength<LaneSwitchEvent>(Map, laneSwitch, BeatLength),
-        new PointSettingsEasing<LaneSwitchEvent>(Map, laneSwitch)
+        new EditorVariableLength<LaneSwitchEvent>(Map, laneSwitch, BeatLength),
+        new EditorVariableEasing<LaneSwitchEvent>(Map, laneSwitch)
     });
 }

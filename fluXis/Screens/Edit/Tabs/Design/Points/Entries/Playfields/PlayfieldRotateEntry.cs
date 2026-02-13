@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,12 +35,12 @@ public partial class PlayfieldRotateEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<PlayfieldRotateEvent>(Map, rotate, BeatLength),
-        new PointSettingsNumber<float>
+        new EditorVariableLength<PlayfieldRotateEvent>(Map, rotate, BeatLength),
+        new EditorVariableNumber<float>
         {
             Text = "Rotation",
             TooltipText = "The rotation of the playfield.",
-            DefaultValue = rotate.Roll,
+            CurrentValue = rotate.Roll,
             Step = 2,
             OnValueChanged = v =>
             {
@@ -48,8 +48,8 @@ public partial class PlayfieldRotateEntry : PointListEntry
                 Map.Update(rotate);
             }
         },
-        new PointSettingsEasing<PlayfieldRotateEvent>(Map, rotate),
-        new PointSettingsSlider<int>
+        new EditorVariableEasing<PlayfieldRotateEvent>(Map, rotate),
+        new EditorVariableSlider<int>
         {
             Text = "Player Index",
             TooltipText = "The player to apply this to.",
@@ -63,7 +63,7 @@ public partial class PlayfieldRotateEntry : PointListEntry
                 Map.Update(rotate);
             }
         },
-        new PointSettingsSlider<int>
+        new EditorVariableSlider<int>
         {
             Text = "Subfield Index",
             TooltipText = "The subfield to apply this to.",

@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -35,14 +35,14 @@ public partial class ShakeEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsLength<ShakeEvent>(Map, shake, BeatLength),
-        new PointSettingsNumber<float>
+        new EditorVariableLength<ShakeEvent>(Map, shake, BeatLength),
+        new EditorVariableNumber<float>
         {
             Text = "Magnitude",
             TooltipText = "The magnitude (strength) of the shake effect.",
             Formatting = "0.##",
             Step = 0.1f,
-            DefaultValue = shake.Magnitude,
+            CurrentValue = shake.Magnitude,
             OnValueChanged = v =>
             {
                 shake.Magnitude = v;

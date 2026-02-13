@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -48,12 +48,12 @@ public partial class TimeOffsetEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings()
     {
-        var startToggle = new PointSettingsToggle
+        var startToggle = new EditorVariableToggle
         {
             Text = "Use Start Value",
             TooltipText = "Enables whether start values should be used.",
             Bindable = new Bindable<bool>(offset.UseStartValue),
-            OnStateChanged = enabled =>
+            OnValueChanged = enabled =>
             {
                 offset.UseStartValue = enabled;
                 Map.Update(offset);
@@ -62,11 +62,11 @@ public partial class TimeOffsetEntry : PointListEntry
 
         return base.CreateSettings().Concat(new Drawable[]
         {
-            new PointSettingsLength<TimeOffsetEvent>(Map, offset, BeatLength),
+            new EditorVariableLength<TimeOffsetEvent>(Map, offset, BeatLength),
             startToggle,
             new StartTargetOffset(Map, offset, BeatLength),
             new TargetOffset("Target Offset", "The visual offset in milliseconds.", Map, offset, BeatLength),
-            new PointSettingsEasing<TimeOffsetEvent>(Map, offset)
+            new EditorVariableEasing<TimeOffsetEvent>(Map, offset)
         });
     }
 
@@ -84,7 +84,7 @@ public partial class TimeOffsetEntry : PointListEntry
         }
     }
 
-    private partial class TargetOffset : PointSettingsBeats<TimeOffsetEvent>
+    private partial class TargetOffset : EditorVariableBeats<TimeOffsetEvent>
     {
         protected override double Value
         {

@@ -2,7 +2,7 @@
 using System.Collections.Specialized;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Layout.Blueprints;
 using fluXis.Utils;
@@ -73,11 +73,11 @@ public partial class ComponentsSettings : FluXisScrollContainer
                         Text = comp.GetType().Name,
                         WebFontSize = 20
                     },
-                    new PointSettingsTextBox
+                    new EditorVariableTextBox
                     {
                         Text = "X Position",
-                        DefaultText = comp.Settings.Position.X.ToStringInvariant(),
-                        OnTextChanged = box =>
+                        CurrentValue = comp.Settings.Position.X.ToStringInvariant(),
+                        OnValueChanged = box =>
                         {
                             if (box.Text.TryParseFloatInvariant(out var v))
                             {
@@ -88,11 +88,11 @@ public partial class ComponentsSettings : FluXisScrollContainer
                                 box.NotifyError();
                         }
                     },
-                    new PointSettingsTextBox
+                    new EditorVariableTextBox
                     {
                         Text = "Y Position",
-                        DefaultText = comp.Settings.Position.Y.ToStringInvariant(),
-                        OnTextChanged = box =>
+                        CurrentValue = comp.Settings.Position.Y.ToStringInvariant(),
+                        OnValueChanged = box =>
                         {
                             if (box.Text.TryParseFloatInvariant(out var v))
                             {
@@ -103,7 +103,7 @@ public partial class ComponentsSettings : FluXisScrollContainer
                                 box.NotifyError();
                         }
                     },
-                    new PointSettingsDropdown<Anchor>
+                    new EditorVariableDropdown<Anchor>
                     {
                         Text = "Anchor",
                         CurrentValue = comp.Settings.Anchor,
@@ -114,7 +114,7 @@ public partial class ComponentsSettings : FluXisScrollContainer
                             update(comp);
                         }
                     },
-                    new PointSettingsDropdown<Anchor>
+                    new EditorVariableDropdown<Anchor>
                     {
                         Text = "Origin",
                         CurrentValue = comp.Settings.Origin,
@@ -125,7 +125,7 @@ public partial class ComponentsSettings : FluXisScrollContainer
                             update(comp);
                         }
                     },
-                    new PointSettingsSlider<float>()
+                    new EditorVariableSlider<float>()
                     {
                         Text = "Scale",
                         CurrentValue = comp.Settings.Scale,
@@ -138,11 +138,11 @@ public partial class ComponentsSettings : FluXisScrollContainer
                             update(comp);
                         }
                     },
-                    new PointSettingsToggle
+                    new EditorVariableToggle
                     {
                         Text = "Anchor to Playfield",
                         CurrentValue = comp.Settings.AnchorToPlayfield,
-                        OnStateChanged = v =>
+                        OnValueChanged = v =>
                         {
                             comp.Settings.AnchorToPlayfield = v;
                             editor.UpdateAnchorToPlayfield(comp);

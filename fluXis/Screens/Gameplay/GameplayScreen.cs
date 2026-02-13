@@ -532,13 +532,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         if (SubmitScore && canBeUploaded)
             scoreSubmissionOverlay.FadeIn(Styling.TRANSITION_FADE);
 
+        var bestScore = scores.GetCurrentTop(RealmMap.ID);
+
+        var score = field.ScoreProcessor.ToScoreInfo();
+        score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
+
         Task.Run(() =>
         {
-            var bestScore = scores.GetCurrentTop(RealmMap.ID);
-
-            var score = field.ScoreProcessor.ToScoreInfo();
-            score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
-
             var screen = new SoloResults(RealmMap, score, api.User.Value ?? APIUser.Default);
             screen.OnRestart = OnRestart;
             if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();

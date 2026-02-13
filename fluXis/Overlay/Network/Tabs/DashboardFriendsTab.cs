@@ -76,11 +76,12 @@ public partial class DashboardFriendsTab : DashboardTab
         if (friends.Rooms.Count > 0)
             children.Add(new DashboardItemList<MultiplayerRoom>("Active Lobbies", friends.Rooms, r => new DrawableMultiplayerCard(r) { Width = 348 }));
 
-        children.AddRange(new Drawable[]
-        {
-            new DashboardItemList<APIUser>("Online", friends.Users.Where(x => x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 }),
-            new DashboardItemList<APIUser>("Offline", friends.Users.Where(x => !x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 })
-        });
+        var users = friends.Users.OrderByDescending(x => x.LastLogin).ToList();
+
+        children.AddRange([
+            new DashboardItemList<APIUser>("Online", users.OrderBy(x => x.Username).Where(x => x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 }),
+            new DashboardItemList<APIUser>("Offline", users.Where(x => !x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 })
+        ]);
 
         return new FillFlowContainer
         {

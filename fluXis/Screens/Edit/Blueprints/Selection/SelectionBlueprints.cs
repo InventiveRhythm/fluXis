@@ -51,14 +51,14 @@ public partial class SelectionBlueprints<T> : Container<SelectionBlueprint<T>>
     {
         base.Update();
 
-        var remove = Children.Where(x => !x.Visible).ToList();
+        var remove = Children.Where(x => !x.IsSelected && !x.Visible).ToList();
         remove.ForEach(x =>
         {
             base.Remove(x, false);
             back.Add(x);
         });
 
-        var add = back.Where(x => x.Visible).ToList();
+        var add = back.Where(x => x.IsSelected || x.Visible).ToList();
         add.ForEach(x =>
         {
             base.Add(x);

@@ -6,8 +6,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using osu.Framework.Bindables;
@@ -50,12 +50,12 @@ public partial class ShaderEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings()
     {
-        var startValToggle = new PointSettingsToggle
+        var startValToggle = new EditorVariableToggle
         {
             Text = "Use Start Value",
             TooltipText = "Enables whether start values should be used.",
             Bindable = new Bindable<bool>(shader.UseStartParams),
-            OnStateChanged = enabled =>
+            OnValueChanged = enabled =>
             {
                 shader.UseStartParams = enabled;
                 Map.Update(shader);
@@ -64,8 +64,8 @@ public partial class ShaderEntry : PointListEntry
 
         var settings = new List<Drawable>
         {
-            new PointSettingsLength<ShaderEvent>(Map, shader, BeatLength),
-            new PointSettingsDropdown<ShaderType>
+            new EditorVariableLength<ShaderEvent>(Map, shader, BeatLength),
+            new EditorVariableDropdown<ShaderType>
             {
                 Text = "Shader",
                 TooltipText = "The shader to apply to the playfield.",
@@ -97,7 +97,7 @@ public partial class ShaderEntry : PointListEntry
         {
             if (attribute.Single)
             {
-                settings.Add(new PointSettingsSlider<float>
+                settings.Add(new EditorVariableSlider<float>
                 {
                     Text = attribute.ParamName ?? "Strength",
                     TooltipText = attribute.Tooltip ?? string.Empty,
@@ -117,7 +117,7 @@ public partial class ShaderEntry : PointListEntry
             {
                 settings.AddRange(new Drawable[]
                 {
-                    new PointSettingsSlider<float>
+                    new EditorVariableSlider<float>
                     {
                         Enabled = startValToggle.Bindable,
                         Text = "Start " + (attribute.ParamName ?? "Strength"),
@@ -132,7 +132,7 @@ public partial class ShaderEntry : PointListEntry
                             Map.Update(shader);
                         }
                     },
-                    new PointSettingsSlider<float>
+                    new EditorVariableSlider<float>
                     {
                         Text = "End " + (attribute.ParamName ?? "Strength"),
                         TooltipText = attribute.Tooltip ?? string.Empty,
@@ -150,7 +150,7 @@ public partial class ShaderEntry : PointListEntry
             }
         }
 
-        settings.Add(new PointSettingsEasing<ShaderEvent>(Map, shader));
+        settings.Add(new EditorVariableEasing<ShaderEvent>(Map, shader));
         return base.CreateSettings().Concat(settings);
     }
 

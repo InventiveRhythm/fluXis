@@ -127,7 +127,8 @@ public partial class Progressbar : GameplayHUDComponent
                 catchup = new Circle
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Theme.Highlight
+                    Colour = Theme.Highlight,
+                    Alpha = 0
                 }
             };
         }
