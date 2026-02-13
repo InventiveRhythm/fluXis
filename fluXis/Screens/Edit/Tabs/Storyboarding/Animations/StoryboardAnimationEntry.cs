@@ -18,12 +18,15 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Animations;
 
-public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
+public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover, IHasCursorType
 {
+    public CursorType Cursor => CursorType.SizeAll;
+
     [Resolved]
     private EditorMap map { get; set; }
 
@@ -38,11 +41,16 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     public Action<StoryboardAnimation> RequestRemove { get; init; }
 
     public StoryboardAnimation Animation { get; }
+
     public readonly StoryboardAnimationRow Row;
 
     private readonly Circle length;
     private readonly OutlinedCircle outlineLength;
     private readonly FluXisSpriteIcon outlineDiamond;
+    private readonly AnchoredPopover popover;
+
+    private readonly Vector2 diamond_size = new(StoryboardAnimationsList.ROW_HEIGHT * 0.6f);
+    private Vector2 half_diamond_size => diamond_size / 2f;
 
     public StoryboardAnimationEntry(StoryboardAnimation animation, StoryboardAnimationRow row, Colour4 color)
     {
@@ -76,20 +84,29 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             outlineDiamond = new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
-                Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT * 0.75f),
+                Size = diamond_size * 1.25f,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 Colour = color.Lighten(1.5f),
-                Alpha = 0
+                Alpha = 0,
+                X = half_diamond_size.X
             },
             new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
-                Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT * 0.6f),
+                Size = diamond_size,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
-                Colour = color
+                Colour = color,
+                X = half_diamond_size.X
             },
+            popover = new AnchoredPopover(this)
+            {
+                Size = diamond_size,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.Centre,
+                X = half_diamond_size.X,
+            }
         };
     }
 
@@ -107,7 +124,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     {
         base.Update();
 
-        X = Math.Clamp(timeline.PositionAtTime(Animation.StartTime, Parent!.DrawWidth), -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
+        X = Math.Clamp(timeline.PositionAtTime(Animation.StartTime, Parent!.DrawWidth) - half_diamond_size.X, -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
 
         var endX = timeline.PositionAtTime(Animation.EndTime, Parent!.DrawWidth);
         var clamped = Math.Max(endX - X, 0);
@@ -118,7 +135,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
 
     protected override bool OnClick(ClickEvent e)
     {
-        this.ShowPopover();
+        popover.ShowPopover();
         IsSelected.Value = true;
         return true;
     }
@@ -192,5 +209,19 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private partial class AnchoredPopover : Container, IHasPopover
+    {
+        private readonly IHasPopover parent;
+
+        public AnchoredPopover(IHasPopover parent)
+        {
+            this.parent = parent;
+            Alpha = 0;
+            AlwaysPresent = true;
+        }
+
+        public Popover GetPopover() => parent.GetPopover();
     }
 }
