@@ -23,6 +23,7 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 {
     [Resolved]
     private StoryboardTimeline timeline { get; set; }
+    private TimelineBlueprintContainer blueprints => timeline.Blueprints;
 
     [Resolved]
     private EditorSnapProvider snaps { get; set; }
@@ -90,12 +91,18 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 
     private void clone()
     {
-        timeline.CloneElement(Object);
+        if (blueprints.SelectionHandler.SelectedObjects.Count > 0)
+            blueprints.CloneSelection();
+        else
+            timeline.CloneElement(Object);
     }
 
     private void delete()
     {
-        storyboard.Remove(Object);
+        if (blueprints.SelectionHandler.SelectedObjects.Count > 0)
+            blueprints.DeleteSelection();
+        else
+            storyboard.Remove(Object);
     }
 
     private partial class BlueprintHandle : Drawable, IHasCursorType
