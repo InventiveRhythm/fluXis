@@ -41,7 +41,8 @@ public partial class AppearanceSkinSection : SettingsSubSection
     {
         buttonsEnabled = new BindableBool(true);
 
-        RightSide.Add(new RefreshButton { Action = skinManager.ReloadSkinList });
+        RightSide.Add(new TopRowButton(FontAwesome6.Brands.Steam, "Open Workshop") { Action = () => game?.OpenLink($"https://steamcommunity.com/app/{steam?.AppID}/workshop/", true) });
+        RightSide.Add(new TopRowButton(FontAwesome6.Solid.ArrowsRotate, "Refresh") { Action = skinManager.ReloadSkinList });
 
         AddRange(new Drawable[]
         {
@@ -122,7 +123,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
         skinFlow.ChildrenEnumerable = skinManager.AvailableSkins.Select(x => new SkinIcon(x));
     }
 
-    private partial class RefreshButton : ClickableContainer
+    private partial class TopRowButton : ClickableContainer
     {
         [Resolved]
         private UISamples samples { get; set; }
@@ -130,7 +131,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
         private HoverLayer hover { get; }
         private FlashLayer flash { get; }
 
-        public RefreshButton()
+        public TopRowButton(IconUsage icon, string text)
         {
             AutoSizeAxes = Axes.X;
             Height = 32;
@@ -152,14 +153,14 @@ public partial class AppearanceSkinSection : SettingsSubSection
                     {
                         new FluXisSpriteIcon
                         {
-                            Icon = FontAwesome.Solid.Sync,
+                            Icon = icon,
                             Size = new Vector2(14),
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft
                         },
                         new FluXisSpriteText
                         {
-                            Text = "Refresh",
+                            Text = text,
                             WebFontSize = 14,
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft
