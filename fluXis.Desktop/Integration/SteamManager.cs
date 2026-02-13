@@ -264,5 +264,6 @@ public partial class SteamManager : Component, ISteamManager
         ticketCb?.Dispose();
         createItemCb?.Dispose();
         submitItemCb?.Dispose();
+        keyboardClose?.Dispose();
     }
 }

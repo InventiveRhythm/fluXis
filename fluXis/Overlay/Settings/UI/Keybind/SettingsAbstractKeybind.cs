@@ -23,6 +23,7 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
     where T : Enum
 {
     public override bool AcceptsFocus => true;
+    public override bool RequestsFocus => index >= 0;
 
     [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
@@ -176,6 +177,15 @@ public abstract partial class SettingsAbstractKeybind<T> : SettingsItem
         if (index == -1 || !HasFocus) return false;
 
         updateBinding(KeyCombination.FromInputState(e.CurrentState), KeyCombination.FromMidiKey(e.Key));
+        return true;
+    }
+
+    protected override bool ActivateFocus()
+    {
+        if (!Enabled)
+            return true;
+
+        TriggerClick();
         return true;
     }
 
