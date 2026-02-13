@@ -13,7 +13,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
 public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 {
-    public override Vector2 ScreenSpaceSelectionPoint => head.ScreenSpaceDrawQuad.Centre;
+    // public override Vector2 ScreenSpaceSelectionPoint => head.ScreenSpaceDrawQuad.Centre;
 
     private DraggableSelectionPiece head;
     private DraggableSelectionPiece end;
