@@ -383,7 +383,6 @@ public abstract partial class PointsList : Container
 
     public void ShowPoint(ITimedObject obj)
     {
-        RequestClose?.Invoke();
         var entry = flow.FirstOrDefault(e => e.Object == obj);
         entry?.OpenSettings();
     }
