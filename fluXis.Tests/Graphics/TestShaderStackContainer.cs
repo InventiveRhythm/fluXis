@@ -1,13 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Shaders;
-using fluXis.Graphics.Shaders.Chromatic;
-using fluXis.Graphics.Shaders.Greyscale;
-using fluXis.Graphics.Shaders.Invert;
-using fluXis.Graphics.Shaders.Mosaic;
-using fluXis.Graphics.Shaders.Noise;
-using fluXis.Graphics.Shaders.Retro;
-using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Replays;
@@ -39,7 +32,7 @@ public partial class TestShaderStackContainer : FluXisTestScene
 
         var stack = new ShaderStackContainer { RelativeSizeAxes = Axes.Both };
 
-        var chroma = new ChromaticContainer { RelativeSizeAxes = Axes.Both };
+        /*var chroma = new ChromaticContainer { RelativeSizeAxes = Axes.Both };
         stack.AddShader(chroma);
         AddSliderStep("Chroma Strength", 0, 20, 0, strength => chroma.Strength = strength);
 
@@ -65,7 +58,7 @@ public partial class TestShaderStackContainer : FluXisTestScene
 
         var retro = new RetroContainer { RelativeSizeAxes = Axes.Both };
         stack.AddShader(retro);
-        AddSliderStep("Retro Strength", 0, 1f, 0f, strength => retro.Strength = strength);
+        AddSliderStep("Retro Strength", 0, 1f, 0f, strength => retro.Strength = strength);*/
 
         stack.AddContent(new Drawable[]
         {
