@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using fluXis.Map;
 using fluXis.Mods;
+using fluXis.Online.API.Models.Maps;
+using fluXis.Online.API.Requests.MapSets;
+using fluXis.Online.Fluxel;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Audio.Track;
@@ -87,6 +90,55 @@ public class RealmMap : RealmObject
     {
         Rating = (float)rating;
         RatingChanged?.Invoke();
+    }
+
+    public void UpdateLocalInfo(FluXisRealm realm, IAPIClient api)
+    {
+        var req = new MapSetRequest(OnlineID);
+        api.PerformRequest(req);
+
+        UpdateLocalInfo(realm, this, req.Response.Data, req.Response.Data.Maps.FirstOrDefault(m => m.ID == OnlineID));
+    }
+
+    public static void UpdateLocalInfo(FluXisRealm realm, RealmMap map, APIMapSet onlineSet, APIMap onlineMap)
+    {
+        try
+        {
+            realm?.RunWrite(r =>
+            {
+                var m = r.Find<RealmMap>(map.ID);
+
+                if (m == null)
+                    return;
+
+                var oldHash = map.OnlineHash;
+                m.OnlineHash = map.OnlineHash = onlineMap.SHA256Hash;
+
+                if (map.OnlineHash != oldHash)
+                    map.OnlineHashUpdated?.Invoke();
+
+                if (Math.Abs(m.Rating - onlineMap.Rating) > .001f)
+                {
+                    m.UpdateRating(onlineMap.Rating);
+                    map.UpdateRating(onlineMap.Rating);
+                }
+
+                m.LastOnlineUpdate = map.LastOnlineUpdate = TimeUtils.GetFromSeconds(onlineSet.LastUpdated);
+
+                if (onlineSet.DateRanked != null)
+                    m.MapSet.DateRanked = map.MapSet.DateRanked = TimeUtils.GetFromSeconds(onlineSet.DateRanked.Value);
+
+                if (m.StatusInt != onlineMap.Status)
+                {
+                    m.MapSet.SetStatus(onlineMap.Status);
+                    map.MapSet.SetStatus(onlineMap.Status);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Failed to update local map info!");
+        }
     }
 
     public void ResetOnlineInfo()
