@@ -505,6 +505,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         // too lazy to properly do this
         settings.InvertedScroll.Value = keybinds.Keymap.InvertScroll;
+        settings.LaneSwitchInteraction.Value = keybinds.Keymap.LaneSwitchInteraction;
     }
 
     protected override void Dispose(bool isDisposing)
