@@ -13,6 +13,7 @@ public class SettingsGraphicsStrings : LocalizationCategory
     public TranslatableString Layout => Get("layout-title", "Layout");
 
     public TranslatableString WindowMode => Get("window-mode", "Window Mode");
+    public TranslatableString FullscreenResolution => Get("fullscreen-resolution", "Fullscreen Resolution");
 
     #endregion
 
