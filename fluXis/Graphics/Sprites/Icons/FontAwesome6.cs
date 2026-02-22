@@ -92,6 +92,7 @@ public class FontAwesome6
         public static IconUsage Minus => GetSolid(0xf068);
         public static IconUsage Music => GetSolid(0xf001);
         public static IconUsage Newspaper => GetSolid(0xf1ea);
+        public static IconUsage NoteSticky => GetSolid(0xf249);
         public static IconUsage ObjectGroup => GetSolid(0xf247);
         public static IconUsage PaintBrush => GetSolid(0xf1fc);
         public static IconUsage Palette => GetSolid(0xf53f);
