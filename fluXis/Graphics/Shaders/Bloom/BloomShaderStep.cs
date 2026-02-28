@@ -14,7 +14,7 @@ public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
     protected override string FragmentShader => "Blur";
     public override ShaderType Type => ShaderType.Bloom;
 
-    public override bool AutoBindBuffer => false;
+    public override int Passes => 1;
 
     private int kernelRadius;
     private float sigma;
@@ -28,32 +28,37 @@ public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
         Direction = new Vector2(MathF.Cos(radians), MathF.Sin(radians))
     };
 
+    private IFrameBuffer buffer;
+
     public override void DrawBuffer(IRenderer renderer, IFrameBuffer current)
     {
         sigma = 20 * Strength;
         kernelRadius = Blur.KernelSize(sigma);
-        DrawColor = Colour4.Blue.Opacity(Strength);
+        DrawColor = Colour4.White;
 
-        renderer.PushScissorState(false);
+        buffer ??= renderer.CreateFrameBuffer();
+        buffer.Size = current.Size;
 
-        using (BindFrameBuffer(TargetBuffer))
-            base.DrawBuffer(renderer, current);
+        TargetBuffer.Unbind();
+        buffer.Bind();
 
-        renderer.SetBlend(BlendingParameters.Additive);
+        radians = 0;
+        UpdateParameters(buffer);
+        DrawFrameBuffer(renderer, current);
 
-        radians = float.DegreesToRadians(0);
-        UpdateParameters(current);
+        radians = 90;
+        UpdateParameters(buffer);
+        // base.DrawBuffer(renderer, buffer);
 
-        using (BindFrameBuffer(TargetBuffer))
-            base.DrawBuffer(renderer, current);
+        buffer.Unbind();
+        TargetBuffer.Bind();
 
-        radians = float.DegreesToRadians(90);
-        UpdateParameters(current);
+        // DrawFrameBuffer(renderer, current);
+        DrawFrameBuffer(renderer, buffer);
 
-        using (BindFrameBuffer(TargetBuffer))
-            base.DrawBuffer(renderer, current);
-
-        renderer.PopScissorState();
+        // renderer.SetBlend(BlendingParameters.Additive);
+        // DrawColor = Colour4.White.Opacity(Strength);
+        // DrawFrameBuffer(renderer, buffer);
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -29,7 +29,7 @@ public partial class ShaderStackContainer : CompositeDrawable, IBufferedDrawable
     public IReadOnlyList<ShaderType> ShaderTypes => shaders.DistinctBy(x => x.Type).Select(x => x.Type).ToList();
 
     public IShader TextureShader { get; private set; }
-    public BufferedDrawNodeSharedData SharedData { get; } = new(2, null, false, true);
+    public BufferedDrawNodeSharedData SharedData { get; } = new(3, null, false, true);
 
     public Color4 BackgroundColour => new(0, 0, 0, 0);
     public DrawColourInfo? FrameBufferDrawColour => base.DrawColourInfo;
@@ -174,22 +174,21 @@ public partial class ShaderStackContainer : CompositeDrawable, IBufferedDrawable
                 if (!shader.ShouldRender)
                     continue;
 
-                IFrameBuffer current = SharedData.CurrentEffectBuffer;
-                IFrameBuffer target = SharedData.GetNextEffectBuffer();
-                shader.TargetBuffer = target;
-
-                shader.UpdateParameters(current);
-                renderer.SetBlend(BlendingParameters.None);
-
-                if (shader.AutoBindBuffer)
+                for (int i = 0; i < shader.Passes; i++)
                 {
+                    IFrameBuffer current = SharedData.CurrentEffectBuffer;
+                    IFrameBuffer target = SharedData.GetNextEffectBuffer();
+                    shader.TargetBuffer = target;
+                    shader.CurrentPass = i + 1;
+
+                    shader.UpdateParameters(current);
+                    renderer.SetBlend(BlendingParameters.None);
+
                     using (BindFrameBuffer(target))
                     {
                         shader.DrawBuffer(renderer, current);
                     }
                 }
-                else
-                    shader.DrawBuffer(renderer, current);
             }
         }
 

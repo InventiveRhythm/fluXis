@@ -1,13 +1,11 @@
 ﻿using System;
 using fluXis.Map.Structures.Events;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Timing;
-using osuTK;
 
 namespace fluXis.Graphics.Shaders;
 
@@ -26,12 +24,13 @@ public abstract class ShaderStep : IHasStrength
     public float Strength3 { get; set; }
 
     public virtual bool ShouldRender => Strength > 0 || Strength2 > 0 || Strength3 > 0;
-    public virtual bool AutoBindBuffer => true;
+    public virtual int Passes => 1;
 
     protected SRGBColour DrawColor { get; set; } = Colour4.White;
 
     public FrameTimeInfo Time { get; set; }
     public IFrameBuffer TargetBuffer { get; set; }
+    public int CurrentPass { get; set; }
 
     protected ShaderStep()
     {
@@ -48,13 +47,6 @@ public abstract class ShaderStep : IHasStrength
 
     public virtual void DrawBuffer(IRenderer renderer, IFrameBuffer current)
     {
-    }
-
-    protected ValueInvokeOnDisposal<IFrameBuffer> BindFrameBuffer(IFrameBuffer frameBuffer)
-    {
-        frameBuffer.Size = Vector2.One;
-        frameBuffer.Bind();
-        return new ValueInvokeOnDisposal<IFrameBuffer>(frameBuffer, static b => b.Unbind());
     }
 }
 
