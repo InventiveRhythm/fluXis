@@ -170,7 +170,7 @@ public class FluXisImport : MapImporter
 
         foreach (var entry in archive.Entries)
         {
-            var filePath = fullPath + entry.FullName;
+            var filePath = fullPath + entry.FullName.Replace('\\', Path.DirectorySeparatorChar);
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
             entry.ExtractToFile(filePath, true);
         }
