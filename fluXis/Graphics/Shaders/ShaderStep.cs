@@ -37,7 +37,7 @@ public abstract class ShaderStep : IHasStrength
         TransformHandler = new ShaderTransformHandler(this);
     }
 
-    public void LoadShader(ShaderManager shaders)
+    public virtual void LoadShader(ShaderManager shaders)
     {
         Shader = shaders.Load(VertexShader, FragmentShader);
     }
@@ -45,7 +45,7 @@ public abstract class ShaderStep : IHasStrength
     public virtual void EnsureParameters(IRenderer renderer) { }
     public abstract void UpdateParameters(IFrameBuffer current);
 
-    public virtual void DrawBuffer(IRenderer renderer, IFrameBuffer current)
+    public virtual void DrawBuffer(IRenderer renderer, IFrameBuffer current, IFrameBuffer target)
     {
     }
 }
@@ -57,7 +57,7 @@ public abstract class ShaderStep<T> : ShaderStep
 
     public override void EnsureParameters(IRenderer renderer) => ParameterBuffer ??= renderer.CreateUniformBuffer<T>();
 
-    public override void DrawBuffer(IRenderer renderer, IFrameBuffer current)
+    public override void DrawBuffer(IRenderer renderer, IFrameBuffer current, IFrameBuffer target)
     {
         var name = typeof(T).Name;
         Shader.BindUniformBlock($"m_{name}", ParameterBuffer);
