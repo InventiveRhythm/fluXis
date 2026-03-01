@@ -1,1 +1,12 @@
-{}
+{
+    "title": "그래픽",
+    "layout-title": "레이아웃",
+    "window-mode": "화면 모드",
+    "rendering-title": "렌더링",
+    "renderer": "렌더러",
+    "renderer-description": "게임을 재시작해야 적용됩니다.",
+    "frame-limiter": "프레임 제한",
+    "threading-mode": "스레드 모드",
+    "show-fps": "FPS 표시",
+    "show-fps-description": "현재 DrawsPerSecond 값이랑 UpdatesPerSecond 값을 하단 오른쪽에 표시합니다."
+}

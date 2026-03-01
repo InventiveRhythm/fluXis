@@ -1,1 +1,12 @@
-{}
+{
+    "general": "일반",
+    "back": "뒤로",
+    "play": "플레이",
+    "edit": "편집",
+    "select": "선택",
+    "delete": "삭제",
+    "export": "내보내기",
+    "refresh": "새로고침",
+    "view-online": "온라인에서 보기",
+    "login-to-use": "로그인하여 이 기능을 사용하세요."
+}
