@@ -108,14 +108,15 @@ public class ScoreProcessor : JudgementDependant, IDisposable
     {
         float acc = 0;
         float pr = 0;
+        float rated = 0;
 
         JudgementProcessor.RunLocked(() =>
         {
             int total = totalNotes;
-            float rated = ratedNotes;
+            rated = ratedNotes;
 
             acc = total == 0 ? 100 : rated / total * 100;
-            pr = (float)CalculatePerformance(mapRating, Accuracy.Value, Flawless, Perfect, Great, Alright, Okay, Miss, Mods);
+            pr = (float)CalculatePerformance(mapRating, acc, Flawless, Perfect, Great, Alright, Okay, Miss, Mods);
         });
 
         var rank = acc switch
@@ -140,7 +141,7 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         });
 
         var maxCombo = Math.Max(nowCombo, MaxCombo);
-        var score = getScore(acc / 100, maxCombo);
+        var score = getScore(rated / MapInfo.MaxCombo, maxCombo);
 
         if (asyncCalculations && !instant)
             schedule.Invoke(set);
