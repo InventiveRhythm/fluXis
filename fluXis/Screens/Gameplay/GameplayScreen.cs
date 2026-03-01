@@ -539,7 +539,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Task.Run(() =>
         {
-            var screen = new SoloResults(RealmMap, score, api.User.Value ?? APIUser.Default);
+            var screen = new SoloResults(RealmMap, score, PlayfieldManager.Players[0].ScoreProcessor.Player ?? APIUser.Default);
             screen.OnRestart = OnRestart;
             if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 

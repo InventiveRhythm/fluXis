@@ -108,7 +108,7 @@ public partial class ResultsPlayer : CompositeDrawable
 
     protected override bool OnClick(ClickEvent e)
     {
-        overlay?.ShowUser(user.ID);
+        if (user.ID > 0) overlay?.ShowUser(user.ID);
         return true;
     }
 }
