@@ -1,5 +1,8 @@
 {
   "search-placeholder": "Click to Search...",
+  "collections": "collections",
+  "collection-none": "collections",
+  "collection-favorite": "collections",
   "sort-by": "sort by",
   "sort-by-title": "Title",
   "sort-by-artist": "Artist",
