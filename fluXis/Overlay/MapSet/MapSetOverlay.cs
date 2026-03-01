@@ -203,6 +203,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     {
                                         // new MapSetInfoTab(),
                                         new MapSetScoreTab(bindableMap),
+                                        new MapSetModdingTab(set),
                                         // new MapSetCommentsTab()
                                     }
                                 },
