@@ -49,8 +49,12 @@ public partial class MultiGameplayScreen : GameplayScreen
         player.JudgementProcessor.ResultAdded += sendScore;
 
         client.OnScore += onScoreUpdate;
+        client.OnVoteSkipUpdate += onVoteSkipUpdate;
         client.OnResultsReady += onOnResultsReady;
         client.OnDisconnect += onDisconnect;
+
+        if (client.Room != null)
+            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{client.Room.Participants.Count})");
     }
 
     protected override void Dispose(bool isDisposing)
@@ -60,6 +64,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         player.JudgementProcessor.ResultAdded -= sendScore;
 
         client.OnScore -= onScoreUpdate;
+        client.OnVoteSkipUpdate -= onVoteSkipUpdate;
         client.OnResultsReady -= onOnResultsReady;
         client.OnDisconnect -= onDisconnect;
     }
@@ -69,7 +74,25 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.Finish(player.ScoreProcessor.ToScoreInfo());
     }
 
+    protected override bool RequestSkip()
+    {
+        var doSkip = base.RequestSkip();
+        client.VoteSkip(!doSkip);
+        return doSkip;
+    }
+
     private void sendScore(HitResult _) => client.UpdateScore(player.ScoreProcessor.Score);
+
+    private void onVoteSkipUpdate(int votes, bool canSkip)
+    {
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            if (client.Room != null)
+                SkipOverlay.SkipText.Text = $"Skip ({votes}/{client.Room?.Participants.Count})";
+
+            if (canSkip) base.SkipIntro();
+        });
+    }
 
     private void onScoreUpdate(long user, int score)
     {

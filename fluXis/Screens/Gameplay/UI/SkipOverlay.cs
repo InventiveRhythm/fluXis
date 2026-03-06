@@ -20,6 +20,8 @@ public partial class SkipOverlay : Container
     private FillFlowContainer content;
     private CircularContainer bar;
 
+    public FluXisSpriteText SkipText;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -38,7 +40,7 @@ public partial class SkipOverlay : Container
             Alpha = 0,
             Children = new Drawable[]
             {
-                new FluXisSpriteText
+                SkipText = new FluXisSpriteText
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,

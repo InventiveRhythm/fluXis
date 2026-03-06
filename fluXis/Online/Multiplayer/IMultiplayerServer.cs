@@ -22,5 +22,6 @@ public interface IMultiplayerServer
     Task<bool> UpdateMap(long map, string hash, List<string> mods);
 
     Task UpdateScore(int score);
+    Task VoteSkip(bool unskip = false);
     Task FinishPlay(ScoreInfo score);
 }

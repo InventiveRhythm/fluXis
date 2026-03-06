@@ -55,6 +55,12 @@ public partial class GameplayGeneralSection : SettingsSubSection
             }),
             new SettingsToggle
             {
+                Label = strings.RememberSessionSkip,
+                Description = strings.RememberSessionSkipDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.SnapColoring)
+            },
+            new SettingsToggle
+            {
                 Label = strings.SnapColoring,
                 Description = strings.SnapColoringDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.SnapColoring)

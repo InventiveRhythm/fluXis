@@ -148,6 +148,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     private bool starting = true;
     public bool Restarting { get; private set; }
+    public bool Skipped { get; private set; }
 
     public event Action OnExit;
 
@@ -179,6 +180,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public RulesetContainer RulesetContainer { get; private set; }
     public PlayfieldManager PlayfieldManager { get; private set; }
+
+    public SkipOverlay SkipOverlay;
 
     private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
@@ -344,7 +347,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     }),
                     CreateTextOverlay(),
                     new DangerHealthOverlay(),
-                    new SkipOverlay(),
+                    SkipOverlay = new SkipOverlay(),
                     failMenu = new FailMenu(),
                     fcOverlay = new FullComboOverlay(),
                     quickActionOverlay = new QuickActionOverlay(),
@@ -595,6 +598,22 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         return null;
     }
 
+    protected virtual bool RequestSkip()
+    {
+        if (Map.StartTime - GameplayClock.CurrentTime < 2000 || Skipped)
+        {
+            Skipped = false;
+            return false;
+        }
+        else
+        {
+            Skipped = true;
+            return true;
+        }
+    }
+
+    protected virtual bool SkipIntro() => GameplayClock.Seek(Map.StartTime - 2000);
+
     public virtual void RestartMap()
     {
         if (Restarting || !AllowRestart) return;
@@ -602,6 +621,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Restarting = true;
         Samples.Restart();
         OnRestart?.Invoke();
+        if (Skipped && Config.Get<bool>(FluXisSetting.RememberSkip)) Schedule(() => RequestSkip());
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -708,9 +728,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 return true;
 
             case FluXisGlobalKeybind.Skip:
-                if (Map.StartTime - GameplayClock.CurrentTime < 2000) return false;
+                RequestSkip();
 
-                GameplayClock.Seek(Map.StartTime - 2000);
+                SkipIntro();
                 return true;
         }
 
