@@ -5,6 +5,7 @@ using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Mods;
 using fluXis.Online.Activity;
+using fluXis.Online.API.Models.Multi;
 using fluXis.Online.Multiplayer;
 using fluXis.Scoring;
 using fluXis.Scoring.Structs;
@@ -54,7 +55,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.OnDisconnect += onDisconnect;
 
         if (client.Room != null)
-            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{client.Room.Participants.Count})");
+            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{client.Room.Participants.Count(p => p.State == MultiplayerUserState.Playing)})");
     }
 
     protected override void Dispose(bool isDisposing)
@@ -88,7 +89,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         Scheduler.ScheduleIfNeeded(() =>
         {
             if (client.Room != null)
-                SkipOverlay.SkipText.Text = $"Skip ({votes}/{client.Room?.Participants.Count})";
+                SkipOverlay.SkipText.Text = $"Skip ({votes}/{client.Room?.Participants.Count(p => p.State == MultiplayerUserState.Playing)})";
 
             if (canSkip) base.SkipIntro();
         });
