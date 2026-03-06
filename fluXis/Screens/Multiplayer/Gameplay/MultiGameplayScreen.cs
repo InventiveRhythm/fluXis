@@ -26,6 +26,8 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     private MultiplayerClient client { get; }
 
+    private int playingParticipants => client.Room?.Participants.Count(p => p.State == MultiplayerUserState.Playing) ?? 1;
+
     public MultiGameplayScreen(MultiplayerClient client, RealmMap realmMap, List<IMod> mods)
         : base(realmMap, mods)
     {
@@ -55,7 +57,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.OnDisconnect += onDisconnect;
 
         if (client.Room != null)
-            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{client.Room.Participants.Count(p => p.State == MultiplayerUserState.Playing)})");
+            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{(int)(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})");
     }
 
     protected override void Dispose(bool isDisposing)
@@ -89,7 +91,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         Scheduler.ScheduleIfNeeded(() =>
         {
             if (client.Room != null)
-                SkipOverlay.SkipText.Text = $"Skip ({votes}/{client.Room?.Participants.Count(p => p.State == MultiplayerUserState.Playing)})";
+                SkipOverlay.SkipText.Text = $"Skip ({votes}/{(int)(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})";
 
             if (canSkip) base.SkipIntro();
         });
