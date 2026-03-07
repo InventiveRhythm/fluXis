@@ -26,7 +26,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public event Action<long?> CountdownUpdated;
     public event Action OnStart;
     public event Action<long, int> OnScore;
-    public event Action<int, bool> OnVoteSkipUpdate;
+    public event Action<long[], bool> OnVoteSkipUpdate;
     public event Action<List<ScoreInfo>> OnResultsReady;
 
     public abstract bool Connected { get; }
@@ -151,9 +151,9 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    public Task VoteSkipUpdated(int votes, bool canSkip)
+    public Task VoteSkipUpdated(long[] playersVoted, bool canSkip)
     {
-        OnVoteSkipUpdate?.Invoke(votes, canSkip);
+        OnVoteSkipUpdate?.Invoke(playersVoted, canSkip);
         return Task.CompletedTask;
     }
 

@@ -44,12 +44,14 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
         Padding = new MarginPadding(20);
         AlwaysPresent = true;
 
-        InternalChildrenEnumerable = scores.Take(10).Select(s => new LeaderboardEntry(this, s)).OrderDescending();
+        InternalChildrenEnumerable = scores.Take(10).Select(CreateEntry).OrderDescending();
 
         playfields.Players.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
     }
 
     public void PerformSort() => SortInternal();
+
+    protected virtual LeaderboardEntry CreateEntry(ScoreInfo score) => new LeaderboardEntry(this, score);
 
     protected override void Update()
     {

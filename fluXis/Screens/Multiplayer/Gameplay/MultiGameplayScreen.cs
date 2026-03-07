@@ -10,7 +10,9 @@ using fluXis.Online.Multiplayer;
 using fluXis.Scoring;
 using fluXis.Scoring.Structs;
 using fluXis.Screens.Gameplay;
+using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Screens.Multiplayer.Gameplay.HUD;
 using fluXis.Utils.Extensions;
 using osu.Framework.Screens;
 
@@ -26,6 +28,8 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     private MultiplayerClient client { get; }
 
+    protected new MultiGameplayHUD GameplayHUD;
+
     private int playingParticipants => client.Room?.Participants.Count(p => p.State == MultiplayerUserState.Playing) ?? 1;
 
     public MultiGameplayScreen(MultiplayerClient client, RealmMap realmMap, List<IMod> mods)
@@ -33,6 +37,8 @@ public partial class MultiGameplayScreen : GameplayScreen
     {
         this.client = client;
     }
+
+    protected override GameplayHUD CreateGameplayHUD() => GameplayHUD = new MultiGameplayHUD(RulesetContainer, room: client?.Room);
 
     protected override UserActivity GetPlayingActivity()
     {
@@ -55,6 +61,8 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.OnVoteSkipUpdate += onVoteSkipUpdate;
         client.OnResultsReady += onOnResultsReady;
         client.OnDisconnect += onDisconnect;
+
+        GameplayHUD.Leaderboard.SkipVisiblePredicate = () => SkipOverlay.SkipVisiblePredicate();
 
         if (client.Room != null)
             ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{(int)(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})");
@@ -86,13 +94,14 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     private void sendScore(HitResult _) => client.UpdateScore(player.ScoreProcessor.Score);
 
-    private void onVoteSkipUpdate(int votes, bool canSkip)
+    private void onVoteSkipUpdate(long[] playersVoted, bool canSkip)
     {
         Scheduler.ScheduleIfNeeded(() =>
         {
             if (client.Room != null)
-                SkipOverlay.SkipText.Text = $"Skip ({votes}/{(int)(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})";
+                SkipOverlay.SkipText.Text = $"Skip ({playersVoted.Length}/{(int)(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})";
 
+            GameplayHUD.Leaderboard.RequestingSkip(playersVoted);
             if (canSkip) base.SkipIntro();
         });
     }

@@ -178,6 +178,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private Container hud { get; set; }
     private ScoreSubmissionOverlay scoreSubmissionOverlay;
 
+    protected GameplayHUD GameplayHUD;
+
     public RulesetContainer RulesetContainer { get; private set; }
     public PlayfieldManager PlayfieldManager { get; private set; }
 
@@ -329,7 +331,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Alpha = DisplayHUD ? 1 : 0,
-                                        Child = new GameplayHUD(RulesetContainer)
+                                        Child = GameplayHUD = CreateGameplayHUD()
                                     },
                                     new DrawSizePreservingFillContainer
                                     {
@@ -453,6 +455,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         AllowOverlays.Value = IsPaused.Value;
     }
 
+    protected virtual GameplayHUD CreateGameplayHUD() => new GameplayHUD(RulesetContainer);
     protected virtual RulesetContainer CreateRuleset() => new(Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo(Mods);
     protected virtual Drawable CreateTextOverlay() => Empty();
@@ -600,7 +603,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     protected virtual bool RequestSkip()
     {
-        if (Map.StartTime - GameplayClock.CurrentTime < 2000 || Skipped)
+        if (!SkipOverlay.SkipVisiblePredicate() || Skipped)
         {
             Skipped = false;
             return false;

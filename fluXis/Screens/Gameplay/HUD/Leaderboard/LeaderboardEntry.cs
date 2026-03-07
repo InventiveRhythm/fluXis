@@ -32,6 +32,8 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
 
     private FluXisSpriteText scoreText { get; set; }
 
+    public FluXisSpriteText PrimaryText { get; protected set; }
+
     private float lastScore;
     private double lastPr;
 
@@ -78,7 +80,7 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
                         Spacing = new Vector2(-2),
                         Children = new Drawable[]
                         {
-                            new FluXisSpriteText
+                            PrimaryText = new FluXisSpriteText
                             {
                                 WebFontSize = 20,
                                 Text = Player.Username
@@ -94,8 +96,11 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
             }
         };
 
+        AfterInitialLoad();
         UpdateValues();
     }
+
+    protected virtual void AfterInitialLoad() { }
 
     protected override void LoadComplete()
     {
@@ -119,13 +124,16 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
             Y = (float)Interpolation.Lerp(TargetY, Y, Math.Exp(-0.01 * Time.Elapsed));
 
         if (lastScore != TotalScore || lastPr != PerformanceRating)
+        {
             UpdateValues();
+            leaderboard.PerformSort();
+        }
 
         lastScore = TotalScore;
         lastPr = PerformanceRating;
     }
 
-    protected void UpdateValues()
+    protected virtual void UpdateValues()
     {
         switch (leaderboard.Mode.Value)
         {
@@ -137,8 +145,6 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
                 scoreText.Text = $"{PerformanceRating.ToStringInvariant("00.00")}pr";
                 break;
         }
-
-        leaderboard.PerformSort();
     }
 
     public int CompareTo(LeaderboardEntry other)
