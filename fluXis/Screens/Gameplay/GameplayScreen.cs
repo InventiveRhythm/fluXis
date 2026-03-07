@@ -608,11 +608,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             Skipped = false;
             return false;
         }
-        else
-        {
-            Skipped = true;
-            return true;
-        }
+
+        Skipped = true;
+        return true;
     }
 
     protected virtual bool SkipIntro() => GameplayClock.Seek(Map.StartTime - 2000);
@@ -731,9 +729,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 return true;
 
             case FluXisGlobalKeybind.Skip:
-                RequestSkip();
+                if (RequestSkip()) SkipIntro();
 
-                SkipIntro();
                 return true;
         }
 

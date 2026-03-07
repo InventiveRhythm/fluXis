@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio.Transforms;
@@ -62,10 +63,8 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.OnResultsReady += onOnResultsReady;
         client.OnDisconnect += onDisconnect;
 
-        GameplayHUD.Leaderboard.SkipVisiblePredicate = () => SkipOverlay.SkipVisiblePredicate();
-
         if (client.Room != null)
-            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{(int)(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})");
+            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{(int)Math.Ceiling(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})");
     }
 
     protected override void Dispose(bool isDisposing)
@@ -89,7 +88,9 @@ public partial class MultiGameplayScreen : GameplayScreen
     {
         var doSkip = base.RequestSkip();
         client.VoteSkip(!doSkip);
-        return doSkip;
+
+        // to prevent skipping by other means
+        return false;
     }
 
     private void sendScore(HitResult _) => client.UpdateScore(player.ScoreProcessor.Score);
@@ -99,10 +100,11 @@ public partial class MultiGameplayScreen : GameplayScreen
         Scheduler.ScheduleIfNeeded(() =>
         {
             if (client.Room != null)
-                SkipOverlay.SkipText.Text = $"Skip ({playersVoted.Length}/{(int)(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})";
+                SkipOverlay.SkipText.Text = $"Skip ({playersVoted.Length}/{(int)Math.Ceiling(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})";
 
             GameplayHUD.Leaderboard.RequestingSkip(playersVoted);
-            if (canSkip) base.SkipIntro();
+
+            if (canSkip) SkipIntro();
         });
     }
 

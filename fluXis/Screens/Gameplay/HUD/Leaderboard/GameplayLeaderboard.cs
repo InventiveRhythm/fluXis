@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Scoring;
+using fluXis.Scoring.Processing;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -46,12 +47,13 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 
         InternalChildrenEnumerable = scores.Take(10).Select(CreateEntry).OrderDescending();
 
-        playfields.Players.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
+        playfields.Players.ForEach(p => AddInternal(CreateSelfEntry(p.ScoreProcessor)));
     }
 
     public void PerformSort() => SortInternal();
 
     protected virtual LeaderboardEntry CreateEntry(ScoreInfo score) => new LeaderboardEntry(this, score);
+    protected virtual LeaderboardEntry CreateSelfEntry(ScoreProcessor processor) => new SelfLeaderboardEntry(this, processor);
 
     protected override void Update()
     {
