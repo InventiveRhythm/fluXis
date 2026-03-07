@@ -159,8 +159,18 @@ public static class StringUtils
                 return false;
 
             var raw = expr.Evaluate();
+
             result = Convert.ChangeType(raw, type, CultureInfo.InvariantCulture);
-            return true;
+
+            switch (result)
+            {
+                case double d when !double.IsFinite(d):
+                case float f when !float.IsFinite(f):
+                    return false;
+
+                default:
+                    return true;
+            }
         }
         catch
         {
