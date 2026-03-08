@@ -53,7 +53,7 @@ public abstract class ShaderStep : IHasStrength
 public abstract class ShaderStep<T> : ShaderStep
     where T : unmanaged, IEquatable<T>
 {
-    protected IUniformBuffer<T> ParameterBuffer { get; private set; }
+    protected IUniformBuffer<T> ParameterBuffer { get; set; }
 
     public override void EnsureParameters(IRenderer renderer) => ParameterBuffer ??= renderer.CreateUniformBuffer<T>();
 
