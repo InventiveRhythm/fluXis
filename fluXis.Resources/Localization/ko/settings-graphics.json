@@ -8,5 +8,6 @@
     "frame-limiter": "프레임 제한",
     "threading-mode": "스레드 모드",
     "show-fps": "FPS 표시",
-    "show-fps-description": "현재 DrawsPerSecond 값이랑 UpdatesPerSecond 값을 하단 오른쪽에 표시합니다."
+    "show-fps-description": "현재 DrawsPerSecond 값이랑 UpdatesPerSecond 값을 하단 오른쪽에 표시합니다.",
+    "fullscreen-resolution": "전체 화면 해상도"
 }
