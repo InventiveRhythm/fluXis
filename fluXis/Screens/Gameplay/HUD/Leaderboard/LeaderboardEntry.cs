@@ -96,11 +96,8 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
             }
         };
 
-        AfterInitialLoad();
         UpdateValues();
     }
-
-    protected virtual void AfterInitialLoad() { }
 
     protected override void LoadComplete()
     {

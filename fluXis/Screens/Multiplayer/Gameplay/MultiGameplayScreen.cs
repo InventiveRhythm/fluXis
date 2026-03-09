@@ -15,6 +15,7 @@ using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Multiplayer.Gameplay.HUD;
 using fluXis.Utils.Extensions;
+using osu.Framework.Allocation;
 using osu.Framework.Screens;
 
 namespace fluXis.Screens.Multiplayer.Gameplay;
@@ -32,6 +33,7 @@ public partial class MultiGameplayScreen : GameplayScreen
     protected new MultiGameplayHUD GameplayHUD;
 
     private int playingParticipants => client.Room?.Participants.Count(p => p.State == MultiplayerUserState.Playing) ?? 1;
+    private int minVoteMajority => (int)Math.Ceiling(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY);
 
     public MultiGameplayScreen(MultiplayerClient client, RealmMap realmMap, List<IMod> mods)
         : base(realmMap, mods)
@@ -51,6 +53,12 @@ public partial class MultiGameplayScreen : GameplayScreen
         return activity;
     }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        GameplayDependencies.CacheAs(client);
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -64,7 +72,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.OnDisconnect += onDisconnect;
 
         if (client.Room != null)
-            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{(int)Math.Ceiling(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})");
+            ScheduleAfterChildren(() => SkipOverlay.SkipText.Text = $"Skip (0/{minVoteMajority})");
     }
 
     protected override void Dispose(bool isDisposing)
@@ -100,7 +108,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         Scheduler.ScheduleIfNeeded(() =>
         {
             if (client.Room != null)
-                SkipOverlay.SkipText.Text = $"Skip ({playersVoted.Length}/{(int)Math.Ceiling(playingParticipants * MultiplayerRoom.MIN_VOTE_SKIP_MAJORITY)})";
+                SkipOverlay.SkipText.Text = $"Skip ({playersVoted.Length}/{minVoteMajority})";
 
             GameplayHUD.Leaderboard.RequestingSkip(playersVoted);
 

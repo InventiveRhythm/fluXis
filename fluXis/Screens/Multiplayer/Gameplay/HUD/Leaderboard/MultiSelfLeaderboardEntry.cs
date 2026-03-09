@@ -1,4 +1,3 @@
-using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring.Processing;
 using fluXis.Screens.Gameplay.HUD.Leaderboard;
@@ -13,8 +12,8 @@ public partial class MultiSelfLeaderboardEntry : MultiLeaderboardEntry
 
     private ScoreProcessor processor { get; }
 
-    public MultiSelfLeaderboardEntry(GameplayLeaderboard leaderboard, ScoreProcessor processor, MultiplayerRoom room)
-        : base(leaderboard, null, room)
+    public MultiSelfLeaderboardEntry(GameplayLeaderboard leaderboard, ScoreProcessor processor)
+        : base(leaderboard, null)
     {
         this.processor = processor;
     }

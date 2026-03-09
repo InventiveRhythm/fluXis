@@ -1,5 +1,5 @@
-using System;
 using fluXis.Online.API.Models.Multi;
+using fluXis.Online.Multiplayer;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Gameplay.Audio;
@@ -18,8 +18,9 @@ public partial class MultiLeaderboardEntry : LeaderboardEntry
     [Resolved]
     private GameplayClock clock { get; set; }
 
+    [Resolved]
     [CanBeNull]
-    private readonly MultiplayerRoom room;
+    private MultiplayerClient client { get; set; }
 
     public MultiplayerParticipant CurrentParticipant;
 
@@ -28,15 +29,16 @@ public partial class MultiLeaderboardEntry : LeaderboardEntry
     private double lastUpdateTime = 0d;
     private const double update_interval = 100d; // very small optimization
 
-    public MultiLeaderboardEntry(GameplayLeaderboard leaderboard, ScoreInfo score, MultiplayerRoom room)
+    public MultiLeaderboardEntry(GameplayLeaderboard leaderboard, ScoreInfo score)
         : base(leaderboard, score)
     {
-        this.room = room;
     }
 
-    protected override void AfterInitialLoad()
+    protected override void LoadComplete()
     {
-        CurrentParticipant = room?.Participants.Find(p => p.ID == Player.ID)
+        base.LoadComplete();
+
+        CurrentParticipant = client?.Room?.Participants.Find(p => p.ID == Player.ID)
                              ?? MultiplayerParticipant.CreateDummy(MultiplayerUserState.Playing);
     }
 
@@ -44,7 +46,7 @@ public partial class MultiLeaderboardEntry : LeaderboardEntry
     {
         base.Update();
 
-        if (!(Math.Abs(Clock.CurrentTime - lastUpdateTime) >= update_interval)) return;
+        if (Clock.CurrentTime - lastUpdateTime < update_interval) return;
 
         bool skipVisible = screen.Map.StartTime - clock.CurrentTime > 2000;
 

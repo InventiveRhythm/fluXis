@@ -144,7 +144,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     [Resolved]
     protected UserCache Users { get; private set; }
 
-    private DependencyContainer dependencies;
+    protected DependencyContainer GameplayDependencies { get; private set; }
 
     private bool starting = true;
     public bool Restarting { get; private set; }
@@ -207,12 +207,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Mods.RemoveAll(m => m is PausedMod);
     }
 
-    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => GameplayDependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
     private void load(ITrackStore tracks)
     {
-        dependencies.CacheAs(this);
+        GameplayDependencies.CacheAs(this);
 
         hudVisibility = Config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
         backgroundDim = Config.GetBindable<float>(FluXisSetting.BackgroundDim);
@@ -239,14 +239,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         MapEvents = Map.GetMapEvents(Mods);
         getKeyCountFromEvents();
 
-        dependencies.CacheAs(Samples);
+        GameplayDependencies.CacheAs(Samples);
 
         var colors = Map.Colors.JsonCopy();
 
         if (RealmMap.Settings.DisableColors)
             colors.PrimaryHex = colors.SecondaryHex = colors.MiddleHex = "";
 
-        dependencies.CacheAs<ICustomColorProvider>(colors);
+        GameplayDependencies.CacheAs<ICustomColorProvider>(colors);
 
         var shaders = buildShaders();
         var transforms = shaders.TransformHandlers.ToList();
@@ -266,10 +266,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         RulesetContainer.ShakeTarget = this;
         RulesetContainer.OnDeath += OnDeath;
 
-        dependencies.Cache(PlayfieldManager = RulesetContainer.PlayfieldManager);
+        GameplayDependencies.Cache(PlayfieldManager = RulesetContainer.PlayfieldManager);
 
-        dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
-        dependencies.CacheAs<IBeatSyncProvider>(GameplayClock);
+        GameplayDependencies.Cache(GameplayClock = clockContainer.GameplayClock);
+        GameplayDependencies.CacheAs<IBeatSyncProvider>(GameplayClock);
         LoadComponent(GameplayClock);
 
         var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(Map, new Storyboard(), ".");
@@ -287,7 +287,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 {
                     camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
                     Samples,
-                    dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }),
+                    GameplayDependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }),
                     shaders.AddContent(new Drawable[]
                     {
                         new AspectRatioContainer(Map.Force16By9)
@@ -455,7 +455,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         AllowOverlays.Value = IsPaused.Value;
     }
 
-    protected virtual GameplayHUD CreateGameplayHUD() => new GameplayHUD(RulesetContainer);
+    protected virtual GameplayHUD CreateGameplayHUD() => new(RulesetContainer);
     protected virtual RulesetContainer CreateRuleset() => new(Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo(Mods);
     protected virtual Drawable CreateTextOverlay() => Empty();
@@ -622,7 +622,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Restarting = true;
         Samples.Restart();
         OnRestart?.Invoke();
-        if (Skipped && Config.Get<bool>(FluXisSetting.RememberSkip)) Schedule(() => RequestSkip());
+        if (Skipped && Config.Get<bool>(FluXisSetting.RememberSkip)) Schedule(() => SkipIntro());
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Online.API.Models.Multi;
 using fluXis.Scoring;
 using fluXis.Scoring.Processing;
 using fluXis.Screens.Gameplay.HUD.Leaderboard;
@@ -11,23 +10,18 @@ namespace fluXis.Screens.Multiplayer.Gameplay.HUD.Leaderboard;
 
 public partial class MultiGameplayLeaderboard : GameplayLeaderboard
 {
-    [CanBeNull]
-    private readonly MultiplayerRoom room;
-
-    public MultiGameplayLeaderboard([NotNull] [ItemNotNull] List<ScoreInfo> scores, MultiplayerRoom room)
+    public MultiGameplayLeaderboard([NotNull] [ItemNotNull] List<ScoreInfo> scores)
         : base(scores)
     {
-        this.room = room;
     }
 
-    protected override LeaderboardEntry CreateEntry(ScoreInfo score) => new MultiLeaderboardEntry(this, score, room);
-    protected override LeaderboardEntry CreateSelfEntry(ScoreProcessor processor) => new MultiSelfLeaderboardEntry(this, processor, room);
+    protected override LeaderboardEntry CreateEntry(ScoreInfo score) => new MultiLeaderboardEntry(this, score);
+    protected override LeaderboardEntry CreateSelfEntry(ScoreProcessor processor) => new MultiSelfLeaderboardEntry(this, processor);
 
     public void RequestingSkip(long[] ids)
     {
         Children.OfType<MultiLeaderboardEntry>().ForEach(l =>
-        {
-            l.RequestingSkip.Value = ids.Contains(l.CurrentParticipant.ID);
-        });
+            l.RequestingSkip.Value = ids.Contains(l.CurrentParticipant.ID)
+        );
     }
 }
