@@ -27,7 +27,7 @@ public partial class GameplayHUD : Container
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private GameplayScreen screen { get; set; }
+    protected GameplayScreen Screen { get; private set; }
 
     public GameplayHUDComponent[] Components => components.Concat(playfields[0].Children).ToArray();
 
@@ -39,7 +39,7 @@ public partial class GameplayHUD : Container
     private PlayfieldHUD[] playfields;
 
     private readonly List<Drawable> hidable = new();
-    private GameplayLeaderboard leaderboard;
+    public GameplayLeaderboard Leaderboard { get; protected set; }
     private float lastAlpha = 1;
 
     public GameplayHUD(RulesetContainer ruleset, HUDLayout layout = null)
@@ -70,18 +70,20 @@ public partial class GameplayHUD : Container
             }
         };
 
-        if (screen is not null)
+        if (Screen is not null)
         {
             AddRangeInternal(new Drawable[]
             {
                 new ModsDisplay(),
-                leaderboard = new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>())
+                Leaderboard = CreateLeaderboard()
             });
         }
 
         layout ??= layouts.Layout.Value;
         loadLayout();
     }
+
+    protected virtual GameplayLeaderboard CreateLeaderboard() => new GameplayLeaderboard(Screen?.Scores ?? new List<ScoreInfo>());
 
     protected override void LoadComplete()
     {
@@ -101,7 +103,7 @@ public partial class GameplayHUD : Container
         if (Math.Abs(target - lastAlpha) < .0001f) return;
 
         hidable.ForEach(x => x.Alpha = target);
-        if (leaderboard != null) leaderboard.HUDAlpha = target;
+        if (Leaderboard != null) Leaderboard.HUDAlpha = target;
 
         lastAlpha = target;
     }

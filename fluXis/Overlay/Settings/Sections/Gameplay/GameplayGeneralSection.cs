@@ -90,7 +90,13 @@ public partial class GameplayGeneralSection : SettingsSubSection
                 Label = strings.HealthEffects,
                 Description = strings.HealthEffectsDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.DimAndFade)
-            }
+            },
+            new SettingsToggle
+            {
+                Label = strings.RememberSessionSkip,
+                Description = strings.RememberSessionSkipDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.RememberSkip)
+            },
         });
     }
 }

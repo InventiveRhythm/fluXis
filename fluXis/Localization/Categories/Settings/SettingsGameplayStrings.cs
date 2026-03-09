@@ -15,6 +15,9 @@ public class SettingsGameplayStrings : LocalizationCategory
     public TranslatableString ScrollDirection => Get("scroll-direction", "Scroll Direction");
     public TranslatableString ScrollDirectionDescription => Get("scroll-direction-description", "The direction in which notes scroll.");
 
+    public TranslatableString RememberSessionSkip => Get("remember-skip", "Remember Skipping After Restart");
+    public TranslatableString RememberSessionSkipDescription => Get("remember-skip-description", "Keep skipping the song when restarting if already skipped once during session.");
+
     public TranslatableString SnapColoring => Get("snap-coloring", "Snap Coloring");
     public TranslatableString SnapColoringDescription => Get("snap-coloring-description", "Color notes based on their snap divisor.");
 

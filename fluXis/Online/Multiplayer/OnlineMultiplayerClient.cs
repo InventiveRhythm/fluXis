@@ -68,6 +68,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
 
     public override async Task TransferHost(long target) => await connection.Server.TransferHost(target);
     public override async Task UpdateScore(int score) => await connection.Server.UpdateScore(score);
+    public override async Task VoteSkip(bool unskip = false) => await connection.Server.VoteSkip(unskip);
     public override async Task Finish(ScoreInfo score) => await connection.Server.FinishPlay(score);
     public override async Task SetReadyState(bool ready) => await connection.Server.UpdateReadyState(ready);
 

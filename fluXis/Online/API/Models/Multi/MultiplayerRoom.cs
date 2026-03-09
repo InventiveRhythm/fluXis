@@ -9,6 +9,9 @@ namespace fluXis.Online.API.Models.Multi;
 [JsonObject(MemberSerialization.OptIn)]
 public class MultiplayerRoom
 {
+    [JsonIgnore]
+    public const float MIN_VOTE_SKIP_MAJORITY = 0.7f;
+
     [JsonProperty("id")]
     public long RoomID { get; init; }
 

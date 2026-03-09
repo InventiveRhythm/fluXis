@@ -3,6 +3,8 @@
   "general-title": "General",
   "scroll-direction": "Scroll Direction",
   "scroll-direction-description": "The direction in which notes scroll.",
+  "remember-skip": "Remember Skipping After Restart",
+  "remember-skip-description": "Keep skipping the song when restarting if already skipped once during session.",
   "snap-coloring": "Snap Coloring",
   "snap-coloring-description": "Color notes based on their snap divisor.",
   "timing-lines": "Timing Lines",

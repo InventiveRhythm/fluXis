@@ -1,3 +1,4 @@
+using System;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Screens.Gameplay.Audio;
 using osu.Framework.Allocation;
@@ -20,6 +21,10 @@ public partial class SkipOverlay : Container
     private FillFlowContainer content;
     private CircularContainer bar;
 
+    public FluXisSpriteText SkipText;
+
+    public Func<bool> SkipVisiblePredicate => () => screen.Map.StartTime - clock.CurrentTime > 2000;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -38,7 +43,7 @@ public partial class SkipOverlay : Container
             Alpha = 0,
             Children = new Drawable[]
             {
-                new FluXisSpriteText
+                SkipText = new FluXisSpriteText
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
@@ -98,7 +103,7 @@ public partial class SkipOverlay : Container
     {
         base.Update();
 
-        switch (screen.Map.StartTime - clock.CurrentTime > 2000)
+        switch (SkipVisiblePredicate())
         {
             case true when !visible:
                 visible = true;

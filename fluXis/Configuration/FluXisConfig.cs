@@ -21,6 +21,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // Gameplay
         SetDefault(FluXisSetting.ScrollDirection, ScrollDirection.Down);
+        SetDefault(FluXisSetting.RememberSkip, false);
         SetDefault(FluXisSetting.SnapColoring, false);
         SetDefault(FluXisSetting.TimingLines, true);
         SetDefault(FluXisSetting.HideFlawless, false);
@@ -124,6 +125,7 @@ public enum FluXisSetting
     LaneCoverTop,
     LaneCoverBottom,
     DimAndFade,
+    RememberSkip,
 
     ScrollSpeed,
 

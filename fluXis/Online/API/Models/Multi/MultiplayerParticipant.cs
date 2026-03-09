@@ -12,5 +12,15 @@ public class MultiplayerParticipant
     [JsonProperty("state")]
     public MultiplayerUserState State { get; set; }
 
+    [JsonIgnore]
+    public bool RequestingSkip { get; set; }
+
     public long ID => Player.ID;
+
+    public static MultiplayerParticipant CreateDummy(MultiplayerUserState state = MultiplayerUserState.Idle) =>
+        new MultiplayerParticipant
+        {
+            Player = APIUser.Dummy,
+            State = state,
+        };
 }

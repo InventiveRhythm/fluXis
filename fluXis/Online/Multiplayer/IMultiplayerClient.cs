@@ -21,5 +21,6 @@ public interface IMultiplayerClient
     Task CountdownStarted(long? time);
     Task LoadRequested();
     Task ScoreUpdated(long user, int score);
+    Task VoteSkipUpdated(long[] playersVoted, bool canSkip);
     Task EveryoneFinished(List<ScoreInfo> scores);
 }

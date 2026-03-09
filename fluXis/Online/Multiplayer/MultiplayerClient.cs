@@ -26,6 +26,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public event Action<long?> CountdownUpdated;
     public event Action OnStart;
     public event Action<long, int> OnScore;
+    public event Action<long[], bool> OnVoteSkipUpdate;
     public event Action<List<ScoreInfo>> OnResultsReady;
 
     public abstract bool Connected { get; }
@@ -150,6 +151,12 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
+    public Task VoteSkipUpdated(long[] playersVoted, bool canSkip)
+    {
+        OnVoteSkipUpdate?.Invoke(playersVoted, canSkip);
+        return Task.CompletedTask;
+    }
+
     public Task EveryoneFinished(List<ScoreInfo> scores)
     {
         // dangerous but when this gets called the
@@ -190,6 +197,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public abstract Task ChangeMap(long map, string hash, List<string> mods);
     public abstract Task TransferHost(long target);
     public abstract Task UpdateScore(int score);
+    public abstract Task VoteSkip(bool unskip = false);
     public abstract Task Finish(ScoreInfo score);
     public abstract Task SetReadyState(bool ready);
 
