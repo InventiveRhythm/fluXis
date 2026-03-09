@@ -622,7 +622,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Restarting = true;
         Samples.Restart();
         OnRestart?.Invoke();
-        if (Skipped && Config.Get<bool>(FluXisSetting.RememberSkip)) Schedule(() => SkipIntro());
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -680,9 +679,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             case IntroAnimation:
                 break;
 
-            case GameplayLoader { HasRestarted: true }:
+            case GameplayLoader { HasRestarted: true } loader:
                 pause = 800;
                 this.FadeOut();
+                if (loader.ShouldSkip && Config.Get<bool>(FluXisSetting.RememberSkip))
+                    Schedule(() => SkipIntro());
                 break;
 
             default:
@@ -730,6 +731,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
             case FluXisGlobalKeybind.Skip:
                 if (RequestSkip()) SkipIntro();
+                else return false;
 
                 return true;
         }

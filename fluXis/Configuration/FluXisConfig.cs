@@ -117,7 +117,6 @@ public enum FluXisSetting
 
     // Gameplay
     ScrollDirection,
-    RememberSkip,
     SnapColoring,
     TimingLines,
     HideFlawless,
@@ -126,6 +125,7 @@ public enum FluXisSetting
     LaneCoverTop,
     LaneCoverBottom,
     DimAndFade,
+    RememberSkip,
 
     ScrollSpeed,
 

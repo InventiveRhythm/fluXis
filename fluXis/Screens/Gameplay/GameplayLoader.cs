@@ -42,6 +42,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private bool fadeBackToGlobalClock;
 
     public bool HasRestarted { get; private set; }
+    public bool ShouldSkip { get; private set; }
 
     private RealmMap map { get; }
     private List<IMod> mods { get; }
@@ -297,6 +298,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     private void requestRestart()
     {
+        ShouldSkip = screen?.Skipped ?? false;
         ValidForResume = true;
         HasRestarted = true;
         this.MakeCurrent();
