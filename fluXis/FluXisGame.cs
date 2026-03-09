@@ -9,6 +9,7 @@ using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Graphics.UserInterface.Panel.Types;
@@ -226,8 +227,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 SubText = "Online functionality will be unavailable.",
                 Buttons = new[]
                 {
-                    new ButtonData { Text = "Retry", Action = () => downloadServerConfig(c) },
-                    new ButtonData { Text = "Continue Offline", Action = () => c?.Invoke() }
+                    new PrimaryButtonData("Retry", () => downloadServerConfig(c)),
+                    new ButtonData { Text = "Play offline", Action = () => c?.Invoke() }
                 }
             };
         });
