@@ -18,12 +18,15 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Animations;
 
-public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
+public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover, IHasCursorType
 {
+    public CursorType Cursor => CursorType.SizeAll;
+
     [Resolved]
     private EditorMap map { get; set; }
 
@@ -32,27 +35,31 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
 
     private float beatLength => map.MapInfo.GetTimingPoint(Animation.StartTime).MsPerBeat;
 
-    private BindableBool isSelected = new(false);
+    public BindableBool IsSelected = new(false);
 
     [CanBeNull]
     public Action<StoryboardAnimation> RequestRemove { get; init; }
 
     public StoryboardAnimation Animation { get; }
-    private readonly StoryboardAnimationRow row;
+
+    public readonly StoryboardAnimationRow Row;
 
     private readonly Circle length;
     private readonly OutlinedCircle outlineLength;
     private readonly FluXisSpriteIcon outlineDiamond;
+    private readonly AnchoredPopover popover;
+
+    private readonly Vector2 diamond_size = new(StoryboardAnimationsList.ROW_HEIGHT * 0.6f);
+    private Vector2 half_diamond_size => diamond_size / 2f;
 
     public StoryboardAnimationEntry(StoryboardAnimation animation, StoryboardAnimationRow row, Colour4 color)
     {
         Animation = animation;
-        this.row = row;
+        Row = row;
 
         Anchor = Anchor.CentreLeft;
-        Origin = Anchor.Centre;
+        Origin = Anchor.CentreLeft;
 
-        Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT);
         InternalChildren = new Drawable[]
         {
             length = new Circle
@@ -61,7 +68,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                 Height = 0.5f,
                 Colour = color,
                 Alpha = 0.5f,
-                Anchor = Anchor.Centre,
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
             },
             outlineLength = new OutlinedCircle
@@ -69,37 +76,44 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                 RelativeSizeAxes = Axes.Y,
                 Height = 0.5f,
                 BorderThickness = 2f,
-                Anchor = Anchor.Centre,
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Colour = color.Lighten(2f),
                 Alpha = 0
             },
-            outlineDiamond =new FluXisSpriteIcon
+            outlineDiamond = new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
-                RelativeSizeAxes = Axes.Both,
-                Size = new Vector2(0.75f),
-                Anchor = Anchor.Centre,
+                Size = diamond_size * 1.25f,
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 Colour = color.Lighten(1.5f),
-                Alpha = 0
+                Alpha = 0,
+                X = half_diamond_size.X
             },
             new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
-                RelativeSizeAxes = Axes.Both,
-                Size = new Vector2(0.6f),
-                Anchor = Anchor.Centre,
+                Size = diamond_size,
+                Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
-                Colour = color
+                Colour = color,
+                X = half_diamond_size.X
             },
+            popover = new AnchoredPopover(this)
+            {
+                Size = diamond_size,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.Centre,
+                X = half_diamond_size.X,
+            }
         };
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        isSelected.BindValueChanged(e =>
+        IsSelected.BindValueChanged(e =>
         {
             outlineDiamond.Alpha = e.NewValue ? 1f : 0f;
             outlineLength.Alpha = e.NewValue ? 1f : 0f;
@@ -110,24 +124,25 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     {
         base.Update();
 
-        X = Math.Clamp(timeline.PositionAtTime(Animation.StartTime, Parent!.DrawWidth), -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
+        X = Math.Clamp(timeline.PositionAtTime(Animation.StartTime, Parent!.DrawWidth) - half_diamond_size.X, -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
 
         var endX = timeline.PositionAtTime(Animation.EndTime, Parent!.DrawWidth);
         var clamped = Math.Max(endX - X, 0);
         length.Width = clamped;
         outlineLength.Width = clamped;
+        Size = new Vector2(StoryboardAnimationsList.ROW_HEIGHT + length.DrawWidth, StoryboardAnimationsList.ROW_HEIGHT);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        this.ShowPopover();
-        isSelected.Value = true;
+        popover.ShowPopover();
+        IsSelected.Value = true;
         return true;
     }
 
     public Popover GetPopover() => new FluXisPopover
     {
-        OnClose = () => isSelected.Value = false,
+        OnClose = () => IsSelected.Value = false,
         Child = new FillFlowContainer
         {
             Width = 380,
@@ -194,5 +209,19 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private partial class AnchoredPopover : Container, IHasPopover
+    {
+        private readonly IHasPopover parent;
+
+        public AnchoredPopover(IHasPopover parent)
+        {
+            this.parent = parent;
+            Alpha = 0;
+            AlwaysPresent = true;
+        }
+
+        public Popover GetPopover() => parent.GetPopover();
     }
 }

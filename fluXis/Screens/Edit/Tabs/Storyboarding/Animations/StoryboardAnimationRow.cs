@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Storyboards;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
@@ -19,6 +21,9 @@ public partial class StoryboardAnimationRow : GridContainer
 
     [Resolved]
     private EditorMap map { get; set; }
+
+    [Resolved]
+    private StoryboardAnimationsList animationList { get; set; }
 
     private readonly StoryboardElement item;
     private readonly StoryboardAnimationType type;
@@ -104,17 +109,30 @@ public partial class StoryboardAnimationRow : GridContainer
         map.Add(animation);
     }
 
-    private void remove(StoryboardAnimation animation)
+    public void Add(StoryboardAnimation animation)
+    {
+        var copy = animation.JsonCopy();
+        entries.Add(createEntry(copy));
+        map.Add(copy);
+    }
+
+    public void Remove(StoryboardAnimation animation)
     {
         var entry = entries.FirstOrDefault(x => x.Animation == animation);
-        if (entry != null) entries.Remove(entry, true);
-
+        if (entry != null)
+        {
+            animationList.TriggerAnimationRemoved(animation);
+            entries.Remove(entry, true);
+        }
+        
         item.Animations.Remove(animation);
         map.Remove(animation);
     }
 
+    public void UpdateAnim(StoryboardAnimation animation) => map.Update(animation);
+
     private StoryboardAnimationEntry createEntry(StoryboardAnimation anim)
-        => new(anim, this, color) { RequestRemove = remove };
+        => new(anim, this, color) { RequestRemove = Remove };
 
     private static string getDefault(StoryboardAnimationType type)
     {
@@ -157,4 +175,9 @@ public partial class StoryboardAnimationRow : GridContainer
         StoryboardAnimationType.Border => Theme.Pink,
         _ => Theme.Text
     };
+
+    public IEnumerable<StoryboardAnimationEntry> GetEntries()
+    {
+        return entries.Children.AsEnumerable();
+    }
 }
