@@ -34,7 +34,7 @@ public partial class ProfileHeader : Container
     private bool showPronouns => !string.IsNullOrEmpty(user.Pronouns);
     private bool showBottomRow => showUsername || showPronouns;
 
-    private UserProfileOverlay overlay;
+    private readonly UserProfileOverlay overlay;
 
     public ProfileHeader(APIUser user, UserProfileOverlay overlay)
     {
@@ -266,16 +266,22 @@ public partial class ProfileHeader : Container
         };
 
         if (user.Following is UserFollowState.Mutual && api.User.Value?.ID != user.ID)
+        {
             yield return new HeaderButton
             {
                 Icon = FontAwesome6.Solid.Message,
                 Text = "Message",
-                Action = () => { chat?.CreatePrivateChannel(user.ID); overlay.Hide(); },
+                Action = () =>
+                {
+                    chat?.CreatePrivateChannel(user.ID);
+                    overlay.Hide();
+                },
             };
+        }
 
         yield return api.User.Value?.ID == user.ID
-                ? new HeaderEditButton()
-                : new HeaderFollowButton(user);
+            ? new HeaderEditButton()
+            : new HeaderFollowButton(user);
     }
 
     private IEnumerable<Drawable> createGroups()
