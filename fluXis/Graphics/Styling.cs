@@ -12,6 +12,8 @@ public static class Styling
     public const float TRANSITION_FADE = 300;
     public const float TRANSITION_ENTER_DELAY = 100;
 
+    public const float SEEK_DEBOUNCE = 50;
+
     public static EdgeEffectParameters ShadowSmall => createShadow(5, 2);
     public static EdgeEffectParameters ShadowSmallNoOffset => createShadow(5, 0);
 
