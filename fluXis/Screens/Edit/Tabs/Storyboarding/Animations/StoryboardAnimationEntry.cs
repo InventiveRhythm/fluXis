@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Outline;
@@ -145,10 +144,14 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                     CurrentValue = Animation.ValueStart,
                     OnValueChanged = t =>
                     {
-                        if (validate(t.Text)) Animation.ValueStart = t.Text;
+                        if (validate(t.Text, out var parsed)) Animation.ValueStart = parsed;
                         else t.NotifyError();
-
                         map.Update(Animation);
+                    },
+                    OnCommit = t =>
+                    {
+                        if (t is not null && validate(t.Text, out var parsed)) t.Text = parsed;
+                        else { t.Text = Animation.ValueStart; t.NotifyError(); }
                     }
                 },
                 new EditorVariableTextBox
@@ -157,10 +160,15 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                     CurrentValue = Animation.ValueEnd,
                     OnValueChanged = t =>
                     {
-                        if (validate(t.Text)) Animation.ValueEnd = t.Text;
+                        if (validate(t.Text, out var parsed)) Animation.ValueEnd = parsed;
                         else t.NotifyError();
 
                         map.Update(Animation);
+                    },
+                    OnCommit = t =>
+                    {
+                        if (t is not null && validate(t.Text, out var parsed)) t.Text = parsed;
+                        else { t.Text = Animation.ValueEnd; t.NotifyError(); }
                     }
                 },
                 new EditorVariableEasing<StoryboardAnimation>(map, Animation),
@@ -168,25 +176,46 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
         }
     };
 
-    private bool validate(string input)
+    private Type getAnimPrimitiveType() => Animation.Type switch
     {
+        StoryboardAnimationType.MoveX or
+        StoryboardAnimationType.MoveY or
+        StoryboardAnimationType.Scale or
+        StoryboardAnimationType.Width or
+        StoryboardAnimationType.Height or
+        StoryboardAnimationType.Rotate or
+        StoryboardAnimationType.Fade or
+        StoryboardAnimationType.Border => typeof(float),
+        _ => null
+    };
+
+    private bool validate(string input, out string outStr)
+    {
+        outStr = input;
+
+        var evalType = getAnimPrimitiveType();
+
+        if (evalType is not null)
+        {
+            if (!input.TryEvaluateTo(evalType, out var result))
+                return false;
+
+            outStr = result.ToString();
+            return true;
+        }
+
         switch (Animation.Type)
         {
-            case StoryboardAnimationType.MoveX:
-            case StoryboardAnimationType.MoveY:
-            case StoryboardAnimationType.Scale:
-            case StoryboardAnimationType.Width:
-            case StoryboardAnimationType.Height:
-            case StoryboardAnimationType.Rotate:
-            case StoryboardAnimationType.Fade:
-            case StoryboardAnimationType.Border:
-                return input.TryParseFloatInvariant(out _);
-
             case StoryboardAnimationType.ScaleVector:
                 var split = input.Split(",");
                 if (split.Length != 2) return false;
 
-                return split.All(x => x.TryParseFloatInvariant(out _));
+                if (!split[0].TryEvaluateTo(typeof(float), out var x) ||
+                    !split[1].TryEvaluateTo(typeof(float), out var y))
+                    return false;
+
+                outStr = $"{x},{y}";
+                return true;
 
             case StoryboardAnimationType.Color:
                 return Colour4.TryParseHex(input, out _);

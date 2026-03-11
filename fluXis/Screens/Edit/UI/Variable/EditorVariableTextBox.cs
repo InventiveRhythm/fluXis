@@ -2,6 +2,7 @@ using System;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -14,6 +15,8 @@ public partial class EditorVariableTextBox : EditorVariableBase
     public string CurrentValue { get; init; }
     public Action<FluXisTextBox> OnValueChanged { get; set; }
     public Action<FluXisTextBox> OnCommit { get; set; }
+
+    public virtual Type CommitEvalType { get; set; } = null;
 
     public string ExtraText { get; init; }
     public int TextBoxWidth { get; init; } = 210;
@@ -71,6 +74,7 @@ public partial class EditorVariableTextBox : EditorVariableBase
                         OnCommitAction = () =>
                         {
                             OnValueChanged?.Invoke(TextBox);
+                            EvalCommit(TextBox);
                             OnCommit?.Invoke(TextBox);
                         }
                     },
@@ -94,6 +98,23 @@ public partial class EditorVariableTextBox : EditorVariableBase
         UpdateLeftTextFlow(leftText);
     }
 
+    protected virtual void EvalCommit(FluXisTextBox box)
+    {
+        if (CommitEvalType is null || !box.IsAlive || box is null)
+            return;
+
+        if (box.Text.TryEvaluateTo(CommitEvalType, out var result))
+            box.Text = result.ToString();
+        else
+            box.NotifyError();
+    }
+
     protected virtual Drawable CreateExtraButton() => Empty().With(d => d.Alpha = 0);
     protected virtual void UpdateLeftTextFlow(FillFlowContainer flow) { }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        if (isDisposing) CommitEvalType = null;
+        base.Dispose(isDisposing);
+    }
 }
