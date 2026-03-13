@@ -1,19 +1,15 @@
+using System;
 using System.Collections.Generic;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Shaders;
-using fluXis.Graphics.Shaders.Chromatic;
-using fluXis.Graphics.Shaders.Greyscale;
-using fluXis.Graphics.Shaders.Invert;
-using fluXis.Graphics.Shaders.Mosaic;
-using fluXis.Graphics.Shaders.Noise;
-using fluXis.Graphics.Shaders.Retro;
-using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Map;
+using fluXis.Map.Structures.Events;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Gameplay.Replays;
+using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
@@ -39,7 +35,7 @@ public partial class TestShaderStackContainer : FluXisTestScene
 
         var stack = new ShaderStackContainer { RelativeSizeAxes = Axes.Both };
 
-        var chroma = new ChromaticContainer { RelativeSizeAxes = Axes.Both };
+        /*var chroma = new ChromaticContainer { RelativeSizeAxes = Axes.Both };
         stack.AddShader(chroma);
         AddSliderStep("Chroma Strength", 0, 20, 0, strength => chroma.Strength = strength);
 
@@ -65,7 +61,38 @@ public partial class TestShaderStackContainer : FluXisTestScene
 
         var retro = new RetroContainer { RelativeSizeAxes = Axes.Both };
         stack.AddShader(retro);
-        AddSliderStep("Retro Strength", 0, 1f, 0f, strength => retro.Strength = strength);
+        AddSliderStep("Retro Strength", 0, 1f, 0f, strength => retro.Strength = strength);*/
+
+        foreach (var shaderType in Enum.GetValues<ShaderType>())
+        {
+            var shd = ShaderStackContainer.CreateForType(shaderType);
+            if (shd is null) continue;
+
+            stack.AddShader(shd);
+
+            var attrs = shd.Type.TryGetAllAttributes<ShaderType, ShaderStrengthAttribute>(out var a) ? a : [new ShaderStrengthAttribute()];
+
+            foreach (var attr in attrs)
+            {
+                AddSliderStep($"{shaderType.ToString()} Strength {attr.Index}", attr.Min, attr.Max, 0, strength =>
+                {
+                    switch (attr.Index)
+                    {
+                        case 1:
+                            shd.Strength = strength;
+                            break;
+
+                        case 2:
+                            shd.Strength2 = strength;
+                            break;
+
+                        case 3:
+                            shd.Strength3 = strength;
+                            break;
+                    }
+                });
+            }
+        }
 
         stack.AddContent(new Drawable[]
         {
