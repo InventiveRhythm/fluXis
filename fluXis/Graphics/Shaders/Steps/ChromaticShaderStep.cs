@@ -3,21 +3,18 @@ using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders.Types;
 
-namespace fluXis.Graphics.Shaders.Chromatic;
+namespace fluXis.Graphics.Shaders.Steps;
 
 public class ChromaticShaderStep : ShaderStep<ChromaticShaderStep.ChromaticParameters>
 {
     protected override string FragmentShader => "ChromaticAberration";
     public override ShaderType Type => ShaderType.Chromatic;
 
-    public override void UpdateParameters(IFrameBuffer current)
+    public override void UpdateParameters(IFrameBuffer current) => ParameterBuffer.Data = ParameterBuffer.Data with
     {
-        ParameterBuffer.Data = ParameterBuffer.Data with
-        {
-            TexSize = current.Size,
-            Radius = Strength
-        };
-    }
+        TexSize = current.Size,
+        Radius = Strength
+    };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public record struct ChromaticParameters

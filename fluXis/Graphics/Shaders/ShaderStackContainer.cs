@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Graphics.Shaders.Bloom;
-using fluXis.Graphics.Shaders.Chromatic;
-using fluXis.Graphics.Shaders.Glitch;
+using fluXis.Graphics.Shaders.Steps;
 using fluXis.Map.Structures.Events;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -119,18 +117,18 @@ public partial class ShaderStackContainer : CompositeDrawable, IBufferedDrawable
     public static ShaderStep CreateForType(ShaderType type) => type switch
     {
         ShaderType.Bloom => new BloomShaderStep(),
-        ShaderType.Greyscale => null,
-        ShaderType.Invert => null,
+        ShaderType.Greyscale => new GreyscaleShaderStep(),
+        ShaderType.Invert => new InvertShaderStep(),
         ShaderType.Chromatic => new ChromaticShaderStep(),
-        ShaderType.Mosaic => null,
-        ShaderType.Noise => null,
-        ShaderType.Vignette => null,
-        ShaderType.Retro => null,
-        ShaderType.HueShift => null,
+        ShaderType.Mosaic => new MosaicShaderStep(),
+        ShaderType.Noise => new NoiseShaderStep(),
+        ShaderType.Vignette => new VignetteShaderStep(),
+        ShaderType.Retro => new RetroShaderStep(),
+        ShaderType.HueShift => new HueShiftShaderStep(),
         ShaderType.Glitch => new GlitchShaderStep(),
-        ShaderType.SplitScreen => null,
-        ShaderType.FishEye => null,
-        ShaderType.Reflections => null,
+        ShaderType.SplitScreen => new SplitScreenShaderStep(),
+        ShaderType.FishEye => new FishEyeShaderStep(),
+        ShaderType.Reflections => new ReflectionsShaderStep(),
         _ => null
     };
 

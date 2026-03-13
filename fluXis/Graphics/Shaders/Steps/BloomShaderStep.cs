@@ -7,7 +7,7 @@ using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Utils;
 using osuTK;
 
-namespace fluXis.Graphics.Shaders.Bloom;
+namespace fluXis.Graphics.Shaders.Steps;
 
 public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
 {
@@ -22,11 +22,13 @@ public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
     private int kernelRadius;
     private float sigma;
     private Vector2 direction;
+
     public override void EnsureParameters(IRenderer renderer)
     {
         ParameterBuffer ??= renderer.CreateUniformBuffer<BlurParameters>();
         composeParameterBuffer ??= renderer.CreateUniformBuffer<BlurComposeParameters>();
     }
+
     public override void UpdateParameters(IFrameBuffer current)
     {
         ParameterBuffer.Data = ParameterBuffer.Data with
@@ -64,6 +66,7 @@ public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
         Shader.Unbind();
         dst.Unbind();
     }
+
     public override void DrawBuffer(IRenderer renderer, IFrameBuffer current, IFrameBuffer target)
     {
         sigma = 20 * Strength;
@@ -98,6 +101,7 @@ public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
         public UniformVector2 Direction;
         private readonly UniformPadding8 pad1;
     }
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public record struct BlurComposeParameters
     {
