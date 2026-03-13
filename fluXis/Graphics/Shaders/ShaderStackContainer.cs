@@ -186,7 +186,7 @@ public partial class ShaderStackContainer : CompositeDrawable, IBufferedDrawable
 
                     using (BindFrameBuffer(target))
                     {
-                        shader.DrawBuffer(renderer, current);
+                        shader.DrawBuffer(renderer, current, target);
                     }
                 }
             }
