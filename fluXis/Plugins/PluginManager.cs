@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Plugins.Capabilities;
+using fluXis.Plugins.Providers;
 using fluXis.Utils;
 using osu.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -16,17 +19,32 @@ namespace fluXis.Plugins;
 public partial class PluginManager : Component
 {
     [Resolved]
+    private FluXisGame game { get; set; }
+
+    [Resolved]
     private Storage storage { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
 
     private Storage pluginStorage;
 
-    private List<Plugin> plugins { get; } = new();
-    public IEnumerable<Plugin> Plugins => plugins.ToImmutableArray();
+    private readonly List<Plugin> plugins = new();
+    private readonly HashSet<string> loadedHashes = new();
+
+    public IReadOnlyList<Plugin> Plugins => plugins;
+
+    public IEnumerable<T> GetCapabilities<T>() where T : class, IPluginCapability
+        => plugins
+           .Select(p => p.GetCapability<T>())
+           .Where(c => c != null);
 
     [BackgroundDependencyLoader]
     private void load()
     {
         pluginStorage = storage.GetStorageForDirectory("plugins");
+
+        registerCapabilityProviders();
 
         loadFromAppDomain();
         loadFromRunFolder();
@@ -35,34 +53,68 @@ public partial class PluginManager : Component
         Logger.Log($"Loaded {plugins.Count} plugins.");
     }
 
+    private void registerCapabilityProviders()
+    {
+        CapabilityRegistry.Register<ISchedulerProvider>(new GameSchedulerProvider(game));
+        CapabilityRegistry.Register<IPanelProvider>(new PanelProvider(panels));
+
+        Logger.Log("Plugin capabilities registered.");
+    }
+
     private void loadSingle(Assembly assembly)
     {
-        string name = assembly.GetName().Name;
+        string name = assembly.GetName().Name ?? assembly.FullName;
 
         try
         {
             var location = assembly.Location;
-            using var fs = File.OpenRead(location);
-            var hash = MapUtils.GetHash(fs);
 
-            var types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Plugin)));
+            if (string.IsNullOrEmpty(location) || !File.Exists(location))
+            {
+                Logger.Log($"Skipping {name} — no file location.");
+                return;
+            }
+
+            string hash;
+            using (var fs = File.OpenRead(location))
+                hash = MapUtils.GetHash(fs);
+
+            if (!loadedHashes.Add(hash))
+            {
+                Logger.Log($"Skipping duplicate {name} [{hash[..8]}]");
+                return;
+            }
+
+            var types = assembly.GetTypes()
+                                .Where(t => t.IsSubclassOf(typeof(Plugin)) && !t.IsAbstract);
 
             foreach (var type in types)
             {
-                var plugin = (Plugin)Activator.CreateInstance(type);
-
-                if (plugin == null)
+                if (Activator.CreateInstance(type) is not Plugin plugin)
                 {
-                    Logger.Log($"Failed to load plugin {name}!");
+                    Logger.Log($"Failed to instantiate plugin {type.Name}!");
                     continue;
                 }
+
+                var capabilities = type.GetInterfaces()
+                                       .Where(i => typeof(IPluginCapability).IsAssignableFrom(i) && i != typeof(IPluginCapability));
 
                 plugin.AssemblyName = name;
                 plugin.Hash = hash;
 
                 plugin.CreateConfig(pluginStorage);
+
+                plugin.Logger = new PluginLogger(name);
+                plugin.Modules.ForEach(m =>
+                {
+                    m.Plugin = plugin;
+                    m.Logger = plugin.Logger;
+                });
+
                 plugins.Add(plugin);
-                Logger.Log($"Loaded plugin {plugin}! [{name}]");
+                var capabilitiesList = capabilities.ToList();
+                string capabilitiesStr = string.Join(", ", capabilitiesList.Select(c => c.Name));
+                Logger.Log($"Loaded {plugin} [{name}] capabilities: {(capabilitiesList.Count != 0 ? capabilitiesStr : "None")}");
             }
         }
         catch (Exception e)
@@ -77,10 +129,7 @@ public partial class PluginManager : Component
         {
             var name = assembly.GetName().Name;
 
-            if (name == null)
-                continue;
-
-            if (!name.StartsWith("fluXis", StringComparison.InvariantCultureIgnoreCase))
+            if (name is null || !name.StartsWith("fluXis", StringComparison.OrdinalIgnoreCase))
                 continue;
 
             loadSingle(assembly);
@@ -89,18 +138,15 @@ public partial class PluginManager : Component
 
     private void loadFromRunFolder()
     {
-        string[] files = Directory.GetFiles(RuntimeInfo.StartupDirectory, "fluXis.*.dll");
-
-        foreach (var file in files)
+        foreach (var file in Directory.GetFiles(RuntimeInfo.StartupDirectory, "fluXis.*.dll"))
         {
             try
             {
-                var assembly = Assembly.LoadFrom(file);
-                loadSingle(assembly);
+                loadSingle(Assembly.LoadFrom(file));
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Failed to load plugin {file} from directory from AppDomain!");
+                Logger.Error(e, $"Failed to load plugin {file} from run folder!");
             }
         }
     }
@@ -113,16 +159,14 @@ public partial class PluginManager : Component
         {
             Logger.Log($"Plugins directory {path} does not exist. Creating...");
             Directory.CreateDirectory(path);
+            return;
         }
 
-        string[] files = Directory.GetFiles(path, "fluXis.*.dll");
-
-        foreach (var file in files)
+        foreach (var file in Directory.GetFiles(path, "fluXis.*.dll"))
         {
             try
             {
-                var assembly = Assembly.LoadFrom(file);
-                loadSingle(assembly);
+                loadSingle(Assembly.LoadFrom(file));
             }
             catch (Exception e)
             {
