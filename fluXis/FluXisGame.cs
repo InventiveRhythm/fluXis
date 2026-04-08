@@ -62,6 +62,7 @@ using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
+using osu.Framework.Threading;
 
 namespace fluXis;
 
@@ -326,6 +327,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             }
         };
     }
+
+    public new ScheduledDelegate Schedule(Action act) => base.Schedule(act);
+    public new ScheduledDelegate Schedule<T>(Action<T> act, T data) => base.Schedule(act, data);
 
     public override void SelectMapSet(RealmMapSet set)
     {

@@ -7,6 +7,7 @@ using fluXis.UI;
 using fluXis.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Screens.Select.List.Items;
 
@@ -19,6 +20,9 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     public ISelectionManager Selection { get; set; }
 
     public RealmMapMetadata Metadata => set.Metadata;
+
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraSetMenuItems = [];
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraDiffMenuItems = [];
 
     public float Size
     {
@@ -66,6 +70,8 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
 
     public Drawable CreateDrawable() => Drawable = new DrawableMapSetItem(this, set, maps)
     {
+        ExtraSetMenuItems = ExtraSetMenuItems,
+        ExtraDiffMenuItems = ExtraDiffMenuItems,
         SelectAction = () => Screen?.Accept(),
         EditAction = m => Screen?.EditMap(m),
         DeleteAction = m => Screen?.DeleteMapSet(m),

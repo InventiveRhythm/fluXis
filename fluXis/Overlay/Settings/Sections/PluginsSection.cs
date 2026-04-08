@@ -1,8 +1,10 @@
+using System;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Overlay.Settings.Sections.Plugins;
+using fluXis.Plugins;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 
@@ -16,11 +18,9 @@ public partial class PluginsSection : SettingsSection
     [BackgroundDependencyLoader]
     private void load()
     {
-        AddRange(new Drawable[]
+        Enum.GetValues<PluginType>().ForEach(ptype =>
         {
-            new PluginsImportSection()
-            // Divider,
-            // new PluginsEditorSection(),
+            Add(new PluginSubSection(ptype));
         });
     }
 }

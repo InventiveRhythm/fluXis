@@ -25,6 +25,8 @@ using fluXis.Online.Activity;
 using fluXis.Online.Collections;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
+using fluXis.Plugins;
+using fluXis.Plugins.Capabilities;
 using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Edit;
@@ -40,6 +42,7 @@ using fluXis.Screens.Select.UI;
 using fluXis.UI;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -47,6 +50,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -87,6 +91,10 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     [Resolved]
     private PanelContainer panels { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PluginManager plugins { get; set; }
+
     protected IEnumerable<IMod> CurrentMods => modsOverlay.SelectedMods;
 
     private MapList mapList { get; set; }
@@ -106,6 +114,9 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     private SelectNoMaps noMapsContainer;
     private SelectLetter letterContainer;
     private LoadingIcon loadingIcon;
+
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraSetMenuItems = [];
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraDiffMenuItems = [];
 
     private Bindable<bool> songSelectBlur;
     private Bindable<bool> showStoryboard;
@@ -188,6 +199,11 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                 },
             },
         };
+
+        var capabilities = plugins?.Plugins?.GetCapabilities<ISongSelectCapability>().ToList() ?? [];
+
+        ExtraSetMenuItems = capabilities.SelectMany(c => c.MapSetContextMenuItems ?? []).ToArray();
+        ExtraDiffMenuItems = capabilities.SelectMany(c => c.MapDifficultyContextMenuItems ?? []).ToArray();
 
         // modsOverlay.BackgroundBlur = modsBlur;
         Filters.OnChange += searchTracker.Reset;
@@ -510,6 +526,9 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (item is not null)
             ScheduleAfterChildren(() => mapList.ScrollToItem(item));
 
+        var capabilities = plugins?.Plugins?.GetCapabilities<ISongSelectCapability>().ToList() ?? [];
+        capabilities.ForEach(c => c?.OnMapChanged(map));
+
         firstMapUpdate = false;
     }
 
@@ -569,7 +588,11 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         {
             case MapUtils.GroupingMode.Default:
             {
-                yield return new MapSetItem(set);
+                yield return new MapSetItem(set)
+                {
+                    ExtraSetMenuItems = ExtraSetMenuItems,
+                    ExtraDiffMenuItems = ExtraDiffMenuItems
+                };
 
                 break;
             }
@@ -577,7 +600,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
             case MapUtils.GroupingMode.Nothing:
             {
                 foreach (var map in set.Maps)
-                    yield return new MapDifficultyItem(map);
+                    yield return new MapDifficultyItem(map) { ExtraMenuItems = ExtraDiffMenuItems };
 
                 break;
             }
@@ -983,11 +1006,15 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
             {
                 case MapUtils.GroupingMode.Default:
                     var grouped = maps.GroupBy(x => x.MapSet.ID);
-                    items.AddRange(grouped.Select(x => new MapSetItem(Maps.GetFromGuid(x.Key), x.ToList())));
+                    items.AddRange(grouped.Select(x => new MapSetItem(Maps.GetFromGuid(x.Key), x.ToList())
+                    {
+                        ExtraSetMenuItems = ExtraSetMenuItems,
+                        ExtraDiffMenuItems = ExtraDiffMenuItems
+                    }));
                     break;
 
                 default:
-                    items.AddRange(maps.Select(x => new MapDifficultyItem(x)));
+                    items.AddRange(maps.Select(x => new MapDifficultyItem(x) { ExtraMenuItems = ExtraDiffMenuItems }));
                     break;
             }
 
