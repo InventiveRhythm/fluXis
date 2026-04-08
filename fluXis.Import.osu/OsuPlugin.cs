@@ -7,7 +7,7 @@ using osu.Framework.Platform;
 
 namespace fluXis.Import.osu;
 
-public class OsuPlugin : Plugin, IMapImporterCapability, ISongSelectCapability, IEditorCapability
+public class OsuPlugin : Plugin, IMapImporterCapability
 {
     public override string Name => "osu! Importer";
     public override string Author => "Flustix";
