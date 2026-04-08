@@ -4,6 +4,7 @@ using System.Net.WebSockets;
 using fluXis.Map;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Users;
+using fluXis.Plugins;
 using fluXis.Utils.Exceptions;
 using NLua.Exceptions;
 using osu.Framework;
@@ -121,6 +122,7 @@ public partial class SentryClient : Component
             case SteamInitException:
             case APIException:
             case LuaException:
+            case PluginException:
                 return true;
 
             case WebException web:
