@@ -22,9 +22,12 @@ using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Maps;
 using fluXis.Online.Fluxel;
+using fluXis.Plugins;
+using fluXis.Plugins.Capabilities;
 using fluXis.Scoring;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -32,6 +35,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
@@ -65,6 +69,10 @@ public partial class ScoreListTab : SelectInfoTab
     [Resolved(CanBeNull = true)]
     private SelectScreen screen { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PluginManager plugins { get; set; }
+
     private readonly List<ScoreListEntry> currentEntries = new();
     public IEnumerable<ScoreInfo> CurrentScores => currentEntries.Select(c => c.ScoreInfo);
 
@@ -80,6 +88,8 @@ public partial class ScoreListTab : SelectInfoTab
 
     private CancellationTokenSource cancelSource;
     private CancellationToken cancel;
+
+    private (MenuItem Item, Func<bool> Predicate)[] extraMenuItems = [];
 
     private LeaderboardTypeButton localButton;
 
@@ -146,6 +156,18 @@ public partial class ScoreListTab : SelectInfoTab
                 }
             }
         };
+
+        if (plugins?.Plugins == null) return;
+
+        List<(MenuItem Item, Func<bool> Predicate)> extraMenuItemsList = [];
+
+        foreach (var plugin in plugins.Plugins)
+        {
+            var capability = plugin.GetCapability<ISongSelectCapability>();
+            extraMenuItemsList.AddRange(capability?.ScoreListContextMenuItems ?? []);
+        }
+
+        extraMenuItems = extraMenuItemsList.ToArray();
     }
 
     public override Drawable CreateHeader()
@@ -267,7 +289,8 @@ public partial class ScoreListTab : SelectInfoTab
                             scoreManager.Delete(detach.ID);
                             Refresh();
                         },
-                        ReplayAction = replays.Exists(x.ID) ? () => screen?.ViewReplay(map, detach) : null
+                        ReplayAction = replays.Exists(x.ID) ? () => screen?.ViewReplay(map, detach) : null,
+                        ExtraMenuItems = extraMenuItems
                     };
                 }));
                 break;
@@ -314,6 +337,16 @@ public partial class ScoreListTab : SelectInfoTab
                 noScores.Text = map.MapSet.AutoImported
                     ? LocalizationStrings.SongSelect.LeaderboardScoresUnavailable
                     : LocalizationStrings.SongSelect.LeaderboardNoScores;
+            }
+
+            if (plugins?.Plugins != null)
+            {
+                foreach (var plugin in plugins.Plugins)
+                {
+                    var capability = plugin.GetCapability<ISongSelectCapability>();
+
+                    capability?.OnScoresChanged(currentEntries.ToArray());
+                }
             }
 
             noScores.FadeTo(empty ? 1 : 0, 300);

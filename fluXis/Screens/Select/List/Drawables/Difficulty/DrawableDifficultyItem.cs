@@ -16,6 +16,7 @@ using fluXis.Screens.Select.List.Items;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -31,6 +32,8 @@ namespace fluXis.Screens.Select.List.Drawables.Difficulty;
 
 public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
 {
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraMenuItems = [];
+
     public MenuItem[] ContextMenuItems
     {
         get
@@ -44,6 +47,11 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                 new MenuActionItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => ExportAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported },
                 new MenuActionItem(LocalizationStrings.General.Delete, FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => DeleteAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported }
             };
+
+            ExtraMenuItems.ForEach(extra =>
+            {
+                if (extra.Predicate()) items.Add(extra.Item);
+            });
 
             if (FluXisGameBase.IsDebug)
             {

@@ -1,5 +1,8 @@
 using System;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Plugins;
+using fluXis.Plugins.Capabilities;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -25,9 +28,11 @@ public partial class EditorTimeline : Container
     private double? lastSeekTime;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(PluginManager plugins)
     {
         RelativeSizeAxes = Axes.Both;
+
+        var capabilities = plugins.Plugins.GetCapabilities<IEditorCapability>();
 
         Children = new Drawable[]
         {
@@ -40,9 +45,17 @@ public partial class EditorTimeline : Container
                 Origin = Anchor.Centre
             },
             new TimelineTagContainer() { Offset = 10 },
-            new TimelineDensity(),
-            indicator = new TimelineIndicator()
         };
+
+        foreach (var capability in capabilities)
+        {
+            if (capability.AddToTimeline is not { Count: > 0 } drawables)
+                continue;
+
+            AddRangeInternal(capability.AddToTimeline);
+        }
+
+        AddRangeInternal([new TimelineDensity(), indicator = new TimelineIndicator()]);
     }
 
     protected override void Update()

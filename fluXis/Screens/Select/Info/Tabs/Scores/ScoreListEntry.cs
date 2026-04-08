@@ -26,6 +26,7 @@ using fluXis.Utils.Extensions;
 using Humanizer;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -52,6 +53,8 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay profileOverlay { get; set; }
 
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraMenuItems = [];
+
     public MenuItem[] ContextMenuItems
     {
         get
@@ -60,6 +63,11 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
             {
                 new MenuActionItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails)
             };
+
+            ExtraMenuItems.ForEach(extra =>
+            {
+                if (extra.Predicate()) items.Add(extra.Item);
+            });
 
             if (DownloadAction != null)
                 items.Add(new MenuActionItem("Download Replay", FontAwesome6.Solid.ArrowDown, MenuItemType.Normal, download));

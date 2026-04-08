@@ -18,6 +18,7 @@ using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -34,6 +35,8 @@ namespace fluXis.Screens.Select.List.Drawables.MapSet;
 
 public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, IComparable<DrawableMapSetDifficulty>
 {
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraMenuItems = [];
+
     public MenuItem[] ContextMenuItems
     {
         get
@@ -47,6 +50,11 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                 }),
                 new MenuActionItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => item.EditAction?.Invoke(map))
             };
+
+            ExtraMenuItems.ForEach(extra =>
+            {
+                if (extra.Predicate()) items.Add(extra.Item);
+            });
 
             if (FluXisGameBase.IsDebug)
             {
