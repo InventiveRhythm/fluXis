@@ -203,6 +203,10 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
         ShowSettings?.Invoke(CreateSettings());
     }
 
+    public void TriggerOnClose() => OnClose();
+
+    protected virtual void OnClose() { }
+
     public abstract ITimedObject CreateClone();
     protected abstract Drawable[] CreateValueContent();
 
