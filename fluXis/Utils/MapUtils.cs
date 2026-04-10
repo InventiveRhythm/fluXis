@@ -33,6 +33,9 @@ public static class MapUtils
             _ => 0
         };
 
+        if (result == 0)
+            result = first.GetHashCode().CompareTo(second.GetHashCode());
+
         if (inverse)
             result = -result;
 
@@ -53,6 +56,9 @@ public static class MapUtils
             SortingMode.Difficulty => compareDifficulty(first, second),
             _ => 0
         };
+
+        if (result == 0)
+            result = first.GetHashCode().CompareTo(second.GetHashCode());
 
         if (inverse)
             result = -result;
