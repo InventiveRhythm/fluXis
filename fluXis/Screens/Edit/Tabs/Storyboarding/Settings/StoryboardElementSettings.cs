@@ -511,6 +511,19 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         }
 
                         break;
+
+                    case StoryboardElementType.Compound:
+                        drawables.Add(new EditorVariableTextBox
+                        {
+                            Text = "Compound ID",
+                            CurrentValue = item.GetParameter("id", ""),
+                            OnValueChanged = t =>
+                            {
+                                item.Parameters["id"] = t.Text;
+                                map.Update(item);
+                            }
+                        });
+                        break;
                 }
 
                 flow.AddRange(drawables);

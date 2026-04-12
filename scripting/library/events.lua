@@ -65,7 +65,7 @@ PulseEvent = {}
 ---@class ScriptEvent
 ---@field time number
 ---@field scriptPath string
----@field parameters string
+---@field parameters table
 ScriptEvent = {}
 
 ---@class ShaderEvent
@@ -101,7 +101,7 @@ HitObjectEaseEvent = {}
 ---@field duration number
 ---@field multiplier number
 ---@field easing number
----@field groups string
+---@field groups string[]
 ScrollMultiplierEvent = {}
 
 ---@class TimeOffsetEvent

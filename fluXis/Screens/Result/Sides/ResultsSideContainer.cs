@@ -14,6 +14,8 @@ public abstract partial class ResultsSideContainer : CompositeDrawable
 {
     protected abstract LocalisableString Title { get; }
 
+    private FillFlowContainer flow;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -30,7 +32,7 @@ public abstract partial class ResultsSideContainer : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Colour = Theme.Background2
             },
-            new FillFlowContainer
+            flow = new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
@@ -55,6 +57,12 @@ public abstract partial class ResultsSideContainer : CompositeDrawable
                 }
             }
         };
+    }
+
+    protected void RebuildContent()
+    {
+        flow.Remove(flow[^1], true);
+        flow.Add(CreateContent());
     }
 
     protected abstract Drawable CreateContent();

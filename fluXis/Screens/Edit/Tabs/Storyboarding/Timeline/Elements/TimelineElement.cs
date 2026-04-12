@@ -141,6 +141,10 @@ public partial class TimelineElement : CompositeDrawable
                 break;
             }
 
+            case StoryboardElementType.Compound:
+                text.Text = Element.GetParameter("id", "");
+                break;
+
             default:
                 text.Text = "";
                 break;

@@ -33,7 +33,7 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
                 return;
 
             contentContainer.Clear();
-            if (value != null) contentContainer.Add(value);
+            if (value != null) Add(value);
         }
     }
 
@@ -119,9 +119,17 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
         Scheduler.AddDelayed(() => Content = content, duration);
     }
 
+    public void Add(Drawable content)
+    {
+        contentContainer.Add(content);
+    }
+
     private void tryClose()
     {
-        if (Content is ICloseable closeable)
+        if (contentContainer.Count == 0)
+            return;
+
+        if (contentContainer.Last() is ICloseable closeable)
             closeable.Close();
     }
 

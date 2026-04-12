@@ -7,6 +7,7 @@ using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Rendering;
@@ -25,13 +26,19 @@ public partial class ResultsSideGraph : ResultsSideContainer
 {
     protected override LocalisableString Title => "Graph";
 
-    private ScoreInfo score { get; }
+    private Bindable<ScoreInfo> score { get; }
     private RealmMap map { get; }
 
-    public ResultsSideGraph(ScoreInfo score, RealmMap map)
+    public ResultsSideGraph(Bindable<ScoreInfo> score, RealmMap map)
     {
         this.score = score;
         this.map = map;
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        score.BindValueChanged(_ => RebuildContent());
     }
 
     protected override Drawable CreateContent() => new LoadWrapper<GraphContainer>
@@ -40,7 +47,7 @@ public partial class ResultsSideGraph : ResultsSideContainer
         AutoSizeAxes = Axes.Y,
         AutoSizeDuration = 400,
         AutoSizeEasing = Easing.Out,
-        LoadContent = () => new GraphContainer(score, map),
+        LoadContent = () => new GraphContainer(score.Value, map),
         OnComplete = g => g.FadeInFromZero(400)
     };
 
@@ -188,11 +195,11 @@ public partial class ResultsSideGraph : ResultsSideContainer
                 var timing = timings[i];
                 var color = skins.SkinJson.GetColorForJudgement(timing.Judgement);
                 var lineColor = new Color(new Rgba32(color.Opacity(0.4f).Vector));
-                
+
                 var yEarly = miss - 1 - timing.Milliseconds;
                 if (yEarly >= 0)
                     image.Mutate(ctx => ctx.DrawLine(lineColor, 2, new PointF(0, yEarly), new PointF(image.Width, yEarly)));
-                
+
                 var yLate = miss - 1 + timing.Milliseconds;
                 if (yLate < image.Height)
                     image.Mutate(ctx => ctx.DrawLine(lineColor, 2, new PointF(0, yLate), new PointF(image.Width, yLate)));

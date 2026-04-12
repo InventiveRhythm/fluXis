@@ -37,6 +37,12 @@ public abstract partial class SettingsItem : Container, IFocusable
 
     protected FillFlowContainer TextFlow { get; private set; }
 
+    private FluXisSpriteText labelText;
+    private FluXisSpriteText descriptionText;
+
+    public void SetLabel(LocalisableString label) => labelText.Text = label;
+    public void SetDescription(LocalisableString description) => descriptionText.Text = description;
+
     protected new Container Content { get; } = new()
     {
         AutoSizeAxes = Axes.Both,
@@ -70,12 +76,12 @@ public abstract partial class SettingsItem : Container, IFocusable
                 Padding = new MarginPadding { Left = Padded ? 20 : 0 },
                 Children = new Drawable[]
                 {
-                    new FluXisSpriteText
+                    labelText = new FluXisSpriteText
                     {
                         Text = Label,
                         WebFontSize = 16
                     },
-                    new FluXisSpriteText
+                    descriptionText = new FluXisSpriteText
                     {
                         Text = Description,
                         WebFontSize = 12,

@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using fluXis;
+using fluXis.Audio.FFT.Structures.Data;
 using fluXis.Map.Structures.Events;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models.Storyboarding;
@@ -59,6 +60,7 @@ internal class Program
             }
         });
         typeList.Add(new EnumType<DefaultBlendingParameters>(true, ctorName: "BlendMode", enumName: "BlendMode"));
+        typeList.Add(new EnumType<FFTBandType>(false));
 
         var eventTypes = LuaMap.GetMapEventTypes();
         eventTypes.Remove(typeof(ScriptEvent));
@@ -77,13 +79,12 @@ internal class Program
 
         typeList.Add(new NamespaceTypes(
             types,
-            new[]
-            {
+            [
                 "fluXis.Map.Structures.Events",
                 "fluXis.Map.Structures.Events.Playfields",
                 "fluXis.Map.Structures.Events.Camera",
                 "fluXis.Map.Structures.Events.Scrolling"
-            },
+            ],
             "events"
         ));
 
@@ -91,6 +92,15 @@ internal class Program
             types,
             "fluXis.Map.Structures",
             "struct"
+        ));
+
+        typeList.Add(new NamespaceTypes(
+            types,
+            [
+                "fluXis.Audio.FFT.Structures.Data",
+                "fluXis.Audio.FFT.Structures.Processor",
+            ],
+            "audio"
         ));
 
         foreach (var type in typeList)
@@ -125,6 +135,30 @@ internal class Program
 
     public static string GetLuaType(Type type, bool enumToNumber = true, Type? fallback = null, bool nullable = false)
     {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            var underlying = type.GetGenericArguments()[0];
+            return GetLuaType(underlying, enumToNumber, fallback, nullable: true);
+        }
+
+        if (type.IsArray)
+        {
+            var elementType = type.GetElementType()!;
+            return GetLuaType(elementType, enumToNumber, fallback, false) + "[]";
+        }
+
+        if (type.IsGenericType)
+        {
+            var genericDef = type.GetGenericTypeDefinition();
+            var genericArgs = type.GetGenericArguments();
+
+            if (genericDef == typeof(List<>))
+                return GetLuaType(genericArgs[0], enumToNumber, fallback, false) + "[]";
+
+            if (genericDef == typeof(Dictionary<,>))
+                return "table";
+        }
+
         string? name = getLuaTypeName(type);
 
         if (name is null)
@@ -155,6 +189,8 @@ internal class Program
             "System.UInt64" => "number",
             "fluXis.Storyboards.StoryboardLayer" => "number",
             "fluXis.Map.Structures.Bases.IMapEvent" => "EventType",
+            "fluXis.Audio.FFT.Structures.Data.FFTBands" => "FFTBands",
+            "fluXis.Audio.FFT.Structures.Processor.FFTParameters" => "FFTParameters",
             "System.Boolean" => "boolean",
             "System.String" => "string",
             "NLua.LuaTable" => "table",

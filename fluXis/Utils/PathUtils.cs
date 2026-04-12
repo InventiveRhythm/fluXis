@@ -73,6 +73,8 @@ public static class PathUtils
             "mp3" => FileType.Audio,
             "wav" => FileType.Audio,
             "ogg" => FileType.Audio,
+            "m4a" => FileType.Audio,
+            "aac" => FileType.Audio,
 
             "jpg" => FileType.Image,
             "jpeg" => FileType.Image,

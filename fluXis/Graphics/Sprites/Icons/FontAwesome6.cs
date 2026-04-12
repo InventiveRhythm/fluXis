@@ -36,6 +36,7 @@ public class FontAwesome6
         public static IconUsage BullseyeArrow => GetSolid(0xf648);
         public static IconUsage CandyCane => GetSolid(0xf786);
         public static IconUsage ChartLine => GetSolid(0xf201);
+        public static IconUsage ChartSimple => GetSolid(0xe473);
         public static IconUsage Check => GetSolid(0xf00c);
         public static IconUsage Circle => GetSolid(0xf111);
         public static IconUsage CircleNodes => GetSolid(0xe4e2);
@@ -92,6 +93,7 @@ public class FontAwesome6
         public static IconUsage Minus => GetSolid(0xf068);
         public static IconUsage Music => GetSolid(0xf001);
         public static IconUsage Newspaper => GetSolid(0xf1ea);
+        public static IconUsage NoteSticky => GetSolid(0xf249);
         public static IconUsage ObjectGroup => GetSolid(0xf247);
         public static IconUsage PaintBrush => GetSolid(0xf1fc);
         public static IconUsage Palette => GetSolid(0xf53f);

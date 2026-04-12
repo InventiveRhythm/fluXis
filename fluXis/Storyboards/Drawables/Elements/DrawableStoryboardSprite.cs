@@ -3,6 +3,7 @@ using fluXis.Storyboards.Storage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Storyboards.Drawables.Elements;
 
@@ -16,7 +17,7 @@ public partial class DrawableStoryboardSprite : DrawableStoryboardElement
     }
 
     [BackgroundDependencyLoader]
-    private void load(StoryboardStorage storage)
+    private void load(StoryboardStorage storage, TextureStore textures)
     {
         AutoSizeAxes = Axes.Both;
 
@@ -25,7 +26,7 @@ public partial class DrawableStoryboardSprite : DrawableStoryboardElement
 
         InternalChild = new Sprite
         {
-            Texture = storage.Textures.Get(file)
+            Texture = storage.Textures.Get(file) ?? textures.Get("missing.png")
         };
     }
 }

@@ -75,6 +75,9 @@ public partial class ParallaxContainer : Container
 
     private void onChange(ValueChangedEvent<bool> enabled)
     {
-        this.MoveTo(Vector2.Zero, 400, Easing.OutQuint);
+        if (enabled.NewValue) return;
+
+        content.MoveTo(Vector2.Zero, 400, Easing.OutQuint);
+        content.ScaleTo(Vector2.One, 400, Easing.OutQuint);
     }
 }

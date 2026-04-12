@@ -1,6 +1,7 @@
 ﻿using fluXis.Graphics.Sprites.Text;
 using fluXis.Scoring;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -9,17 +10,34 @@ namespace fluXis.Screens.Result.Center;
 
 public partial class ResultsCenterScore : CompositeDrawable
 {
+    [Resolved]
+    private Bindable<ScoreInfo> score { get; set; }
+
+    [Resolved]
+    private Results results { get; set; }
+
     [BackgroundDependencyLoader]
-    private void load(Results results, ScoreInfo score)
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Margin = new MarginPadding { Top = 36 };
 
+        setContent();
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        score.BindValueChanged(_ => setContent());
+    }
+
+    private void setContent()
+    {
         var difference = "";
 
         if (results.ComparisonScore != null)
-            difference = $"{score.Score - results.ComparisonScore.Score:+#0;-#0}";
+            difference = $"{score.Value.Score - results.ComparisonScore.Score:+#0;-#0}";
 
         InternalChild = new FillFlowContainer
         {
@@ -41,7 +59,7 @@ public partial class ResultsCenterScore : CompositeDrawable
                 },
                 new ForcedHeightText
                 {
-                    Text = $"{score.Score:000000}",
+                    Text = $"{score.Value.Score:000000}",
                     WebFontSize = 64,
                     Height = 48,
                     Shadow = true,

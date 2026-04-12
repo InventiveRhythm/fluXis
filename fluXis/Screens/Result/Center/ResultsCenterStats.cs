@@ -5,6 +5,7 @@ using fluXis.Graphics.UserInterface.Text;
 using fluXis.Scoring;
 using fluXis.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -13,12 +14,29 @@ namespace fluXis.Screens.Result.Center;
 
 public partial class ResultsCenterStats : CompositeDrawable
 {
+    [Resolved]
+    private Bindable<ScoreInfo> score { get; set; }
+
+    [Resolved]
+    private RealmMap map { get; set; }
+
     [BackgroundDependencyLoader]
-    private void load(RealmMap map, ScoreInfo score)
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
         Height = 38;
 
+        setContent();
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        score.BindValueChanged(_ => setContent());
+    }
+
+    private void setContent()
+    {
         InternalChild = new GridContainer
         {
             RelativeSizeAxes = Axes.Both,
@@ -26,17 +44,17 @@ public partial class ResultsCenterStats : CompositeDrawable
             {
                 new Drawable[]
                 {
-                    new Statistic("Accuracy", $"{score.Accuracy.ToStringInvariant("00.00")}%"),
+                    new Statistic("Accuracy", $"{score.Value.Accuracy.ToStringInvariant("00.00")}%"),
                     new Statistic("Combo", "", flow =>
                     {
-                        flow.AddText($"{score.MaxCombo}x");
+                        flow.AddText($"{score.Value.MaxCombo}x");
                         flow.AddText<FluXisSpriteText>($"/{map.Filters.NoteCount + map.Filters.LongNoteCount * 2}x", text =>
                         {
                             text.WebFontSize = 14;
                             text.Alpha = .6f;
                         });
                     }),
-                    new Statistic("Performance", $"{score.PerformanceRating.ToStringInvariant("0.00")}"),
+                    new Statistic("Performance", $"{score.Value.PerformanceRating.ToStringInvariant("0.00")}"),
                 }
             }
         };

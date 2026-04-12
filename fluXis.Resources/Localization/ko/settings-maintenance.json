@@ -1,1 +1,8 @@
-{}
+{
+    "title": "고급",
+    "files-title": "파일",
+    "files-clean-up": "파일 정리하기",
+    "files-clean-up-description": "불필요한 파일을 모두 삭제합니다.",
+    "maps-title": "맵",
+    "maps-scores-clean-up": "점수 정리"
+}

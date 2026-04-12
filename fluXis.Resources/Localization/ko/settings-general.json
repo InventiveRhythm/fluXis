@@ -1,1 +1,12 @@
-{}
+{
+    "title": "일반",
+    "language-title": "언어",
+    "language-current": "현재 언어",
+    "original-meta": "원본 언어로 맵 메타데이터 표시",
+    "original-meta-description": "노래의 메타데이터를 원본 언어로 표시합니다.",
+    "folders-title": "폴더",
+    "open-folder": "fluXis 폴더 열기",
+    "export-logs": "로그 내보내기",
+    "export-logs-description": "모든 로그를 zip 파일로 압축하여 공유를 편하게 만듭니다.",
+    "change-folder": "폴더 위치 변경"
+}

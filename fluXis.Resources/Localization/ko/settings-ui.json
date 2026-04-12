@@ -1,1 +1,21 @@
-{}
+{
+    "title": "사용자 인터페이스",
+    "general-title": "일반",
+    "ui-scale": "UI 크기",
+    "ui-scale-description": "인터페이스의 크기를 조절합니다.",
+    "confirm-duration": "길게 누르기 지속 시간",
+    "confirm-duration-description": "버튼을 길게 누르는 시간을 조정합니다.",
+    "skip-warning": "경고 건너뛰기",
+    "skip-warning-description": "게임을 시작할 때 경고문을 건너뛰기할 지 결정합니다.",
+    "parallax": "시차 효과",
+    "parallax-description": "배경 및 기타 인터페이스 요소의 시차 효과를 켜거나 끕니다.",
+    "show-storyboard-video": "스토리보드 및 동영상 표시",
+    "main-menu-title": "메인 메뉴",
+    "intro-music": "fluXis 인트로 음악",
+    "intro-music-description": "fluXis 인트로 음악을 시작 시에 재생할 지 결정합니다. 이 설정이 꺼져있는 경우 라이브러리에서 무작위 음악을 재생합니다.",
+    "song-select-title": "노래 선택",
+    "song-select-blur": "배경 흐리기",
+    "song-select-blur-description": "노래 선택 화면의 배경을 흐리게 합니다.",
+    "loop-mode": "반복 모드",
+    "loop-mode-description": "노래 선택의 음악 반복 모드를 결정합니다."
+}

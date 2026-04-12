@@ -9,10 +9,14 @@ namespace fluXis.Overlay.Music;
 public partial class MusicVisualiser : Container
 {
     [Resolved]
-    private GlobalClock clock { get; set; }
+    private IAmplitudeProvider amplitudeProvider { get; set; }
 
     private const int bar_count = 128;
-    private const float bar_width = 1f / bar_count;
+    private const int trim_bars = 12; // trims the very high ends of the bars where it is always near zero
+    private const int active_bars = bar_count - trim_bars;
+    private const float bar_width = 1f / active_bars;
+
+    public bool Visible;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -24,7 +28,7 @@ public partial class MusicVisualiser : Container
         Anchor = Anchor.BottomLeft;
         Origin = Anchor.BottomLeft;
 
-        for (int i = 0; i < bar_count; i++)
+        for (int i = 0; i < active_bars; i++)
         {
             Add(new Box
             {
@@ -42,11 +46,27 @@ public partial class MusicVisualiser : Container
     {
         base.Update();
 
-        for (var i = 0; i < Children.Count; i++)
+        if (!Visible) return;
+
+        var amplitudes = amplitudeProvider.Amplitudes;
+        if (amplitudes == null || amplitudes.Length == 0) return;
+
+        int binsPerBar = amplitudes.Length / active_bars;
+
+        for (var i = 0; i < active_bars; i++)
         {
-            var child = Children[i];
-            var height = clock.Amplitudes[i];
-            child.Height = height;
+            float sum = 0;
+            float max = 0;
+            int startBin = i * binsPerBar;
+
+            for (int j = 0; j < binsPerBar && (startBin + j) < amplitudes.Length; j++)
+            {
+                float val = amplitudes[startBin + j];
+                sum += val;
+                if (val > max) max = val;
+            }
+
+            Children[i].Height = (sum / System.Math.Max(1, binsPerBar)) * 0.5f + max * 0.5f;
         }
     }
 }

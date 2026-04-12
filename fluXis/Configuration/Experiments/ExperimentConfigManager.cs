@@ -15,10 +15,12 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
     protected override void InitialiseDefaults()
     {
         SetDefault(ExperimentConfig.ModView, false);
+        SetDefault(ExperimentConfig.LrcFeatures, false);
     }
 }
 
 public enum ExperimentConfig
 {
-    ModView
+    ModView,
+    LrcFeatures
 }

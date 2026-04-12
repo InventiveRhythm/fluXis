@@ -11,7 +11,7 @@ using osuTK;
 
 namespace fluXis.Graphics.UserInterface.Panel;
 
-public partial class Panel : Container
+public partial class Panel : ClickableContainer
 {
     [Resolved]
     private UISamples samples { get; set; }

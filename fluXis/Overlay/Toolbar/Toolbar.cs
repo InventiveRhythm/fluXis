@@ -167,7 +167,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Dashboard,
                                 TooltipSub = LocalizationStrings.Toolbar.DashboardDescription,
-                                Icon = FontAwesome6.Solid.ChartLine,
+                                Icon = FontAwesome6.Solid.EarthAmericas,
                                 Overlay = dashboard,
                                 Keybind = FluXisGlobalKeybind.ToggleDashboard,
                                 ShowPulse = api.HasUnreadNotifications.GetBoundCopy(),

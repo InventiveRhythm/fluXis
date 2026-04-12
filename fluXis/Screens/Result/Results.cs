@@ -7,6 +7,7 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Screens.Result.Sides.Types;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -22,9 +23,9 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
 
     public ScoreInfo ComparisonScore { get; set; }
 
-    protected ScoreInfo Score { get; }
     protected RealmMap Map { get; }
-    protected APIUser Player { get; }
+    protected Bindable<ScoreInfo> Score { get; }
+    protected Bindable<APIUser> Player { get; }
 
     protected DependencyContainer ExtraDependencies { get; set; }
 
@@ -39,17 +40,17 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
     public Results(RealmMap map, ScoreInfo score, APIUser player)
     {
         Map = map;
-        Score = score;
-        Player = player;
+        Score = new Bindable<ScoreInfo>(score);
+        Player = new Bindable<APIUser>(player ?? APIUser.Default);
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
         ExtraDependencies.CacheAs(this);
-        ExtraDependencies.CacheAs(Score);
         ExtraDependencies.CacheAs(Map);
-        ExtraDependencies.CacheAs(Player ?? APIUser.Default);
+        ExtraDependencies.CacheAs(Score);
+        ExtraDependencies.CacheAs(Player);
 
         InternalChildren = new Drawable[]
         {
@@ -67,7 +68,7 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
     {
         var list = new List<Drawable>();
 
-        if (Score.HitResults is not null && Score.HitResults.Count > 0)
+        if (Score.Value.HitResults is not null && Score.Value.HitResults.Count > 0)
             list.Add(new ResultsSideGraph(Score, Map));
 
         return list.ToArray();

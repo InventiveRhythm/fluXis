@@ -29,7 +29,8 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     [Resolved]
     private StoryboardTimeline timeline { get; set; }
 
-    private float beatLength => map.MapInfo.GetTimingPoint(Animation.StartTime).MsPerBeat;
+    private double startTime => row.Item.StartTime + Animation.StartTime;
+    private float beatLength => map.MapInfo.GetTimingPoint(startTime).MsPerBeat;
 
     private BindableBool isSelected = new(false);
 
@@ -73,7 +74,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                 Colour = color.Lighten(2f),
                 Alpha = 0
             },
-            outlineDiamond =new FluXisSpriteIcon
+            outlineDiamond = new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.Diamond,
                 RelativeSizeAxes = Axes.Both,
@@ -109,9 +110,9 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     {
         base.Update();
 
-        X = Math.Clamp(timeline.PositionAtTime(Animation.StartTime, Parent!.DrawWidth), -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
+        X = Math.Clamp(timeline.PositionAtTime(startTime, Parent!.DrawWidth), -DrawWidth / 2f, Parent.DrawWidth + DrawWidth / 2f);
 
-        var endX = timeline.PositionAtTime(Animation.EndTime, Parent!.DrawWidth);
+        var endX = timeline.PositionAtTime(startTime + Animation.Duration, Parent!.DrawWidth);
         var clamped = Math.Max(endX - X, 0);
         length.Width = clamped;
         outlineLength.Width = clamped;
@@ -127,6 +128,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     public Popover GetPopover() => new FluXisPopover
     {
         OnClose = () => isSelected.Value = false,
+        AllowableAnchors = [Anchor.BottomCentre],
         Child = new FillFlowContainer
         {
             Width = 380,
@@ -136,7 +138,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             Children = new Drawable[]
             {
                 new EditorVariableTitle(Animation.Type.GetDescription(), () => RequestRemove?.Invoke(Animation), false),
-                new EditorVariableTime(map, Animation),
+                new EditorVariableTime(map, Animation, () => row.Item.StartTime),
                 new EditorVariableLength<StoryboardAnimation>(map, Animation, beatLength),
                 new EditorVariableTextBox
                 {

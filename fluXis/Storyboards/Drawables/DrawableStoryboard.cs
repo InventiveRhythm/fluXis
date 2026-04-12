@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using fluXis.Audio.FFT;
 using fluXis.Configuration;
 using fluXis.Map;
 using fluXis.Scripting;
@@ -24,6 +25,9 @@ public partial class DrawableStoryboard : CompositeDrawable
     [Resolved]
     private ISkin skin { get; set; }
 
+    [Resolved]
+    private AudioAnalyzer audioAnalyzer { get; set; }
+
     public Storyboard Storyboard { get; }
     private MapInfo map { get; }
     private string assetPath { get; }
@@ -42,6 +46,16 @@ public partial class DrawableStoryboard : CompositeDrawable
     private void load(GameHost host)
     {
         Storage = new StoryboardStorage(host, assetPath);
+
+        // wait for FFT data to be ready before scripts can get amplitudes.
+        try
+        {
+            audioAnalyzer.ComputeComplete.Wait();
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
 
         var elements = Storyboard.Elements.Where(e => e.Type == StoryboardElementType.Script).ToList();
 
@@ -68,7 +82,7 @@ public partial class DrawableStoryboard : CompositeDrawable
             return null;
 
         var raw = File.ReadAllText(full);
-        var runner = scripts[path] = new StoryboardScriptRunner(map, Storyboard, new LuaSettings(config), skin);
+        var runner = scripts[path] = new StoryboardScriptRunner(map, audioAnalyzer, Storyboard, new LuaSettings(config), skin);
 
         try
         {

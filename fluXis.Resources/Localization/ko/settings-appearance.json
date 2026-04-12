@@ -1,1 +1,27 @@
-{}
+{
+    "skin-title": "스킨",
+    "skin-current": "현재 스킨",
+    "skin-current-description": "게임 내에서 사용할 스킨을 선택합니다.",
+    "skin-refresh": "스킨 목록 새로고침",
+    "skin-refresh-description": "스킨 목록을 다시 불러옵니다.",
+    "skin-open-editor": "스킨 편집기 열기",
+    "skin-open-editor-description": "인게임 에디터에서 스킨을 엽니다.",
+    "skin-open-folder": "스킨 폴더 열기",
+    "skin-open-folder-description": "파일 탐색기에서 현재 스킨에 대한 폴더를 엽니다.",
+    "title": "스킨 및 레이아웃",
+    "skin-export": "현재 스킨 내보내기",
+    "skin-export-description": ".fsk 확장자로 현재 스킨을 내보냅니다.",
+    "skin-delete": "스킨 삭제",
+    "skin-delete-description": "현재 스킨을 삭제합니다.",
+    "layout-title": "HUD 레이아웃",
+    "layout-current": "현재 레이아웃",
+    "layout-current-description": "사용할 레이아웃을 선택합니다.",
+    "layout-reload": "레이아웃 다시 불러오기",
+    "layout-reload-description": "사용 가능한 레이아웃 목록이 새로고침됩니다.",
+    "layout-create": "새로운 레이아웃 만들기",
+    "layout-create-description": "새로운 레이아웃을 만듭니다.",
+    "layout-open-folder": "레이아웃 폴더 열기",
+    "layout-open-folder-description": "파일 탐색기에서 레이아웃을 포함하는 폴더를 엽니다.",
+    "layout-open-editor": "레이아웃 편집기 열기",
+    "layout-open-editor-description": "현재 레이아웃을 인게임 에디터에서 엽니다."
+}

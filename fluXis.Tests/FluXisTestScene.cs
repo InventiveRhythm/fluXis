@@ -5,7 +5,9 @@ using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Map;
 using fluXis.Online.Fluxel;
+using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Mouse;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,6 +21,22 @@ public partial class FluXisTestScene : TestScene
 {
     protected DependencyContainer TestDependencies { get; private set; }
     protected GlobalClock GlobalClock => TestDependencies.Get<GlobalClock>();
+
+    [CanBeNull]
+    private TestMultiplayerClient multiClient = null;
+
+    protected TestMultiplayerClient MultiplayerClient
+    {
+        get
+        {
+            if (multiClient != null)
+                return multiClient;
+
+            multiClient = new TestMultiplayerClient();
+            TestDependencies.CacheAs<MultiplayerClient>(multiClient);
+            return multiClient;
+        }
+    }
 
     protected TestAPIClient TestAPI => TestDependencies.Get<IAPIClient>() as TestAPIClient;
     protected virtual bool UseTestAPI => false;

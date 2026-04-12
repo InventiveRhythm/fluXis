@@ -22,6 +22,11 @@ public partial class ExperimentsSection : SettingsSection
             {
                 Label = "ModView",
                 Bindable = experiments.GetBindable<bool>(ExperimentConfig.ModView)
+            },
+            new SettingsToggle
+            {
+                Label = ".lrc features",
+                Bindable = experiments.GetBindable<bool>(ExperimentConfig.LrcFeatures)
             }
         });
     }

@@ -242,7 +242,7 @@ public partial class MenuScreen : FluXisScreen
                                         {
                                             Text = LocalizationStrings.MainMenu.DashboardText,
                                             Description = LocalizationStrings.MainMenu.DashboardDescription,
-                                            Icon = FontAwesome6.Solid.ChartLine,
+                                            Icon = FontAwesome6.Solid.EarthAmericas,
                                             Keys = new[] { Key.D },
                                             GamepadButton = JoystickButton.Button1, // X
                                             Action = openDashboard,

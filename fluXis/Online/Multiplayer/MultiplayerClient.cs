@@ -36,7 +36,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public virtual APIUser Player => APIUser.Dummy;
 
     [CanBeNull]
-    public MultiplayerRoom Room { get; set; }
+    public MultiplayerRoom Room { get; protected set; }
 
     public async Task Create(string name, MultiplayerPrivacy privacy, string password, long mapid, string hash)
     {

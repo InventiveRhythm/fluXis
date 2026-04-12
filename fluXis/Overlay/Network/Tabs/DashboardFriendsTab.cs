@@ -79,8 +79,8 @@ public partial class DashboardFriendsTab : DashboardTab
         var users = friends.Users.OrderByDescending(x => x.LastLogin).ToList();
 
         children.AddRange([
-            new DashboardItemList<APIUser>("Online", users.OrderBy(x => x.Username).Where(x => x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 }),
-            new DashboardItemList<APIUser>("Offline", users.Where(x => !x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 })
+            new DashboardItemList<APIUser>(LocalizationStrings.General.StatusOnline, users.OrderBy(x => x.Username).Where(x => x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 }),
+            new DashboardItemList<APIUser>(LocalizationStrings.General.StatusOffline, users.Where(x => !x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 })
         ]);
 
         return new FillFlowContainer

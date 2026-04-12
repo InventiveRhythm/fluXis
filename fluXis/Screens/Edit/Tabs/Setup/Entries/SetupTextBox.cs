@@ -25,6 +25,7 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
     public Action<string> OnChange { get; init; } = _ => { };
     public int MaxLength { get; init; } = 256;
     public bool ReadOnly { get; init; }
+    public bool Password { get; init; }
 
     public CompositeDrawable TabbableContentContainer
     {
@@ -45,6 +46,7 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
         Text = Default,
         FontSize = FluXisSpriteText.GetWebFontSize(18),
         SidePadding = 0,
+        IsPassword = Password,
         PlaceholderText = Placeholder,
         BackgroundActive = BackgroundColor,
         BackgroundInactive = BackgroundColor,

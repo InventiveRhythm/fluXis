@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using fluXis.Online;
 using fluXis.Online.Activity;
@@ -95,7 +96,7 @@ public class TestAPIClient : IAPIClient
         }
 
         Status.Value = ConnectionStatus.Failed;
-        LastException = new APIException("Invalid credentials");
+        LastException = new APIException("Invalid credentials", HttpStatusCode.Unauthorized);
         User.Value = null;
 
         return Task.FromResult<Exception?>(LastException);

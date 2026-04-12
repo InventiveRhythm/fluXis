@@ -226,7 +226,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Colour = Colour4.Black,
+                        Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text,
                         Alpha = .75f,
                         Child = new FillFlowContainer
                         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using fluXis.Audio;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Drawables;
@@ -9,16 +10,25 @@ using fluXis.Online.API.Models.Scores;
 using fluXis.Online.Drawables.Images;
 using fluXis.Scoring.Enums;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Overlay.User.Tabs.Scores;
 
 public partial class ProfileScore : Container
 {
+    [Resolved]
+    private UISamples samples { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private FluXisGame game { get; set; }
+
     private APIScore score { get; }
 
     public ProfileScore(APIScore score)
@@ -174,5 +184,15 @@ public partial class ProfileScore : Container
                 }
             }
         };
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        samples.Click();
+
+        if (score.Map?.MapSetID is not null)
+            game?.PresentMapSet(score.Map.MapSetID);
+
+        return true;
     }
 }

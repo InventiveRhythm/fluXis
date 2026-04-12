@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using fluXis.Audio;
@@ -36,6 +37,8 @@ public partial class GlobalBackground : CompositeDrawable
 
     [CanBeNull]
     private CancellationTokenSource cancellationSource;
+
+    private float amplitude;
 
     public float Zoom { set => stack.ScaleTo(value, 1000, Easing.OutQuint); }
     public float ParallaxStrength { set => parallaxContainer.Strength = value; }
@@ -109,7 +112,17 @@ public partial class GlobalBackground : CompositeDrawable
 
         if (backgroundPulse.Value)
         {
-            var amplitude = amplitudeProvider.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
+            var amplitudes = amplitudeProvider.Amplitudes
+                                              .Where((_, i) => i is > 0 and < 128)
+                                              .Select((amp, i) => (amp, index: i + 1))
+                                              .ToList();
+
+            float decay = 0.15f; // the lower the value the more biased we are to the bass
+            float weightedSum = amplitudes.Sum(x => x.amp * MathF.Pow(decay, x.index));
+            float totalWeight = amplitudes.Sum(x => MathF.Pow(decay, x.index));
+            float newSample = totalWeight > 0 ? weightedSum / totalWeight : 0f;
+
+            amplitude = Math.Min(amplitude * 0.7f + newSample * 0.3f, 1f);
             Scale = new Vector2(1 + amplitude * .02f);
         }
 

@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using fluXis.Online.Fluxel;
 using JetBrains.Annotations;
-using osu.Framework.IO.Network;
 using osu.Framework.Logging;
+using WebRequest = osu.Framework.IO.Network.WebRequest;
 
 namespace fluXis.Online.API;
 
@@ -30,7 +31,7 @@ public abstract class APIRequest<T> : APIRequest
         Response = req.ResponseObject;
 
         if (!Response.Success)
-            base.Fail(new APIException(Response.Message));
+            base.Fail(new APIException(Response.Message, (HttpStatusCode)Response.Status));
     }
 
     public override void Fail(Exception e)
@@ -42,7 +43,7 @@ public abstract class APIRequest<T> : APIRequest
 
         if (req.ResponseObject is not null)
         {
-            base.Fail(new APIException(Response.Message));
+            base.Fail(new APIException(Response.Message, (HttpStatusCode)Response.Status));
             return;
         }
 

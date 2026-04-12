@@ -4,12 +4,16 @@ using AutoMapper.Internal;
 using fluXis.Database.Input;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Realms;
 
 namespace fluXis.Database;
 
 public static class RealmObjectUtils
 {
+    private static readonly ILoggerFactory logger_factory = new NullLoggerFactory();
+
     private static readonly IMapper write_mapper = new MapperConfiguration(c =>
     {
         c.ShouldMapField = _ => false;
@@ -70,7 +74,7 @@ public static class RealmObjectUtils
                     m.Ignore();
             });
         });
-    }).CreateMapper();
+    }, logger_factory).CreateMapper();
 
     private static readonly IMapper mapper = new MapperConfiguration(c =>
     {
@@ -98,7 +102,7 @@ public static class RealmObjectUtils
                  }
              }
          });
-    }).CreateMapper();
+    }, logger_factory).CreateMapper();
 
     private static readonly IMapper set_mapper = new MapperConfiguration(c =>
     {
@@ -116,7 +120,7 @@ public static class RealmObjectUtils
         c.CreateMap<RealmMap, RealmMap>()
          .MaxDepth(1)
          .ForMember(m => m.MapSet, cc => cc.Ignore());
-    }).CreateMapper();
+    }, logger_factory).CreateMapper();
 
     private static void setConfiguration(IMapperConfigurationExpression c)
     {

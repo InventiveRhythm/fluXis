@@ -31,8 +31,8 @@ HitSoundFade = {}
 ---@class ScrollVelocity
 ---@field time number
 ---@field multiplier number
----@field groups string
----@field laneMask string
+---@field groups string[]
+---@field laneMask boolean[]
 ScrollVelocity = {}
 
 ---@class TimingPoint

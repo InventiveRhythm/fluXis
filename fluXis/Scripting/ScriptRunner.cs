@@ -28,6 +28,7 @@ public class ScriptRunner
         Lua.State.Encoding = Encoding.UTF8;
 
         AddField("mathf", new LuaMath());
+        AddField("FFTParameters", new LuaFFTParameters());
 
         AddFunction("print", print);
         AddFunction("RandomRange", randomRange);

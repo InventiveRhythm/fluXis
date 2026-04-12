@@ -1,20 +1,33 @@
 ﻿using System.Linq;
+using fluXis.Audio;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Overlay.Notifications;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 
 namespace fluXis.Screens.Edit.Tabs.Verify;
 
 public partial class VerifyIssueEntry : CompositeDrawable
 {
+    [Resolved]
+    private NotificationManager notifications { get; set; }
+
+    [Resolved]
+    private Clipboard clipboard { get; set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
+
     private VerifyIssue issue { get; }
 
     private HoverLayer hover;
+    private FlashLayer flash;
 
     public VerifyIssueEntry(VerifyIssue issue)
     {
@@ -40,6 +53,7 @@ public partial class VerifyIssueEntry : CompositeDrawable
         InternalChildren = new Drawable[]
         {
             hover = new HoverLayer { Colour = color },
+            flash = new FlashLayer { Colour = color.Lighten(.5f).Opacity(.5f) },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -96,8 +110,22 @@ public partial class VerifyIssueEntry : CompositeDrawable
         };
     }
 
+    protected override bool OnClick(ClickEvent e)
+    {
+        if (issue.Time == null) return false;
+
+        clipboard.SetText(((int)issue.Time).ToString());
+        notifications.SendSmallText("Copied issue time to clipboard.");
+
+        samples.Click();
+        flash.Show();
+
+        return true;
+    }
+
     protected override bool OnHover(HoverEvent e)
     {
+        if (issue.Time != null) samples.Hover();
         hover.Show();
         return true;
     }

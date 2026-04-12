@@ -5,19 +5,6 @@ using fluXis.Configuration;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Shaders;
-using fluXis.Graphics.Shaders.Bloom;
-using fluXis.Graphics.Shaders.Chromatic;
-using fluXis.Graphics.Shaders.Glitch;
-using fluXis.Graphics.Shaders.Greyscale;
-using fluXis.Graphics.Shaders.HueShift;
-using fluXis.Graphics.Shaders.Invert;
-using fluXis.Graphics.Shaders.Mosaic;
-using fluXis.Graphics.Shaders.Noise;
-using fluXis.Graphics.Shaders.Retro;
-using fluXis.Graphics.Shaders.Vignette;
-using fluXis.Graphics.Shaders.SplitScreen;
-using fluXis.Graphics.Shaders.FishEye;
-using fluXis.Graphics.Shaders.Reflections;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
@@ -210,7 +197,9 @@ public partial class DesignContainer : EditorTabContainer
 
         foreach (var type in shaderTypes)
         {
-            ShaderContainer shader = type switch
+            var shader = ShaderStackContainer.CreateForType(type);
+
+            /*ShaderStep shader = type switch
             {
                 ShaderType.Chromatic => new ChromaticContainer(),
                 ShaderType.Greyscale => new GreyscaleContainer(),
@@ -226,12 +215,11 @@ public partial class DesignContainer : EditorTabContainer
                 ShaderType.FishEye => new FishEyeContainer(),
                 ShaderType.Reflections => new ReflectionsContainer(),
                 _ => null
-            };
+            };*/
 
             if (shader is null)
                 continue;
 
-            shader.RelativeSizeAxes = Axes.Both;
             shaders.AddShader(shader);
         }
 

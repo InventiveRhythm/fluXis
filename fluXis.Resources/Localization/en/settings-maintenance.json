@@ -9,5 +9,7 @@
   "maps-recalculate-filters": "Recalculate Filters",
   "maps-recalculate-filters-description": "Recalculates all filters for all maps.",
   "maps-scores-clean-up": "Clean up Scores",
-  "maps-scores-clean-up-description": "Removes scores from maps that you do not have anymore."
+  "maps-scores-clean-up-description": "Removes scores from maps that you do not have anymore.",
+  "visualization-cache-clear":  "Clear Visualization Cache",
+  "visualization-cache-clear-description": "Clears all cached visualization data. It will be regenerated automatically on demand so feel free to clear if you want."
 }

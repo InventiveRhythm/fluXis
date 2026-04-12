@@ -14,6 +14,22 @@ public static class LuaExtensions
 {
     private static readonly ConcurrentDictionary<Type, LuaTypeCache> reflection_cache = new();
 
+    // All conversion delegates to this
+    private static object convertToLua(object value, Lua lua)
+    {
+        if (value == null) return null;
+
+        var type = value.GetType();
+
+        if (type.IsPrimitive || value is decimal || value is string)
+            return value;
+
+        if (value is IEnumerable enumerable)
+            return enumerable.ToLuaTable(lua);
+
+        return value.ToLuaTable(lua);
+    }
+
     public static LuaTable ToLuaTable(this IEnumerable collection, Lua lua)
     {
         ArgumentNullException.ThrowIfNull(lua);
@@ -25,14 +41,7 @@ public static class LuaExtensions
 
         foreach (var item in collection)
         {
-            if (item == null)
-            {
-                luaTable[index++] = null;
-                continue;
-            }
-
-            var itemTable = item.ToLuaTable(lua);
-            luaTable[index++] = itemTable;
+            luaTable[index++] = convertToLua(item, lua);
         }
 
         return luaTable;
@@ -42,11 +51,12 @@ public static class LuaExtensions
     {
         ArgumentNullException.ThrowIfNull(lua);
 
-        if (obj == null)
-            return null;
+        if (obj == null) return null;
+
+        if (obj is IEnumerable enumerable and not string)
+            return enumerable.ToLuaTable(lua);
 
         var type = obj.GetType();
-
         var typeCache = reflection_cache.GetOrAdd(type, generateTypeCache);
 
         var itemTable = lua.DoString("return {}")[0] as LuaTable;
@@ -57,7 +67,7 @@ public static class LuaExtensions
             try
             {
                 var value = cachedProp.Property.GetValue(obj);
-                itemTable[cachedProp.LuaName] = value;
+                itemTable[cachedProp.LuaName] = convertToLua(value, lua);
             }
             catch (Exception ex)
             {
@@ -70,12 +80,31 @@ public static class LuaExtensions
             try
             {
                 var value = cachedField.Field.GetValue(obj);
-                itemTable[cachedField.LuaName] = value;
-                itemTable[cachedField.OriginalName] = value;
+                var luaValue = convertToLua(value, lua);
+
+                itemTable[cachedField.LuaName] = luaValue;
+                itemTable[cachedField.OriginalName] = luaValue;
             }
             catch (Exception ex)
             {
                 Logger.Log($"Failed to get field {cachedField.Field.Name} for {type.Name}: {ex.Message}");
+            }
+        }
+
+        foreach (var cachedMethod in typeCache.Methods)
+        {
+            try
+            {
+                string tempKey = $"__temp_func_{Guid.NewGuid():N}";
+                lua.RegisterFunction(tempKey, obj, cachedMethod.Method);
+
+                itemTable[cachedMethod.LuaName] = lua[tempKey];
+
+                lua[tempKey] = null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Failed to bind method {cachedMethod.Method.Name} for {type.Name}: {ex.Message}");
             }
         }
 
@@ -89,6 +118,7 @@ public static class LuaExtensions
         var properties = type.GetProperties(
             BindingFlags.Public |
             BindingFlags.Instance |
+            BindingFlags.Static |
             BindingFlags.FlattenHierarchy
         );
 
@@ -119,6 +149,27 @@ public static class LuaExtensions
             typeCache.Fields.Add(new LuaFieldsCache(field, luaName, field.Name));
         }
 
+        var methods = type.GetMethods(
+            BindingFlags.Public |
+            BindingFlags.Instance |
+            BindingFlags.FlattenHierarchy
+        );
+
+        foreach (var method in methods)
+        {
+            if (method.IsSpecialName || method.DeclaringType == typeof(object)) continue;
+
+            var attr = method.GetCustomAttribute<LuaMemberAttribute>(true);
+
+            if (attr == null) continue;
+
+            string luaName = !string.IsNullOrEmpty(attr.Name)
+                ? attr.Name
+                : (method.Name.IsUpperCase() ? method.Name.ToLower() : method.Name.Camelize());
+
+            typeCache.Methods.Add(new LuaMethodsCache(method, luaName));
+        }
+
         return typeCache;
     }
 
@@ -126,8 +177,12 @@ public static class LuaExtensions
     {
         public List<LuaPropertiesCache> Properties { get; } = new();
         public List<LuaFieldsCache> Fields { get; } = new();
+        public List<LuaMethodsCache> Methods { get; } = new();
     }
 
     private record struct LuaPropertiesCache(PropertyInfo Property, string LuaName);
+
     private record struct LuaFieldsCache(FieldInfo Field, string LuaName, string OriginalName);
+
+    private record struct LuaMethodsCache(MethodInfo Method, string LuaName);
 }

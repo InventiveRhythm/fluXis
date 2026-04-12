@@ -13,23 +13,9 @@ using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Shaders;
-using fluXis.Graphics.Shaders.Bloom;
-using fluXis.Graphics.Shaders.Chromatic;
-using fluXis.Graphics.Shaders.Glitch;
-using fluXis.Graphics.Shaders.Greyscale;
-using fluXis.Graphics.Shaders.HueShift;
-using fluXis.Graphics.Shaders.Invert;
-using fluXis.Graphics.Shaders.Mosaic;
-using fluXis.Graphics.Shaders.Noise;
-using fluXis.Graphics.Shaders.Retro;
-using fluXis.Graphics.Shaders.Vignette;
-using fluXis.Graphics.Shaders.SplitScreen;
-using fluXis.Graphics.Shaders.FishEye;
-using fluXis.Graphics.Shaders.Reflections;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
-using fluXis.Map.Structures.Events;
 using fluXis.Mods;
 using fluXis.Online;
 using fluXis.Online.Activity;
@@ -137,6 +123,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     private GlobalClock globalClock { get; set; }
+
+    [Resolved(CanBeNull = true)]
+    private GlobalFFTProcessor fftProcessor { get; set; }
 
     [Resolved]
     private Storage storage { get; set; }
@@ -370,27 +359,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         var shaders = MapEvents.ShaderEvents;
         var shaderTypes = shaders.Select(e => e.Type).Distinct().ToList();
 
-        LoadComponent(stack);
-
         foreach (var shaderType in shaderTypes)
         {
-            ShaderContainer shader = shaderType switch
-            {
-                ShaderType.Chromatic => new ChromaticContainer(),
-                ShaderType.Greyscale => new GreyscaleContainer(),
-                ShaderType.Invert => new InvertContainer(),
-                ShaderType.Bloom => new BloomContainer(),
-                ShaderType.Mosaic => new MosaicContainer(),
-                ShaderType.Noise => new NoiseContainer(),
-                ShaderType.Vignette => new VignetteContainer(),
-                ShaderType.Retro => new RetroContainer(),
-                ShaderType.HueShift => new HueShiftContainer(),
-                ShaderType.Glitch => new GlitchContainer(),
-                ShaderType.SplitScreen => new SplitScreenContainer(),
-                ShaderType.FishEye => new FishEyeContainer(),
-                ShaderType.Reflections => new ReflectionsContainer(),
-                _ => null
-            };
+            var shader = ShaderStackContainer.CreateForType(shaderType);
 
             if (shader == null)
             {
@@ -398,7 +369,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 continue;
             }
 
-            shader.RelativeSizeAxes = Axes.Both;
             var handler = stack.AddShader(shader);
             LoadComponent(handler);
 
@@ -406,6 +376,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                    .ForEach(s => s.Apply(handler));
         }
 
+        LoadComponent(stack);
         return stack;
     }
 
@@ -539,7 +510,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Task.Run(() =>
         {
-            var screen = new SoloResults(RealmMap, score, api.User.Value ?? APIUser.Default);
+            var screen = new SoloResults(RealmMap, score, PlayfieldManager.Players[0].ScoreProcessor.Player ?? APIUser.Default);
             screen.OnRestart = OnRestart;
             if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 
@@ -611,6 +582,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override bool OnExiting(ScreenExitEvent e)
     {
+        if (fftProcessor is not null) fftProcessor.Enabled.Value = true;
         this.FadeOut(Styling.TRANSITION_FADE);
 
         if (FadeBackToGlobalClock)
@@ -634,6 +606,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
+        // there is absolutely no reason for our global fft processor to be active during gameplay
+        if (fftProcessor is not null) fftProcessor.Enabled.Value = false;
+
         GameplayClock.Start();
         GameplayClock.RateTo(Rate, 0);
 

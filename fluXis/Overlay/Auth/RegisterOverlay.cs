@@ -6,7 +6,6 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
-using fluXis.Input;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth.UI;
 using fluXis.Overlay.Notifications;
@@ -16,14 +15,13 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Overlay.Auth;
 
-public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class RegisterOverlay : Container
 {
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -362,18 +360,4 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
     protected override bool OnDragStart(DragStartEvent e) => true;
     protected override bool OnKeyDown(KeyDownEvent e) => true;
     protected override bool OnScroll(ScrollEvent e) => true;
-
-    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
-    {
-        switch (e.Action)
-        {
-            case FluXisGlobalKeybind.Back:
-                Hide();
-                break;
-        }
-
-        return true;
-    }
-
-    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

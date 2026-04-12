@@ -618,11 +618,15 @@ public partial class MapStore : Component
             File.WriteAllBytes(MapFiles.GetFullPath(set.GetPathForFile(filename)), stream.ToArray());
 
             var hash = MapUtils.GetHash(stream);
+
             map.Hash = hash;
+            map.AudioHash = info.AudioHash; // set by RealmMap.GetMapInfo in EditorLoader.pushEditor
             map.FileName = filename;
 
             map.Filters ??= new RealmMapFilters();
             map.Filters.UpdateFilters(info, events);
+
+            map.EnableVisualization = info.EnableVisualization;
 
             var existing = r.Find<RealmMap>(map.ID)!;
             set.CopyChanges(existing.MapSet);
@@ -672,6 +676,7 @@ public partial class MapStore : Component
             },
             FileName = fileName,
             Hash = MapUtils.GetHash(info.Serialize()),
+            AudioHash = map.AudioHash,
             Filters = MapUtils.GetMapFilters(info, refEffect),
             KeyCount = map.KeyCount,
             MapSet = set,

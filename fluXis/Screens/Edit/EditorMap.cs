@@ -152,6 +152,7 @@ public class EditorMap : IVerifyContext
 
         MapInfo.AudioFile = file.Name;
         RealmMap.Metadata.Audio = file.Name;
+        RealmMap.AudioHash = MapUtils.GetXXHash(file.OpenRead());
         AudioChanged?.Invoke();
     }
 

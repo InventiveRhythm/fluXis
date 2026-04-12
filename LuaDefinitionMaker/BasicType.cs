@@ -31,7 +31,7 @@ public class BasicType : LuaType
             {
                 var b = BaseType.BaseType;
 
-                if (b != typeof(ILuaModel) && b != typeof(object))
+                if (b != typeof(ILuaModel) && b != typeof(object) && b != typeof(ValueType)) // exclude ValueType cuz of structs
                     sb.Append($": {Program.GetLuaType(b, fallback: fallbackType)}");
             }
 
@@ -60,6 +60,15 @@ public class BasicType : LuaType
                 sb.AppendLine();
             }
 
+            foreach (var field in BaseType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
+            {
+                var memberAttr = field.GetCustomAttribute<LuaMemberAttribute>();
+                if (memberAttr is null) continue;
+
+                sb.Append($"---@field {memberAttr.Name} {Program.GetLuaType(field.FieldType, fallback: fallbackType)}");
+                sb.AppendLine();
+            }
+
             if (Attribute.Public)
                 sb.AppendLine($"{Name} = {{}}");
             else
@@ -76,6 +85,23 @@ public class BasicType : LuaType
             sb.AppendLine($"---@type {Program.GetLuaType(property.PropertyType, fallback: fallbackType)}");
             sb.AppendLine($"---@diagnostic disable-next-line: missing-fields");
             sb.AppendLine($"{globalAttr.Name ?? property.Name} = {{}}");
+            sb.AppendLine();
+        }
+
+        // handle static (global) properties separately
+        foreach (var prop in BaseType.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly))
+        {
+            var globalAttr = prop.GetCustomAttribute<LuaGlobalAttribute>();
+            if (globalAttr is null) continue;
+
+            var fieldName = globalAttr.Name ?? prop.Name;
+
+            var sum = Documentation.GetPropertySummary(prop);
+            if (sum is not null) sb.AppendLine($"---{sum.ReplaceLineEndings(" ")}");
+
+            sb.AppendLine($"---@type {Program.GetLuaType(prop.PropertyType, fallback: fallbackType)}");
+            sb.AppendLine($"---@diagnostic disable-next-line: missing-fields");
+            sb.AppendLine($"{Name}.{fieldName} = {{}}");
             sb.AppendLine();
         }
 
@@ -117,7 +143,7 @@ public class BasicType : LuaType
                           Nullable.GetUnderlyingType(pType) != null;
 
                 var luaType = Program.GetLuaType(pType, false, typeof(string), isNullable);
-                
+
                 sb.Append($"---@param {parameter.Name} {luaType}");
 
                 var desc = doc.GetParameterDescription(parameter.Name!);

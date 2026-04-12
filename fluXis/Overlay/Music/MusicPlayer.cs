@@ -63,6 +63,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     private BufferedContainer blur;
     private SpriteStack<MapBackground> backgrounds;
     private BackgroundVideo video;
+    private MusicVisualiser visualizer;
 
     private Container coversContainer;
     private SpriteStack<MapCover> covers;
@@ -182,7 +183,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                 },
                             }
                         },
-                        new MusicVisualiser(),
+                        visualizer = new MusicVisualiser(),
                         trackInfoContainer = new Container
                         {
                             Padding = new MarginPadding(inner_padding),
@@ -280,6 +281,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                 }
             }
         };
+
+        State.BindValueChanged(v => visualizer.Visible = v.NewValue == Visibility.Visible);
     }
 
     protected override void LoadComplete()
