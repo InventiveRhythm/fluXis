@@ -71,7 +71,7 @@ public partial class PluginManager : Component
 
             if (string.IsNullOrEmpty(location) || !File.Exists(location))
             {
-                Logger.Log($"Skipping {name} — no file location.");
+                Logger.Log($"Couldn't find {name}, Skipping.");
                 return;
             }
 

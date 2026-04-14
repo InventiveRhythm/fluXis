@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
 namespace fluXis.Plugins;
@@ -26,8 +27,25 @@ namespace fluXis.Plugins;
 [UsedImplicitly]
 public interface IPluginModule
 {
-    public Plugin Plugin { get; internal set; }
-    public PluginLogger Logger { get; internal set; }
+    private static readonly ConditionalWeakTable<IPluginModule, ModuleState> state = new();
+
+    private class ModuleState
+    {
+        public Plugin Plugin { get; set; } = null!;
+        public PluginLogger Logger { get; set; } = null!;
+    }
+
+    public Plugin Plugin
+    {
+        get => state.GetOrCreateValue(this)!.Plugin;
+        internal set => state.GetOrCreateValue(this)!.Plugin = value;
+    }
+
+    public PluginLogger Logger
+    {
+        get => state.GetOrCreateValue(this)!.Logger;
+        internal set => state.GetOrCreateValue(this)!.Logger = value;
+    }
 
     public T GetCapability<T>() where T : class, IPluginCapability
         => this as T;
