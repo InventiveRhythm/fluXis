@@ -830,6 +830,7 @@ public partial class MapStore : Component
                 notification.Progress = (float)current / max;
             }
 
+            notification.State = LoadingState.UnknownProgress;
             archive.Dispose();
             notification.State = LoadingState.Complete;
             if (openFolder) game.ExportStorage.PresentFileExternally(fileName);

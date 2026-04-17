@@ -410,7 +410,12 @@ public partial class DashboardAccountTab : DashboardTab
             parameters.Avatar = b64;
 
         var req = new UserProfileUpdateRequest(user.ID, parameters);
-        req.Progress += (cur, max) => notification.Progress = cur / (float)max;
+        req.Progress += (cur, max) =>
+        {
+            var prog = cur / (float)max;
+            notification.Progress = prog;
+            notification.State = prog >= 1 ? LoadingState.UnknownProgress : LoadingState.Working;
+        };
 
         req.Failure += ex =>
         {
