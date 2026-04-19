@@ -95,6 +95,7 @@ public abstract class APIRequest
         APIClient = fluxel;
 
         Request = CreateWebRequest($"{RootUrl}{Path}");
+        Request.ContentType = "application/json";
         Request.Method = Method;
         Request.AllowRetryOnTimeout = false;
 
