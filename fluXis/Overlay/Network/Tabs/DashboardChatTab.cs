@@ -172,9 +172,20 @@ public partial class DashboardChatTab : DashboardTab
         Channel.BindValueChanged(e =>
         {
             flow.Clear();
+            loading.Show();
+
             var chan = client.GetChannel(e.NewValue);
-            chan?.Messages.ForEach(addMessage);
-        });
+
+            chan?.LoadMessages().ContinueWith(_ => Schedule(() =>
+            {
+                if (Channel.Value != e.NewValue)
+                    return;
+
+                chan.Messages.ForEach(addMessage);
+                loading.Hide();
+                scroll.ScrollToEnd();
+            }));
+        }, true);
     }
 
     public void WaitForChannel(string ch)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Requests.Chat;
 using fluXis.Online.Fluxel;
@@ -27,11 +28,9 @@ public class ChatChannel
         APIChannel = channel;
 
         this.api = api;
-
-        loadMessages();
     }
 
-    private void loadMessages()
+    public async Task LoadMessages()
     {
         var req = new ChatMessagesRequest(Name);
         req.Success += res =>
@@ -39,7 +38,7 @@ public class ChatChannel
             res.Data.Sort((a, b) => a.CreatedAtUnix.CompareTo(b.CreatedAtUnix));
             res.Data.ForEach(AddMessage);
         };
-        api.PerformRequestAsync(req);
+        await api.PerformRequestAsync(req);
     }
 
     public void AddMessage(APIChatMessage message)
