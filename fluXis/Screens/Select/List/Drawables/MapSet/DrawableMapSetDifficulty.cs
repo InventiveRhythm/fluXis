@@ -40,12 +40,12 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         {
             List<MenuItem> items = new()
             {
-                new MenuActionItem(LocalizationStrings.General.Play, Phosphor.Bold.Play, MenuItemType.Highlighted, () =>
+                new MenuActionItem(LocalizationStrings.General.Play, FontAwesome6.Solid.Play, MenuItemType.Highlighted, () =>
                 {
                     selection.Select(map);
                     item.SelectAction?.Invoke();
                 }),
-                new MenuActionItem(LocalizationStrings.General.Edit, Phosphor.Bold.PencilSimple, MenuItemType.Normal, () => item.EditAction?.Invoke(map))
+                new MenuActionItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => item.EditAction?.Invoke(map))
             };
 
             if (FluXisGameBase.IsDebug)
@@ -53,9 +53,9 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                 items.Add(new MenuSpacerItem());
 
                 if (map.OnlineID > 0)
-                    items.Add(new MenuActionItem("Copy Online ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
+                    items.Add(new MenuActionItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
 
-                items.Add(new MenuActionItem("Copy ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
+                items.Add(new MenuActionItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
             }
 
             return items.ToArray();
@@ -96,7 +96,6 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         Height = 48;
 
         var color = Theme.GetKeyCountColor(map.KeyCount);
-        var colorLight = color.Lighten(1);
 
         InternalChildren = new Drawable[]
         {
@@ -114,17 +113,16 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = ColourInfo.GradientVertical(colorLight, color)
+                            Colour = ColourInfo.GradientVertical(color.Lighten(1), color)
                         }
                     }
                 }
             },
-            content = new BufferedContainer(cachedFrameBuffer: true, pixelSnapping: true)
+            content = new BufferedContainer(cachedFrameBuffer: true)
             {
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
                 Masking = true,
-                BackgroundColour = color.Opacity(0),
                 Children = new Drawable[]
                 {
                     new Box
