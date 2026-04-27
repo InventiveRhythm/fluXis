@@ -75,6 +75,8 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     public Action<ITimedObject> OnClone { get; set; }
     public ITimedObject Object { get; }
 
+    public const float HEIGHT = 32f;
+
     protected float BeatLength => Map.MapInfo.GetTimingPoint(Object.Time).MsPerBeat;
 
     [Resolved]
@@ -114,7 +116,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
         compactMode = config.GetBindable<bool>(FluXisSetting.EditorCompactMode);
 
         RelativeSizeAxes = Axes.X;
-        Height = 32;
+        Height = HEIGHT;
         Masking = true;
         CornerRadius = 5;
         BorderColour = Color;

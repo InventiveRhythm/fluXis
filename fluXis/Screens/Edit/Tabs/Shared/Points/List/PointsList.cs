@@ -21,7 +21,6 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -57,7 +56,7 @@ public abstract partial class PointsList : Container
 
     private bool initialLoad = true;
     private FluXisScrollContainer scroll;
-    private FillFlowContainer<PointListEntry> flow;
+    private CullableFlowContainer<PointListEntry> flow;
 
     private Bindable<bool> compactMode;
 
@@ -128,7 +127,7 @@ public abstract partial class PointsList : Container
                                     new PointsListIconButton(() =>
                                     {
                                         var i = currentEvent.Value;
-                                        if (i is not null) scroll.ScrollIntoView(i);
+                                        if (i is not null) scroll.ScrollTo(i.Y);
                                     }) { ButtonIcon = FontAwesome6.Solid.MagnifyingGlass }
                                 }
                             }
@@ -148,12 +147,11 @@ public abstract partial class PointsList : Container
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 ScrollbarVisible = false,
-                                Child = flow = new FillFlowContainer<PointListEntry>
+                                Child = flow = new CullableFlowContainer<PointListEntry>
                                 {
                                     RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                    Direction = FillDirection.Vertical,
-                                    Spacing = new Vector2(8)
+                                    Spacing = 8,
+                                    ItemSize = PointListEntry.HEIGHT
                                 }
                             },
                             iconUp = new FluXisSpriteIcon
@@ -182,13 +180,8 @@ public abstract partial class PointsList : Container
         {
             var func = e.NewValue.MatchFunc;
 
-            foreach (var entry in flow)
-            {
-                if (func(entry.Object))
-                    entry.Show();
-                else
-                    entry.Hide();
-            }
+            foreach (var entry in flow.Items)
+                flow.SetFiltered(entry, !func(entry.Object));
         };
     }
 
@@ -214,7 +207,7 @@ public abstract partial class PointsList : Container
     {
         var compact = v.NewValue;
 
-        flow.TransformTo(nameof(FillFlowContainer.Spacing), new Vector2(compact ? 2 : 8), Styling.TRANSITION_MOVE, Easing.OutQuint);
+        flow.TransformTo(nameof(CullableFlowContainer<PointListEntry>.Spacing), compact ? 2f : 8f, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     private void openSettings(IEnumerable<Drawable> list)
@@ -277,7 +270,7 @@ public abstract partial class PointsList : Container
 
         ScheduleAfterChildren(() => objects.ForEach(o =>
         {
-            var entry = flow.FirstOrDefault(e => e.Object == o);
+            var entry = flow.Items.FirstOrDefault(e => e.Object == o);
 
             if (entry is null)
                 return;
@@ -324,12 +317,12 @@ public abstract partial class PointsList : Container
 
     private void sortPoints()
     {
-        flow.OrderBy(e => e.Object.Time).ForEach(e => flow.SetLayoutPosition(e, (float)e.Object.Time));
+        flow.Sort((a, b) => a.Object.Time.CompareTo(b.Object.Time));
     }
 
     private void selectRange(PointListEntry obj)
     {
-        var timeSorted = flow.OrderBy(e => e.Object.Time).ToList();
+        var timeSorted = flow.Items.OrderBy(e => e.Object.Time).ToList();
 
         int p1 = timeSorted.IndexOf(lastSelected);
         int p2 = timeSorted.IndexOf(obj);
@@ -403,13 +396,17 @@ public abstract partial class PointsList : Container
 
     public void ShowPoint(ITimedObject obj)
     {
-        var entry = flow.FirstOrDefault(e => e.Object == obj);
-        entry?.OpenSettings();
+        var entry = flow.Items.FirstOrDefault(e => e.Object == obj);
+
+        if (entry == null) return;
+
+        scroll.ScrollTo(entry.Y);
+        entry.OpenSettings();
     }
 
     protected void UpdatePoint(ITimedObject obj)
     {
-        var entry = flow.FirstOrDefault(e => e.Object == obj);
+        var entry = flow.Items.FirstOrDefault(e => e.Object == obj);
         entry?.UpdateValues();
 
         sortPoints();
@@ -417,7 +414,7 @@ public abstract partial class PointsList : Container
 
     protected void RemovePoint(ITimedObject obj)
     {
-        var entry = flow.FirstOrDefault(e => e.Object == obj);
+        var entry = flow.Items.FirstOrDefault(e => e.Object == obj);
 
         if (entry != null)
             flow.Remove(entry, true);
@@ -427,7 +424,7 @@ public abstract partial class PointsList : Container
     {
         base.UpdateAfterChildren();
 
-        var belowTime = flow.Where(e => e.Object.Time <= clock.CurrentTime);
+        var belowTime = flow.Items.Where(e => e.Object.Time <= clock.CurrentTime);
         var min = belowTime.MaxBy(x => x.Object.Time);
         currentEvent.Value = min;
 
