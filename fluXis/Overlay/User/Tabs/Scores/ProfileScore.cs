@@ -20,7 +20,7 @@ using osuTK;
 
 namespace fluXis.Overlay.User.Tabs.Scores;
 
-public partial class ProfileScore : Container
+public partial class ProfileScore : BufferedContainer, IHasLoadedValue
 {
     [Resolved]
     private UISamples samples { get; set; }
@@ -31,7 +31,13 @@ public partial class ProfileScore : Container
 
     private APIScore score { get; }
 
+    private bool wasVisibleOnce; // this is to prevent redrawing if the entry has not been scrolled to yet
+
+    // TODO: if we add more load wrappers we have to make sure we use load flags like ScoreListEntry
+    public bool Loaded { get; private set; }
+
     public ProfileScore(APIScore score)
+        : base(cachedFrameBuffer: true)
     {
         this.score = score;
     }
@@ -94,8 +100,16 @@ public partial class ProfileScore : Container
                         new LoadWrapper<DrawableOnlineBackground>
                         {
                             RelativeSizeAxes = Axes.Both,
-                            OnComplete = d => d.FadeInFromZero(Styling.TRANSITION_FADE),
-                            LoadContent = () => new DrawableOnlineBackground(score.Map)
+                            OnComplete = d =>
+                            {
+                                d.FadeInFromZero(Styling.TRANSITION_FADE);
+                                Scheduler.AddDelayed(() => Loaded = true, Styling.TRANSITION_FADE);
+                            },
+                            LoadContent = () =>
+                            {
+                                wasVisibleOnce = true;
+                                return new DrawableOnlineBackground(score.Map);
+                            }
                         },
                         new Box
                         {
@@ -184,6 +198,14 @@ public partial class ProfileScore : Container
                 }
             }
         };
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if ((!Loaded && wasVisibleOnce) || IsHovered || Time.Current < LatestTransformEndTime)
+            ForceRedraw();
     }
 
     protected override bool OnClick(ClickEvent e)
