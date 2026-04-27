@@ -14,120 +14,126 @@ namespace fluXis.Storyboards.Drawables.Elements;
 public partial class DrawableStoryboardCompound : DrawableStoryboardElement
 {
     [Resolved]
-    private IFrameBasedClock clock { get; set; }
+    protected IFrameBasedClock FramedClock { get; private set; }
 
     [Resolved]
-    private DrawableStoryboard storyboard { get; set; }
+    protected DrawableStoryboard Storyboard { get; private set; }
 
-    private int depth;
+    protected int ChildrenDepth;
 
-    private readonly string id = string.Empty;
-    private readonly List<StoryboardElement> children;
+    protected readonly string ID = string.Empty;
+    protected readonly List<StoryboardElement> Children;
 
-    private readonly Stack<DrawableStoryboardElement> past = new();
-    private readonly Stack<DrawableStoryboardElement> future = new();
+    protected readonly Stack<DrawableStoryboardElement> Past = new();
+    protected readonly Stack<DrawableStoryboardElement> Future = new();
 
-    private SortingContainer container;
+    protected SortingContainer Container;
 
     public DrawableStoryboardCompound(StoryboardElement element)
         : this(element, [])
     {
-        id = element.GetParameter("id", "");
+        ID = element.GetParameter("id", "");
     }
 
     public DrawableStoryboardCompound(StoryboardElement element, List<StoryboardElement> children)
         : base(element)
     {
-        this.children = children;
+        Children = children;
 
         if (element.Type != StoryboardElementType.Compound)
             throw new ArgumentException($"Element provided is not {nameof(StoryboardElementType.Compound)}", nameof(element));
     }
 
+    protected DrawableStoryboardElement CreateDrawableFor(StoryboardElement el)
+    {
+        var element = el.JsonCopy();
+        element.StartTime += Element.StartTime;
+        element.EndTime += Element.StartTime;
+
+        var drawable = element.Type switch
+        {
+            StoryboardElementType.Box => new DrawableStoryboardBox(element),
+            StoryboardElementType.Sprite => new DrawableStoryboardSprite(element),
+            StoryboardElementType.Text => new DrawableStoryboardText(element),
+            StoryboardElementType.Circle => new DrawableStoryboardCircle(element),
+            StoryboardElementType.OutlineCircle => new DrawableStoryboardOutlineCircle(element),
+            StoryboardElementType.SkinSprite => new DrawableStoryboardSkinSprite(element),
+            StoryboardElementType.OutlineBox => new DrawableStoryboardOutlineBox(element),
+            StoryboardElementType.Compound => new DrawableMutableStoryboardCompound(element, []),
+            _ => new DrawableStoryboardElement(element)
+        };
+
+        drawable.Clock = FramedClock;
+        return drawable;
+    }
+
     [BackgroundDependencyLoader]
     private void load()
     {
-        if (depth >= 10)
+        if (ChildrenDepth >= 10)
         {
             Logger.Log("Nested compound depth is over 10, no more elements will be created.", LoggingTarget.Runtime, LogLevel.Important);
             return;
         }
 
-        if (!string.IsNullOrWhiteSpace(id) && storyboard.Storyboard.Compounds.TryGetValue(id, out var sub))
-            children.AddRange(sub);
+        if (!string.IsNullOrWhiteSpace(ID) && Storyboard.Storyboard.Compounds.TryGetValue(ID, out var sub))
+            Children.AddRange(sub);
 
         var drawables = new List<DrawableStoryboardElement>();
 
-        foreach (var el in children)
+        foreach (var el in Children)
         {
-            var element = el.JsonCopy();
-            element.StartTime += Element.StartTime;
-            element.EndTime += Element.StartTime;
-
-            var drawable = element.Type switch
-            {
-                StoryboardElementType.Box => new DrawableStoryboardBox(element),
-                StoryboardElementType.Sprite => new DrawableStoryboardSprite(element),
-                StoryboardElementType.Text => new DrawableStoryboardText(element),
-                StoryboardElementType.Script => null,
-                StoryboardElementType.Circle => new DrawableStoryboardCircle(element),
-                StoryboardElementType.OutlineCircle => new DrawableStoryboardOutlineCircle(element),
-                StoryboardElementType.SkinSprite => new DrawableStoryboardSkinSprite(element),
-                StoryboardElementType.OutlineBox => new DrawableStoryboardOutlineBox(element),
-                StoryboardElementType.Compound => new DrawableStoryboardCompound(element) { depth = depth + 1 },
-                _ => new DrawableStoryboardElement(element)
-            };
+            var drawable = CreateDrawableFor(el);
 
             if (drawable is null)
                 continue;
 
             // preload to avoid lagspikes when loading sprites
-            drawable.Clock = clock;
             LoadComponent(drawable);
             drawables.Add(drawable);
         }
 
-        InternalChild = container = new SortingContainer
+        InternalChild = Container = new SortingContainer
         {
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Clock = clock
+            Clock = FramedClock
         };
 
-        drawables.OrderByDescending(x => x.Element.StartTime).ForEach(x => future.Push(x));
+        drawables.OrderByDescending(x => x.Element.StartTime).ForEach(x => Future.Push(x));
     }
 
     protected override void Update()
     {
         base.Update();
 
-        while (future.Count > 0 && future.Peek().Element.StartTime <= clock.CurrentTime)
+        while (Future.Count > 0 && Future.Peek().Element.StartTime <= FramedClock.CurrentTime)
         {
-            var drawable = future.Pop();
-            container.Add(drawable);
+            var drawable = Future.Pop();
+            Container.Add(drawable);
         }
 
-        var tooEarly = container.Children.Where(c => c.Element.StartTime > clock.CurrentTime).ToList();
+        var tooEarly = Container.Children.Where(c => c.Element.StartTime > FramedClock.CurrentTime).ToList();
 
         foreach (var drawable in tooEarly.OrderByDescending(x => x.Element.StartTime))
         {
-            container.Remove(drawable, false);
-            future.Push(drawable);
+            Container.Remove(drawable, false);
+            Future.Push(drawable);
         }
 
-        var toRemove = container.Children.Where(c => c.Element.EndTime < clock.CurrentTime).ToList();
+        var toRemove = Container.Children.Where(c => c.Element.EndTime < FramedClock.CurrentTime).ToList();
 
         foreach (var drawable in toRemove.OrderBy(x => x.Element.EndTime))
         {
-            container.Remove(drawable, false);
-            past.Push(drawable);
+            Container.Remove(drawable, false);
+            Past.Push(drawable);
         }
 
-        while (past.Count > 0 && past.Peek().Element.EndTime > clock.CurrentTime)
+        while (Past.Count > 0 && Past.Peek().Element.EndTime > FramedClock.CurrentTime)
         {
-            var drawable = past.Pop();
-            container.Add(drawable);
+            var drawable = Past.Pop();
+            Container.Add(drawable);
         }
     }
 
@@ -135,14 +141,14 @@ public partial class DrawableStoryboardCompound : DrawableStoryboardElement
     {
         base.Dispose(isDisposing);
 
-        while (past.TryPop(out var p))
+        while (Past.TryPop(out var p))
             p.Dispose();
 
-        while (future.TryPop(out var f))
+        while (Future.TryPop(out var f))
             f.Dispose();
     }
 
-    private partial class SortingContainer : Container<DrawableStoryboardElement>
+    protected partial class SortingContainer : Container<DrawableStoryboardElement>
     {
         protected override void AddInternal(Drawable drawable)
         {
