@@ -74,6 +74,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     private readonly DrawableMapSetItem item;
     private readonly RealmMap map;
     private Container outline;
+    private BufferedContainer content;
     private Box highlight;
     private DrawableScoreRank rank;
     private DifficultyChip ratingChip;
@@ -117,7 +118,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                     }
                 }
             },
-            new Container
+            content = new BufferedContainer(cachedFrameBuffer: true)
             {
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
@@ -270,6 +271,14 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
 
         scores.TopScoreUpdated += updateTopScore;
         updateTopScore(map.ID, scores.GetCurrentTop(map.ID));
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Time.Current < outline.LatestTransformEndTime || Time.Current < LatestTransformEndTime || IsHovered)
+            content.ForceRedraw();
     }
 
     public void UpdatePosition(double elapsed)
