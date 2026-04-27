@@ -10,7 +10,7 @@ using osuTK;
 
 namespace fluXis.Screens.Edit.UI.BottomBar.Timeline;
 
-public partial class TimelineDensity : FillFlowContainer
+public partial class TimelineDensity : BufferedContainer
 {
     [Resolved]
     private EditorClock clock { get; set; }
@@ -25,6 +25,13 @@ public partial class TimelineDensity : FillFlowContainer
 
     private float sectionLength => (float)(track.Length / sections);
 
+    private FillFlowContainer flow;
+
+    public TimelineDensity()
+        : base(cachedFrameBuffer: true)
+    {
+    }
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -34,6 +41,11 @@ public partial class TimelineDensity : FillFlowContainer
         CornerRadius = 3;
         Masking = true;
         Y = 8;
+
+        Child = flow = new FillFlowContainer
+        {
+            RelativeSizeAxes = Axes.Both,
+        };
     }
 
     protected override void LoadComplete()
@@ -48,13 +60,13 @@ public partial class TimelineDensity : FillFlowContainer
         trackChanged(track);
     }
 
-    private void trackChanged(DrawableTrack track)
+    private void trackChanged(DrawableTrack newTrack)
     {
-        Clear();
+        flow.Clear();
 
         for (var i = 0; i < sections; i++)
         {
-            Add(new Box
+            flow.Add(new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Width = section_width,
@@ -81,13 +93,16 @@ public partial class TimelineDensity : FillFlowContainer
         }
 
         var highest = counts.Max();
+
+        if (highest == 0)
+            return;
+
         var percentages = counts.Select(c => c / highest).ToArray();
 
         for (var i = 0; i < sections; i++)
-        {
-            var box = this[i];
-            box.Alpha = percentages[i];
-        }
+            flow[i].Alpha = percentages[i];
+
+        ForceRedraw();
     }
 
     private float getValue(HitObject hit)
@@ -100,12 +115,12 @@ public partial class TimelineDensity : FillFlowContainer
 
     protected override bool OnHover(HoverEvent e)
     {
-        this.ResizeHeightTo(12, 300, Easing.OutQuint);
+        this.ResizeHeightTo(12, 300, Easing.OutQuint).During(ForceRedraw);
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        this.ResizeHeightTo(6, 600, Easing.OutQuint);
+        this.ResizeHeightTo(6, 600, Easing.OutQuint).During(ForceRedraw);
     }
 }
