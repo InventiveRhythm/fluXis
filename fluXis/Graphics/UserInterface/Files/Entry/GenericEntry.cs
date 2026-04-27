@@ -165,4 +165,6 @@ public abstract partial class GenericEntry : Container, IComparable<GenericEntry
 
         return string.Compare(Text, other.Text, StringComparison.Ordinal);
     }
+
+    public override string ToString() => Text ?? base.ToString();
 }
