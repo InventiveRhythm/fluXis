@@ -6,20 +6,19 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Screens.Edit.UI.BottomBar.Timeline.Tags;
 
-public partial class TimelineTag : Container
+public partial class TimelineTag : HoverClickContainer
 {
     public virtual Colour4 TagColour => Colour4.White;
     public bool Expandable = true;
 
     protected FluXisSpriteText Text { get; private set; }
-    protected virtual Action UpdateAction { get; set; }
+    protected virtual Action DefferedUpdateAction { get; set; }
     protected FluXisSpriteIcon Icon { get; private set; }
     private HoverClickContainer textContainer { get; set; }
 
@@ -33,13 +32,17 @@ public partial class TimelineTag : Container
     private const int string_limit = 30;
     private const float text_margin = 2;
 
+    public Action OnHoverAction { get; set; }
+    public Action OnHoverLostAction { get; set; }
+    public Action<float> AnimationEnd { get; set; }
+
     public new float X
     {
         get => base.X;
         set
         {
             base.X = value + (collapsedSize.X / 4) / (Parent?.DrawWidth ?? 1f);
-            UpdateAction?.Invoke();
+            if (IsLoaded) DefferedUpdateAction?.Invoke();
         }
     }
 
@@ -75,7 +78,10 @@ public partial class TimelineTag : Container
                 Y = 0,
                 Size = new Vector2(0, 0),
                 Masking = true,
-                HoverLostAction = () => { if (!IsHovered) Retract(); },
+                HoverLostAction = () =>
+                {
+                    if (!IsHovered) Retract();
+                },
                 Action = () => clock.SeekSmoothly(TimedObject.Time),
                 Children = new Drawable[]
                 {
@@ -110,8 +116,8 @@ public partial class TimelineTag : Container
         if (!Expandable)
             return;
 
-        UpdateAction?.Invoke();
-        
+        DefferedUpdateAction?.Invoke();
+
         trimText();
 
         this.ResizeTo(expandedSize, 200, Easing.OutQuint);
@@ -119,25 +125,27 @@ public partial class TimelineTag : Container
         textContainer.Width = 16;
         textContainer.ResizeHeightTo(16, 100, Easing.In).Then().ResizeWidthTo(Text.DrawWidth + 6, 100, Easing.OutQuint);
         Text.FadeIn(150);
+        AnimationEnd?.Invoke((float)(210 + Time.Current));
     }
 
     protected virtual void Retract()
-    {   
+    {
         if (!Expandable && !IsHovered)
             return;
 
-        UpdateAction?.Invoke();
+        DefferedUpdateAction?.Invoke();
 
         trimText();
         Text.FadeOut(100);
         textContainer.ResizeWidthTo(collapsedSize.X, 100, Easing.In).Then().ResizeHeightTo(0, 100, Easing.OutQuint);
         this.Delay(200).Then().ResizeTo(collapsedSize, 200, Easing.OutQuint);
+        AnimationEnd?.Invoke((float)(410 + Time.Current));
     }
 
     protected override bool OnHover(HoverEvent e)
     {
         Expand();
-        return true;
+        return base.OnHover(e);
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
