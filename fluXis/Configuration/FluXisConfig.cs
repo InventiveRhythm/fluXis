@@ -99,7 +99,6 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         // Debug
         SetDefault(FluXisSetting.LogAPIResponses, false);
         SetDefault(FluXisSetting.ShowMissingLocalizations, false);
-        SetDefault(FluXisSetting.StreamFileBrowser, true);
 
         // Misc
         SetDefault(FluXisSetting.OpenRGBIntegration, false);
@@ -192,7 +191,6 @@ public enum FluXisSetting
     ServerUrl,
 
     // Debug
-    StreamFileBrowser,
     LogAPIResponses,
     ShowMissingLocalizations,
 
