@@ -217,11 +217,13 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
 
         backgroundWrapper.DelayedLoadComplete += background =>
         {
-            background.FadeInFromZero(300).Finally(_ => loaded |= LoadingStates.Background);
+            background.FadeInFromZero(300);
+            Scheduler.AddDelayed(() => loaded |= LoadingStates.Background, 310);
         };
         contentLoader.DelayedLoadComplete += content =>
         {
-            content.FadeInFromZero(300).Finally(_ => loaded |= LoadingStates.Content);
+            content.FadeInFromZero(300);
+            Scheduler.AddDelayed(() => loaded |= LoadingStates.Content, 310);
         };
     }
 
