@@ -8,7 +8,7 @@ namespace fluXis.Screens.Edit.UI.BottomBar.Timeline.Tags;
 public partial class TimelineTimingPointTag : TimelineTag
 {
     public override Colour4 TagColour => Theme.TimingPoint;
-    protected override Action DefferedUpdateAction => () => Text.Text = $"{(int)TimingPoint.BPM} BPM";
+    protected override Action DeferredUpdateAction => () => Text.Text = $"{(int)TimingPoint.BPM} BPM";
 
     public TimingPoint TimingPoint => (TimingPoint)TimedObject;
 

@@ -18,7 +18,7 @@ public partial class TimelineTag : HoverClickContainer
     public bool Expandable = true;
 
     protected FluXisSpriteText Text { get; private set; }
-    protected virtual Action DefferedUpdateAction { get; set; }
+    protected virtual Action DeferredUpdateAction { get; set; }
     protected FluXisSpriteIcon Icon { get; private set; }
     private HoverClickContainer textContainer { get; set; }
 
@@ -32,8 +32,7 @@ public partial class TimelineTag : HoverClickContainer
     private const int string_limit = 30;
     private const float text_margin = 2;
 
-    public Action OnHoverAction { get; set; }
-    public Action OnHoverLostAction { get; set; }
+    public Action OnDeferredUpdate { get; set; }
     public Action<float> AnimationEnd { get; set; }
 
     public new float X
@@ -41,8 +40,14 @@ public partial class TimelineTag : HoverClickContainer
         get => base.X;
         set
         {
-            base.X = value + (collapsedSize.X / 4) / (Parent?.DrawWidth ?? 1f);
-            if (IsLoaded) DefferedUpdateAction?.Invoke();
+            // I have no idea why it's slightly offset by 2.5
+            base.X = value + ((collapsedSize.X / 4) - 2.5f) / (Parent?.DrawWidth ?? 1f);
+
+            if (IsLoaded)
+            {
+                DeferredUpdateAction?.Invoke();
+                OnDeferredUpdate?.Invoke();
+            }
         }
     }
 
@@ -116,7 +121,8 @@ public partial class TimelineTag : HoverClickContainer
         if (!Expandable)
             return;
 
-        DefferedUpdateAction?.Invoke();
+        DeferredUpdateAction?.Invoke();
+        OnDeferredUpdate?.Invoke();
 
         trimText();
 
@@ -133,7 +139,8 @@ public partial class TimelineTag : HoverClickContainer
         if (!Expandable && !IsHovered)
             return;
 
-        DefferedUpdateAction?.Invoke();
+        DeferredUpdateAction?.Invoke();
+        OnDeferredUpdate?.Invoke();
 
         trimText();
         Text.FadeOut(100);

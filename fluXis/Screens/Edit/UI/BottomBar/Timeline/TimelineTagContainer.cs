@@ -25,8 +25,8 @@ public partial class TimelineTagContainer : BufferedContainer
     // private Container chorusPoints;
 
     private float childLatestAnimEndTime;
-    private int hoveredChildCount;
-    public bool AnyChildHovered => hoveredChildCount > 0;
+
+    private const float width_scale = 1.1f;
 
     public float Offset
     {
@@ -45,8 +45,10 @@ public partial class TimelineTagContainer : BufferedContainer
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Height = 40;
         Y = -Offset;
+
+        // Height increased to accomodate for buffered containers getting clipped
+        Height = 40;
 
         // children order is important for priorety - first: lowest, last: highest
         Children = new Drawable[]
@@ -59,6 +61,10 @@ public partial class TimelineTagContainer : BufferedContainer
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        // to prevent horizontal clipping
+        Width *= width_scale;
+
         ForceRedraw();
 
         registerListeners(
@@ -164,9 +170,8 @@ public partial class TimelineTagContainer : BufferedContainer
 
     private T createTag<T>(T tag) where T : TimelineTag
     {
-        tag.OnHoverAction = () => hoveredChildCount++;
-        tag.OnHoverLostAction = () => hoveredChildCount--;
         tag.AnimationEnd = t => childLatestAnimEndTime = t;
+        tag.OnDeferredUpdate = ForceRedraw;
         return tag;
     }
 
@@ -174,7 +179,8 @@ public partial class TimelineTagContainer : BufferedContainer
     {
         if (time == 0) return 0;
 
-        var x = time / clock.TrackLength;
+        var p = time / clock.TrackLength;
+        var x = (p + (width_scale - 1) / 2.0) / width_scale;
         return double.IsFinite(x) && !double.IsNaN(x) ? (float)x : 0;
     }
 }
