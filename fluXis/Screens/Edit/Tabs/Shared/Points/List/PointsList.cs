@@ -312,7 +312,7 @@ public abstract partial class PointsList : Container
         ActionStack.Add(new EventPlaceAction(obj));
 
         if (openSettings)
-            flow.FirstOrDefault(e => e.Object == obj)?.OpenSettings();
+            ScheduleAfterChildren(() => flow.Items.FirstOrDefault(e => e.Object == obj)?.OpenSettings());
     }
 
     private void sortPoints()
