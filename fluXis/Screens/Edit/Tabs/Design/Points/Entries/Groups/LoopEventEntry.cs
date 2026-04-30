@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
@@ -8,6 +9,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
@@ -46,7 +48,7 @@ public partial class LoopEventEntry : PointListEntry
             }
         },
         new DistanceInput("Distance", "The time between loops", Map, loop, BeatLength),
-        new EditorVariableNumber<int>
+        new CountInput(Map, loop, () => loop.Distance)
         {
             Text = "Count",
             TooltipText = "How many times the group should loop.",
@@ -75,7 +77,39 @@ public partial class LoopEventEntry : PointListEntry
         {
             Text = text;
             TooltipText = tooltip;
-            Min = 1;
+            Min = 1 / 16;
         }
+    }
+
+    private partial class CountInput : EditorVariableNumber<int>
+    {
+        [NotNull]
+        private readonly EditorMap map;
+
+        [NotNull]
+        private readonly LoopEvent obj;
+
+        [NotNull]
+        private readonly Func<double> getDistance;
+
+        public CountInput([NotNull] EditorMap map, [NotNull] LoopEvent obj, [NotNull] Func<double> getDistance)
+        {
+            this.map = map;
+            this.obj = obj;
+            this.getDistance = getDistance;
+        }
+
+        protected override Drawable CreateExtraButton() => new EditorVariableToCurrentButton
+        {
+            Action = t =>
+            {
+                double old = obj.Time;
+                double diff = t - old;
+                int newValue = (int)Math.Max(diff / getDistance(), 0);
+                CurrentValue = newValue;
+                obj.Count = newValue;
+                map.Update(obj);
+            }
+        };
     }
 }
