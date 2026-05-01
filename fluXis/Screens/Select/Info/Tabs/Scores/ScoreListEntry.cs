@@ -491,8 +491,17 @@ public partial class ScoreListEntry : BufferedContainer, IHasCustomTooltip<Score
 
         timeText.Text = TimeUtils.Ago(date);
 
-        if ((!Loaded && wasVisibleOnce) || loaded.HasFlag(LoadingStates.Downloading) || IsHovered || Time.Current < wrapper.LatestTransformEndTime)
+        if (
+            (!Loaded && wasVisibleOnce) ||
+            loaded.HasFlag(LoadingStates.Downloading) ||
+            Player.HasAnimatedAvatar || Player.HasAnimatedBanner ||
+            ScoreInfo.Rank == ScoreRank.X ||
+            IsHovered ||
+            Time.Current < wrapper.LatestTransformEndTime
+        )
+        {
             ForceRedraw();
+        }
     }
 
     protected override bool OnHover(HoverEvent e)
