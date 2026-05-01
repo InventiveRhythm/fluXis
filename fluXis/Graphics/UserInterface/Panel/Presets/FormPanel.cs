@@ -144,11 +144,11 @@ public partial class FormPanel<T> : Panel, ICloseable
 
             if (group == groupId && !string.IsNullOrEmpty(groupId))
             {
-                groupItems.Add(prop, new GroupItem(createDrawable(prop, data), groupAttr));
+                groupItems.Add(prop, new GroupItem(createDrawable(prop, data, OnDataUpdate), groupAttr));
                 continue;
             }
 
-            yield return createDrawable(prop, data);
+            yield return createDrawable(prop, data, OnDataUpdate);
         }
 
         if (!string.IsNullOrEmpty(groupId) && groupItems.Count > 0)
@@ -194,8 +194,10 @@ public partial class FormPanel<T> : Panel, ICloseable
         };
     }
 
-    private static Drawable createDrawable(PropertyInfo prop, T data)
+    private static Drawable createDrawable(PropertyInfo prop, T data, Action<T> onDataUpdate = null)
     {
+        onDataUpdate ??= d => { };
+
         var type = prop.PropertyType;
 
         if (type.IsNullable())
@@ -223,6 +225,7 @@ public partial class FormPanel<T> : Panel, ICloseable
                             var bytes = File.ReadAllBytes(file.FullName);
                             var b64 = Convert.ToBase64String(bytes);
                             prop.SetValue(data, b64);
+                            onDataUpdate(data);
                         }
                     };
 
@@ -240,7 +243,11 @@ public partial class FormPanel<T> : Panel, ICloseable
                     return new SetupColor(name)
                     {
                         Color = Colour4.TryParseHex(val as string ?? "#ffffff", out var c) ? c : Colour4.White,
-                        OnColorChanged = v => prop.SetValue(data, v.ToHex())
+                        OnColorChanged = v =>
+                        {
+                            prop.SetValue(data, v.ToHex());
+                            onDataUpdate(data);
+                        }
                     };
                 }
             }
@@ -248,6 +255,7 @@ public partial class FormPanel<T> : Panel, ICloseable
             return new FluXisSpriteText { Text = $"could not create input for type {owr} ({name})" };
         }
 
+        // TODO: call onDataUpdate here?
         if (type.IsEnum)
         {
             var getValues = typeof(Enum)
@@ -273,10 +281,37 @@ public partial class FormPanel<T> : Panel, ICloseable
             {
                 Default = val as string,
                 Placeholder = prop.GetCustomAttribute<PlaceholderAttribute>()?.Placeholder ?? string.Empty,
+                TooltipText = prop.GetCustomAttribute<TooltipAttribute>()?.TooltipText ?? string.Empty,
                 MaxLength = prop.GetCustomAttribute<MaxLengthAttribute>()?.Length ?? 256,
                 ReadOnly = prop.GetCustomAttribute<ReadOnlyAttribute>()?.IsReadOnly ?? false,
                 Password = prop.GetCustomAttribute<PasswordPropertyTextAttribute>()?.Password ?? false,
-                OnChange = v => prop.SetValue(data, v)
+                OnChange = v =>
+                {
+                    prop.SetValue(data, v);
+                    onDataUpdate(data);
+                }
+            };
+        }
+
+        if (type == typeof(float))
+        {
+            var range = prop.GetCustomAttribute<RangeAttribute>();
+            var min = range != null ? Convert.ToSingle(range.Minimum) : float.MinValue;
+            var max = range != null ? Convert.ToSingle(range.Maximum) : float.MaxValue;
+
+            return new SetupNumberBox(name)
+            {
+                Default = val as string,
+                Placeholder = prop.GetCustomAttribute<PlaceholderAttribute>()?.Placeholder ?? string.Empty,
+                TooltipText = prop.GetCustomAttribute<TooltipAttribute>()?.TooltipText ?? string.Empty,
+                ReadOnly = prop.GetCustomAttribute<ReadOnlyAttribute>()?.IsReadOnly ?? false,
+                Min = min,
+                Max = max,
+                OnChange = v =>
+                {
+                    prop.SetValue(data, v);
+                    onDataUpdate(data);
+                }
             };
         }
 
@@ -284,6 +319,10 @@ public partial class FormPanel<T> : Panel, ICloseable
 
         void throwInvalidCombo(TypeOverrideAttribute.Type attr)
             => throw new InvalidOperationException($"Custom type '{attr}' can not be represented with '{prop.PropertyType}'.");
+    }
+
+    protected virtual void OnDataUpdate(T data)
+    {
     }
 
     public void Close()

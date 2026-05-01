@@ -23,6 +23,7 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
     public string Default { get; init; } = string.Empty;
     public string Placeholder { get; init; } = string.Empty;
     public Action<string> OnChange { get; init; } = _ => { };
+    public Action<string> OnCommit { get; init; } = null;
     public int MaxLength { get; init; } = 256;
     public bool ReadOnly { get; init; }
     public bool Password { get; init; }
@@ -51,7 +52,11 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
         BackgroundActive = BackgroundColor,
         BackgroundInactive = BackgroundColor,
         OnTextChanged = () => OnChange.Invoke(textBox.Text),
-        OnCommitAction = () => OnChange.Invoke(textBox.Text),
+        OnCommitAction = () =>
+        {
+            OnChange.Invoke(textBox.Text); // if OnCommit is set maybe OnChange shouldn't be invoked there?
+            OnCommit?.Invoke(textBox.Text);
+        },
         OnFocusAction = StartHighlight,
         OnFocusLostAction = StopHighlight,
         CommitOnFocusLost = true,
