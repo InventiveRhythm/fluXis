@@ -196,8 +196,6 @@ public partial class FormPanel<T> : Panel, ICloseable
 
     private static Drawable createDrawable(PropertyInfo prop, T data, Action<T> onDataUpdate = null)
     {
-        onDataUpdate ??= d => { };
-
         var type = prop.PropertyType;
 
         if (type.IsNullable())
@@ -225,7 +223,7 @@ public partial class FormPanel<T> : Panel, ICloseable
                             var bytes = File.ReadAllBytes(file.FullName);
                             var b64 = Convert.ToBase64String(bytes);
                             prop.SetValue(data, b64);
-                            onDataUpdate(data);
+                            onDataUpdate?.Invoke(data);
                         }
                     };
 
@@ -246,7 +244,7 @@ public partial class FormPanel<T> : Panel, ICloseable
                         OnColorChanged = v =>
                         {
                             prop.SetValue(data, v.ToHex());
-                            onDataUpdate(data);
+                            onDataUpdate?.Invoke(data);
                         }
                     };
                 }
@@ -288,7 +286,7 @@ public partial class FormPanel<T> : Panel, ICloseable
                 OnChange = v =>
                 {
                     prop.SetValue(data, v);
-                    onDataUpdate(data);
+                    onDataUpdate?.Invoke(data);
                 }
             };
         }
@@ -310,7 +308,7 @@ public partial class FormPanel<T> : Panel, ICloseable
                 OnChange = v =>
                 {
                     prop.SetValue(data, v);
-                    onDataUpdate(data);
+                    onDataUpdate?.Invoke(data);
                 }
             };
         }

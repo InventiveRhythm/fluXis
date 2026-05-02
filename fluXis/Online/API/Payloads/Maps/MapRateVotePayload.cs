@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using fluXis.Utils.Attributes;
@@ -35,4 +36,17 @@ public class MapRateVotePayload
     [Range(0.0, 5.0)]
     [JsonProperty("percept")]
     public float Perception { get; set; }
+
+    public bool IsRatingValid()
+    {
+        return Base is >= 0 and <= 20 &&
+               Reading is >= 0 and <= 5 &&
+               Tracking is >= 0 and <= 5 &&
+               Perception is >= 0 and <= 5;
+    }
+
+    public float ComputeRating()
+    {
+        return (float)Math.Round(Base + ((Reading + Tracking + Perception) / 3) * 2, 2);
+    }
 }

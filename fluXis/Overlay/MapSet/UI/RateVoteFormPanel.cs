@@ -57,30 +57,17 @@ public partial class RateVoteFormPanel : FormPanel<MapRateVotePayload>
         });
     }
 
-    [BackgroundDependencyLoader]
-    private void load()
-    {
-    }
-
     protected override void OnDataUpdate(MapRateVotePayload data)
     {
-        float rating = computeRating(data);
+        float rating = data.ComputeRating();
         ratingText.Text = rating.ToStringInvariant();
         ratingText.Colour = Theme.GetDifficultyColor(rating);
-    }
-
-    private static float computeRating(MapRateVotePayload data)
-    {
-        return (float)Math.Round(data.Base + ((data.Reading + data.Tracking + data.Perception) / 3) * 2, 2);
     }
 
     private bool onVote(FormPanel<MapRateVotePayload> form, MapRateVotePayload data)
     {
         // just in case
-        if (data.Base < 0 || data.Base > 20 ||
-            data.Reading < 0 || data.Reading > 5 ||
-            data.Tracking < 0 || data.Tracking > 5 ||
-            data.Perception < 0 || data.Perception > 5)
+        if (!data.IsRatingValid())
             return false;
 
         form.StartLoading();
@@ -90,12 +77,11 @@ public partial class RateVoteFormPanel : FormPanel<MapRateVotePayload>
         {
             form.StopLoading();
             form.Close();
-            onSuccess?.Invoke(computeRating(data));
+            onSuccess?.Invoke(data.ComputeRating());
         });
         req.Failure += ex => Schedule(() =>
         {
             form.StopLoading();
-
             notifications.SendError("Failed to vote!", ex.Message);
         });
         api.PerformRequestAsync(req);
