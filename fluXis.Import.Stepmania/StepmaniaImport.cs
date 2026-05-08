@@ -5,6 +5,7 @@ using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Import.Stepmania.AutoImport;
 using fluXis.Import.Stepmania.Map;
+using fluXis.Map.Structures;
 using fluXis.Overlay.Notifications;
 using fluXis.Utils;
 using JetBrains.Annotations;
@@ -92,8 +93,8 @@ public class StepmaniaImport : MapImporter
 
             foreach (var info in infos)
             {
-                var hits = info.HitObjects.Count(x => !x.LongNote && x.Type == 1);
-                var lns = info.HitObjects.Count(x => x.LongNote && x.Type == 1);
+                var hits = info.HitObjects.Count(x => !x.LongNote && x.Type == HitObjectType.Tick);
+                var lns = info.HitObjects.Count(x => x.LongNote && x.Type == HitObjectType.Tick);
                 var mines = info.HitObjects.Count(x => x.Landmine);
                 var length = info.HitObjects.Max(x => x.Time);
 

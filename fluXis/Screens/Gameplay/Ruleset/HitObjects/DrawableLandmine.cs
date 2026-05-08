@@ -112,7 +112,7 @@ public partial class DrawableLandmine : DrawableHitObject
         while (next != null)
         {
             if (next.Time - Data.Time > Ruleset.HitWindows.TimingFor(Judgement.Okay)) return null; // no need to keep going if the next note is too far away
-            if (next.Type != 2) return next;
+            if (next.Type != HitObjectType.Landmine) return next;
 
             next = next.NextObject;
         }

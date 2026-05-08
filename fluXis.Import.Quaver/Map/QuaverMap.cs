@@ -71,7 +71,7 @@ public class QuaverMap
                     {
                         Time = t,
                         Lane = o.Lane,
-                        Type = 2,
+                        Type = HitObjectType.Landmine,
                         HoldTime = 0,
                         Group = o.TimingGroup
                     });
@@ -86,7 +86,7 @@ public class QuaverMap
                     {
                         Time = o.EndTime,
                         Lane = o.Lane,
-                        Type = 2,
+                        Type = HitObjectType.Landmine,
                         HoldTime = 0,
                         Group = o.TimingGroup
                     });
@@ -98,7 +98,7 @@ public class QuaverMap
                 {
                     Time = o.StartTime,
                     Lane = o.Lane,
-                    Type = o.Type == "Mine" ? 2 : 0,
+                    Type = o.Type == "Mine" ? HitObjectType.Landmine : HitObjectType.Normal,
                     HoldTime = o.IsLongNote ? o.EndTime - o.StartTime : 0,
                     Group = o.TimingGroup
                 });

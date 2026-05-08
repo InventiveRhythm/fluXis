@@ -242,7 +242,7 @@ public class StepmaniaFile
                                 {
                                     Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
                                     Lane = i + 1,
-                                    Type = 2,
+                                    Type = HitObjectType.Landmine,
                                 });
                                 break;
 

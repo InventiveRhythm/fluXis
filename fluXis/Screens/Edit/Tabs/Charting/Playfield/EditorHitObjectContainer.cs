@@ -51,7 +51,7 @@ public partial class EditorHitObjectContainer : Container<EditorHitObject>
 
         switch (info.Type)
         {
-            case 0:
+            case HitObjectType.Normal:
                 if (info.LongNote)
                     draw = new EditorLongNote(info);
                 else
@@ -59,11 +59,11 @@ public partial class EditorHitObjectContainer : Container<EditorHitObject>
 
                 break;
 
-            case 1:
+            case HitObjectType.Tick:
                 draw = new EditorTickNote(info);
                 break;
 
-            case 2:
+            case HitObjectType.Landmine:
                 draw = new EditorLandmine(info);
                 break;
         }

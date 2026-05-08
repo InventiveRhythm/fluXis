@@ -26,7 +26,7 @@ public class OverlappingCheck : IVerifyCheck
 
                 bool overlappingTime = Precision.AlmostEquals(current.Time, prev.Time);
                 bool overlappingEndTime = currentLn != null && Precision.AlmostEquals(current.Time, currentLn.EndTime);
-                bool insideLn = currentLn != null && current.Type != 1 // except for tick notes inside LNs
+                bool insideLn = currentLn != null && current.Type != HitObjectType.Tick // except for tick notes inside LNs
                                                   && current.Time > currentLn.Time && current.Time < currentLn.EndTime;
 
                 if (overlappingTime || insideLn || overlappingEndTime)

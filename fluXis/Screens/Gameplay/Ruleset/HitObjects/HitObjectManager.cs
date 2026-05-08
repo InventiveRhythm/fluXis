@@ -181,10 +181,10 @@ public partial class HitObjectManager : Container<HitObjectColumn>
     {
         switch (hit.Type)
         {
-            case 1:
+            case HitObjectType.Tick:
                 return new DrawableTickNote(hit);
 
-            case 2:
+            case HitObjectType.Landmine:
                 return new DrawableLandmine(hit);
 
             default:
@@ -205,11 +205,11 @@ public partial class HitObjectManager : Container<HitObjectColumn>
         // ignore hitsounds when the next is a
         // tick note since it would be played twice
         // when hitting them as a normal note
-        if (hitObject is { Type: 1 } && userTriggered) return;
+        if (hitObject is { Type: HitObjectType.Tick } && userTriggered) return;
 
         var sound = hitObject.HitSound;
 
-        if (sound == ":normal" && hitObject.Type == 1)
+        if (sound == ":normal" && hitObject.Type == HitObjectType.Tick)
         {
             sound = ":tick-big";
 

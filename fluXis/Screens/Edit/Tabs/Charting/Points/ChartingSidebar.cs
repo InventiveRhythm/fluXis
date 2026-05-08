@@ -47,14 +47,14 @@ public partial class ChartingSidebar : PointsSidebar
                 inspector.AddSection("Type", selected.GetType().ReadableName());
                 inspector.AddSection("Time", TimeUtils.Format(selected.Time));
 
-                if (selected is HitObject hit)
+                if (selected is { } hit)
                 {
                     inspector.AddSection("Hit Type", hit.Type switch
                     {
-                        0 when !hit.LongNote => "Single",
-                        0 when hit.LongNote => "Long",
-                        1 => "Tick",
-                        2 => "Landmine",
+                        HitObjectType.Normal when !hit.LongNote => "Single",
+                        HitObjectType.Normal when hit.LongNote => "Long",
+                        HitObjectType.Tick => "Tick",
+                        HitObjectType.Landmine => "Landmine",
                         _ => "Unknown"
                     });
 
@@ -77,17 +77,17 @@ public partial class ChartingSidebar : PointsSidebar
                 inspector.AddSection("Start", TimeUtils.Format(selectionHandler.SelectedObjects.Min(o => o.Time)));
                 inspector.AddSection("End", TimeUtils.Format(selectionHandler.SelectedObjects.Max(o => o.Time)));
 
-                if (selectionHandler.SelectedObjects.All(o => o is HitObject))
+                if (selectionHandler.SelectedObjects.All(o => o != null))
                 {
                     var evenCount = Map.RealmMap.KeyCount % 2 == 0;
                     var laneCount = Map.RealmMap.KeyCount / 2;
                     var middleLane = laneCount + 1;
 
-                    var leftCount = selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane <= laneCount);
-                    var middleCount = selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane == middleLane);
+                    var leftCount = selectionHandler.SelectedObjects.Count(o => o.Lane <= laneCount);
+                    var middleCount = selectionHandler.SelectedObjects.Count(o => o.Lane == middleLane);
                     var rightCount = evenCount
-                        ? selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane > laneCount)
-                        : selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane > middleLane);
+                        ? selectionHandler.SelectedObjects.Count(o => o.Lane > laneCount)
+                        : selectionHandler.SelectedObjects.Count(o => o.Lane > middleLane);
 
                     var leftPercentage = (float)leftCount / selectionHandler.SelectedObjects.Count * 100;
                     var middlePercentage = (float)middleCount / selectionHandler.SelectedObjects.Count * 100;

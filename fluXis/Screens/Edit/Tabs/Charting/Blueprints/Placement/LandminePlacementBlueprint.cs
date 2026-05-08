@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
@@ -22,7 +23,7 @@ public partial class LandminePlacementBlueprint : NotePlacementBlueprint
         };
         //piece.Child.Colour = Theme.Red;
 
-        Hit.Type = 2;
+        Hit.Type = HitObjectType.Landmine;
     }
 
     public override void UpdatePlacement(double time, int lane)
