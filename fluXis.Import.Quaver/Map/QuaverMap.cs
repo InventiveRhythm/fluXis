@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using fluXis.Import.Quaver.Map.Structs;
 using fluXis.Map;
 using fluXis.Map.Structures;
@@ -59,13 +60,49 @@ public class QuaverMap
 
         foreach (var o in HitObjects)
         {
-            mapInfo.HitObjects.Add(new HitObject
+            // we don't support LN mines, so let's just put a bunch of mines every 1/4 beat
+            if (o.Type == "Mine" && o.IsLongNote)
             {
-                Time = o.StartTime,
-                Lane = o.Lane,
-                HoldTime = o.IsLongNote ? o.EndTime - o.StartTime : 0,
-                Group = o.TimingGroup
-            });
+                TimingPoint timingPoint = mapInfo.GetTimingPoint(o.StartTime);
+
+                for (float t = o.StartTime; t < o.EndTime; t += timingPoint.MsPerBeat / 4)
+                {
+                    mapInfo.HitObjects.Add(new HitObject
+                    {
+                        Time = t,
+                        Lane = o.Lane,
+                        Type = 2,
+                        HoldTime = 0,
+                        Group = o.TimingGroup
+                    });
+
+                    timingPoint = mapInfo.GetTimingPoint(o.StartTime); // in case the bpm changes during the LN mine (idk might happen on some weird maps)
+                }
+
+                // if the endtime is too far from the last mine we placed then put a mine directly at the endtime
+                if (Math.Abs(mapInfo.HitObjects.Last().Time - o.EndTime) > timingPoint.MsPerBeat / 16)
+                {
+                    mapInfo.HitObjects.Add(new HitObject
+                    {
+                        Time = o.EndTime,
+                        Lane = o.Lane,
+                        Type = 2,
+                        HoldTime = 0,
+                        Group = o.TimingGroup
+                    });
+                }
+            }
+            else
+            {
+                mapInfo.HitObjects.Add(new HitObject
+                {
+                    Time = o.StartTime,
+                    Lane = o.Lane,
+                    Type = o.Type == "Mine" ? 2 : 0,
+                    HoldTime = o.IsLongNote ? o.EndTime - o.StartTime : 0,
+                    Group = o.TimingGroup
+                });
+            }
         }
 
         foreach (var t in TimingPoints)

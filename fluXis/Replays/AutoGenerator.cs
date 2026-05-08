@@ -104,6 +104,7 @@ public class AutoGenerator
             for (int i = 0; i < objects.Count; i++)
             {
                 var currentObject = objects[i];
+                if (currentObject.Type == 2) continue;
 
                 if (currentObject.Time < blockedUntil)
                     continue;

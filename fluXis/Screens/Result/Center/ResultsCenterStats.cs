@@ -37,6 +37,11 @@ public partial class ResultsCenterStats : CompositeDrawable
 
     private void setContent()
     {
+        int noteCount = map.Filters.NoteCount + (score.Value.Mods.Contains("NLN") ? map.Filters.LongNoteCount : 0);
+        int longNoteCount = score.Value.Mods.Contains("NLN") ? 0 : map.Filters.LongNoteCount;
+        int landmineCount = score.Value.Mods.Contains("NMN") ? 0 : map.Filters.LandmineCount;
+        int mapMaxCombo = noteCount + longNoteCount * 2 + landmineCount;
+
         InternalChild = new GridContainer
         {
             RelativeSizeAxes = Axes.Both,
@@ -48,7 +53,7 @@ public partial class ResultsCenterStats : CompositeDrawable
                     new Statistic("Combo", "", flow =>
                     {
                         flow.AddText($"{score.Value.MaxCombo}x");
-                        flow.AddText<FluXisSpriteText>($"/{map.Filters.NoteCount + map.Filters.LongNoteCount * 2}x", text =>
+                        flow.AddText<FluXisSpriteText>($"/{mapMaxCombo}x", text =>
                         {
                             text.WebFontSize = 14;
                             text.Alpha = .6f;

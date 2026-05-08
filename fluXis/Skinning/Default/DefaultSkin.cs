@@ -119,6 +119,8 @@ public class DefaultSkin : ISkin
 
     public virtual Drawable GetTickNote(int lane, int keyCount, bool small) => new DefaultTickNote(small);
 
+    public virtual Drawable GetLandmine(int lane, int keyCount) => new DefaultLandmine();
+
     public virtual Drawable GetLongNoteStart(int lane, int keyCount) => GetHitObject(lane, keyCount);
 
     public virtual Drawable GetLongNoteBody(int lane, int keyCount)

@@ -59,6 +59,9 @@ public class APIMap
     [JsonProperty("long-notes")]
     public int LongNoteCount { get; init; }
 
+    [JsonProperty("landmines")]
+    public int LandmineCount { get; init; }
+
     [JsonProperty("maxcombo")]
     public int MaxCombo { get; init; }
 

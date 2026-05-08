@@ -15,6 +15,7 @@ public class RealmMapFilters : RealmObject
 
     public int NoteCount { get; set; }
     public int LongNoteCount { get; set; }
+    public int LandmineCount { get; set; }
     public float NotesPerSecond { get; set; }
 
     [Ignored]
@@ -55,6 +56,7 @@ public class RealmMapFilters : RealmObject
         BPMMax = 0;
         NoteCount = 0;
         LongNoteCount = 0;
+        LandmineCount = 0;
         NotesPerSecond = 0;
         Effects = 0;
     }
