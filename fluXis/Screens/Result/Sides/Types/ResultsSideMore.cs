@@ -2,7 +2,7 @@
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Screens.Result.Sides.Presets;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

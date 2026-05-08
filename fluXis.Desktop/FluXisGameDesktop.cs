@@ -4,7 +4,7 @@ using fluXis.Configuration;
 using fluXis.Desktop.Integration;
 using fluXis.Integration;
 using fluXis.IPC;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
 

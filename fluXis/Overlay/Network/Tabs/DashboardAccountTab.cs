@@ -22,7 +22,7 @@ using fluXis.Overlay.Network.Tabs.Account;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Screens.Edit.Tabs.Setup.Entries;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -254,7 +254,7 @@ public partial class DashboardAccountTab : DashboardTab
                                 },
                                 new SetupTextBox("E-Mail")
                                 {
-                                    Default = StringUtils.CensorEmail(user.Email),
+                                    Default = user.Email?.CensorEmail(),
                                     ReadOnly = true
                                 }
                             }

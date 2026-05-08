@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Framework.Android", "Fr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaDefinitionMaker", "LuaDefinitionMaker\LuaDefinitionMaker.csproj", "{AE7A49FF-10A5-4E87-9C10-85EFDDC49B4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midori", "..\..\flustix\Midori\Midori\Midori.csproj", "{DC435D54-56FB-435F-8C9A-F65232AEAFE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -185,6 +187,18 @@ Global
 		{1E394E9D-1540-4B76-A867-E9651F022359}.Release|iPhone.Build.0 = Release|Any CPU
 		{1E394E9D-1540-4B76-A867-E9651F022359}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{1E394E9D-1540-4B76-A867-E9651F022359}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Release|iPhone.Build.0 = Release|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{DC435D54-56FB-435F-8C9A-F65232AEAFE3}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
