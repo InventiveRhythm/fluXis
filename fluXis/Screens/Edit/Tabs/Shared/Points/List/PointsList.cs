@@ -322,6 +322,11 @@ public abstract partial class PointsList : Container
             flow.FirstOrDefault(e => e.Object == obj)?.OpenSettings();
     }
 
+    private void moveSelectionToCurrentTime()
+    {
+        ActionStack.Add(new EventsMoveToTimeAction(selectedEntries.Select(x => x.Object).ToList(), clock.CurrentTime));
+    }
+
     private void sortPoints()
     {
         flow.OrderBy(e => e.Object.Time).ForEach(e => flow.SetLayoutPosition(e, (float)e.Object.Time));
@@ -383,6 +388,7 @@ public abstract partial class PointsList : Container
             entry.CloneSelected = duplicateSelected;
             entry.DeleteSelected = deleteSelected;
             entry.OnClone = o => Create(o);
+            entry.MoveSelectedToCurrentTime = moveSelectionToCurrentTime;
 
             entry.Selected += select;
             entry.Deselected += deselect;
