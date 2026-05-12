@@ -4,10 +4,12 @@ using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Groups;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Camera;
+using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Groups;
 using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Playfields;
 using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Scrolling;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
@@ -35,6 +37,7 @@ public partial class DesignPointsList : PointsList
         RegisterTypeEvents(Map.MapEvents.CameraMoveEvents);
         RegisterTypeEvents(Map.MapEvents.CameraScaleEvents);
         RegisterTypeEvents(Map.MapEvents.CameraRotateEvents);
+        RegisterTypeEvents(Map.MapEvents.LoopEvents);
         RegisterTypeEvents(Map.MapEvents.ScriptEvents);
         RegisterTypeEvents(Map.MapEvents.NoteEvents);
     }
@@ -58,6 +61,7 @@ public partial class DesignPointsList : PointsList
         CameraMoveEvent camm => new CameraMoveEntry(camm),
         CameraScaleEvent cams => new CameraScaleEntry(cams),
         CameraRotateEvent camr => new CameraRotateEntry(camr),
+        LoopEvent loop => new LoopEventEntry(loop),
         ScriptEvent script => new ScriptEntry(script),
         NoteEvent note => new NoteEntry(note),
         _ => null
@@ -82,6 +86,7 @@ public partial class DesignPointsList : PointsList
         CreateDefaultDropdownEntry<CameraMoveEvent>("Camera Move", Theme.CameraMove),
         CreateDefaultDropdownEntry<CameraScaleEvent>("Camera Scale", Theme.CameraScale),
         CreateDefaultDropdownEntry<CameraRotateEvent>("Camera Rotate", Theme.CameraRotate),
+        CreateDefaultDropdownEntry<LoopEvent>("Loop", Theme.Loop),
         // CreateDefaultDropdownEntry<ScriptEvent>("Script", FluXisColors.Script),
         CreateDefaultDropdownEntry<NoteEvent>("Note", Theme.Note),
     };

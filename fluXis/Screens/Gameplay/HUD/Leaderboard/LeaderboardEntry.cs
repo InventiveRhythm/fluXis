@@ -6,7 +6,7 @@ using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Images;
 using fluXis.Scoring;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

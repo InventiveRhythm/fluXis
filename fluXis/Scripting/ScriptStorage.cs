@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using fluXis.Configuration;
 using fluXis.Storyboards;
-using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Logging;
 
 namespace fluXis.Scripting;

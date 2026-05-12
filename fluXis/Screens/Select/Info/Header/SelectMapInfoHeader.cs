@@ -18,6 +18,7 @@ using fluXis.Scoring;
 using fluXis.Screens.Select.Mods;
 using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;

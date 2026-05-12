@@ -28,7 +28,7 @@ public partial class EditorFlashLayer : CompositeDrawable
 
     public void Rebuild(List<FlashEvent> flashes)
     {
-        ClearTransforms();
+        ClearTransforms(true);
         box.FadeOut();
 
         flashes.ForEach(flash =>

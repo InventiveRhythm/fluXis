@@ -9,6 +9,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Scripting;
 using fluXis.Utils;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;

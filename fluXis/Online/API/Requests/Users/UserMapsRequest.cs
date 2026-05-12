@@ -4,7 +4,7 @@ namespace fluXis.Online.API.Requests.Users;
 
 public class UserMapsRequest : APIRequest<APIUserMaps>
 {
-    protected override string Path => $"/user/{id}/maps";
+    protected override string Path => $"/users/{id}/maps";
 
     private long id { get; }
 

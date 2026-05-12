@@ -49,6 +49,8 @@ public class FluXisImport : MapImporter
             Notifications.AddTask(Notification);
         }
 
+        Notification.State = LoadingState.UnknownProgress;
+
         try
         {
             var set = getRealmMaps(path);

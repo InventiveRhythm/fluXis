@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Configuration;
@@ -9,6 +10,8 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Events;
@@ -27,6 +30,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
+using Container = osu.Framework.Graphics.Containers.Container;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.List;
 
@@ -40,6 +44,10 @@ public abstract partial class PointsList : Container
 
     [Resolved]
     private EditorClock clock { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PanelContainer panels { get; set; }
 
     private BindableList<PointListEntry> selectedEntries { get; } = new();
     private PointListEntry lastSelected = null;
@@ -237,6 +245,17 @@ public abstract partial class PointsList : Container
         }
     }
 
+    private void applyGroupSelected()
+    {
+        var obj = selectedEntries.Select(x => x.Object).ToList();
+
+        panels?.Add(new FormPanel<ApplyGroupForm>(FontAwesome6.Solid.ObjectGroup, "Apply Group", new ApplyGroupForm(), (_, d) =>
+        {
+            obj.ForEach(x => x.Group = d.NewGroup.ToLowerInvariant());
+            return true;
+        }));
+    }
+
     private void duplicateSelected()
     {
         var temp = selectedEntries.ToList();
@@ -365,6 +384,7 @@ public abstract partial class PointsList : Container
                 openSettings(list);
             };
             entry.RequestClose = RequestClose;
+            entry.RequestApplyGroup = applyGroupSelected;
             entry.CloneSelected = duplicateSelected;
             entry.DeleteSelected = deleteSelected;
             entry.OnClone = o => Create(o);
@@ -620,5 +640,11 @@ public abstract partial class PointsList : Container
         {
             UpdateColors(false);
         }
+    }
+
+    private class ApplyGroupForm
+    {
+        [Description("New Group ID")]
+        public string NewGroup { get; set; }
     }
 }

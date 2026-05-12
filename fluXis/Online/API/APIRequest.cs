@@ -65,6 +65,7 @@ public abstract class APIRequest
     protected abstract string Path { get; }
     protected virtual HttpMethod Method => HttpMethod.Get;
     protected virtual string RootUrl => APIClient.Endpoint.APIUrl;
+    protected virtual string ContentType => "application/json";
 
     protected FluxelClient APIClient { get; private set; }
     protected WebRequest Request { get; private set; }
@@ -95,6 +96,7 @@ public abstract class APIRequest
         APIClient = fluxel;
 
         Request = CreateWebRequest($"{RootUrl}{Path}");
+        Request.ContentType = ContentType;
         Request.Method = Method;
         Request.AllowRetryOnTimeout = false;
 

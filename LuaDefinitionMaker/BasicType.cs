@@ -4,6 +4,7 @@ using fluXis.Scripting;
 using fluXis.Scripting.Attributes;
 using fluXis.Utils;
 using Humanizer;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using NLua;
 

@@ -25,6 +25,7 @@ using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using Humanizer;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;

@@ -40,8 +40,9 @@ public class FluXisRealm : IDisposable
     /// 18 - Reset online score IDs
     /// 19 - Add `RealmMapUserSettings`
     /// 20 - Added `AudioHash` &amp; 'EnableVisualization' to RealmMap
+    /// 21 - Add `LandmineCount` to `RealmMapFilters`
     /// </summary>
-    private const int schema_version = 20;
+    private const int schema_version = 21;
 
     private Realm updateRealm;
 
@@ -333,6 +334,13 @@ public class FluXisRealm : IDisposable
                 });
 
                 Logger.Log($"(Schema v20) Migration took {sw.ElapsedMilliseconds}ms for {maps.Count} maps");
+                break;
+            }
+
+            case 21:
+            {
+                var maps = migration.NewRealm.All<RealmMap>().ToList();
+                maps.ForEach(x => x.Filters.LandmineCount = 0);
                 break;
             }
         }

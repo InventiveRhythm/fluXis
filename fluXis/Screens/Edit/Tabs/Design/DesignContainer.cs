@@ -177,7 +177,9 @@ public partial class DesignContainer : EditorTabContainer
     private RulesetContainer createRuleset()
     {
         var effects = Map.MapEvents.JsonCopy();
+        effects.Compile();
         effects.RunScripts(scripts);
+        effects.Sort();
 
         backFlash.Rebuild(effects.FlashEvents.Where(x => x.InBackground).ToList());
         frontFlash.Rebuild(effects.FlashEvents.Where(x => !x.InBackground).ToList());

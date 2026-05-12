@@ -10,6 +10,6 @@ public static class ZipExtensions
     {
         using Stream entryStream = entry.Open();
 
-        return entryStream.ReadAllBytesToArray();
+        return entryStream.ReadAllRemainingBytesToArray();
     }
 }

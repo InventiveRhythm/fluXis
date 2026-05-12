@@ -220,7 +220,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }
 
         Map.Sort();
-        MapEvents = Map.GetMapEvents(Mods);
+        MapEvents = Map.GetMapEvents(Mods, true);
+
         getKeyCountFromEvents();
 
         dependencies.CacheAs(Samples);

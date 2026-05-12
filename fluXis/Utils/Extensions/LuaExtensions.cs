@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Humanizer;
+using Midori.Utils.Extensions;
 using NLua;
 using osu.Framework.Logging;
 

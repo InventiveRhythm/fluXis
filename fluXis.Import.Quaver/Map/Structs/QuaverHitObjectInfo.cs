@@ -8,6 +8,7 @@ public class QuaverHitObjectInfo
 {
     public float StartTime { get; set; }
     public int Lane { get; set; }
+    public string Type { get; set; }
     public float EndTime { get; set; }
     public string TimingGroup { get; set; }
 

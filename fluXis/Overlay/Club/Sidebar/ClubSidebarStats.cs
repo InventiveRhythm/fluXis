@@ -1,6 +1,6 @@
 ﻿using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Clubs;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

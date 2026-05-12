@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Drawables;
@@ -10,12 +11,16 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Setup.Entries;
 
 public partial class SetupKeymode : CompositeDrawable
 {
     private int[] counts { get; } = { 4, 5, 6, 7, 8 };
+    private int[] extraCounts { get; } = { 1, 2, 3, 9, 10 };
+
+    private FillFlowContainer keyCountButtonsContainer;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -32,14 +37,31 @@ public partial class SetupKeymode : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Colour = Theme.Background3
             },
-            new FillFlowContainer
+            keyCountButtonsContainer = new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Direction = FillDirection.Horizontal,
-                ChildrenEnumerable = counts.Select(count => new Entry(count) { Width = 1f / counts.Length })
+                ChildrenEnumerable = getEntries(false)
             }
         };
     }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.Key != Key.AltLeft && e.Key != Key.AltRight) return false;
+
+        keyCountButtonsContainer.ChildrenEnumerable = getEntries(true);
+        return true;
+    }
+
+    protected override void OnKeyUp(KeyUpEvent e)
+    {
+        if (e.Key != Key.AltLeft && e.Key != Key.AltRight) return;
+
+        keyCountButtonsContainer.ChildrenEnumerable = getEntries(false);
+    }
+
+    private IEnumerable<Entry> getEntries(bool extra) => (extra ? extraCounts : counts).Select(count => new Entry(count) { Width = 1f / counts.Length });
 
     private partial class Entry : BufferedContainer
     {

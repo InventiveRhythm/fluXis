@@ -104,6 +104,7 @@ public class AutoGenerator
             for (int i = 0; i < objects.Count; i++)
             {
                 var currentObject = objects[i];
+                if (currentObject.Type == HitObjectType.Landmine) continue;
 
                 if (currentObject.Time < blockedUntil)
                     continue;
@@ -135,7 +136,7 @@ public class AutoGenerator
         if (currentObject.LongNote)
             return endTime;
 
-        if (nextObject?.Type == 1)
+        if (nextObject?.Type == HitObjectType.Tick)
         {
             var diff = nextObject.Time - currentObject.Time;
 

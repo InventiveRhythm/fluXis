@@ -11,6 +11,7 @@ using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Groups;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Verify;
@@ -111,6 +112,7 @@ public class EditorMap : IVerifyContext
             new ChangeNotifier<CameraMoveEvent>(MapEvents.CameraMoveEvents),
             new ChangeNotifier<CameraScaleEvent>(MapEvents.CameraScaleEvents),
             new ChangeNotifier<CameraRotateEvent>(MapEvents.CameraRotateEvents),
+            new ChangeNotifier<LoopEvent>(MapEvents.LoopEvents),
             new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents),
             new ChangeNotifier<StoryboardAnimation>(new List<StoryboardAnimation>()),

@@ -527,7 +527,7 @@ public partial class MapStore : Component
                 {
                     notification.State = LoadingState.Failed;
                     status.State = DownloadState.Failed;
-                    Logger.Log($"Failed to update mapset: {ex.Message}", LoggingTarget.Network);
+                    Logger.Error(ex, $"Failed to update mapset: {ex.Message}", LoggingTarget.Network);
                 }
                 finally
                 {
@@ -830,6 +830,7 @@ public partial class MapStore : Component
                 notification.Progress = (float)current / max;
             }
 
+            notification.State = LoadingState.UnknownProgress;
             archive.Dispose();
             notification.State = LoadingState.Complete;
             if (openFolder) game.ExportStorage.PresentFileExternally(fileName);

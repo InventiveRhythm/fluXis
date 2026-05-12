@@ -69,6 +69,7 @@ public static class Theme
     public static Colour4 CameraMove => Colour4.FromHex("#96C859");
     public static Colour4 CameraScale => Colour4.FromHex("#7E97D4");
     public static Colour4 CameraRotate => Colour4.FromHex("#CC9666");
+    public static Colour4 Loop => Colour4.FromHex("#c58a7b");
     public static Colour4 Script => Colour4.FromHex("#c58a7b");
     public static Colour4 Note => Text;
     public static Colour4 NoteTag => Colour4.FromHex("#235284");

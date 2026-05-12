@@ -83,6 +83,8 @@ public class StoryboardElement : ITimedObject
     [JsonIgnore]
     double ITimedObject.Time { get => StartTime; set => StartTime = value; }
 
+    public string Group { get; set; }
+
     public T GetParameter<T>(string key, T fallback)
     {
         if (!Parameters.TryGetValue(key, out var token))

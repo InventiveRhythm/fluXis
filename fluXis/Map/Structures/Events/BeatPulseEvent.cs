@@ -8,6 +8,9 @@ public class BeatPulseEvent : IMapEvent
     [JsonProperty("time")]
     public double Time { get; set; }
 
+    [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public string Group { get; set; }
+
     [JsonProperty("strength")]
     public float Strength { get; set; } = 1.05f;
 
