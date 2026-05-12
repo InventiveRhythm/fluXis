@@ -4,7 +4,7 @@ namespace fluXis.Online.API.Requests.MapSets.Favorite;
 
 public class MapFavoriteRequest : APIRequest<APIMapSetFavoriteState>
 {
-    protected override string Path => $"/mapset/{id}/favorite";
+    protected override string Path => $"/mapsets/{id}/favorite";
 
     private long id { get; }
 

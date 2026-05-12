@@ -32,8 +32,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Framework.Android", "Fr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaDefinitionMaker", "LuaDefinitionMaker\LuaDefinitionMaker.csproj", "{AE7A49FF-10A5-4E87-9C10-85EFDDC49B4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midori", "..\..\flustix\Midori\Midori\Midori.csproj", "{DC435D54-56FB-435F-8C9A-F65232AEAFE3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

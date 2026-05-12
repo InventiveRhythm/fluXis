@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using fluXis.Utils;
 using Newtonsoft.Json;
 
@@ -9,6 +10,7 @@ namespace fluXis.Online.API.Payloads.Chat;
 public class ChatCreateChannelPayload
 {
     [JsonProperty("target")]
+    [Required]
     public long? TargetID { get; set; }
 
     public ChatCreateChannelPayload(long target)

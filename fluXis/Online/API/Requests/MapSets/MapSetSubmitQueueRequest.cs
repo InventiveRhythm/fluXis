@@ -5,7 +5,7 @@ namespace fluXis.Online.API.Requests.MapSets;
 
 public class MapSetSubmitQueueRequest : APIRequest<dynamic>
 {
-    protected override string Path => $"/mapset/{id}/submit";
+    protected override string Path => $"/mapsets/{id}/submit";
     protected override HttpMethod Method => HttpMethod.Post;
 
     private long id { get; }
