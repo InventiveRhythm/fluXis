@@ -11,6 +11,7 @@ using fluXis.Online.Drawables.Images;
 using fluXis.Scoring.Enums;
 using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

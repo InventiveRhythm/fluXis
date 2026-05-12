@@ -8,7 +8,7 @@ namespace fluXis.Online.API.Requests.Clubs;
 
 public class EditClubRequest : APIRequest<APIClub>
 {
-    protected override string Path => $"/club/{id}";
+    protected override string Path => $"/clubs/{id}";
     protected override HttpMethod Method => HttpMethod.Patch;
 
     private long id { get; }

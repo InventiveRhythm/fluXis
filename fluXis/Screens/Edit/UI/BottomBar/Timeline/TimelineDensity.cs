@@ -107,7 +107,7 @@ public partial class TimelineDensity : BufferedContainer
 
     private float getValue(HitObject hit)
     {
-        if (hit.Type == 1)
+        if (hit.Type == HitObjectType.Tick)
             return .1f;
 
         return 1f;

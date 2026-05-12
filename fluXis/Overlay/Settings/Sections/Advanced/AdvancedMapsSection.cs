@@ -12,6 +12,7 @@ using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Overlay.Settings.UI;
 using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -88,7 +89,7 @@ public partial class AdvancedMapsSection : SettingsSubSection
 
             var bytes = dir.GetFiles("*", SearchOption.AllDirectories).Sum(f => f.Length);
 
-            var label = $"{strings.ClearVisualizationCache} ({StringUtils.FormatBytes(bytes)})";
+            var label = $"{strings.ClearVisualizationCache} ({bytes.FormatBytes()})";
             Schedule(() => clearFFTOption.SetLabel(label));
         });
     }

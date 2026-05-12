@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Storyboards;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;

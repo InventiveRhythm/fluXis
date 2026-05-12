@@ -33,6 +33,9 @@ public static class MapUtils
             _ => 0
         };
 
+        if (result == 0)
+            result = first.GetHashCode().CompareTo(second.GetHashCode());
+
         if (inverse)
             result = -result;
 
@@ -53,6 +56,9 @@ public static class MapUtils
             SortingMode.Difficulty => compareDifficulty(first, second),
             _ => 0
         };
+
+        if (result == 0)
+            result = first.GetHashCode().CompareTo(second.GetHashCode());
 
         if (inverse)
             result = -result;
@@ -148,6 +154,8 @@ public static class MapUtils
 
             if (hitObject.LongNote)
                 filters.LongNoteCount++;
+            else if (hitObject.Landmine)
+                filters.LandmineCount++;
             else
                 filters.NoteCount++;
         }
@@ -239,7 +247,8 @@ public static class MapUtils
 
             var value = hitObject.Type switch
             {
-                1 => 0.1f, // tick
+                HitObjectType.Tick => 0.1f, // tick
+                HitObjectType.Landmine => 0, // landmine
                 _ => 1
             };
 

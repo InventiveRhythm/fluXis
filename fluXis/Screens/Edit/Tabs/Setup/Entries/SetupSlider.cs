@@ -3,7 +3,7 @@ using System.Numerics;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 

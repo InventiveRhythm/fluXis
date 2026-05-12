@@ -2,7 +2,7 @@
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Requests.Scores;
 using fluXis.Online.API.Responses.Scores;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;

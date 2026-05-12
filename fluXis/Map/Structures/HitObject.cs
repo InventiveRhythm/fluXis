@@ -31,15 +31,17 @@ public class HitObject : ITimedObject
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
-    /// <summary>
-    /// 0 = Normal / Long
-    /// 1 = Tick
-    /// </summary>
+    [JsonProperty("hidden")]
+    public bool Hidden { get; set; }
+
     [JsonProperty("type")]
-    public int Type { get; set; }
+    public HitObjectType Type { get; set; }
 
     [JsonIgnore]
-    public bool LongNote => HoldTime > 0 && Type == 0;
+    public bool LongNote => HoldTime > 0 && Type == HitObjectType.Normal;
+
+    [JsonIgnore]
+    public bool Landmine => Type == HitObjectType.Landmine;
 
     [JsonIgnore]
     public double EndTime
@@ -89,4 +91,11 @@ public class HitObject : ITimedObject
     [CanBeNull]
     [JsonIgnore]
     public EditorHitObject EditorDrawable { get; set; }
+}
+
+public enum HitObjectType
+{
+    Normal,
+    Tick,
+    Landmine
 }

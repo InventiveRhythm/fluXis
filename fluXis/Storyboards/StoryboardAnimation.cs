@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK;

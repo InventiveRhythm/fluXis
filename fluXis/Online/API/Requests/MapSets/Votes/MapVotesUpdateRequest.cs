@@ -8,7 +8,7 @@ namespace fluXis.Online.API.Requests.MapSets.Votes;
 
 public class MapVotesUpdateRequest : APIRequest<APIMapVotes>
 {
-    protected override string Path => $"/mapset/{id}/votes";
+    protected override string Path => $"/mapsets/{id}/votes";
     protected override HttpMethod Method => HttpMethod.Post;
 
     private long id { get; }

@@ -5,7 +5,7 @@ using fluXis.Online.Drawables.Images;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Skinning;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

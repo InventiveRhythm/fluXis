@@ -13,6 +13,7 @@ using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using Humanizer;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;

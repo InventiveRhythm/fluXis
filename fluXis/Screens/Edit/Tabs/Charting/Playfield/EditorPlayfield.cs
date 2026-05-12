@@ -152,7 +152,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
         var sound = info.HitSound;
 
-        if (sound == ":normal" && info.Type == 1)
+        if (sound == ":normal" && info.Type == HitObjectType.Tick)
         {
             sound = ":tick-big";
 

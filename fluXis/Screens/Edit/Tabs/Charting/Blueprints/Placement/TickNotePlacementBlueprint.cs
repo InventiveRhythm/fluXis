@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
@@ -21,7 +22,7 @@ public partial class TickNotePlacementBlueprint : NotePlacementBlueprint
             Origin = Anchor.BottomLeft
         };
 
-        Hit.Type = 1;
+        Hit.Type = HitObjectType.Tick;
     }
 
     public override void UpdatePlacement(double time, int lane)
