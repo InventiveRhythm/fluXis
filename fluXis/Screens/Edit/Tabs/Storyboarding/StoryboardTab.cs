@@ -233,7 +233,7 @@ public partial class StoryboardTab : EditorTab
         {
             // TODO: maybe don't iterate over all layers in the future?
             foreach (var layer in layers)
-                layer.QueueAddStaticElement(e);
+                layer.AddStaticElement(e);
         }
 
         storyboard.Sort();
@@ -251,7 +251,7 @@ public partial class StoryboardTab : EditorTab
         {
             // TODO: maybe don't iterate over all layers in the future?
             foreach (var layer in layers)
-                layer.QueueRemoveStaticElement(e);
+                layer.RemoveStaticElement(e);
         }
 
         storyboard.Sort();

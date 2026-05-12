@@ -4,7 +4,6 @@ using fluXis.Storyboards.Drawables.Elements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Threading;
 using osu.Framework.Timing;
 
 namespace fluXis.Storyboards.Drawables;
@@ -19,11 +18,6 @@ public partial class DrawableDynamicStoryboardLayer : DrawSizePreservingFillCont
     private DrawableMutableStoryboardCompound masterCompound;
     private Dictionary<StoryboardElement, DrawableMutableStoryboardCompound> scriptDrawables { get; } = new();
 
-    private readonly Dictionary<StoryboardElement, PendingAction> pendingActions = new();
-    private ScheduledDelegate pendingFlushDelegate;
-
-    private const float static_debounce = 1000 / 60f; // debounced at 60 fps
-
     public DrawableDynamicStoryboardLayer(IFrameBasedClock clock, DrawableDynamicStoryboard storyboard, StoryboardLayer layer)
     {
         this.clock = clock;
@@ -33,7 +27,6 @@ public partial class DrawableDynamicStoryboardLayer : DrawSizePreservingFillCont
 
     // Some clarification:
     // We call normal (non script created) elements as 'static' because we don't need to track it to rebuild it.
-    // Static elements are debounced here but script elements are debounced in storyboard tab via an IdleTracker; This is so that updating static elements is self-contained and as reactive as possible.
 
     [BackgroundDependencyLoader]
     private void load()
@@ -118,52 +111,8 @@ public partial class DrawableDynamicStoryboardLayer : DrawSizePreservingFillCont
 
     public void UpdateStaticElement(StoryboardElement element)
     {
-        pendingActions[element] = PendingAction.Update;
-        schedulePendingFlush();
-    }
-
-    public void QueueAddStaticElement(StoryboardElement element)
-    {
-        pendingActions[element] = PendingAction.Add;
-        schedulePendingFlush();
-    }
-
-    public void QueueRemoveStaticElement(StoryboardElement element)
-    {
-        pendingActions[element] = PendingAction.Remove;
-        schedulePendingFlush();
-    }
-
-    private void schedulePendingFlush()
-    {
-        pendingFlushDelegate?.Cancel();
-        pendingFlushDelegate = Scheduler.AddDelayed(executePendingActions, static_debounce);
-    }
-
-    private void executePendingActions()
-    {
-        foreach (var (element, action) in pendingActions)
-        {
-            switch (action)
-            {
-                case PendingAction.Remove:
-                    masterCompound.RemoveElement(element);
-                    break;
-
-                case PendingAction.Update:
-                    masterCompound.RemoveElement(element);
-                    if (element.Layer == layer)
-                        masterCompound.AddElement(element);
-                    break;
-
-                case PendingAction.Add:
-                    if (element.Layer == layer)
-                        masterCompound.AddElement(element);
-                    break;
-            }
-        }
-
-        pendingActions.Clear();
+        masterCompound.RemoveElement(element);
+        AddStaticElement(element);
     }
 
     #endregion
@@ -176,12 +125,5 @@ public partial class DrawableDynamicStoryboardLayer : DrawSizePreservingFillCont
         base.Dispose(isDisposing);
         storyboard.ScriptElementsAdded -= onScriptElementsAdded;
         storyboard.ScriptElementsRemoved -= onScriptElementsRemoved;
-    }
-
-    private enum PendingAction
-    {
-        Add,
-        Remove,
-        Update
     }
 }
