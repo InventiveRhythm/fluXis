@@ -99,6 +99,7 @@ public partial class EditorVariableWaveform : BufferedContainer
 
         RelativeSizeAxes = Axes.X;
         Height = 280;
+        Width = 0.4f;
         CornerRadius = 20;
         Masking = true;
 
@@ -113,7 +114,7 @@ public partial class EditorVariableWaveform : BufferedContainer
 
         Add(new Box
         {
-            Width = 6,
+            Width = 4,
             RelativeSizeAxes = Axes.Y,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre
@@ -237,7 +238,7 @@ public partial class EditorVariableWaveform : BufferedContainer
                     RelativeSizeAxes = Axes.Both,
                     RelativePositionAxes = Axes.Both,
                     Waveform = editor.Waveform.Value,
-                    Resolution = 1,
+                    Resolution = 0.75f,
                     BaseColour = Theme.Highlight.Darken(1f),
                     LowColour = Theme.Highlight.Darken(.5f),
                     MidColour = Theme.Highlight,
