@@ -119,7 +119,6 @@ public static class LuaExtensions
         var properties = type.GetProperties(
             BindingFlags.Public |
             BindingFlags.Instance |
-            BindingFlags.Static |
             BindingFlags.FlattenHierarchy
         );
 
