@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using fluXis.Map;
+using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Scripting.Attributes;
 using fluXis.Utils.Extensions;
@@ -33,9 +34,24 @@ public class LuaMap : ILuaModel
         events = map.GetMapEvents();
     }
 
+#nullable enable
+
+    /// <summary>
+    /// Get all or specific types of Hitobjects in a range. Leave type parameter if you want all HitObjects.
+    /// 'Normal' HitObjectType will also give long notes not just normal notes.
+    /// </summary>
     [LuaMember(Name = "NotesInRange")]
-    public LuaTable GetNotesInRange(double startTime, double endTime)
-        => getInRange(map.HitObjects, startTime, endTime).ToLuaTable(lua);
+    public LuaTable GetNotesInRange(double startTime, double endTime, [LuaCustomType(typeof(HitObjectType?))] string? type = null)
+    {
+        HitObjectType? typeHit = Enum.TryParse<HitObjectType>(type, out var typeH) ? typeH : null;
+
+        return typeHit is null
+            ? getInRange(map.HitObjects, startTime, endTime).ToLuaTable(lua)
+            : getInRange(map.HitObjects, startTime, endTime)
+              .Where(h => h.Type == typeHit).ToLuaTable(lua);
+    }
+
+#nullable restore
 
     [LuaMember(Name = "TimingPointsInRange")]
     public LuaTable GetTimingPointsInRange(double startTime, double endTime)
