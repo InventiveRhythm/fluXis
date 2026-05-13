@@ -95,6 +95,7 @@ function BlendMode(input) end
 ---| "PlayfieldMove"
 ---| "PlayfieldRotate"
 ---| "PlayfieldScale"
+---| "Loop"
 ---| "CameraMove"
 ---| "CameraRotate"
 ---| "CameraScale"

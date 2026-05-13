@@ -1,5 +1,8 @@
 ---@meta
 
+---@param v number
+function SetVersion(v) end
+
 ---@param from number
 ---@param to number
 ---@return number

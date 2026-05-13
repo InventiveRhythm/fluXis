@@ -17,7 +17,8 @@ function Vector2(x, y) end
 ---@field holdTime number
 ---@field hitSound string
 ---@field group string
----@field type number 0 = Normal / Long             1 = Tick
+---@field hidden boolean
+---@field type string
 HitObject = {}
 
 ---@class HitSoundFade
@@ -30,6 +31,7 @@ HitSoundFade = {}
 
 ---@class ScrollVelocity
 ---@field time number
+---@field group string
 ---@field multiplier number
 ---@field groups string[]
 ---@field laneMask boolean[]

@@ -63,7 +63,6 @@ internal class Program
         typeList.Add(new EnumType<FFTBandType>(false));
 
         var eventTypes = LuaMap.GetMapEventTypes();
-        eventTypes.Remove(typeof(ScriptEvent));
         eventTypes.Remove(typeof(NoteEvent));
 
         var eventSb = new StringBuilder();

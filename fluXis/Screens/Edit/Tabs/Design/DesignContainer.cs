@@ -178,7 +178,6 @@ public partial class DesignContainer : EditorTabContainer
     {
         var effects = Map.MapEvents.JsonCopy();
         effects.Compile();
-        effects.RunScripts(scripts);
         effects.Sort();
 
         backFlash.Rebuild(effects.FlashEvents.Where(x => x.InBackground).ToList());
