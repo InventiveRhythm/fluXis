@@ -4,10 +4,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using fluXis.Scripting.Models;
 using Humanizer;
 using Midori.Utils.Extensions;
 using NLua;
 using osu.Framework.Logging;
+using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Utils.Extensions;
 
@@ -24,6 +27,18 @@ public static class LuaExtensions
 
         if (type.IsPrimitive || value is decimal || value is string)
             return value;
+
+        // Explicit conversion
+        // do this for types we don't have control over
+        // or types that are better for use as wrappers in lua rather than relying on auto table generation
+        switch (value)
+        {
+            case Vector2 v:
+                return new LuaVector2(v);
+
+            case Color4 c:
+                return new LuaColor4(c);
+        }
 
         if (value is IEnumerable enumerable)
             return enumerable.ToLuaTable(lua);

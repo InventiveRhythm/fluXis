@@ -193,7 +193,7 @@ internal class Program
             "fluXis.Audio.FFT.Structures.Data.FFTBands" => "FFTBands",
             "fluXis.Audio.FFT.Structures.Processor.FFTParameters" => "FFTParameters",
             "osuTK.Graphics.Color4" => "Color4",
-            "osuTK.Graphics.Vector2" => "Vector2",
+            "osuTK.Vector2" => "Vector2",
             "System.Boolean" => "boolean",
             "System.String" => "string",
             "NLua.LuaTable" => "table",
