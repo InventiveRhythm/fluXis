@@ -54,6 +54,12 @@ public partial class UserInterfaceGeneralSection : SettingsSubSection
             },
             new SettingsToggle
             {
+                Label = strings.ShowBackgroundShaders,
+                Description = strings.ShowBackgroundShadersDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.ShowBackgroundShaders)
+            },
+            new SettingsToggle
+            {
                 Label = strings.RelativeMouseScroll,
                 Description = strings.RelativeMouseScrollDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.RelativeMiddleScroll)
