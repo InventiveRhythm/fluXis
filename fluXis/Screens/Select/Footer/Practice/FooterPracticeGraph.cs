@@ -6,6 +6,7 @@ using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
+using fluXis.Map.Structures;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -152,7 +153,8 @@ public partial class FooterPracticeGraph : GridContainer
 
             var value = hit.Type switch
             {
-                1 => 0.1f, // tick
+                HitObjectType.Tick => 0.1f,
+                HitObjectType.Landmine => 0f,
                 _ => 1
             };
 

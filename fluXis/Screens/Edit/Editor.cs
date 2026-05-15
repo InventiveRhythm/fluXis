@@ -55,6 +55,7 @@ using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using ManagedBass.Fx;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -1032,7 +1033,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 setID = editorMap.MapSet.OnlineID;
 
             var request = new MapSetUploadRequest(buffer, setID);
-            request.Progress += (l1, l2) => overlay.SubText = $"{StringUtils.FormatBytes(l1)}/{StringUtils.FormatBytes(l2)} {Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
+            request.Progress += (l1, l2) => overlay.SubText = $"{l1.FormatBytes()}/{l1.FormatBytes()} {Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
             await api.PerformRequestAsync(request);
 
             overlay.SubText = "Reading response...";

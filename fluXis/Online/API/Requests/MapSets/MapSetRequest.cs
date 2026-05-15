@@ -4,7 +4,7 @@ namespace fluXis.Online.API.Requests.MapSets;
 
 public class MapSetRequest : APIRequest<APIMapSet>
 {
-    protected override string Path => $"/mapset/{id}";
+    protected override string Path => $"/mapsets/{id}";
 
     private long id { get; }
 

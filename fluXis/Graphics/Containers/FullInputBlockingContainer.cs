@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 
@@ -13,10 +14,14 @@ public partial class FullInputBlockingContainer : Container
     [CanBeNull]
     public Func<UIEvent, bool> GenericHandle { get; set; }
 
+    public Bindable<bool> Active { get; set; } = new();
     public Action OnClickAction { get; set; }
 
     protected override bool Handle(UIEvent e)
     {
+        if (!Active.Value)
+            return false;
+
         if (e is TouchEvent)
             return false;
 

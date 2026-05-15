@@ -11,6 +11,9 @@ public class ScrollVelocity : ITimedObject, IHasGroups
     [JsonProperty("time")]
     public double Time { get; set; }
 
+    [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public string Group { get; set; }
+
     [JsonProperty("multiplier")]
     public double Multiplier { get; set; } = 1;
 

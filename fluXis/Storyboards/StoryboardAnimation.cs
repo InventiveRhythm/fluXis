@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK;
@@ -91,6 +91,9 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
         get => StartTime;
         set => StartTime = value;
     }
+
+    [JsonIgnore]
+    string ITimedObject.Group { get; set; }
 }
 
 public enum StoryboardAnimationType

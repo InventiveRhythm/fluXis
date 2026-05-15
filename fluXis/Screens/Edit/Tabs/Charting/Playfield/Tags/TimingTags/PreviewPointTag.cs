@@ -33,5 +33,6 @@ public partial class PreviewPointTag : EditorTag
     private class PreviewPointObject : ITimedObject
     {
         public double Time { get; set; }
+        public string Group { get; set; }
     }
 }

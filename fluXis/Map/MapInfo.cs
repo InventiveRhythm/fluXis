@@ -198,13 +198,15 @@ public class MapInfo
         HitSoundFades?.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
-    public MapEvents GetMapEvents(List<IMod> mods)
+    public MapEvents GetMapEvents(List<IMod> mods, bool comp)
     {
         var events = GetMapEvents<MapEvents>();
+        if (comp) events.Compile();
 
         foreach (var mod in mods.OfType<IApplicableToEvents>())
             mod.Apply(events);
 
+        events.Sort();
         return events;
     }
 

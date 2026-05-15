@@ -150,6 +150,7 @@ public partial class TaskNotification : CompositeDrawable
                                                 progress = new CircularContainer
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
+                                                    RelativePositionAxes = Axes.X,
                                                     Width = 0.5f,
                                                     Masking = true,
                                                     Children = new Drawable[]
@@ -219,11 +220,28 @@ public partial class TaskNotification : CompositeDrawable
         icon.ClearTransforms();
         icon.RotateTo(0);
 
+        progress.ClearTransforms();
+
         switch (state)
         {
             case LoadingState.Working:
+            case LoadingState.UnknownProgress:
                 setColor(colorWorking, instant ? 0 : 500);
-                resize(data.Progress);
+
+                if (state != LoadingState.Working)
+                {
+                    progress.ResizeWidthTo(1f, 600, Easing.Out)
+                            .MoveToX(0, 600, Easing.Out)
+                            .Then()
+                            .ResizeWidthTo(0, 600, Easing.Out)
+                            .MoveToX(1f, 600, Easing.Out)
+                            .Then()
+                            .MoveToX(0f, 200)
+                            .Loop();
+                }
+                else
+                    resize(data.Progress);
+
                 icon.Icon = data.WorkingIcon;
                 statusText.Text = data.TextWorking;
 
@@ -234,8 +252,11 @@ public partial class TaskNotification : CompositeDrawable
 
             case LoadingState.Failed:
                 setColor(colorFailed, instant ? 0 : 500);
+                resize(1);
+
                 icon.Icon = FontAwesome6.Solid.XMark;
                 statusText.Text = data.TextFailed;
+
                 Hide(10000);
                 error?.Play();
                 break;
@@ -243,10 +264,12 @@ public partial class TaskNotification : CompositeDrawable
             case LoadingState.Complete:
                 setColor(colorFinished, instant ? 0 : 500);
                 resize(1);
+
                 icon.Icon = FontAwesome6.Solid.Check;
                 statusText.Text = data.TextFinished;
-                finish?.Play();
+
                 Hide(data.ClickAction != null ? 5000 : 1000);
+                finish?.Play();
                 break;
         }
     }
@@ -260,6 +283,10 @@ public partial class TaskNotification : CompositeDrawable
 
     private void resize(float taskProgress)
     {
+        if (data.State == LoadingState.UnknownProgress)
+            return;
+
+        progress.MoveToX(0, 200, Easing.OutQuint);
         progress.ResizeWidthTo(taskProgress, 200, Easing.OutQuint);
     }
 }

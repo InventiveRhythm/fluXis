@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Graphics;
@@ -22,6 +24,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
@@ -37,6 +40,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     {
         new MenuActionItem("Clone to current time", FontAwesome6.Solid.Clone, clone),
         new MenuActionItem("Go to time", FontAwesome6.Solid.ArrowRight, goTo),
+        new MenuActionItem("Bulk-Apply Group", FontAwesome6.Solid.ObjectGroup, applyGroup) { IsEnabled = () => State == SelectedState.Selected },
         new MenuActionItem("Edit", FontAwesome6.Solid.PenRuler, OpenSettings),
         new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => delete(false))
     };
@@ -65,6 +69,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     public Action<IEnumerable<Drawable>> ShowSettings { get; set; }
     public Action RequestClose { get; set; }
+    public Action RequestApplyGroup { get; set; }
     public Action DeleteSelected { get; set; }
     public Action CloneSelected { get; set; }
     public Action<ITimedObject> OnClone { get; set; }
@@ -93,6 +98,10 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     private Circle indicator;
     private FluXisSpriteText timeText;
     private FillFlowContainer valueFlow;
+    private FluXisSpriteText groupText;
+
+    private InputManager input;
+    private bool wasHoldingAlt;
 
     protected PointListEntry(ITimedObject obj)
     {
@@ -142,6 +151,14 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
                 Origin = Anchor.CentreRight,
                 Direction = FillDirection.Horizontal,
                 X = -10
+            },
+            groupText = new FluXisSpriteText
+            {
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Colour = Color,
+                X = -10,
+                Alpha = 0
             }
         };
     }
@@ -151,9 +168,35 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
         base.LoadComplete();
         UpdateValues();
 
+        input = GetContainingInputManager();
+
         CurrentEvent.BindValueChanged(currentEventChange, true);
         compactMode.BindValueChanged(compactChanged, true);
         FinishTransforms(true);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        var isHoldingAlt = input.CurrentState.Keyboard.AltPressed;
+
+        if (wasHoldingAlt == isHoldingAlt)
+            return;
+
+        wasHoldingAlt = isHoldingAlt;
+
+        if (isHoldingAlt)
+        {
+            valueFlow.Alpha = 0;
+            groupText.Text = Object.Group;
+            groupText.Alpha = 1;
+        }
+        else
+        {
+            valueFlow.Alpha = 1;
+            groupText.Alpha = 0;
+        }
     }
 
     protected override void Dispose(bool isDisposing)
@@ -208,11 +251,27 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     protected virtual IEnumerable<Drawable> CreateSettings()
     {
-        return new Drawable[]
+        var props = Object.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var hasGroup = props.Any(x => x.Name == nameof(ITimedObject.Group));
+
+        var list = new List<Drawable>
         {
             new EditorVariableTitle(Text, () => delete()),
             new EditorVariableTime(Map, Object)
         };
+
+        if (hasGroup)
+        {
+            list.Add(new EditorVariableTextBox
+            {
+                Text = "Group",
+                TooltipText = "The group this object belongs to.",
+                CurrentValue = Object.Group,
+                OnValueChanged = t => Object.Group = t.Text.ToLowerInvariant()
+            });
+        }
+
+        return list.ToArray();
     }
 
     private void clone()
@@ -226,6 +285,14 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
         var clone = CreateClone();
         OnClone?.Invoke(clone);
+    }
+
+    private void applyGroup()
+    {
+        if (State != SelectedState.Selected)
+            return;
+
+        RequestApplyGroup?.Invoke();
     }
 
     private void goTo() => clock.SeekSmoothly(Object.Time);

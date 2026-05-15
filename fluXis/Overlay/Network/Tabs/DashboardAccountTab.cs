@@ -22,7 +22,7 @@ using fluXis.Overlay.Network.Tabs.Account;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Screens.Edit.Tabs.Setup.Entries;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -254,7 +254,7 @@ public partial class DashboardAccountTab : DashboardTab
                                 },
                                 new SetupTextBox("E-Mail")
                                 {
-                                    Default = StringUtils.CensorEmail(user.Email),
+                                    Default = user.Email?.CensorEmail(),
                                     ReadOnly = true
                                 }
                             }
@@ -410,7 +410,12 @@ public partial class DashboardAccountTab : DashboardTab
             parameters.Avatar = b64;
 
         var req = new UserProfileUpdateRequest(user.ID, parameters);
-        req.Progress += (cur, max) => notification.Progress = cur / (float)max;
+        req.Progress += (cur, max) =>
+        {
+            var prog = cur / (float)max;
+            notification.Progress = prog;
+            notification.State = prog >= 1 ? LoadingState.UnknownProgress : LoadingState.Working;
+        };
 
         req.Failure += ex =>
         {

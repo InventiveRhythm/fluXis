@@ -12,6 +12,9 @@ public class ColorFadeEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableTo
     [JsonProperty("time")]
     public double Time { get; set; }
 
+    [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public string Group { get; set; }
+
     [JsonProperty("fade-primary")]
     public bool FadePrimary { get; set; } = false;
 

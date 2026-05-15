@@ -1,6 +1,6 @@
 using System;
 using fluXis.Graphics.Sprites.Icons;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Mods;

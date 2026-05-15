@@ -37,7 +37,7 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
         }
     }
 
-    private Drawable dim;
+    private FullInputBlockingContainer dim;
     private Container contentContainer;
 
     private AudioFilter lowPass;
@@ -50,8 +50,8 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
         InternalChild = new PopoverContainer
         {
             RelativeSizeAxes = Axes.Both,
-            Children = new[]
-            {
+            Children =
+            [
                 lowPass = new AudioFilter(audio.TrackMixer),
                 dim = new FullInputBlockingContainer
                 {
@@ -69,7 +69,7 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
                 {
                     RelativeSizeAxes = Axes.Both
                 }
-            }
+            ]
         };
     }
 
@@ -80,19 +80,19 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
         if (Content is { IsLoaded: true, IsPresent: false } && !Content.Transforms.Any())
         {
             Schedule(() => contentContainer.Remove(Content, false));
-            dim.Alpha = 0;
+            setAlpha(0);
             setBlur(0);
             setCutOff(AudioFilter.MAX);
         }
         else if (Content is { IsLoaded: true })
         {
-            dim.Alpha = Content.Alpha;
+            setAlpha(Content.Alpha);
             setBlur(Content.Alpha);
             setCutOff((int)(AudioFilter.MAX - (AudioFilter.MAX - AudioFilter.MIN) * Content.Alpha));
         }
         else if (BlurContainer?.BlurSigma != Vector2.Zero || dim.Alpha != 0)
         {
-            dim.Alpha = 0;
+            setAlpha(0);
             setBlur(0);
         }
     }
@@ -131,6 +131,15 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
 
         if (contentContainer.Last() is ICloseable closeable)
             closeable.Close();
+    }
+
+    private float lastAlpha = 0;
+
+    private void setAlpha(float alpha)
+    {
+        dim.Alpha = alpha;
+        dim.Active.Value = alpha > 0 && lastAlpha <= alpha;
+        lastAlpha = alpha;
     }
 
     private void setBlur(float blur)

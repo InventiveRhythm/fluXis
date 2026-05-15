@@ -102,7 +102,7 @@ public partial class ModCategory : CompositeDrawable
     {
         Scheduler.AddDelayed(() =>
         {
-            header.MoveToX(-50, 400, Easing.OutQuint).FadeOut(200);
+            header.MoveToX(-50, 400, Easing.In).FadeOut(200);
 
             for (var i = 0; i < entries.Length; i++)
             {

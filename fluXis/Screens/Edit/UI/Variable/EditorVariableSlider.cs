@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
