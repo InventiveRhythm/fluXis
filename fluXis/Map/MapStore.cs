@@ -527,7 +527,7 @@ public partial class MapStore : Component
                 {
                     notification.State = LoadingState.Failed;
                     status.State = DownloadState.Failed;
-                    Logger.Log($"Failed to update mapset: {ex.Message}", LoggingTarget.Network);
+                    Logger.Error(ex, $"Failed to update mapset: {ex.Message}", LoggingTarget.Network);
                 }
                 finally
                 {
@@ -618,11 +618,15 @@ public partial class MapStore : Component
             File.WriteAllBytes(MapFiles.GetFullPath(set.GetPathForFile(filename)), stream.ToArray());
 
             var hash = MapUtils.GetHash(stream);
+
             map.Hash = hash;
+            map.AudioHash = info.AudioHash; // set by RealmMap.GetMapInfo in EditorLoader.pushEditor
             map.FileName = filename;
 
             map.Filters ??= new RealmMapFilters();
             map.Filters.UpdateFilters(info, events);
+
+            map.EnableVisualization = info.EnableVisualization;
 
             var existing = r.Find<RealmMap>(map.ID)!;
             set.CopyChanges(existing.MapSet);
@@ -672,6 +676,7 @@ public partial class MapStore : Component
             },
             FileName = fileName,
             Hash = MapUtils.GetHash(info.Serialize()),
+            AudioHash = map.AudioHash,
             Filters = MapUtils.GetMapFilters(info, refEffect),
             KeyCount = map.KeyCount,
             MapSet = set,
@@ -825,6 +830,7 @@ public partial class MapStore : Component
                 notification.Progress = (float)current / max;
             }
 
+            notification.State = LoadingState.UnknownProgress;
             archive.Dispose();
             notification.State = LoadingState.Complete;
             if (openFolder) game.ExportStorage.PresentFileExternally(fileName);

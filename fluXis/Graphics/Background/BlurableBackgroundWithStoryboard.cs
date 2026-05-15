@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Configuration;
 using fluXis.Database.Maps;
+using fluXis.Graphics.Shaders;
 using fluXis.Map.Drawables;
 using fluXis.Storyboards;
 using fluXis.Storyboards.Drawables;
 using JetBrains.Annotations;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Video;
@@ -38,6 +41,34 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
             yield break;
 
         var framed = new FramedClock(GlobalClock.CurrentTrack, false);
+
+        var effects = info.GetMapEvents([], true);
+        var shaders = effects.ShaderEvents;
+
+        if (shaders.Count != 0 && Config.Get<bool>(FluXisSetting.ShowBackgroundShaders))
+        {
+            var grouped = shaders.GroupBy(x => x.Type);
+
+            ShaderStack = new ShaderStackContainer { RelativeSizeAxes = Axes.Both };
+
+            var handlers = new PersistentTransformContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Clock = framed
+            };
+
+            LoadComponent(handlers);
+
+            foreach (var group in grouped)
+            {
+                var handle = ShaderStack.AddShader(ShaderStackContainer.CreateForType(group.Key));
+                handlers.Add(handle);
+
+                group.ForEach(x => x.Apply(handle));
+            }
+
+            AddInternal(handlers);
+        }
 
         var stream = info.GetVideoStream();
 
@@ -85,5 +116,10 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
 
         if (video != null)
             video.PlaybackPosition = video.Clock.CurrentTime;
+    }
+
+    private partial class PersistentTransformContainer : Container
+    {
+        public override bool RemoveCompletedTransforms => false;
     }
 }

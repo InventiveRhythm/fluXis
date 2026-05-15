@@ -36,6 +36,7 @@ public class FontAwesome6
         public static IconUsage BullseyeArrow => GetSolid(0xf648);
         public static IconUsage CandyCane => GetSolid(0xf786);
         public static IconUsage ChartLine => GetSolid(0xf201);
+        public static IconUsage ChartSimple => GetSolid(0xe473);
         public static IconUsage Check => GetSolid(0xf00c);
         public static IconUsage Circle => GetSolid(0xf111);
         public static IconUsage CircleNodes => GetSolid(0xe4e2);

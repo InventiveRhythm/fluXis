@@ -8,8 +8,10 @@ using fluXis.Online.API.Requests.Clubs;
 using fluXis.Online.Drawables;
 using fluXis.Online.Drawables.Users;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Club;
 using fluXis.Overlay.Network.Tabs.Club;
 using fluXis.Overlay.Network.Tabs.Shared;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -28,12 +30,33 @@ public partial class DashboardClubTab : DashboardTab
     [Resolved]
     private IAPIClient api { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private ClubOverlay clubOverlay { get; set; }
+
     private FluXisScrollContainer content;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Header.Child = new DashboardRefreshButton(refresh);
+        Header.Child = new FillFlowContainer
+        {
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Horizontal,
+            Anchor = Anchor.CentreRight,
+            Origin = Anchor.CentreRight,
+            Children = new Drawable[]
+            {
+                new DashboardRefreshButton(refresh),
+                new DashboardRefreshButton(() =>
+                {
+                    if (clubOverlay is null || api.User.Value.Club is null)
+                        return;
+
+                    clubOverlay.ShowClub(api.User.Value.Club.ID);
+                }) { Text = "View Full" }
+            }
+        };
 
         Content.Children = new Drawable[]
         {

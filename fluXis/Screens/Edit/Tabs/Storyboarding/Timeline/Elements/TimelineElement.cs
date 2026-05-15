@@ -6,8 +6,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Scripting;
 using fluXis.Storyboards;
-using fluXis.Utils;
 using fluXis.Utils.Attributes;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -140,6 +140,10 @@ public partial class TimelineElement : CompositeDrawable
                 text.Text = txt;
                 break;
             }
+
+            case StoryboardElementType.Compound:
+                text.Text = Element.GetParameter("id", "");
+                break;
 
             default:
                 text.Text = "";

@@ -109,6 +109,7 @@ public enum DashboardTabType
     News,
     Friends,
     Club,
+    Mapping,
     Chat,
     Online,
     Account

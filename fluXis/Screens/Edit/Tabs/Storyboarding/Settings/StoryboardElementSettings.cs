@@ -19,9 +19,9 @@ using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Scripting;
 using fluXis.Storyboards;
-using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -469,34 +469,28 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             }
                             else if (parameter.Type == typeof(int))
                             {
-                                drawables.Add(new EditorVariableTextBox
+                                drawables.Add(new EditorVariableNumber<int>
                                 {
                                     Text = parameter.Title,
-                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<int>()).ToString(),
-                                    OnValueChanged = box =>
+                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<int>()),
+                                    OnValueChanged = v =>
                                     {
-                                        if (box.Text.TryParseIntInvariant(out var result))
-                                            item.Parameters[parameter.Key] = result;
-                                        else
-                                            box.NotifyError();
-
+                                        item.Parameters[parameter.Key] = v;
                                         map.Update(item);
                                     }
                                 });
                             }
                             else if (parameter.Type == typeof(float))
                             {
-                                drawables.Add(new EditorVariableTextBox
+                                drawables.Add(new EditorVariableNumber<float>
                                 {
                                     Text = parameter.Title,
-                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<float>()).ToStringInvariant(),
-                                    OnValueChanged = box =>
+                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<float>()),
+                                    Step = 0.1f,
+                                    Formatting = "G7",
+                                    OnValueChanged = v =>
                                     {
-                                        if (box.Text.TryParseFloatInvariant(out var result))
-                                            item.Parameters[parameter.Key] = result;
-                                        else
-                                            box.NotifyError();
-
+                                        item.Parameters[parameter.Key] = v;
                                         map.Update(item);
                                     }
                                 });
@@ -516,6 +510,19 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             }
                         }
 
+                        break;
+
+                    case StoryboardElementType.Compound:
+                        drawables.Add(new EditorVariableTextBox
+                        {
+                            Text = "Compound ID",
+                            CurrentValue = item.GetParameter("id", ""),
+                            OnValueChanged = t =>
+                            {
+                                item.Parameters["id"] = t.Text;
+                                map.Update(item);
+                            }
+                        });
                         break;
                 }
 

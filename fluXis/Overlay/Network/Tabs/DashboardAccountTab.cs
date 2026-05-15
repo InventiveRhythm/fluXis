@@ -5,6 +5,7 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
@@ -21,13 +22,12 @@ using fluXis.Overlay.Network.Tabs.Account;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Screens.Edit.Tabs.Setup.Entries;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osuTK;
@@ -187,7 +187,7 @@ public partial class DashboardAccountTab : DashboardTab
                                         Origin = Anchor.Centre
                                     }
                                 },
-                                new ImageEditHover()
+                                new ImageSelector.ImageEditHover()
                             },
                             Action = () =>
                             {
@@ -218,7 +218,7 @@ public partial class DashboardAccountTab : DashboardTab
                                         Origin = Anchor.Centre
                                     }
                                 },
-                                new ImageEditHover()
+                                new ImageSelector.ImageEditHover()
                             },
                             Action = () =>
                             {
@@ -254,7 +254,7 @@ public partial class DashboardAccountTab : DashboardTab
                                 },
                                 new SetupTextBox("E-Mail")
                                 {
-                                    Default = StringUtils.CensorEmail(user.Email),
+                                    Default = user.Email?.CensorEmail(),
                                     ReadOnly = true
                                 }
                             }
@@ -410,7 +410,12 @@ public partial class DashboardAccountTab : DashboardTab
             parameters.Avatar = b64;
 
         var req = new UserProfileUpdateRequest(user.ID, parameters);
-        req.Progress += (cur, max) => notification.Progress = cur / (float)max;
+        req.Progress += (cur, max) =>
+        {
+            var prog = cur / (float)max;
+            notification.Progress = prog;
+            notification.State = prog >= 1 ? LoadingState.UnknownProgress : LoadingState.Working;
+        };
 
         req.Failure += ex =>
         {
@@ -473,66 +478,5 @@ public partial class DashboardAccountTab : DashboardTab
         };
 
         api.PerformRequestAsync(req);
-    }
-
-    private partial class ImageEditHover : CompositeDrawable
-    {
-        [Resolved]
-        private UISamples samples { get; set; } = null!;
-
-        public ImageEditHover()
-        {
-            RelativeSizeAxes = Axes.Both;
-            AlwaysPresent = true;
-            Alpha = 0;
-
-            InternalChildren = new Drawable[]
-            {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Theme.Background2,
-                    Alpha = 0.75f
-                },
-                new FillFlowContainer
-                {
-                    AutoSizeAxes = Axes.Both,
-                    Direction = FillDirection.Vertical,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Spacing = new Vector2(8),
-                    Children = new Drawable[]
-                    {
-                        new FluXisSpriteIcon
-                        {
-                            Size = new Vector2(20),
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Icon = FontAwesome6.Solid.Pencil
-                        },
-                        new ForcedHeightText
-                        {
-                            Height = 28,
-                            WebFontSize = 16,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Text = "click to change"
-                        }
-                    }
-                }
-            };
-        }
-
-        protected override bool OnHover(HoverEvent e)
-        {
-            samples.Hover();
-            this.FadeIn(50);
-            return true;
-        }
-
-        protected override void OnHoverLost(HoverLostEvent e)
-        {
-            this.FadeOut(200);
-        }
     }
 }

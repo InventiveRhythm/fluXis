@@ -51,6 +51,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.SkipIntro, false);
         SetDefault(FluXisSetting.Parallax, true);
         SetDefault(FluXisSetting.ShowStoryboardVideo, true);
+        SetDefault(FluXisSetting.ShowBackgroundShaders, false);
         SetDefault(FluXisSetting.RelativeMiddleScroll, false);
 
         // UI // Main Menu
@@ -146,6 +147,7 @@ public enum FluXisSetting
     SkipIntro,
     Parallax,
     ShowStoryboardVideo,
+    ShowBackgroundShaders,
     RelativeMiddleScroll,
 
     // UI // Main Menu

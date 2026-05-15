@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Hashing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,6 +11,7 @@ using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Utils.Attributes;
+using osu.Framework.Extensions;
 using osu.Framework.Localisation;
 
 namespace fluXis.Utils;
@@ -31,6 +33,9 @@ public static class MapUtils
             _ => 0
         };
 
+        if (result == 0)
+            result = first.GetHashCode().CompareTo(second.GetHashCode());
+
         if (inverse)
             result = -result;
 
@@ -51,6 +56,9 @@ public static class MapUtils
             SortingMode.Difficulty => compareDifficulty(first, second),
             _ => 0
         };
+
+        if (result == 0)
+            result = first.GetHashCode().CompareTo(second.GetHashCode());
 
         if (inverse)
             result = -result;
@@ -146,6 +154,8 @@ public static class MapUtils
 
             if (hitObject.LongNote)
                 filters.LongNoteCount++;
+            else if (hitObject.Landmine)
+                filters.LandmineCount++;
             else
                 filters.NoteCount++;
         }
@@ -237,7 +247,8 @@ public static class MapUtils
 
             var value = hitObject.Type switch
             {
-                1 => 0.1f, // tick
+                HitObjectType.Tick => 0.1f, // tick
+                HitObjectType.Landmine => 0, // landmine
                 _ => 1
             };
 
@@ -251,6 +262,10 @@ public static class MapUtils
     public static string GetHash(string input) => BitConverter.ToString(SHA256.HashData(Encoding.UTF8.GetBytes(input))).Replace("-", "").ToLower();
     public static string GetHash(Stream input) => BitConverter.ToString(SHA256.Create().ComputeHash(input)).Replace("-", "").ToLower();
     public static string GetHash(byte[] input) => BitConverter.ToString(SHA256.HashData(input)).Replace("-", "").ToLower();
+
+    public static string GetXXHash(string input) => BitConverter.ToString(XxHash3.Hash(Encoding.UTF8.GetBytes(input))).Replace("-", "").ToLower();
+    public static string GetXXHash(Stream input) => BitConverter.ToString(XxHash3.Hash(input.ReadAllBytesToArray())).Replace("-", "").ToLower();
+    public static string GetXXHash(byte[] input) => BitConverter.ToString(XxHash3.Hash(input)).Replace("-", "").ToLower();
 
     public static float GetDifficulty(float difficulty, float min, float mid, float max)
     {

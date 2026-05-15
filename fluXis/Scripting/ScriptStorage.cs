@@ -6,8 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using fluXis.Configuration;
-using fluXis.Utils;
+using fluXis.Storyboards;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Logging;
 
 namespace fluXis.Scripting;
@@ -134,6 +135,8 @@ public class ScriptStorage
             var sb = new StringBuilder();
             sb.AppendLine($"---@env {(env == Env.Effect ? "effect" : "storyboard")}");
             sb.AppendLine();
+            sb.AppendLine($"SetVersion({Storyboard.LATEST_VERSION})");
+            sb.AppendLine();
             sb.AppendLine("---@param parent StoryboardElement");
             sb.AppendLine("function process(parent)");
             sb.AppendLine("    -- your code here");
@@ -190,7 +193,7 @@ public class ScriptStorage
             Content = content;
         }
 
-        #nullable enable
+#nullable enable
         public void AddParam(string name, string title, string type, object? fallback)
         {
             try
@@ -232,7 +235,7 @@ public class ScriptStorage
                 _ => throw new ArgumentOutOfRangeException(nameof(type))
             };
         }
-        #nullable disable
+#nullable disable
     }
 
     public class ParameterDefinition

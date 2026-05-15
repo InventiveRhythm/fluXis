@@ -55,6 +55,7 @@ using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using ManagedBass.Fx;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -106,6 +107,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private WikiOverlay wiki { get; set; }
+
+    [Resolved(CanBeNull = true)]
+    private GlobalFFTProcessor fftProcessor { get; set; }
 
     /// <summary>
     /// overwrites the tab the editor opens with
@@ -201,7 +205,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         editorMap.MapInfo ??= new EditorMap.EditorMapInfo(new MapMetadata { Mapper = editorMap.RealmMap.Metadata.Mapper }) { NewLaneSwitchLayout = true, RealmEntry = editorMap.RealmMap };
         editorMap.MapInfo.MapEvents ??= new MapEvents();
-        editorMap.MapInfo.Storyboard ??= new Storyboard();
+        editorMap.MapInfo.Storyboard ??= new Storyboard { Version = Storyboard.LATEST_VERSION };
 
         editorMap.SetupWatcher();
         editorMap.SetupNotifiers();
@@ -721,6 +725,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (isNewMap) // delete the map if it was new and not saved
             mapStore.DeleteMapSet(editorMap.MapSet);
 
+        if (fftProcessor is not null) fftProcessor.Enabled.Value = true;
+
         // I hate this but it works. I hate this but it works. I hate this but it works.
         this.Delay(EditorLoader.DURATION * .98f).FadeOut();
 
@@ -735,6 +741,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
+        // TODO: probably check back on this later if we add visualizations to editor in the future
+        if (fftProcessor is not null) fftProcessor.Enabled.Value = false;
         enterAnimation();
         FinishTransforms(true);
     }
@@ -1025,7 +1033,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 setID = editorMap.MapSet.OnlineID;
 
             var request = new MapSetUploadRequest(buffer, setID);
-            request.Progress += (l1, l2) => overlay.SubText = $"{StringUtils.FormatBytes(l1)}/{StringUtils.FormatBytes(l2)} {Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
+            request.Progress += (l1, l2) => overlay.SubText = $"{l1.FormatBytes()}/{l1.FormatBytes()} {Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
             await api.PerformRequestAsync(request);
 
             overlay.SubText = "Reading response...";

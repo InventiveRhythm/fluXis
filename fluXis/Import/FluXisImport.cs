@@ -9,6 +9,7 @@ using fluXis.Map;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Utils;
+using fluXis.Utils.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
@@ -47,6 +48,8 @@ public class FluXisImport : MapImporter
 
             Notifications.AddTask(Notification);
         }
+
+        Notification.State = LoadingState.UnknownProgress;
 
         try
         {
@@ -178,6 +181,8 @@ public class FluXisImport : MapImporter
         var fileCount = archive.Entries.Count;
         var idx = 0;
 
+        Dictionary<string, string> audioHashes = new();
+
         foreach (var entry in archive.Entries)
         {
             var hash = GetHash(entry);
@@ -187,6 +192,13 @@ public class FluXisImport : MapImporter
             {
                 var json = new StreamReader(entry.Open()).ReadToEnd();
                 var mapInfo = json.Deserialize<MapInfo>();
+
+                if (!audioHashes.TryGetValue(mapInfo.AudioFile, out var audioHash))
+                {
+                    var audioEntry = archive.GetEntry(mapInfo.AudioFile);
+                    audioHash = audioEntry != null ? MapUtils.GetXXHash(audioEntry.ReadAllBytes()) : "";
+                    audioHashes[mapInfo.AudioFile] = audioHash;
+                }
 
                 var length = 0f;
                 var keys = 0;
@@ -231,7 +243,8 @@ public class FluXisImport : MapImporter
                     HealthDifficulty = mapInfo.HealthDifficulty,
                     MapSet = mapSet,
                     Hash = hash,
-                    KeyCount = keys,
+                    AudioHash = audioHash,
+                    KeyCount = (int)Math.Ceiling(keys / (mapInfo.IsSplit ? 2f : 1)),
                     StatusInt = MapStatus,
                     FileName = filename
                 };

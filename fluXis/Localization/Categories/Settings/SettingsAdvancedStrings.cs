@@ -32,5 +32,8 @@ public class SettingsAdvancedStrings : LocalizationCategory
     public TranslatableString CleanUpScores => Get("maps-scores-clean-up", "Clean up Scores");
     public TranslatableString CleanUpScoresDescription => Get("maps-scores-clean-up-description", "Removes scores from maps that you do not have anymore.");
 
+    public TranslatableString ClearVisualizationCache => Get("visualization-cache-clear", "Clear Visualization Cache");
+    public TranslatableString ClearVisualizationCacheDescription => Get("visualization-cache-clear-description", "Clears all cached visualization data. It will be regenerated automatically on demand so feel free to clear if you want.");
+
     #endregion
 }

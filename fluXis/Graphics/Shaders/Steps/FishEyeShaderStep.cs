@@ -2,6 +2,7 @@
 using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders.Types;
+using osu.Framework.Utils;
 
 namespace fluXis.Graphics.Shaders.Steps;
 
@@ -10,7 +11,7 @@ public class FishEyeShaderStep : ShaderStep<FishEyeShaderStep.FishEyeParameters>
     protected override string FragmentShader => "FishEye";
     public override ShaderType Type => ShaderType.FishEye;
 
-    public override bool ShouldRender => Strength != 0;
+    public override bool ShouldRender => !Precision.AlmostEquals(Strength, 0);
 
     public override void UpdateParameters(IFrameBuffer current) => ParameterBuffer.Data = ParameterBuffer.Data with
     {

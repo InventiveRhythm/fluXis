@@ -1,4 +1,5 @@
 ﻿using System;
+using fluXis.Audio.FFT;
 using fluXis.Map;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
@@ -20,7 +21,7 @@ public class StoryboardScriptRunner : ScriptRunner
     [LuaGlobal(Name = "screen")]
     public LuaVector2 ScreenResolution { get; }
 
-    public StoryboardScriptRunner(MapInfo map, Storyboard storyboard, LuaSettings settings, ISkin skin)
+    public StoryboardScriptRunner(MapInfo map, AudioAnalyzer audioAnalyzer, Storyboard storyboard, LuaSettings settings, ISkin skin)
     {
         this.storyboard = storyboard;
         Map = map;
@@ -31,12 +32,14 @@ public class StoryboardScriptRunner : ScriptRunner
         AddField("settings", settings);
         AddField("skin", new LuaSkin(skin));
         AddField("map", new LuaMap(map, Lua));
+        AddField("AudioAnalyzer", new LuaAudioAnalyzer(audioAnalyzer, Lua));
 
         AddFunction("Add", add);
 
         // enums
         AddFunction("Layer", (string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
         AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
+        AddFunction("BlendMode", (string str) => Enum.TryParse(str, out DefaultBlendingParameters blendMode) ? blendMode : DefaultBlendingParameters.Mix);
 
         // elements
         AddFunction("StoryboardBox", newBox);
@@ -70,7 +73,24 @@ public class StoryboardScriptRunner : ScriptRunner
     }
 
     [LuaGlobal(Name = "Add")]
-    private void add(LuaStoryboardElement element) => storyboard.Elements.Add(element.Build());
+    private void add(LuaStoryboardElement element)
+    {
+        var v = Version;
+
+        while (v < Storyboard.LATEST_VERSION)
+        {
+            v++;
+
+            switch (v)
+            {
+                case 2:
+                    element.Animations.ForEach(x => x.StartTime -= element.StartTime);
+                    break;
+            }
+        }
+
+        storyboard.Elements.Add(element.Build());
+    }
 
     [LuaGlobal(Name = "StoryboardBox")]
     private LuaStoryboardBox newBox() => new();

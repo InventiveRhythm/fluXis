@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -27,6 +28,8 @@ public partial class DashboardSidebar : ExpandingContainer
     {
         Width = 64;
         RelativeSizeAxes = Axes.Y;
+        EdgeEffect = Styling.ShadowMediumNoOffset;
+        Masking = true;
 
         InternalChildren = new Drawable[]
         {
@@ -72,6 +75,9 @@ public partial class DashboardSidebar : ExpandingContainer
         Expanded.BindValueChanged(expanded =>
         {
             this.ResizeWidthTo(expanded.NewValue ? size_open : SIZE_CLOSED, 600, Easing.OutQuint);
+            FadeEdgeEffectTo(expanded.NewValue ? Styling.SHADOW_OPACITY : 0f, 300);
         }, true);
+
+        FinishTransforms(true);
     }
 }

@@ -17,6 +17,12 @@ public class APIUserMaps
     [JsonProperty("guest_diffs")]
     public List<APIMapSet> Guest { get; set; } = null!;
 
+    [JsonProperty("limit_uploaded")]
+    public long? LimitUploadedCount { get; set; }
+
+    [JsonProperty("limit_max")]
+    public long? LimitMaximumCount { get; set; }
+
     public APIUserMaps(List<APIMapSet> pure, List<APIMapSet> impure, List<APIMapSet> guest)
     {
         Pure = pure;

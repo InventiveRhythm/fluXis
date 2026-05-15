@@ -48,6 +48,7 @@ public class RealmMap : RealmObject
     public RealmMapUserSettings Settings { get; set; } = new();
 
     public string Hash { get; set; } = string.Empty;
+    public string AudioHash { get; set; } = string.Empty;
     public string OnlineHash { get; set; } = string.Empty;
 
     [Ignored]
@@ -68,6 +69,8 @@ public class RealmMap : RealmObject
     public DateTimeOffset LastLocalUpdate { get; set; } = DateTimeOffset.Now;
     public DateTimeOffset? LastOnlineUpdate { get; set; }
     public DateTimeOffset? LastPlayed { get; set; }
+
+    public bool EnableVisualization { get; set; }
 
     public RealmMap([CanBeNull] RealmMapMetadata meta = null, [CanBeNull] RealmMapFilters filter = null)
     {
@@ -131,8 +134,26 @@ public class RealmMap : RealmObject
             var json = File.ReadAllText(path);
             var hash = MapUtils.GetHash(json);
             var map = json.Deserialize<T>();
+            byte[] audioBytes = [];
+            string fullAudioPath = MapFiles.GetFullPath(MapSet.GetPathForFile(map.AudioFile));
+
+            try
+            {
+                if (File.Exists(fullAudioPath))
+                {
+                    audioBytes = File.ReadAllBytes(fullAudioPath);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed to get audioHash for map info");
+                audioBytes = [];
+            }
+
+            var audioHash = MapUtils.GetXXHash(audioBytes);
             map.RealmEntry = this;
             map.Hash = hash;
+            map.AudioHash = audioHash;
             return map;
         }
         catch (Exception e)

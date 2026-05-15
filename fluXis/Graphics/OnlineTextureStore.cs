@@ -28,9 +28,9 @@ public class OnlineTextureStore : TextureStore
     public Texture GetClubBanner(string id) => get(AssetType.ClubBanner, id);
 
     private Texture get(AssetType type, long id, AssetSize size = AssetSize.Small, bool addExtension = false) => get(type, id.ToString(), size, addExtension);
-    private Texture get(AssetType type, string id, AssetSize size = AssetSize.Small, bool addExtension = false) => string.IsNullOrEmpty(id) ? null : Get(getUrl(type, id, size, addExtension));
+    private Texture get(AssetType type, string id, AssetSize size = AssetSize.Small, bool addExtension = false) => string.IsNullOrEmpty(id) ? null : Get(GetUrl(api, type, id, size, addExtension));
 
-    private string getUrl(AssetType type, string id, AssetSize size, bool addExtension)
+    public static string GetUrl(IAPIClient api, AssetType type, string id, AssetSize size = AssetSize.Small, bool addExtension = false)
     {
         var typeStr = type switch
         {

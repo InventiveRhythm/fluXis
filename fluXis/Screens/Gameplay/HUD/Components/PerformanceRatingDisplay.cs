@@ -1,7 +1,7 @@
 ﻿using fluXis.Graphics.Sprites.Text;
-using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

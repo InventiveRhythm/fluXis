@@ -35,4 +35,6 @@ public class EditorChangeRequest : ITimedObject, IHasDuration
         }
         set => Request.EndTime = Request.StartTime + value;
     }
+
+    string ITimedObject.Group { get; set; } = string.Empty;
 }

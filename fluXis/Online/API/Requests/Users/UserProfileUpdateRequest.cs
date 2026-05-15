@@ -8,7 +8,7 @@ namespace fluXis.Online.API.Requests.Users;
 
 public class UserProfileUpdateRequest : APIRequest<APIUser>
 {
-    protected override string Path => $"/user/{uid}";
+    protected override string Path => $"/users/{uid}";
     protected override HttpMethod Method => HttpMethod.Patch;
 
     private long uid { get; }

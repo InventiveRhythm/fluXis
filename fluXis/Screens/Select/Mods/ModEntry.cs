@@ -204,7 +204,7 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
     public override void Hide()
     {
         this.FadeOut(200);
-        content.MoveToX(-50, 400, Easing.OutQuint);
+        content.MoveToX(-50, 400, Easing.In);
     }
 
     public ITooltip<ModEntry> GetCustomTooltip() => new ModEntryTooltip();

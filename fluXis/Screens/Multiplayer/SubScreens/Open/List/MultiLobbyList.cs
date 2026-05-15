@@ -1,20 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.Activity;
+using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Requests.Multiplayer;
 using fluXis.Online.Fluxel;
 using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Multiplayer.SubScreens.Open.List.List;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby;
+using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -163,27 +168,34 @@ public partial class MultiLobbyList : MultiSubScreen
         this.Push(new MultiSelectScreen(create));
     }
 
-    private void create(RealmMap map, List<string> mods)
-    {
-        var panel = new CreateRoomPanel($"{client.Player.NameWithApostrophe} Room", async void (name, privacy, pw, cb) =>
+    private void create(RealmMap map, List<string> mods) => Schedule(() => panels.Content = new FormPanel<LobbyCreateData>(
+        FontAwesome6.Solid.Plus,
+        "Create Lobby",
+        new LobbyCreateData { Name = $"{client.Player.NameWithApostrophe} Room" },
+        (form, data) =>
         {
-            try
-            {
-                await client.Create(name, privacy, pw, map.OnlineID, map.Hash);
+            form.StartLoading();
 
-                if (client.Room != null)
-                    Schedule(() => this.Push(new MultiLobby()));
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Failed to create lobby!");
-                notifications.SendError("Failed to join lobby", ex.Message);
-            }
-            finally { cb?.Invoke(); }
-        });
+            client.Create(data.Name, string.IsNullOrWhiteSpace(data.Password) ? MultiplayerPrivacy.Public : MultiplayerPrivacy.Private, data.Password, map.OnlineID, map.Hash)
+                  .ContinueWith(t => Schedule(() =>
+                  {
+                      form.StopLoading();
 
-        Schedule(() => panels.Content = panel);
-    }
+                      if (client.Room != null)
+                      {
+                          this.Push(new MultiLobby());
+                          form.Close();
+                      }
+                      else
+                      {
+                          var ex = t.Exception;
+                          Logger.Error(ex, "Failed to create lobby!");
+                          notifications.SendError("Failed to join lobby!", ex?.Message ?? "Unknown Error");
+                      }
+                  }));
+
+            return false;
+        }, "Create!"));
 
     public async void JoinLobby(long room, string password = "")
     {
@@ -228,5 +240,14 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         loadLobbies();
         base.OnResuming(e);
+    }
+
+    private class LobbyCreateData
+    {
+        public string Name { get; set; }
+
+        [PasswordPropertyText]
+        [Placeholder("Leave empty for a public lobby.")]
+        public string Password { get; set; }
     }
 }

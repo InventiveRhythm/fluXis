@@ -1,15 +1,26 @@
-﻿using fluXis.Graphics;
+﻿using System.Linq;
+using System.Net;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Graphics.UserInterface.Tabs;
 using fluXis.Input;
+using fluXis.Online.API;
 using fluXis.Online.API.Models.Clubs;
+using fluXis.Online.API.Payloads.Clubs;
 using fluXis.Online.API.Requests.Clubs;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Club.Sidebar;
 using fluXis.Overlay.Club.Tabs;
 using fluXis.Overlay.Club.UI;
+using fluXis.Overlay.Notifications;
+using fluXis.Utils;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -24,6 +35,12 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 {
     [Resolved]
     private IAPIClient api { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
+
+    [Resolved]
+    private NotificationManager notifications { get; set; }
 
     private APIClub club;
     private Container content;
@@ -186,6 +203,14 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                 Spacing = new Vector2(28),
                                 Children = new Drawable[]
                                 {
+                                    new FluXisButton
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 40,
+                                        Text = "Edit",
+                                        Action = () => editClub(club),
+                                        Alpha = canEdit(club) ? 1f : 0f
+                                    },
                                     new ClubSidebarStats(club),
                                     // new ClubSidebarActivity(club),
                                 }
@@ -195,6 +220,57 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                 }
             }
         };
+    }
+
+    private bool canEdit(APIClub club)
+    {
+        if (api.User.Value?.CanModerate() ?? false)
+            return true;
+
+        return api.User.Value?.ID == club.Owner?.ID;
+    }
+
+    private void editClub(APIClub club)
+    {
+        var startData = new EditClubPayload
+        {
+            Name = club.Name,
+            JoinType = club.JoinType,
+            Icon = OnlineTextureStore.GetUrl(api, OnlineTextureStore.AssetType.ClubIcon, club.IconHash),
+            Banner = OnlineTextureStore.GetUrl(api, OnlineTextureStore.AssetType.ClubBanner, club.BannerHash),
+            ColorStart = club.Colors.First().Color,
+            ColorEnd = club.Colors.Last().Color
+        };
+
+        panels.Content = new FormPanel<EditClubPayload>(FontAwesome6.Solid.Pencil, "Edit Club", startData.JsonCopy(), (form, data) =>
+        {
+            form.StartLoading();
+            data = data.NullWhereSame(startData);
+
+            var req = new EditClubRequest(club.ID, data);
+            req.Success += _ => Schedule(() =>
+            {
+                form.StopLoading();
+                form.Close();
+                this.club = null;
+                ShowClub(club.ID);
+            });
+            req.Failure += ex => Schedule(() =>
+            {
+                form.StopLoading();
+
+                if (ex is APIException { Status: HttpStatusCode.NotModified })
+                {
+                    form.Close();
+                    return;
+                }
+
+                notifications.SendError("Failed to update club!", ex.Message);
+            });
+            api.PerformRequestAsync(req);
+
+            return false;
+        });
     }
 
     protected override void PopIn()
@@ -225,4 +301,3 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }
-

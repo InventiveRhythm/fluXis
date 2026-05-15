@@ -6,7 +6,7 @@ namespace fluXis.Online.API.Requests.MapSets.Favorite;
 
 public class MapSetModdingRequest : APIRequest<List<APIModdingAction>>
 {
-    protected override string Path => $"/mapset/{id}/modding";
+    protected override string Path => $"/mapsets/{id}/modding";
     private long id { get; }
 
     public MapSetModdingRequest(long id)

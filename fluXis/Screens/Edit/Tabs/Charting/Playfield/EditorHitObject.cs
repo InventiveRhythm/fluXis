@@ -50,7 +50,7 @@ public abstract partial class EditorHitObject : CompositeDrawable
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 RelativeSizeAxes = Axes.X,
-                Height = Data.Type == 1 ? 20 : 36,
+                Height = Data.Type == HitObjectType.Tick ? 20 : 36,
                 Child = text = new FluXisSpriteText
                 {
                     Anchor = Anchor.Centre,

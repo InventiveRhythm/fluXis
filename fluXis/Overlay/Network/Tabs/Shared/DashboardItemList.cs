@@ -16,6 +16,8 @@ public partial class DashboardItemList<T> : FillFlowContainer
     private IList<T> items { get; }
     private Func<T, Drawable> create { get; }
 
+    public string EmptyText { get; init; } = "Nobody here...";
+
     public DashboardItemList(LocalisableString title, IList<T> items, Func<T, Drawable> create)
     {
         this.create = create;
@@ -60,7 +62,7 @@ public partial class DashboardItemList<T> : FillFlowContainer
             },
             new FluXisSpriteText
             {
-                Text = "Nobody here...",
+                Text = EmptyText,
                 WebFontSize = 14,
                 Alpha = items.Any() ? 0f : .8f
             },

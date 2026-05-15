@@ -83,6 +83,8 @@ public class StoryboardElement : ITimedObject
     [JsonIgnore]
     double ITimedObject.Time { get => StartTime; set => StartTime = value; }
 
+    public string Group { get; set; }
+
     public T GetParameter<T>(string key, T fallback)
     {
         if (!Parameters.TryGetValue(key, out var token))
@@ -143,6 +145,12 @@ public enum StoryboardElementType
     [AllowedAnimation(StoryboardAnimationType.Height)]
     [AllowedAnimation(StoryboardAnimationType.Border)]
     OutlineBox = 7,
+
+    [Icon(0xf0c8, Regular = true)]
+    [WidthHeight]
+    [AllowedAnimation(StoryboardAnimationType.Width)]
+    [AllowedAnimation(StoryboardAnimationType.Height)]
+    Compound = 8
 }
 
 public enum StoryboardLayer

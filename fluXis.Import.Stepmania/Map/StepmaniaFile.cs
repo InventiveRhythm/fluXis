@@ -238,6 +238,12 @@ public class StepmaniaFile
                                 break;
 
                             case StepNote.Mine:
+                                map.HitObjects.Add(new HitObject
+                                {
+                                    Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
+                                    Lane = i + 1,
+                                    Type = HitObjectType.Landmine,
+                                });
                                 break;
 
                             default:
