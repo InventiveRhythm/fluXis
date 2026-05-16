@@ -106,7 +106,7 @@ public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public record struct DitherParameters
+    private record struct DitherParameters
     {
         public UniformFloat Strength;
         private readonly UniformPadding12 pad1;
