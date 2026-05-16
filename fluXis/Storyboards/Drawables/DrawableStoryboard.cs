@@ -25,7 +25,7 @@ public partial class DrawableStoryboard : CompositeDrawable
     [Resolved]
     private ISkin skin { get; set; }
 
-    [Resolved]
+    [Resolved(CanBeNull = true)]
     private AudioAnalyzer audioAnalyzer { get; set; }
 
     public Storyboard Storyboard { get; }
@@ -50,7 +50,7 @@ public partial class DrawableStoryboard : CompositeDrawable
         // wait for FFT data to be ready before scripts can get amplitudes.
         try
         {
-            audioAnalyzer.ComputeComplete.Wait();
+            audioAnalyzer?.ComputeComplete.Wait();
         }
         catch (OperationCanceledException)
         {

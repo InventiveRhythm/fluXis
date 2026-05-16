@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Shaders.Steps;
 using fluXis.Map.Structures.Events;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -168,6 +169,8 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
             foreach (var shader in Source.shaders)
             {
                 shader.Time = Source.Time;
+                // OpenGL needs different implementations in some shaders
+                shader.UsingVeldrid = renderer.IsVeldrid();
                 shader.EnsureParameters(renderer);
 
                 if (!shader.ShouldRender)

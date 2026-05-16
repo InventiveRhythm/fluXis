@@ -6,6 +6,7 @@ using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Timing;
+using osuTK;
 
 namespace fluXis.Graphics.Shaders;
 
@@ -18,6 +19,8 @@ public abstract class ShaderStep : IHasStrength
 
     public abstract ShaderType Type { get; }
     public ShaderTransformHandler TransformHandler { get; }
+
+    public bool UsingVeldrid = true;
 
     public float Strength { get; set; }
     public float Strength2 { get; set; }
@@ -42,11 +45,39 @@ public abstract class ShaderStep : IHasStrength
         Shader = shaders.Load(VertexShader, FragmentShader);
     }
 
+    protected virtual void EnsureBufferSize(IRenderer renderer, ref IFrameBuffer buffer, Vector2 size)
+    {
+        buffer ??= renderer.CreateFrameBuffer();
+        buffer.Size = size;
+    }
+
     public virtual void EnsureParameters(IRenderer renderer) { }
     public abstract void UpdateParameters(IFrameBuffer current);
 
     public virtual void DrawBuffer(IRenderer renderer, IFrameBuffer current, IFrameBuffer target)
     {
+    }
+
+    protected virtual void DrawScaledBuffer(IRenderer renderer, IFrameBuffer src, IFrameBuffer dst, IShader shader, bool forceProjection = true)
+    {
+        if (forceProjection)
+        {
+            renderer.PushOrtho(new RectangleF(0, 0, dst.Size.X, dst.Size.Y));
+        }
+
+        dst.Bind();
+        shader?.Bind();
+
+        var drawRect = new RectangleF(0, 0, dst.Size.X, dst.Size.Y);
+        renderer.DrawFrameBuffer(src, drawRect, Colour4.White);
+
+        shader?.Unbind();
+        dst.Unbind();
+
+        if (forceProjection)
+        {
+            renderer.PopOrtho();
+        }
     }
 }
 
