@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Rendering;
+using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Utils;
 using osuTK;
@@ -12,6 +13,9 @@ namespace fluXis.Graphics.Shaders.Steps;
 public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
 {
     protected override string FragmentShader => "Blur";
+    protected string DitherFragmentShader => "Dither";
+    private IShader ditherShader;
+    private IUniformBuffer<DitherParameters> ditherParameterBuffer;
     public override ShaderType Type => ShaderType.GaussianBlur;
 
     private int kernelRadius;
@@ -21,13 +25,32 @@ public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
 
     private const float max_sigma = 32f;
 
-    public override void UpdateParameters(IFrameBuffer current) => ParameterBuffer.Data = ParameterBuffer.Data with
+    public override void EnsureParameters(IRenderer renderer)
     {
-        TexSize = targetSize,
-        Radius = kernelRadius,
-        Sigma = sigma,
-        Direction = direction
-    };
+        ParameterBuffer ??= renderer.CreateUniformBuffer<BlurParameters>();
+        ditherParameterBuffer ??= renderer.CreateUniformBuffer<DitherParameters>();
+    }
+
+    public override void UpdateParameters(IFrameBuffer current)
+    {
+        ParameterBuffer.Data = ParameterBuffer.Data with
+        {
+            TexSize = targetSize,
+            Radius = kernelRadius,
+            Sigma = sigma,
+            Direction = direction
+        };
+        ditherParameterBuffer.Data = ditherParameterBuffer.Data with
+        {
+            Strength = Strength * 6,
+        };
+    }
+
+    public override void LoadShader(ShaderManager shaders)
+    {
+        base.LoadShader(shaders);
+        ditherShader = shaders.Load(VertexShader, DitherFragmentShader);
+    }
 
     private IFrameBuffer bufferX;
     private IFrameBuffer bufferY;
@@ -67,7 +90,9 @@ public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
         drawPass(renderer, current, bufferX, Vector2.UnitX, downsampledSize);
         drawPass(renderer, bufferX, bufferY, Vector2.UnitY, downsampledSize);
 
-        DrawScaledBuffer(renderer, bufferY, target, null, UsingVeldrid);
+        ditherShader.BindUniformBlock($"m_{nameof(DitherParameters)}", ditherParameterBuffer);
+
+        DrawScaledBuffer(renderer, bufferY, target, ditherShader, UsingVeldrid);
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -78,5 +103,12 @@ public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
         public UniformFloat Sigma;
         public UniformVector2 Direction;
         private readonly UniformPadding8 pad1;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public record struct DitherParameters
+    {
+        public UniformFloat Strength;
+        private readonly UniformPadding12 pad1;
     }
 }

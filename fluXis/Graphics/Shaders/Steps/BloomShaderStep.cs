@@ -13,7 +13,7 @@ namespace fluXis.Graphics.Shaders.Steps;
 public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
 {
     protected override string FragmentShader => "Blur";
-    protected string ComposeFragmentShader => "AdditiveCompose";
+    protected string ComposeFragmentShader => "AdditiveComposeDithered";
     private IShader blurComposeShader;
     private IUniformBuffer<AdditiveComposeParameters> composeParameterBuffer;
     public override ShaderType Type => ShaderType.Bloom;
