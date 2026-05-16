@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using fluXis.Map.Structures.Events;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Rendering;
+using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Utils;
 using osuTK;
@@ -11,6 +13,9 @@ namespace fluXis.Graphics.Shaders.Steps;
 public class MotionBlurStep : ShaderStep<MotionBlurStep.BlurParameters>
 {
     protected override string FragmentShader => "Blur";
+    protected string DitherFragmentShader => "Dither";
+    private IShader ditherShader;
+    private IUniformBuffer<DitherParameters> ditherParameterBuffer;
     public override ShaderType Type => ShaderType.MotionBlur;
 
     public override bool ShouldRender => Strength > 0;
@@ -24,15 +29,70 @@ public class MotionBlurStep : ShaderStep<MotionBlurStep.BlurParameters>
         }
     }
 
+    private float sigma;
+    private int kernelRadius;
+    private Vector2 targetSize;
+
     private const float max_sigma = 40f;
 
-    public override void UpdateParameters(IFrameBuffer current) => ParameterBuffer.Data = ParameterBuffer.Data with
+    private IFrameBuffer buffer;
+
+    public override void EnsureParameters(IRenderer renderer)
     {
-        TexSize = current.Size,
-        Direction = blurDirection,
-        Radius = Blur.KernelSize(Strength * max_sigma),
-        Sigma = Strength * max_sigma
-    };
+        ParameterBuffer ??= renderer.CreateUniformBuffer<BlurParameters>();
+        ditherParameterBuffer ??= renderer.CreateUniformBuffer<DitherParameters>();
+    }
+
+    public override void UpdateParameters(IFrameBuffer current)
+    {
+        ParameterBuffer.Data = ParameterBuffer.Data with
+        {
+            TexSize = targetSize,
+            Direction = blurDirection,
+            Radius = kernelRadius,
+            Sigma = sigma
+        };
+        ditherParameterBuffer.Data = ditherParameterBuffer.Data with
+        {
+            Strength = Strength * 8,
+        };
+    }
+
+    public override void LoadShader(ShaderManager shaders)
+    {
+        base.LoadShader(shaders);
+        ditherShader = shaders.Load(VertexShader, DitherFragmentShader);
+    }
+
+    public override void DrawBuffer(IRenderer renderer, IFrameBuffer current, IFrameBuffer target)
+    {
+        float min_scale = 0.4f;
+        float downsampleScale = Math.Max(min_scale, 1f - Strength);
+
+        Vector2 downsampledSize = new Vector2(
+            (int)Math.Ceiling(current.Size.X * downsampleScale),
+            (int)Math.Ceiling(current.Size.Y * downsampleScale)
+        );
+
+        targetSize = downsampledSize;
+
+        sigma = max_sigma * Strength * downsampleScale;
+        kernelRadius = Blur.KernelSize(sigma);
+        UpdateParameters(current);
+        DrawColor = Colour4.White;
+
+        EnsureBuffer(renderer, ref buffer, downsampledSize);
+
+        target.Unbind();
+
+        // blur
+        Shader.BindUniformBlock($"m_{nameof(BlurParameters)}", ParameterBuffer);
+        DrawScaledBuffer(renderer, current, buffer, Shader, UsingVeldrid);
+
+        // dither
+        ditherShader.BindUniformBlock($"m_{nameof(DitherParameters)}", ditherParameterBuffer);
+        DrawScaledBuffer(renderer, buffer, target, ditherShader, UsingVeldrid);
+    }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public record struct BlurParameters
@@ -42,5 +102,12 @@ public class MotionBlurStep : ShaderStep<MotionBlurStep.BlurParameters>
         public UniformFloat Sigma;
         public UniformVector2 Direction;
         private readonly UniformPadding8 pad1;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    private record struct DitherParameters
+    {
+        public UniformFloat Strength;
+        private readonly UniformPadding12 pad1;
     }
 }
