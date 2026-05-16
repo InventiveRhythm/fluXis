@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.InteropServices;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics.Rendering;
@@ -18,15 +17,12 @@ public class ZoomBlurStep : ShaderStep<ZoomBlurStep.BlurParameters>
     public override void UpdateParameters(IFrameBuffer current)
     {
         float sigma = (Strength / 2f) + 0.5f;
-        float scaleStep = ((sigma - 0.5f) * 4.0f) / 200f;
-        int samples = Math.Min(128, (int)MathF.Ceiling(1f / MathF.Abs(scaleStep)));
 
         ParameterBuffer.Data = ParameterBuffer.Data with
         {
             TexSize = current.Size,
+            Position = new Vector2((Strength2 + 1f) / 2f, (-Strength3 + 1f) / 2f),
             Sigma = sigma,
-            Samples = samples,
-            Position = new Vector2((Strength2 + 1f) / 2f, (-Strength3 + 1f) / 2f)
         };
     }
 
@@ -34,9 +30,8 @@ public class ZoomBlurStep : ShaderStep<ZoomBlurStep.BlurParameters>
     public record struct BlurParameters
     {
         public UniformVector2 TexSize;
-        public UniformFloat Sigma;
-        public UniformInt Samples;
         public UniformVector2 Position;
-        public UniformPadding8 pad2;
+        public UniformFloat Sigma;
+        public UniformPadding12 pad1;
     }
 }
