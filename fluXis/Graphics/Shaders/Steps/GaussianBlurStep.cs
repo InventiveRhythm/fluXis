@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics;
@@ -16,12 +17,13 @@ public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
     private int kernelRadius;
     private float sigma;
     private Vector2 direction;
+    private Vector2 targetSize;
 
     private const float max_sigma = 32f;
 
     public override void UpdateParameters(IFrameBuffer current) => ParameterBuffer.Data = ParameterBuffer.Data with
     {
-        TexSize = current.Size,
+        TexSize = targetSize,
         Radius = kernelRadius,
         Sigma = sigma,
         Direction = direction
@@ -30,37 +32,42 @@ public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
     private IFrameBuffer bufferX;
     private IFrameBuffer bufferY;
 
-    private void drawPass(IRenderer renderer, IFrameBuffer src, IFrameBuffer dst, Vector2 dir)
+    private void drawPass(IRenderer renderer, IFrameBuffer src, IFrameBuffer dst, Vector2 dir, Vector2 targetTexSize)
     {
         direction = dir;
+        targetSize = targetTexSize;
         UpdateParameters(src);
+
         Shader.BindUniformBlock($"m_{nameof(BlurParameters)}", ParameterBuffer);
-        dst.Bind();
-        Shader.Bind();
-        DrawFrameBuffer(renderer, src);
-        Shader.Unbind();
-        dst.Unbind();
+
+        DrawScaledBuffer(renderer, src, dst, Shader, UsingVeldrid);
     }
 
     public override void DrawBuffer(IRenderer renderer, IFrameBuffer current, IFrameBuffer target)
     {
-        sigma = max_sigma * Strength;
+        float min_scale = 0.5f;
+        float downsampleScale = Math.Max(min_scale, 1f - Strength);
+
+        Vector2 downsampledSize = new Vector2(
+            (int)Math.Ceiling(current.Size.X * downsampleScale),
+            (int)Math.Ceiling(current.Size.Y * downsampleScale)
+        );
+
+        targetSize = downsampledSize;
+
+        sigma = max_sigma * Strength * downsampleScale;
         kernelRadius = Blur.KernelSize(sigma);
         DrawColor = Colour4.White;
 
-        bufferX ??= renderer.CreateFrameBuffer();
-        bufferX.Size = current.Size;
-        bufferY ??= renderer.CreateFrameBuffer();
-        bufferY.Size = current.Size;
+        EnsureBuffer(renderer, ref bufferX, downsampledSize);
+        EnsureBuffer(renderer, ref bufferY, downsampledSize);
 
         target.Unbind();
-        drawPass(renderer, current, bufferX, Vector2.UnitX);
-        drawPass(renderer, bufferX, bufferY, Vector2.UnitY);
 
-        target.Bind();
-        Shader.Bind();
-        DrawFrameBuffer(renderer, bufferY);
-        Shader.Unbind();
+        drawPass(renderer, current, bufferX, Vector2.UnitX, downsampledSize);
+        drawPass(renderer, bufferX, bufferY, Vector2.UnitY, downsampledSize);
+
+        DrawScaledBuffer(renderer, bufferY, target, null, UsingVeldrid);
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

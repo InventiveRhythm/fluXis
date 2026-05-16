@@ -68,16 +68,19 @@ public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
     public override void DrawBuffer(IRenderer renderer, IFrameBuffer current, IFrameBuffer target)
     {
         float min_scale = 0.5f;
-        float downsampleScale = Math.Max(min_scale, 1f - (Strength * 0.75f));
+        float downsampleScale = Math.Max(min_scale, 1f - (Strength * 0.75f)); // scale maxes out at 0.75 strength
 
-        sigma = max_sigma * Strength;
+        sigma = max_sigma * Strength * downsampleScale;
         kernelRadius = Blur.KernelSize(sigma);
         DrawColor = Colour4.White;
 
-        Vector2 downsampledSize = current.Size * downsampleScale;
+        Vector2 downsampledSize = new Vector2(
+            (int)Math.Ceiling(current.Size.X * downsampleScale),
+            (int)Math.Ceiling(current.Size.Y * downsampleScale)
+        );
 
-        EnsureBufferSize(renderer, ref buffer, downsampledSize);
-        EnsureBufferSize(renderer, ref buffer2, downsampledSize);
+        EnsureBuffer(renderer, ref buffer, downsampledSize);
+        EnsureBuffer(renderer, ref buffer2, downsampledSize);
 
         target.Unbind();
 

@@ -45,7 +45,7 @@ public abstract class ShaderStep : IHasStrength
         Shader = shaders.Load(VertexShader, FragmentShader);
     }
 
-    protected virtual void EnsureBufferSize(IRenderer renderer, ref IFrameBuffer buffer, Vector2 size)
+    protected virtual void EnsureBuffer(IRenderer renderer, ref IFrameBuffer buffer, Vector2 size)
     {
         buffer ??= renderer.CreateFrameBuffer();
         buffer.Size = size;
