@@ -33,7 +33,7 @@ public class MotionBlurStep : ShaderStep<MotionBlurStep.BlurParameters>
     private int kernelRadius;
     private Vector2 targetSize;
 
-    private const float max_sigma = 40f;
+    private const float max_sigma = 45f;
 
     private IFrameBuffer buffer;
 
