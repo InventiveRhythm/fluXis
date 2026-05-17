@@ -120,6 +120,8 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
         All = Background | Content
     }
 
+    public const float HEIGHT = 80f;
+
     public DrawableMapSetHeader(DrawableMapSetItem parent, RealmMapSet mapset)
         : base(cachedFrameBuffer: true)
     {
@@ -133,7 +135,7 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
         var color = mapset.Metadata.Color;
 
         RelativeSizeAxes = Axes.X;
-        Height = 80;
+        Height = HEIGHT;
         CornerRadius = 10;
         Masking = true;
         Children = new Drawable[]
@@ -218,12 +220,12 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
         backgroundWrapper.DelayedLoadComplete += background =>
         {
             background.FadeInFromZero(300);
-            Scheduler.AddDelayed(() => loaded |= LoadingStates.Background, 310);
+            Scheduler.AddDelayed(() => loaded |= LoadingStates.Background, 350);
         };
         contentLoader.DelayedLoadComplete += content =>
         {
             content.FadeInFromZero(300);
-            Scheduler.AddDelayed(() => loaded |= LoadingStates.Content, 310);
+            Scheduler.AddDelayed(() => loaded |= LoadingStates.Content, 350);
         };
     }
 

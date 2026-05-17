@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
 using osu.Framework.Utils;
 
@@ -28,7 +29,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
     private SelectedState selectedState = SelectedState.Deselected;
 
-    private DrawableMapSetHeader header = null!;
+    private MapSetLoadWrapper header = null!;
     private Container<DrawableMapSetDifficulty> difficultyFlow = null!;
 
     public DrawableMapSetItem(MapSetItem item, RealmMapSet set, List<RealmMap> maps)
@@ -54,7 +55,11 @@ public partial class DrawableMapSetItem : CompositeDrawable
                 AutoSizeAxes = Axes.Y,
                 Padding = new MarginPadding { Horizontal = 10 }
             },
-            header = new DrawableMapSetHeader(this, set)
+            header = new MapSetLoadWrapper(() => new DrawableMapSetHeader(this, set), 0, 500)
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = DrawableMapSetHeader.HEIGHT
+            }
         };
 
         foreach (var map in maps)
@@ -146,5 +151,31 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
         item.Select();
         return true;
+    }
+
+    // a trick so it doesn't unload early if it's at the bottom or top of the scroll container
+    private partial class MapSetLoadWrapper : DelayedLoadUnloadWrapper
+    {
+        public float Pad { get; set; } = 300f;
+
+        public MapSetLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
+            : base(createContentAction, timeBeforeLoad, timeBeforeUnload)
+        {
+        }
+
+        public override Quad ScreenSpaceDrawQuad
+        {
+            get
+            {
+                var rect = base.ScreenSpaceDrawQuad.AABBFloat;
+
+                return new RectangleF(
+                    rect.X,
+                    rect.Y - Pad,
+                    rect.Width,
+                    rect.Height + (Pad * 2)
+                );
+            }
+        }
     }
 }
