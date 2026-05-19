@@ -7,6 +7,7 @@ using System.Reflection;
 using fluXis.Scripting.Models;
 using Humanizer;
 using Midori.Utils.Extensions;
+using Newtonsoft.Json;
 using NLua;
 using osu.Framework.Logging;
 using osuTK;
@@ -17,6 +18,14 @@ namespace fluXis.Utils.Extensions;
 public static class LuaExtensions
 {
     private static readonly ConcurrentDictionary<Type, LuaTypeCache> reflection_cache = new();
+
+    private const int max_depth = 32;
+
+    [ThreadStatic]
+    private static HashSet<object> visitedObjects;
+
+    [ThreadStatic]
+    private static int currentDepth;
 
     // All conversion delegates to this
     private static object convertToLua(object value, Lua lua)
@@ -72,59 +81,87 @@ public static class LuaExtensions
         if (obj is IEnumerable enumerable and not string)
             return enumerable.ToLuaTable(lua);
 
-        var type = obj.GetType();
-        var typeCache = reflection_cache.GetOrAdd(type, generateTypeCache);
+        currentDepth++;
+        Debug.Assert(currentDepth <= max_depth,
+            $"Max recursion depth ({max_depth}) hit for {obj.GetType().FullName}");
 
-        var itemTable = lua.DoString("return {}")[0] as LuaTable;
-        Debug.Assert(itemTable != null);
+        bool isValueType = obj.GetType().IsValueType;
 
-        foreach (var cachedProp in typeCache.Properties)
+        // ValueTypes (structs) can't form an infinite loop because they are copied/cloned instead of referenced unless you use `ref` excplicitly
+        if (!isValueType)
         {
-            try
-            {
-                var value = cachedProp.Property.GetValue(obj);
-                itemTable[cachedProp.LuaName] = convertToLua(value, lua);
-            }
-            catch (Exception ex)
-            {
-                Logger.Log($"Failed to get property {cachedProp.Property.Name} for {type.Name}: {ex.Message}");
-            }
+            visitedObjects ??= new HashSet<object>(ReferenceEqualityComparer.Instance);
+            bool alreadyPresent = !visitedObjects.Add(obj);
+            Debug.Assert(!alreadyPresent,
+                $"Circular reference detected for type {obj.GetType().FullName} at depth {currentDepth}");
         }
 
-        foreach (var cachedField in typeCache.Fields)
+        try
         {
-            try
-            {
-                var value = cachedField.Field.GetValue(obj);
-                var luaValue = convertToLua(value, lua);
+            var type = obj.GetType();
+            var typeCache = reflection_cache.GetOrAdd(type, generateTypeCache);
 
-                itemTable[cachedField.LuaName] = luaValue;
-                itemTable[cachedField.OriginalName] = luaValue;
-            }
-            catch (Exception ex)
+            var itemTable = lua.DoString("return {}")[0] as LuaTable;
+            Debug.Assert(itemTable != null);
+
+            foreach (var cachedProp in typeCache.Properties)
             {
-                Logger.Log($"Failed to get field {cachedField.Field.Name} for {type.Name}: {ex.Message}");
+                try
+                {
+                    var value = cachedProp.Property.GetValue(obj);
+                    itemTable[cachedProp.LuaName] = convertToLua(value, lua);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Failed to get property {cachedProp.Property.Name} for {type.Name}: {ex.Message}");
+                }
             }
+
+            foreach (var cachedField in typeCache.Fields)
+            {
+                try
+                {
+                    var value = cachedField.Field.GetValue(obj);
+                    var luaValue = convertToLua(value, lua);
+
+                    itemTable[cachedField.LuaName] = luaValue;
+                    itemTable[cachedField.OriginalName] = luaValue;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Failed to get field {cachedField.Field.Name} for {type.Name}: {ex.Message}");
+                }
+            }
+
+            foreach (var cachedMethod in typeCache.Methods)
+            {
+                try
+                {
+                    string tempKey = $"__temp_func_{Guid.NewGuid():N}";
+                    lua.RegisterFunction(tempKey, obj, cachedMethod.Method);
+
+                    itemTable[cachedMethod.LuaName] = lua[tempKey];
+
+                    lua[tempKey] = null;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Failed to bind method {cachedMethod.Method.Name} for {type.Name}: {ex.Message}");
+                }
+            }
+
+            return itemTable;
         }
-
-        foreach (var cachedMethod in typeCache.Methods)
+        finally
         {
-            try
-            {
-                string tempKey = $"__temp_func_{Guid.NewGuid():N}";
-                lua.RegisterFunction(tempKey, obj, cachedMethod.Method);
+            if (!isValueType)
+                visitedObjects?.Remove(obj);
 
-                itemTable[cachedMethod.LuaName] = lua[tempKey];
+            currentDepth--;
 
-                lua[tempKey] = null;
-            }
-            catch (Exception ex)
-            {
-                Logger.Log($"Failed to bind method {cachedMethod.Method.Name} for {type.Name}: {ex.Message}");
-            }
+            if (currentDepth == 0)
+                visitedObjects = null;
         }
-
-        return itemTable;
     }
 
     private static LuaTypeCache generateTypeCache(Type type)
@@ -140,6 +177,11 @@ public static class LuaExtensions
         foreach (var prop in properties)
         {
             if (prop.GetIndexParameters().Length > 0)
+                continue;
+
+            // if we can't get it through json then it's a good idea not to be able to get it through lua also
+            // this also saves us from stack overflows as some auto generated fields may have references to the same type
+            if (prop.GetCustomAttribute<JsonIgnoreAttribute>(true) != null)
                 continue;
 
             var attr = prop.GetCustomAttribute<LuaMemberAttribute>(true);
@@ -160,6 +202,9 @@ public static class LuaExtensions
 
         foreach (var field in fields)
         {
+            if (field.GetCustomAttribute<JsonIgnoreAttribute>(true) != null)
+                continue;
+
             string luaName = char.ToLowerInvariant(field.Name[0]) + field.Name[1..];
             typeCache.Fields.Add(new LuaFieldsCache(field, luaName, field.Name));
         }
