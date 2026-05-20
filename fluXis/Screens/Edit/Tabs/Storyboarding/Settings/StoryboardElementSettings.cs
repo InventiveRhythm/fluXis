@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using fluXis.Configuration;
+using fluXis.Configuration.Experiments;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -62,12 +63,23 @@ public partial class StoryboardElementSettings : CompositeDrawable
         Anchor.BottomRight
     };
 
+    private DefaultBlendingParameters[] nonExperimentalBlends { get; } =
+    {
+        DefaultBlendingParameters.None,
+        DefaultBlendingParameters.Mix,
+        DefaultBlendingParameters.Add,
+    };
+
+    private bool useExperimentalBlends;
+
     private FillFlowContainer flow;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ExperimentConfigManager experiments)
     {
         RelativeSizeAxes = Axes.Both;
+
+        useExperimentalBlends = experiments.Get<bool>(ExperimentConfig.NewSbBlendModes);
 
         InternalChildren = new Drawable[]
         {
@@ -240,7 +252,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     {
                         Text = "Blend Mode",
                         CurrentValue = item.BlendingMode,
-                        Items = Enum.GetValues<DefaultBlendingParameters>().ToList(),
+                        Items = useExperimentalBlends ? Enum.GetValues<DefaultBlendingParameters>().ToList() : nonExperimentalBlends.ToList(),
                         Enabled = blendingEnabled,
                         HideWhenDisabled = true,
                         OnValueChanged = mode =>

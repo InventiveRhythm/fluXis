@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using fluXis;
 using fluXis.Audio.FFT.Structures.Data;
+using fluXis.Map.Structures;
 using fluXis.Map.Structures.Events;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models.Storyboarding;
@@ -50,6 +51,7 @@ internal class Program
         }
 
         typeList.Add(new EnumType<Easing>(true, ctorName: "Easing", enumName: "Easing"));
+        typeList.Add(new EnumType<HitObjectType>(true, ctorName: "HitObjectType", enumName: "HitObjectType"));
         typeList.Add(new EnumType<Anchor>(true)
         {
             Values = new[]
@@ -190,6 +192,8 @@ internal class Program
             "fluXis.Map.Structures.Bases.IMapEvent" => "EventType",
             "fluXis.Audio.FFT.Structures.Data.FFTBands" => "FFTBands",
             "fluXis.Audio.FFT.Structures.Processor.FFTParameters" => "FFTParameters",
+            "osuTK.Graphics.Color4" => "Color4",
+            "osuTK.Vector2" => "Vector2",
             "System.Boolean" => "boolean",
             "System.String" => "string",
             "NLua.LuaTable" => "table",
