@@ -1,6 +1,7 @@
 ﻿using System;
 using fluXis.Audio.FFT;
 using fluXis.Map;
+using fluXis.Map.Structures;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Models.Skinning;
@@ -40,6 +41,7 @@ public class StoryboardScriptRunner : ScriptRunner
         AddFunction("Layer", (string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
         AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
         AddFunction("BlendMode", (string str) => Enum.TryParse(str, out DefaultBlendingParameters blendMode) ? blendMode : DefaultBlendingParameters.Mix);
+        AddFunction("HitObjectType", (string str) => Enum.TryParse(str, out HitObjectType hitType) ? hitType : HitObjectType.Normal);
 
         // elements
         AddFunction("StoryboardBox", newBox);

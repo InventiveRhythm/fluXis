@@ -12,11 +12,11 @@ BeatPulseEvent = {}
 ---@field time number
 ---@field group string
 ---@field fadePrimary boolean
----@field primary string
+---@field primary Color4
 ---@field fadeSecondary boolean
----@field secondary string
+---@field secondary Color4
 ---@field fadeMiddle boolean
----@field middle string
+---@field middle Color4
 ---@field duration number
 ---@field easing number
 ---@field playfieldIndex number
@@ -29,9 +29,9 @@ ColorFadeEvent = {}
 ---@field duration number
 ---@field inBackground boolean
 ---@field easing number
----@field startColor string
+---@field startColor Color4
 ---@field startOpacity number
----@field endColor string
+---@field endColor Color4
 ---@field endOpacity number
 FlashEvent = {}
 
