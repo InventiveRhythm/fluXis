@@ -156,7 +156,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
     // a trick so it doesn't unload early if it's at the bottom or top of the scroll container
     private partial class MapSetLoadWrapper : DelayedLoadUnloadWrapper
     {
-        public float Pad { get; set; } = 300f;
+        public float Pad { get; set; } = 450f;
 
         public MapSetLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
             : base(createContentAction, timeBeforeLoad, timeBeforeUnload)
