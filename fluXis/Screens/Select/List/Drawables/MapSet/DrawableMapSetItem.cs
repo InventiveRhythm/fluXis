@@ -29,7 +29,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
     private SelectedState selectedState = SelectedState.Deselected;
 
-    private MapSetLoadWrapper header = null!;
+    private DrawableMapSetHeader header = null!;
     private Container<DrawableMapSetDifficulty> difficultyFlow = null!;
 
     public DrawableMapSetItem(MapSetItem item, RealmMapSet set, List<RealmMap> maps)
@@ -55,7 +55,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
                 AutoSizeAxes = Axes.Y,
                 Padding = new MarginPadding { Horizontal = 10 }
             },
-            header = new MapSetLoadWrapper(() => new DrawableMapSetHeader(this, set), 0, 500)
+            new MapSetLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0)
             {
                 RelativeSizeAxes = Axes.X,
                 Height = DrawableMapSetHeader.HEIGHT
@@ -131,7 +131,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
         if (selectedState == SelectedState.Selected)
             return;
 
-        header.Show();
+        header?.Show();
         selectedState = SelectedState.Selected;
     }
 
@@ -140,7 +140,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
         if (selectedState == SelectedState.Deselected)
             return;
 
-        header.Hide();
+        header?.Hide();
         selectedState = SelectedState.Deselected;
     }
 
@@ -156,7 +156,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
     // a trick so it doesn't unload early if it's at the bottom or top of the scroll container
     private partial class MapSetLoadWrapper : DelayedLoadUnloadWrapper
     {
-        public float Pad { get; set; } = 450f;
+        public float Pad { get; set; } = 250f;
 
         public MapSetLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
             : base(createContentAction, timeBeforeLoad, timeBeforeUnload)
