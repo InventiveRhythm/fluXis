@@ -96,6 +96,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         Height = 48;
 
         var color = Theme.GetKeyCountColor(map.KeyCount);
+        var colorLight = color.Lighten(1);
 
         InternalChildren = new Drawable[]
         {
@@ -113,16 +114,17 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = ColourInfo.GradientVertical(color.Lighten(1), color)
+                            Colour = ColourInfo.GradientVertical(colorLight, color)
                         }
                     }
                 }
             },
-            content = new BufferedContainer(cachedFrameBuffer: true)
+            content = new BufferedContainer(cachedFrameBuffer: true, pixelSnapping: true)
             {
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
                 Masking = true,
+                BackgroundColour = color.Opacity(0),
                 Children = new Drawable[]
                 {
                     new Box
