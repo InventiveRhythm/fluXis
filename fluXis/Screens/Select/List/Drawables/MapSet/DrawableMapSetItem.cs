@@ -49,7 +49,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new DelayedLoadUnloadWrapper(() =>
+            new ExpandedLoadWrapper(() =>
             {
                 var flow = new Container<DrawableMapSetDifficulty>
                 {
@@ -75,7 +75,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
                 difficultyFlow = flow;
                 return flow;
             }, 0, 250),
-            new MapSetLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0)
+            new ExpandedLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0)
             {
                 RelativeSizeAxes = Axes.X,
                 Height = DrawableMapSetHeader.HEIGHT
@@ -162,11 +162,11 @@ public partial class DrawableMapSetItem : CompositeDrawable
     }
 
     // a trick so it doesn't unload early if it's at the bottom or top of the scroll container
-    private partial class MapSetLoadWrapper : DelayedLoadUnloadWrapper
+    private partial class ExpandedLoadWrapper : DelayedLoadUnloadWrapper
     {
         public float Pad { get; set; } = 250f;
 
-        public MapSetLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
+        public ExpandedLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
             : base(createContentAction, timeBeforeLoad, timeBeforeUnload)
         {
         }
