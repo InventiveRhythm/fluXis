@@ -17,6 +17,7 @@ using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Localization.Stores;
+using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Overlay.Achievements;
 using fluXis.Overlay.Auth;
@@ -89,6 +90,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private Dashboard dashboard;
     private LoginOverlay loginOverlay;
     private UserProfileOverlay userProfileOverlay;
+    private ClubOverlay clubOverlay;
     private MapSetOverlay mapSetOverlay;
     private Toolbar toolbar;
     private PanelContainer panelContainer;
@@ -151,7 +153,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(mapSetOverlay = new MapSetOverlay(), overlayContainer.Add, true);
         loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
         loadComponent(new WikiOverlay(), overlayContainer.Add, true);
-        loadComponent(new ClubOverlay(), overlayContainer.Add, true);
+        loadComponent(clubOverlay = new ClubOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
         loadComponent(new SettingsMenu(), overlayContainer.Add, true);
 
@@ -351,15 +353,28 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             globalBackground.AddBackgroundFromMap(map);
     }
 
-    public void OpenLink(string link, bool skipWarning = false)
+    public override void OpenLink(string link, bool skipWarning = false)
     {
+        var parsed = ParsedLink.Parse(link, APIClient.Endpoint);
+
+        switch (parsed.Action)
+        {
+            case LinkAction.MapSet:
+                PresentMapSet((long)parsed.Argument);
+                return;
+
+            case LinkAction.User:
+                PresentUser((long)parsed.Argument);
+                return;
+
+            case LinkAction.Club:
+                PresentClub((long)parsed.Argument);
+                return;
+        }
+
         if (skipWarning)
         {
-            if (Steam?.Initialized ?? false)
-                Steam.OpenLink(link);
-            else
-                Host.OpenUrlExternally(link);
-
+            base.OpenLink(link, true);
             return;
         }
 
@@ -415,6 +430,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public void PresentUser(long id)
         => userProfileOverlay.ShowUser(id);
+
+    public void PresentClub(long id)
+        => clubOverlay.ShowClub(id);
 
     public void PresentMapSet(long id)
     {
