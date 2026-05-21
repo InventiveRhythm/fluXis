@@ -118,7 +118,7 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
     private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet?.ID);
 
     public MapCard(APIMapSet mapSet)
-        : base(cachedFrameBuffer: true)
+        : base(cachedFrameBuffer: true, pixelSnapping: true)
     {
         MapSet = mapSet;
         Height = 112;

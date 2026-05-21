@@ -38,7 +38,7 @@ public partial class ProfileScore : BufferedContainer, IHasLoadedValue
     public bool Loaded { get; private set; }
 
     public ProfileScore(APIScore score)
-        : base(cachedFrameBuffer: true)
+        : base(cachedFrameBuffer: true, pixelSnapping: true)
     {
         this.score = score;
     }

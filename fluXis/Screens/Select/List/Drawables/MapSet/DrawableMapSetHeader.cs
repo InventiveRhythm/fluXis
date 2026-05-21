@@ -123,7 +123,7 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
     public const float HEIGHT = 80f;
 
     public DrawableMapSetHeader(DrawableMapSetItem parent, RealmMapSet mapset)
-        : base(cachedFrameBuffer: true)
+        : base(cachedFrameBuffer: true, pixelSnapping: true)
     {
         this.parent = parent;
         this.mapset = mapset;
@@ -133,6 +133,8 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
     private void load()
     {
         var color = mapset.Metadata.Color;
+
+        BackgroundColour = color.Opacity(0);
 
         RelativeSizeAxes = Axes.X;
         Height = HEIGHT;
