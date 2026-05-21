@@ -119,7 +119,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                     }
                 }
             },
-            content = new BufferedContainer(cachedFrameBuffer: true, pixelSnapping: true)
+            content = new BufferedContainer(cachedFrameBuffer: true)
             {
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
