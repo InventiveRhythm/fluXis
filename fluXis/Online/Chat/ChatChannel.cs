@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using fluXis.Graphics;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Requests.Chat;
 using fluXis.Online.Fluxel;
 
 namespace fluXis.Online.Chat;
 
-public class ChatChannel
+public class ChatChannel : IHasLoadedValue
 {
     public string Name => APIChannel.Name;
     public APIChannelType Type => APIChannel.Type;
@@ -16,11 +17,12 @@ public class ChatChannel
     public APIChatChannel APIChannel { get; }
     private IAPIClient api { get; }
 
+    public bool Loaded { get; private set; }
+
     public event Action<APIChatMessage> OnMessage;
     public event Action<APIChatMessage> OnMessageRemoved;
 
     public IReadOnlyList<APIChatMessage> Messages => messages;
-
     private List<APIChatMessage> messages { get; } = new();
 
     public ChatChannel(APIChatChannel channel, IAPIClient api)
@@ -37,6 +39,7 @@ public class ChatChannel
         {
             res.Data.Sort((a, b) => a.CreatedAtUnix.CompareTo(b.CreatedAtUnix));
             res.Data.ForEach(AddMessage);
+            Loaded = true;
         };
         await api.PerformRequestAsync(req);
     }

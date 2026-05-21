@@ -176,16 +176,29 @@ public partial class DashboardChatTab : DashboardTab
 
             var chan = client.GetChannel(e.NewValue);
 
+            if (chan?.Loaded ?? false)
+            {
+                addMessages(chan);
+                return;
+            }
+
             chan?.LoadMessages().ContinueWith(_ => Schedule(() =>
             {
                 if (Channel.Value != e.NewValue)
                     return;
 
-                chan.Messages.ForEach(addMessage);
-                loading.Hide();
-                scroll.ScrollToEnd();
+                addMessages(chan);
             }));
         }, true);
+
+        Schedule(() => scroll.ScrollToEnd(false));
+    }
+
+    private void addMessages(ChatChannel ch)
+    {
+        ch?.Messages.ForEach(addMessage);
+        loading.Hide();
+        scroll.ScrollToEnd(false);
     }
 
     public void WaitForChannel(string ch)
