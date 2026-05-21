@@ -30,7 +30,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
     private SelectedState selectedState = SelectedState.Deselected;
 
     private DrawableMapSetHeader header = null!;
-    private Container<DrawableMapSetDifficulty> difficultyFlow = null!;
+    private Container<DrawableMapSetDifficulty>? difficultyFlow;
 
     public DrawableMapSetItem(MapSetItem item, RealmMapSet set, List<RealmMap> maps)
     {
@@ -49,32 +49,38 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            difficultyFlow = new Container<DrawableMapSetDifficulty>
+            new DelayedLoadUnloadWrapper(() =>
             {
-                RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
-                Padding = new MarginPadding { Horizontal = 10 }
-            },
+                var flow = new Container<DrawableMapSetDifficulty>
+                {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Padding = new MarginPadding { Horizontal = 10 }
+                };
+
+                foreach (var map in maps)
+                {
+                    flow.Add(new DrawableMapSetDifficulty(this, map)
+                    {
+                        RequestedResort = () =>
+                        {
+                            var children = flow.Children.ToList();
+                            flow.Clear(false);
+                            children.Sort();
+                            flow.Children = children;
+                        }
+                    });
+                }
+
+                difficultyFlow = flow;
+                return flow;
+            }, 0, 250),
             new MapSetLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0)
             {
                 RelativeSizeAxes = Axes.X,
                 Height = DrawableMapSetHeader.HEIGHT
             }
         };
-
-        foreach (var map in maps)
-        {
-            difficultyFlow.Add(new DrawableMapSetDifficulty(this, map)
-            {
-                RequestedResort = () =>
-                {
-                    var children = difficultyFlow.Children.ToList();
-                    difficultyFlow.Clear(false);
-                    children.Sort();
-                    difficultyFlow.Children = children;
-                }
-            });
-        }
     }
 
     protected override void LoadComplete()
@@ -92,6 +98,8 @@ public partial class DrawableMapSetItem : CompositeDrawable
             Y = item.Position;
         else
             Y = (float)Interpolation.Lerp(item.Position, Y, Math.Exp(-0.01 * Time.Elapsed));
+
+        if (difficultyFlow is not { IsAlive: true }) return;
 
         var selected = item.State.Value == SelectedState.Selected;
         var pos = selected ? 85f : 20;
