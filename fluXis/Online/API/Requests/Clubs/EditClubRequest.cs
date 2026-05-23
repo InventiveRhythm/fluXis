@@ -1,7 +1,7 @@
 using System.Net.Http;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Payloads.Clubs;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Clubs;

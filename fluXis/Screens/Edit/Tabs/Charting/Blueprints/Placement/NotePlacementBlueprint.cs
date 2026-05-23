@@ -2,7 +2,7 @@ using System;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Tabs.Verify;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Input;
 

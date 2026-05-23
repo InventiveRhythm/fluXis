@@ -1,4 +1,4 @@
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 

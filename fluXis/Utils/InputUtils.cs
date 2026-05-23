@@ -29,14 +29,14 @@ public static class InputUtils
         return bind switch
         {
             FluXisGlobalKeybind globalBind => GlobalKeybindContainer.GlobalKeyBindings
-                .Concat(GlobalKeybindContainer.InGameKeyBindings)
-                .FirstOrDefault(kb => kb.Action.Equals(globalBind)),
+                                                                    .Concat(GlobalKeybindContainer.InGameKeyBindings)
+                                                                    .FirstOrDefault(kb => kb.Action.Equals(globalBind)),
 
             EditorKeybinding editorBind => EditorKeybindingContainer.EditorKeyBindings
-                .FirstOrDefault(kb => kb.Action.Equals(editorBind)),
+                                                                    .FirstOrDefault(kb => kb.Action.Equals(editorBind)),
 
             FluXisGameplayKeybind gameplayBind => new KeyBinding(
-                GameplayKeybindContainer.GetDefaultFor(gameplayBind), 
+                GameplayKeybindContainer.GetDefaultFor(gameplayBind),
                 gameplayBind),
 
             _ => throw new ArgumentException($"keybinding type not found for: {typeof(T).Name}", nameof(bind))

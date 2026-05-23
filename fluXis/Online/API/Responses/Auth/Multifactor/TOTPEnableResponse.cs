@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Responses.Auth.Multifactor;

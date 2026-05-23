@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using fluXis.Online.API.Models.Users;
-using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Models.Maps.Modding;
