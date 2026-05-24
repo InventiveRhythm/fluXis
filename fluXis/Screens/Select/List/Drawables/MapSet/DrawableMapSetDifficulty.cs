@@ -18,6 +18,7 @@ using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -29,6 +30,7 @@ using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osu.Framework.Utils;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Screens.Select.List.Drawables.MapSet;
 
@@ -79,6 +81,10 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     private DrawableScoreRank rank;
     private DifficultyChip ratingChip;
 
+    private Color4 keymodeColor;
+    private Color4 keymodeColorLight;
+    private readonly Color4 backgroundColor = Theme.Background2;
+
     public Action RequestedResort { get; set; }
 
     public float TargetY = 0;
@@ -95,8 +101,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         RelativeSizeAxes = Axes.X;
         Height = 48;
 
-        var color = Theme.GetKeyCountColor(map.KeyCount);
-        var colorLight = color.Lighten(1);
+        keymodeColor = Theme.GetKeyCountColor(map.KeyCount);
+        keymodeColorLight = keymodeColor.Lighten(1);
 
         InternalChildren = new Drawable[]
         {
@@ -114,23 +120,24 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = ColourInfo.GradientVertical(colorLight, color)
+                            Colour = ColourInfo.GradientVertical(keymodeColorLight, keymodeColor)
                         }
                     }
                 }
             },
-            content = new BufferedContainer(cachedFrameBuffer: true, pixelSnapping: true)
+                // no pixel snapping for this because on small textures it causes a very pixelated look due to TextureFilteringMode.Nearest
+            content = new BufferedContainer(cachedFrameBuffer: true)
             {
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
                 Masking = true,
-                BackgroundColour = color.Opacity(0),
+                BackgroundColour = backgroundColor,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = color
+                        Colour = keymodeColor
                     },
                     new Container
                     {
@@ -151,7 +158,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                                 highlight = new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = ColourInfo.GradientHorizontal(color.Opacity(0), color.Opacity(0.25f))
+                                    Colour = ColourInfo.GradientHorizontal(keymodeColor.Opacity(0), keymodeColor.Opacity(0.25f))
                                 },
                                 new FillFlowContainer
                                 {
@@ -229,7 +236,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text,
+                        Colour = Theme.IsBright(keymodeColor) ? Theme.TextDark : Theme.Text,
                         Alpha = .75f,
                         Child = new FillFlowContainer
                         {
@@ -329,11 +336,13 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     {
         if (Equals(e.NewValue, map))
         {
+            content.BackgroundColour = keymodeColor.Opacity(0);
             outline.FadeIn(200);
             highlight.FadeIn(200);
         }
         else
         {
+            content.BackgroundColour = backgroundColor.Opacity(0);
             outline.FadeOut(200);
             highlight.FadeOut(200);
         }
