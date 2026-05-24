@@ -27,10 +27,15 @@ public partial class DrawableMapSetItem : CompositeDrawable
     private readonly RealmMapSet set;
     private readonly List<RealmMap> maps;
 
+    private bool alreadyLoadedOnce;
     private SelectedState selectedState = SelectedState.Deselected;
 
     private DrawableMapSetHeader header = null!;
     private Container<DrawableMapSetDifficulty>? difficultyFlow;
+
+    private const float unselected_pos = 20f;
+    private const float selected_pos = 85f;
+    private const float pos_velocity = 48 + 5;
 
     public DrawableMapSetItem(MapSetItem item, RealmMapSet set, List<RealmMap> maps)
     {
@@ -58,10 +63,14 @@ public partial class DrawableMapSetItem : CompositeDrawable
                     Padding = new MarginPadding { Horizontal = 10 }
                 };
 
+                var isSelected = item.State.Value == SelectedState.Selected;
+                float initialPos = selected_pos;
+
                 foreach (var map in maps)
                 {
                     flow.Add(new DrawableMapSetDifficulty(this, map)
                     {
+                        Y = alreadyLoadedOnce ? (isSelected ? initialPos : unselected_pos) : 0,
                         RequestedResort = () =>
                         {
                             var children = flow.Children.ToList();
@@ -70,8 +79,13 @@ public partial class DrawableMapSetItem : CompositeDrawable
                             flow.Children = children;
                         }
                     });
+
+                    // prevent reenter animation if it's already loaded and selected
+                    // without this, scrolling this in and out of view would animate it entering every time
+                    if (alreadyLoadedOnce && isSelected) initialPos += pos_velocity;
                 }
 
+                alreadyLoadedOnce = true;
                 difficultyFlow = flow;
                 return flow;
             }, 0, 250),
@@ -102,12 +116,12 @@ public partial class DrawableMapSetItem : CompositeDrawable
         if (difficultyFlow is not { IsAlive: true }) return;
 
         var selected = item.State.Value == SelectedState.Selected;
-        var pos = selected ? 85f : 20;
+        var pos = selected ? selected_pos : unselected_pos;
 
         foreach (var difficulty in difficultyFlow)
         {
             difficulty.TargetY = pos;
-            if (selected) pos += 48 + 5;
+            if (selected) pos += pos_velocity;
 
             difficulty.UpdatePosition(Time.Elapsed);
             difficulty.Alpha = difficulty.Y <= 30 ? 0 : 1;
