@@ -12,6 +12,7 @@ using fluXis.Screens.Edit.UI.Variable.Timing;
 using JetBrains.Annotations;
 using Midori.Utils;
 using Midori.Utils.Extensions;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
