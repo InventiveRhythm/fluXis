@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Rendering;
@@ -12,35 +13,31 @@ namespace fluXis.Graphics.Shaders.Steps;
 public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
 {
     protected override string FragmentShader => "Blur";
-    protected string ComposeFragmentShader => "BlurCompose";
+    protected string ComposeFragmentShader => "AdditiveComposeDithered";
     private IShader blurComposeShader;
-    private IUniformBuffer<BlurComposeParameters> composeParameterBuffer;
+    private IUniformBuffer<AdditiveComposeParameters> composeParameterBuffer;
     public override ShaderType Type => ShaderType.Bloom;
 
     public override int Passes => 1;
 
     private int kernelRadius;
     private float sigma;
-    private Vector2 direction;
+
+    private const float max_sigma = 20f;
 
     public override void EnsureParameters(IRenderer renderer)
     {
         ParameterBuffer ??= renderer.CreateUniformBuffer<BlurParameters>();
-        composeParameterBuffer ??= renderer.CreateUniformBuffer<BlurComposeParameters>();
+        composeParameterBuffer ??= renderer.CreateUniformBuffer<AdditiveComposeParameters>();
     }
 
     public override void UpdateParameters(IFrameBuffer current)
     {
-        ParameterBuffer.Data = ParameterBuffer.Data with
-        {
-            Radius = kernelRadius,
-            Sigma = sigma,
-            TexSize = current.Size,
-            Direction = direction
-        };
+        // we only need to update the compose parameters here
+        // cuz drawBlurPass handles its own blur parameters.
         composeParameterBuffer.Data = composeParameterBuffer.Data with
         {
-            Strength = Strength
+            Strength = Strength,
         };
     }
 
@@ -53,42 +50,53 @@ public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
     private IFrameBuffer buffer;
     private IFrameBuffer buffer2;
 
-    private void drawBlurPass(IRenderer renderer, IFrameBuffer src, IFrameBuffer dst, Vector2 blurDirection)
+    private void drawBlurPass(IRenderer renderer, IFrameBuffer src, IFrameBuffer dst, Vector2 blurDirection, Vector2 targetTexSize)
     {
-        direction = blurDirection;
-        UpdateParameters(src);
+        ParameterBuffer.Data = ParameterBuffer.Data with
+        {
+            Radius = kernelRadius,
+            Sigma = sigma,
+            TexSize = targetTexSize,
+            Direction = blurDirection
+        };
+
         Shader.BindUniformBlock($"m_{nameof(BlurParameters)}", ParameterBuffer);
-        dst.Bind();
-        Shader.Bind();
 
-        DrawFrameBuffer(renderer, src);
-
-        Shader.Unbind();
-        dst.Unbind();
+        DrawScaledBuffer(renderer, src, dst, Shader, UsingVeldrid);
     }
 
     public override void DrawBuffer(IRenderer renderer, IFrameBuffer current, IFrameBuffer target)
     {
-        sigma = 20 * Strength;
+        float min_scale = 0.5f;
+        float downsampleScale = Math.Max(min_scale, 1f - (Strength * 0.75f)); // scale maxes out at 0.75 strength
+
+        sigma = max_sigma * Strength * downsampleScale;
         kernelRadius = Blur.KernelSize(sigma);
         DrawColor = Colour4.White;
 
-        buffer ??= renderer.CreateFrameBuffer();
-        buffer.Size = current.Size;
-        buffer2 ??= renderer.CreateFrameBuffer();
-        buffer2.Size = current.Size;
+        Vector2 downsampledSize = new Vector2(
+            (int)Math.Ceiling(current.Size.X * downsampleScale),
+            (int)Math.Ceiling(current.Size.Y * downsampleScale)
+        );
+
+        EnsureBuffer(renderer, ref buffer, downsampledSize);
+        EnsureBuffer(renderer, ref buffer2, downsampledSize);
 
         target.Unbind();
 
-        drawBlurPass(renderer, current, buffer, Vector2.UnitX);
-        drawBlurPass(renderer, buffer, buffer2, Vector2.UnitY);
+        drawBlurPass(renderer, current, buffer, Vector2.UnitX, downsampledSize);
+        drawBlurPass(renderer, buffer, buffer2, Vector2.UnitY, downsampledSize);
 
-        blurComposeShader.BindUniformBlock($"m_{nameof(BlurComposeParameters)}", composeParameterBuffer);
+        UpdateParameters(current);
+        blurComposeShader.BindUniformBlock($"m_{nameof(AdditiveComposeParameters)}", composeParameterBuffer);
+
+        //render composition
         target.Bind();
-
         blurComposeShader.Bind();
         renderer.BindTexture(buffer2.Texture, 1);
+
         DrawFrameBuffer(renderer, current);
+
         blurComposeShader.Unbind();
     }
 
@@ -103,7 +111,7 @@ public class BloomShaderStep : ShaderStep<BloomShaderStep.BlurParameters>
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public record struct BlurComposeParameters
+    public record struct AdditiveComposeParameters
     {
         public UniformFloat Strength;
         private readonly UniformPadding12 pad1;

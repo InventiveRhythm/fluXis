@@ -7,6 +7,7 @@ using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Transforms;
 using osu.Framework.Threading;
 using osu.Framework.Utils;
@@ -21,6 +22,12 @@ public static class DrawableExtensions
     {
         deps.CacheAs(draw);
         return draw;
+    }
+
+    // I'm too lazy to put this elsewhere
+    public static bool IsVeldrid(this IRenderer renderer)
+    {
+        return renderer.GetType().Name.Contains("Veldrid");
     }
 
     public static void Shake(this Drawable target, double shakeDuration, float shakeMagnitude, int bounces = 4)
