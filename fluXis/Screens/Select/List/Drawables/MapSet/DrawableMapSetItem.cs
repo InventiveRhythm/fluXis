@@ -88,10 +88,11 @@ public partial class DrawableMapSetItem : CompositeDrawable
                 difficultyFlow = flow;
                 return flow;
             }, 0, 250),
-            new ExpandedLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0)
+            new ExpandedLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0, 500)
             {
                 RelativeSizeAxes = Axes.X,
-                Height = DrawableMapSetHeader.HEIGHT
+                Height = DrawableMapSetHeader.HEIGHT,
+                SSPadding = new MarginPadding { Vertical = 200 }
             }
         };
     }
@@ -179,7 +180,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
     // a trick so it doesn't unload early if it's at the bottom or top of the scroll container
     private partial class ExpandedLoadWrapper : DelayedLoadUnloadWrapper
     {
-        public float Pad { get; set; } = 250f;
+        public MarginPadding SSPadding { get; set; } = new(250f);
 
         public ExpandedLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
             : base(createContentAction, timeBeforeLoad, timeBeforeUnload)
@@ -193,10 +194,10 @@ public partial class DrawableMapSetItem : CompositeDrawable
                 var rect = base.ScreenSpaceDrawQuad.AABBFloat;
 
                 return new RectangleF(
-                    rect.X,
-                    rect.Y - Pad,
-                    rect.Width,
-                    rect.Height + (Pad * 2)
+                    rect.X - SSPadding.Left,
+                    rect.Y - SSPadding.Top,
+                    rect.Width + SSPadding.Left + SSPadding.Right,
+                    rect.Height + SSPadding.Top + SSPadding.Bottom
                 );
             }
         }
