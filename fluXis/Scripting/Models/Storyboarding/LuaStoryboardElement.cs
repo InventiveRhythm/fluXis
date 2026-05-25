@@ -103,6 +103,7 @@ public class LuaStoryboardElement : ILuaModel
         StartX = StartX,
         StartY = StartY,
         Blending = Blending,
+        BlendingMode = BlendingMode,
         Width = Width,
         Height = Height,
         Color = Color,

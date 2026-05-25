@@ -31,5 +31,8 @@
     "options-wipe-scores": "로컬 점수 지우기",
     "wipe-scores-title": "정말로 이 난이도에 대한 모든 로컬 점수를 지우시겠습니까?",
     "no-maps-title": "맵을 찾을 수 없습니다!",
-    "no-maps-description": "검색 필터를 한번 바꿔보세요."
+    "no-maps-description": "검색 필터를 한번 바꿔보세요.",
+    "collections": "모음집",
+    "collection-none": "없음",
+    "collection-favorite": "즐겨찾기"
 }

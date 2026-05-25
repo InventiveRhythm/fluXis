@@ -1,6 +1,6 @@
 ﻿using System;
 using fluXis.Scoring.Enums;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Scoring.Structs;

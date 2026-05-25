@@ -38,7 +38,6 @@ public partial class DesignPointsList : PointsList
         RegisterTypeEvents(Map.MapEvents.CameraScaleEvents);
         RegisterTypeEvents(Map.MapEvents.CameraRotateEvents);
         RegisterTypeEvents(Map.MapEvents.LoopEvents);
-        RegisterTypeEvents(Map.MapEvents.ScriptEvents);
         RegisterTypeEvents(Map.MapEvents.NoteEvents);
     }
 
@@ -62,7 +61,6 @@ public partial class DesignPointsList : PointsList
         CameraScaleEvent cams => new CameraScaleEntry(cams),
         CameraRotateEvent camr => new CameraRotateEntry(camr),
         LoopEvent loop => new LoopEventEntry(loop),
-        ScriptEvent script => new ScriptEntry(script),
         NoteEvent note => new NoteEntry(note),
         _ => null
     };
@@ -87,7 +85,6 @@ public partial class DesignPointsList : PointsList
         CreateDefaultDropdownEntry<CameraScaleEvent>("Camera Scale", Theme.CameraScale),
         CreateDefaultDropdownEntry<CameraRotateEvent>("Camera Rotate", Theme.CameraRotate),
         CreateDefaultDropdownEntry<LoopEvent>("Loop", Theme.Loop),
-        // CreateDefaultDropdownEntry<ScriptEvent>("Script", FluXisColors.Script),
         CreateDefaultDropdownEntry<NoteEvent>("Note", Theme.Note),
     };
 }

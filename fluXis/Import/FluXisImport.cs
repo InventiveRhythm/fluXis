@@ -10,6 +10,7 @@ using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using Midori.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 using osuTK;
 

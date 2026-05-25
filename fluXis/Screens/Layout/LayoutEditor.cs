@@ -34,6 +34,7 @@ using fluXis.Screens.Layout.Components;
 using fluXis.Screens.Layout.Settings;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using Midori.Utils;
 using MongoDB.Bson;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

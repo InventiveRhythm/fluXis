@@ -363,6 +363,14 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
+    public virtual void OpenLink(string link, bool skipWarning = false)
+    {
+        if (Steam?.Initialized ?? false)
+            Steam.OpenLink(link);
+        else
+            Host.OpenUrlExternally(link);
+    }
+
     private Season getSeason()
     {
         var date = DateTime.Now;

@@ -16,7 +16,7 @@ using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Skinning;
 using fluXis.Skinning.Json;
-using fluXis.Utils;
+using Midori.Utils;
 using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

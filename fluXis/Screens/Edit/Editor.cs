@@ -175,6 +175,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorModding modding;
     private EditorOsd osd;
 
+    private Bindable<bool> autosave;
+
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
         this.loader = loader;
@@ -186,6 +188,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         BindableBackgroundDim = config.GetBindable<float>(FluXisSetting.EditorDim);
         BindableBackgroundBlur = config.GetBindable<float>(FluXisSetting.EditorBlur);
+
+        autosave = config.GetBindable<bool>(FluXisSetting.EditorAutoSave);
 
         globalClock.Looping = false;
 
@@ -300,6 +304,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 new MenuExpandItem("File", FontAwesome6.Solid.File, new FluXisMenuItem[]
                                 {
                                     new MenuActionItem("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { IsEnabled = () => HasUnsavedChanges },
+                                    new MenuToggleItem("Auto Save", FontAwesome6.Solid.FloppyDisk, autosave),
                                     new MenuSpacerItem(),
                                     new MenuActionItem("Create new difficulty...", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
                                     {
@@ -511,6 +516,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     protected override void Update()
     {
         base.Update();
+
+        if (autosave.Value)
+        {
+            var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            if (now - lastSaveTime > 1000 * 60 * 5) save();
+        }
 
         // too lazy to properly do this
         settings.InvertedScroll.Value = keybinds.Keymap.InvertScroll;

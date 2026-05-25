@@ -19,6 +19,7 @@ using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
+using Midori.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Threading;
@@ -113,7 +114,6 @@ public class EditorMap : IVerifyContext
             new ChangeNotifier<CameraScaleEvent>(MapEvents.CameraScaleEvents),
             new ChangeNotifier<CameraRotateEvent>(MapEvents.CameraRotateEvents),
             new ChangeNotifier<LoopEvent>(MapEvents.LoopEvents),
-            new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents),
             new ChangeNotifier<StoryboardAnimation>(new List<StoryboardAnimation>()),
             MapInfo.Storyboard

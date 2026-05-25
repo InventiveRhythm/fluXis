@@ -16,7 +16,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Graphics.Shaders;
 
-public partial class ShaderStackContainer : CompositeDrawable, IBufferedDrawable
+public partial class ShaderStackContainer : Container, IBufferedDrawable
 {
     [Resolved]
     private ShaderManager manager { get; set; }
