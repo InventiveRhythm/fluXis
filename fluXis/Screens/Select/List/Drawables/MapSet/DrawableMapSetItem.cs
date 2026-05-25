@@ -32,6 +32,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
     private DrawableMapSetHeader header = null!;
     private Container<DrawableMapSetDifficulty>? difficultyFlow;
+    private ExpandedLoadWrapper difficultyWrapper = null!;
 
     private const float unselected_pos = 20f;
     private const float selected_pos = 85f;
@@ -54,7 +55,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new DelayedLoadUnloadWrapper(() =>
+            difficultyWrapper = new ExpandedLoadWrapper(() =>
             {
                 var flow = new Container<DrawableMapSetDifficulty>
                 {
@@ -80,8 +81,6 @@ public partial class DrawableMapSetItem : CompositeDrawable
                         }
                     });
 
-                    // prevent reenter animation if it's already loaded and selected
-                    // without this, scrolling this in and out of view would animate it entering every time
                     if (alreadyLoadedOnce && isSelected) initialPos += pos_velocity;
                 }
 
@@ -89,7 +88,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
                 difficultyFlow = flow;
                 return flow;
             }, 0, 250),
-            new MapSetLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0)
+            new ExpandedLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0)
             {
                 RelativeSizeAxes = Axes.X,
                 Height = DrawableMapSetHeader.HEIGHT
@@ -154,6 +153,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
             return;
 
         header?.Show();
+        difficultyWrapper.AllowUnloading = false;
         selectedState = SelectedState.Selected;
     }
 
@@ -163,6 +163,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
             return;
 
         header?.Hide();
+        difficultyWrapper.AllowUnloading = true;
         selectedState = SelectedState.Deselected;
     }
 
@@ -176,11 +177,11 @@ public partial class DrawableMapSetItem : CompositeDrawable
     }
 
     // a trick so it doesn't unload early if it's at the bottom or top of the scroll container
-    private partial class MapSetLoadWrapper : DelayedLoadUnloadWrapper
+    private partial class ExpandedLoadWrapper : DelayedLoadUnloadWrapper
     {
         public float Pad { get; set; } = 250f;
 
-        public MapSetLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
+        public ExpandedLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
             : base(createContentAction, timeBeforeLoad, timeBeforeUnload)
         {
         }
