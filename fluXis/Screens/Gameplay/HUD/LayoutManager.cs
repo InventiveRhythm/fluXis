@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Screens.Gameplay.HUD.Components;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

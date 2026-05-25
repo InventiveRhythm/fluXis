@@ -7,7 +7,7 @@ using fluXis.Online.API.Payloads.Scores;
 using fluXis.Online.API.Responses.Scores;
 using fluXis.Replays;
 using fluXis.Scoring;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Scores;

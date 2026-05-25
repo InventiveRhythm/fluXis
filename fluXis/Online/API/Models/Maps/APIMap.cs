@@ -1,4 +1,7 @@
-﻿using fluXis.Online.API.Models.Users;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 using osu.Framework.Localisation;
 
@@ -15,7 +18,11 @@ public class APIMap
     public long MapSetID { get; init; }
 
     [JsonProperty("mapper")]
-    public APIUser Mapper { get; init; } = null!;
+    [Obsolete($"Use {nameof(Mappers)} instead.")]
+    public APIUser Mapper => Mappers.First();
+
+    [JsonProperty("mappers")]
+    public List<APIUser> Mappers { get; init; } = null!;
 
     [JsonProperty("hash")]
     public string SHA256Hash { get; init; } = null!;
@@ -114,6 +121,6 @@ public class APIMap
         Source = "Unknown Source",
         Tags = "",
         Difficulty = "Unknown",
-        Mapper = APIUser.CreateUnknown(mapper)
+        Mappers = [APIUser.CreateUnknown(mapper)]
     };
 }

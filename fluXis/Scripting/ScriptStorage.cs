@@ -193,7 +193,7 @@ public class ScriptStorage
             Content = content;
         }
 
-        #nullable enable
+#nullable enable
         public void AddParam(string name, string title, string type, object? fallback)
         {
             try
@@ -235,7 +235,7 @@ public class ScriptStorage
                 _ => throw new ArgumentOutOfRangeException(nameof(type))
             };
         }
-        #nullable disable
+#nullable disable
     }
 
     public class ParameterDefinition

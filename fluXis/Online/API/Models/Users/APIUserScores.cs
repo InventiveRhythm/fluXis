@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Online.API.Models.Scores;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Models.Users;

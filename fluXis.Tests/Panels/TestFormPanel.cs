@@ -5,7 +5,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Online.API.Payloads.Clubs;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Allocation;
 
 namespace fluXis.Tests.Panels;

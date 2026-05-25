@@ -8,8 +8,8 @@ using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Screens.Edit.UI.Variable.Preset;
-using fluXis.Utils;
 using fluXis.Utils.Attributes;
+using Midori.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 

@@ -6,7 +6,7 @@ using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.UI.Variable;
-using fluXis.Utils;
+using Midori.Utils;
 using Midori.Utils.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;

@@ -6,6 +6,7 @@ using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Logging;

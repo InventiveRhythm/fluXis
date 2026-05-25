@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Numerics;
 using fluXis.Graphics.UserInterface.Text;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -20,12 +21,14 @@ public partial class EditorVariableNumber<T> : EditorVariableTextBox, IHasCursor
     // hide
     public new Action<FluXisTextBox> OnCommit { get; private set; }
 
+    public override Type CommitEvalType => typeof(T);
+
     public new T CurrentValue
     {
         set
         {
-            updateValue(value, false);
-            updateText();
+            UpdateValue(value, false);
+            UpdateText();
         }
     }
 
@@ -49,13 +52,13 @@ public partial class EditorVariableNumber<T> : EditorVariableTextBox, IHasCursor
     {
         base.OnValueChanged += t =>
         {
-            if (T.TryParse(t.Text, CultureInfo.InvariantCulture, out var val))
-                updateValue(val, true);
+            if (t.Text.TryEvaluateTo<T>(out var val))
+                UpdateValue(val, true);
             else
                 t.NotifyError();
         };
 
-        base.OnCommit += _ => updateText();
+        base.OnCommit += _ => UpdateText();
     }
 
     [BackgroundDependencyLoader]
@@ -102,11 +105,11 @@ public partial class EditorVariableNumber<T> : EditorVariableTextBox, IHasCursor
             lastSampleTime = Time.Current;
         }
 
-        updateValue(bind.Value += change, true);
-        updateText();
+        UpdateValue(bind.Value += change, true);
+        UpdateText();
     }
 
-    private void updateValue(T newVal, bool notify)
+    protected void UpdateValue(T newVal, bool notify)
     {
         if (Min != null)
             newVal = T.Max(Min!.Value, newVal);
@@ -119,12 +122,23 @@ public partial class EditorVariableNumber<T> : EditorVariableTextBox, IHasCursor
             OnValueChanged?.Invoke(bind.Value);
     }
 
-    private void updateText()
+    protected void UpdateText()
     {
         var text = bind.Value.ToString(Formatting, CultureInfo.InvariantCulture);
-        if (TextBox == null)
-            Schedule(() => TextBox!.Text = text);
+        Schedule(() => TextBox.Text = text);
+    }
+
+    protected override void EvalCommit(FluXisTextBox box)
+    {
+        if (!box.IsAlive || box is null) return;
+
+        if (box.Text.TryEvaluateTo<T>(out var result))
+        {
+            UpdateValue(result, true);
+        }
         else
-            TextBox.Text = text;
+            box.NotifyError();
+
+        UpdateText();
     }
 }

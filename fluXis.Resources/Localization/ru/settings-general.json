@@ -6,5 +6,7 @@
     "open-folder": "Открыть папку fluXis",
     "change-folder": "Изменить путь",
     "original-meta": "Предпочитать оригинальные метаданные",
-    "original-meta-description": "Отображает данные о треке в оригинальном языке."
+    "original-meta-description": "Отображает данные о треке в оригинальном языке.",
+    "export-logs": "Экспортировать логи",
+    "export-logs-description": "Сжать все лог файлы в архив."
 }

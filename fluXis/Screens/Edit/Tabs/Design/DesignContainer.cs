@@ -22,6 +22,7 @@ using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -178,7 +179,6 @@ public partial class DesignContainer : EditorTabContainer
     {
         var effects = Map.MapEvents.JsonCopy();
         effects.Compile();
-        effects.RunScripts(scripts);
         effects.Sort();
 
         backFlash.Rebuild(effects.FlashEvents.Where(x => x.InBackground).ToList());

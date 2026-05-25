@@ -1,6 +1,7 @@
 ﻿using System;
 using fluXis.Audio.FFT;
 using fluXis.Map;
+using fluXis.Map.Structures;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Models.Skinning;
@@ -17,7 +18,6 @@ namespace fluXis.Scripting.Runners;
 public class StoryboardScriptRunner : ScriptRunner
 {
     private readonly Storyboard storyboard;
-    private int version = 1;
 
     [LuaGlobal(Name = "screen")]
     public LuaVector2 ScreenResolution { get; }
@@ -35,13 +35,13 @@ public class StoryboardScriptRunner : ScriptRunner
         AddField("map", new LuaMap(map, Lua));
         AddField("AudioAnalyzer", new LuaAudioAnalyzer(audioAnalyzer, Lua));
 
-        AddFunction("SetVersion", (int v) => version = v);
         AddFunction("Add", add);
 
         // enums
         AddFunction("Layer", (string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
         AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
         AddFunction("BlendMode", (string str) => Enum.TryParse(str, out DefaultBlendingParameters blendMode) ? blendMode : DefaultBlendingParameters.Mix);
+        AddFunction("HitObjectType", (string str) => Enum.TryParse(str, out HitObjectType hitType) ? hitType : HitObjectType.Normal);
 
         // elements
         AddFunction("StoryboardBox", newBox);
@@ -77,7 +77,7 @@ public class StoryboardScriptRunner : ScriptRunner
     [LuaGlobal(Name = "Add")]
     private void add(LuaStoryboardElement element)
     {
-        var v = version;
+        var v = Version;
 
         while (v < Storyboard.LATEST_VERSION)
         {

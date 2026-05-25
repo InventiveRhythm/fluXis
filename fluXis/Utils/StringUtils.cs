@@ -1,5 +1,8 @@
 using System;
+using System.Globalization;
+using System.Numerics;
 using System.Text;
+using NCalc;
 
 namespace fluXis.Utils;
 
@@ -51,4 +54,50 @@ public static class StringUtils
 
         return result.ToString();
     }
+
+    public static bool TryEvaluate<T>(string input, out T result) where T : INumber<T>
+    {
+        if (TryEvaluate(input, typeof(T), out var raw))
+        {
+            result = (T)raw;
+            return true;
+        }
+
+        result = T.Zero;
+        return false;
+    }
+
+    public static bool TryEvaluate(string input, Type type, out object result)
+    {
+        result = null;
+
+        try
+        {
+            var expr = new Expression(input, CultureInfo.InvariantCulture);
+
+            if (expr.HasErrors())
+                return false;
+
+            var raw = expr.Evaluate();
+
+            result = Convert.ChangeType(raw, type, CultureInfo.InvariantCulture);
+
+            switch (result)
+            {
+                case double d when !double.IsFinite(d):
+                case float f when !float.IsFinite(f):
+                    return false;
+
+                default:
+                    return true;
+            }
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public static bool TryEvaluateTo<T>(this string value, out T result) where T : INumber<T> => TryEvaluate(value, out result);
+    public static bool TryEvaluateTo(this string value, Type type, out object result) => TryEvaluate(value, type, out result);
 }

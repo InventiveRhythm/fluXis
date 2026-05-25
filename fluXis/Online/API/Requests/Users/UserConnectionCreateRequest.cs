@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using fluXis.Online.API.Payloads.Users;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json.Linq;
 using osu.Framework.IO.Network;
 

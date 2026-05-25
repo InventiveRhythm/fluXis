@@ -17,5 +17,16 @@
     "song-select-blur": "배경 흐리기",
     "song-select-blur-description": "노래 선택 화면의 배경을 흐리게 합니다.",
     "loop-mode": "반복 모드",
-    "loop-mode-description": "노래 선택의 음악 반복 모드를 결정합니다."
+    "loop-mode-description": "노래 선택의 음악 반복 모드를 결정합니다.",
+    "show-storyboard-video-description": "대부분의 화면에서 스토리보드와 동영상를 표시합니다. (곡 선택 기능을 제외하고 서포터가 필요합니다.)",
+    "relative-mouse-scroll": "상대적 마우스 스크롤",
+    "relative-mouse-scroll-description": "마우스 가운데 버튼을 누른 상태로 있으면 마우스 커서가 시작 위치에서 얼마나 이동했는지에 따라 목록이 스크롤됩니다. (웹 브라우저와 유사)",
+    "force-snow": "강제로 눈 내리기",
+    "force-snow-description": "겨울이 아니여도 언제나 눈이 보이도록 해줍니다.",
+    "bubble-visualizer": "버블 시각화",
+    "bubble-visualizer-description": "메인 메뉴에서 버블 시각화를 활성화하세요.",
+    "bubble-sway": "버블 스웨이",
+    "bubble-sway-description": "버블을 수평으로 이동시킵니다.",
+    "header-height": "헤더 높이",
+    "header-height-description": "화면 오른쪽 상단의 커버 크기를 변경합니다."
 }

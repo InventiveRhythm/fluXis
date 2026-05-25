@@ -10,12 +10,9 @@ using fluXis.Map.Structures.Events.Camera;
 using fluXis.Map.Structures.Events.Groups;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Map.Structures.Events.Scrolling;
-using fluXis.Scripting;
-using fluXis.Scripting.Runners;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
-using osu.Framework.Logging;
 
 namespace fluXis.Map;
 
@@ -74,9 +71,6 @@ public class MapEvents
 
     [JsonProperty("loops")]
     public List<LoopEvent> LoopEvents { get; private set; } = new();
-
-    [JsonProperty("scripts")]
-    public List<ScriptEvent> ScriptEvents { get; private set; } = new();
 
     [JsonProperty("notes")]
     public List<NoteEvent> NoteEvents { get; private set; } = new();
@@ -397,28 +391,6 @@ public class MapEvents
         }
 
         return this;
-    }
-
-    public void RunScripts(ScriptStorage storage)
-    {
-        foreach (var ev in ScriptEvents)
-        {
-            try
-            {
-                var runner = storage.GetRunner(ev.ScriptPath, s => new EffectScriptRunner(s)
-                {
-                    AddFlash = FlashEvents.Add
-                }) ?? throw new Exception("Could not create script runner.");
-
-                runner.Handle(ev);
-            }
-            catch (Exception ex)
-            {
-                ScriptRunner.Logger.Add($"Failed to run script at {ev.Time}: {ex.Message}", LogLevel.Error);
-            }
-        }
-
-        Sort();
     }
 
     public IEnumerable<ITimedObject> Where(Func<ITimedObject, bool> func)
