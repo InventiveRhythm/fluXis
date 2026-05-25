@@ -89,6 +89,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
 
     public float TargetY = 0;
 
+    public const float HEIGHT = 48f;
+
     public DrawableMapSetDifficulty(DrawableMapSetItem parentEntry, RealmMap map)
     {
         item = parentEntry;
@@ -99,7 +101,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 48;
+        Height = HEIGHT;
 
         keymodeColor = Theme.GetKeyCountColor(map.KeyCount);
         keymodeColorLight = keymodeColor.Lighten(1);

@@ -6,7 +6,7 @@ using fluXis.Graphics;
 using fluXis.Map;
 using fluXis.Screens.Edit;
 using fluXis.Scripting.Runners;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;

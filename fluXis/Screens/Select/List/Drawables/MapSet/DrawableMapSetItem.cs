@@ -32,6 +32,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
     private DrawableMapSetHeader header = null!;
     private Container<DrawableMapSetDifficulty>? difficultyFlow;
+    private ExpandedLoadWrapper difficultyWrapper = null!;
 
     private const float unselected_pos = 20f;
     private const float selected_pos = 85f;
@@ -54,7 +55,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new ExpandedLoadWrapper(() =>
+            difficultyWrapper = new ExpandedLoadWrapper(() =>
             {
                 var flow = new Container<DrawableMapSetDifficulty>
                 {
@@ -80,8 +81,6 @@ public partial class DrawableMapSetItem : CompositeDrawable
                         }
                     });
 
-                    // prevent reenter animation if it's already loaded and selected
-                    // without this, scrolling this in and out of view would animate it entering every time
                     if (alreadyLoadedOnce && isSelected) initialPos += pos_velocity;
                 }
 
@@ -154,6 +153,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
             return;
 
         header?.Show();
+        difficultyWrapper.AllowUnloading = false;
         selectedState = SelectedState.Selected;
     }
 
@@ -163,6 +163,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
             return;
 
         header?.Hide();
+        difficultyWrapper.AllowUnloading = true;
         selectedState = SelectedState.Deselected;
     }
 
