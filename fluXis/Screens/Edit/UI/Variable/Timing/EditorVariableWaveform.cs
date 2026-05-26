@@ -39,7 +39,9 @@ public partial class EditorVariableWaveform : BufferedContainer
 
     private int lastIndex = -1;
     private double lastUpdateTime;
-    private double updateInterval => (point?.MsPerBeat ?? 500) / 2; // update every half beat since we already only move by a beat
+
+    // update every half beat since we already only move by a beat (caps at 30 fps or 1800 bpm)
+    private double updateInterval => Math.Max((point?.MsPerBeat ?? 500) / 2, 1000d / 30);
 
     private Sample metronomeSample;
     private Sample metronomeEndSample;
