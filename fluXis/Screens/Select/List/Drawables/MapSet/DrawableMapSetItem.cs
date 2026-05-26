@@ -9,6 +9,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Utils;
 
@@ -88,6 +89,18 @@ public partial class DrawableMapSetItem : CompositeDrawable
                 difficultyFlow = flow;
                 return flow;
             }, 0, 250),
+            new Container
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = DrawableMapSetHeader.HEIGHT,
+                Masking = true,
+                CornerRadius = 10,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = set.Metadata.Color
+                }
+            },
             new ExpandedLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0, 500)
             {
                 RelativeSizeAxes = Axes.X,
