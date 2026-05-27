@@ -123,7 +123,7 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
     public const float HEIGHT = 80f;
 
     public DrawableMapSetHeader(DrawableMapSetItem parent, RealmMapSet mapset)
-        : base(cachedFrameBuffer: true, pixelSnapping: true)
+        : base(cachedFrameBuffer: true)
     {
         this.parent = parent;
         this.mapset = mapset;

@@ -498,6 +498,7 @@ public partial class ScoreListEntry : BufferedContainer, IHasCustomTooltip<Score
             Player.HasAnimatedAvatar || Player.HasAnimatedBanner ||
             ScoreInfo.Rank == ScoreRank.X ||
             IsHovered ||
+            Disappearing ||
             Time.Current < wrapper.LatestTransformEndTime
         )
         {

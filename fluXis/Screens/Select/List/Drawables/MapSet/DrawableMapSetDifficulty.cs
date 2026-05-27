@@ -130,6 +130,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                 // no pixel snapping for this because on small textures it causes a very pixelated look due to TextureFilteringMode.Nearest
             content = new BufferedContainer(cachedFrameBuffer: true)
             {
+                // render it at 1.25x scale to prevent it from looking "low-res"
+                FrameBufferScale = new Vector2(1.25f),
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
                 Masking = true,
