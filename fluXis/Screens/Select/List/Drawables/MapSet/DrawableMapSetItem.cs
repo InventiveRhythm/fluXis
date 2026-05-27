@@ -101,7 +101,10 @@ public partial class DrawableMapSetItem : CompositeDrawable
                     Colour = set.Metadata.Color
                 }
             },
-            new ExpandedLoadWrapper(() => header = new DrawableMapSetHeader(this, set), 0, 500)
+            new ExpandedLoadWrapper(() => header = new DrawableMapSetHeader(this, set)
+            {
+                RelativeSizeAxes = Axes.Both
+            }, 0, 500)
             {
                 RelativeSizeAxes = Axes.X,
                 Height = DrawableMapSetHeader.HEIGHT,
