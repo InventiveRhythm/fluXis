@@ -590,14 +590,28 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private void exportNotes()
     {
         var sb = new StringBuilder();
+        var extended = false;
 
-        foreach (var noteEvent in editorMap.MapEvents.NoteEvents)
+        foreach (var ev in editorMap.MapEvents.NoteEvents)
         {
-            sb.AppendLine($"[{TimeUtils.Format(noteEvent.Time)}] {noteEvent.Content}");
+            var time = TimeUtils.Format(ev.Time);
+            var text = ev.Content ?? string.Empty;
+
+            if (text.StartsWith('+'))
+            {
+                text = text[1..];
+                extended = true;
+                sb.Append($"<{time}>{text}");
+            }
+            else
+            {
+                sb.AppendLine();
+                sb.Append($"[{time}] {text}");
+            }
         }
 
-        var path = MapFiles.GetFullPath(editorMap.MapSet.GetPathForFile("lyrics.lrc"));
-        File.WriteAllText(path, sb.ToString());
+        var path = MapFiles.GetFullPath(editorMap.MapSet.GetPathForFile($"lyrics.{(extended ? "elrc" : "lrc")}"));
+        File.WriteAllText(path, sb.ToString().Trim());
     }
 
     private void importNotes()
