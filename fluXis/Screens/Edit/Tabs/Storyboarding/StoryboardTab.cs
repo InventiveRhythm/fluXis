@@ -200,17 +200,11 @@ public partial class StoryboardTab : EditorTab
     private void updateLoadingFromRanges()
     {
         float currentTime = (float)clock.CurrentTime;
+        var ranges = dynamicStoryboard.LoadedRanges;
 
-        bool shouldShow = false;
+        var active = ranges.Where(r => currentTime >= r.Item1 && currentTime <= r.Item2).ToList();
 
-        foreach (var r in dynamicStoryboard.LoadedRanges)
-        {
-            if (currentTime >= r.Item1 && currentTime <= r.Item2 && !r.Item3)
-            {
-                shouldShow = true;
-                break;
-            }
-        }
+        bool shouldShow = active.Count > 0 && active.Any(r => !r.Item3);
 
         if (shouldShow == loadingFromRanges)
             return;
