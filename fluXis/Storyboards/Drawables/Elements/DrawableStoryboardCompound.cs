@@ -104,73 +104,37 @@ public partial class DrawableStoryboardCompound : DrawableStoryboardElement
         drawables.OrderByDescending(x => x.Element.StartTime).ForEach(x => Future.Push(x));
     }
 
-    private double lastTime;
-
     protected override void Update()
     {
         base.Update();
-        double currentTime = FramedClock.CurrentTime;
 
-        // this is only used to guarantee that our state will always be correct when seeking
-        // this is still performant since seeking is a one time thing as opposed to constantly updating hundreds of times a second
-        // hardcoded to 2 seconds as we assume that there is no continuous seek/play that is greater than that
-        // we might consider using the current snap divisor (with respect to BPM) when in editor though
-        bool isSeek = Math.Abs(currentTime - lastTime) > 2000 || currentTime < lastTime;
-
-        if (isSeek)
+        while (Future.Count > 0 && Future.Peek().Element.StartTime <= FramedClock.CurrentTime)
         {
-            handleSeek(currentTime);
-        }
-        else
-        {
-            while (Future.Count > 0 && Future.Peek().Element.StartTime <= currentTime)
-            {
-                Container.Add(Future.Pop());
-            }
-
-            for (int i = Container.Count - 1; i >= 0; i--)
-            {
-                var drawable = Container[i];
-
-                if (drawable.Element.EndTime < currentTime)
-                {
-                    Container.Remove(drawable, false);
-                    Past.Push(drawable);
-                }
-            }
+            var drawable = Future.Pop();
+            Container.Add(drawable);
         }
 
-        lastTime = currentTime;
-    }
+        var tooEarly = Container.Children.Where(c => c.Element.StartTime > FramedClock.CurrentTime).ToList();
 
-    private void handleSeek(double currentTime)
-    {
-        var allDrawables = new List<DrawableStoryboardElement>();
-        allDrawables.AddRange(Container.Children);
-
-        while (Past.TryPop(out var p)) allDrawables.Add(p);
-        while (Future.TryPop(out var f)) allDrawables.Add(f);
-
-        Container.Clear(false);
-
-        var futureElements = new List<DrawableStoryboardElement>();
-        var pastElements = new List<DrawableStoryboardElement>();
-
-        foreach (var drawable in allDrawables)
+        foreach (var drawable in tooEarly.OrderByDescending(x => x.Element.StartTime))
         {
-            if (drawable.Element.StartTime > currentTime)
-                futureElements.Add(drawable);
-            else if (drawable.Element.EndTime < currentTime)
-                pastElements.Add(drawable);
-            else
-                Container.Add(drawable);
+            Container.Remove(drawable, false);
+            Future.Push(drawable);
         }
 
-        foreach (var f in futureElements.OrderByDescending(x => x.Element.StartTime))
-            Future.Push(f);
+        var toRemove = Container.Children.Where(c => c.Element.EndTime < FramedClock.CurrentTime).ToList();
 
-        foreach (var p in pastElements.OrderBy(x => x.Element.EndTime))
-            Past.Push(p);
+        foreach (var drawable in toRemove.OrderBy(x => x.Element.EndTime))
+        {
+            Container.Remove(drawable, false);
+            Past.Push(drawable);
+        }
+
+        while (Past.Count > 0 && Past.Peek().Element.EndTime > FramedClock.CurrentTime)
+        {
+            var drawable = Past.Pop();
+            Container.Add(drawable);
+        }
     }
 
     protected override void Dispose(bool isDisposing)
