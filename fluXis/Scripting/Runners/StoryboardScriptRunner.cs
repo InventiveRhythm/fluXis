@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using fluXis.Audio.FFT;
-using fluXis.Graphics;
 using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Scripting.Attributes;
@@ -17,30 +15,17 @@ using osu.Framework.Logging;
 namespace fluXis.Scripting.Runners;
 
 [LuaDefinition("storyboard", Hide = true)]
-public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
+public class StoryboardScriptRunner : ScriptRunner
 {
-    private readonly List<StoryboardElement> addTo;
-
     private readonly Storyboard storyboard;
-
-    public bool Loaded { get; private set; }
 
     [LuaGlobal(Name = "screen")]
     public LuaVector2 ScreenResolution { get; }
 
-    public StoryboardScriptRunner
-    (
-        MapInfo map,
-        AudioAnalyzer audioAnalyzer,
-        Storyboard storyboard,
-        LuaSettings settings,
-        ISkin skin,
-        List<StoryboardElement> addTo = null)
+    public StoryboardScriptRunner(MapInfo map, AudioAnalyzer audioAnalyzer, Storyboard storyboard, LuaSettings settings, ISkin skin)
     {
         this.storyboard = storyboard;
         Map = map;
-
-        this.addTo = addTo ?? this.storyboard.Elements;
 
         ScreenResolution = new LuaVector2(storyboard.Resolution);
         AddField("screen", ScreenResolution);
@@ -82,7 +67,6 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
 
             var l = LuaStoryboardElement.FromElement(element);
             func.Call(l);
-            Loaded = true;
         }
         catch (Exception ex)
         {
@@ -107,7 +91,7 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
             }
         }
 
-        addTo.Add(element.Build());
+        storyboard.Elements.Add(element.Build());
     }
 
     [LuaGlobal(Name = "StoryboardBox")]

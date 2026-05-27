@@ -68,7 +68,7 @@ public class OsuStoryboardParser
             {
                 if (initialValues.Add(animation.Type))
                 {
-                    toAdd.Add(new StoryboardAnimation(element)
+                    toAdd.Add(new StoryboardAnimation
                     {
                         Type = animation.Type,
                         ValueStart = animation.ValueStart,
@@ -208,7 +208,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.Fade,
                                     StartTime = startTime,
@@ -229,7 +229,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.Scale,
                                     StartTime = startTime,
@@ -252,7 +252,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.ScaleVector,
                                     StartTime = startTime,
@@ -276,7 +276,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.Rotate,
                                     StartTime = startTime,
@@ -299,7 +299,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.MoveX,
                                     StartTime = startTime,
@@ -308,7 +308,7 @@ public class OsuStoryboardParser
                                     ValueStart = startX.ToStringInvariant(),
                                     ValueEnd = endX.ToStringInvariant()
                                 },
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.MoveY,
                                     StartTime = startTime,
@@ -329,7 +329,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.MoveX,
                                     StartTime = startTime,
@@ -350,7 +350,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.MoveY,
                                     StartTime = startTime,
@@ -378,7 +378,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation(currentElement)
+                                new StoryboardAnimation
                                 {
                                     Type = StoryboardAnimationType.Color,
                                     StartTime = startTime,

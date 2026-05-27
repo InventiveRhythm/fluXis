@@ -97,9 +97,6 @@ public class Storyboard : EditorMap.IChangeNotifier
         x.EndTime += offset;
     });
 
-    public List<StoryboardElement> GetScriptElements(string s) =>
-        Elements.FindAll(e => e.Type == StoryboardElementType.Script && e.GetParameter("path", "") == s);
-
     public bool Matches(Type type) => typeof(StoryboardElement) == type;
 
     public string Save() => Sort().Serialize();

@@ -20,16 +20,16 @@ namespace fluXis.Storyboards.Drawables;
 public partial class DrawableStoryboard : CompositeDrawable
 {
     [Resolved]
-    protected FluXisConfig Config { get; private set; }
+    private FluXisConfig config { get; set; }
 
     [Resolved]
-    protected ISkin Skin { get; private set; }
+    private ISkin skin { get; set; }
 
     [Resolved]
-    protected AudioAnalyzer AudioAnalyzer { get; private set; }
+    private AudioAnalyzer audioAnalyzer { get; set; }
 
     public Storyboard Storyboard { get; }
-    protected MapInfo Map { get; }
+    private MapInfo map { get; }
     private string assetPath { get; }
 
     public StoryboardStorage Storage { get; private set; }
@@ -37,7 +37,7 @@ public partial class DrawableStoryboard : CompositeDrawable
 
     public DrawableStoryboard(MapInfo map, Storyboard storyboard, string assetPath)
     {
-        Map = map;
+        this.map = map;
         Storyboard = storyboard;
         this.assetPath = assetPath;
     }
@@ -50,36 +50,31 @@ public partial class DrawableStoryboard : CompositeDrawable
         // wait for FFT data to be ready before scripts can get amplitudes.
         try
         {
-            AudioAnalyzer.ComputeComplete.Wait();
+            audioAnalyzer.ComputeComplete.Wait();
         }
         catch (OperationCanceledException)
         {
             return;
         }
 
-        LoadScripts();
-        Storyboard.Sort();
-    }
-
-    protected virtual void LoadScripts()
-    {
         var elements = Storyboard.Elements.Where(e => e.Type == StoryboardElementType.Script).ToList();
 
         foreach (var element in elements)
         {
-            var script = LoadScript(element.GetParameter("path", ""));
+            var script = loadScript(element.GetParameter("path", ""));
             script?.Process(element);
         }
+
+        Storyboard.Sort();
     }
 
-    protected StoryboardScriptRunner LoadScript(string path, List<StoryboardElement> addTo = null)
+    private StoryboardScriptRunner loadScript(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
             return null;
 
-        // Only use the cache when not adding into a dedicated list
-        if (addTo == null && scripts.TryGetValue(path, out var cached))
-            return cached;
+        if (scripts.TryGetValue(path, out var script))
+            return script;
 
         var full = Storage.Storage.GetFullPath(path);
 
@@ -87,10 +82,7 @@ public partial class DrawableStoryboard : CompositeDrawable
             return null;
 
         var raw = File.ReadAllText(full);
-        var runner = new StoryboardScriptRunner(Map, AudioAnalyzer, Storyboard, new LuaSettings(Config), Skin, addTo);
-
-        if (addTo == null)
-            scripts[path] = runner;
+        var runner = scripts[path] = new StoryboardScriptRunner(map, audioAnalyzer, Storyboard, new LuaSettings(config), skin);
 
         try
         {
@@ -99,7 +91,6 @@ public partial class DrawableStoryboard : CompositeDrawable
         catch (Exception ex)
         {
             ScriptRunner.Logger.Add($"Failed to load script '{path}'.", LogLevel.Error, ex);
-            return null;
         }
 
         return runner;

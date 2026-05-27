@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Animations;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Settings;
@@ -45,16 +43,6 @@ public partial class StoryboardTab : EditorTab
     private AspectRatioContainer aspect;
     private IdleTracker idleTracker;
     private Container loading;
-    private Box backgroundDim;
-
-    private Storyboard storyboard => map.Storyboard;
-    private DrawableDynamicStoryboard dynamicStoryboard;
-    private DrawableDynamicStoryboardLayer[] layers;
-
-    private readonly List<StoryboardElement> scriptsToBeRebuilt = new();
-    private readonly List<StoryboardElement> scriptsToBeRemoved = new();
-
-    private bool loadingFromRanges;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -66,34 +54,8 @@ public partial class StoryboardTab : EditorTab
         dependencies.CacheAs<ITimePositionProvider>(timeline);
         dependencies.CacheAs(timeline.Blueprints);
 
-        LoadComponent(dynamicStoryboard = new DrawableDynamicStoryboard
-        (
-            new Bindable<MapInfo>(map.MapInfo),
-            new Bindable<Storyboard>(storyboard),
-            editor.MapSetPath
-        ));
-
-        layers = Enum.GetValues<StoryboardLayer>()
-                     .Select(x => new DrawableDynamicStoryboardLayer(clock, dynamicStoryboard, x))
-                     .ToArray();
-
-        aspect = new AspectRatioContainer(new BindableBool(true))
-        {
-            CornerRadius = 12,
-            Masking = true
-        };
-        aspect.Add(new MapBackground(map.RealmMap) { RelativeSizeAxes = Axes.Both });
-        aspect.Add(backgroundDim = new Box
-        {
-            RelativeSizeAxes = Axes.Both,
-            Colour = Colour4.Black,
-            Alpha = editor.BindableBackgroundDim.Value
-        });
-        aspect.AddRange(layers);
-
         InternalChildren = new Drawable[]
         {
-            dynamicStoryboard,
             idleTracker = new IdleTracker(400, rebuildPreview),
             new GridContainer
             {
@@ -135,7 +97,11 @@ public partial class StoryboardTab : EditorTab
                                             {
                                                 RelativeSizeAxes = Axes.Both,
                                                 Padding = new MarginPadding(12),
-                                                Child = aspect
+                                                Child = aspect = new AspectRatioContainer(new BindableBool(true))
+                                                {
+                                                    CornerRadius = 12,
+                                                    Masking = true
+                                                }
                                             },
                                             loading = new Container
                                             {
@@ -171,142 +137,59 @@ public partial class StoryboardTab : EditorTab
                 }
             }
         };
+
+        rebuildPreview();
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
-        map.Storyboard.ElementAdded += onElementAdded;
-        map.Storyboard.ElementRemoved += onElementRemoved;
-        map.Storyboard.ElementUpdated += onElementUpdated;
-
-        map.RegisterAddListener<StoryboardAnimation>(onAnimationUpdated);
-        map.RegisterUpdateListener<StoryboardAnimation>(onAnimationUpdated);
-        map.RegisterRemoveListener<StoryboardAnimation>(onAnimationUpdated);
+        map.Storyboard.ElementAdded += queueRebuild;
+        map.Storyboard.ElementRemoved += queueRebuild;
+        map.Storyboard.ElementUpdated += queueRebuild;
+        map.RegisterAddListener<StoryboardAnimation>(queueRebuild);
+        map.RegisterUpdateListener<StoryboardAnimation>(queueRebuild);
+        map.RegisterRemoveListener<StoryboardAnimation>(queueRebuild);
 
         map.ScriptChanged += queueRebuild;
     }
 
-    protected override void Update()
+    private void queueRebuild(StoryboardElement _) => queueRebuild();
+    private void queueRebuild(StoryboardAnimation _) => queueRebuild();
+    private void queueRebuild(string _) => queueRebuild();
+
+    private void queueRebuild()
     {
-        base.Update();
-        updateLoadingFromRanges();
-    }
-
-    /// <summary>
-    /// Not to be confused with actual loading; This only updates the loading icon's visibility
-    /// </summary>
-    private void updateLoadingFromRanges()
-    {
-        float currentTime = (float)clock.CurrentTime;
-        var ranges = dynamicStoryboard.LoadedRanges;
-
-        var active = ranges.Where(r => currentTime >= r.Item1 && currentTime <= r.Item2).ToList();
-
-        bool shouldShow = active.Count > 0 && active.Any(r => !r.Item3);
-
-        if (shouldShow == loadingFromRanges)
-            return;
-
-        loadingFromRanges = shouldShow;
-
-        if (shouldShow)
-            loading.FadeIn(300);
-        else
-            loading.FadeOut(300);
-    }
-
-    #region Event Handling
-
-    private void onElementAdded(StoryboardElement e)
-    {
-        if (e.Type == StoryboardElementType.Script)
-            queueRebuild(e);
-        else
-        {
-            // TODO: maybe don't iterate over all layers in the future?
-            foreach (var layer in layers)
-                layer.QueueAddStaticElement(e);
-        }
-
-        storyboard.Sort();
-    }
-
-    private void onElementRemoved(StoryboardElement e)
-    {
-        if (e.Type == StoryboardElementType.Script)
-        {
-            scriptsToBeRemoved.Add(e);
-            loading.FadeIn(300);
-            idleTracker.Reset();
-        }
-        else
-        {
-            // TODO: maybe don't iterate over all layers in the future?
-            foreach (var layer in layers)
-                layer.QueueRemoveStaticElement(e);
-        }
-
-        storyboard.Sort();
-    }
-
-    private void onElementUpdated(StoryboardElement e)
-    {
-        if (e.Type == StoryboardElementType.Script)
-            queueRebuild(e);
-        else
-        {
-            // TODO: maybe don't iterate over all layers in the future?
-            foreach (var layer in layers)
-                layer.UpdateStaticElement(e);
-        }
-
-        storyboard.Sort();
-    }
-
-    private void onAnimationUpdated(StoryboardAnimation a) => onElementUpdated(a.ParentElement);
-
-    #endregion
-
-    #region Building
-
-    private void queueRebuild(StoryboardElement e)
-    {
-        scriptsToBeRebuilt.Clear();
-        scriptsToBeRebuilt.Add(e);
-
-        loading.FadeIn(300);
-        idleTracker.Reset();
-    }
-
-    private void queueRebuild(string s)
-    {
-        scriptsToBeRebuilt.Clear();
-        scriptsToBeRebuilt.AddRange(storyboard.GetScriptElements(s));
-
         loading.FadeIn(300);
         idleTracker.Reset();
     }
 
     private void rebuildPreview()
     {
-        backgroundDim.Alpha = editor.BindableBackgroundDim.Value;
+        aspect.Clear();
 
-        if (scriptsToBeRemoved.Count > 0)
-            dynamicStoryboard.RemoveElements(scriptsToBeRemoved);
+        var copy = map.Storyboard.JsonCopy();
 
-        if (scriptsToBeRebuilt.Count > 0)
-            dynamicStoryboard.RebuildElements(scriptsToBeRebuilt);
+        var draw = new DrawableStoryboard(map.MapInfo, copy, editor.MapSetPath);
+        LoadComponent(draw);
 
-        scriptsToBeRemoved.Clear();
-        scriptsToBeRebuilt.Clear();
-
-        if (!loadingFromRanges)
-            ScheduleAfterChildren(() => loading.FadeOut(300));
+        aspect.AddRange(new Drawable[]
+        {
+            new MapBackground(map.RealmMap)
+            {
+                RelativeSizeAxes = Axes.Both
+            },
+            new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.Black,
+                Alpha = editor.BindableBackgroundDim.Value
+            }
+        });
+        aspect.AddRange(Enum.GetValues<StoryboardLayer>().Select(x => new DrawableStoryboardLayer(clock, draw, x)).ToArray());
+        ScheduleAfterChildren(() => loading.FadeOut(300));
     }
-
-    #endregion
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
@@ -364,22 +247,5 @@ public partial class StoryboardTab : EditorTab
             clock.SeekBackward(amount);
         else
             clock.SeekForward(amount);
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-        base.Dispose(isDisposing);
-
-        if (map == null) return;
-
-        map.Storyboard.ElementAdded -= onElementAdded;
-        map.Storyboard.ElementRemoved -= onElementRemoved;
-        map.Storyboard.ElementUpdated -= onElementUpdated;
-
-        map.DeregisterAddListener<StoryboardAnimation>(onAnimationUpdated);
-        map.DeregisterUpdateListener<StoryboardAnimation>(onAnimationUpdated);
-        map.DeregisterRemoveListener<StoryboardAnimation>(onAnimationUpdated);
-
-        map.ScriptChanged -= queueRebuild;
     }
 }
