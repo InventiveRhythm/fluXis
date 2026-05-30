@@ -6,6 +6,7 @@ using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Localization;
 using fluXis.Online.Fluxel;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,7 +20,8 @@ public partial class DashboardAccountLogoutButton : CompositeDrawable
     [Resolved]
     private PanelContainer panels { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
     [Resolved]
@@ -77,7 +79,7 @@ public partial class DashboardAccountLogoutButton : CompositeDrawable
                 new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
                 {
                     api.Logout();
-                    game.Exit();
+                    game?.Exit();
                 }, true),
                 new CancelButtonData()
             }

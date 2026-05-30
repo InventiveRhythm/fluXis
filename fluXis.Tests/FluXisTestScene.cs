@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Mouse;
@@ -81,6 +82,33 @@ public partial class FluXisTestScene : TestScene
         }
 
         return new RealmMapSet(maps) { ID = setId };
+    }
+
+    protected virtual IEnumerable<APIUser> CreateDummyUsers(long count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            yield return CreateDummyUser();
+        }
+    }
+
+    protected virtual APIUser CreateDummyUser([CanBeNull] Action<APIUser> act = null)
+    {
+        var id = RNG.Next(ushort.MaxValue);
+        var user = new APIUser
+        {
+            ID = id,
+            Username = $"User{id}",
+            IsOnline = RNG.NextBool()
+        };
+
+        if (!user.IsOnline)
+        {
+            user.LastLogin = DateTimeOffset.Now.ToUnixTimeSeconds() - RNG.Next(ushort.MaxValue * 16);
+        }
+
+        act?.Invoke(user);
+        return user;
     }
 
     protected virtual RealmMap GetTestMap(MapStore maps)
