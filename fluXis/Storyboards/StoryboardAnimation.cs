@@ -10,6 +10,11 @@ namespace fluXis.Storyboards;
 
 public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeepCloneable<StoryboardAnimation>
 {
+    public StoryboardAnimation(StoryboardElement parentElement)
+    {
+        ParentElement = parentElement;
+    }
+
     /// <summary>
     /// The start time of the animation.
     /// </summary>
@@ -75,7 +80,10 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
         }
     }
 
-    public StoryboardAnimation DeepClone() => new()
+    [JsonIgnore]
+    public StoryboardElement ParentElement;
+
+    public StoryboardAnimation DeepClone() => new(ParentElement)
     {
         StartTime = StartTime,
         Duration = Duration,
