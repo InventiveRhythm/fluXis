@@ -390,12 +390,26 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         protected override bool OnHover(HoverEvent e) => true;
     }
 
+    /// <summary>
+    /// Sort Order:
+    /// <list type="number">
+    /// <item>
+    /// <description>Key count</description>
+    /// </item>
+    /// <item>
+    /// <description>Rating</description>
+    /// </item>
+    /// </list>
+    /// </summary>
     public int CompareTo(DrawableMapSetDifficulty other)
     {
         if (ReferenceEquals(this, other)) return 0;
         if (other is null) return 1;
 
-        var result = map.Rating.CompareTo(other.map.Rating);
-        return result == 0 ? (map.Filters?.NotesPerSecond ?? 0).CompareTo(other.map.Filters?.NotesPerSecond ?? 0) : result;
+        var keyResult = map.KeyCount.CompareTo(other.map.KeyCount);
+        if (keyResult != 0) return keyResult;
+
+        var ratingResult = map.Rating.CompareTo(other.map.Rating);
+        return ratingResult == 0 ? (map.Filters?.NotesPerSecond ?? 0).CompareTo(other.map.Filters?.NotesPerSecond ?? 0) : ratingResult;
     }
 }
