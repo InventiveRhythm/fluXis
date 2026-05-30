@@ -116,7 +116,7 @@ public partial class DashboardClubTab : DashboardTab
                 Children = new Drawable[]
                 {
                     new DashboardItemList<APIUser>("Online Members", club.Members!.Where(x => x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 338 }),
-                    new DashboardItemList<APIUser>("Offline Members", club.Members!.Where(x => !x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 338 }),
+                    new DashboardItemList<APIUser>("Offline Members", club.Members!.Where(x => !x.IsOnline).OrderByDescending(x => x.LastLogin).ToList(), u => new DrawableUserCard(u) { Width = 338 }),
                 }
             }
         }
