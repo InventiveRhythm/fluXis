@@ -126,6 +126,7 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
         ShaderType.SplitScreen => new SplitScreenShaderStep(),
         ShaderType.FishEye => new FishEyeShaderStep(),
         ShaderType.Reflections => new ReflectionsShaderStep(),
+        ShaderType.Glitch2 => new Glitch2ShaderStep(),
         _ => null
     };
 

@@ -140,5 +140,9 @@ public enum ShaderType
 
     [ShaderStrength(1)]
     [ShaderStrength(2, ParamName = "Scale", Tooltip = "Scale factor of each consecutive reflection.")]
-    Reflections
+    Reflections,
+
+    [ShaderStrength(ParamName = "Amount")]
+    [ShaderStrength(2, ParamName = "Speed")]
+    Glitch2
 }
