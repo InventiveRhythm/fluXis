@@ -3,7 +3,10 @@ using System.Linq;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Tabs;
 using fluXis.Input;
 using fluXis.Online.API.Models.Maps;
@@ -12,6 +15,7 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.MapSet.Buttons;
 using fluXis.Overlay.MapSet.Sidebar;
 using fluXis.Overlay.MapSet.Tabs;
+using fluXis.Overlay.MapSet.UI;
 using fluXis.Overlay.MapSet.UI.Difficulties;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -30,6 +34,9 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     [Resolved]
     private IAPIClient api { get; set; }
 
+    [Resolved]
+    private PanelContainer panels { get; set; }
+
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
@@ -38,6 +45,10 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer flow;
+
+    private FluXisButton rateVoteButton;
+    private Container alreadyVotedContainer;
+    private FluXisSpriteText alreadyVotedText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -211,6 +222,27 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     Spacing = new Vector2(20),
                                     Children = new Drawable[]
                                     {
+                                        rateVoteButton = new FluXisButton
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            Height = 40,
+                                            Text = "Rate Vote",
+                                            Action = () => panels.Content = new RateVoteFormPanel(bindableMap.Value.ID),
+                                            Alpha = canVote(bindableMap.Value) ? 1f : 0f
+                                        },
+                                        alreadyVotedContainer = new Container
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            Height = 40,
+                                            Alpha = canVote(bindableMap.Value) ? 0f : 1f,
+                                            Child = alreadyVotedText = new FluXisSpriteText
+                                            {
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                WebFontSize = 16,
+                                                Text = "Already voted", //TODO: display the user's rating
+                                            }
+                                        },
                                         new MapSetSidebarMapper(bindableMap),
                                         new MapSetSidebarVoting(set),
                                         new MapSetSidebarStats(bindableMap)
@@ -222,6 +254,22 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                 }
             }
         };
+
+        bindableMap.BindValueChanged(e => updateRateVoteAlpha(e.NewValue));
+    }
+
+    private void updateRateVoteAlpha(APIMap map)
+    {
+        bool votable = canVote(map);
+        rateVoteButton.Alpha = votable ? 1.0f : 0.0f;
+        alreadyVotedContainer.Alpha = votable ? 0.0f : 1.0f;
+    }
+
+    private bool canVote(APIMap map)
+    {
+        // if (!api.User.Value.IsPurifier()) return false; // <- uncomment this if we want to display the button to purifiers only
+
+        return !map.HasVotedRate && api.User.Value.ID != map.Mapper.ID;
     }
 
     private IEnumerable<TabContainer> createTabs(APIMapSet set, Bindable<APIMap> bindableMap)

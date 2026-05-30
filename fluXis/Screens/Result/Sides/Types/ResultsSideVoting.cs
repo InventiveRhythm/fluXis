@@ -4,11 +4,15 @@ using fluXis.Database.Maps;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Online.API.Models.Maps;
+using fluXis.Online.API.Requests.Maps;
 using fluXis.Online.API.Requests.MapSets.Votes;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.MapSet.UI;
 using Humanizer;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -30,14 +34,20 @@ public partial class ResultsSideVoting : ResultsSideContainer
     [Resolved]
     private IAPIClient api { get; set; }
 
+    [Resolved]
+    private PanelContainer panels { get; set; }
+
     private bool sendingRequest;
     private int currentVote;
 
-    private Container container;
+    private FillFlowContainer container;
 
     private VoteButton upButton;
     private FluXisSpriteText count;
     private VoteButton downButton;
+    private FluXisButton voteRateButton;
+    private Container alreadyVotedContainer;
+    private FluXisSpriteText alreadyVotedText;
 
     private FluXisSpriteText error;
     private LoadingIcon loading;
@@ -109,31 +119,74 @@ public partial class ResultsSideVoting : ResultsSideContainer
         loading.FadeOut(300);
         container.Delay(300).FadeIn(300);
         sendingRequest = false;
+
+        //TODO : for this to work properly, fluxel's MapRoute need to pass the userid to map.ToAPI() in order for map.HasVotedRate to be correct
+        //       also, to avoid performing two requests, maybe we should create another route that returns both the up/down-vote status and whether the user already voted on rating
+        //       ideally we'd also want to retrieve the user's vote value so we can display it (would require more fluxel changes)
+        var req = new MapRequest(map.OnlineID);
+        req.Success += apiMap => displayRateVoteButton(!apiMap.Data.HasVotedRate);
+        req.Failure += ex => displayRateVoteButton(false, "Failed to get vote status");
+
+        api.PerformRequestAsync(req);
     }
 
     protected override Drawable CreateContent() => new Container
     {
         RelativeSizeAxes = Axes.X,
-        Height = 48,
+        AutoSizeAxes = Axes.Y,
+        AutoSizeDuration = 400,
+        AutoSizeEasing = Easing.Out,
         Children = new Drawable[]
         {
-            container = new Container
+            container = new FillFlowContainer
             {
-                RelativeSizeAxes = Axes.Both,
                 Alpha = 0,
+                AutoSizeAxes = Axes.Y,
+                RelativeSizeAxes = Axes.X,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(20),
                 Children = new Drawable[]
                 {
-                    count = new FluXisSpriteText
+                    new Container
                     {
-                        WebFontSize = 20,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
+                        AutoSizeAxes = Axes.Y,
+                        RelativeSizeAxes = Axes.X,
+                        Children = new Drawable[]
+                        {
+                            count = new FluXisSpriteText
+                            {
+                                WebFontSize = 20,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                            },
+                            upButton = new VoteButton(Theme.VoteUp, FontAwesome6.Solid.AngleUp, () => setVote(1)),
+                            downButton = new VoteButton(Theme.VoteDown, FontAwesome6.Solid.AngleDown, () => setVote(-1))
+                            {
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight
+                            }
+                        }
                     },
-                    upButton = new VoteButton(Theme.VoteUp, FontAwesome6.Solid.AngleUp, () => setVote(1)),
-                    downButton = new VoteButton(Theme.VoteDown, FontAwesome6.Solid.AngleDown, () => setVote(-1))
+                    voteRateButton = new FluXisButton
                     {
-                        Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight
+                        RelativeSizeAxes = Axes.X,
+                        Height = 40,
+                        Text = "Rate Vote",
+                        Action = () => panels.Content = new RateVoteFormPanel(map.OnlineID, displayUserRateVote),
+                        Alpha = 0f
+                    },
+                    alreadyVotedContainer = new Container
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 40,
+                        Alpha = 0f,
+                        Child = alreadyVotedText = new FluXisSpriteText
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            WebFontSize = 16,
+                            Text = "Your rate vote: TODO" //TODO: display current vote here (would require changes in fluxel)
+                        }
                     }
                 }
             },
@@ -153,6 +206,20 @@ public partial class ResultsSideVoting : ResultsSideContainer
             }
         }
     };
+
+    private void displayRateVoteButton(bool display, string customText = "")
+    {
+        voteRateButton.Alpha = display ? 1f : 0f;
+        alreadyVotedContainer.Alpha = display ? 0f : 1f;
+        if (customText != "") alreadyVotedText.Text = customText;
+    }
+
+    private void displayUserRateVote(float rating)
+    {
+        voteRateButton.Alpha = 0f;
+        alreadyVotedContainer.Alpha = 1f;
+        alreadyVotedText.Text = $"Your rate vote: {rating}";
+    }
 
     private partial class VoteButton : CompositeDrawable
     {

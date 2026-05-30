@@ -18,6 +18,18 @@ public class PlaceholderAttribute : Attribute
 
 [MeansImplicitUse]
 [AttributeUsage(AttributeTargets.Property)]
+public class TooltipAttribute : Attribute
+{
+    public string TooltipText { get; }
+
+    public TooltipAttribute(string tooltipText)
+    {
+        TooltipText = tooltipText;
+    }
+}
+
+[MeansImplicitUse]
+[AttributeUsage(AttributeTargets.Property)]
 public class GroupAttribute : Attribute
 {
     public string Group { get; }
