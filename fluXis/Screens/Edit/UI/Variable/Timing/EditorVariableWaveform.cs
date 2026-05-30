@@ -1,19 +1,25 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Screens.Edit.UI.Variable.Timing;
 
-public partial class EditorVariableWaveform : Container
+/// <summary>
+/// This Drawable is very expensive, it's recommended to only instantiate it once and use <see cref="EditorVariableWaveform.CreateView(Drawable)"/>.
+/// </summary>
+public partial class EditorVariableWaveform : BufferedContainer
 {
     private const int count = 7;
 
@@ -23,19 +29,66 @@ public partial class EditorVariableWaveform : Container
     [Resolved]
     private EditorMap map { get; set; }
 
-    private TimingPoint point { get; }
+    [CanBeNull]
+    private TimingPoint point { get; set; }
+
+    private readonly List<Drawable> trackedDrawables = [];
 
     private double currentTime = -10;
     private double endTime;
 
     private int lastIndex = -1;
+    private double lastUpdateTime;
+
+    // update every half beat since we already only move by a beat (caps at 30 fps or 1800 bpm)
+    private double updateInterval => Math.Max((point?.MsPerBeat ?? 500) / 2, 1000d / 30);
 
     private Sample metronomeSample;
     private Sample metronomeEndSample;
 
-    public EditorVariableWaveform(TimingPoint point)
+    public EditorVariableWaveform(TimingPoint point = null)
+        : base(cachedFrameBuffer: true)
+    {
+        if (point is not null) ChangePoint(point);
+    }
+
+    public BufferedContainerView<Drawable> CreateView(Drawable trackedDrawable)
+    {
+        trackedDrawables.Add(trackedDrawable);
+        return base.CreateView();
+    }
+
+    public void ChangePoint(TimingPoint point)
     {
         this.point = point;
+        currentTime = -10;
+        lastIndex = -1;
+
+        if (IsLoaded) recalculateRange();
+        ForceRedraw();
+    }
+
+    public void Untrack(Drawable drawableToUntrack)
+    {
+        trackedDrawables.Remove(drawableToUntrack);
+    }
+
+    private void updateBuffer(double _)
+    {
+        if (Clock.CurrentTime - lastUpdateTime < updateInterval) return;
+        if (!trackedDrawables.Any(d => d.IsPresent)) return;
+
+        ForceRedraw();
+        lastUpdateTime = Clock.CurrentTime;
+    }
+
+    private void recalculateRange()
+    {
+        var next = map.MapInfo.TimingPoints
+                      .SkipWhile(g => g != point).Skip(1)
+                      .FirstOrDefault();
+
+        endTime = next?.Time ?? clock.TrackLength;
     }
 
     [BackgroundDependencyLoader]
@@ -44,8 +97,11 @@ public partial class EditorVariableWaveform : Container
         metronomeSample = samples.Get("UI/metronome");
         metronomeEndSample = samples.Get("UI/metronome-end");
 
+        clock.TimeChanged += updateBuffer; // only ever draw when time actually changes
+
         RelativeSizeAxes = Axes.X;
         Height = 280;
+        Width = 0.4f;
         CornerRadius = 20;
         Masking = true;
 
@@ -60,7 +116,7 @@ public partial class EditorVariableWaveform : Container
 
         Add(new Box
         {
-            Width = 2,
+            Width = 4,
             RelativeSizeAxes = Axes.Y,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre
@@ -70,23 +126,23 @@ public partial class EditorVariableWaveform : Container
     protected override void LoadComplete()
     {
         base.LoadComplete();
-
-        var next = map.MapInfo.TimingPoints
-                      .SkipWhile(g => g != point).Skip(1)
-                      .FirstOrDefault();
-
-        endTime = next?.Time ?? clock.TrackLength;
+        recalculateRange();
     }
 
     protected override void Update()
     {
         base.Update();
 
+        if (point == null) return;
+
         int currentBeat = (int)Math.Floor((clock.CurrentTime - point.Time) / point.MsPerBeat);
         goToBeat(currentBeat);
     }
 
-    private void goToBeat(int beat) => goToTime(point.Time + beat * point.MsPerBeat);
+    private void goToBeat(int beat)
+    {
+        if (point != null) goToTime(point.Time + beat * point.MsPerBeat);
+    }
 
     private void goToTime(double time)
     {
@@ -98,6 +154,8 @@ public partial class EditorVariableWaveform : Container
 
     private void regenerate()
     {
+        if (point == null) return;
+
         var index = (int)Math.Round((currentTime - point.Time) / point.MsPerBeat);
 
         // 10ms leniency
@@ -128,6 +186,13 @@ public partial class EditorVariableWaveform : Container
 
             index++;
         }
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        if (isDisposing)
+            clock.TimeChanged -= updateBuffer;
+        base.Dispose(isDisposing);
     }
 
     private partial class WaveformRow : Container
@@ -175,7 +240,7 @@ public partial class EditorVariableWaveform : Container
                     RelativeSizeAxes = Axes.Both,
                     RelativePositionAxes = Axes.Both,
                     Waveform = editor.Waveform.Value,
-                    Resolution = 1,
+                    Resolution = 0.75f,
                     BaseColour = Theme.Highlight.Darken(1f),
                     LowColour = Theme.Highlight.Darken(.5f),
                     MidColour = Theme.Highlight,
