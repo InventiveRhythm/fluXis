@@ -48,22 +48,25 @@ public class CroppedBackgroundLoader : IResourceStore<TextureUpload>
 
     private static TextureUpload cropTexture(TextureUpload tex)
     {
-        var image = Image.LoadPixelData<Rgba32>(tex.Data.ToArray(), tex.Width, tex.Height);
-
-        var visibleSize = new Size(1000, 100);
-
-        if (visibleSize.Width > image.Width)
+        using (tex)
         {
-            var ratio = image.Width / (float)visibleSize.Width;
-            visibleSize = (Size)(visibleSize * ratio);
+            var image = Image.LoadPixelData<Rgba32>(tex.Data, tex.Width, tex.Height);
+
+            var visibleSize = new Size(1000, 100);
+
+            if (visibleSize.Width > image.Width)
+            {
+                var ratio = image.Width / (float)visibleSize.Width;
+                visibleSize = (Size)(visibleSize * ratio);
+            }
+
+            image.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Size = visibleSize,
+                Mode = ResizeMode.Crop
+            }));
+
+            return new TextureUpload(image);
         }
-
-        image.Mutate(x => x.Resize(new ResizeOptions
-        {
-            Size = visibleSize,
-            Mode = ResizeMode.Crop
-        }));
-
-        return new TextureUpload(image);
     }
 }

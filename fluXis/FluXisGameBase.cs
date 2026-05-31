@@ -47,6 +47,7 @@ using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Video;
 using osu.Framework.Input;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
@@ -222,6 +223,8 @@ public partial class FluXisGameBase : osu.Framework.Game
                 cacheComponent(Steam, true, true);
 
             Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
+
+            VideoDecoder.PreloadLibraries();
 
             GlobalKeybindContainer keybinds;
 
@@ -408,6 +411,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public new virtual void Exit()
     {
         APIClient.Disconnect();
+        VideoDecoder.UnloadLibraries();
         base.Exit();
     }
 

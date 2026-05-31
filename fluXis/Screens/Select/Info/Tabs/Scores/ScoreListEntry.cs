@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Database.Maps;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Drawables;
 using fluXis.Graphics.Sprites.Icons;
@@ -38,7 +39,7 @@ using osuTK;
 
 namespace fluXis.Screens.Select.Info.Tabs.Scores;
 
-public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, IHasContextMenu
+public partial class ScoreListEntry : BufferedContainer, IHasCustomTooltip<ScoreInfo>, IHasContextMenu, IHasLoadedValue
 {
     [Resolved]
     private UISamples samples { get; set; }
@@ -52,6 +53,11 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay profileOverlay { get; set; }
+
+    public ScoreListEntry()
+        : base(cachedFrameBuffer: true)
+    {
+    }
 
     public MenuItem[] ContextMenuItems
     {
@@ -97,6 +103,24 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
     private Box downloadBar;
     private Circle downloadCircle;
+
+    public bool Loaded => loaded == LoadingStates.All;
+    private LoadingStates loaded;
+
+    private LoadWrapper<DrawableBanner> bannerWrapper;
+    private LoadWrapper<DrawableAvatar> avatarWrapper;
+
+    private bool wasVisibleOnce; // this is to prevent redrawing if the entry has not been scrolled to yet
+
+    [Flags]
+    private enum LoadingStates
+    {
+        Banner = 1,
+        Avatar = 2,
+        Downloading = 4,
+
+        All = Banner | Avatar
+    }
 
     private ColourInfo outlineColor
     {
@@ -149,16 +173,25 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = Theme.Background2
                             },
-                            new LoadWrapper<DrawableBanner>
+                            bannerWrapper = new LoadWrapper<DrawableBanner>
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                LoadContent = () => new DrawableBanner(Player)
+                                LoadContent = () =>
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre
+                                    wasVisibleOnce = true;
+
+                                    return new DrawableBanner(Player)
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre
+                                    };
                                 },
-                                OnComplete = banner => banner.FadeInFromZero(400)
+                                OnComplete = banner =>
+                                {
+                                    banner.FadeInFromZero(400);
+                                    Scheduler.AddDelayed(() => loaded |= LoadingStates.Banner, 400);
+                                }
                             },
                             new Box
                             {
@@ -202,18 +235,27 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre
                                         },
-                                        new LoadWrapper<DrawableAvatar>
+                                        avatarWrapper = new LoadWrapper<DrawableAvatar>
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             CornerRadius = 10,
                                             Masking = true,
-                                            LoadContent = () => new DrawableAvatar(Player)
+                                            LoadContent = () =>
                                             {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Anchor = Anchor.Centre,
-                                                Origin = Anchor.Centre
+                                                wasVisibleOnce = true;
+
+                                                return new DrawableAvatar(Player)
+                                                {
+                                                    RelativeSizeAxes = Axes.Both,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre
+                                                };
                                             },
-                                            OnComplete = avatar => avatar.FadeInFromZero(400)
+                                            OnComplete = avatar =>
+                                            {
+                                                avatar.FadeInFromZero(400);
+                                                Scheduler.AddDelayed(() => loaded |= LoadingStates.Avatar, 400);
+                                            }
                                         },
                                         new FillFlowContainer
                                         {
@@ -396,6 +438,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
             switch (s)
             {
                 case DownloadState.Downloading:
+                    loaded |= LoadingStates.Downloading;
                     downloadBar.FadeColour(Theme.Blue, 400);
                     break;
 
@@ -405,12 +448,17 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                         var w = DrawWidth;
                         downloadCircle.FadeIn().ResizeTo(w).FadeColour(downloadBar.Colour)
                                       .ResizeTo(32, 600, Easing.OutQuint)
-                                      .Then(400).FadeTo(0).OnComplete(_ => DownloadFinishedAction?.Invoke(downloadCircle));
+                                      .Then(400).FadeTo(0).OnComplete(_ =>
+                                      {
+                                          DownloadFinishedAction?.Invoke(downloadCircle);
+                                          loaded &= ~LoadingStates.Downloading;
+                                      });
                     });
                     break;
 
                 case DownloadState.Failed:
-                    downloadBar.FadeColour(Theme.Red, 400).Then(1000).FadeOut(400);
+                    downloadBar.FadeColour(Theme.Red, 400).Then(1000).FadeOut(400)
+                               .OnComplete(_ => loaded &= ~LoadingStates.Downloading);
                     break;
             }
         });
@@ -427,10 +475,35 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
         this.Delay(delay + 600).Expire();
     }
 
+    private double lastUpdateTime;
+
     protected override void Update()
     {
-        timeText.Text = TimeUtils.Ago(date);
         base.Update();
+
+        if (!wasVisibleOnce)
+        {
+            if (Time.Current - lastUpdateTime < 1000f / 15) // throttle not visible to 15 fps
+                return;
+
+            ForceRedraw();
+            lastUpdateTime = Time.Current;
+        }
+
+        timeText.Text = TimeUtils.Ago(date);
+
+        if (
+            (!Loaded && wasVisibleOnce) ||
+            loaded.HasFlag(LoadingStates.Downloading) ||
+            Player.HasAnimatedAvatar || Player.HasAnimatedBanner ||
+            ScoreInfo.Rank == ScoreRank.X ||
+            IsHovered ||
+            Disappearing ||
+            Time.Current < wrapper.LatestTransformEndTime
+        )
+        {
+            ForceRedraw();
+        }
     }
 
     protected override bool OnHover(HoverEvent e)

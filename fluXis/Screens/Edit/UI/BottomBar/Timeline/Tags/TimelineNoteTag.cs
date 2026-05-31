@@ -8,7 +8,7 @@ namespace fluXis.Screens.Edit.UI.BottomBar.Timeline.Tags;
 public partial class TimelineNoteTag : TimelineTag
 {
     public override Colour4 TagColour => Theme.NoteTag;
-    protected override Action UpdateAction => () => Text.Text = Note.Content;
+    protected override Action DeferredUpdateAction => () => Text.Text = Note.Content;
 
     public NoteEvent Note => (NoteEvent)TimedObject;
 
