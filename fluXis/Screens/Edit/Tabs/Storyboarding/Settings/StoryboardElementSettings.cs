@@ -536,6 +536,19 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             }
                         });
                         break;
+
+                    case StoryboardElementType.Video:
+                        drawables.Add(new EditorVariableTextBox
+                        {
+                            Text = "Path",
+                            CurrentValue = item.GetParameter("path", ""),
+                            OnValueChanged = t =>
+                            {
+                                item.Parameters["path"] = t.Text;
+                                map.Update(item);
+                            }
+                        });
+                        break;
                 }
 
                 flow.AddRange(drawables);

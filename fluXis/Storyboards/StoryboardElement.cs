@@ -150,7 +150,13 @@ public enum StoryboardElementType
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
-    Compound = 8
+    Compound = 8,
+
+    [Icon(0xf0c8, Regular = true)]
+    [WidthHeight]
+    [AllowedAnimation(StoryboardAnimationType.Width)]
+    [AllowedAnimation(StoryboardAnimationType.Height)]
+    Video = 9
 }
 
 public enum StoryboardLayer

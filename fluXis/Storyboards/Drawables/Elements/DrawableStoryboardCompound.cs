@@ -60,6 +60,7 @@ public partial class DrawableStoryboardCompound : DrawableStoryboardElement
             StoryboardElementType.SkinSprite => new DrawableStoryboardSkinSprite(element),
             StoryboardElementType.OutlineBox => new DrawableStoryboardOutlineBox(element),
             StoryboardElementType.Compound => new DrawableMutableStoryboardCompound(element, []),
+            StoryboardElementType.Video => new DrawableStoryboardVideo(element),
             _ => new DrawableStoryboardElement(element)
         };
 
