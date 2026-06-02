@@ -51,8 +51,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Full,
-                Spacing = new Vector2(20),
-                ChildrenEnumerable = skinManager.AvailableSkins.Select(x => new SkinIcon(x)),
+                Spacing = new Vector2(24),
                 Margin = new MarginPadding { Bottom = 8 }
             },
             new SettingsButton
@@ -115,6 +114,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
 
         skinManager.SkinChanged += () => buttonsEnabled.Value = !skinManager.IsDefault;
         skinManager.SkinListChanged += reloadList;
+        reloadList();
     }
 
     private void reloadList()

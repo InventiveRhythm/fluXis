@@ -1,11 +1,16 @@
+using System;
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -19,8 +24,12 @@ public partial class SettingsCategoryTab : Container
     [Resolved]
     private UISamples samples { get; set; }
 
+    [CanBeNull]
+    public Action<Drawable> ScrollToItem { get; set; }
+
     private Container scalingContainer;
-    private FillFlowContainer content;
+    private Container subsections;
+
     private HoverLayer hover;
     private FlashLayer flash;
 
@@ -33,47 +42,84 @@ public partial class SettingsCategoryTab : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(70);
-        Anchor = Anchor.CentreLeft;
-        Origin = Anchor.CentreLeft;
+        RelativeSizeAxes = Axes.X;
+        Height = 48;
+        Masking = true;
 
-        InternalChild = scalingContainer = new Container
+        InternalChildren = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            CornerRadius = 10,
-            Masking = true,
-            Children = new Drawable[]
+            scalingContainer = new Container
             {
-                hover = new HoverLayer(),
-                flash = new FlashLayer(),
-                content = new FillFlowContainer
+                RelativeSizeAxes = Axes.X,
+                Height = Height,
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.Centre,
+                CornerRadius = 8,
+                Masking = true,
+                Y = Height / 2f,
+                Children = new Drawable[]
                 {
-                    AutoSizeAxes = Axes.X,
-                    RelativeSizeAxes = Axes.Y,
-                    Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(20),
-                    Padding = new MarginPadding(20),
-                    Children = new Drawable[]
+                    hover = new HoverLayer(),
+                    flash = new FlashLayer(),
+                    new FillFlowContainer
                     {
-                        new FluXisSpriteIcon
+                        AutoSizeAxes = Axes.X,
+                        RelativeSizeAxes = Axes.Y,
+                        Direction = FillDirection.Horizontal,
+                        Spacing = new Vector2(16),
+                        Padding = new MarginPadding(12),
+                        Children = new Drawable[]
                         {
-                            Size = new Vector2(30),
-                            Icon = section.Icon,
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft
-                        },
-                        new FluXisSpriteText
-                        {
-                            Text = section.Title,
-                            FontSize = 24,
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft
+                            new FluXisSpriteIcon
+                            {
+                                Size = new Vector2(24),
+                                Icon = section.Icon,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            },
+                            new FluXisSpriteText
+                            {
+                                Text = section.Title,
+                                WebFontSize = 16,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            }
                         }
                     }
                 }
-            }
+            },
+            subsections = new Container
+            {
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Padding = new MarginPadding { Top = Height },
+                Children = new Drawable[]
+                {
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.Y,
+                        Width = 4,
+                        X = 6,
+                        Origin = Anchor.TopCentre,
+                        Padding = new MarginPadding { Vertical = 4 },
+                        Child = new Circle
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = Theme.Foreground,
+                        }
+                    },
+                    new FillFlowContainer
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Padding = new MarginPadding { Left = 12 },
+                        ChildrenEnumerable = section.SubSections.Select(x => new SettingsSubCategoryButton(x)
+                        {
+                            Action = () => ScrollToItem?.Invoke(x)
+                        })
+                    },
+                }
+            },
         };
     }
 
@@ -81,20 +127,22 @@ public partial class SettingsCategoryTab : Container
     {
         base.LoadComplete();
 
-        currentSection.BindValueChanged(e =>
+        currentSection.BindValueChanged(v =>
         {
-            ScheduleAfterChildren(() =>
+            if (v.NewValue == section)
             {
-                if (e.NewValue == section)
-                    select();
-                else
-                    deselect();
-            });
+                scalingContainer.FadeTo(1f, 200);
+                this.ResizeHeightTo(48 + section.SubSections.Count() * 44, 400, Easing.OutQuint);
+            }
+            else
+            {
+                scalingContainer.FadeTo(0.75f, 200);
+                this.ResizeHeightTo(48, 400, Easing.OutQuint);
+            }
         }, true);
-    }
 
-    private void select() => this.ResizeWidthTo(content.DrawWidth, 400, Easing.OutQuint);
-    private void deselect() => this.ResizeWidthTo(70, 400, Easing.OutQuint);
+        FinishTransforms(true);
+    }
 
     protected override bool OnClick(ClickEvent e)
     {
@@ -107,7 +155,7 @@ public partial class SettingsCategoryTab : Container
     protected override bool OnMouseDown(MouseDownEvent e)
     {
         scalingContainer.ScaleTo(.9f, 1000, Easing.OutQuint);
-        return true;
+        return false;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)

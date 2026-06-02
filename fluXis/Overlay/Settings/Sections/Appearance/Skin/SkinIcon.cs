@@ -143,7 +143,7 @@ public partial class SkinIcon : CompositeDrawable
     private void updateSelected()
     {
         var state = isCurrent;
-        this.BorderTo(state ? 2 : 0, 200);
+        this.BorderTo(state ? 3 : 0, 200);
         selected.FadeTo(state ? .25f : 0, 200);
     }
 

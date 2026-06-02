@@ -2,29 +2,38 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Overlay.Settings.Sections;
-using fluXis.Overlay.Settings.Sidebar;
 using fluXis.Overlay.Settings.Tabs;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Overlay.Settings;
 
 public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    protected override float OverlayPadding => 96;
+    protected override float OpenedRoundness => 0;
+    protected override float OverlayPadding => 0;
     protected override ColourInfo BackgroundColor => Theme.Background1;
     protected override IconUsage Icon => FontAwesome6.Solid.Gear;
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private Toolbar.Toolbar toolbar { get; set; }
 
     private Bindable<SettingsSection> currentSection { get; } = new();
 
@@ -45,6 +54,9 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
     private SettingsCategorySelector categorySelector;
     private FluXisScrollContainer scrollContainer;
 
+    private FluXisSpriteIcon titleIcon;
+    private FluXisSpriteText titleText;
+
     private Sample tabSwitch;
 
     [BackgroundDependencyLoader]
@@ -57,60 +69,98 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
         Content.ItemFocused += i => scrollContainer.ScrollTo(i as Drawable);
     }
 
-    protected override Drawable[] CreateContent() => new Drawable[]
+    protected override Drawable[] CreateContent()
     {
-        new GridContainer
+        sections.ForEach(LoadComponent);
+
+        return new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            RowDimensions = new Dimension[]
+            new GridContainer
             {
-                new(GridSizeMode.AutoSize),
-                new()
-            },
-            Content = new[]
-            {
-                new Drawable[]
+                RelativeSizeAxes = Axes.Both,
+                ColumnDimensions = new Dimension[]
                 {
-                    categorySelector = new SettingsCategorySelector(sections, currentSection) { CloseAction = Hide }
+                    new(GridSizeMode.Absolute, 300),
+                    new()
                 },
-                new Drawable[]
+                Content = new[]
                 {
-                    new GridContainer
+                    new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        ColumnDimensions = new Dimension[]
+                        categorySelector = new SettingsCategorySelector(sections, currentSection)
                         {
-                            new(GridSizeMode.Absolute, 300),
-                            new()
+                            ScrollToItem = d => scrollContainer.ScrollTo(d)
                         },
-                        Content = new[]
+                        new Container
                         {
-                            new Drawable[]
+                            RelativeSizeAxes = Axes.Both,
+                            Children = new Drawable[]
                             {
-                                new SettingsSidebar(currentSection)
+                                new Container
                                 {
-                                    ScrollToSection = s => scrollContainer.ScrollTo(s)
+                                    RelativeSizeAxes = Axes.X,
+                                    Height = 48,
+                                    Children = new Drawable[]
+                                    {
+                                        new Box
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            Height = 2,
+                                            Colour = Theme.Background2,
+                                            Anchor = Anchor.BottomLeft,
+                                            Origin = Anchor.BottomLeft
+                                        },
+                                        new FillFlowContainer
+                                        {
+                                            AutoSizeAxes = Axes.Both,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft,
+                                            Padding = new MarginPadding(16),
+                                            Spacing = new Vector2(12),
+                                            Children = new Drawable[]
+                                            {
+                                                titleIcon = new FluXisSpriteIcon
+                                                {
+                                                    Size = new Vector2(20),
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft
+                                                },
+                                                titleText = new FluXisSpriteText
+                                                {
+                                                    Text = "",
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft,
+                                                    WebFontSize = 16
+                                                }
+                                            }
+                                        },
+                                        new IconButton
+                                        {
+                                            Anchor = Anchor.CentreRight,
+                                            Origin = Anchor.CentreRight,
+                                            Icon = FontAwesome6.Solid.XMark,
+                                            ButtonSize = 36,
+                                            IconSize = 16,
+                                            Margin = new MarginPadding(6),
+                                            Action = Hide
+                                        }
+                                    }
                                 },
                                 new Container
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Padding = new MarginPadding(48)
-                                    {
-                                        Top = 20,
-                                        Right = 32
-                                    },
-                                    Masking = true,
+                                    Padding = new MarginPadding { Top = 48 },
                                     Child = scrollContainer = new FluXisScrollContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         ScrollbarAnchor = Anchor.TopRight,
-                                        Masking = false,
+                                        Masking = true,
                                         HideScrollbarOnInactivity = true,
                                         Child = new Container<SettingsSection>
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
-                                            Padding = new MarginPadding { Right = 20 },
+                                            Padding = new MarginPadding { Horizontal = 48, Top = 32, Bottom = 48 },
                                             ChildrenEnumerable = sections
                                         }
                                     }
@@ -119,10 +169,10 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
                         }
                     }
                 }
-            }
-        },
-        new CheatCodeHandler(showExperiments, Key.W, Key.S, Key.D, Key.A, Key.W)
-    };
+            },
+            new CheatCodeHandler(showExperiments, Key.W, Key.S, Key.D, Key.A, Key.W)
+        };
+    }
 
     protected override void LoadComplete()
     {
@@ -176,6 +226,17 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
 
         if (prev != null && !InitialAnimation)
             tabSwitch?.Play();
+
+        titleIcon.Icon = next.Icon;
+        titleText.Text = next.Title;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        var pad = toolbar?.Height + toolbar?.Y ?? 0;
+        if (pad != Padding.Top) Padding = new MarginPadding { Top = pad };
     }
 
     protected override bool OnDragStart(DragStartEvent e) => true;

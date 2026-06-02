@@ -1,4 +1,3 @@
-using System;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -9,12 +8,10 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Overlay.Settings.Sidebar;
+namespace fluXis.Overlay.Settings.Tabs;
 
-public partial class SettingsSidebarButton : Container
+public partial class SettingsSubCategoryButton : ClickableContainer
 {
-    public Action ClickAction { get; init; }
-
     [Resolved]
     private UISamples samples { get; set; }
 
@@ -24,7 +21,7 @@ public partial class SettingsSidebarButton : Container
     private HoverLayer hover;
     private FlashLayer flash;
 
-    public SettingsSidebarButton(SettingsSubSection section)
+    public SettingsSubCategoryButton(SettingsSubSection section)
     {
         this.section = section;
     }
@@ -33,7 +30,7 @@ public partial class SettingsSidebarButton : Container
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 48;
+        Height = 44;
 
         InternalChild = content = new Container
         {
@@ -51,7 +48,7 @@ public partial class SettingsSidebarButton : Container
                     RelativeSizeAxes = Axes.Both,
                     Direction = FillDirection.Horizontal,
                     Spacing = new Vector2(12),
-                    Padding = new MarginPadding(14),
+                    Padding = new MarginPadding(12),
                     Children = new Drawable[]
                     {
                         new FluXisSpriteIcon
@@ -66,7 +63,7 @@ public partial class SettingsSidebarButton : Container
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
                             Text = section.Title,
-                            WebFontSize = 16
+                            WebFontSize = 14
                         }
                     }
                 }
@@ -84,8 +81,7 @@ public partial class SettingsSidebarButton : Container
     {
         flash.Show();
         samples.Click();
-        ClickAction?.Invoke();
-        return true;
+        return base.OnClick(e);
     }
 
     protected override bool OnHover(HoverEvent e)
