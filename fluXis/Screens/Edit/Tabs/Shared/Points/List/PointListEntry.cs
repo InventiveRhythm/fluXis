@@ -39,6 +39,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     public MenuItem[] ContextMenuItems => new MenuItem[]
     {
         new MenuActionItem("Clone to current time", FontAwesome6.Solid.Clone, clone),
+        new MenuActionItem("Move to current time", FontAwesome6.Solid.Clock, moveToCurrentTime),
         new MenuActionItem("Go to time", FontAwesome6.Solid.ArrowRight, goTo),
         new MenuActionItem("Bulk-Apply Group", FontAwesome6.Solid.ObjectGroup, applyGroup) { IsEnabled = () => State == SelectedState.Selected },
         new MenuActionItem("Edit", FontAwesome6.Solid.PenRuler, OpenSettings),
@@ -72,6 +73,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     public Action RequestApplyGroup { get; set; }
     public Action DeleteSelected { get; set; }
     public Action CloneSelected { get; set; }
+    public Action MoveSelectedToCurrentTime { get; set; }
     public Action<ITimedObject> OnClone { get; set; }
     public ITimedObject Object { get; }
 
@@ -285,6 +287,17 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
         var clone = CreateClone();
         OnClone?.Invoke(clone);
+    }
+
+    private void moveToCurrentTime()
+    {
+        if (State == SelectedState.Selected)
+        {
+            MoveSelectedToCurrentTime?.Invoke();
+            return;
+        }
+
+        ActionStack.Add(new EventsMoveToTimeAction(new List<ITimedObject> { Object }, clock.CurrentTime));
     }
 
     private void applyGroup()
