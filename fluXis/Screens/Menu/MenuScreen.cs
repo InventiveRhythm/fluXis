@@ -519,13 +519,15 @@ public partial class MenuScreen : FluXisScreen
 
     public void PreEnter()
     {
-        if (config.Get<bool>(FluXisSetting.IntroTheme))
+        var theme = config.Get<MapStore.BuiltinMap>(FluXisSetting.IntroTheme);
+
+        if (theme != MapStore.BuiltinMap.None)
         {
             maps.CurrentMap = maps.CreateBuiltinMap(Game.CurrentSeason switch
             {
                 Season.Halloween => MapStore.BuiltinMap.Spoophouse,
                 Season.Christmas => MapStore.BuiltinMap.Christmashouse,
-                _ => MapStore.BuiltinMap.Roundhouse
+                _ => theme
             }).LowestDifficulty;
             clock.Seek(0);
         }

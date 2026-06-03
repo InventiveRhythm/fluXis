@@ -41,8 +41,8 @@ public class SettingsUIStrings : LocalizationCategory
 
     public TranslatableString MainMenu => Get("main-menu-title", "Main Menu");
 
-    public TranslatableString IntroMusic => Get("intro-music", "fluXis intro music");
-    public TranslatableString IntroMusicDescription => Get("intro-music-description", "Play the fluXis intro music on startup. Disabling this will play a random song from your library instead.");
+    public TranslatableString IntroMusic => Get("intro-music", "Intro Music");
+    public TranslatableString IntroMusicDescription => Get("intro-music-description", "The music that plays when starting up the game.");
 
     public TranslatableString ForceSnow => Get("force-snow", "Force Snow");
     public TranslatableString ForceSnowDescription => Get("force-snow-description", "Makes the snow always visible, not just in the winter.");

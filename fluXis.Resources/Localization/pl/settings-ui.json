@@ -14,8 +14,6 @@
     "relative-mouse-scroll": "Względne przewijanie myszy",
     "relative-mouse-scroll-description": "Przytrzymanie środkowego przycisku myszy przewija listy zależnie od przesunięcia kursora (jak w przeglądarkach).",
     "main-menu-title": "Menu główne",
-    "intro-music": "Muzyka intro fluXis",
-    "intro-music-description": "Odtwarza muzykę intro fluXis przy uruchomieniu. Po wyłączeniu odtwarzany będzie losowy utwór z biblioteki.",
     "force-snow": "Wymuś śnieg",
     "force-snow-description": "Śnieg jest zawsze widoczny, nie tylko zimą.",
     "bubble-visualizer": "Wizualizer bąbelków",
