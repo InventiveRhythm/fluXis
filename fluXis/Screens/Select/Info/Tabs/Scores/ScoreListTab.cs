@@ -256,6 +256,8 @@ public partial class ScoreListTab : SelectInfoTab
                         player = u;
                     }
 
+                    info.Player = player;
+
                     return new ScoreListEntry
                     {
                         ScoreInfo = info,
