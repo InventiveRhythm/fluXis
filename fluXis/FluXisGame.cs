@@ -558,6 +558,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         globalClock.RateTo(0, 1500, Easing.Out);
         globalClock.VolumeOut(1300);
         exitAnimation.Show(buffer.Hide, () => base.Exit());
+        APIClient.Disconnect();
         isExiting = true;
     }
 
