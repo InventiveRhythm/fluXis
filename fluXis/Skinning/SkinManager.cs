@@ -17,6 +17,7 @@ using fluXis.Skinning.Custom;
 using fluXis.Skinning.Default;
 using fluXis.Skinning.DefaultCircle;
 using fluXis.Skinning.Json;
+using fluXis.Storyboards;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using Midori.Utils;
@@ -482,6 +483,8 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
     Texture ISkin.GetIcon() => currentSkin.GetIcon() ?? defaultSkin.GetIcon();
     Texture ISkin.GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
+
+    float? ISkin.GetSpriteAspectRatio(SkinSprite sprite) => currentSkin.GetSpriteAspectRatio(sprite) ?? defaultSkin.GetSpriteAspectRatio(sprite);
 
     Sample ISkin.GetUISample(UISamples.SampleType type) => currentSkin.GetUISample(type) ?? defaultSkin.GetUISample(type);
     Sample ISkin.GetCourseSample(CourseScreen.SampleType type) => currentSkin.GetCourseSample(type) ?? defaultSkin.GetCourseSample(type);

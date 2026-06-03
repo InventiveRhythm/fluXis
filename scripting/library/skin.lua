@@ -3,6 +3,12 @@
 ---@class skin
 skin = {}
 
+---gets the aspect ratio of a skin sprite. returns 1 if not available
+---@param sprite SkinSprite
+---@return number
+---@nodiscard
+function skin:sprratio(sprite) end
+
 ---@param mode number
 ---@return number
 ---@nodiscard

@@ -14,6 +14,7 @@ using fluXis.Skinning.Default.Receptor;
 using fluXis.Skinning.Default.Results;
 using fluXis.Skinning.Default.Stage;
 using fluXis.Skinning.Json;
+using fluXis.Storyboards;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -51,6 +52,13 @@ public class DefaultSkin : ISkin
 
     public virtual Texture GetIcon() => Textures.Get("Skins/default.png");
     public Texture GetDefaultBackground() => Textures.Get("Backgrounds/default.png");
+
+    public virtual float? GetSpriteAspectRatio(SkinSprite sprite) => sprite switch
+    {
+        SkinSprite.HitObject or SkinSprite.LongNoteStart or SkinSprite.LongNoteEnd => 114 / 42f,
+        SkinSprite.TickNote or SkinSprite.TickNoteSmall => 114 / 20f,
+        _ => null
+    };
 
     public Sample GetUISample(UISamples.SampleType type) => type switch
     {
