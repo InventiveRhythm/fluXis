@@ -4,10 +4,10 @@
 skin = {}
 
 ---gets the aspect ratio of a skin sprite. returns 1 if not available
----@param sprite SkinSprite
+---@param str SkinSprite
 ---@return number
 ---@nodiscard
-function skin:sprratio(sprite) end
+function skin:sprratio(str) end
 
 ---@param mode number
 ---@return number

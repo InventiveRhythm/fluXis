@@ -28,7 +28,4 @@
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="All" />
     <AdditionalFiles Include="..\CodeAnalysis\BannedSymbols.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="build\" />
-  </ItemGroup>
 </Project>
