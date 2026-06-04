@@ -397,6 +397,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, "Fonts/Noto/Noto-CJK-Compatibility");
         AddFont(Resources, "Fonts/Noto/Noto-Thai");
 
+        AddFont(Resources, "Fonts/Phosphor/PhosphorBold");
+        AddFont(Resources, "Fonts/Phosphor/PhosphorFill");
+
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Solid");
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Regular");
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Brands");
