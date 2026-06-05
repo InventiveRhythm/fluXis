@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Audio;
-using fluXis.Audio.FFT;
 using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
@@ -97,7 +96,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private FloatingNotificationContainer notificationContainer;
     private ExitAnimation exitAnimation;
 
-    private AudioAnalyzer audioAnalyzer;
     private GlobalFFTProcessor fftProcessor;
 
     private SentryClient sentry { get; }
@@ -174,7 +172,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(MenuScreen = new MenuScreen());
 
-        loadComponent(audioAnalyzer = new AudioAnalyzer(), Add, true);
         loadComponent(fftProcessor = new GlobalFFTProcessor(), Add, true);
         // GlobalClock was our main amplitude provider but have an actual processor now
         GameDependencies.CacheAs<IAmplitudeProvider>(fftProcessor);
