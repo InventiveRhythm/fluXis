@@ -26,8 +26,8 @@ public partial class FluXisTestScene : TestScene
     [CanBeNull]
     private TestMultiplayerClient multiClient = null;
 
-    [CanBeNull]
-    private AudioAnalyzer audioAnalyzer = null;
+    [Resolved]
+    private AudioAnalyzer audioAnalyzer { get; set; }
 
     [CanBeNull]
     private GlobalFFTProcessor fftProcessor = null;
