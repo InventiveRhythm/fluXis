@@ -96,7 +96,7 @@ public partial class EditorVariableScript : EditorVariableTextBox
                         Size = new Vector2(16),
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Icon = FontAwesome6.Solid.Pencil
+                        Icon = Phosphor.Bold.PencilSimple
                     }
                 }
             };

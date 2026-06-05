@@ -21,7 +21,7 @@ public partial class FloatingTextNotification : FloatingNotification
 
     public string Text { get; init; }
     public string SubText { get; init; }
-    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Info;
+    public IconUsage Icon { get; init; } = Phosphor.Bold.Info;
     public Color4 AccentColor { get; init; } = Theme.Highlight;
     public float Lifetime { get; init; } = 5000;
     public Action Action { get; init; }

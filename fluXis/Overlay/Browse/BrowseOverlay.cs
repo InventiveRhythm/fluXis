@@ -229,7 +229,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                             Margin = new MarginPadding(20),
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.BottomRight,
-                            Icon = FontAwesome6.Solid.AngleUp,
+                            Icon = Phosphor.Bold.CaretUp,
                             UseAutoSize = false,
                             Size = new Vector2(64),
                             IconSize = new Vector2(24),

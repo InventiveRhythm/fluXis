@@ -42,7 +42,7 @@ namespace fluXis.Screens.Select.Info.Tabs.Scores;
 public partial class ScoreListTab : SelectInfoTab
 {
     public override LocalisableString Title => LocalizationStrings.SongSelect.LeaderboardTitle;
-    public override IconUsage Icon => FontAwesome6.Solid.RankingStar;
+    public override IconUsage Icon => Phosphor.Bold.Ranking;
 
     [Resolved]
     private MapStore maps { get; set; }
@@ -128,7 +128,7 @@ public partial class ScoreListTab : SelectInfoTab
                 {
                     new FluXisSpriteIcon
                     {
-                        Icon = FontAwesome6.Solid.TriangleExclamation,
+                        Icon = Phosphor.Bold.Warning,
                         Colour = Theme.Yellow,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,

@@ -28,7 +28,7 @@ public partial class SelectModsButton : FooterButton
     public SelectModsButton(Action action)
     {
         Text = LocalizationStrings.SongSelect.FooterMods;
-        Icon = FontAwesome6.Solid.Cube;
+        Icon = Phosphor.Bold.Cube;
         AccentColor = Theme.Footer1;
         Action = action;
     }

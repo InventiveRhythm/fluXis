@@ -23,7 +23,7 @@ public partial class TestFormPanel : FluXisTestScene
 
         AddStep("Add Panel", () =>
         {
-            var panel = new FormPanel<EditClubPayload>(FontAwesome6.Solid.Pencil, "Really, really long title that will hopefully cut off to show truncating", new EditClubPayload(), (_, data) =>
+            var panel = new FormPanel<EditClubPayload>(Phosphor.Bold.PencilSimple, "Really, really long title that will hopefully cut off to show truncating", new EditClubPayload(), (_, data) =>
             {
                 File.WriteAllText("form.json", data.Serialize());
                 return true;

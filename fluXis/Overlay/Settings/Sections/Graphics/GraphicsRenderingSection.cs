@@ -23,7 +23,7 @@ namespace fluXis.Overlay.Settings.Sections.Graphics;
 public partial class GraphicsRenderingSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Rendering;
-    public override IconUsage Icon => FontAwesome6.Solid.Cubes;
+    public override IconUsage Icon => Phosphor.Bold.Cube;
 
     private SettingsGraphicsStrings strings => LocalizationStrings.Settings.Graphics;
 
@@ -85,7 +85,7 @@ public partial class GraphicsRenderingSection : SettingsSubSection
         {
             Text = "Restart Required",
             SubText = "Changing the renderer requires a restart to take effect. (You will have to open the game again manually.)",
-            Icon = FontAwesome6.Solid.ArrowsRotate,
+            Icon = Phosphor.Bold.ArrowsClockwise,
             Buttons = new ButtonData[]
             {
                 new PrimaryButtonData("Exit now.", () => game.Exit()),

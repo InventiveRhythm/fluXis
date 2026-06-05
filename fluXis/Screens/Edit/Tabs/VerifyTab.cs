@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
@@ -18,7 +19,7 @@ namespace fluXis.Screens.Edit.Tabs;
 
 public partial class VerifyTab : EditorTab
 {
-    public override IconUsage Icon => FontAwesome.Solid.CheckDouble;
+    public override IconUsage Icon => Phosphor.Bold.Checks;
     public override string TabName => "Verify";
 
     public static readonly List<(string, float)> COLUMNS = new()

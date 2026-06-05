@@ -24,7 +24,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardClubTab : DashboardTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Club;
-    public override IconUsage Icon => FontAwesome6.Solid.CircleNodes;
+    public override IconUsage Icon => Phosphor.Bold.Graph;
     public override DashboardTabType Type => DashboardTabType.Club;
 
     [Resolved]

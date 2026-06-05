@@ -8,6 +8,6 @@ public class LandmineTool : ChartingTool
 {
     public override string Name => "Landmine";
     public override string Description => "Creates a landmine.";
-    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = FontAwesome6.Solid.Bomb };
+    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = Phosphor.Bold.Bomb };
     public override PlacementBlueprint CreateBlueprint() => new LandminePlacementBlueprint();
 }

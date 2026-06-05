@@ -8,6 +8,6 @@ public class SingleNoteTool : ChartingTool
 {
     public override string Name => "Single Note";
     public override string Description => "Creates a single note.";
-    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = FontAwesome6.Solid.Pen };
+    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = Phosphor.Bold.PencilSimple };
     public override PlacementBlueprint CreateBlueprint() => new SingleNotePlacementBlueprint();
 }

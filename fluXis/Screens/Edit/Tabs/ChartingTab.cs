@@ -11,7 +11,7 @@ namespace fluXis.Screens.Edit.Tabs;
 
 public partial class ChartingTab : EditorTab
 {
-    public override IconUsage Icon => FontAwesome6.Solid.PenRuler;
+    public override IconUsage Icon => Phosphor.Bold.PencilRuler;
     public override string TabName => "Charting";
     public override bool HasLoading => true;
 

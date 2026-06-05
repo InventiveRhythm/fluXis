@@ -14,7 +14,7 @@ namespace fluXis.Overlay.Settings.Sections.Gameplay;
 public partial class GameplayHudSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.HUD;
-    public override IconUsage Icon => FontAwesome6.Solid.LayerGroup;
+    public override IconUsage Icon => Phosphor.Bold.Stack;
 
     private SettingsGameplayStrings strings => LocalizationStrings.Settings.Gameplay;
 

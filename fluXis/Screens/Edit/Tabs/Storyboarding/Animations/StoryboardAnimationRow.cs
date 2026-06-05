@@ -70,7 +70,7 @@ public partial class StoryboardAnimationRow : GridContainer
                             Action = addNew,
                             Child = new FluXisSpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.Plus,
+                                Icon = Phosphor.Bold.Plus,
                                 Margin = new MarginPadding { Horizontal = 8 },
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,

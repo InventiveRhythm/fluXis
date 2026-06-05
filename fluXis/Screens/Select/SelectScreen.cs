@@ -333,7 +333,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (map.MapSet.AutoImported)
         {
             panels.Content = new SingleButtonPanel(
-                FontAwesome6.Solid.ExclamationTriangle,
+                Phosphor.Bold.Warning,
                 "This map cannot be edited.",
                 "This map is auto-imported from a different game and cannot be opened in the editor.");
             return;

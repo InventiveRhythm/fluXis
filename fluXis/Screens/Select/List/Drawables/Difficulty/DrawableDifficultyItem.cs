@@ -38,19 +38,19 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
             List<MenuItem> items = new()
             {
                 !Equals(maps.CurrentMap, map)
-                    ? new MenuActionItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => maps.Select(map, true))
-                    : new MenuActionItem(LocalizationStrings.General.Play, FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => SelectAction?.Invoke()),
-                new MenuActionItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => EditAction?.Invoke(map)),
-                new MenuActionItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => ExportAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported },
-                new MenuActionItem(LocalizationStrings.General.Delete, FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => DeleteAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported }
+                    ? new MenuActionItem(LocalizationStrings.General.Select, Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => maps.Select(map, true))
+                    : new MenuActionItem(LocalizationStrings.General.Play, Phosphor.Bold.Play, MenuItemType.Highlighted, () => SelectAction?.Invoke()),
+                new MenuActionItem(LocalizationStrings.General.Edit, Phosphor.Bold.PencilSimple, MenuItemType.Normal, () => EditAction?.Invoke(map)),
+                new MenuActionItem(LocalizationStrings.General.Export, Phosphor.Bold.Package, MenuItemType.Normal, () => ExportAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported },
+                new MenuActionItem(LocalizationStrings.General.Delete, Phosphor.Bold.Trash, MenuItemType.Dangerous, () => DeleteAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported }
             };
 
             if (FluXisGameBase.IsDebug)
             {
                 if (map.OnlineID > 0)
-                    items.Add(new MenuActionItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
+                    items.Add(new MenuActionItem("Copy Online ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
 
-                items.Add(new MenuActionItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
+                items.Add(new MenuActionItem("Copy ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
             }
 
             return items.ToArray();
@@ -184,7 +184,7 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                 Child = new FluXisSpriteIcon
                 {
                     X = -2,
-                    Icon = FontAwesome6.Solid.AngleLeft,
+                    Icon = Phosphor.Bold.CaretLeft,
                     Size = new Vector2(16),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,

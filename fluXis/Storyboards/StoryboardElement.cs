@@ -103,29 +103,29 @@ public class StoryboardElement : ITimedObject
 
 public enum StoryboardElementType
 {
-    [Icon(0xf0c8)]
+    [Icon(0xE45E, Fill = true)]
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
     Box = 0,
 
-    [Icon(0xf03e)]
+    [Icon(0xE2CC)]
     Sprite = 1,
 
-    [Icon(0xf031)]
+    [Icon(0xE48A)]
     Text = 2,
 
-    [Icon(0xf70e)]
+    [Icon(0xEB7A)]
     Script = 3,
 
-    [Icon(0xf111)]
+    [Icon(0xE18A, Fill = true)]
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
     [AllowedAnimation(StoryboardAnimationType.Rotate, true)]
     Circle = 4,
 
-    [Icon(0xf111, Regular = true)]
+    [Icon(0xE18A)]
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
@@ -133,26 +133,26 @@ public enum StoryboardElementType
     [AllowedAnimation(StoryboardAnimationType.Rotate, true)]
     OutlineCircle = 5,
 
-    [Icon(0xf1fc)]
+    [Icon(0xE590)]
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
     SkinSprite = 6,
 
-    [Icon(0xf0c8, Regular = true)]
+    [Icon(0xE45E)]
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
     [AllowedAnimation(StoryboardAnimationType.Border)]
     OutlineBox = 7,
 
-    [Icon(0xf0c8, Regular = true)]
+    [Icon(0xE45E)]
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]
     Compound = 8,
 
-    [Icon(0xf0c8, Regular = true)]
+    [Icon(0xE740)]
     [WidthHeight]
     [AllowedAnimation(StoryboardAnimationType.Width)]
     [AllowedAnimation(StoryboardAnimationType.Height)]

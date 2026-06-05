@@ -90,7 +90,7 @@ public partial class EditorBottomBar : Container
                                 Child = new CornerButton
                                 {
                                     ButtonText = "Test",
-                                    Icon = FontAwesome6.Solid.Play,
+                                    Icon = Phosphor.Bold.Play,
                                     ShowImmediately = true,
                                     ButtonColor = Theme.Primary,
                                     Corner = Corner.BottomRight,

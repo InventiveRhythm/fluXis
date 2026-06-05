@@ -411,7 +411,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                         {
                                             Text = "This file does not exist.",
                                             SubText = "Do you want to create it?",
-                                            Icon = FontAwesome6.Solid.File,
+                                            Icon = Phosphor.Bold.File,
                                             Buttons = new ButtonData[]
                                             {
                                                 new PrimaryButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
@@ -436,7 +436,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 void showError(string text, [CanBeNull] Exception e)
                                 {
                                     panels.Content = new SingleButtonPanel(
-                                        FontAwesome6.Solid.ExclamationTriangle,
+                                        Phosphor.Bold.Warning,
                                         text,
                                         e?.Message ?? "Unknown error"
                                     );

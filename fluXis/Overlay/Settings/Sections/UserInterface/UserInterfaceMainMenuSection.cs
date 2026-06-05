@@ -14,7 +14,7 @@ namespace fluXis.Overlay.Settings.Sections.UserInterface;
 public partial class UserInterfaceMainMenuSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.MainMenu;
-    public override IconUsage Icon => FontAwesome6.Solid.House;
+    public override IconUsage Icon => Phosphor.Bold.House;
 
     private SettingsUIStrings strings => LocalizationStrings.Settings.UI;
 

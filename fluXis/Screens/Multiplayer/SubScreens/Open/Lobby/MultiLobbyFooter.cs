@@ -21,14 +21,14 @@ public partial class MultiLobbyFooter : Footer
     protected override CornerButton CreateLeftButton() => new()
     {
         ButtonText = "Leave",
-        Icon = FontAwesome6.Solid.DoorOpen,
+        Icon = Phosphor.Bold.DoorOpen,
         Action = LeaveAction
     };
 
     protected override CornerButton CreateRightButton() => new()
     {
         ButtonText = "Ready",
-        Icon = FontAwesome6.Solid.SquareCheck,
+        Icon = Phosphor.Bold.CheckSquare,
         ButtonColor = Theme.Primary,
         Corner = Corner.BottomRight,
         Action = RightButtonAction
@@ -39,7 +39,7 @@ public partial class MultiLobbyFooter : Footer
         yield return new FooterButton
         {
             Text = "Change Map",
-            Icon = FontAwesome6.Solid.ArrowRightArrowLeft,
+            Icon = Phosphor.Bold.ArrowsLeftRight,
             AccentColor = Theme.Footer1,
             Enabled = CanChangeMap,
             Action = ChangeMapAction
@@ -48,7 +48,7 @@ public partial class MultiLobbyFooter : Footer
         yield return new FooterButton
         {
             Text = "View Map",
-            Icon = FontAwesome6.Solid.Eye,
+            Icon = Phosphor.Bold.Eye,
             AccentColor = Theme.Footer2,
             Action = ViewMapAction
         };

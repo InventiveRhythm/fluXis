@@ -76,7 +76,7 @@ public partial class BrowserSearchBar : Container
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 X = 30,
-                Icon = FontAwesome6.Solid.MagnifyingGlass
+                Icon = Phosphor.Bold.MagnifyingGlass
             },
             new ClickableSpriteIcon
             {
@@ -84,7 +84,7 @@ public partial class BrowserSearchBar : Container
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.Centre,
                 X = -30,
-                Icon = FontAwesome6.Solid.AngleDoubleRight,
+                Icon = Phosphor.Bold.CaretDoubleRight,
                 Action = search
             }
         };

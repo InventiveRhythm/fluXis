@@ -14,7 +14,7 @@ namespace fluXis.Overlay.Settings.Sections.Audio;
 public partial class AudioVolumeSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Volume;
-    public override IconUsage Icon => FontAwesome6.Solid.VolumeHigh;
+    public override IconUsage Icon => Phosphor.Bold.SpeakerHigh;
 
     private SettingsAudioStrings strings => LocalizationStrings.Settings.Audio;
 

@@ -18,14 +18,14 @@ public partial class MultiLobbyListFooter : Footer
     protected override CornerButton CreateLeftButton() => new()
     {
         ButtonText = LocalizationStrings.General.Back,
-        Icon = FontAwesome6.Solid.AngleLeft,
+        Icon = Phosphor.Bold.CaretLeft,
         Action = BackAction
     };
 
     protected override CornerButton CreateRightButton() => new()
     {
         ButtonText = "Refresh",
-        Icon = FontAwesome6.Solid.ArrowsRotate,
+        Icon = Phosphor.Bold.ArrowsClockwise,
         ButtonColor = Theme.Primary,
         Corner = Corner.BottomRight,
         Action = RefreshAction
@@ -36,7 +36,7 @@ public partial class MultiLobbyListFooter : Footer
         yield return new FooterButton
         {
             Text = "Create",
-            Icon = FontAwesome6.Solid.Plus,
+            Icon = Phosphor.Bold.Plus,
             AccentColor = Theme.Footer1,
             Action = CreateAction
         };

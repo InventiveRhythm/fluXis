@@ -47,7 +47,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
             {
                 new MenuExpandItem(
                     "Create new...",
-                    FontAwesome6.Solid.Plus,
+                    Phosphor.Bold.Plus,
                     groups.Select<IGrouping<string, StoryboardElementType>, FluXisMenuItem>(x =>
                     {
                         var items = x.OrderBy(y => y).ToList();

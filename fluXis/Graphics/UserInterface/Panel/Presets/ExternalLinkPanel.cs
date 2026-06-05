@@ -18,7 +18,7 @@ public partial class ExternalLinkPanel : ButtonPanel
 
     public ExternalLinkPanel(string link)
     {
-        Icon = FontAwesome6.Solid.Link;
+        Icon = Phosphor.Bold.Link;
         Text = "Just to make sure...";
         CreateSubText = flow =>
         {

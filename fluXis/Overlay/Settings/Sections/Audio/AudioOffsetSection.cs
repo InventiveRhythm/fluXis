@@ -15,7 +15,7 @@ namespace fluXis.Overlay.Settings.Sections.Audio;
 public partial class AudioOffsetSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Offset;
-    public override IconUsage Icon => FontAwesome6.Solid.Clock;
+    public override IconUsage Icon => Phosphor.Bold.Clock;
 
     private SettingsAudioStrings strings => LocalizationStrings.Settings.Audio;
 

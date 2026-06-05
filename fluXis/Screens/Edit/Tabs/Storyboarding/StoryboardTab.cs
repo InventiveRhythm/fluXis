@@ -27,7 +27,7 @@ namespace fluXis.Screens.Edit.Tabs.Storyboarding;
 
 public partial class StoryboardTab : EditorTab
 {
-    public override IconUsage Icon => FontAwesome6.Solid.PaintBrush;
+    public override IconUsage Icon => Phosphor.Bold.PaintBrushBroad;
     public override string TabName => "Storyboard";
 
     [Resolved]

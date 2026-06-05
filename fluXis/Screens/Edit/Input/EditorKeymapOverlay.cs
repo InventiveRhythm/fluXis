@@ -26,7 +26,7 @@ namespace fluXis.Screens.Edit.Input;
 
 public partial class EditorKeymapOverlay : IconEntranceOverlay, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    protected override IconUsage Icon => FontAwesome6.Solid.Keyboard;
+    protected override IconUsage Icon => Phosphor.Bold.Keyboard;
     protected override ColourInfo BackgroundColor => Theme.Background1;
     protected override float IconRotation => 0;
 
@@ -68,7 +68,7 @@ public partial class EditorKeymapOverlay : IconEntranceOverlay, IKeyBindingHandl
                             {
                                 new FluXisSpriteIcon
                                 {
-                                    Icon = FontAwesome6.Solid.Keyboard,
+                                    Icon = Phosphor.Bold.Keyboard,
                                     Size = new Vector2(20),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
@@ -86,7 +86,7 @@ public partial class EditorKeymapOverlay : IconEntranceOverlay, IKeyBindingHandl
                         {
                             Anchor = Anchor.CentreRight,
                             Origin = Anchor.CentreRight,
-                            Icon = FontAwesome6.Solid.XMark,
+                            Icon = Phosphor.Bold.X,
                             Margin = new MarginPadding(16),
                             ButtonSize = 48,
                             IconSize = 24,

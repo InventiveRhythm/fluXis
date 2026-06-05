@@ -239,7 +239,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
 
             if (selected?.Count == 0)
             {
-                notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+                notifications.SendSmallText("Nothing selected.", Phosphor.Bold.X);
                 return true;
             }
 

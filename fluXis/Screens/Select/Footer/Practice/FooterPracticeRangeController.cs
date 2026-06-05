@@ -10,7 +10,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
@@ -233,7 +232,7 @@ public partial class FooterPracticeRangeController : Container
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.BottomCentre,
-                    Icon = FontAwesome.Solid.CaretDown,
+                    Icon = Phosphor.Bold.CaretDown,
                     Size = new Vector2(triangle_size),
                     Colour = Color4.White,
                 },
@@ -241,7 +240,7 @@ public partial class FooterPracticeRangeController : Container
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.TopCentre,
-                    Icon = FontAwesome.Solid.CaretUp,
+                    Icon = Phosphor.Bold.CaretUp,
                     Size = new Vector2(triangle_size),
                     Colour = Color4.White
                 }

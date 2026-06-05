@@ -33,7 +33,7 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
 
     public const float SHEAR_AMOUNT = 0.1f;
 
-    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
+    public IconUsage Icon { get; init; } = Phosphor.Bold.QuestionMark;
     public LocalisableString Text { get; init; } = "Default Text";
     public virtual LocalisableString Description { get; set; } = string.Empty;
     public Action Action { get; init; }

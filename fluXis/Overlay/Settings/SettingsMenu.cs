@@ -29,7 +29,7 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
     protected override float OpenedRoundness => 0;
     protected override float OverlayPadding => 0;
     protected override ColourInfo BackgroundColor => Theme.Background1;
-    protected override IconUsage Icon => FontAwesome6.Solid.Gear;
+    protected override IconUsage Icon => Phosphor.Bold.GearSix;
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -138,7 +138,7 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
                                         {
                                             Anchor = Anchor.CentreRight,
                                             Origin = Anchor.CentreRight,
-                                            Icon = FontAwesome6.Solid.XMark,
+                                            Icon = Phosphor.Bold.X,
                                             ButtonSize = 36,
                                             IconSize = 16,
                                             Margin = new MarginPadding(6),

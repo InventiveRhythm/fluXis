@@ -35,20 +35,20 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
-                new MenuActionItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
+                new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
+                new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
 
             if (user.Following is UserFollowState.Mutual)
-                list.Add(new MenuActionItem("Message", FontAwesome6.Solid.Message, MenuItemType.Normal, () => chat?.CreatePrivateChannel(user.ID)));
+                list.Add(new MenuActionItem("Message", Phosphor.Bold.ChatsCircle, MenuItemType.Normal, () => chat?.CreatePrivateChannel(user.ID)));
 
             if (user.SteamID is not null)
-                list.Add(new MenuActionItem("View Steam Profile", FontAwesome6.Brands.Steam, MenuItemType.Normal, () => game?.OpenLink(StringUtils.FormatSteamProfile(user.SteamID!.Value), true)));
+                list.Add(new MenuActionItem("View Steam Profile", Phosphor.Bold.SteamLogo, MenuItemType.Normal, () => game?.OpenLink(StringUtils.FormatSteamProfile(user.SteamID!.Value), true)));
 
             if (FluXisGameBase.IsDebug)
             {
                 list.Add(new MenuSpacerItem());
-                list.Add(new MenuActionItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard.SetText($"{user.ID}")));
+                list.Add(new MenuActionItem("Copy ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard.SetText($"{user.ID}")));
             }
 
             return list.ToArray();

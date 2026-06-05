@@ -29,7 +29,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardNotificationsTab : DashboardTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Notifications;
-    public override IconUsage Icon => FontAwesome6.Solid.Bell;
+    public override IconUsage Icon => Phosphor.Bold.Bell;
     public override DashboardTabType Type => DashboardTabType.Notifications;
 
     [Resolved]
@@ -243,7 +243,7 @@ public partial class DashboardNotificationsTab : DashboardTab
                         new FluXisSpriteIcon
                         {
                             Size = new Vector2(24),
-                            Icon = FontAwesome6.Solid.CircleNodes,
+                            Icon = Phosphor.Bold.Graph,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Shadow = true

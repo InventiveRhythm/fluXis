@@ -26,7 +26,7 @@ public partial class DrawableMenuToggleItem : DrawableFluXisMenuItem<MenuToggleI
             Child = new FluXisSpriteIcon
             {
                 Size = new Vector2(16),
-                Icon = FontAwesome6.Solid.Check
+                Icon = Phosphor.Bold.Check
             }
         };
     }

@@ -93,7 +93,7 @@ public abstract partial class SettingsItem : Container, IFocusable
             {
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Icon = FontAwesome6.Solid.AngleLeft,
+                Icon = Phosphor.Bold.CaretLeft,
                 Size = new Vector2(16),
                 Alpha = 0
             },
@@ -190,7 +190,7 @@ public abstract partial class SettingsItem : Container, IFocusable
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Icon = FontAwesome6.Solid.RotateLeft,
+                        Icon = Phosphor.Bold.ArrowCounterClockwise,
                         Size = new Vector2(16)
                     }
                 }

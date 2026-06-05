@@ -14,7 +14,7 @@ namespace fluXis.Overlay.Settings.Sections.UserInterface;
 public partial class UserInterfaceSongSelectSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.SongSelect;
-    public override IconUsage Icon => FontAwesome6.Solid.Map;
+    public override IconUsage Icon => Phosphor.Bold.MapTrifold;
 
     private SettingsUIStrings strings => LocalizationStrings.Settings.UI;
 

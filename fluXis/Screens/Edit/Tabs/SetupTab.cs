@@ -17,7 +17,7 @@ namespace fluXis.Screens.Edit.Tabs;
 
 public partial class SetupTab : EditorTab
 {
-    public override IconUsage Icon => FontAwesome6.Solid.ScrewdriverWrench;
+    public override IconUsage Icon => Phosphor.Bold.Wrench;
     public override string TabName => "Setup";
 
     private SetupSection metadata;

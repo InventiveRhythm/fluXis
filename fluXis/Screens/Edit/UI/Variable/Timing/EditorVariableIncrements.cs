@@ -64,7 +64,7 @@ public partial class EditorVariableIncrements : GridContainer
 
             InternalChildren = new Drawable[]
             {
-                new IncrementButton(FontAwesome6.Solid.Minus, v => change(-v)),
+                new IncrementButton(Phosphor.Bold.Minus, v => change(-v)),
                 new FluXisSpriteText
                 {
                     Text = text,
@@ -72,7 +72,7 @@ public partial class EditorVariableIncrements : GridContainer
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 },
-                new IncrementButton(FontAwesome6.Solid.Plus, v => change(v))
+                new IncrementButton(Phosphor.Bold.Plus, v => change(v))
                 {
                     Anchor = Anchor.TopRight,
                     Origin = Anchor.TopRight

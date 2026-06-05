@@ -322,7 +322,7 @@ public partial class MapStore : Component
             {
                 Text = "Failed to download bundled maps!",
                 SubText = "Make sure you have a working and stable internet connection when launching the game!",
-                Icon = FontAwesome6.Solid.ExclamationTriangle,
+                Icon = Phosphor.Bold.Warning,
                 Buttons = new ButtonData[]
                 {
                     new PrimaryButtonData("Retry", () => DownloadBundledMaps(complete)),

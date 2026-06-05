@@ -10,7 +10,7 @@ public class NoEventMod : IMod, IApplicableToEvents
     public string Name => "No Events";
     public string Acronym => "NEV";
     public string Description => "Removes all visual effects.";
-    public IconUsage Icon => FontAwesome6.Solid.Diamond;
+    public IconUsage Icon => Phosphor.Bold.Diamond;
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => 0.6f;
     public bool Rankable => false;

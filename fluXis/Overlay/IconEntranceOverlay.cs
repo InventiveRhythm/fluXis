@@ -23,7 +23,7 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
     protected virtual float IconRotation => 60;
     protected virtual float OpenedRoundness => 20;
     protected virtual ColourInfo BackgroundColor => Theme.Background2;
-    protected virtual IconUsage Icon => FontAwesome6.Solid.Question;
+    protected virtual IconUsage Icon => Phosphor.Bold.QuestionMark;
 
     [CanBeNull]
     protected Sample OpenSample { get; set; }

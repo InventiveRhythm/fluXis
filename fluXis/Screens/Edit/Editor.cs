@@ -301,22 +301,22 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         {
                             Items = new FluXisMenuItem[]
                             {
-                                new MenuExpandItem("File", FontAwesome6.Solid.File, new FluXisMenuItem[]
+                                new MenuExpandItem("File", Phosphor.Bold.File, new FluXisMenuItem[]
                                 {
-                                    new MenuActionItem("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { IsEnabled = () => HasUnsavedChanges },
-                                    new MenuToggleItem("Auto Save", FontAwesome6.Solid.FloppyDisk, autosave),
+                                    new MenuActionItem("Save", Phosphor.Bold.FloppyDisk, () => save()) { IsEnabled = () => HasUnsavedChanges },
+                                    new MenuToggleItem("Auto Save", Phosphor.Bold.FloppyDisk, autosave),
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Create new difficulty...", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
+                                    new MenuActionItem("Create new difficulty...", Phosphor.Bold.Plus, () => panels.Content = new EditorDifficultyCreationPanel
                                     {
                                         OnCreate = createNewDiff
                                     }) { IsEnabled = () => canSave },
-                                    new MenuActionItem("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
+                                    new MenuActionItem("Switch to difficulty", Phosphor.Bold.ArrowsLeftRight, () => { })
                                     {
                                         IsEnabled = () => EditorMap.MapSet.Maps.Count > 1,
                                         Items = EditorMap.MapSet.Maps.Where(x => x.ID != EditorMap.RealmMap.ID)
-                                                         .Select(x => new MenuActionItem(x.Difficulty, FontAwesome6.Solid.Circle, () => loader.SwitchTo(x))).ToList()
+                                                         .Select(x => new MenuActionItem(x.Difficulty, Phosphor.Bold.Circle, () => loader.SwitchTo(x))).ToList()
                                     },
-                                    new MenuActionItem("Delete difficulty...", FontAwesome6.Solid.Trash, () =>
+                                    new MenuActionItem("Delete difficulty...", Phosphor.Bold.Trash, () =>
                                     {
                                         panels.Content = new ConfirmDeletionPanel(() =>
                                         {
@@ -335,63 +335,63 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                         IsEnabled = () => EditorMap.MapSet.Maps.Count > 1 && canSave
                                     },
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Export", FontAwesome6.Solid.BoxOpen, export),
-                                    new MenuActionItem("Upload...", FontAwesome6.Solid.Upload, startUpload) { IsEnabled = () => canSave && api.IsLoggedIn },
-                                    new MenuActionItem("Submit to Queue...", FontAwesome6.Solid.Upload, submitToQueue) { IsEnabled = () => EditorMap.MapSet.OnlineID > 0 && api.IsLoggedIn },
+                                    new MenuActionItem("Export", Phosphor.Bold.Package, export),
+                                    new MenuActionItem("Upload...", Phosphor.Bold.Upload, startUpload) { IsEnabled = () => canSave && api.IsLoggedIn },
+                                    new MenuActionItem("Submit to Queue...", Phosphor.Bold.Upload, submitToQueue) { IsEnabled = () => EditorMap.MapSet.OnlineID > 0 && api.IsLoggedIn },
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
-                                    experiments.Get<bool>(ExperimentConfig.LrcFeatures) ? new MenuActionItem("Export notes as .lrc", FontAwesome6.Solid.LineColumns, exportNotes) : null,
-                                    experiments.Get<bool>(ExperimentConfig.LrcFeatures) ? new MenuActionItem("Import .lrc as notes", FontAwesome6.Solid.LineColumns, importNotes) : null,
+                                    new MenuActionItem("Open Song Folder", Phosphor.Bold.FolderOpen, openFolder),
+                                    experiments.Get<bool>(ExperimentConfig.LrcFeatures) ? new MenuActionItem("Export notes as .lrc", Phosphor.Bold.List, exportNotes) : null,
+                                    experiments.Get<bool>(ExperimentConfig.LrcFeatures) ? new MenuActionItem("Import .lrc as notes", Phosphor.Bold.List, importNotes) : null,
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, tryExit)
+                                    new MenuActionItem("Exit", Phosphor.Bold.DoorOpen, MenuItemType.Dangerous, tryExit)
                                 }.Where(x => x != null)),
-                                new MenuExpandItem("Edit", FontAwesome6.Solid.Pen, new FluXisMenuItem[]
+                                new MenuExpandItem("Edit", Phosphor.Bold.PencilSimple, new FluXisMenuItem[]
                                 {
-                                    new MenuActionItem("Undo", FontAwesome6.Solid.RotateLeft, actionStack.Undo) { IsEnabled = () => actionStack.CanUndo },
-                                    new MenuActionItem("Redo", FontAwesome6.Solid.RotateRight, actionStack.Redo) { IsEnabled = () => actionStack.CanRedo },
+                                    new MenuActionItem("Undo", Phosphor.Bold.ArrowCounterClockwise, actionStack.Undo) { IsEnabled = () => actionStack.CanUndo },
+                                    new MenuActionItem("Redo", Phosphor.Bold.ArrowClockwise, actionStack.Redo) { IsEnabled = () => actionStack.CanRedo },
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Copy", FontAwesome6.Solid.Copy, () => ChartingContainer?.Copy())
+                                    new MenuActionItem("Copy", Phosphor.Bold.Copy, () => ChartingContainer?.Copy())
                                         { IsEnabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
-                                    new MenuActionItem("Cut", FontAwesome6.Solid.Cut, () => ChartingContainer?.Copy(true))
+                                    new MenuActionItem("Cut", Phosphor.Bold.Scissors, () => ChartingContainer?.Copy(true))
                                         { IsEnabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
-                                    new MenuActionItem("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
+                                    new MenuActionItem("Paste", Phosphor.Bold.Clipboard, () => ChartingContainer?.Paste()),
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Apply Offset...", FontAwesome6.Solid.Clock, applyOffset),
-                                    new MenuActionItem("Flip Selection", FontAwesome6.Solid.LeftRight, () => ChartingContainer?.FlipSelection())
+                                    new MenuActionItem("Apply Offset...", Phosphor.Bold.Clock, applyOffset),
+                                    new MenuActionItem("Flip Selection", Phosphor.Bold.ArrowsHorizontal, () => ChartingContainer?.FlipSelection())
                                         { IsEnabled = () => ChartingContainer?.CanFlipSelection ?? false },
-                                    new MenuActionItem("Shuffle Selection", FontAwesome6.Solid.Shuffle, () => ChartingContainer?.ShuffleSelection())
+                                    new MenuActionItem("Shuffle Selection", Phosphor.Bold.ShuffleAngular, () => ChartingContainer?.ShuffleSelection())
                                         { IsEnabled = () => ChartingContainer?.CanShuffleSelection ?? false },
-                                    new MenuActionItem("Re-snap all notes", FontAwesome6.Solid.ArrowsRotate, () => ChartingContainer?.ReSnapAll()),
+                                    new MenuActionItem("Re-snap all notes", Phosphor.Bold.ArrowsClockwise, () => ChartingContainer?.ReSnapAll()),
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll()),
-                                    new MenuActionItem("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
+                                    new MenuActionItem("Select all", Phosphor.Bold.SelectionAll, () => ChartingContainer?.BlueprintContainer.SelectAll()),
+                                    new MenuActionItem("Delete", Phosphor.Bold.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Editor Keymap...", FontAwesome6.Solid.Keyboard, () => keymapOverlay.Show())
+                                    new MenuActionItem("Editor Keymap...", Phosphor.Bold.Keyboard, () => keymapOverlay.Show())
                                 }),
-                                new MenuExpandItem("View", FontAwesome6.Solid.Eye, createView()),
-                                new MenuExpandItem("Timing", FontAwesome6.Solid.Clock, new FluXisMenuItem[]
+                                new MenuExpandItem("View", Phosphor.Bold.Eye, createView()),
+                                new MenuExpandItem("Timing", Phosphor.Bold.Clock, new FluXisMenuItem[]
                                 {
-                                    new MenuActionItem("Set preview point to current time", FontAwesome6.Solid.Stopwatch, () =>
+                                    new MenuActionItem("Set preview point to current time", Phosphor.Bold.Timer, () =>
                                     {
                                         EditorMap.MapInfo.Metadata.PreviewTime
                                             = EditorMap.RealmMap.Metadata.PreviewTime
                                                 = (int)EditorClock.CurrentTime;
                                     })
                                 }),
-                                new MenuExpandItem("Audio", FontAwesome6.Solid.VolumeHigh, new FluXisMenuItem[]
+                                new MenuExpandItem("Audio", Phosphor.Bold.SpeakerHigh, new FluXisMenuItem[]
                                 {
-                                    new MenuToggleItem("Enable Low Pass filter", FontAwesome6.Solid.AngleDown, () =>
+                                    new MenuToggleItem("Enable Low Pass filter", Phosphor.Bold.CaretDown, () =>
                                     {
                                         lowPassEnabled = !lowPassEnabled;
                                         lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, 400);
                                     }, () => lowPassEnabled),
-                                    new MenuToggleItem("Enable High Pass filter", FontAwesome6.Solid.AngleUp, () =>
+                                    new MenuToggleItem("Enable High Pass filter", Phosphor.Bold.CaretUp, () =>
                                     {
                                         highPassEnabled = !highPassEnabled;
                                         highPass.CutoffTo(highPassEnabled ? 300 : 0, 400);
                                     }, () => highPassEnabled)
                                 }),
-                                new MenuActionItem("Wiki", FontAwesome6.Solid.Book, openHelp)
+                                new MenuActionItem("Wiki", Phosphor.Bold.Book, openHelp)
                             }
                         },
                         new EditorTabSwitcher
@@ -412,19 +412,19 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             var list = new List<FluXisMenuItem>
             {
-                new MenuExpandItem("Background Dim", FontAwesome6.Solid.Image, createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)),
-                new MenuExpandItem("Background Blur", FontAwesome6.Solid.Aperture, createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)),
+                new MenuExpandItem("Background Dim", Phosphor.Bold.Image, createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)),
+                new MenuExpandItem("Background Blur", Phosphor.Bold.Aperture, createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)),
                 new MenuSpacerItem(),
-                new MenuExpandItem("Waveform opacity", FontAwesome6.Solid.WaveformLines, createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)),
+                new MenuExpandItem("Waveform opacity", Phosphor.Bold.Waveform, createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)),
                 new MenuSpacerItem(),
-                new MenuToggleItem("Show sample on notes", FontAwesome6.Solid.LayerGroup, settings.ShowSamples),
+                new MenuToggleItem("Show sample on notes", Phosphor.Bold.Stack, settings.ShowSamples),
                 new MenuSpacerItem(),
-                new MenuToggleItem("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, settings.ForceAspectRatio),
-                new MenuToggleItem("Compact Sidebar", FontAwesome6.Solid.ArrowsToLine, config.GetBindable<bool>(FluXisSetting.EditorCompactMode)),
+                new MenuToggleItem("Force 16:9 Ratio", Phosphor.Bold.Rectangle, settings.ForceAspectRatio),
+                new MenuToggleItem("Compact Sidebar", Phosphor.Bold.ArrowsInLineVertical, config.GetBindable<bool>(FluXisSetting.EditorCompactMode)),
             };
 
             if (experiments.Get<bool>(ExperimentConfig.ModView))
-                list.Add(new MenuToggleItem("Toggle ModView", FontAwesome6.Solid.Pen, () => modding.Toggle(), () => modding.IsActive));
+                list.Add(new MenuToggleItem("Toggle ModView", Phosphor.Bold.PencilSimple, () => modding.Toggle(), () => modding.IsActive));
 
             return list.ToArray();
         }
@@ -433,7 +433,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private FluXisMenuItem[] createPercentItems(Func<float> get, Action<float> set)
     {
         float[] values = { 0, .2f, .4f, .6f, .8f, 1 };
-        return values.Select(x => new MenuToggleItem($"{x * 100:0}%", FontAwesome6.Solid.Percent, () => set(x), () => Math.Abs(get() - x) < .01f)).ToArray<FluXisMenuItem>();
+        return values.Select(x => new MenuToggleItem($"{x * 100:0}%", Phosphor.Bold.Percent, () => set(x), () => Math.Abs(get() - x) < .01f)).ToArray<FluXisMenuItem>();
     }
 
     private void updateStateHash()
@@ -499,7 +499,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (!canSave)
         {
             panels.Content = new SingleButtonPanel(
-                FontAwesome6.Solid.ExclamationTriangle,
+                Phosphor.Bold.Warning,
                 "This map is from another game!",
                 "You can edit and playtest, but not save or upload.");
         }
@@ -828,7 +828,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         if (!HasUnsavedChanges)
         {
-            notifications.SendSmallText("Map is already up to date", FontAwesome6.Solid.Check);
+            notifications.SendSmallText("Map is already up to date", Phosphor.Bold.Check);
             return true;
         }
 
@@ -842,7 +842,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         isNewMap = false;
         updateStateHash();
-        notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
+        notifications.SendSmallText("Saved!", Phosphor.Bold.Check);
         lastSaveTime = now;
 
         EditorMap.ScriptWatcher.Enable();
@@ -882,7 +882,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             panel.Hide();
         };
         req.Failure += ex => panels.Replace(new SingleButtonPanel(
-            FontAwesome6.Solid.ExclamationTriangle,
+            Phosphor.Bold.Warning,
             "Failed to submit!",
             ex.Message
         ));
@@ -913,7 +913,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             panels.Content = new ButtonPanel
             {
-                Icon = FontAwesome6.Solid.ExclamationTriangle,
+                Icon = Phosphor.Bold.Warning,
                 Text = "You are about to update a mapset!",
                 SubText = "Are you sure you want to continue?\nThis will wipe scores of updated maps.",
                 Buttons = new ButtonData[]
@@ -954,7 +954,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
                 panels.Content = new ButtonPanel
                 {
-                    Icon = FontAwesome6.Solid.ExclamationTriangle,
+                    Icon = Phosphor.Bold.Warning,
                     Text = "You already have a mapset with the same title and artist uploaded!",
                     CreateSubText = flow =>
                     {
@@ -1030,7 +1030,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     builder.AppendLine($"{kvp.Key}: {kvp.Value} issue(s)");
 
                 Schedule(() => panels.Replace(new SingleButtonPanel(
-                    FontAwesome6.Solid.ExclamationTriangle,
+                    Phosphor.Bold.Warning,
                     "Issues found!",
                     builder.ToString()
                 )));
@@ -1066,7 +1066,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (!request.IsSuccessful)
             {
                 Schedule(() => panels.Replace(new SingleButtonPanel(
-                    FontAwesome6.Solid.ExclamationTriangle,
+                    Phosphor.Bold.Warning,
                     $"Failed up {(isUpdate ? "update" : "upload")} mapset!",
                     request.FailReason?.Message ?? APIRequest.UNKNOWN_ERROR
                 )));
@@ -1101,7 +1101,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             Logger.Error(e, "An error occurred while uploading the mapset!");
             Schedule(() => panels.Replace(new SingleButtonPanel(
-                FontAwesome6.Solid.ExclamationTriangle,
+                Phosphor.Bold.Warning,
                 $"Failed up {(isUpdate ? "update" : "upload")} mapset!",
                 e.Message
             )));

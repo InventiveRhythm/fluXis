@@ -187,12 +187,12 @@ public partial class MultiLobby : MultiSubScreen
         if (!hasMapDownloaded)
         {
             footer.RightButton.ButtonText = "Download Map";
-            footer.RightButton.Icon = FontAwesome6.Solid.Download;
+            footer.RightButton.Icon = Phosphor.Bold.ArrowLineDown;
             return;
         }
 
         footer.RightButton.ButtonText = ready ? "Unready" : "Ready";
-        footer.RightButton.Icon = FontAwesome6.Solid.SquareCheck;
+        footer.RightButton.Icon = Phosphor.Bold.CheckSquare;
     }
 
     private void mapAdded(RealmMapSet set)
@@ -260,7 +260,7 @@ public partial class MultiLobby : MultiSubScreen
         }
         catch (Exception ex)
         {
-            notifications.SendError("Map change failed", ex.Message, FontAwesome6.Solid.Bomb);
+            notifications.SendError("Map change failed", ex.Message, Phosphor.Bold.Bomb);
         }
     }));
 
@@ -319,7 +319,7 @@ public partial class MultiLobby : MultiSubScreen
         footer.CanChangeMap.Value = isHost;
 
         if (isHost)
-            notifications.SendSmallText("You are now the lobby host.", FontAwesome6.Solid.Crown);
+            notifications.SendSmallText("You are now the lobby host.", Phosphor.Bold.CrownSimple);
 
         hostTransferSample?.Play();
     }
@@ -432,7 +432,7 @@ public partial class MultiLobby : MultiSubScreen
 
         panels.Content ??= new ButtonPanel
         {
-            Icon = FontAwesome6.Solid.DoorOpen,
+            Icon = Phosphor.Bold.DoorOpen,
             Text = "Are you sure you want to exit the lobby?",
             Buttons = new ButtonData[]
             {

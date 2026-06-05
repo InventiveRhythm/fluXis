@@ -26,7 +26,7 @@ public partial class DrawableMenuExpandItem : DrawableFluXisMenuItem<MenuExpandI
             Child = new FluXisSpriteIcon
             {
                 Size = new Vector2(16),
-                Icon = FontAwesome6.Solid.AngleRight
+                Icon = Phosphor.Bold.CaretRight
             }
         };
     }

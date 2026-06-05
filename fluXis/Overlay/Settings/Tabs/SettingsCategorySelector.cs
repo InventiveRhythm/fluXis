@@ -90,7 +90,7 @@ public partial class SettingsCategorySelector : Container, IKeyBindingHandler<Fl
             {
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Icon = FontAwesome6.Solid.XMark,
+                Icon = Phosphor.Bold.X,
                 ButtonSize = 70,
                 Action = CloseAction,
                 Margin = new MarginPadding(10)

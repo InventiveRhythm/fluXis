@@ -89,7 +89,7 @@ public partial class SkinIcon : CompositeDrawable
                 {
                     new FluXisSpriteIcon
                     {
-                        Icon = FontAwesome6.Brands.Steam,
+                        Icon = Phosphor.Bold.SteamLogo,
                         Size = new Vector2(12),
                         Alpha = skin.SteamWorkshop ? 1 : 0,
                         Margin = new MarginPadding { Bottom = 4 },

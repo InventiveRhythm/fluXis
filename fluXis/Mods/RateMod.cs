@@ -9,7 +9,7 @@ public class RateMod : IMod
 {
     public string Name => "Rate";
     public string Description => "Change the rate of the map";
-    public IconUsage Icon => FontAwesome6.Solid.Clock;
+    public IconUsage Icon => Phosphor.Bold.Clock;
     public ModType Type => ModType.Rate;
     public bool Rankable => true;
     public Type[] IncompatibleMods => Array.Empty<Type>();

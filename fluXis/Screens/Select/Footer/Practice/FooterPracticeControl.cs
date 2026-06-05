@@ -46,7 +46,7 @@ public partial class FooterPracticeControl : GridContainer
         {
             new Drawable[]
             {
-                new Button(FontAwesome6.Solid.Minus, () => changeValue(-1)),
+                new Button(Phosphor.Bold.Minus, () => changeValue(-1)),
                 new FillFlowContainer
                 {
                     AutoSizeAxes = Axes.Both,
@@ -90,7 +90,7 @@ public partial class FooterPracticeControl : GridContainer
                         }
                     }
                 },
-                new Button(FontAwesome6.Solid.Plus, () => changeValue(1))
+                new Button(Phosphor.Bold.Plus, () => changeValue(1))
             }
         };
     }
