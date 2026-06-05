@@ -23,6 +23,9 @@ public class LuaStoryboardAnimation : ILuaModel
     [LuaMember(Name = "type")]
     public StoryboardAnimationType Type { get; set; }
 
+    [LuaMember(Name = "useStartValue")]
+    public bool UseStartValue { get; set; } = true;
+
     [LuaMember(Name = "start")]
     public string Start { get; set; }
 
@@ -41,7 +44,8 @@ public class LuaStoryboardAnimation : ILuaModel
         Duration = Duration,
         Easing = Easing,
         Type = Type,
-        ValueStart = Start,
+        UseStartValue = UseStartValue,
+        StartValue = Start,
         ValueEnd = End
     };
 }
