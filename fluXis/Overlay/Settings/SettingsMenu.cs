@@ -26,8 +26,8 @@ namespace fluXis.Overlay.Settings;
 
 public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    protected override float OpenedRoundness => 0;
-    protected override float OverlayPadding => 0;
+    protected override float OpenedRoundness => 8;
+    protected override float OverlayPadding => 32;
     protected override ColourInfo BackgroundColor => Theme.Background1;
     protected override IconUsage Icon => Phosphor.Bold.GearSix;
 
