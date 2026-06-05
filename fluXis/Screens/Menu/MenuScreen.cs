@@ -10,16 +10,20 @@ using fluXis.Graphics.Sprites.Outline;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
+using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
+using fluXis.Online.Spectator;
 using fluXis.Overlay.Browse;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar;
 using fluXis.Screens.Edit;
+using fluXis.Screens.Gameplay;
+using fluXis.Screens.Gameplay.Spectator;
 using fluXis.Screens.Menu.UI;
 using fluXis.Screens.Menu.UI.Buttons;
 using fluXis.Screens.Menu.UI.NowPlaying;
@@ -29,7 +33,9 @@ using fluXis.Screens.Menu.UI.Visualizer;
 using fluXis.Screens.Multiplayer;
 using fluXis.Screens.Select;
 using fluXis.UI;
+using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -84,6 +90,10 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private PanelContainer panels { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private SpectatorClient spectator { get; set; }
 
     private FluXisTextFlow splashText;
     private FluXisSpriteText pressAnyKeyText;
@@ -459,6 +469,29 @@ public partial class MenuScreen : FluXisScreen
                 panels.Content ??= new ConfirmExitPanel();
                 return true;
 
+            case Key.C when spectator != null && DebugUtils.IsDebugBuild: // TODO: move this to a proper screen
+                var data = new SpectatorRequest { ID = "1" };
+                panels.Add(new FormPanel<SpectatorRequest>(Phosphor.Bold.Monitor, "Start spectating", data, (_, o) =>
+                {
+                    spectator.StartWatching(long.Parse(o.ID)).Wait();
+                    spectator.OnStartedPlaying += (u, state) =>
+                    {
+                        var map = maps.GetMapFromOnlineID(state.MapID!.Value);
+
+                        if (map is null)
+                        {
+                            // TODO: download map
+                            panels.Add(new SingleButtonPanel(Phosphor.Bold.Warning, "The player you are spectating is playing a map you dont have downloaded.", ""));
+                            return;
+                        }
+
+                        var mods = state.Mods.Select(ModUtils.GetFromAcronym).Where(x => x != null).ToList();
+                        this.Push(new GameplayLoader(map, mods, () => new SpectatorGameplay(map, mods, spectator.Replays[u])));
+                    };
+                    return true;
+                }));
+                return true;
+
             case Key.BackSpace when DebugUtils.IsDebugBuild:
                 revertStartAnimation();
                 return true;
@@ -466,6 +499,11 @@ public partial class MenuScreen : FluXisScreen
             default:
                 return CanPlayAnimation();
         }
+    }
+
+    private class SpectatorRequest
+    {
+        public string ID { get; set; }
     }
 
     protected override bool OnMouseDown(MouseDownEvent e) => CanPlayAnimation();

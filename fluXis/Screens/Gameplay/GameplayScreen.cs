@@ -59,7 +59,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Screens.Gameplay;
 
-public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
+public abstract partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float ParallaxStrength => 0f;
     public override float BackgroundBlur => backgroundBlur?.Value ?? 0f;
@@ -148,7 +148,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public Action<double, double> OnSeek { get; set; }
 
     public Action OnRestart { get; set; }
-    private ReplayRecorder replayRecorder;
+    protected ReplayRecorder ReplayRecorder { get; private set; }
 
     public List<ScoreInfo> Scores { get; init; } = new();
 
@@ -182,7 +182,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public float Rate { get; }
 
-    public GameplayScreen(RealmMap realmMap, List<IMod> mods)
+    protected GameplayScreen(RealmMap realmMap, List<IMod> mods)
     {
         RealmMap = realmMap;
         Mods = mods;
@@ -243,7 +243,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             {
                 x.ScrollSpeed = new Bindable<float>(Config.Get<float>(FluXisSetting.ScrollSpeed));
             }),
-            replayRecorder = new ReplayRecorder()
+            ReplayRecorder = new ReplayRecorder()
         }.Concat(transforms), UseGlobalOffset);
 
         RulesetContainer.ParentClock = clockContainer.GameplayClock;
@@ -350,8 +350,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         backgroundVideo.LoadVideo(Map);
 
-        RulesetContainer.Input.OnPress += replayRecorder.PressKey;
-        RulesetContainer.Input.OnRelease += replayRecorder.ReleaseKey;
+        RulesetContainer.Input.OnPress += ReplayRecorder.PressKey;
+        RulesetContainer.Input.OnRelease += ReplayRecorder.ReleaseKey;
     }
 
     private ShaderStackContainer buildShaders()
@@ -487,7 +487,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             field.ScoreProcessor.Recalculate();
         }
 
-        replayRecorder.IsRecording.Value = false;
+        ReplayRecorder.IsRecording.Value = false;
 
         var showingOverlay = field.ScoreProcessor.FullCombo || field.ScoreProcessor.FullFlawless;
 
@@ -547,7 +547,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         try
         {
-            var replay = replayRecorder.Replay;
+            var replay = ReplayRecorder.Replay;
             replay.PlayerID = api.User.Value?.ID ?? -1;
             var folder = storage.GetFullPath("replays");
 

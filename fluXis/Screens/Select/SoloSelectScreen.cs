@@ -52,6 +52,6 @@ public partial class SoloSelectScreen : SelectScreen
             });
         }
         else
-            this.Push(new GameplayLoader(map, mods, () => new GameplayScreen(map, mods) { Scores = scores }));
+            this.Push(new GameplayLoader(map, mods, () => new SoloGameplayScreen(map, mods) { Scores = scores }));
     }
 }

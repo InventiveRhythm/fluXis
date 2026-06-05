@@ -18,6 +18,7 @@ using fluXis.Localization;
 using fluXis.Localization.Stores;
 using fluXis.Online;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Spectator;
 using fluXis.Overlay.Achievements;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Browse;
@@ -140,6 +141,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         // GameDependencies.CacheAs<IAmplitudeProvider>(globalClock);
 
         loadComponent(NotificationManager, Add);
+        loadComponent<SpectatorClient>(new OnlineSpectatorClient(), Add, true);
 
         loadComponent(globalBackground = new GlobalBackground { InitialDim = 1 }, buffer.Add, true);
         loadComponent(screenContainer = new Container { RelativeSizeAxes = Axes.Both }, buffer.Add);
