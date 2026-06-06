@@ -5,6 +5,7 @@ using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
+using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 
@@ -24,6 +25,19 @@ public partial class SpectatorGameplay : ReplayGameplayScreen
         var rs = base.CreateRuleset();
         ((ReplayRulesetContainer)rs).RequireSyncFrames = true;
         return rs;
+    }
+
+    protected override Drawable CreateTextOverlay()
+    {
+        var overlay = base.CreateTextOverlay();
+
+        if (overlay is ReplayOverlay ro)
+        {
+            ro.Title = "Spectator Mode";
+            ro.SubTitle = u => $"Watching {u?.Username}";
+        }
+
+        return overlay;
     }
 
     protected override void LoadComplete()
