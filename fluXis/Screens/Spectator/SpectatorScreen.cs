@@ -11,6 +11,7 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Online.Spectator;
 using fluXis.Online.Spectator.Models;
 using fluXis.Screens.Gameplay;
+using fluXis.Screens.Multiplayer;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -91,6 +92,12 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
         this.MakeCurrent();
     }
 
+    private void onDisconnect() => panels.Add(new DisconnectedPanel(() =>
+    {
+        this.MakeCurrent();
+        this.Exit();
+    }));
+
     private void enterAnimation()
     {
         this.FadeInFromZero(Styling.TRANSITION_FADE);
@@ -111,6 +118,7 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
 
         spectator.OnStartedPlaying += onStartPlaying;
         spectator.OnStoppedPlaying += onStopPlaying;
+        spectator.OnDisconnect += onDisconnect;
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -131,6 +139,8 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
 
         spectator.OnStartedPlaying -= onStartPlaying;
         spectator.OnStoppedPlaying -= onStopPlaying;
+        spectator.OnDisconnect -= onDisconnect;
+
         spectator.StopWatching(userid);
         return base.OnExiting(e);
     }

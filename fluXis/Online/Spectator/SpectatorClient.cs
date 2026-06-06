@@ -5,12 +5,22 @@ using System.Threading.Tasks;
 using fluXis.Mods;
 using fluXis.Online.Spectator.Models;
 using fluXis.Replays;
+using fluXis.Utils.Extensions;
 using osu.Framework.Graphics;
 
 namespace fluXis.Online.Spectator;
 
 public abstract partial class SpectatorClient : Component, ISpectatorClient
 {
+    public event Action OnDisconnect;
+
+    protected virtual void TriggerDisconnect()
+    {
+        frames.Clear();
+        Replays.Clear();
+        Scheduler.ScheduleIfNeeded(() => OnDisconnect?.Invoke());
+    }
+
     #region Player
 
     private readonly List<ReplayFrame> frames = new();
