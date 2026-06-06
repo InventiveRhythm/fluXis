@@ -218,12 +218,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(host.Storage.GetStorageForDirectory("maps")));
 
         dependencies.CacheAs(this);
+
+        keybinds = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host);
+        dependencies.CacheAs(keybinds);
+
         dependencies.CacheAs(EditorMap);
         dependencies.CacheAs<ICustomColorProvider>(EditorMap.MapInfo.Colors);
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
         dependencies.CacheAs(actionStack = new EditorActionStack(EditorMap) { NotificationManager = notifications });
         dependencies.CacheAs(modding = new EditorModding());
-        dependencies.CacheAs(settings = new EditorSettings
+        dependencies.CacheAs(settings = new EditorSettings(keybinds)
         {
             ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)
         });
@@ -261,9 +265,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         };
 
         verifyTab = tabList.OfType<VerifyTab>().First();
-
-        keybinds = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host);
-        dependencies.CacheAs(keybinds);
 
         InternalChild = keybinds.WithChildren(new Drawable[]
         {
@@ -522,9 +523,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             if (now - lastSaveTime > 1000 * 60 * 5) save();
         }
-
-        // too lazy to properly do this
-        settings.InvertedScroll.Value = keybinds.Keymap.InvertScroll;
     }
 
     protected override void Dispose(bool isDisposing)
