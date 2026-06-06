@@ -12,7 +12,7 @@ using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
-using fluXis.Screens;
+using fluXis.Screens.Spectator;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
@@ -42,12 +42,13 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                 new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
 
-            if (DebugUtils.IsDebugBuild)
+            if (DebugUtils.IsDebugBuild && user.IsOnline)
             {
                 list.Add(new MenuActionItem("Spectate", Phosphor.Bold.Binoculars, MenuItemType.Normal, () =>
                 {
                     game?.MenuScreen.MakeCurrent();
                     game?.MenuScreen.Push(new SpectatorScreen(user.ID));
+                    game?.CloseOverlays();
                 }));
             }
 

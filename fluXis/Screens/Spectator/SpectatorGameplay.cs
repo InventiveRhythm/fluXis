@@ -8,7 +8,7 @@ using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 
-namespace fluXis.Screens.Gameplay.Spectator;
+namespace fluXis.Screens.Spectator;
 
 public partial class SpectatorGameplay : ReplayGameplayScreen
 {
