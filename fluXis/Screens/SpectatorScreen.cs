@@ -39,10 +39,8 @@ public partial class SpectatorScreen : FluXisScreen
 
     private void onStartPlaying(long id, SpectatorState state)
     {
-        /*
         if (id != userid)
             return;
-            */
 
         var map = maps.GetMapFromOnlineID(state.MapID!.Value);
 
@@ -59,9 +57,8 @@ public partial class SpectatorScreen : FluXisScreen
 
     private void onStopPlaying(long id)
     {
-        /*if (id != userid)
+        if (id != userid)
             return;
-            */
 
         this.MakeCurrent();
     }
