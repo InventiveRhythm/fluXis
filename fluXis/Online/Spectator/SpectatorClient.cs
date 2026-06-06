@@ -56,6 +56,7 @@ public abstract partial class SpectatorClient : Component, ISpectatorClient
     #region Viewer
 
     public event Action<long, SpectatorState> OnStartedPlaying;
+    public event Action<long> OnStoppedPlaying;
     public Dictionary<long, Replay> Replays { get; } = new();
 
     public abstract Task StartWatching(long id);
@@ -84,7 +85,16 @@ public abstract partial class SpectatorClient : Component, ISpectatorClient
         return Task.CompletedTask;
     }
 
-    Task ISpectatorClient.StoppedPlaying(long id) => Task.CompletedTask;
+    Task ISpectatorClient.StoppedPlaying(long id)
+    {
+        Schedule(() =>
+        {
+            OnStoppedPlaying?.Invoke(id);
+            Replays.Remove(id);
+        });
+
+        return Task.CompletedTask;
+    }
 
     #endregion
 }

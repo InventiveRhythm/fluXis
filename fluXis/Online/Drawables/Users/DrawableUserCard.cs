@@ -12,10 +12,12 @@ using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
+using fluXis.Screens;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -23,6 +25,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
+using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Online.Drawables.Users;
@@ -38,6 +41,15 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                 new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
                 new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
+
+            if (DebugUtils.IsDebugBuild)
+            {
+                list.Add(new MenuActionItem("Spectate", Phosphor.Bold.Binoculars, MenuItemType.Normal, () =>
+                {
+                    game?.MenuScreen.MakeCurrent();
+                    game?.MenuScreen.Push(new SpectatorScreen(user.ID));
+                }));
+            }
 
             if (user.Following is UserFollowState.Mutual)
                 list.Add(new MenuActionItem("Message", Phosphor.Bold.ChatsCircle, MenuItemType.Normal, () => chat?.CreatePrivateChannel(user.ID)));

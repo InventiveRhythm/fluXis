@@ -26,6 +26,9 @@ public partial class OnlineSpectatorClient : SpectatorClient
 
     private void connect() => Task.Run(() =>
     {
+        if (IsDisposed)
+            return;
+
         try
         {
             connection = api.GetWebSocket<ISpectatorServer, ISpectatorClient>(this, "/spectator");
@@ -41,10 +44,10 @@ public partial class OnlineSpectatorClient : SpectatorClient
 
     protected override void Dispose(bool isDisposing)
     {
-        base.Dispose(isDisposing);
-
         connection?.Close(WebSocketCloseCode.NormalClosure, "Disconnecting.");
         connection?.Dispose();
+
+        base.Dispose(isDisposing);
     }
 
     protected override void StartPlayingCore(long mapid, IEnumerable<string> mods)

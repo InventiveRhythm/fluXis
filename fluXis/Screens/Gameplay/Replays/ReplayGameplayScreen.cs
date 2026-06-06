@@ -20,12 +20,12 @@ public partial class ReplayGameplayScreen : GameplayScreen
     protected override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
 
-    private Replay replay { get; }
+    protected Replay Replay { get; }
 
     public ReplayGameplayScreen(RealmMap realmMap, List<IMod> mods, Replay replay)
         : base(realmMap, mods)
     {
-        this.replay = replay;
+        Replay = replay;
     }
 
     protected override void LoadComplete()
@@ -36,9 +36,9 @@ public partial class ReplayGameplayScreen : GameplayScreen
         OnSeek += (_, now) => GameplayClock.Seek(now);
     }
 
-    protected override RulesetContainer CreateRuleset() => new ReplayRulesetContainer(replay, Map, MapEvents, Mods) { CurrentPlayer = replay.GetPlayer(Users) };
-    protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
-    protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(this, RealmMap, replay.GetPlayer(Users));
+    protected override RulesetContainer CreateRuleset() => new ReplayRulesetContainer(Replay, Map, MapEvents, Mods) { CurrentPlayer = Replay.GetPlayer(Users) };
+    protected override Drawable CreateTextOverlay() => new ReplayOverlay(Replay);
+    protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(this, RealmMap, Replay.GetPlayer(Users));
 
     protected override void UpdatePausedState()
     {
