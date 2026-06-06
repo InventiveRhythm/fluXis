@@ -91,7 +91,7 @@ public class Storyboard : EditorMap.IChangeNotifier
         OnUpdate?.Invoke(obj);
     }
 
-    public void ApplyOffset(float offset) => Elements.ForEach(x =>
+    public void ApplyOffset(double offset) => Elements.ForEach(x =>
     {
         x.StartTime += offset;
         x.EndTime += offset;
