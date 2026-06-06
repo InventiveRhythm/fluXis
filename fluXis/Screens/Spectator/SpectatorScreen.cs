@@ -1,18 +1,26 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.UserInterface.Footer;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Online;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.API.Requests.Maps;
+using fluXis.Online.Fluxel;
 using fluXis.Online.Spectator;
 using fluXis.Online.Spectator.Models;
+using fluXis.Overlay.Music;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Multiplayer;
 using fluXis.Utils;
+using fluXis.Utils.Downloading;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
@@ -36,11 +44,16 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
     private PanelContainer panels { get; set; }
 
     [Resolved]
+    private IAPIClient api { get; set; }
+
+    [Resolved]
     private SpectatorClient spectator { get; set; }
 
     private readonly long userid;
     private APIUser user;
+    private long? currentMap;
 
+    private MusicVisualiser visualiser;
     private ScreenHeader header;
     private SpectatorFooter footer;
 
@@ -57,6 +70,7 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
 
         InternalChildren =
         [
+            visualiser = new MusicVisualiser(),
             header = new ScreenHeader
             {
                 Title = "Spectating",
@@ -68,19 +82,48 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
 
     private void onStartPlaying(long id, SpectatorState state)
     {
-        if (id != userid)
+        if (id != userid || !state.MapID.HasValue)
             return;
 
-        var map = maps.GetMapFromOnlineID(state.MapID!.Value);
+        if (!this.IsCurrentScreen())
+            this.MakeCurrent();
 
-        if (map is null)
+        currentMap = state.MapID;
+        var map = maps.GetMapFromOnlineID(state.MapID.Value);
+
+        if (map != null)
         {
-            // TODO: download map
-            panels.Add(new SingleButtonPanel(Phosphor.Bold.Warning, "The player you are spectating is playing a map you dont have downloaded.", ""));
+            pushMap(map, state.Mods);
             return;
         }
 
-        var mods = state.Mods.Select(ModUtils.GetFromAcronym).Where(x => x != null).ToList();
+        var req = new MapRequest(state.MapID.Value);
+        api.PerformRequest(req);
+
+        if (!req.IsSuccessful)
+        {
+            panels.Add(new SingleButtonPanel(Phosphor.Bold.Warning, "Failed to load map!", "The player you are spectating is playing a map that does not exist on the servers anymore."));
+            return;
+        }
+
+        maps.DownloadMapSet(req.Response.Data.MapSetID, false, dl => Schedule(() =>
+        {
+            if (dl != DownloadState.Finished)
+                return;
+
+            map = maps.GetMapFromOnlineID(state.MapID.Value);
+            if (map is null) throw new InvalidOperationException("Map finished downloading but can't be found in store.");
+
+            if (currentMap != map.OnlineID)
+                return; // user switched maps while downloading
+
+            pushMap(map, state.Mods);
+        }));
+    }
+
+    private void pushMap(RealmMap map, IEnumerable<string> rawMods)
+    {
+        var mods = rawMods.Select(ModUtils.GetFromAcronym).Where(x => x != null).ToList();
         this.Push(new GameplayLoader(map, mods, () => new SpectatorGameplay(map, mods, spectator.Replays[userid])));
     }
 
@@ -89,6 +132,7 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
         if (id != userid)
             return;
 
+        currentMap = null;
         this.MakeCurrent();
     }
 
@@ -103,6 +147,11 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
         this.FadeInFromZero(Styling.TRANSITION_FADE);
         footer.Show();
         header.Show();
+
+        visualiser.MoveToY(-Footer.HEIGHT);
+        visualiser.Visible = true;
+
+        ApplyMapBackground(maps.CurrentMap);
     }
 
     private void exitAnimation()
@@ -110,6 +159,9 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
         this.FadeOut(Styling.TRANSITION_FADE);
         footer.Hide();
         header.Hide();
+
+        visualiser.MoveToY(0);
+        visualiser.Visible = false;
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
