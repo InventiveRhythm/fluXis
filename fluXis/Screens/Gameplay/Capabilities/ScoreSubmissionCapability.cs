@@ -70,14 +70,14 @@ public partial class ScoreSubmissionCapability : Component, IEndingCapability
 
                     if (request.IsSuccessful && resData?.Score != null)
                         scores.UpdateOnlineID(id, resData.Score.ID);
-
-                    Schedule(() =>
-                    {
-                        overlay.FadeOut(Styling.TRANSITION_FADE);
-                        complete();
-                    });
                 }
             }
+
+            Schedule(() =>
+            {
+                overlay.FadeOut(Styling.TRANSITION_FADE);
+                complete();
+            });
         });
 
         return screen;
