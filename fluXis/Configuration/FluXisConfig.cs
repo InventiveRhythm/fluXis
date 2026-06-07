@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Map;
 using fluXis.Screens.Select.Info.Tabs.Scores;
 using fluXis.Utils;
 using osu.Framework.Configuration;
@@ -51,10 +52,11 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.SkipIntro, false);
         SetDefault(FluXisSetting.Parallax, true);
         SetDefault(FluXisSetting.ShowStoryboardVideo, true);
+        SetDefault(FluXisSetting.ShowBackgroundShaders, false);
         SetDefault(FluXisSetting.RelativeMiddleScroll, false);
 
         // UI // Main Menu
-        SetDefault(FluXisSetting.IntroTheme, true);
+        SetDefault(FluXisSetting.IntroTheme, MapStore.BuiltinMap.Floorboard);
         SetDefault(FluXisSetting.ForceSnow, false);
         SetDefault(FluXisSetting.MainMenuVisualizer, true);
         SetDefault(FluXisSetting.MainMenuVisualizerSway, false);
@@ -74,6 +76,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.EditorShowSamples, false);
         SetDefault(FluXisSetting.EditorKeymap, "");
         SetDefault(FluXisSetting.EditorCompactMode, false);
+        SetDefault(FluXisSetting.EditorAutoSave, false);
 
         // Audio
         SetDefault(FluXisSetting.InactiveVolume, 0.5d, 0d, 1d, 0.01d);
@@ -146,6 +149,7 @@ public enum FluXisSetting
     SkipIntro,
     Parallax,
     ShowStoryboardVideo,
+    ShowBackgroundShaders,
     RelativeMiddleScroll,
 
     // UI // Main Menu
@@ -169,6 +173,7 @@ public enum FluXisSetting
     EditorShowSamples,
     EditorKeymap,
     EditorCompactMode,
+    EditorAutoSave,
 
     // Audio
     InactiveVolume,

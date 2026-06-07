@@ -14,7 +14,7 @@ public partial class ConfirmExitPanel : ButtonPanel
 
     public ConfirmExitPanel()
     {
-        Icon = FontAwesome6.Solid.DoorOpen;
+        Icon = Phosphor.Bold.DoorOpen;
         Text = LocalizationStrings.General.PanelConfirmExit;
         Buttons = new ButtonData[]
         {

@@ -31,7 +31,7 @@ using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Gameplay;
-using fluXis.Screens.Gameplay.Replays;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Select.Footer;
 using fluXis.Screens.Select.Info;
 using fluXis.Screens.Select.List;
@@ -263,7 +263,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         this.Push(new GameplayLoader(map, mods, () =>
         {
             var replay = replayFunc();
-            return replay == null ? null : new ReplayGameplayScreen(map, mods, replay) { Scores = selectMapInfo.ScoreList?.CurrentScores.ToList() };
+            return replay == null ? null : new GameplayScreen(map, mods) { Scores = selectMapInfo.ScoreList?.CurrentScores.ToList() }.RegisterCapability(new ReplayCapability(replay));
         }));
     }
 
@@ -349,7 +349,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (map.MapSet.AutoImported)
         {
             panels.Content = new SingleButtonPanel(
-                FontAwesome6.Solid.ExclamationTriangle,
+                Phosphor.Bold.Warning,
                 "This map cannot be edited.",
                 "This map is auto-imported from a different game and cannot be opened in the editor.");
             return;

@@ -8,6 +8,6 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardNewsTab : DashboardWipTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.News;
-    public override IconUsage Icon => FontAwesome6.Solid.Newspaper;
+    public override IconUsage Icon => Phosphor.Bold.Newspaper;
     public override DashboardTabType Type => DashboardTabType.News;
 }

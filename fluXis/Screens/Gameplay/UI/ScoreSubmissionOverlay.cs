@@ -39,7 +39,7 @@ public partial class ScoreSubmissionOverlay : Container
                 {
                     new FluXisSpriteIcon
                     {
-                        Icon = FontAwesome6.Solid.Shapes,
+                        Icon = Phosphor.Bold.Shapes,
                         Size = new Vector2(30),
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,

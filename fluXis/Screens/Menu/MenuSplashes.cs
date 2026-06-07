@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 using osu.Framework.Platform;

@@ -13,7 +13,7 @@ namespace fluXis.Overlay.Settings.Sections.Gameplay;
 public partial class GameplayScrollSpeedSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.ScrollSpeed;
-    public override IconUsage Icon => FontAwesome6.Solid.UpDown;
+    public override IconUsage Icon => Phosphor.Bold.ArrowsDownUp;
 
     private SettingsGameplayStrings strings => LocalizationStrings.Settings.Gameplay;
 

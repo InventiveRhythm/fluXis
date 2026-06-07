@@ -71,7 +71,7 @@ public class LuaStoryboardElement : ILuaModel
     /// <param name="ease">the easing function used for this animation</param>
     [LuaMember(Name = "animate")]
     public void AddAnimation([LuaCustomType(typeof(StoryboardAnimationType))] string type, float time, float len, string startVal, string endVal, [LuaCustomType(typeof(Easing))] string ease) =>
-        Animations.Add(new LuaStoryboardAnimation
+        Animations.Add(new LuaStoryboardAnimation(this)
         {
             StartTime = time,
             Duration = len,
@@ -103,6 +103,7 @@ public class LuaStoryboardElement : ILuaModel
         StartX = StartX,
         StartY = StartY,
         Blending = Blending,
+        BlendingMode = BlendingMode,
         Width = Width,
         Height = Height,
         Color = Color,

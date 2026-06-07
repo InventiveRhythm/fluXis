@@ -25,6 +25,7 @@ using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using Humanizer;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -61,7 +62,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
         {
             var items = new List<MenuItem>
             {
-                new MenuActionItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails)
+                new MenuActionItem("View Details", Phosphor.Bold.Info, MenuItemType.Highlighted, viewDetails)
             };
 
             ExtraMenuItems.ForEach(extra =>
@@ -70,13 +71,13 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
             });
 
             if (DownloadAction != null)
-                items.Add(new MenuActionItem("Download Replay", FontAwesome6.Solid.ArrowDown, MenuItemType.Normal, download));
+                items.Add(new MenuActionItem("Download Replay", Phosphor.Bold.ArrowDown, MenuItemType.Normal, download));
             if (ReplayAction != null)
-                items.Add(new MenuActionItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
+                items.Add(new MenuActionItem("View Replay", Phosphor.Bold.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
             if (profileOverlay != null)
-                items.Add(new MenuActionItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Normal, () => profileOverlay.ShowUser(Player.ID)) { IsEnabled = () => api.CanUseOnline });
+                items.Add(new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Normal, () => profileOverlay.ShowUser(Player.ID)) { IsEnabled = () => api.CanUseOnline });
             if (DeleteAction != null)
-                items.Add(new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => DeleteAction.Invoke()));
+                items.Add(new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => DeleteAction.Invoke()));
 
             return items.ToArray();
         }
@@ -274,7 +275,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                                                                 new FluXisSpriteIcon
                                                                 {
                                                                     Size = new Vector2(12),
-                                                                    Icon = FontAwesome6.Regular.Clock,
+                                                                    Icon = Phosphor.Bold.Clock,
                                                                     Anchor = Anchor.CentreLeft,
                                                                     Origin = Anchor.CentreLeft
                                                                 },

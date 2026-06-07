@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK;
@@ -10,6 +10,11 @@ namespace fluXis.Storyboards;
 
 public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeepCloneable<StoryboardAnimation>
 {
+    public StoryboardAnimation(StoryboardElement parentElement)
+    {
+        ParentElement = parentElement;
+    }
+
     /// <summary>
     /// The start time of the animation.
     /// </summary>
@@ -75,7 +80,10 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
         }
     }
 
-    public StoryboardAnimation DeepClone() => new()
+    [JsonIgnore]
+    public StoryboardElement ParentElement;
+
+    public StoryboardAnimation DeepClone() => new(ParentElement)
     {
         StartTime = StartTime,
         Duration = Duration,
@@ -91,6 +99,9 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
         get => StartTime;
         set => StartTime = value;
     }
+
+    [JsonIgnore]
+    string ITimedObject.Group { get; set; }
 }
 
 public enum StoryboardAnimationType

@@ -24,7 +24,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardClubTab : DashboardTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Club;
-    public override IconUsage Icon => FontAwesome6.Solid.CircleNodes;
+    public override IconUsage Icon => Phosphor.Bold.Graph;
     public override DashboardTabType Type => DashboardTabType.Club;
 
     [Resolved]
@@ -116,7 +116,7 @@ public partial class DashboardClubTab : DashboardTab
                 Children = new Drawable[]
                 {
                     new DashboardItemList<APIUser>("Online Members", club.Members!.Where(x => x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 338 }),
-                    new DashboardItemList<APIUser>("Offline Members", club.Members!.Where(x => !x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 338 }),
+                    new DashboardItemList<APIUser>("Offline Members", club.Members!.Where(x => !x.IsOnline).OrderByDescending(x => x.LastLogin).ToList(), u => new DrawableUserCard(u) { Width = 338 }),
                 }
             }
         }

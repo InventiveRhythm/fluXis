@@ -7,7 +7,7 @@ using fluXis.Online.API.Payloads.Scores;
 using fluXis.Online.API.Responses.Scores;
 using fluXis.Replays;
 using fluXis.Scoring;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Scores;
@@ -44,7 +44,7 @@ public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
         var results = score.HitResults.Select(x => new ScoreSubmissionPayload.Result
         {
             Difference = x.Difference,
-            HoldEnd = x.HoldEnd
+            Type = x.Type
         });
 
         var payload = new ScoreSubmissionPayload

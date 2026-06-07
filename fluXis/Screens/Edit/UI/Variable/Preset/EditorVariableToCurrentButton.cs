@@ -56,7 +56,7 @@ public partial class EditorVariableToCurrentButton : Container, IHasTooltip
                     Size = new Vector2(16),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Icon = FontAwesome6.Solid.Clock
+                    Icon = Phosphor.Bold.Clock
                 }
             }
         };

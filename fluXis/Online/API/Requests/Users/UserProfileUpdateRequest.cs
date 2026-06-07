@@ -1,14 +1,14 @@
 using System.Net.Http;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Payloads.Users;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Users;
 
 public class UserProfileUpdateRequest : APIRequest<APIUser>
 {
-    protected override string Path => $"/user/{uid}";
+    protected override string Path => $"/users/{uid}";
     protected override HttpMethod Method => HttpMethod.Patch;
 
     private long uid { get; }

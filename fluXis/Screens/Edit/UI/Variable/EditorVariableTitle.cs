@@ -1,4 +1,5 @@
 using System;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Overlay.Wiki;
@@ -8,7 +9,6 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Screens.Edit.UI.Variable;
 
@@ -46,7 +46,7 @@ public partial class EditorVariableTitle : CompositeDrawable
             },
             new PointsList.PointsListIconButton(() => wiki?.NavigateTo($"/editor/events/{title.Kebaberize()}"))
             {
-                ButtonIcon = FontAwesome.Solid.Book,
+                ButtonIcon = Phosphor.Bold.Book,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 X = -40,
@@ -65,7 +65,7 @@ public partial class EditorVariableTitle : CompositeDrawable
         public DeleteButton(Action action)
             : base(action)
         {
-            ButtonIcon = FontAwesome.Solid.Trash;
+            ButtonIcon = Phosphor.Bold.Trash;
         }
 
         protected override void UpdateColors(bool hovered)

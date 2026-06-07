@@ -11,6 +11,12 @@
     "show-storyboard-video-description": "Zeigt Storyboards und Videos auf den meisten Bildschirmen an. (BRAUCHT SUPPORTER, außer für die Songauswahl)",
     "relative-mouse-scroll-description": "Durch Gedrückthalten der mittleren Maustaste werden Listen entsprechend der Mausbewegung vom Ausgangspunkt aus gescrollt (ähnlich wie in Webbrowsern)",
     "main-menu-title": "Hauptmenü",
-    "intro-music": "fluXis-Intromusik",
-    "intro-music-description": "Spielt die fluXis-Intromusik beim Starten des Spiels. Wenn deaktiviert, wird ein zufälliger Song aus deiner Bibliothek abgespielt."
+    "confirm-duration": "Bestätigungslänge",
+    "show-background-shaders": "Zeige Shaders im Hintergrund",
+    "show-background-shaders-description": "Zeigt Shaders mit Storyboards, reduziert Leistung bei den Menüs. (Das Bloom-Effekt kann sehr hell hiermit sein)",
+    "song-select-title": "Songliste",
+    "song-select-blur": "Hintergrund verschwämmen",
+    "song-select-blur-description": "Verschwämmt den Hintergrund in der Songliste.",
+    "force-snow": "Schnee erzwingen",
+    "force-snow-description": "Macht den Schnee immer sichtbar, auch außerhalb von Winter."
 }

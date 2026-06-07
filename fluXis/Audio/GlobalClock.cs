@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using fluXis.Audio.FFT;
 using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
@@ -30,6 +31,9 @@ public partial class GlobalClock : TransformableClock, IAdjustableClock, IFrameB
 
     [Resolved]
     private ITrackStore tracks { get; set; }
+
+    [Resolved(CanBeNull = true)]
+    private AudioAnalyzer analyzer { get; set; }
 
     [CanBeNull]
     public DrawableTrack CurrentTrack => track.Value;
@@ -124,6 +128,8 @@ public partial class GlobalClock : TransformableClock, IAdjustableClock, IFrameB
 
         LoadMap(e.NewValue);
         trackPath = newPath;
+
+        analyzer?.SetAudio(e.NewValue);
 
         watch.Stop();
         Logger.Log($"Song load took {watch.ElapsedMilliseconds}ms.", LoggingTarget.Runtime, LogLevel.Debug);

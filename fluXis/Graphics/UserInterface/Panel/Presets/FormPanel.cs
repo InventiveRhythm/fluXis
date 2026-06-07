@@ -326,7 +326,7 @@ public partial class FormPanel<T> : Panel, ICloseable
                 flash = new FlashLayer(),
                 new FluXisSpriteIcon
                 {
-                    Icon = FontAwesome6.Solid.XMark,
+                    Icon = Phosphor.Bold.X,
                     Size = new Vector2(14),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre

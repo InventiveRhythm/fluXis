@@ -20,7 +20,7 @@ public partial class CornerButton : Container
 {
     private const int corner_radius = 20;
 
-    private IconUsage iconSprite = FontAwesome6.Solid.Question;
+    private IconUsage iconSprite = Phosphor.Bold.QuestionMark;
     private LocalisableString buttonText;
 
     public virtual LocalisableString ButtonText

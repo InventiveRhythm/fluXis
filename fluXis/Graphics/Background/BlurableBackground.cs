@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Configuration;
 using fluXis.Database.Maps;
+using fluXis.Graphics.Shaders;
 using fluXis.Map.Drawables;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -12,10 +14,13 @@ using osuTK;
 
 namespace fluXis.Graphics.Background;
 
-public partial class BlurableBackground : CompositeDrawable
+public partial class BlurableBackground : Container
 {
     [Resolved]
     protected GlobalClock GlobalClock { get; private set; }
+
+    [Resolved]
+    protected FluXisConfig Config { get; private set; }
 
     public RealmMap Map { get; }
 
@@ -34,6 +39,9 @@ public partial class BlurableBackground : CompositeDrawable
     [CanBeNull]
     private BufferedContainer blurContainer;
 
+    [CanBeNull]
+    protected ShaderStackContainer ShaderStack;
+
     public BlurableBackground(RealmMap map, float blur)
     {
         RelativeSizeAxes = Axes.Both;
@@ -46,12 +54,16 @@ public partial class BlurableBackground : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        var content = CreateContent();
+        var content = CreateContent().ToList();
+        var target = (Container)ShaderStack ?? this;
 
         if (blur > 0)
-            InternalChild = blurContainer = CreateBlur(content);
+            target.Add(blurContainer = CreateBlur(content));
         else
-            InternalChildrenEnumerable = content;
+            target.AddRange(content);
+
+        if (ShaderStack != null)
+            Add(ShaderStack);
 
         updateBlur();
     }

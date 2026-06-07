@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using fluXis.Audio;
+using fluXis.Audio.FFT;
 using fluXis.Audio.Preview;
 using fluXis.Configuration;
 using fluXis.Configuration.Experiments;
@@ -98,6 +99,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private KeybindStore keybindStore;
     private ImportManager importManager;
+
+    private AudioAnalyzer audioAnalyzer;
 
     private Storage exportStorage;
     public Storage ExportStorage => exportStorage ??= Host.Storage.GetStorageForDirectory("export");
@@ -217,6 +220,8 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(new UISamples(), true, true);
             cacheComponent(CreateLightController(), true, true);
             cacheComponent(CursorOverlay = new GlobalCursorOverlay());
+
+            cacheComponent(audioAnalyzer = new AudioAnalyzer(), true, true);
 
             if (Steam is not null)
                 cacheComponent(Steam, true, true);
@@ -360,6 +365,14 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
+    public virtual void OpenLink(string link, bool skipWarning = false)
+    {
+        if (Steam?.Initialized ?? false)
+            Steam.OpenLink(link);
+        else
+            Host.OpenUrlExternally(link);
+    }
+
     private Season getSeason()
     {
         var date = DateTime.Now;
@@ -389,9 +402,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, "Fonts/Noto/Noto-CJK-Compatibility");
         AddFont(Resources, "Fonts/Noto/Noto-Thai");
 
-        AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Solid");
-        AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Regular");
-        AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Brands");
+        AddFont(Resources, "Fonts/Phosphor/PhosphorBold");
+        AddFont(Resources, "Fonts/Phosphor/PhosphorFill");
 
         AddFont(Resources, "Fonts/JetBrainsMono/JetBrainsMono");
         // Resharper restore StringLiteralTypo
@@ -417,7 +429,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             Task.Delay(1000).ContinueWith(_ => exceptionCount--);
 
-            NotificationManager?.SendError("An unhandled error occurred!", /*IsDebug ? */e.Message /* : "This has been automatically reported to the developers."*/, FontAwesome6.Solid.Bomb);
+            NotificationManager?.SendError("An unhandled error occurred!", /*IsDebug ? */e.Message /* : "This has been automatically reported to the developers."*/, Phosphor.Bold.Bomb);
             return exceptionCount <= MaxExceptions;
         };
     }

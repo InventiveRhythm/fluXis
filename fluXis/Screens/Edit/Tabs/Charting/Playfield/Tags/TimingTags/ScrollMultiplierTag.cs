@@ -1,7 +1,7 @@
 using System;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Events.Scrolling;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 

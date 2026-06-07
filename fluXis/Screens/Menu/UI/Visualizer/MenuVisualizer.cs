@@ -15,11 +15,13 @@ namespace fluXis.Screens.Menu.UI.Visualizer;
 public partial class MenuVisualizer : Container
 {
     [Resolved]
-    private GlobalClock clock { get; set; }
+    private IAmplitudeProvider amplitudeProvider { get; set; }
 
     private const int circle_count = 64;
     private const int max_extra_speed = 2;
     private const int max_extra_scale = 0;
+
+    private float amplitude = 0f;
 
     private bool loaded;
     private Bindable<bool> visualizerEnabled;
@@ -71,7 +73,17 @@ public partial class MenuVisualizer : Container
 
     protected override void Update()
     {
-        float amplitude = clock.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
+        var amplitudes = amplitudeProvider.Amplitudes
+                                          .Where((_, i) => i is > 0 and < 128)
+                                          .Select((amp, i) => (amp, index: i + 1))
+                                          .ToList();
+
+        float decay = 0.85f; // the lower the value the more biased we are to the bass
+        float weightedSum = amplitudes.Sum(x => x.amp * x.amp * MathF.Pow(decay, x.index));
+        float totalWeight = amplitudes.Sum(x => x.amp * MathF.Pow(decay, x.index));
+        float newSample = totalWeight > 0 ? weightedSum / totalWeight : 0f;
+
+        amplitude = Math.Min(amplitude * 0.75f + newSample * 0.3f, 0.65f);
 
         foreach (var child in Children)
         {

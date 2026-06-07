@@ -39,5 +39,10 @@
     "leaderboard-visibility": "항상 게임 플레이 리더보드 표시",
     "leaderboard-visibility-description": "HUD의 왼쪽 영역의 실시간 리더보드를 표시할 지 결정합니다.",
     "leaderboard-mode": "리더보드 정렬",
-    "leaderboard-mode-description": "리더보드의 정렬 기준을 결정합니다."
+    "leaderboard-mode-description": "리더보드의 정렬 기준을 결정합니다.",
+    "snap-coloring": "스냅 컬러링",
+    "snap-coloring-description": "스냅 분할 값을 기준으로 색상 메모를 지정합니다.",
+    "timing-lines": "타이밍 라인",
+    "timing-lines-description": "4박자마다 한 줄씩 표시합니다.",
+    "hud-title": "HUD (헤드업 디스플레이)"
 }

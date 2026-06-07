@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
 using fluXis.Configuration;
@@ -17,16 +15,16 @@ using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Mods;
-using fluXis.Online;
 using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.API.Requests.Scores;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Notifications;
 using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Audio;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Capabilities;
+using fluXis.Screens.Gameplay.Capabilities.Bases;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Overlay;
@@ -36,12 +34,11 @@ using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Gameplay.UI;
 using fluXis.Screens.Gameplay.UI.Menus;
 using fluXis.Screens.Intro;
-using fluXis.Screens.Result;
 using fluXis.Skinning.Default;
 using fluXis.Storyboards;
 using fluXis.Storyboards.Drawables;
-using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
@@ -52,14 +49,13 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
-using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Screens.Gameplay;
 
-public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
+public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float ParallaxStrength => 0f;
     public override float BackgroundBlur => backgroundBlur?.Value ?? 0f;
@@ -95,25 +91,21 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }
     }
 
-    protected virtual double GameplayStartTime => 0;
-    protected virtual bool AllowRestart => true;
-    protected virtual bool AllowPausing => true;
-    protected virtual bool DisplayHUD => true;
-    protected virtual bool InstantlyExitOnPause => false;
-    protected virtual bool SubmitScore => true;
-    protected virtual bool UseGlobalOffset => true;
-    public virtual bool FadeBackToGlobalClock => true;
+    public bool AllowPausing { get; set; } = true;
+    public bool AllowRestarting { get; set; } = true;
+    public bool CursorVisible { get; set; }
+    public bool FadeBackToGlobalClock { get; set; } = true;
+    public bool InstantlyExitOnPause { get; set; }
+    public bool UseGlobalOffset { get; set; } = true;
+    public double GameplayStartTime { get; set; }
 
-    protected bool CursorVisible { get; set; }
+    public bool SubmitScore => capabilities.Any(x => x is ScoreSubmissionCapability);
 
     [Resolved]
-    protected FluXisConfig Config { get; private set; }
+    public FluXisConfig Config { get; private set; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }
-
-    [Resolved]
-    private ScoreManager scores { get; set; }
 
     [Resolved]
     private IAPIClient api { get; set; }
@@ -124,11 +116,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     [Resolved]
     private GlobalClock globalClock { get; set; }
 
-    [Resolved]
-    private Storage storage { get; set; }
-
-    [Resolved]
-    protected UserCache Users { get; private set; }
+    [Resolved(CanBeNull = true)]
+    private GlobalFFTProcessor fftProcessor { get; set; }
 
     private DependencyContainer dependencies;
 
@@ -145,7 +134,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public Action<double, double> OnSeek { get; set; }
 
     public Action OnRestart { get; set; }
-    private ReplayRecorder replayRecorder;
+    public ReplayRecorder ReplayRecorder { get; private set; }
 
     public List<ScoreInfo> Scores { get; init; } = new();
 
@@ -161,7 +150,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private BackgroundVideo backgroundVideo;
     private GameplayClockContainer clockContainer;
     private Container hud { get; set; }
-    private ScoreSubmissionOverlay scoreSubmissionOverlay;
 
     public RulesetContainer RulesetContainer { get; private set; }
     public PlayfieldManager PlayfieldManager { get; private set; }
@@ -179,6 +167,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public float Rate { get; }
 
+    private readonly List<IGameplayCapability> capabilities = new();
+
     public GameplayScreen(RealmMap realmMap, List<IMod> mods)
     {
         RealmMap = realmMap;
@@ -188,11 +178,36 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Mods.RemoveAll(m => m is PausedMod);
     }
 
+    #region Screen Presets
+
+    public static GameplayScreen Solo(RealmMap map, List<IMod> mods, List<ScoreInfo> scores)
+        => new GameplayScreen(map, mods) { Scores = scores }
+           .RegisterCapability(new ScoreSubmissionCapability())
+           .RegisterCapability(new SpectatorSendCapability());
+
+    #endregion
+
+    public GameplayScreen RegisterCapability(IGameplayCapability capability)
+    {
+        capability.Screen = this;
+        capabilities.Add(capability);
+
+        return this;
+    }
+
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
     private void load(ITrackStore tracks)
     {
+        capabilities.ForEach(x =>
+        {
+            x.PreLoad();
+
+            if (x is Drawable draw)
+                AddInternal(draw);
+        });
+
         dependencies.CacheAs(this);
 
         hudVisibility = Config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
@@ -200,7 +215,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         backgroundBlur = Config.GetBindable<float>(FluXisSetting.BackgroundBlur);
         bgaEnabled = Config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
 
-        Map = LoadMap();
+        Map = loadMap();
 
         if (Map == null)
         {
@@ -217,7 +232,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }
 
         Map.Sort();
-        MapEvents = Map.GetMapEvents(Mods);
+        MapEvents = Map.GetMapEvents(Mods, true);
+
         getKeyCountFromEvents();
 
         dependencies.CacheAs(Samples);
@@ -235,17 +251,17 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         clockContainer = new GameplayClockContainer(tracks, RealmMap, Map, new Drawable[]
         {
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
-            RulesetContainer = CreateRuleset().With(x =>
+            RulesetContainer = createRuleset().With(x =>
             {
                 x.ScrollSpeed = new Bindable<float>(Config.Get<float>(FluXisSetting.ScrollSpeed));
             }),
-            replayRecorder = new ReplayRecorder()
+            ReplayRecorder = new ReplayRecorder()
         }.Concat(transforms), UseGlobalOffset);
 
         RulesetContainer.ParentClock = clockContainer.GameplayClock;
         RulesetContainer.IsPaused.BindTo(IsPaused);
         RulesetContainer.ShakeTarget = this;
-        RulesetContainer.OnDeath += OnDeath;
+        RulesetContainer.OnDeath += onDeath;
 
         dependencies.Cache(PlayfieldManager = RulesetContainer.PlayfieldManager);
 
@@ -258,8 +274,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         var camera = new CameraContainer(MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList());
 
-        InternalChildren = new Drawable[]
-        {
+        AddRangeInternal([
             keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount, Map.IsDual)
             {
                 Anchor = Anchor.Centre,
@@ -311,7 +326,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                     hud = new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Alpha = DisplayHUD ? 1 : 0,
                                         Child = new GameplayHUD(RulesetContainer)
                                     },
                                     new DrawSizePreservingFillContainer
@@ -328,7 +342,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                             }
                         }
                     }),
-                    CreateTextOverlay(),
                     new DangerHealthOverlay(),
                     new SkipOverlay(),
                     failMenu = new FailMenu(),
@@ -338,17 +351,20 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     new PauseMenu()
                 },
             },
-            scoreSubmissionOverlay = new ScoreSubmissionOverlay(),
             Debug = new DebugText()
-        };
+        ]);
 
         clockContainer.Add(new BeatPulseManager(Map, MapEvents.BeatPulseEvents, keybindContainer));
 
         backgroundVideo.LoadVideo(Map);
 
-        RulesetContainer.Input.OnPress += replayRecorder.PressKey;
-        RulesetContainer.Input.OnRelease += replayRecorder.ReleaseKey;
+        RulesetContainer.Input.OnPress += ReplayRecorder.PressKey;
+        RulesetContainer.Input.OnRelease += ReplayRecorder.ReleaseKey;
+
+        capabilities.ForEach(x => x.PostLoad());
     }
+
+    public void Add(Drawable draw) => AddInternal(draw);
 
     private ShaderStackContainer buildShaders()
     {
@@ -377,7 +393,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         return stack;
     }
 
-    private void showNotifcations()
+    private void showNotifications()
     {
         if (ValidForPush)
             notifications.Tasks?.FadeIn().MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
@@ -400,7 +416,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             if (PlayfieldManager.AnyFailed) return;
 
             if (PlayfieldManager.OnComplete())
-                End();
+                end();
         };
 
         bgaEnabled.BindValueChanged(e =>
@@ -412,16 +428,55 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         });
     }
 
-    protected virtual void UpdatePausedState()
+    private void updatePausedState()
     {
-        Activity.Value = !IsPaused.Value ? GetPlayingActivity() : new UserActivity.Paused(this, RealmMap);
         AllowOverlays.Value = IsPaused.Value;
+
+        var uac = capabilities.OfType<IUserActivityCapability>().ToArray();
+        UserActivity activity = null;
+
+        foreach (var capability in uac)
+        {
+            activity = capability.Create();
+            if (activity != null) break;
+        }
+
+        activity ??= !IsPaused.Value ? new UserActivity.Playing(this, RealmMap) : new UserActivity.Paused(this, RealmMap);
+        uac.ForEach(x => x.Modify(activity));
+        Activity.Value = activity;
     }
 
-    protected virtual RulesetContainer CreateRuleset() => new(Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
-    protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo(Mods);
-    protected virtual Drawable CreateTextOverlay() => Empty();
-    protected virtual UserActivity GetPlayingActivity() => new UserActivity.Playing(this, RealmMap);
+    private RulesetContainer createRuleset()
+    {
+        var rsc = capabilities.OfType<IRulesetCapability>().ToArray();
+        RulesetContainer ruleset = null;
+
+        foreach (var capability in rsc)
+        {
+            ruleset = capability.Create();
+            if (ruleset != null) break;
+        }
+
+        ruleset ??= new RulesetContainer(Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
+        rsc.ForEach(x => x.Modify(ruleset));
+        return ruleset;
+    }
+
+    private MapInfo loadMap()
+    {
+        var mc = capabilities.OfType<IMapCapability>().ToArray();
+        MapInfo map = null;
+
+        foreach (var capability in mc)
+        {
+            map = capability.Load();
+            if (map != null) break;
+        }
+
+        map ??= RealmMap.GetMapInfo(Mods);
+        mc.ForEach(x => x.Modify(map));
+        return map;
+    }
 
     protected override void Update()
     {
@@ -433,28 +488,25 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 backgroundVideo.Start();
         }
 
-        if (DisplayHUD)
+        var hudWasVisible = hudVisible;
+
+        hudVisible = hudVisibility.Value switch
         {
-            var hudWasVisible = hudVisible;
+            HudVisibility.Hidden => false,
+            HudVisibility.ShowDuringBreaks => PlayfieldManager.InBreak.Value,
+            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayfieldManager.InBreak.Value,
+            _ => true
+        };
 
-            hudVisible = hudVisibility.Value switch
-            {
-                HudVisibility.Hidden => false,
-                HudVisibility.ShowDuringBreaks => PlayfieldManager.InBreak.Value,
-                HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayfieldManager.InBreak.Value,
-                _ => true
-            };
-
-            if (hudVisible != hudWasVisible)
-                hud.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
-        }
+        if (hudVisible != hudWasVisible)
+            hud.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
 
         base.Update();
     }
 
     private bool failed;
 
-    public virtual void OnDeath()
+    private void onDeath()
     {
         if (failed)
             return;
@@ -471,7 +523,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         GameplayClock.RateTo(Rate * .75f, 2000, Easing.OutQuart);
     }
 
-    protected virtual void End()
+    private void end()
     {
         var field = PlayfieldManager.FirstPlayer;
 
@@ -483,11 +535,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             field.ScoreProcessor.Recalculate();
         }
 
-        replayRecorder.IsRecording.Value = false;
+        ReplayRecorder.IsRecording.Value = false;
 
         var showingOverlay = field.ScoreProcessor.FullCombo || field.ScoreProcessor.FullFlawless;
-
-        var stopwatch = Stopwatch.StartNew();
 
         if (showingOverlay)
         {
@@ -495,77 +545,49 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             Scheduler.AddDelayed(() => fcOverlay.Hide(), 1400);
         }
 
-        var canBeUploaded = Mods.All(m => m.Rankable) && RealmMap.StatusInt < 100 && !RealmMap.MapSet.AutoImported;
-
-        if (SubmitScore && canBeUploaded)
-            scoreSubmissionOverlay.FadeIn(Styling.TRANSITION_FADE);
-
-        var bestScore = scores.GetCurrentTop(RealmMap.ID);
+        var stopwatch = Stopwatch.StartNew();
+        var ending = capabilities.OfType<IEndingCapability>().ToArray();
 
         var score = field.ScoreProcessor.ToScoreInfo();
         score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
 
-        Task.Run(() =>
+        Screen screen = null;
+        nextHandler(0);
+
+        return;
+
+        void nextHandler(int index)
         {
-            var screen = new SoloResults(RealmMap, score, PlayfieldManager.Players[0].ScoreProcessor.Player ?? APIUser.Default);
-            screen.OnRestart = OnRestart;
-            if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
-
-            if (Mods.All(m => m.SaveScore) && SubmitScore && !RealmMap.MapSet.AutoImported)
+            if (index >= ending.Length)
             {
-                var id = scores.Add(RealmMap.ID, score).ID;
-                var replay = SaveReplay(id);
-
-                if (canBeUploaded)
-                {
-                    var request = new ScoreSubmitRequest(score, Mods, replay, Map.Hash, Map.EffectHash, Map.StoryboardHash);
-                    screen.SubmitRequest = request;
-                    api.PerformRequest(request);
-
-                    var resData = request.Response?.Data;
-
-                    if (request.IsSuccessful && resData?.Score != null)
-                        scores.UpdateOnlineID(id, resData.Score.ID);
-
-                    Schedule(() => scoreSubmissionOverlay.FadeOut(Styling.TRANSITION_FADE));
-                }
+                // ReSharper disable once AccessToModifiedClosure
+                defaultBehaviour(screen);
+                return;
             }
 
+            var scr = ending[index].OnEnd(score, () => nextHandler(index + 1));
+            if (scr != null) screen = scr;
+        }
+
+        void defaultBehaviour(Screen scr)
+        {
             var minDelay = showingOverlay ? 2400 : 400;
             var elapsed = stopwatch.Elapsed.TotalMilliseconds;
 
             var delay = Math.Max(200, minDelay - elapsed);
-            Schedule(() => this.Delay(delay).FadeOut(Styling.TRANSITION_FADE).OnComplete(_ => this.Push(screen)));
-        });
+            Schedule(() => this.Delay(delay).FadeOut(Styling.TRANSITION_FADE).OnComplete(_ =>
+            {
+                if (!this.IsCurrentScreen()) return;
+
+                if (scr != null) this.Push(scr);
+                else this.Exit();
+            }));
+        }
     }
 
-    protected Replay SaveReplay(Guid scoreID)
+    public void RestartMap()
     {
-        try
-        {
-            var replay = replayRecorder.Replay;
-            replay.PlayerID = api.User.Value?.ID ?? -1;
-            var folder = storage.GetFullPath("replays");
-
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            var path = Path.Combine(folder, $"{scoreID}.frp");
-            File.WriteAllText(path, replay.Serialize());
-
-            return replay;
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, "Failed to save replay!");
-        }
-
-        return null;
-    }
-
-    public virtual void RestartMap()
-    {
-        if (Restarting || !AllowRestart) return;
+        if (Restarting || !AllowRestarting) return;
 
         Restarting = true;
         Samples.Restart();
@@ -579,6 +601,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override bool OnExiting(ScreenExitEvent e)
     {
+        capabilities.ForEach(x => x.Exit());
+
+        if (fftProcessor is not null) fftProcessor.Enabled.Value = true;
         this.FadeOut(Styling.TRANSITION_FADE);
 
         if (FadeBackToGlobalClock)
@@ -591,7 +616,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             });
         }
 
-        showNotifcations();
+        showNotifications();
 
         OnExit?.Invoke();
         GameplayClock.Stop();
@@ -602,6 +627,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
+        // there is absolutely no reason for our global fft processor to be active during gameplay
+        if (fftProcessor is not null) fftProcessor.Enabled.Value = false;
+
         GameplayClock.Start();
         GameplayClock.RateTo(Rate, 0);
 
@@ -618,7 +646,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             });
         }
 
-        IsPaused.BindValueChanged(_ => UpdatePausedState(), true);
+        IsPaused.BindValueChanged(_ => updatePausedState(), true);
 
         var pause = 2000;
 
@@ -643,13 +671,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             this.ScaleTo(1f, Styling.TRANSITION_MOVE, Easing.OutQuint).FadeIn(Styling.TRANSITION_FADE);
     }
 
-    public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         if (e.Repeat || PlayfieldManager.Finished) return false;
 
         switch (e.Action)
         {
-            case FluXisGlobalKeybind.QuickRestart when !starting && !Restarting && AllowRestart:
+            case FluXisGlobalKeybind.QuickRestart when !starting && !Restarting && AllowRestarting:
                 quickActionOverlay.OnConfirm = RestartMap;
                 quickActionOverlay.IsHolding = true;
                 return true;

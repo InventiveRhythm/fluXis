@@ -23,7 +23,7 @@ namespace fluXis.Screens.Select.Info.Tabs.Settings;
 public partial class MapSettingsTab : SelectInfoTab
 {
     public override LocalisableString Title => "Settings";
-    public override IconUsage Icon => FontAwesome6.Solid.Gear;
+    public override IconUsage Icon => Phosphor.Bold.GearSix;
     public override bool ShowBackdrop => true;
 
     [Resolved]

@@ -71,13 +71,13 @@ public partial class HeaderGroupChip : CircularContainer
     {
         return group.ID switch
         {
-            "fa" => FontAwesome6.Solid.Star,
-            "purifier" => FontAwesome6.Solid.Diamond, // we don't have the icon that the website uses
-            "moderators" => FontAwesome6.Solid.ShieldHalved,
-            "dev" => FontAwesome6.Solid.UserShield,
-            "bot" => FontAwesome6.Solid.UserAstronaut,
-            "supporter" => FontAwesome6.Solid.Heart,
-            _ => FontAwesome6.Solid.User
+            "fa" => Phosphor.Bold.Star,
+            "purifier" => Phosphor.Bold.DiamondsFour,
+            "moderators" => Phosphor.Bold.Shield,
+            "dev" => Phosphor.Bold.Code,
+            "bot" => Phosphor.Bold.Robot,
+            "supporter" => Phosphor.Bold.HeartStraight,
+            _ => Phosphor.Bold.User
         };
     }
 }

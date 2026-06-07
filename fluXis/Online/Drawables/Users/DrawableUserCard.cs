@@ -12,10 +12,12 @@ using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
+using fluXis.Screens.Spectator;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -23,6 +25,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
+using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Online.Drawables.Users;
@@ -35,20 +38,30 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
-                new MenuActionItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
+                new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
+                new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
 
+            if (DebugUtils.IsDebugBuild && user.IsOnline)
+            {
+                list.Add(new MenuActionItem("Spectate", Phosphor.Bold.Binoculars, MenuItemType.Normal, () =>
+                {
+                    game?.MenuScreen.MakeCurrent();
+                    game?.MenuScreen.Push(new SpectatorScreen(user.ID));
+                    game?.CloseOverlays();
+                }));
+            }
+
             if (user.Following is UserFollowState.Mutual)
-                list.Add(new MenuActionItem("Message", FontAwesome6.Solid.Message, MenuItemType.Normal, () => chat?.CreatePrivateChannel(user.ID)));
+                list.Add(new MenuActionItem("Message", Phosphor.Bold.ChatsCircle, MenuItemType.Normal, () => chat?.CreatePrivateChannel(user.ID)));
 
             if (user.SteamID is not null)
-                list.Add(new MenuActionItem("View Steam Profile", FontAwesome6.Brands.Steam, MenuItemType.Normal, () => game?.OpenLink(StringUtils.FormatSteamProfile(user.SteamID!.Value), true)));
+                list.Add(new MenuActionItem("View Steam Profile", Phosphor.Bold.SteamLogo, MenuItemType.Normal, () => game?.OpenLink(StringUtils.FormatSteamProfile(user.SteamID!.Value), true)));
 
             if (FluXisGameBase.IsDebug)
             {
                 list.Add(new MenuSpacerItem());
-                list.Add(new MenuActionItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard.SetText($"{user.ID}")));
+                list.Add(new MenuActionItem("Copy ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard.SetText($"{user.ID}")));
             }
 
             return list.ToArray();

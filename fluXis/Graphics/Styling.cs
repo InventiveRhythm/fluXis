@@ -1,3 +1,4 @@
+using fluXis.Audio.FFT.Structures.Processor;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Effects;
 using osuTK;
@@ -46,6 +47,17 @@ public static class Styling
             Radius = radius
         };
     }
+
+    public static FFTParameters GlobalReactiveFFT => FFTParameters.Reactive with
+    {
+        SpatialWindowSize = 1,
+        Gamma = 1.1f,
+        ReleaseHigh = 0.2f,
+        BassFloor = 0.5f,
+        BassMultiplier = 1f,
+        HighMultiplier = 1.15f,
+        MaxAdaptationRate = 0.2f
+    };
 
 #pragma warning restore RS0030
 }

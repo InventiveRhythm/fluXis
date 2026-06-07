@@ -10,8 +10,6 @@
   "parallax": "Hiệu ứng thị sai",
   "parallax-description": "Bật hiệu ứng thị sai trên nền và các yếu tố khác.",
   "main-menu-title": "Menu chính",
-  "intro-music": "Nhạc mở đầu fluXis",
-  "intro-music-description": "Phát nhạc mở đầu fluXis khi khởi động. Tắt tuỳ chọn này sẽ phát ngẫu nhiên một bài từ thư viện của bạn.",
   "force-snow": "Luôn có tuyết",
   "force-snow-description": "Luôn hiển thị tuyết, không chỉ vào mùa đông.",
   "bubble-visualizer": "Hiển thị bong bóng",

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using fluXis.Import.osu.Map.Components;
 using fluXis.Import.osu.Map.Enums;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Graphics.Primitives;
 
 namespace fluXis.Import.osu.Map;

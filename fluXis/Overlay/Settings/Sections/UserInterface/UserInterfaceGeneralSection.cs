@@ -13,7 +13,7 @@ namespace fluXis.Overlay.Settings.Sections.UserInterface;
 public partial class UserInterfaceGeneralSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.General;
-    public override IconUsage Icon => FontAwesome6.Solid.Gear;
+    public override IconUsage Icon => Phosphor.Bold.GearSix;
 
     private SettingsUIStrings strings => LocalizationStrings.Settings.UI;
 
@@ -51,6 +51,12 @@ public partial class UserInterfaceGeneralSection : SettingsSubSection
                 Label = strings.ShowStoryboardVideo,
                 Description = strings.ShowStoryboardVideoDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.ShowStoryboardVideo)
+            },
+            new SettingsToggle
+            {
+                Label = strings.ShowBackgroundShaders,
+                Description = strings.ShowBackgroundShadersDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.ShowBackgroundShaders)
             },
             new SettingsToggle
             {

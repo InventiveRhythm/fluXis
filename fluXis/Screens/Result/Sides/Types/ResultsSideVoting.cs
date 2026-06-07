@@ -129,8 +129,8 @@ public partial class ResultsSideVoting : ResultsSideContainer
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     },
-                    upButton = new VoteButton(Theme.VoteUp, FontAwesome6.Solid.AngleUp, () => setVote(1)),
-                    downButton = new VoteButton(Theme.VoteDown, FontAwesome6.Solid.AngleDown, () => setVote(-1))
+                    upButton = new VoteButton(Theme.VoteUp, Phosphor.Bold.CaretUp, () => setVote(1)),
+                    downButton = new VoteButton(Theme.VoteDown, Phosphor.Bold.CaretDown, () => setVote(-1))
                     {
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopRight

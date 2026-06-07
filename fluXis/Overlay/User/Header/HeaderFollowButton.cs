@@ -78,7 +78,7 @@ public partial class HeaderFollowButton : CompositeDrawable
                         Child = icon = new FluXisSpriteIcon
                         {
                             Y = 2, // it looks kinda off-center without this
-                            Icon = FontAwesome6.Solid.Heart,
+                            Icon = Phosphor.Bold.HeartStraight,
                             Size = new Vector2(20)
                         }
                     },
@@ -111,7 +111,7 @@ public partial class HeaderFollowButton : CompositeDrawable
 
         text.Text = following ? "Unfollow" : "Follow";
         background.FadeColour(following ? Theme.Red : Theme.Primary, 200);
-        icon.Icon = following ? FontAwesome6.Solid.HeartCrack : FontAwesome6.Solid.Heart;
+        icon.Icon = following ? Phosphor.Bold.HeartStraightBreak : Phosphor.Bold.HeartStraight;
 
         return base.OnClick(e);
     }
@@ -125,7 +125,7 @@ public partial class HeaderFollowButton : CompositeDrawable
         if (following)
         {
             background.FadeColour(Theme.Red, 50);
-            icon.Icon = FontAwesome6.Solid.HeartCrack;
+            icon.Icon = Phosphor.Bold.HeartStraightBreak;
             icon.Vibrate(100, 4);
             text.Text = "Unfollow";
         }
@@ -137,7 +137,7 @@ public partial class HeaderFollowButton : CompositeDrawable
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        icon.Icon = FontAwesome6.Solid.Heart;
+        icon.Icon = Phosphor.Bold.HeartStraight;
         text.Text = following ? "Following" : "Follow";
 
         if (following)

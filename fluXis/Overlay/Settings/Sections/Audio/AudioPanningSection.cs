@@ -13,7 +13,7 @@ namespace fluXis.Overlay.Settings.Sections.Audio;
 public partial class AudioPanningSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Panning;
-    public override IconUsage Icon => FontAwesome6.Solid.LeftRight;
+    public override IconUsage Icon => Phosphor.Bold.ArrowsHorizontal;
 
     private SettingsAudioStrings strings => LocalizationStrings.Settings.Audio;
 

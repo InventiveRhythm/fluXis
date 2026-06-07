@@ -6,8 +6,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Scripting;
 using fluXis.Storyboards;
-using fluXis.Utils;
 using fluXis.Utils.Attributes;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -42,7 +42,7 @@ public partial class TimelineElement : CompositeDrawable
             Name += $" [{element.GetParameter("file", "")}]";
         if (element.Type == StoryboardElementType.Text)
             Name += $" [{element.GetParameter("text", "")}] ";
-        if (element.Type == StoryboardElementType.Script)
+        if (element.Type is StoryboardElementType.Script or StoryboardElementType.Video)
             Name += $" [{element.GetParameter("path", "")}] ";
     }
 
@@ -143,6 +143,10 @@ public partial class TimelineElement : CompositeDrawable
 
             case StoryboardElementType.Compound:
                 text.Text = Element.GetParameter("id", "");
+                break;
+
+            case StoryboardElementType.Video:
+                text.Text = Element.GetParameter("path", "");
                 break;
 
             default:

@@ -17,6 +17,7 @@ using fluXis.Overlay.User;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -138,12 +139,12 @@ public partial class DrawableChatMessage : Container
             Colour = Colour4.FromHex(groups.First().Color),
             Icon = groups.First().ID switch
             {
-                "fa" => FontAwesome6.Solid.Star,
-                "purifier" => FontAwesome6.Solid.Diamond,
-                "moderators" => FontAwesome6.Solid.ShieldHalved,
-                "dev" => FontAwesome6.Solid.UserShield,
-                "bot" => FontAwesome6.Solid.UserAstronaut,
-                _ => FontAwesome6.Solid.User
+                "fa" => Phosphor.Bold.Star,
+                "purifier" => Phosphor.Bold.DiamondsFour,
+                "moderators" => Phosphor.Bold.Shield,
+                "dev" => Phosphor.Bold.Code,
+                "bot" => Phosphor.Bold.Robot,
+                _ => Phosphor.Bold.User
             }
         };
     }
@@ -230,9 +231,9 @@ public partial class DrawableChatMessage : Container
                 var items = new List<MenuItem>();
 
                 if (API.User.Value?.CanModerate() ?? false)
-                    items.Add(new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete));
+                    items.Add(new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, delete));
 
-                items.Add(new MenuActionItem("Report", FontAwesome6.Solid.Flag, MenuItemType.Dangerous, report) { IsEnabled = () => false });
+                items.Add(new MenuActionItem("Report", Phosphor.Bold.Flag, MenuItemType.Dangerous, report) { IsEnabled = () => false });
                 return items.ToArray();
             }
         }

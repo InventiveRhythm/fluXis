@@ -1,6 +1,6 @@
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 

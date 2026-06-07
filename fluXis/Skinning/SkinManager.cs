@@ -17,8 +17,10 @@ using fluXis.Skinning.Custom;
 using fluXis.Skinning.Default;
 using fluXis.Skinning.DefaultCircle;
 using fluXis.Skinning.Json;
+using fluXis.Storyboards;
 using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -482,6 +484,8 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     Texture ISkin.GetIcon() => currentSkin.GetIcon() ?? defaultSkin.GetIcon();
     Texture ISkin.GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
 
+    float? ISkin.GetSpriteAspectRatio(SkinSprite sprite) => currentSkin.GetSpriteAspectRatio(sprite) ?? defaultSkin.GetSpriteAspectRatio(sprite);
+
     Sample ISkin.GetUISample(UISamples.SampleType type) => currentSkin.GetUISample(type) ?? defaultSkin.GetUISample(type);
     Sample ISkin.GetCourseSample(CourseScreen.SampleType type) => currentSkin.GetCourseSample(type) ?? defaultSkin.GetCourseSample(type);
 
@@ -493,6 +497,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
     Drawable ISkin.GetHitObject(int lane, int keyCount) => currentSkin.GetHitObject(lane, keyCount) ?? defaultSkin.GetHitObject(lane, keyCount);
     Drawable ISkin.GetTickNote(int lane, int keyCount, bool small) => currentSkin.GetTickNote(lane, keyCount, small) ?? defaultSkin.GetTickNote(lane, keyCount, small);
+    Drawable ISkin.GetLandmine(int lane, int keyCount) => currentSkin.GetLandmine(lane, keyCount) ?? defaultSkin.GetLandmine(lane, keyCount);
     Drawable ISkin.GetLongNoteStart(int lane, int keyCount) => currentSkin.GetLongNoteStart(lane, keyCount) ?? defaultSkin.GetLongNoteStart(lane, keyCount);
     Drawable ISkin.GetLongNoteBody(int lane, int keyCount) => currentSkin.GetLongNoteBody(lane, keyCount) ?? defaultSkin.GetLongNoteBody(lane, keyCount);
     Drawable ISkin.GetLongNoteEnd(int lane, int keyCount) => currentSkin.GetLongNoteEnd(lane, keyCount) ?? defaultSkin.GetLongNoteEnd(lane, keyCount);

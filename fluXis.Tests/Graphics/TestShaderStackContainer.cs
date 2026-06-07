@@ -8,7 +8,7 @@ using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens;
 using fluXis.Screens.Gameplay;
-using fluXis.Screens.Gameplay.Replays;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -110,7 +110,7 @@ public partial class TestShaderStackContainer : FluXisTestScene
             var mods = new List<IMod> { new AutoPlayMod() };
             var replay = new AutoGenerator(map.GetMapInfo(), map.KeyCount);
 
-            screenStack.Push(new GameplayLoader(map, mods, () => new ReplayGameplayScreen(map, mods, replay.Generate())));
+            screenStack.Push(new GameplayLoader(map, mods, () => new GameplayScreen(map, mods).RegisterCapability(new ReplayCapability(replay.Generate()))));
         });
     }
 }

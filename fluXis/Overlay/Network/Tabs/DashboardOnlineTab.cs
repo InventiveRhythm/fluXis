@@ -20,7 +20,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardOnlineTab : DashboardWipTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Online;
-    public override IconUsage Icon => FontAwesome6.Solid.EarthAmericas;
+    public override IconUsage Icon => Phosphor.Bold.GlobeHemisphereWest;
     public override DashboardTabType Type => DashboardTabType.Online;
 
     [Resolved]

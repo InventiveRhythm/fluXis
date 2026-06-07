@@ -10,7 +10,7 @@ namespace fluXis.Overlay.Settings.Sections;
 
 public partial class AudioSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.VolumeHigh;
+    public override IconUsage Icon => Phosphor.Bold.SpeakerHigh;
     public override LocalisableString Title => LocalizationStrings.Settings.Audio.Title;
 
     [BackgroundDependencyLoader]

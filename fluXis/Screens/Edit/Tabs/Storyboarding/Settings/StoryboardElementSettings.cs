@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using fluXis.Configuration;
+using fluXis.Configuration.Experiments;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -19,9 +20,9 @@ using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Scripting;
 using fluXis.Storyboards;
-using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -62,12 +63,23 @@ public partial class StoryboardElementSettings : CompositeDrawable
         Anchor.BottomRight
     };
 
+    private DefaultBlendingParameters[] nonExperimentalBlends { get; } =
+    {
+        DefaultBlendingParameters.None,
+        DefaultBlendingParameters.Mix,
+        DefaultBlendingParameters.Add,
+    };
+
+    private bool useExperimentalBlends;
+
     private FillFlowContainer flow;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ExperimentConfigManager experiments)
     {
         RelativeSizeAxes = Axes.Both;
+
+        useExperimentalBlends = experiments.Get<bool>(ExperimentConfig.NewSbBlendModes);
 
         InternalChildren = new Drawable[]
         {
@@ -240,7 +252,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     {
                         Text = "Blend Mode",
                         CurrentValue = item.BlendingMode,
-                        Items = Enum.GetValues<DefaultBlendingParameters>().ToList(),
+                        Items = useExperimentalBlends ? Enum.GetValues<DefaultBlendingParameters>().ToList() : nonExperimentalBlends.ToList(),
                         Enabled = blendingEnabled,
                         HideWhenDisabled = true,
                         OnValueChanged = mode =>
@@ -399,7 +411,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                         {
                                             Text = "This file does not exist.",
                                             SubText = "Do you want to create it?",
-                                            Icon = FontAwesome6.Solid.File,
+                                            Icon = Phosphor.Bold.File,
                                             Buttons = new ButtonData[]
                                             {
                                                 new PrimaryButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
@@ -424,7 +436,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 void showError(string text, [CanBeNull] Exception e)
                                 {
                                     panels.Content = new SingleButtonPanel(
-                                        FontAwesome6.Solid.ExclamationTriangle,
+                                        Phosphor.Bold.Warning,
                                         text,
                                         e?.Message ?? "Unknown error"
                                     );
@@ -469,34 +481,28 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             }
                             else if (parameter.Type == typeof(int))
                             {
-                                drawables.Add(new EditorVariableTextBox
+                                drawables.Add(new EditorVariableNumber<int>
                                 {
                                     Text = parameter.Title,
-                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<int>()).ToString(),
-                                    OnValueChanged = box =>
+                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<int>()),
+                                    OnValueChanged = v =>
                                     {
-                                        if (box.Text.TryParseIntInvariant(out var result))
-                                            item.Parameters[parameter.Key] = result;
-                                        else
-                                            box.NotifyError();
-
+                                        item.Parameters[parameter.Key] = v;
                                         map.Update(item);
                                     }
                                 });
                             }
                             else if (parameter.Type == typeof(float))
                             {
-                                drawables.Add(new EditorVariableTextBox
+                                drawables.Add(new EditorVariableNumber<float>
                                 {
                                     Text = parameter.Title,
-                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<float>()).ToStringInvariant(),
-                                    OnValueChanged = box =>
+                                    CurrentValue = item.GetParameter(parameter.Key, parameter.GetDefaultFallback<float>()),
+                                    Step = 0.1f,
+                                    Formatting = "G7",
+                                    OnValueChanged = v =>
                                     {
-                                        if (box.Text.TryParseFloatInvariant(out var result))
-                                            item.Parameters[parameter.Key] = result;
-                                        else
-                                            box.NotifyError();
-
+                                        item.Parameters[parameter.Key] = v;
                                         map.Update(item);
                                     }
                                 });
@@ -526,6 +532,19 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             OnValueChanged = t =>
                             {
                                 item.Parameters["id"] = t.Text;
+                                map.Update(item);
+                            }
+                        });
+                        break;
+
+                    case StoryboardElementType.Video:
+                        drawables.Add(new EditorVariableTextBox
+                        {
+                            Text = "Path",
+                            CurrentValue = item.GetParameter("path", ""),
+                            OnValueChanged = t =>
+                            {
+                                item.Parameters["path"] = t.Text;
                                 map.Update(item);
                             }
                         });

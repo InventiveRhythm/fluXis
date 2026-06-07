@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using fluXis.Database.Input;
@@ -38,8 +39,10 @@ public class FluXisRealm : IDisposable
     /// 17 - Romanizable Title and Artist
     /// 18 - Reset online score IDs
     /// 19 - Add `RealmMapUserSettings`
+    /// 20 - Added `AudioHash` &amp; 'EnableVisualization' to RealmMap
+    /// 21 - Add `LandmineCount` to `RealmMapFilters`
     /// </summary>
-    private const int schema_version = 19;
+    private const int schema_version = 21;
 
     private Realm updateRealm;
 
@@ -284,6 +287,60 @@ public class FluXisRealm : IDisposable
             {
                 var maps = migration.NewRealm.All<RealmMap>().ToList();
                 maps.ForEach(x => x.Settings = new RealmMapUserSettings());
+                break;
+            }
+
+            case 20:
+            {
+                var sw = Stopwatch.StartNew();
+                var maps = migration.NewRealm.All<RealmMap>().ToList();
+
+                var mapsAndAudio = maps
+                                   .Select(x => (
+                                       Map: x,
+                                       Id: x.ID,
+                                       Path: MapFiles.GetFullPath(x.FullAudioPath)
+                                   ))
+                                   .ToList();
+
+                var results = mapsAndAudio
+                              .AsParallel()
+                              .WithDegreeOfParallelism(Environment.ProcessorCount)
+                              .Select(item =>
+                              {
+                                  byte[] bytes = [];
+
+                                  try
+                                  {
+                                      if (File.Exists(item.Path))
+                                      {
+                                          bytes = File.ReadAllBytes(item.Path);
+                                      }
+                                  }
+                                  catch (Exception e)
+                                  {
+                                      Logger.Error(e, $"(Schema v20) Something wrong happened during reading bytes when migrating, mapID: {item.Id}");
+                                      bytes = [];
+                                  }
+
+                                  return (item.Map, Hash: bytes.Length > 0 ? MapUtils.GetXXHash(bytes) : string.Empty);
+                              })
+                              .ToList();
+
+                results.ForEach(r =>
+                {
+                    r.Map.AudioHash = r.Hash;
+                    r.Map.EnableVisualization = false;
+                });
+
+                Logger.Log($"(Schema v20) Migration took {sw.ElapsedMilliseconds}ms for {maps.Count} maps");
+                break;
+            }
+
+            case 21:
+            {
+                var maps = migration.NewRealm.All<RealmMap>().ToList();
+                maps.ForEach(x => x.Filters.LandmineCount = 0);
                 break;
             }
         }

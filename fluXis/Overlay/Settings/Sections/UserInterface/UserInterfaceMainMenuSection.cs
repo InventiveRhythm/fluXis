@@ -2,6 +2,7 @@ using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Localization.Categories.Settings;
+using fluXis.Map;
 using fluXis.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,7 +14,7 @@ namespace fluXis.Overlay.Settings.Sections.UserInterface;
 public partial class UserInterfaceMainMenuSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.MainMenu;
-    public override IconUsage Icon => FontAwesome6.Solid.House;
+    public override IconUsage Icon => Phosphor.Bold.House;
 
     private SettingsUIStrings strings => LocalizationStrings.Settings.UI;
 
@@ -22,11 +23,12 @@ public partial class UserInterfaceMainMenuSection : SettingsSubSection
     {
         AddRange(new Drawable[]
         {
-            new SettingsToggle
+            new SettingsDropdown<MapStore.BuiltinMap>()
             {
                 Label = strings.IntroMusic,
                 Description = strings.IntroMusicDescription,
-                Bindable = Config.GetBindable<bool>(FluXisSetting.IntroTheme)
+                Bindable = Config.GetBindable<MapStore.BuiltinMap>(FluXisSetting.IntroTheme),
+                Items = [MapStore.BuiltinMap.Floorboard, MapStore.BuiltinMap.Roundhouse, MapStore.BuiltinMap.None]
             },
             new SettingsToggle
             {

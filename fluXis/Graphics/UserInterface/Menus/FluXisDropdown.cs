@@ -52,7 +52,7 @@ public partial class FluXisDropdown<T> : Dropdown<T>
                 },
                 Icon = new FluXisSpriteIcon
                 {
-                    Icon = FontAwesome6.Solid.AngleDown,
+                    Icon = Phosphor.Bold.CaretDown,
                     Anchor = Anchor.CentreRight,
                     Origin = Anchor.CentreRight,
                     Size = new Vector2(16)

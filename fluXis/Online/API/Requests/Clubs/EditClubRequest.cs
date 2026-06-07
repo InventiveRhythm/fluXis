@@ -1,14 +1,14 @@
 using System.Net.Http;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Payloads.Clubs;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Clubs;
 
 public class EditClubRequest : APIRequest<APIClub>
 {
-    protected override string Path => $"/club/{id}";
+    protected override string Path => $"/clubs/{id}";
     protected override HttpMethod Method => HttpMethod.Patch;
 
     private long id { get; }

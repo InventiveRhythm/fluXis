@@ -12,7 +12,7 @@ namespace fluXis.Overlay.Settings.Sections;
 
 public partial class PluginsSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.PuzzlePiece;
+    public override IconUsage Icon => Phosphor.Bold.PuzzlePiece;
     public override LocalisableString Title => LocalizationStrings.Settings.Plugins.Title;
 
     [BackgroundDependencyLoader]

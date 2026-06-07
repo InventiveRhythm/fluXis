@@ -18,7 +18,7 @@ namespace fluXis.Overlay.User.Tabs;
 
 public partial class ProfileMapsTab : TabContainer
 {
-    public override IconUsage Icon => FontAwesome6.Solid.Map;
+    public override IconUsage Icon => Phosphor.Bold.MapTrifold;
     public override string Title => "Maps";
 
     [Resolved]

@@ -38,7 +38,7 @@ public partial class HealthBar : GameplayHUDComponent
                 Size = new Vector2(24),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Icon = FontAwesome6.Solid.XMark,
+                Icon = Phosphor.Bold.X,
                 Alpha = 0
             }
         };

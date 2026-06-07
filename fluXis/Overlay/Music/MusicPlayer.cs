@@ -63,6 +63,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     private BufferedContainer blur;
     private SpriteStack<MapBackground> backgrounds;
     private BackgroundVideo video;
+    private MusicVisualiser visualizer;
 
     private Container coversContainer;
     private SpriteStack<MapCover> covers;
@@ -182,7 +183,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                 },
                             }
                         },
-                        new MusicVisualiser(),
+                        visualizer = new MusicVisualiser(),
                         trackInfoContainer = new Container
                         {
                             Padding = new MarginPadding(inner_padding),
@@ -227,7 +228,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                             {
                                                 new()
                                                 {
-                                                    Icon = FontAwesome6.Solid.BackwardStep,
+                                                    Icon = Phosphor.Bold.SkipBack,
                                                     Action = () =>
                                                     {
                                                         if (screens.AllowMusicControl)
@@ -236,7 +237,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                 },
                                                 pausePlay = new MusicPlayerButton
                                                 {
-                                                    Icon = FontAwesome6.Solid.Play,
+                                                    Icon = Phosphor.Bold.Play,
                                                     Action = () =>
                                                     {
                                                         if (!screens.AllowMusicPausing)
@@ -250,7 +251,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                 },
                                                 new()
                                                 {
-                                                    Icon = FontAwesome6.Solid.ForwardStep,
+                                                    Icon = Phosphor.Bold.SkipForward,
                                                     Action = () =>
                                                     {
                                                         if (screens.AllowMusicControl)
@@ -259,7 +260,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                 },
                                                 fullscreenToggle = new MusicPlayerButton
                                                 {
-                                                    Icon = FontAwesome6.Solid.UpRightAndDownLeftFromCenter,
+                                                    Icon = Phosphor.Bold.ArrowsOutSimple,
                                                     Action = toggleFullscreen
                                                 }
                                             }
@@ -280,6 +281,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                 }
             }
         };
+
+        State.BindValueChanged(v => visualizer.Visible = v.NewValue == Visibility.Visible);
     }
 
     protected override void LoadComplete()
@@ -298,8 +301,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         progress.Width = (float)((globalClock.CurrentTrack?.CurrentTime ?? 0) / (globalClock.CurrentTrack?.Length ?? 1000));
 
-        pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome6.Solid.Pause : FontAwesome6.Solid.Play;
-        fullscreenToggle.IconSprite.Icon = fullscreen ? FontAwesome6.Solid.DownLeftAndUpRightToCenter : FontAwesome6.Solid.UpRightAndDownLeftFromCenter;
+        pausePlay.IconSprite.Icon = globalClock.IsRunning ? Phosphor.Bold.Pause : Phosphor.Bold.Play;
+        fullscreenToggle.IconSprite.Icon = fullscreen ? Phosphor.Bold.ArrowsInSimple : Phosphor.Bold.ArrowsOutSimple;
 
         if (video.IsPlaying && fullscreen) metadataCountdown -= Time.Elapsed;
         if (metadataCountdown <= 0) hideMetadata();

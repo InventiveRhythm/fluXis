@@ -4,7 +4,7 @@ namespace fluXis.Scripting.Attributes;
 
 #nullable enable
 
-[AttributeUsage(AttributeTargets.Class)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public class LuaDefinitionAttribute : Attribute
 {
     public string FileName { get; }

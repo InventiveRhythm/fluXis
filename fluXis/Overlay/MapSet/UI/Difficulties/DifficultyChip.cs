@@ -1,7 +1,9 @@
+using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Drawables;
 using fluXis.Online.API.Models.Maps;
+using Humanizer;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -79,9 +81,9 @@ public partial class DifficultyChip : CircularContainer
                             new ForcedHeightText
                             {
                                 Height = 16,
-                                Text = $"mapped by {map.Mapper.Username}",
+                                Text = $"mapped by {map.Mappers.Select(x => x.Username).Humanize()}",
                                 WebFontSize = 10,
-                                Alpha = set.Creator.ID == map.Mapper.ID ? 0 : .8f
+                                Alpha = map.Mappers.Count == 1 && map.Mappers.Any(x => x.ID == set.Creator.ID) ? 0 : .8f
                             }
                         }
                     }

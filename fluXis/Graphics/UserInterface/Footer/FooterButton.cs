@@ -30,7 +30,7 @@ public partial class FooterButton : CompositeDrawable
         }
     }
 
-    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
+    public IconUsage Icon { get; init; } = Phosphor.Bold.QuestionMark;
     public Action Action { get; init; }
     public Colour4 AccentColor { get; init; } = Theme.Text;
     public int Index { get; init; }
