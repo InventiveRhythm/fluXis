@@ -189,14 +189,14 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                 {
                     Items = new MenuItem[]
                     {
-                        new MenuExpandItem("File", FontAwesome6.Solid.File, new MenuItem[]
+                        new MenuExpandItem("File", Phosphor.Bold.File, new MenuItem[]
                         {
-                            new MenuActionItem("Save", FontAwesome6.Solid.FloppyDisk, MenuItemType.Normal, () => save()),
-                            new MenuActionItem("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, this.Exit)
+                            new MenuActionItem("Save", Phosphor.Bold.FloppyDisk, MenuItemType.Normal, () => save()),
+                            new MenuActionItem("Exit", Phosphor.Bold.DoorOpen, MenuItemType.Dangerous, this.Exit)
                         }),
-                        new MenuExpandItem("View", FontAwesome6.Solid.Eye, new MenuItem[]
+                        new MenuExpandItem("View", Phosphor.Bold.Eye, new MenuItem[]
                         {
-                            new MenuToggleItem("Force 16:9", FontAwesome6.Solid.RectangleWide, forceAspect.Toggle, () => forceAspect.Value)
+                            new MenuToggleItem("Force 16:9", Phosphor.Bold.Rectangle, forceAspect.Toggle, () => forceAspect.Value)
                         })
                     }
                 }
@@ -251,13 +251,13 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     {
         if (!unsavedChanges)
         {
-            notifications.SendSmallText("Layout is already up to date!", FontAwesome6.Solid.Check);
+            notifications.SendSmallText("Layout is already up to date!", Phosphor.Bold.Check);
             return true;
         }
 
         updateDictionary();
         manager.SaveLayout(layout);
-        notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
+        notifications.SendSmallText("Saved!", Phosphor.Bold.Check);
         updateHash();
 
         return true;

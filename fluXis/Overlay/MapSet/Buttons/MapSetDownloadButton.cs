@@ -24,7 +24,7 @@ public partial class MapSetDownloadButton : MapSetButton
     private CircularProgress progress;
 
     public MapSetDownloadButton(APIMapSet set)
-        : base(FontAwesome6.Solid.ArrowDown, () => { })
+        : base(Phosphor.Bold.ArrowDown, () => { })
     {
         this.set = set;
     }
@@ -109,7 +109,7 @@ public partial class MapSetDownloadButton : MapSetButton
 
     private void updateIcon() => Scheduler.ScheduleIfNeeded(() =>
     {
-        Icon.Icon = downloaded ? FontAwesome6.Solid.AngleDoubleRight : FontAwesome6.Solid.ArrowDown;
+        Icon.Icon = downloaded ? Phosphor.Bold.CaretDoubleRight : Phosphor.Bold.ArrowDown;
 
         var status = maps.DownloadQueue.FirstOrDefault(s => s.OnlineID == set.ID);
         var state = status?.State ?? (downloaded ? DownloadState.Finished : null);

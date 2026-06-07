@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using fluXis.Online.Spectator.Models;
 using JetBrains.Annotations;
 
 namespace fluXis.Online.Spectator;
@@ -7,7 +8,6 @@ namespace fluXis.Online.Spectator;
 public interface ISpectatorClient
 {
     Task StartedPlaying(long id, SpectatorState state);
-    Task StoppedPlaying(long id, SpectatorState state);
-    Task RecieveFrameBundle(long id, SpectatorFrameBundle bundle);
-    Task ScoreProcessed(long id, SpectatorState state);
+    Task ReceiveFrameBundle(long id, SpectatorFrameBundle bundle);
+    Task StoppedPlaying(long id);
 }

@@ -14,6 +14,7 @@ using fluXis.Skinning.Custom.Judgements;
 using fluXis.Skinning.Custom.Lighting;
 using fluXis.Skinning.Custom.Receptor;
 using fluXis.Skinning.Json;
+using fluXis.Storyboards;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -50,6 +51,8 @@ public class CustomSkin : ISkin
         string path = SkinJson.GetOverrideOrDefault("UserInterface/background") + ".png";
         return storage.Exists(path) ? textures.Get(path) : null;
     }
+
+    public float? GetSpriteAspectRatio(SkinSprite sprite) => null;
 
     public Sample GetUISample(UISamples.SampleType type) => type switch
     {

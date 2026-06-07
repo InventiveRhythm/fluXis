@@ -11,7 +11,7 @@ namespace fluXis.Screens.Edit.Tabs;
 
 public partial class DesignTab : EditorTab
 {
-    public override IconUsage Icon => FontAwesome6.Solid.Palette;
+    public override IconUsage Icon => Phosphor.Bold.Palette;
     public override string TabName => "Design";
     public override bool HasLoading => true;
 

@@ -56,5 +56,5 @@ public partial class TestGameplay : FluXisTestScene
         });
     }
 
-    protected virtual GameplayScreen CreateGameplayScreen(RealmMap map) => new(map, new List<IMod>());
+    protected virtual GameplayScreen CreateGameplayScreen(RealmMap map) => GameplayScreen.Solo(map, [], []);
 }

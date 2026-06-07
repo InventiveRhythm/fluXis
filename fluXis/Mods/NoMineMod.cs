@@ -10,7 +10,7 @@ public class NoMineMod : IMod, IApplicableToMap
     public string Name => "No Mines";
     public string Acronym => "NMN";
     public string Description => "Removes all landmines.";
-    public IconUsage Icon => FontAwesome6.Solid.Flag;
+    public IconUsage Icon => Phosphor.Bold.Flag;
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => .8f;
     public bool Rankable => true;

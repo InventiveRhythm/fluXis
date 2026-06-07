@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Map;
 using fluXis.Screens.Select.Info.Tabs.Scores;
 using fluXis.Utils;
 using osu.Framework.Configuration;
@@ -55,7 +56,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.RelativeMiddleScroll, false);
 
         // UI // Main Menu
-        SetDefault(FluXisSetting.IntroTheme, true);
+        SetDefault(FluXisSetting.IntroTheme, MapStore.BuiltinMap.Floorboard);
         SetDefault(FluXisSetting.ForceSnow, false);
         SetDefault(FluXisSetting.MainMenuVisualizer, true);
         SetDefault(FluXisSetting.MainMenuVisualizerSway, false);

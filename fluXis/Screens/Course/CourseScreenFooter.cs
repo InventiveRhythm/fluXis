@@ -16,7 +16,7 @@ public partial class CourseScreenFooter : Footer
     protected override CornerButton CreateLeftButton() => new()
     {
         ButtonText = "Exit",
-        Icon = FontAwesome6.Solid.DoorOpen,
+        Icon = Phosphor.Bold.DoorOpen,
         Corner = Corner.BottomLeft,
         Action = ExitAction,
         PlayClickSound = false
@@ -25,7 +25,7 @@ public partial class CourseScreenFooter : Footer
     protected override CornerButton CreateRightButton() => new()
     {
         ButtonText = "Continue",
-        Icon = FontAwesome6.Solid.Play,
+        Icon = Phosphor.Bold.Play,
         Corner = Corner.BottomRight,
         ButtonColor = Theme.Primary,
         Action = ContinueAction,

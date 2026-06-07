@@ -10,7 +10,7 @@ namespace fluXis.Overlay.Settings.Sections;
 
 public partial class AppearanceSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.PaintBrush;
+    public override IconUsage Icon => Phosphor.Bold.PaintBrushBroad;
     public override LocalisableString Title => LocalizationStrings.Settings.Appearance.Title;
 
     [BackgroundDependencyLoader]

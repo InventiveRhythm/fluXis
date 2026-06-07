@@ -23,7 +23,7 @@ public class TestAPIClient : IAPIClient
     public const string USERNAME = "testing";
     public const string PASSWORD = "passwd";
 
-    public Bindable<APIUser?> User => new(new APIUser
+    public Bindable<APIUser?> User { get; } = new(new APIUser
     {
         ID = 1,
         Username = USERNAME,

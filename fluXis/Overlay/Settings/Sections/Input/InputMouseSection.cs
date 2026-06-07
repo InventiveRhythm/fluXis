@@ -14,7 +14,7 @@ namespace fluXis.Overlay.Settings.Sections.Input;
 public partial class InputMouseSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Mouse;
-    public override IconUsage Icon => FontAwesome6.Solid.ComputerMouse;
+    public override IconUsage Icon => Phosphor.Bold.Mouse;
 
     private SettingsInputStrings strings => LocalizationStrings.Settings.Input;
 

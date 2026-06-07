@@ -29,8 +29,7 @@ internal class Program
 
         Write("Compiling project...");
 
-        Directory.CreateDirectory("build");
-        runCommand("dotnet", "build fluXis -c Release -o build /p:DocumentationFile=build/xmldoc.xml");
+        runCommand("dotnet", "build fluXis -c Release -o build /p:DocumentationFile=xmldoc.xml");
 
         var xml = loadXml("build/xmldoc.xml");
         if (xml is null) return;

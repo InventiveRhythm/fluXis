@@ -10,7 +10,7 @@ namespace fluXis.Overlay.Settings.Sections;
 
 public partial class ExperimentsSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.Flask;
+    public override IconUsage Icon => Phosphor.Bold.Flask;
     public override LocalisableString Title => "Experiments";
 
     [BackgroundDependencyLoader(true)]

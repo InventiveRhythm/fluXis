@@ -3,7 +3,7 @@ using fluXis.Database.Maps;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Gameplay;
-using fluXis.Screens.Gameplay.Replays;
+using fluXis.Screens.Gameplay.Capabilities;
 
 namespace fluXis.Tests.Gameplay;
 
@@ -16,7 +16,6 @@ public partial class TestReplay : TestGameplay
         var info = map.GetMapInfo();
         var auto = new AutoGenerator(info, map.KeyCount);
         var replay = auto.Generate();
-
-        return new ReplayGameplayScreen(map, Mods, replay);
+        return new GameplayScreen(map, Mods).RegisterCapability(new ReplayCapability(replay));
     }
 }

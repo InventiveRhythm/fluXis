@@ -327,7 +327,7 @@ public class EditorMap : IVerifyContext
 
     private void throwMissingHandler(ITimedObject obj) => throw new ArgumentException($"Type '{obj.GetType().Name}' does not have a change handler associated with it.");
 
-    public void ApplyOffsetToAll(float offset) => notifiers.ForEach(n => n.ApplyOffset(offset));
+    public void ApplyOffsetToAll(double offset) => notifiers.ForEach(n => n.ApplyOffset(offset));
 
     public void Sort()
     {
@@ -387,7 +387,7 @@ public class EditorMap : IVerifyContext
         void Remove(ITimedObject obj);
         void Update(ITimedObject obj);
 
-        void ApplyOffset(float offset);
+        void ApplyOffset(double offset);
 
         bool Matches(Type type);
     }
@@ -445,7 +445,7 @@ public class EditorMap : IVerifyContext
             OnTypedUpdate?.Invoke((T)obj);
         }
 
-        public void ApplyOffset(float offset)
+        public void ApplyOffset(double offset)
         {
             foreach (var obj in list)
             {

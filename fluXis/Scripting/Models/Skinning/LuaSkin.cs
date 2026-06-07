@@ -1,5 +1,7 @@
-﻿using fluXis.Scripting.Attributes;
+﻿using System;
+using fluXis.Scripting.Attributes;
 using fluXis.Skinning;
+using fluXis.Storyboards;
 using NLua;
 
 namespace fluXis.Scripting.Models.Skinning;
@@ -13,6 +15,13 @@ public class LuaSkin : ILuaModel
     {
         this.skin = skin;
     }
+
+    /// <summary>
+    /// gets the aspect ratio of a skin sprite. returns 1 if not available
+    /// </summary>
+    [LuaMember(Name = "sprratio")]
+    public float GetSpriteRatio([LuaCustomType(typeof(SkinSprite))] string str)
+        => skin.GetSpriteAspectRatio(Enum.TryParse<SkinSprite>(str, out var s) ? s : SkinSprite.HitObject) ?? 1;
 
     [LuaMember(Name = "colwidth")]
     public int GetColumnWidth(int mode)

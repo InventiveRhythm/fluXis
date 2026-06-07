@@ -164,7 +164,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
         req.Failure += ex =>
         {
             StopLoading(false);
-            panels.Replace(new SingleButtonPanel(FontAwesome6.Solid.TriangleExclamation, "Something went wrong...", ex.Message));
+            panels.Replace(new SingleButtonPanel(Phosphor.Bold.Warning, "Something went wrong...", ex.Message));
         };
         api.PerformRequestAsync(req);
     }

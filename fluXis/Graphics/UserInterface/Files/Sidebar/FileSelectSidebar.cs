@@ -53,27 +53,27 @@ public partial class FileSelectSidebar : ExpandingContainer
                     Spacing = new Vector2(0, 10),
                     Children = new SidebarEntry[]
                     {
-                        new(FontAwesome6.Solid.HardDrive, "This PC", null, select)
+                        new(Phosphor.Bold.HardDrive, "This PC", null, select)
                     }
                 }
             }
         };
 
         if (tryGetFolderPath(Environment.SpecialFolder.Desktop, out var folder))
-            entries.Add(new SidebarEntry(FontAwesome6.Solid.Display, "Desktop", new DirectoryInfo(folder), select));
+            entries.Add(new SidebarEntry(Phosphor.Bold.Monitor, "Desktop", new DirectoryInfo(folder), select));
 
         if (tryGetFolderPath(Environment.SpecialFolder.UserProfile, out folder))
         {
-            entries.Add(new SidebarEntry(FontAwesome6.Solid.User, Environment.UserName, new DirectoryInfo(folder), select));
-            entries.Add(new SidebarEntry(FontAwesome6.Solid.Download, "Downloads", new DirectoryInfo(folder).CreateSubdirectory("Downloads"), select));
+            entries.Add(new SidebarEntry(Phosphor.Bold.User, Environment.UserName, new DirectoryInfo(folder), select));
+            entries.Add(new SidebarEntry(Phosphor.Bold.Download, "Downloads", new DirectoryInfo(folder).CreateSubdirectory("Downloads"), select));
         }
 
         if (tryGetFolderPath(Environment.SpecialFolder.MyPictures, out folder))
-            entries.Add(new SidebarEntry(FontAwesome6.Solid.Images, "Pictures", new DirectoryInfo(folder), select));
+            entries.Add(new SidebarEntry(Phosphor.Bold.Images, "Pictures", new DirectoryInfo(folder), select));
         if (tryGetFolderPath(Environment.SpecialFolder.MyMusic, out folder))
-            entries.Add(new SidebarEntry(FontAwesome6.Solid.Music, "Music", new DirectoryInfo(folder), select));
+            entries.Add(new SidebarEntry(Phosphor.Bold.MusicNotes, "Music", new DirectoryInfo(folder), select));
         if (!string.IsNullOrEmpty(mapDirectory))
-            entries.Add(new SidebarEntry(FontAwesome6.Solid.Cube, "Map Folder", new DirectoryInfo(mapDirectory), select));
+            entries.Add(new SidebarEntry(Phosphor.Bold.Cube, "Map Folder", new DirectoryInfo(mapDirectory), select));
     }
 
     protected override void LoadComplete()

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 using osu.Framework.Localisation;
@@ -16,10 +14,6 @@ public class APIMap
 
     [JsonProperty("mapset")]
     public long MapSetID { get; init; }
-
-    [JsonProperty("mapper")]
-    [Obsolete($"Use {nameof(Mappers)} instead.")]
-    public APIUser Mapper => Mappers.First();
 
     [JsonProperty("mappers")]
     public List<APIUser> Mappers { get; init; } = null!;

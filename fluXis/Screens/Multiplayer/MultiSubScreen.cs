@@ -1,19 +1,15 @@
 using fluXis.Database.Maps;
 using fluXis.Graphics;
-using fluXis.Graphics.Sprites.Text;
-using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface;
 using fluXis.Input;
 using fluXis.Online.Activity;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK;
 
 namespace fluXis.Screens.Multiplayer;
 
@@ -31,56 +27,11 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
     protected virtual UserActivity InitialActivity => new UserActivity.MenuGeneral();
     public virtual bool AllowMusicPausing => false;
 
-    private Container titleContainer;
-    private Circle titleLine;
-    private FluXisSpriteText titleText;
-    private FluXisSpriteText titleSubText;
+    private ScreenHeader header;
 
     protected override void LoadComplete()
     {
-        AddRangeInternal(new Drawable[]
-        {
-            titleContainer = new Container
-            {
-                AutoSizeAxes = Axes.Both,
-                Margin = new MarginPadding(30),
-                Children = new Drawable[]
-                {
-                    new Container
-                    {
-                        Size = new Vector2(6, 3),
-                        RelativeSizeAxes = Axes.Y,
-                        Anchor = Anchor.BottomLeft,
-                        Origin = Anchor.BottomLeft,
-                        Colour = Theme.Text,
-                        Child = titleLine = new Circle
-                        {
-                            RelativeSizeAxes = Axes.Both
-                        }
-                    },
-                    new FillFlowContainer
-                    {
-                        AutoSizeAxes = Axes.Both,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Direction = FillDirection.Vertical,
-                        Margin = new MarginPadding { Left = 12 },
-                        Children = new Drawable[]
-                        {
-                            titleText = new FluXisSpriteText
-                            {
-                                WebFontSize = 16,
-                                Alpha = .8f
-                            },
-                            titleSubText = new FluXisSpriteText
-                            {
-                                WebFontSize = 20
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        AddInternal(header = new ScreenHeader());
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
@@ -113,23 +64,20 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
     {
         RefreshActivity();
 
-        titleContainer.MoveToX(0);
-        titleLine.ResizeHeightTo(0).ResizeHeightTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
-        titleText.MoveToX(-10).MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
-        titleSubText.MoveToX(-10).MoveToX(0, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        header.Show();
         this.FadeInFromZero(Styling.TRANSITION_FADE);
     }
 
     protected virtual void FadeOut(IScreen next)
     {
-        titleContainer.MoveToX(50, Styling.TRANSITION_MOVE);
+        header.Hide();
         this.FadeOut(Styling.TRANSITION_FADE);
     }
 
     protected void RefreshTitle()
     {
-        titleText.Text = Title;
-        titleSubText.Text = SubTitle;
+        header.Title = Title;
+        header.SubTitle = SubTitle;
     }
 
     protected void RefreshActivity() => Activity.Value = InitialActivity;

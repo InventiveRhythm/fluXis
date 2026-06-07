@@ -38,11 +38,11 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     public MenuItem[] ContextMenuItems => new MenuItem[]
     {
-        new MenuActionItem("Clone to current time", FontAwesome6.Solid.Clone, clone),
-        new MenuActionItem("Go to time", FontAwesome6.Solid.ArrowRight, goTo),
-        new MenuActionItem("Bulk-Apply Group", FontAwesome6.Solid.ObjectGroup, applyGroup) { IsEnabled = () => State == SelectedState.Selected },
-        new MenuActionItem("Edit", FontAwesome6.Solid.PenRuler, OpenSettings),
-        new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => delete(false))
+        new MenuActionItem("Clone to current time", Phosphor.Bold.Copy, clone),
+        new MenuActionItem("Go to time", Phosphor.Bold.ArrowRight, goTo),
+        new MenuActionItem("Bulk-Apply Group", Phosphor.Bold.SelectionAll, applyGroup) { IsEnabled = () => State == SelectedState.Selected },
+        new MenuActionItem("Edit", Phosphor.Bold.PencilRuler, OpenSettings),
+        new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => delete(false))
     };
 
     public event Action<PointListEntry> Selected;

@@ -243,7 +243,7 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             ColorEnd = club.Colors.Last().Color
         };
 
-        panels.Content = new FormPanel<EditClubPayload>(FontAwesome6.Solid.Pencil, "Edit Club", startData.JsonCopy(), (form, data) =>
+        panels.Content = new FormPanel<EditClubPayload>(Phosphor.Bold.PencilSimple, "Edit Club", startData.JsonCopy(), (form, data) =>
         {
             form.StartLoading();
             data = data.NullWhereSame(startData);

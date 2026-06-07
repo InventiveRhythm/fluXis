@@ -111,14 +111,14 @@ public partial class PauseMenu : CompositeDrawable, IKeyBindingHandler<FluXisGlo
                                     {
                                         Text = "Resume",
                                         SubText = "Continue playing",
-                                        Icon = FontAwesome6.Solid.Play,
+                                        Icon = Phosphor.Bold.Play,
                                         Action = () => screen.IsPaused.Value = false
                                     },
                                     new()
                                     {
                                         Text = "Restart",
                                         SubText = "Try again?",
-                                        Icon = FontAwesome6.Solid.RotateRight,
+                                        Icon = Phosphor.Bold.ArrowClockwise,
                                         Action = () => screen.RestartMap()
                                     },
                                     new()
@@ -126,7 +126,7 @@ public partial class PauseMenu : CompositeDrawable, IKeyBindingHandler<FluXisGlo
                                         Text = "Quit",
                                         Color = Theme.Red,
                                         SubText = "Bye bye",
-                                        Icon = FontAwesome6.Solid.DoorOpen,
+                                        Icon = Phosphor.Bold.DoorOpen,
                                         Action = () => screen.Exit()
                                     }
                                 }

@@ -16,7 +16,7 @@ namespace fluXis.Overlay.Settings.Sections;
 
 public partial class InputSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.Keyboard;
+    public override IconUsage Icon => Phosphor.Bold.Keyboard;
     public override LocalisableString Title => LocalizationStrings.Settings.Input.Title;
 
     private InputKeybindingsSection bindings = null!;

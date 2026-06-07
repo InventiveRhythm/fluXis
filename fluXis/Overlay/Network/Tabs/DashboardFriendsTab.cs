@@ -23,7 +23,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardFriendsTab : DashboardTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Friends;
-    public override IconUsage Icon => FontAwesome6.Solid.UserGroup;
+    public override IconUsage Icon => Phosphor.Bold.Users;
     public override DashboardTabType Type => DashboardTabType.Friends;
 
     [Resolved]

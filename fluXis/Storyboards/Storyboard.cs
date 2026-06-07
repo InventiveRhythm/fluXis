@@ -91,11 +91,14 @@ public class Storyboard : EditorMap.IChangeNotifier
         OnUpdate?.Invoke(obj);
     }
 
-    public void ApplyOffset(float offset) => Elements.ForEach(x =>
+    public void ApplyOffset(double offset) => Elements.ForEach(x =>
     {
         x.StartTime += offset;
         x.EndTime += offset;
     });
+
+    public List<StoryboardElement> GetScriptElements(string s) =>
+        Elements.FindAll(e => e.Type == StoryboardElementType.Script && e.GetParameter("path", "") == s);
 
     public bool Matches(Type type) => typeof(StoryboardElement) == type;
 

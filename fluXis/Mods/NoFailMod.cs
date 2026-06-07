@@ -10,7 +10,7 @@ public class NoFailMod : IMod, IApplicableToHealthProcessor
     public string Name => "No Fail";
     public string Acronym => "NF";
     public string Description => "You can't fail, no matter what.";
-    public IconUsage Icon => FontAwesome6.Solid.ShieldHalved;
+    public IconUsage Icon => Phosphor.Bold.Shield;
     public ModType Type => ModType.DifficultyDecrease;
     public float ScoreMultiplier => 0.5f;
     public bool Rankable => true;

@@ -69,7 +69,7 @@ public partial class TimelineTag : HoverClickContainer
         {
             Icon = new FluXisSpriteIcon
             {
-                Icon = FontAwesome6.Solid.Play,
+                Icon = Phosphor.Bold.Play,
                 Size = new Vector2(10),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

@@ -76,7 +76,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             },
             outlineDiamond = new FluXisSpriteIcon
             {
-                Icon = FontAwesome6.Solid.Diamond,
+                Icon = Phosphor.Bold.Diamond,
                 RelativeSizeAxes = Axes.Both,
                 Size = new Vector2(0.75f),
                 Anchor = Anchor.Centre,
@@ -86,7 +86,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             },
             new FluXisSpriteIcon
             {
-                Icon = FontAwesome6.Solid.Diamond,
+                Icon = Phosphor.Bold.Diamond,
                 RelativeSizeAxes = Axes.Both,
                 Size = new Vector2(0.6f),
                 Anchor = Anchor.Centre,

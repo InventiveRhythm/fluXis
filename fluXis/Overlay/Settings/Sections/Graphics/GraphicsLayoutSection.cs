@@ -19,7 +19,7 @@ namespace fluXis.Overlay.Settings.Sections.Graphics;
 public partial class GraphicsLayoutSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Layout;
-    public override IconUsage Icon => FontAwesome6.Solid.WindowRestore;
+    public override IconUsage Icon => Phosphor.Bold.AppWindow;
 
     private SettingsGraphicsStrings strings => LocalizationStrings.Settings.Graphics;
 

@@ -20,7 +20,7 @@ namespace fluXis.Overlay.Settings.Sections.Advanced;
 public partial class AdvancedFilesSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Files;
-    public override IconUsage Icon => FontAwesome6.Solid.File;
+    public override IconUsage Icon => Phosphor.Bold.File;
 
     private SettingsAdvancedStrings strings => LocalizationStrings.Settings.Advanced;
 
@@ -36,7 +36,7 @@ public partial class AdvancedFilesSection : SettingsSubSection
                 ButtonText = "Run",
                 Action = () =>
                 {
-                    notifications.SendSmallText("Cleaning up files...", FontAwesome6.Solid.Rotate);
+                    notifications.SendSmallText("Cleaning up files...", Phosphor.Bold.ArrowsClockwise);
                     var deleted = 0;
                     var errors = 0;
 
@@ -59,7 +59,7 @@ public partial class AdvancedFilesSection : SettingsSubSection
                         }
                     }
 
-                    notifications.SendText($"Cleaned up {deleted} folder(s)", errors != 0 ? $"{errors} deletion(s) failed." : "", FontAwesome6.Solid.Check);
+                    notifications.SendText($"Cleaned up {deleted} folder(s)", errors != 0 ? $"{errors} deletion(s) failed." : "", Phosphor.Bold.Check);
                 }
             },
             new SettingsTextBox

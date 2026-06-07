@@ -26,7 +26,7 @@ namespace fluXis.Overlay.Settings.Sections.Appearance;
 public partial class AppearanceSkinSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Skin;
-    public override IconUsage Icon => FontAwesome6.Solid.PaintBrush;
+    public override IconUsage Icon => Phosphor.Bold.Palette;
 
     private SettingsAppearanceStrings strings => LocalizationStrings.Settings.Appearance;
 
@@ -41,8 +41,8 @@ public partial class AppearanceSkinSection : SettingsSubSection
     {
         buttonsEnabled = new BindableBool(true);
 
-        RightSide.Add(new TopRowButton(FontAwesome6.Brands.Steam, "Open Workshop") { Action = () => game?.OpenLink($"https://steamcommunity.com/app/{steam?.AppID}/workshop/", true) });
-        RightSide.Add(new TopRowButton(FontAwesome6.Solid.ArrowsRotate, "Refresh") { Action = skinManager.ReloadSkinList });
+        RightSide.Add(new TopRowButton(Phosphor.Bold.SteamLogo, "Open Workshop") { Action = () => game?.OpenLink($"https://steamcommunity.com/app/{steam?.AppID}/workshop/", true) });
+        RightSide.Add(new TopRowButton(Phosphor.Bold.ArrowsClockwise, "Refresh") { Action = skinManager.ReloadSkinList });
 
         AddRange(new Drawable[]
         {
@@ -52,7 +52,6 @@ public partial class AppearanceSkinSection : SettingsSubSection
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Full,
                 Spacing = new Vector2(20),
-                ChildrenEnumerable = skinManager.AvailableSkins.Select(x => new SkinIcon(x)),
                 Margin = new MarginPadding { Bottom = 8 }
             },
             new SettingsButton
@@ -115,6 +114,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
 
         skinManager.SkinChanged += () => buttonsEnabled.Value = !skinManager.IsDefault;
         skinManager.SkinListChanged += reloadList;
+        reloadList();
     }
 
     private void reloadList()

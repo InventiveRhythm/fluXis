@@ -15,7 +15,7 @@ namespace fluXis.Overlay.Settings.Sections.Appearance;
 public partial class AppearanceLayoutSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Layout;
-    public override IconUsage Icon => FontAwesome6.Solid.LayerGroup;
+    public override IconUsage Icon => Phosphor.Bold.Layout;
 
     private SettingsAppearanceStrings strings => LocalizationStrings.Settings.Appearance;
 

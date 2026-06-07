@@ -254,7 +254,7 @@ public partial class TaskNotification : CompositeDrawable
                 setColor(colorFailed, instant ? 0 : 500);
                 resize(1);
 
-                icon.Icon = FontAwesome6.Solid.XMark;
+                icon.Icon = Phosphor.Bold.X;
                 statusText.Text = data.TextFailed;
 
                 Hide(10000);
@@ -265,7 +265,7 @@ public partial class TaskNotification : CompositeDrawable
                 setColor(colorFinished, instant ? 0 : 500);
                 resize(1);
 
-                icon.Icon = FontAwesome6.Solid.Check;
+                icon.Icon = Phosphor.Bold.Check;
                 statusText.Text = data.TextFinished;
 
                 Hide(data.ClickAction != null ? 5000 : 1000);

@@ -13,7 +13,7 @@ namespace fluXis.Overlay.Club.Tabs;
 
 public partial class ClubMembersTab : TabContainer
 {
-    public override IconUsage Icon => FontAwesome6.Solid.UserGroup;
+    public override IconUsage Icon => Phosphor.Bold.Users;
     public override string Title => "Members";
 
     private APIClub club { get; }

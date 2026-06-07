@@ -96,7 +96,7 @@ public partial class MultiResults : FluXisScreen, IKeyBindingHandler<FluXisGloba
             backButton = new CornerButton
             {
                 ButtonText = LocalizationStrings.General.Back,
-                Icon = FontAwesome6.Solid.AngleLeft,
+                Icon = Phosphor.Bold.CaretLeft,
                 Action = this.Exit
             }
         };

@@ -173,7 +173,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 {
                                                     new FluXisSpriteIcon
                                                     {
-                                                        Icon = FontAwesome6.Solid.FolderOpen,
+                                                        Icon = Phosphor.Bold.FolderOpen,
                                                         Size = new Vector2(30),
                                                         Anchor = Anchor.TopCentre,
                                                         Origin = Anchor.TopCentre,
@@ -208,7 +208,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 {
                                                     new FluXisSpriteIcon
                                                     {
-                                                        Icon = FontAwesome6.Solid.XMark,
+                                                        Icon = Phosphor.Bold.X,
                                                         Size = new Vector2(30),
                                                         Anchor = Anchor.TopCentre,
                                                         Origin = Anchor.TopCentre
@@ -832,7 +832,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Icon = FontAwesome6.Solid.AngleLeft,
+                    Icon = Phosphor.Bold.CaretLeft,
                     Size = new Vector2(20)
                 }
             };

@@ -220,7 +220,7 @@ public partial class ProfileHeader : Container
                                         Placement = user.Statistics!.GlobalRank,
                                         CreateIcon = () => new FluXisSpriteIcon
                                         {
-                                            Icon = FontAwesome6.Solid.EarthAmericas,
+                                            Icon = Phosphor.Bold.GlobeHemisphereWest,
                                             Size = new Vector2(20)
                                         }
                                     },
@@ -261,7 +261,7 @@ public partial class ProfileHeader : Container
     {
         yield return new HeaderButton
         {
-            Icon = FontAwesome6.Solid.ShareNodes,
+            Icon = Phosphor.Bold.ShareNetwork,
             Action = () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}"),
         };
 
@@ -269,7 +269,7 @@ public partial class ProfileHeader : Container
         {
             yield return new HeaderButton
             {
-                Icon = FontAwesome6.Solid.Message,
+                Icon = Phosphor.Bold.ChatsCircle,
                 Text = "Message",
                 Action = () =>
                 {

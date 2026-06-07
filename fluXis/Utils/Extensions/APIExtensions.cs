@@ -72,6 +72,7 @@ public static class APIExtensions
         ScrollSpeed = score.ScrollSpeed,
         Timestamp = score.Time,
         Mods = score.Mods.Split(",").ToList(),
-        PlayerID = score.User.ID
+        PlayerID = score.User.ID,
+        Player = score.User
     };
 }

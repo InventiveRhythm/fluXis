@@ -39,7 +39,7 @@ public partial class FluXisSearchBox : Container
                 Size = new Vector2(20),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Icon = FontAwesome6.Solid.MagnifyingGlass,
+                Icon = Phosphor.Bold.MagnifyingGlass,
                 Margin = new MarginPadding { Left = 15 },
                 Alpha = 1f
             },

@@ -5,9 +5,10 @@ using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Mods;
 using fluXis.Overlay.Notifications;
-using fluXis.Screens.Edit.Playtest;
+using fluXis.Replays;
 using fluXis.Screens.Edit.UI.BottomBar.Timeline;
 using fluXis.Screens.Gameplay;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -90,7 +91,7 @@ public partial class EditorBottomBar : Container
                                 Child = new CornerButton
                                 {
                                     ButtonText = "Test",
-                                    Icon = FontAwesome6.Solid.Play,
+                                    Icon = Phosphor.Bold.Play,
                                     ShowImmediately = true,
                                     ButtonColor = Theme.Primary,
                                     Corner = Corner.BottomRight,
@@ -146,10 +147,13 @@ public partial class EditorBottomBar : Container
 
                                         editor.Push(new GameplayLoader(map.RealmMap, mods, () =>
                                         {
-                                            if (shouldAutoPlay)
-                                                return new EditorAutoPlaytestScreen(clock, map.RealmMap, clone, startTime, mods);
+                                            var screen = new GameplayScreen(map.RealmMap, mods)
+                                                .RegisterCapability(new EditorPlaytestCapability(clock, clone, startTime));
 
-                                            return new EditorPlaytestScreen(clock, map.RealmMap, clone, startTime, mods);
+                                            if (shouldAutoPlay)
+                                                screen = screen.RegisterCapability(new ReplayCapability(new AutoGenerator(clone, map.RealmMap.KeyCount).Generate()));
+
+                                            return screen;
                                         }));
                                     }
                                 }

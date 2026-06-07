@@ -5,6 +5,7 @@ using fluXis.Skinning.DefaultCircle.HitObject;
 using fluXis.Skinning.DefaultCircle.Lighting;
 using fluXis.Skinning.DefaultCircle.Receptor;
 using fluXis.Skinning.Json;
+using fluXis.Storyboards;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -23,6 +24,18 @@ public class DefaultCircleSkin : DefaultSkin
     }
 
     public override Texture GetIcon() => Textures.Get("Skins/circle.png");
+
+    public override float? GetSpriteAspectRatio(SkinSprite sprite) => sprite switch
+    {
+        SkinSprite.HitObject
+            or SkinSprite.LongNoteStart
+            or SkinSprite.LongNoteBody
+            or SkinSprite.LongNoteEnd
+            or SkinSprite.TickNote
+            or SkinSprite.TickNoteSmall
+            or SkinSprite.Receptor => 1,
+        _ => null
+    };
 
     public override Drawable GetHitObject(int lane, int keyCount)
     {

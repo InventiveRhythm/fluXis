@@ -411,7 +411,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                         {
                                             Text = "This file does not exist.",
                                             SubText = "Do you want to create it?",
-                                            Icon = FontAwesome6.Solid.File,
+                                            Icon = Phosphor.Bold.File,
                                             Buttons = new ButtonData[]
                                             {
                                                 new PrimaryButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
@@ -436,7 +436,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                 void showError(string text, [CanBeNull] Exception e)
                                 {
                                     panels.Content = new SingleButtonPanel(
-                                        FontAwesome6.Solid.ExclamationTriangle,
+                                        Phosphor.Bold.Warning,
                                         text,
                                         e?.Message ?? "Unknown error"
                                     );
@@ -532,6 +532,19 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             OnValueChanged = t =>
                             {
                                 item.Parameters["id"] = t.Text;
+                                map.Update(item);
+                            }
+                        });
+                        break;
+
+                    case StoryboardElementType.Video:
+                        drawables.Add(new EditorVariableTextBox
+                        {
+                            Text = "Path",
+                            CurrentValue = item.GetParameter("path", ""),
+                            OnValueChanged = t =>
+                            {
+                                item.Parameters["path"] = t.Text;
                                 map.Update(item);
                             }
                         });

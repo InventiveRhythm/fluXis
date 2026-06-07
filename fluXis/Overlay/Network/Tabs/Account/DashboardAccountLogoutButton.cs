@@ -6,6 +6,7 @@ using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Localization;
 using fluXis.Online.Fluxel;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,7 +20,8 @@ public partial class DashboardAccountLogoutButton : CompositeDrawable
     [Resolved]
     private PanelContainer panels { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
     [Resolved]
@@ -47,7 +49,7 @@ public partial class DashboardAccountLogoutButton : CompositeDrawable
                 Size = new Vector2(16),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Icon = FontAwesome6.Solid.PersonToDoor
+                Icon = Phosphor.Bold.SignOut
             }
         };
     }
@@ -71,13 +73,13 @@ public partial class DashboardAccountLogoutButton : CompositeDrawable
         {
             Text = "Are you sure you want to log out?",
             SubText = "This will exit the game.",
-            Icon = FontAwesome6.Solid.PersonToDoor,
+            Icon = Phosphor.Bold.SignOut,
             Buttons = new ButtonData[]
             {
                 new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
                 {
                     api.Logout();
-                    game.Exit();
+                    game?.Exit();
                 }, true),
                 new CancelButtonData()
             }
