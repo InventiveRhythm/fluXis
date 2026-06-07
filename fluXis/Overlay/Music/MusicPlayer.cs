@@ -7,6 +7,7 @@ using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
