@@ -59,7 +59,7 @@ public partial class DrawableTickNote : DrawableHitObject
 
         var next = Data.NextObject;
 
-        if (next?.Type == 1 && next.Lane == Data.Lane && (Data.VisualLane != 0 || next.VisualLane != 0))
+        if (next?.Type == HitObjectType.Tick && next.Lane == Data.Lane && (Data.VisualLane != 0 || next.VisualLane != 0))
         {
             var l = next.VisualLane == 0 ? next.Lane : next.VisualLane;
             var pos = Column.FullPositionAt(next.Time, l, next.ScrollGroup, next.StartEasing);

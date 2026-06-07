@@ -4,7 +4,7 @@ namespace fluXis.Online.API.Requests.MapSets;
 
 public class MapSetDeleteRequest : APIRequest<object>
 {
-    protected override string Path => $"/mapset/{id}";
+    protected override string Path => $"/mapsets/{id}";
     protected override HttpMethod Method => HttpMethod.Delete;
 
     private long id { get; }

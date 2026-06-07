@@ -27,7 +27,7 @@ namespace fluXis.Overlay.Network.Tabs.Chat;
 public partial class ChatChannelButton : Container, IHasContextMenu
 {
     public ChatChannel Channel { get; }
-    public IconUsage Icon { get; set; } = FontAwesome6.Solid.Hashtag;
+    public IconUsage Icon { get; set; } = Phosphor.Bold.Hash;
 
     public MenuItem[] ContextMenuItems
     {
@@ -36,7 +36,7 @@ public partial class ChatChannelButton : Container, IHasContextMenu
             var list = new List<MenuItem>();
 
             if (publicChannel)
-                list.Add(new MenuActionItem("Leave Channel", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, leave));
+                list.Add(new MenuActionItem("Leave Channel", Phosphor.Bold.DoorOpen, MenuItemType.Dangerous, leave));
 
             return list.ToArray();
         }

@@ -70,7 +70,7 @@ public partial class StoryboardAnimationRow : GridContainer
                             Action = addNew,
                             Child = new FluXisSpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.Plus,
+                                Icon = Phosphor.Bold.Plus,
                                 Margin = new MarginPadding { Horizontal = 8 },
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
@@ -91,7 +91,7 @@ public partial class StoryboardAnimationRow : GridContainer
 
     private void addNew()
     {
-        var animation = new StoryboardAnimation
+        var animation = new StoryboardAnimation(Item)
         {
             StartTime = clock.CurrentTime - Item.StartTime,
             ValueStart = getDefault(type),
@@ -114,7 +114,12 @@ public partial class StoryboardAnimationRow : GridContainer
     }
 
     private StoryboardAnimationEntry createEntry(StoryboardAnimation anim)
-        => new(anim, this, color) { RequestRemove = remove };
+    {
+        // Restore the parent reference lost during json deserialization (because of [JsonIgnore] on ParentElement).
+        anim.ParentElement ??= Item;
+
+        return new StoryboardAnimationEntry(anim, this, color) { RequestRemove = remove };
+    }
 
     private static string getDefault(StoryboardAnimationType type)
     {

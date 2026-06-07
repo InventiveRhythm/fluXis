@@ -11,7 +11,7 @@ public partial class ConfirmDeletionPanel : ButtonPanel
 {
     public ConfirmDeletionPanel(Action confirm, Action cancel = null, string itemName = "")
     {
-        Icon = FontAwesome6.Solid.Trash;
+        Icon = Phosphor.Bold.Trash;
         Text = $"Are you sure you want to delete this{(string.IsNullOrEmpty(itemName) ? "" : $" {itemName}")}?";
         SubText = "This action cannot be undone.";
         IsDangerous = true;

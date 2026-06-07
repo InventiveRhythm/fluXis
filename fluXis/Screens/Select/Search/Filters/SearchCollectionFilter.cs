@@ -22,16 +22,16 @@ public partial class SearchCollectionFilter : SearchFilterControl<Collection?>
         switch (item?.Type)
         {
             case CollectionType.Favorite:
-                return FontAwesome6.Solid.Heart;
+                return Phosphor.Bold.HeartStraight;
 
             case CollectionType.Owned:
-                return FontAwesome6.Solid.ListMusic;
+                return Phosphor.Bold.Playlist;
 
             case CollectionType.Subscribed:
-                return FontAwesome6.Solid.EarthAmericas;
+                return Phosphor.Bold.GlobeHemisphereWest;
 
             default:
-                return FontAwesome6.Solid.XMark;
+                return Phosphor.Bold.X;
         }
     }
 

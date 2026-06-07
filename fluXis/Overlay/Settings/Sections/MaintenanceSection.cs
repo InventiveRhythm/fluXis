@@ -10,7 +10,7 @@ namespace fluXis.Overlay.Settings.Sections;
 
 public partial class MaintenanceSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.ScrewdriverWrench;
+    public override IconUsage Icon => Phosphor.Bold.Wrench;
     public override LocalisableString Title => LocalizationStrings.Settings.Advanced.Title;
 
     [BackgroundDependencyLoader]

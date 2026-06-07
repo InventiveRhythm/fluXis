@@ -16,7 +16,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Graphics.Shaders;
 
-public partial class ShaderStackContainer : CompositeDrawable, IBufferedDrawable
+public partial class ShaderStackContainer : Container, IBufferedDrawable
 {
     [Resolved]
     private ShaderManager manager { get; set; }
@@ -126,6 +126,7 @@ public partial class ShaderStackContainer : CompositeDrawable, IBufferedDrawable
         ShaderType.SplitScreen => new SplitScreenShaderStep(),
         ShaderType.FishEye => new FishEyeShaderStep(),
         ShaderType.Reflections => new ReflectionsShaderStep(),
+        ShaderType.Glitch2 => new Glitch2ShaderStep(),
         _ => null
     };
 

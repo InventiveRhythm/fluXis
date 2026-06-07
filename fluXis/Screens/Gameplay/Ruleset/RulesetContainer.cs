@@ -35,6 +35,7 @@ public partial class RulesetContainer : CompositeDrawable
     public virtual bool AsyncScoreCalculations => false;
     public HitWindows HitWindows { get; private set; }
     public ReleaseWindows ReleaseWindows { get; private set; }
+    public LandmineWindows LandmineWindows { get; private set; }
 
     private readonly Dictionary<string, ScrollGroup> scrolls = new();
     public IReadOnlyDictionary<string, ScrollGroup> ScrollGroups => scrolls;
@@ -117,6 +118,7 @@ public partial class RulesetContainer : CompositeDrawable
 
         HitWindows = new HitWindows(difficulty, Rate);
         ReleaseWindows = new ReleaseWindows(difficulty, Rate);
+        LandmineWindows = new LandmineWindows(difficulty, Rate);
     }
 
     private void createScrollGroups()

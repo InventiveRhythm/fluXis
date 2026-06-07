@@ -22,7 +22,7 @@ using fluXis.Screens.Edit.Tabs.Shared;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -45,7 +45,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         new SelectTool(),
         new SingleNoteTool(),
         new LongNoteTool(),
-        new TickNoteTool()
+        new TickNoteTool(),
+        new LandmineTool()
     };
 
     public IReadOnlyList<EffectTool> EffectTools { get; } = new EffectTool[]
@@ -140,14 +141,14 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             new()
             {
                 Title = "Tools",
-                ExtraTitle = "(1-4)",
-                Icon = FontAwesome6.Solid.Pen,
+                ExtraTitle = "(1-5)",
+                Icon = Phosphor.Bold.PencilSimple,
                 Tools = Tools
             },
             new()
             {
                 Title = "Effects",
-                Icon = FontAwesome6.Solid.WandMagicSparkles,
+                Icon = Phosphor.Bold.MagicWand,
                 Tools = EffectTools
             },
             toolboxHitsounds = new ToolboxHitsoundCategory(),
@@ -200,9 +201,9 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
                 recordingInput = !recordingInput;
 
                 if (recordingInput)
-                    notifications.SendSmallText("Recording input.", FontAwesome6.Solid.Check);
+                    notifications.SendSmallText("Recording input.", Phosphor.Bold.Check);
                 else
-                    notifications.SendSmallText("Stopped recording input.", FontAwesome6.Solid.XMark);
+                    notifications.SendSmallText("Stopped recording input.", Phosphor.Bold.X);
 
                 return true;
             }
@@ -328,7 +329,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         if (!objects.Any())
         {
-            notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+            notifications.SendSmallText("Nothing selected.", Phosphor.Bold.X);
             return;
         }
 
@@ -341,7 +342,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         if (!objects.Any())
         {
-            notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+            notifications.SendSmallText("Nothing selected.", Phosphor.Bold.X);
             return;
         }
 
@@ -354,7 +355,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         if (!objects.Any())
         {
-            notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+            notifications.SendSmallText("Nothing selected.", Phosphor.Bold.X);
             return;
         }
 
@@ -391,7 +392,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         if (!hits.Any())
         {
-            notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+            notifications.SendSmallText("Nothing selected.", Phosphor.Bold.X);
             return;
         }
 
@@ -405,11 +406,11 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         if (deleteAfter)
         {
-            notifications.SendSmallText($"Cut {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
+            notifications.SendSmallText($"Cut {content.HitObjects.Count} hit objects.", Phosphor.Bold.Check);
             BlueprintContainer.SelectionHandler.DeleteSelected();
         }
         else
-            notifications.SendSmallText($"Copied {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
+            notifications.SendSmallText($"Copied {content.HitObjects.Count} hit objects.", Phosphor.Bold.Check);
     }
 
     public void Paste()
@@ -419,7 +420,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         if ((!clipboard.GetText()?.TryDeserialize(out content) ?? true) || !content.HitObjects.Any())
         {
-            notifications.SendSmallText("Clipboard is empty.", FontAwesome6.Solid.XMark);
+            notifications.SendSmallText("Clipboard is empty.", Phosphor.Bold.X);
             return;
         }
 
@@ -432,6 +433,6 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         ActionStack.Add(new NotePasteAction(content.HitObjects.ToArray()));
 
-        notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
+        notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", Phosphor.Bold.Check);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using fluXis.Online.API.Models.Users;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Structs;
 using Newtonsoft.Json;
@@ -95,4 +96,7 @@ public class ScoreInfo
             return float.TryParse(rate, out var result) ? result : 1;
         }
     }
+
+    [JsonIgnore]
+    public APIUser? Player { get; set; }
 }

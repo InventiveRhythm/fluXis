@@ -3,9 +3,9 @@ namespace fluXis.Screens.Edit.Actions;
 public class ApplyOffsetAction : EditorAction
 {
     public override string Description => $"Add offset of {offset}ms to everything";
-    private float offset { get; }
+    private double offset { get; }
 
-    public ApplyOffsetAction(float offset)
+    public ApplyOffsetAction(double offset)
     {
         this.offset = offset;
     }

@@ -17,6 +17,8 @@
   "nf-description": "You can't fail, no matter what.",
   "nln-name": "No LN",
   "nln-description": "Removes all long notes and replaces them with single notes.",
+  "nmn-name": "No Mines",
+  "nmn-description": "Removes all landmines.",
   "nsv-name": "No SV",
   "nsv-description": "Removes all scroll velocity changes.",
   "pa-name": "Paused",

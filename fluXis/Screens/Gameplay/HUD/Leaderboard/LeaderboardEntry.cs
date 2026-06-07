@@ -6,7 +6,7 @@ using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Images;
 using fluXis.Scoring;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -20,7 +20,7 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
 {
     protected virtual float TotalScore => score.Score;
     protected virtual double PerformanceRating => score.PerformanceRating;
-    protected virtual APIUser Player => users.Get(score.PlayerID) ?? APIUser.CreateUnknown(score.PlayerID);
+    protected virtual APIUser Player => score.Player ?? users.Get(score.PlayerID) ?? APIUser.CreateUnknown(score.PlayerID);
 
     [Resolved]
     private UserCache users { get; set; }

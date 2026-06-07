@@ -36,7 +36,7 @@ public partial class NotificationManager : Component
         Tasks?.Add(notification.Create());
     }
 
-    public void SendSmallText(string text) => SendSmallText(text, FontAwesome6.Solid.Info);
+    public void SendSmallText(string text) => SendSmallText(text, Phosphor.Bold.Info);
 
     public void SendSmallText(string text, IconUsage icon)
     {
@@ -53,7 +53,7 @@ public partial class NotificationManager : Component
         });
     }
 
-    public void SendText(string text, string subtext = "", Action action = null) => SendText(text, subtext, FontAwesome6.Solid.Info, action);
+    public void SendText(string text, string subtext = "", Action action = null) => SendText(text, subtext, Phosphor.Bold.Info, action);
 
     public void SendText(string text, string subtext, IconUsage icon, Action action = null)
     {
@@ -72,7 +72,7 @@ public partial class NotificationManager : Component
         });
     }
 
-    public void SendError(string text, string subtext = "", Action action = null) => SendError(text, subtext, FontAwesome6.Solid.XMark, action);
+    public void SendError(string text, string subtext = "", Action action = null) => SendError(text, subtext, Phosphor.Bold.X, action);
 
     public void SendError(string text, string subtext, IconUsage icon, Action action = null)
     {

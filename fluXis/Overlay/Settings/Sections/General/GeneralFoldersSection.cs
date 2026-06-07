@@ -16,7 +16,7 @@ namespace fluXis.Overlay.Settings.Sections.General;
 public partial class GeneralFoldersSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Folders;
-    public override IconUsage Icon => FontAwesome6.Solid.Folder;
+    public override IconUsage Icon => Phosphor.Bold.Folder;
 
     [Resolved]
     private FluXisGameBase game { get; set; }

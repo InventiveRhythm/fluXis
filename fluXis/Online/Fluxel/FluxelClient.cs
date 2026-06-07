@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Configuration;
@@ -243,7 +244,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
                 {
                     if (connection.State >= WebSocketState.Closing)
                     {
-                        LastException = new APIException(connection.CloseReason);
+                        LastException = new APIException(connection.CloseReason, HttpStatusCode.Gone);
                         Status.Value = ConnectionStatus.Reconnecting;
                         break;
                     }

@@ -79,10 +79,10 @@ public partial class DrawableMultiplayerCard : CompositeDrawable
                                 Size = new Vector2(16),
                                 Icon = room.Privacy switch
                                 {
-                                    MultiplayerPrivacy.Public => FontAwesome6.Solid.EarthAmericas,
-                                    MultiplayerPrivacy.Club => FontAwesome6.Solid.CircleNodes,
-                                    MultiplayerPrivacy.Private => FontAwesome6.Solid.Lock,
-                                    _ => FontAwesome6.Solid.Question
+                                    MultiplayerPrivacy.Public => Phosphor.Bold.GlobeHemisphereWest,
+                                    MultiplayerPrivacy.Club => Phosphor.Bold.Graph,
+                                    MultiplayerPrivacy.Private => Phosphor.Bold.Lock,
+                                    _ => Phosphor.Bold.QuestionMark
                                 },
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft

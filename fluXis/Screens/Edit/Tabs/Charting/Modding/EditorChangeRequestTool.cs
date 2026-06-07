@@ -10,7 +10,7 @@ public class EditorChangeRequestTool : ChartingTool
 {
     public override string Name => "Comment";
     public override string Description => "Creates a highlighted area with a comment.";
-    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = FontAwesome6.Solid.Message };
+    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = Phosphor.Bold.ChatsCircle };
     public override PlacementBlueprint CreateBlueprint() => new EditorChangeRequestBlueprint(modding);
 
     private EditorModding modding { get; }

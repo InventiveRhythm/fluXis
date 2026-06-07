@@ -16,7 +16,7 @@ public partial class IconButton : Container
 {
     public float ButtonSize { get; init; } = 50;
     public Colour4 ButtonColor { get; init; } = Colour4.Transparent;
-    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
+    public IconUsage Icon { get; init; } = Phosphor.Bold.QuestionMark;
     public float IconSize { get; init; } = 30;
     public Action Action { get; init; }
 

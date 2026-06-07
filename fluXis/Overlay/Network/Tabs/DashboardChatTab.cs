@@ -29,7 +29,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardChatTab : DashboardTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Chat;
-    public override IconUsage Icon => FontAwesome6.Solid.Message;
+    public override IconUsage Icon => Phosphor.Bold.ChatsCircle;
     public override DashboardTabType Type => DashboardTabType.Chat;
     public override float DashboardWidth => 1600;
 

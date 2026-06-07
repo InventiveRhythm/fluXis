@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Audio.FFT;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
@@ -16,10 +17,13 @@ namespace fluXis.Screens.Edit.Tabs;
 
 public partial class SetupTab : EditorTab
 {
-    public override IconUsage Icon => FontAwesome6.Solid.ScrewdriverWrench;
+    public override IconUsage Icon => Phosphor.Bold.Wrench;
     public override string TabName => "Setup";
 
     private SetupSection metadata;
+
+    [Resolved]
+    private AudioAnalyzer analyzer { get; set; }
 
     [BackgroundDependencyLoader]
     private void load(EditorMap map)
@@ -177,6 +181,17 @@ public partial class SetupTab : EditorTab
                                                             {
                                                                 map.MapInfo.NewLaneSwitchLayout = value;
                                                                 map.MapEvents.LaneSwitchEvents.ForEach(map.Update);
+                                                            }
+                                                        },
+                                                        new SetupToggle("Enable Visualization", map.MapInfo.EnableVisualization)
+                                                        {
+                                                            TooltipText = "Allows getting audio amplitude data in scripts",
+                                                            OnChange = value =>
+                                                            {
+                                                                map.MapInfo.EnableVisualization = value;
+
+                                                                // immediately start fft processing
+                                                                if (value) analyzer.SetAudio(map.RealmMap);
                                                             }
                                                         },
                                                         new SetupSlider<int>("Extra Playfields", map.MapInfo.ExtraPlayfields, 0, 9, 1)

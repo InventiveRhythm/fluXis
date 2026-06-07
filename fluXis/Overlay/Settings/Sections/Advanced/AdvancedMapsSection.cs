@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Database;
@@ -11,17 +12,19 @@ using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Overlay.Settings.UI;
 using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
+using osu.Framework.Platform;
 
 namespace fluXis.Overlay.Settings.Sections.Advanced;
 
 public partial class AdvancedMapsSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Maps;
-    public override IconUsage Icon => FontAwesome6.Solid.Map;
+    public override IconUsage Icon => Phosphor.Bold.MapTrifold;
 
     private SettingsAdvancedStrings strings => LocalizationStrings.Settings.Advanced;
 
@@ -35,6 +38,13 @@ public partial class AdvancedMapsSection : SettingsSubSection
 
     [Resolved]
     private NotificationManager notifications { get; set; }
+
+    [Resolved]
+    private GameHost host { get; set; }
+
+    private Storage cacheStorage => host.CacheStorage.GetStorageForDirectory(FluXisGame.FFT_CACHE_PATH);
+
+    private SettingsItem clearFFTOption;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -54,7 +64,33 @@ public partial class AdvancedMapsSection : SettingsSubSection
                 Description = strings.CleanUpScoresDescription,
                 ButtonText = "Run",
                 Action = clearScores
+            },
+            clearFFTOption = new SettingsButton
+            {
+                Label = strings.ClearVisualizationCache + " (???KB)",
+                Description = strings.ClearVisualizationCacheDescription,
+                ButtonText = "Run",
+                Action = clearFFTCache
             }
+        });
+
+        Task.Run(() =>
+        {
+            var path = cacheStorage.GetFullPath(FluXisGame.FFT_CACHE_PATH);
+            var dir = new DirectoryInfo(path);
+
+            if (!dir.Exists)
+            {
+                var labelNoCache = $"{strings.ClearVisualizationCache} (No Cache)";
+                Schedule(() => clearFFTOption.SetLabel(labelNoCache));
+
+                return;
+            }
+
+            var bytes = dir.GetFiles("*", SearchOption.AllDirectories).Sum(f => f.Length);
+
+            var label = $"{strings.ClearVisualizationCache} ({bytes.FormatBytes()})";
+            Schedule(() => clearFFTOption.SetLabel(label));
         });
     }
 
@@ -134,6 +170,12 @@ public partial class AdvancedMapsSection : SettingsSubSection
             }
         });
 
-        notifications.SendSmallText($"Removed {count} scores.", FontAwesome6.Solid.Check);
+        notifications.SendSmallText($"Removed {count} scores.", Phosphor.Bold.Check);
+    }
+
+    private void clearFFTCache()
+    {
+        cacheStorage.DeleteDirectory(FluXisGame.FFT_CACHE_PATH);
+        clearFFTOption.SetLabel($"{strings.ClearVisualizationCache} (No Cache)");
     }
 }

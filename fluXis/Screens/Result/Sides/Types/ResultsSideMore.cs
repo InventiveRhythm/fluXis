@@ -2,7 +2,7 @@
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Screens.Result.Sides.Presets;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -47,7 +47,7 @@ public partial class ResultsSideMore : ResultsSideContainer
 
         if (score.Value.HitResults is { Count: > 0 })
         {
-            var nonMiss = score.Value.HitResults.Where(r => r.Judgement > Judgement.Miss).ToList();
+            var nonMiss = score.Value.HitResults.Where(r => r is { Judgement: > Judgement.Miss, Type: not ResultType.Landmine }).ToList();
             var avg = nonMiss.Count > 1 ? nonMiss.Average(x => x.Difference) : 0;
             flow.Add(new ResultsSideDoubleText("Mean", $"{(int)-avg}ms"));
         }

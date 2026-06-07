@@ -16,7 +16,7 @@ namespace fluXis.Overlay.MapSet.Tabs;
 
 public partial class MapSetModdingTab : TabContainer
 {
-    public override IconUsage Icon => FontAwesome6.Solid.PenRuler;
+    public override IconUsage Icon => Phosphor.Bold.PencilRuler;
     public override string Title => "Modding";
 
     [Resolved]

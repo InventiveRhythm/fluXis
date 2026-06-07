@@ -45,7 +45,7 @@ public partial class SelectNoMaps : CompositeDrawable
                     new FluXisSpriteIcon
                     {
                         Margin = new MarginPadding { Bottom = 8 },
-                        Icon = FontAwesome6.Solid.TriangleExclamation,
+                        Icon = Phosphor.Bold.Warning,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
                         Size = new Vector2(32)

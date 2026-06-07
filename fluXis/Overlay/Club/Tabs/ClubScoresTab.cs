@@ -10,7 +10,7 @@ namespace fluXis.Overlay.Club.Tabs;
 
 public partial class ClubScoresTab : TabContainer
 {
-    public override IconUsage Icon => FontAwesome6.Solid.ArrowTrendUp;
+    public override IconUsage Icon => Phosphor.Bold.Ranking;
     public override string Title => "Scores";
 
     [BackgroundDependencyLoader]

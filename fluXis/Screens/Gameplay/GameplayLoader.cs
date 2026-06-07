@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Audio;
+using fluXis.Audio.FFT;
 using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
@@ -37,6 +38,9 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
     [Resolved]
     private GlobalClock clock { get; set; }
 
+    [Resolved]
+    private AudioAnalyzer audioAnalyzer { get; set; }
+
     private GameplayScreen screen;
     private readonly Func<GameplayScreen> createFunc;
     private bool fadeBackToGlobalClock;
@@ -66,6 +70,12 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         Depth = -1;
+
+        if (audioAnalyzer is not null)
+        {
+            audioAnalyzer.SetAudio(map);
+            audioAnalyzer.ComputeComplete.Wait();
+        }
 
         InternalChildren = new Drawable[]
         {
@@ -258,11 +268,11 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }
 
         screen.OnRestart += requestRestart;
-        fadeBackToGlobalClock = screen.FadeBackToGlobalClock;
 
         LoadComponentAsync(screen, _ =>
         {
             allowExiting = false;
+            fadeBackToGlobalClock = screen.FadeBackToGlobalClock;
 
             if (!screen.ValidForPush)
             {

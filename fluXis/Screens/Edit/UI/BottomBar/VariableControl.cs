@@ -121,7 +121,7 @@ public partial class VariableControl : FillFlowContainer
                                     Action = () => Bindable.Value += Bindable.Precision,
                                     Child = new FluXisSpriteIcon
                                     {
-                                        Icon = FontAwesome6.Solid.Plus,
+                                        Icon = Phosphor.Bold.Plus,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Size = new Vector2(10)
@@ -135,7 +135,7 @@ public partial class VariableControl : FillFlowContainer
                                     Origin = Anchor.CentreRight,
                                     Child = new FluXisSpriteIcon
                                     {
-                                        Icon = FontAwesome6.Solid.Minus,
+                                        Icon = Phosphor.Bold.Minus,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Size = new Vector2(10)

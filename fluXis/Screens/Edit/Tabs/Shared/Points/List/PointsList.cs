@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Configuration;
@@ -9,6 +10,8 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Events;
@@ -27,6 +30,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
+using Container = osu.Framework.Graphics.Containers.Container;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points.List;
 
@@ -40,6 +44,10 @@ public abstract partial class PointsList : Container
 
     [Resolved]
     private EditorClock clock { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PanelContainer panels { get; set; }
 
     private BindableList<PointListEntry> selectedEntries { get; } = new();
     private PointListEntry lastSelected = null;
@@ -121,7 +129,7 @@ public abstract partial class PointsList : Container
                                     {
                                         var i = currentEvent.Value;
                                         if (i is not null) scroll.ScrollIntoView(i);
-                                    }) { ButtonIcon = FontAwesome6.Solid.MagnifyingGlass }
+                                    }) { ButtonIcon = Phosphor.Bold.MagnifyingGlass }
                                 }
                             }
                         }
@@ -150,7 +158,7 @@ public abstract partial class PointsList : Container
                             },
                             iconUp = new FluXisSpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.AngleUp,
+                                Icon = Phosphor.Bold.CaretUp,
                                 Size = new Vector2(16),
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
@@ -158,7 +166,7 @@ public abstract partial class PointsList : Container
                             },
                             iconDown = new FluXisSpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.AngleDown,
+                                Icon = Phosphor.Bold.CaretDown,
                                 Size = new Vector2(16),
                                 Anchor = Anchor.BottomCentre,
                                 Origin = Anchor.BottomCentre,
@@ -234,6 +242,17 @@ public abstract partial class PointsList : Container
                 ActionStack.Add(new EventBulkRemoveAction(temp.Select(x => x.Object)));
                 break;
         }
+    }
+
+    private void applyGroupSelected()
+    {
+        var obj = selectedEntries.Select(x => x.Object).ToList();
+
+        panels?.Add(new FormPanel<ApplyGroupForm>(Phosphor.Bold.SelectionAll, "Apply Group", new ApplyGroupForm(), (_, d) =>
+        {
+            obj.ForEach(x => x.Group = d.NewGroup.ToLowerInvariant());
+            return true;
+        }));
     }
 
     private void duplicateSelected()
@@ -360,6 +379,7 @@ public abstract partial class PointsList : Container
             entry.CurrentEvent = currentEvent;
             entry.ShowSettings = openSettings;
             entry.RequestClose = RequestClose;
+            entry.RequestApplyGroup = applyGroupSelected;
             entry.CloneSelected = duplicateSelected;
             entry.DeleteSelected = deleteSelected;
             entry.OnClone = o => Create(o);
@@ -547,7 +567,7 @@ public abstract partial class PointsList : Container
         [Resolved]
         private UISamples samples { get; set; }
 
-        public IconUsage ButtonIcon { get; init; } = FontAwesome.Solid.Plus;
+        public IconUsage ButtonIcon { get; init; } = Phosphor.Bold.Plus;
         protected Action Action { get; init; }
 
         protected Box Background { get; private set; }
@@ -609,5 +629,11 @@ public abstract partial class PointsList : Container
         {
             UpdateColors(false);
         }
+    }
+
+    private class ApplyGroupForm
+    {
+        [Description("New Group ID")]
+        public string NewGroup { get; set; }
     }
 }

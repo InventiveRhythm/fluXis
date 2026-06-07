@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using fluXis.Online.API.Requests.Collections;
 using fluXis.Online.Fluxel;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;

@@ -7,14 +7,12 @@ using System.Reflection;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Groups;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Map.Structures.Events.Scrolling;
-using fluXis.Scripting;
-using fluXis.Scripting.Runners;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
-using osu.Framework.Logging;
 
 namespace fluXis.Map;
 
@@ -71,8 +69,8 @@ public class MapEvents
     [JsonProperty("camera-rotate")]
     public List<CameraRotateEvent> CameraRotateEvents { get; private set; } = new();
 
-    [JsonProperty("scripts")]
-    public List<ScriptEvent> ScriptEvents { get; private set; } = new();
+    [JsonProperty("loops")]
+    public List<LoopEvent> LoopEvents { get; private set; } = new();
 
     [JsonProperty("notes")]
     public List<NoteEvent> NoteEvents { get; private set; } = new();
@@ -292,6 +290,75 @@ public class MapEvents
         }
     }
 
+    public Dictionary<Type, IEnumerable> GetListsForTypes() => AllListProperties.ToDictionary(
+        x => x.PropertyType.GetGenericArguments().First(),
+        x => x.GetValue(this) as IEnumerable
+    );
+
+    public Dictionary<string, List<ITimedObject>> GetGroups()
+    {
+        var dict = new Dictionary<string, List<ITimedObject>>();
+
+        ForAllEvents(x =>
+        {
+            var group = x.Group?.ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(group)) return;
+
+            if (!dict.ContainsKey(group))
+                dict[group] = new List<ITimedObject>();
+
+            dict[group].Add(x);
+        });
+
+        return dict;
+    }
+
+    /// <summary>
+    /// "Compiles" all the loop and other group-related events by populating them into the lists.
+    /// </summary>
+    public void Compile()
+    {
+        var lists = GetListsForTypes();
+        var addMethods = lists.ToDictionary(x => x.Key, x => x.Value.GetType().GetMethod("Add", BindingFlags.Public | BindingFlags.Instance));
+        var copyMethod = typeof(JsonUtils).GetMethod(nameof(JsonUtils.JsonCopy), BindingFlags.Public | BindingFlags.Static);
+
+        var groups = GetGroups();
+
+        foreach (var loop in LoopEvents)
+        {
+            if (!groups.TryGetValue(loop.TargetGroup?.ToLowerInvariant() ?? string.Empty, out var items) || items.Count == 0)
+                return;
+
+            var lowestTime = items.MinBy(x => x.Time).Time;
+
+            for (int i = 0; i < loop.Count; i++)
+            {
+                var start = loop.Time + loop.Distance * i;
+                addItems(items, start, lowestTime);
+            }
+        }
+
+        void addItems(List<ITimedObject> items, double time, double lowest)
+        {
+            foreach (var obj in items)
+            {
+                if (obj is LoopEvent)
+                    continue;
+
+                var delta = obj.Time - lowest;
+                var target = time + delta;
+
+                var typedCopy = copyMethod!.MakeGenericMethod([obj.GetType()]);
+                var copy = (typedCopy.Invoke(null, [obj]) as ITimedObject)!;
+                copy.Time = target;
+
+                var list = lists[copy.GetType()];
+                var add = addMethods[copy.GetType()];
+                add.Invoke(list, [copy]);
+            }
+        }
+    }
+
     public void ForAllEvents(Action<ITimedObject> action)
     {
         foreach (var prop in AllListProperties)
@@ -324,28 +391,6 @@ public class MapEvents
         }
 
         return this;
-    }
-
-    public void RunScripts(ScriptStorage storage)
-    {
-        foreach (var ev in ScriptEvents)
-        {
-            try
-            {
-                var runner = storage.GetRunner(ev.ScriptPath, s => new EffectScriptRunner(s)
-                {
-                    AddFlash = FlashEvents.Add
-                }) ?? throw new Exception("Could not create script runner.");
-
-                runner.Handle(ev);
-            }
-            catch (Exception ex)
-            {
-                ScriptRunner.Logger.Add($"Failed to run script at {ev.Time}: {ex.Message}", LogLevel.Error);
-            }
-        }
-
-        Sort();
     }
 
     public IEnumerable<ITimedObject> Where(Func<ITimedObject, bool> func)

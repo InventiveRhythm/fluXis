@@ -6,8 +6,9 @@ namespace fluXis.Online.API.Requests.MapSets;
 
 public class MapSetUploadRequest : APIRequest<APIMapSet>
 {
-    protected override string Path => update ? $"/mapset/{mapID}" : "/mapsets";
+    protected override string Path => update ? $"/mapsets/{mapID}" : "/mapsets";
     protected override HttpMethod Method => update ? HttpMethod.Patch : HttpMethod.Post;
+    protected override string ContentType => string.Empty;
 
     private bool update => mapID != -1;
 

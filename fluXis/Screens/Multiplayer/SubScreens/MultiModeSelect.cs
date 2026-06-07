@@ -130,7 +130,7 @@ public partial class MultiModeSelect : MultiSubScreen
             {
                 Corner = Corner.BottomLeft,
                 ButtonText = LocalizationStrings.General.Back,
-                Icon = FontAwesome6.Solid.AngleLeft,
+                Icon = Phosphor.Bold.CaretLeft,
                 Action = this.Exit
             },
             new FluXisSpriteText

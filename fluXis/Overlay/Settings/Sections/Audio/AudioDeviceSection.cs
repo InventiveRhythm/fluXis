@@ -16,7 +16,7 @@ namespace fluXis.Overlay.Settings.Sections.Audio;
 public partial class AudioDeviceSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Device;
-    public override IconUsage Icon => FontAwesome6.Solid.Headphones;
+    public override IconUsage Icon => Phosphor.Bold.Headphones;
 
     private SettingsAudioStrings strings => LocalizationStrings.Settings.Audio;
 

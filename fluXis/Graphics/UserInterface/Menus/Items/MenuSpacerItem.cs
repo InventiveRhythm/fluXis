@@ -5,7 +5,7 @@ namespace fluXis.Graphics.UserInterface.Menus.Items;
 public class MenuSpacerItem : FluXisMenuItem
 {
     public MenuSpacerItem()
-        : base(" ", FontAwesome6.Solid.Circle, MenuItemType.Normal, () => { })
+        : base(" ", Phosphor.Bold.Circle, MenuItemType.Normal, () => { })
     {
     }
 }

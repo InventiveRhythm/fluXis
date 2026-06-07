@@ -12,7 +12,7 @@ namespace fluXis.Overlay.Settings;
 
 public partial class SettingsSection : FillFlowContainer
 {
-    public virtual IconUsage Icon => FontAwesome6.Solid.Gear;
+    public virtual IconUsage Icon => Phosphor.Bold.GearSix;
     public virtual LocalisableString Title => "Section";
 
     public IEnumerable<SettingsSubSection> SubSections => InternalChildren.OfType<SettingsSubSection>().ToList();

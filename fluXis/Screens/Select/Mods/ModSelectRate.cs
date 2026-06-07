@@ -6,7 +6,7 @@ using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Localization;
 using fluXis.Mods;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -196,7 +196,7 @@ public partial class ModSelectRate : FillFlowContainer
     public override void Hide()
     {
         this.Delay(ModsOverlay.STAGGER_DURATION)
-            .FadeOut(200).MoveToX(-50, 400, Easing.OutQuint);
+            .FadeOut(200).MoveToX(-50, 400, Easing.In);
     }
 
     protected override bool OnClick(ClickEvent e) => true;

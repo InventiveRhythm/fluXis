@@ -24,7 +24,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardMappingTab : DashboardTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Mapping;
-    public override IconUsage Icon => FontAwesome6.Solid.PenRuler;
+    public override IconUsage Icon => Phosphor.Bold.PencilRuler;
     public override DashboardTabType Type => DashboardTabType.Mapping;
 
     [Resolved]

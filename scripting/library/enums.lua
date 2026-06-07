@@ -43,6 +43,16 @@
 ---@nodiscard
 function Easing(input) end
 
+---@alias HitObjectType string
+---| "Normal"
+---| "Tick"
+---| "Landmine"
+
+---@param input HitObjectType
+---@return number
+---@nodiscard
+function HitObjectType(input) end
+
 ---@alias AnchorName string
 ---| "TopLeft"
 ---| "TopCentre"
@@ -75,6 +85,11 @@ function Anchor(input) end
 ---@nodiscard
 function BlendMode(input) end
 
+---@alias FFTBandType string
+---| "Low"
+---| "Mid"
+---| "High"
+
 ---@alias EventType string
 ---| "BeatPulse"
 ---| "ColorFade"
@@ -90,6 +105,7 @@ function BlendMode(input) end
 ---| "PlayfieldMove"
 ---| "PlayfieldRotate"
 ---| "PlayfieldScale"
+---| "Loop"
 ---| "CameraMove"
 ---| "CameraRotate"
 ---| "CameraScale"

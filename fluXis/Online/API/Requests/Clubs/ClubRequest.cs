@@ -4,7 +4,7 @@ namespace fluXis.Online.API.Requests.Clubs;
 
 public class ClubRequest : APIRequest<APIClub>
 {
-    protected override string Path => $"/club/{id}";
+    protected override string Path => $"/clubs/{id}";
 
     private long id { get; }
 

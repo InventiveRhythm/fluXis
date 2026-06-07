@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using fluXis.Online.Spectator.Models;
 using JetBrains.Annotations;
 
 namespace fluXis.Online.Spectator;
@@ -6,10 +7,12 @@ namespace fluXis.Online.Spectator;
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public interface ISpectatorServer
 {
-    Task StartSession(long score, SpectatorState state);
+    // player
+    Task StartSession(SpectatorState state);
     Task SendFrameBundle(SpectatorFrameBundle bundle);
-    Task EndSession(SpectatorState state);
+    Task EndSession();
 
+    // viewer
     Task StartWatching(long id);
     Task StopWatching(long id);
 }

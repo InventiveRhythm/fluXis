@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using fluXis.Online.API.Payloads.Users;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json.Linq;
 using osu.Framework.IO.Network;
 
@@ -8,8 +8,8 @@ namespace fluXis.Online.API.Requests.Users;
 
 public class UserConnectionCreateRequest : APIRequest<JToken>
 {
-    protected override string Path => $"/user/{id}/connections";
-    protected override HttpMethod Method => HttpMethod.Post;
+    protected override string Path => $"/users/{id}/connections/{provider}";
+    protected override HttpMethod Method => HttpMethod.Put;
 
     private long id { get; }
     private string provider { get; }

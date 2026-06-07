@@ -1,8 +1,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
+using fluXis.Online.API.Payloads.Clubs;
+using Midori.Utils;
 using osu.Framework.Allocation;
 
 namespace fluXis.Tests.Panels;
@@ -15,11 +18,16 @@ public partial class TestFormPanel : FluXisTestScene
         CreateClock();
 
         var panelContainer = new PanelContainer();
+        TestDependencies.CacheAs(panelContainer);
         Add(panelContainer);
 
         AddStep("Add Panel", () =>
         {
-            var panel = new FormPanel<FormData>(FontAwesome6.Solid.Pencil, "Really, really long title that will hopefully cut off to show truncating", new FormData(), (_, _) => true);
+            var panel = new FormPanel<EditClubPayload>(Phosphor.Bold.PencilSimple, "Really, really long title that will hopefully cut off to show truncating", new EditClubPayload(), (_, data) =>
+            {
+                File.WriteAllText("form.json", data.Serialize());
+                return true;
+            });
             panelContainer.Content = panel;
         });
 

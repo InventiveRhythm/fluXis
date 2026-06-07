@@ -36,6 +36,9 @@ public partial class TestStoryboard : FluXisTestScene
         {
             GlobalClock.LoadMap(map);
             GlobalClock.Stop();
+
+            AudioAnalyzer.SetAudio(map);
+            AudioAnalyzer.ComputeComplete.Wait();
         }
 
         var data = File.ReadAllText(@"W:\osu-lazer\exports\mylove\Raphlesia & BilliumMoto - My Love (Mao).osb");

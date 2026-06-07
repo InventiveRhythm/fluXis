@@ -99,7 +99,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                                     {
                                         Text = "Restart",
                                         SubText = "Try again?",
-                                        Icon = FontAwesome6.Solid.RotateRight,
+                                        Icon = Phosphor.Bold.ArrowClockwise,
                                         Action = () => screen?.RestartMap()
                                     },
                                     new()
@@ -107,7 +107,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                                         Text = "Quit",
                                         Color = Theme.Red,
                                         SubText = "Bye bye",
-                                        Icon = FontAwesome6.Solid.DoorOpen,
+                                        Icon = Phosphor.Bold.DoorOpen,
                                         Action = () => screen?.Exit()
                                     }
                                 }

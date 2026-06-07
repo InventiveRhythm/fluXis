@@ -69,7 +69,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
                                     new FluXisSpriteIcon
                                     {
                                         Size = new Vector2(50),
-                                        Icon = FontAwesome6.Solid.EarthAmericas,
+                                        Icon = Phosphor.Bold.GlobeHemisphereWest,
                                         Shadow = true,
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft
@@ -160,7 +160,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
                                 {
                                     Corner = Corner.BottomLeft,
                                     ButtonText = LocalizationStrings.General.Back,
-                                    Icon = FontAwesome6.Solid.AngleLeft,
+                                    Icon = Phosphor.Bold.CaretLeft,
                                     Action = this.Exit
                                 }
                             }

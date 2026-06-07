@@ -104,7 +104,7 @@ public partial class SearchBar : Container
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Icon = FontAwesome6.Solid.MagnifyingGlass,
+                                Icon = Phosphor.Bold.MagnifyingGlass,
                                 Shear = new Vector2(.2f, 0),
                                 Size = new Vector2(24),
                                 Shadow = true,

@@ -13,7 +13,7 @@ namespace fluXis.Overlay.Settings.Sections.Gameplay;
 public partial class GameplayMapSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Map;
-    public override IconUsage Icon => FontAwesome6.Solid.Map;
+    public override IconUsage Icon => Phosphor.Bold.MapTrifold;
 
     private SettingsGameplayStrings strings => LocalizationStrings.Settings.Gameplay;
 

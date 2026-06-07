@@ -32,21 +32,18 @@ public static class PathUtils
         return string.Concat(path.Split(Path.GetInvalidFileNameChars()));
     }
 
-    public static IconUsage GetIconForType(FileType type)
+    public static IconUsage GetIconForType(FileType type) => type switch
     {
-        return type switch
-        {
-            FileType.Folder => FontAwesome6.Solid.Folder,
-            FileType.Drive => FontAwesome6.Solid.HardDrive,
-            FileType.Audio => FontAwesome6.Solid.Music,
-            FileType.Image => FontAwesome6.Solid.Image,
-            FileType.Video => FontAwesome6.Solid.Film,
-            FileType.Map => FontAwesome6.Solid.Map,
-            FileType.Skin => FontAwesome6.Solid.PaintBrush,
-            FileType.Unknown => FontAwesome6.Solid.File,
-            _ => FontAwesome6.Solid.Question
-        };
-    }
+        FileType.Folder => Phosphor.Bold.Folder,
+        FileType.Drive => Phosphor.Bold.HardDrive,
+        FileType.Audio => Phosphor.Bold.MusicNotes,
+        FileType.Image => Phosphor.Bold.Image,
+        FileType.Video => Phosphor.Bold.FilmReel,
+        FileType.Map => Phosphor.Bold.MapTrifold,
+        FileType.Skin => Phosphor.Bold.Palette,
+        FileType.Unknown => Phosphor.Bold.File,
+        _ => Phosphor.Bold.QuestionMark
+    };
 
     public static Colour4 GetColorForType(FileType type)
     {

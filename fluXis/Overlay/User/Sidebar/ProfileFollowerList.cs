@@ -80,7 +80,7 @@ public partial class ProfileFollowerList : FillFlowContainer
                     new FluXisSpriteIcon
                     {
                         Size = new Vector2(20),
-                        Icon = FontAwesome6.Solid.UserGroup,
+                        Icon = Phosphor.Bold.Users,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre
                     },

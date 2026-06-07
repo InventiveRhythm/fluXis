@@ -8,7 +8,7 @@ using fluXis.Localization;
 using fluXis.Localization.Categories;
 using fluXis.Localization.Categories.Settings;
 using fluXis.Mods;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Platform;
 using osu.Framework;
 using osu.Framework.Localisation;

@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using fluXis.Configuration;
 using fluXis.Storyboards;
-using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Logging;
 
 namespace fluXis.Scripting;
@@ -193,7 +193,7 @@ public class ScriptStorage
             Content = content;
         }
 
-        #nullable enable
+#nullable enable
         public void AddParam(string name, string title, string type, object? fallback)
         {
             try
@@ -235,7 +235,7 @@ public class ScriptStorage
                 _ => throw new ArgumentOutOfRangeException(nameof(type))
             };
         }
-        #nullable disable
+#nullable disable
     }
 
     public class ParameterDefinition

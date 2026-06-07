@@ -229,7 +229,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                             Margin = new MarginPadding(20),
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.BottomRight,
-                            Icon = FontAwesome6.Solid.AngleUp,
+                            Icon = Phosphor.Bold.CaretUp,
                             UseAutoSize = false,
                             Size = new Vector2(64),
                             IconSize = new Vector2(24),
@@ -385,6 +385,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         previousScrollY = currentScrollY;
     }
 
+    private bool wasPlaying = false;
+
     protected override void PopIn()
     {
         content.ResizeHeightTo(0).MoveToY(1)
@@ -392,7 +394,9 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                .MoveToY(0, 800, Easing.OutQuint);
 
         this.FadeIn(200);
-        clock?.VolumeOut(400).OnComplete(_ => clock?.Stop());
+
+        wasPlaying = clock?.IsRunning ?? false;
+        if (wasPlaying) clock?.VolumeOut(400).OnComplete(_ => clock?.Stop());
 
         if (firstOpen)
         {
@@ -407,6 +411,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         this.FadeOut(200);
 
         previews.StopPreview();
+
+        if (!wasPlaying) return;
 
         clock?.Start();
         clock?.VolumeIn(400);

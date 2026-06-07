@@ -10,7 +10,7 @@ public class NoSvMod : IMod, IApplicableToMap, IApplicableToEvents
     public string Name => "No SV";
     public string Acronym => "NSV";
     public string Description => "Removes all scroll velocity changes.";
-    public IconUsage Icon => FontAwesome6.Solid.Bars;
+    public IconUsage Icon => Phosphor.Bold.List;
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => .8f;
     public bool Rankable => true;

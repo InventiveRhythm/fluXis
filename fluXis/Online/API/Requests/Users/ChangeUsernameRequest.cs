@@ -1,5 +1,5 @@
 ﻿using System.Net.Http;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Users;
