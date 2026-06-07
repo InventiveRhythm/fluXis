@@ -367,7 +367,8 @@ public partial class MultiLobby : MultiSubScreen
         MultiScreen.Push(new GameplayLoader(
             map, mods,
             () => new GameplayScreen(map, mods) { Scores = client.Room?.Scores }
-                .RegisterCapability(new MultiplayerCapability(client))
+                  .RegisterCapability(new MultiplayerCapability(client))
+                  .RegisterCapability(new SpectatorSendCapability())
         ));
     }
 
