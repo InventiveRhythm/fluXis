@@ -26,7 +26,7 @@ public partial class MapSetFavoriteButton : MapSetButton
     private bool updating;
 
     public MapSetFavoriteButton(APIMapSet set)
-        : base(FontAwesome6.Regular.Heart, () => { })
+        : base(Phosphor.Bold.HeartStraight, () => { })
     {
         this.set = set;
         state = set.Favorite ?? false;
@@ -88,7 +88,7 @@ public partial class MapSetFavoriteButton : MapSetButton
 
     private void updateIcon() => Scheduler.ScheduleIfNeeded(() =>
     {
-        Icon.Icon = state ? FontAwesome6.Solid.Heart : FontAwesome6.Regular.Heart;
+        Icon.Icon = Phosphor.Bold.HeartStraight;
         this.FadeColour(state ? Theme.Pink : Colour4.White, 300);
     });
 }

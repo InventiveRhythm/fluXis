@@ -169,7 +169,7 @@ public partial class MultiLobbyList : MultiSubScreen
     }
 
     private void create(RealmMap map, List<string> mods) => Schedule(() => panels.Content = new FormPanel<LobbyCreateData>(
-        FontAwesome6.Solid.Plus,
+        Phosphor.Bold.Plus,
         "Create Lobby",
         new LobbyCreateData { Name = $"{client.Player.NameWithApostrophe} Room" },
         (form, data) =>

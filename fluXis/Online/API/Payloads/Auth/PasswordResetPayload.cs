@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Payloads.Auth;
 
@@ -7,8 +8,10 @@ namespace fluXis.Online.API.Payloads.Auth;
 public class PasswordResetPayload
 {
     [JsonProperty("token")]
-    public string? Token { get; set; }
+    [Required]
+    public string Token { get; set; } = null!;
 
     [JsonProperty("password")]
-    public string? Password { get; set; }
+    [Required]
+    public string Password { get; set; } = null!;
 }

@@ -10,8 +10,6 @@
   "parallax": "視差効果",
   "parallax-description": "背景などで視差効果を有効にします。",
   "main-menu-title": "メインメニュー",
-  "intro-music": "fluXisのイントロ音楽",
-  "intro-music-description": "起動時にfluXisのイントロ音楽を再生します。これをオフにすると、ライブラリからランダムな曲が代わりに再生されます。",
   "force-snow": "強制的に雪を降らせる",
   "force-snow-description": "雪を常に表示させ、冬以外でも表示させます。",
   "bubble-visualizer": "バブルビジュアライザー",

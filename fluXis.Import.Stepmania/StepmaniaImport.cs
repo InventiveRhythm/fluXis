@@ -7,8 +7,8 @@ using fluXis.Import.Stepmania.AutoImport;
 using fluXis.Import.Stepmania.Map;
 using fluXis.Map.Structures;
 using fluXis.Overlay.Notifications;
-using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
 

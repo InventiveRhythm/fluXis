@@ -36,6 +36,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
     [Resolved]
     private EditorSnapProvider snaps { get; set; }
 
+    [Resolved]
+    private EditorSettings settings { get; set; }
+
     public ChartingContainer ChartingContainer { get; init; }
 
     public ChartingTool CurrentTool
@@ -127,7 +130,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
         var container = playfield.HitObjectContainer;
         var mousePosition = InputManager.CurrentState.Mouse.Position;
 
-        var time = snaps.SnapTime(container.TimeAtScreenSpacePosition(mousePosition));
+        var time = snaps.SnapTime(container.TimeAtScreenSpacePosition(mousePosition), settings.Keymap.SnapNext);
         var lane = container.LaneAtScreenSpacePosition(mousePosition);
         currentPlacement.UpdatePlacement(time, lane);
     }
@@ -239,7 +242,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
 
             if (selected?.Count == 0)
             {
-                notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+                notifications.SendSmallText("Nothing selected.", Phosphor.Bold.X);
                 return true;
             }
 

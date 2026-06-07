@@ -14,7 +14,7 @@ public partial class FullInputBlockingContainer : Container
     [CanBeNull]
     public Func<UIEvent, bool> GenericHandle { get; set; }
 
-    public Bindable<bool> Active { get; set; } = new();
+    public Bindable<bool> Active { get; set; } = new(true);
     public Action OnClickAction { get; set; }
 
     protected override bool Handle(UIEvent e)

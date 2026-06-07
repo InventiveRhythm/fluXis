@@ -12,9 +12,6 @@
     <EmbeddedResource Include="Localization\**\*" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="build\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="build\fluXis.xml" />
   </ItemGroup>
 </Project>

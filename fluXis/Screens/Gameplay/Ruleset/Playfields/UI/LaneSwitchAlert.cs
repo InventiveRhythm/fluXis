@@ -42,7 +42,7 @@ public partial class LaneSwitchAlert : Container
                 {
                     leftIcon = new FluXisSpriteIcon
                     {
-                        Icon = FontAwesome6.Solid.AngleLeft,
+                        Icon = Phosphor.Bold.CaretLeft,
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -60,7 +60,7 @@ public partial class LaneSwitchAlert : Container
                 {
                     rightIcon = new FluXisSpriteIcon
                     {
-                        Icon = FontAwesome6.Solid.AngleRight,
+                        Icon = Phosphor.Bold.CaretRight,
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,

@@ -77,7 +77,7 @@ public partial class ClubMemberEntry : FillFlowContainer
                         {
                             new FluXisSpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.Crown,
+                                Icon = Phosphor.Bold.CrownSimple,
                                 Size = new Vector2(16),
                                 Colour = Colour4.FromHex("#FAD49E"),
                                 Anchor = Anchor.CentreLeft,

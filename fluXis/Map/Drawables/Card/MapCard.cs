@@ -50,18 +50,18 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
+                new MenuActionItem("View", Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
             };
 
             if (downloaded)
-                list.Add(new MenuActionItem("Show in Song Select", FontAwesome6.Solid.Eye, selectAndShow));
+                list.Add(new MenuActionItem("Show in Song Select", Phosphor.Bold.Eye, selectAndShow));
             else if (!downloading)
-                list.Add(new MenuActionItem("Download", FontAwesome6.Solid.Download, download));
+                list.Add(new MenuActionItem("Download", Phosphor.Bold.ArrowLineDown, download));
 
-            list.Add(new MenuActionItem("Open in Web", FontAwesome6.Solid.EarthAmericas, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
+            list.Add(new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
 
             if (RequestDelete != null && canDelete)
-                list.Add(new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
+                list.Add(new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
 
             return list.ToArray();
         }

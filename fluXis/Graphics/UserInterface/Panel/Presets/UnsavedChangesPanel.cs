@@ -11,7 +11,7 @@ public partial class UnsavedChangesPanel : ButtonPanel
 {
     public UnsavedChangesPanel(Action save, Action exit, [CanBeNull] Action cancel = null)
     {
-        Icon = FontAwesome6.Solid.ExclamationTriangle;
+        Icon = Phosphor.Bold.Warning;
         Text = "There are unsaved changes.";
         SubText = "Are you sure you want to exit?";
         IsDangerous = true;

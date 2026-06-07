@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Payloads.Chat;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Chat;

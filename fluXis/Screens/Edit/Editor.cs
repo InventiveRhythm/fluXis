@@ -46,6 +46,7 @@ using fluXis.Screens.Edit.Tabs.Verify.Checks;
 using fluXis.Screens.Edit.UI;
 using fluXis.Screens.Edit.UI.BottomBar;
 using fluXis.Screens.Edit.UI.MenuBar;
+using fluXis.Screens.Edit.UI.Panels;
 using fluXis.Screens.Edit.UI.TabSwitcher;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Scripting;
@@ -124,9 +125,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private int currentTab;
 
     public Bindable<Waveform> Waveform { get; private set; }
-    private EditorMap editorMap { get; }
+    public EditorMap EditorMap { get; private set; }
 
-    private EditorClock clock;
+    public EditorClock EditorClock { get; private set; }
     private EditorSettings settings;
     private EditorActionStack actionStack;
 
@@ -147,7 +148,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private string lastEffectHash;
     private string lastStoryboardHash;
 
-    private bool canSave => editorMap.RealmMap.StatusInt < 100;
+    private bool canSave => EditorMap.RealmMap.StatusInt < 100;
 
     public bool HasUnsavedChanges
     {
@@ -156,9 +157,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (!canSave)
                 return false;
 
-            return editorMap.MapEventsHash != lastEffectHash
-                   || editorMap.MapInfoHash != lastMapHash
-                   || editorMap.StoryboardHash != lastStoryboardHash;
+            return EditorMap.MapEventsHash != lastEffectHash
+                   || EditorMap.MapInfoHash != lastMapHash
+                   || EditorMap.StoryboardHash != lastStoryboardHash;
         }
     }
 
@@ -175,10 +176,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorModding modding;
     private EditorOsd osd;
 
+    private Bindable<bool> autosave;
+
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
         this.loader = loader;
-        editorMap = new EditorMap(map, realmMap, LoadComponent, Scheduler);
+        EditorMap = new EditorMap(map, realmMap, LoadComponent, Scheduler);
     }
 
     [BackgroundDependencyLoader]
@@ -187,59 +190,65 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         BindableBackgroundDim = config.GetBindable<float>(FluXisSetting.EditorDim);
         BindableBackgroundBlur = config.GetBindable<float>(FluXisSetting.EditorBlur);
 
+        autosave = config.GetBindable<bool>(FluXisSetting.EditorAutoSave);
+
         globalClock.Looping = false;
 
-        editorMap.Panels = panels;
-        isNewMap = editorMap.IsNew;
+        EditorMap.Panels = panels;
+        isNewMap = EditorMap.IsNew;
 
-        if (editorMap.RealmMap == null)
+        if (EditorMap.RealmMap == null)
         {
-            editorMap.RealmMap = mapStore.CreateNew();
+            EditorMap.RealmMap = mapStore.CreateNew();
         }
         else
         {
-            var resources = editorMap.RealmMap.MapSet.Resources;
-            editorMap.RealmMap = editorMap.RealmMap.Detach();
-            editorMap.RealmMap.MapSet.Resources = resources;
+            var resources = EditorMap.RealmMap.MapSet.Resources;
+            EditorMap.RealmMap = EditorMap.RealmMap.Detach();
+            EditorMap.RealmMap.MapSet.Resources = resources;
         }
 
-        editorMap.MapInfo ??= new EditorMap.EditorMapInfo(new MapMetadata { Mapper = editorMap.RealmMap.Metadata.Mapper }) { NewLaneSwitchLayout = true, RealmEntry = editorMap.RealmMap };
-        editorMap.MapInfo.MapEvents ??= new MapEvents();
-        editorMap.MapInfo.Storyboard ??= new Storyboard { Version = Storyboard.LATEST_VERSION };
+        EditorMap.MapInfo ??= new EditorMap.EditorMapInfo(new MapMetadata { Mapper = EditorMap.RealmMap.Metadata.Mapper }) { NewLaneSwitchLayout = true, RealmEntry = EditorMap.RealmMap };
+        EditorMap.MapInfo.MapEvents ??= new MapEvents();
+        EditorMap.MapInfo.Storyboard ??= new Storyboard { Version = Storyboard.LATEST_VERSION };
 
-        editorMap.SetupWatcher();
-        editorMap.SetupNotifiers();
+        EditorMap.SetupWatcher();
+        EditorMap.SetupNotifiers();
 
-        backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
+        backgrounds.AddBackgroundFromMap(EditorMap.RealmMap);
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(host.Storage.GetStorageForDirectory("maps")));
 
         dependencies.CacheAs(this);
-        dependencies.CacheAs(editorMap);
-        dependencies.CacheAs<ICustomColorProvider>(editorMap.MapInfo.Colors);
+
+        keybinds = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host);
+        dependencies.CacheAs(keybinds);
+
+        dependencies.CacheAs(EditorMap);
+        dependencies.CacheAs<ICustomColorProvider>(EditorMap.MapInfo.Colors);
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
-        dependencies.CacheAs(actionStack = new EditorActionStack(editorMap) { NotificationManager = notifications });
+        dependencies.CacheAs(actionStack = new EditorActionStack(EditorMap) { NotificationManager = notifications });
         dependencies.CacheAs(modding = new EditorModding());
-        dependencies.CacheAs(settings = new EditorSettings
+        dependencies.CacheAs(settings = new EditorSettings(keybinds)
         {
             ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)
         });
 
         updateStateHash();
 
-        clock = new EditorClock(editorMap.MapInfo) { SnapDivisor = settings.SnapDivisorBindable };
-        clock.ChangeSource(loadMapTrack());
-        dependencies.CacheAs(clock);
-        dependencies.CacheAs<IBeatSyncProvider>(clock);
+        EditorClock = new EditorClock(EditorMap.MapInfo) { SnapDivisor = settings.SnapDivisorBindable };
+        EditorClock.ChangeSource(loadMapTrack());
+        dependencies.CacheAs(EditorClock);
+        dependencies.CacheAs<IBeatSyncProvider>(EditorClock);
 
-        dependencies.CacheAs(new EditorSnapProvider(editorMap, settings, clock));
+        dependencies.CacheAs(new EditorSnapProvider(EditorMap, settings, EditorClock));
 
-        MapSetPath = MapFiles.GetFullPath($"{editorMap.MapSet.ID}");
+        MapSetPath = MapFiles.GetFullPath($"{EditorMap.MapSet.ID}");
 
         if (!Directory.Exists(MapSetPath))
             Directory.CreateDirectory(MapSetPath);
 
         var scripts = new ScriptStorage(MapSetPath);
-        editorMap.ScriptChanged += _ =>
+        EditorMap.ScriptChanged += _ =>
         {
             osd.DisplayText("Reloaded Scripts!");
             scripts.Reload();
@@ -258,19 +267,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         verifyTab = tabList.OfType<VerifyTab>().First();
 
-        keybinds = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host);
-        dependencies.CacheAs(keybinds);
-
         InternalChild = keybinds.WithChildren(new Drawable[]
         {
             lowPass = new AudioFilter(audioManager.TrackMixer),
             highPass = new AudioFilter(audioManager.TrackMixer, BQFType.HighPass),
-            clock,
+            EditorClock,
             modding,
-            dependencies.CacheAsAndReturn(new Hitsounding(editorMap.RealmMap.MapSet, editorMap.MapInfo.HitSoundFades, clock.RateBindable)
+            dependencies.CacheAsAndReturn(new Hitsounding(EditorMap.RealmMap.MapSet, EditorMap.MapInfo.HitSoundFades, EditorClock.RateBindable)
             {
                 DirectVolume = true,
-                Clock = clock
+                Clock = EditorClock
             }),
             new FluXisContextMenuContainer
             {
@@ -297,96 +303,97 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         {
                             Items = new FluXisMenuItem[]
                             {
-                                new MenuExpandItem("File", FontAwesome6.Solid.File, new FluXisMenuItem[]
+                                new MenuExpandItem("File", Phosphor.Bold.File, new FluXisMenuItem[]
                                 {
-                                    new MenuActionItem("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { IsEnabled = () => HasUnsavedChanges },
+                                    new MenuActionItem("Save", Phosphor.Bold.FloppyDisk, () => save()) { IsEnabled = () => HasUnsavedChanges },
+                                    new MenuToggleItem("Auto Save", Phosphor.Bold.FloppyDisk, autosave),
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Create new difficulty...", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
+                                    new MenuActionItem("Create new difficulty...", Phosphor.Bold.Plus, () => panels.Content = new EditorDifficultyCreationPanel
                                     {
                                         OnCreate = createNewDiff
                                     }) { IsEnabled = () => canSave },
-                                    new MenuActionItem("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
+                                    new MenuActionItem("Switch to difficulty", Phosphor.Bold.ArrowsLeftRight, () => { })
                                     {
-                                        IsEnabled = () => editorMap.MapSet.Maps.Count > 1,
-                                        Items = editorMap.MapSet.Maps.Where(x => x.ID != editorMap.RealmMap.ID)
-                                                         .Select(x => new MenuActionItem(x.Difficulty, FontAwesome6.Solid.Circle, () => loader.SwitchTo(x))).ToList()
+                                        IsEnabled = () => EditorMap.MapSet.Maps.Count > 1,
+                                        Items = EditorMap.MapSet.Maps.Where(x => x.ID != EditorMap.RealmMap.ID)
+                                                         .Select(x => new MenuActionItem(x.Difficulty, Phosphor.Bold.Circle, () => loader.SwitchTo(x))).ToList()
                                     },
-                                    new MenuActionItem("Delete difficulty...", FontAwesome6.Solid.Trash, () =>
+                                    new MenuActionItem("Delete difficulty...", Phosphor.Bold.Trash, () =>
                                     {
                                         panels.Content = new ConfirmDeletionPanel(() =>
                                         {
                                             // delete diff
-                                            mapStore.DeleteDifficulty(editorMap.MapSet, editorMap.RealmMap);
+                                            mapStore.DeleteDifficulty(EditorMap.MapSet, EditorMap.RealmMap);
 
                                             // requery mapset
-                                            var set = mapStore.GetFromGuid(editorMap.MapSet.ID);
+                                            var set = mapStore.GetFromGuid(EditorMap.MapSet.ID);
 
                                             // switch to other diff
-                                            var other = set.Maps.FirstOrDefault(x => x.ID != editorMap.RealmMap.ID);
+                                            var other = set.Maps.FirstOrDefault(x => x.ID != EditorMap.RealmMap.ID);
                                             loader.SwitchTo(other);
                                         }, itemName: "difficulty");
                                     })
                                     {
-                                        IsEnabled = () => editorMap.MapSet.Maps.Count > 1 && canSave
+                                        IsEnabled = () => EditorMap.MapSet.Maps.Count > 1 && canSave
                                     },
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Export", FontAwesome6.Solid.BoxOpen, export),
-                                    new MenuActionItem("Upload...", FontAwesome6.Solid.Upload, startUpload) { IsEnabled = () => canSave && api.IsLoggedIn },
-                                    new MenuActionItem("Submit to Queue...", FontAwesome6.Solid.Upload, submitToQueue) { IsEnabled = () => editorMap.MapSet.OnlineID > 0 && api.IsLoggedIn },
+                                    new MenuActionItem("Export", Phosphor.Bold.Package, export),
+                                    new MenuActionItem("Upload...", Phosphor.Bold.Upload, startUpload) { IsEnabled = () => canSave && api.IsLoggedIn },
+                                    new MenuActionItem("Submit to Queue...", Phosphor.Bold.Upload, submitToQueue) { IsEnabled = () => EditorMap.MapSet.OnlineID > 0 && api.IsLoggedIn },
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
-                                    experiments.Get<bool>(ExperimentConfig.LrcFeatures) ? new MenuActionItem("Export notes as .lrc", FontAwesome6.Solid.LineColumns, exportNotes) : null,
-                                    experiments.Get<bool>(ExperimentConfig.LrcFeatures) ? new MenuActionItem("Import .lrc as notes", FontAwesome6.Solid.LineColumns, importNotes) : null,
+                                    new MenuActionItem("Open Song Folder", Phosphor.Bold.FolderOpen, openFolder),
+                                    experiments.Get<bool>(ExperimentConfig.LrcFeatures) ? new MenuActionItem("Export notes as .lrc", Phosphor.Bold.List, exportNotes) : null,
+                                    experiments.Get<bool>(ExperimentConfig.LrcFeatures) ? new MenuActionItem("Import .lrc as notes", Phosphor.Bold.List, importNotes) : null,
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, tryExit)
+                                    new MenuActionItem("Exit", Phosphor.Bold.DoorOpen, MenuItemType.Dangerous, tryExit)
                                 }.Where(x => x != null)),
-                                new MenuExpandItem("Edit", FontAwesome6.Solid.Pen, new FluXisMenuItem[]
+                                new MenuExpandItem("Edit", Phosphor.Bold.PencilSimple, new FluXisMenuItem[]
                                 {
-                                    new MenuActionItem("Undo", FontAwesome6.Solid.RotateLeft, actionStack.Undo) { IsEnabled = () => actionStack.CanUndo },
-                                    new MenuActionItem("Redo", FontAwesome6.Solid.RotateRight, actionStack.Redo) { IsEnabled = () => actionStack.CanRedo },
+                                    new MenuActionItem("Undo", Phosphor.Bold.ArrowCounterClockwise, actionStack.Undo) { IsEnabled = () => actionStack.CanUndo },
+                                    new MenuActionItem("Redo", Phosphor.Bold.ArrowClockwise, actionStack.Redo) { IsEnabled = () => actionStack.CanRedo },
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Copy", FontAwesome6.Solid.Copy, () => ChartingContainer?.Copy())
+                                    new MenuActionItem("Copy", Phosphor.Bold.Copy, () => ChartingContainer?.Copy())
                                         { IsEnabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
-                                    new MenuActionItem("Cut", FontAwesome6.Solid.Cut, () => ChartingContainer?.Copy(true))
+                                    new MenuActionItem("Cut", Phosphor.Bold.Scissors, () => ChartingContainer?.Copy(true))
                                         { IsEnabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
-                                    new MenuActionItem("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
+                                    new MenuActionItem("Paste", Phosphor.Bold.Clipboard, () => ChartingContainer?.Paste()),
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Apply Offset...", FontAwesome6.Solid.Clock, applyOffset),
-                                    new MenuActionItem("Flip Selection", FontAwesome6.Solid.LeftRight, () => ChartingContainer?.FlipSelection())
+                                    new MenuActionItem("Apply Offset...", Phosphor.Bold.Clock, applyOffset),
+                                    new MenuActionItem("Flip Selection", Phosphor.Bold.ArrowsHorizontal, () => ChartingContainer?.FlipSelection())
                                         { IsEnabled = () => ChartingContainer?.CanFlipSelection ?? false },
-                                    new MenuActionItem("Shuffle Selection", FontAwesome6.Solid.Shuffle, () => ChartingContainer?.ShuffleSelection())
+                                    new MenuActionItem("Shuffle Selection", Phosphor.Bold.ShuffleAngular, () => ChartingContainer?.ShuffleSelection())
                                         { IsEnabled = () => ChartingContainer?.CanShuffleSelection ?? false },
-                                    new MenuActionItem("Re-snap all notes", FontAwesome6.Solid.ArrowsRotate, () => ChartingContainer?.ReSnapAll()),
+                                    new MenuActionItem("Re-snap all notes", Phosphor.Bold.ArrowsClockwise, () => ChartingContainer?.ReSnapAll()),
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll()),
-                                    new MenuActionItem("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
+                                    new MenuActionItem("Select all", Phosphor.Bold.SelectionAll, () => ChartingContainer?.BlueprintContainer.SelectAll()),
+                                    new MenuActionItem("Delete", Phosphor.Bold.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
                                     new MenuSpacerItem(),
-                                    new MenuActionItem("Editor Keymap...", FontAwesome6.Solid.Keyboard, () => keymapOverlay.Show())
+                                    new MenuActionItem("Editor Keymap...", Phosphor.Bold.Keyboard, () => keymapOverlay.Show())
                                 }),
-                                new MenuExpandItem("View", FontAwesome6.Solid.Eye, createView()),
-                                new MenuExpandItem("Timing", FontAwesome6.Solid.Clock, new FluXisMenuItem[]
+                                new MenuExpandItem("View", Phosphor.Bold.Eye, createView()),
+                                new MenuExpandItem("Timing", Phosphor.Bold.Clock, new FluXisMenuItem[]
                                 {
-                                    new MenuActionItem("Set preview point to current time", FontAwesome6.Solid.Stopwatch, () =>
+                                    new MenuActionItem("Set preview point to current time", Phosphor.Bold.Timer, () =>
                                     {
-                                        editorMap.MapInfo.Metadata.PreviewTime
-                                            = editorMap.RealmMap.Metadata.PreviewTime
-                                                = (int)clock.CurrentTime;
+                                        EditorMap.MapInfo.Metadata.PreviewTime
+                                            = EditorMap.RealmMap.Metadata.PreviewTime
+                                                = (int)EditorClock.CurrentTime;
                                     })
                                 }),
-                                new MenuExpandItem("Audio", FontAwesome6.Solid.VolumeHigh, new FluXisMenuItem[]
+                                new MenuExpandItem("Audio", Phosphor.Bold.SpeakerHigh, new FluXisMenuItem[]
                                 {
-                                    new MenuToggleItem("Enable Low Pass filter", FontAwesome6.Solid.AngleDown, () =>
+                                    new MenuToggleItem("Enable Low Pass filter", Phosphor.Bold.CaretDown, () =>
                                     {
                                         lowPassEnabled = !lowPassEnabled;
                                         lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, 400);
                                     }, () => lowPassEnabled),
-                                    new MenuToggleItem("Enable High Pass filter", FontAwesome6.Solid.AngleUp, () =>
+                                    new MenuToggleItem("Enable High Pass filter", Phosphor.Bold.CaretUp, () =>
                                     {
                                         highPassEnabled = !highPassEnabled;
                                         highPass.CutoffTo(highPassEnabled ? 300 : 0, 400);
                                     }, () => highPassEnabled)
                                 }),
-                                new MenuActionItem("Wiki", FontAwesome6.Solid.Book, openHelp)
+                                new MenuActionItem("Wiki", Phosphor.Bold.Book, openHelp)
                             }
                         },
                         new EditorTabSwitcher
@@ -407,19 +414,19 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             var list = new List<FluXisMenuItem>
             {
-                new MenuExpandItem("Background Dim", FontAwesome6.Solid.Image, createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)),
-                new MenuExpandItem("Background Blur", FontAwesome6.Solid.Aperture, createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)),
+                new MenuExpandItem("Background Dim", Phosphor.Bold.Image, createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)),
+                new MenuExpandItem("Background Blur", Phosphor.Bold.Aperture, createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)),
                 new MenuSpacerItem(),
-                new MenuExpandItem("Waveform opacity", FontAwesome6.Solid.WaveformLines, createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)),
+                new MenuExpandItem("Waveform opacity", Phosphor.Bold.Waveform, createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)),
                 new MenuSpacerItem(),
-                new MenuToggleItem("Show sample on notes", FontAwesome6.Solid.LayerGroup, settings.ShowSamples),
+                new MenuToggleItem("Show sample on notes", Phosphor.Bold.Stack, settings.ShowSamples),
                 new MenuSpacerItem(),
-                new MenuToggleItem("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, settings.ForceAspectRatio),
-                new MenuToggleItem("Compact Sidebar", FontAwesome6.Solid.ArrowsToLine, config.GetBindable<bool>(FluXisSetting.EditorCompactMode)),
+                new MenuToggleItem("Force 16:9 Ratio", Phosphor.Bold.Rectangle, settings.ForceAspectRatio),
+                new MenuToggleItem("Compact Sidebar", Phosphor.Bold.ArrowsInLineVertical, config.GetBindable<bool>(FluXisSetting.EditorCompactMode)),
             };
 
             if (experiments.Get<bool>(ExperimentConfig.ModView))
-                list.Add(new MenuToggleItem("Toggle ModView", FontAwesome6.Solid.Pen, () => modding.Toggle(), () => modding.IsActive));
+                list.Add(new MenuToggleItem("Toggle ModView", Phosphor.Bold.PencilSimple, () => modding.Toggle(), () => modding.IsActive));
 
             return list.ToArray();
         }
@@ -428,23 +435,24 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private FluXisMenuItem[] createPercentItems(Func<float> get, Action<float> set)
     {
         float[] values = { 0, .2f, .4f, .6f, .8f, 1 };
-        return values.Select(x => new MenuToggleItem($"{x * 100:0}%", FontAwesome6.Solid.Percent, () => set(x), () => Math.Abs(get() - x) < .01f)).ToArray<FluXisMenuItem>();
+        return values.Select(x => new MenuToggleItem($"{x * 100:0}%", Phosphor.Bold.Percent, () => set(x), () => Math.Abs(get() - x) < .01f)).ToArray<FluXisMenuItem>();
     }
 
     private void updateStateHash()
     {
-        lastMapHash = editorMap.MapInfoHash;
-        lastEffectHash = editorMap.MapEventsHash;
-        lastStoryboardHash = editorMap.StoryboardHash;
+        lastMapHash = EditorMap.MapInfoHash;
+        lastEffectHash = EditorMap.MapEventsHash;
+        lastStoryboardHash = EditorMap.StoryboardHash;
     }
 
-    private void applyOffset()
+    private void applyOffset() => panels.Add(new FormPanel<EditorApplyOffset>(Phosphor.Bold.Clock, "Apply offset to map", new EditorApplyOffset(), (panel, offset) =>
     {
-        panels.Content = new EditorOffsetPanel
-        {
-            OnApplyOffset = offset => actionStack.Add(new ApplyOffsetAction(offset))
-        };
-    }
+        if (!offset.Offset.TryParseDoubleInvariant(out var result))
+            return false;
+
+        actionStack.Add(new ApplyOffsetAction(result));
+        return true;
+    }));
 
     private void createNewDiff(CreateNewMapParameters param)
     {
@@ -452,11 +460,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return;
 
         panels.Content.Hide();
-        loader.CreateNewDifficulty(editorMap.RealmMap, editorMap.MapInfo, param);
+        loader.CreateNewDifficulty(EditorMap.RealmMap, EditorMap.MapInfo, param);
 
         bool diffExists(string name)
         {
-            if (!editorMap.MapSet.Maps.Any(x => string.Equals(x.Difficulty, name, StringComparison.CurrentCultureIgnoreCase)))
+            if (!EditorMap.MapSet.Maps.Any(x => string.Equals(x.Difficulty, name, StringComparison.CurrentCultureIgnoreCase)))
                 return false;
 
             notifications.SendError("A difficulty with that name already exists!");
@@ -466,7 +474,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private Track loadMapTrack()
     {
-        string path = editorMap.MapSet?.GetPathForFile(editorMap.RealmMap.Metadata?.Audio);
+        string path = EditorMap.MapSet?.GetPathForFile(EditorMap.RealmMap.Metadata?.Audio);
 
         Waveform w = null;
 
@@ -477,7 +485,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         Waveform.Value = w;
-        return editorMap.RealmMap.GetTrack() ?? trackStore.GetVirtual(10000);
+        return EditorMap.RealmMap.GetTrack() ?? trackStore.GetVirtual(10000);
     }
 
     protected override void LoadComplete()
@@ -494,7 +502,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (!canSave)
         {
             panels.Content = new SingleButtonPanel(
-                FontAwesome6.Solid.ExclamationTriangle,
+                Phosphor.Bold.Warning,
                 "This map is from another game!",
                 "You can edit and playtest, but not save or upload.");
         }
@@ -502,28 +510,31 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         BindableBackgroundDim.BindValueChanged(updateDim, true);
         BindableBackgroundBlur.BindValueChanged(updateBlur, true);
 
-        editorMap.AudioChanged += () => clock.ChangeSource(loadMapTrack());
-        editorMap.BackgroundChanged += () => backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
+        EditorMap.AudioChanged += () => EditorClock.ChangeSource(loadMapTrack());
+        EditorMap.BackgroundChanged += () => backgrounds.AddBackgroundFromMap(EditorMap.RealmMap);
 
-        editorMap.ScriptWatcher.Enable();
+        EditorMap.ScriptWatcher.Enable();
     }
 
     protected override void Update()
     {
         base.Update();
 
-        // too lazy to properly do this
-        settings.InvertedScroll.Value = keybinds.Keymap.InvertScroll;
+        if (autosave.Value)
+        {
+            var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            if (now - lastSaveTime > 1000 * 60 * 5) save();
+        }
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        clock.Stop();
+        EditorClock.Stop();
         BindableBackgroundDim.UnbindAll();
         BindableBackgroundBlur.UnbindAll();
-        editorMap.ScriptWatcher.Dispose();
+        EditorMap.ScriptWatcher.Dispose();
     }
 
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue);
@@ -574,19 +585,33 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         Game.OpenLink($"{api.Endpoint.WikiRootUrl}/editor");
     }
 
-    private void openFolder() => MapFiles.PresentExternally(editorMap.RealmMap);
+    private void openFolder() => MapFiles.PresentExternally(EditorMap.RealmMap);
 
     private void exportNotes()
     {
         var sb = new StringBuilder();
+        var extended = false;
 
-        foreach (var noteEvent in editorMap.MapEvents.NoteEvents)
+        foreach (var ev in EditorMap.MapEvents.NoteEvents)
         {
-            sb.AppendLine($"[{TimeUtils.Format(noteEvent.Time)}] {noteEvent.Content}");
+            var time = TimeUtils.Format(ev.Time);
+            var text = ev.Content ?? string.Empty;
+
+            if (text.StartsWith('+'))
+            {
+                text = text[1..];
+                extended = true;
+                sb.Append($"<{time}>{text}");
+            }
+            else
+            {
+                sb.AppendLine();
+                sb.Append($"[{time}] {text}");
+            }
         }
 
-        var path = MapFiles.GetFullPath(editorMap.MapSet.GetPathForFile("lyrics.lrc"));
-        File.WriteAllText(path, sb.ToString());
+        var path = MapFiles.GetFullPath(EditorMap.MapSet.GetPathForFile($"lyrics.{(extended ? "elrc" : "lrc")}"));
+        File.WriteAllText(path, sb.ToString().Trim());
     }
 
     private void importNotes()
@@ -600,7 +625,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             {
                 var lines = File.ReadAllLines(f.FullName);
 
-                editorMap.MapEvents.NoteEvents.ToList().ForEach(x => editorMap.Remove(x));
+                EditorMap.MapEvents.NoteEvents.ToList().ForEach(x => EditorMap.Remove(x));
 
                 foreach (var line in lines)
                 {
@@ -621,7 +646,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         hundredths *= hundredGroup.Length == 3 ? 1 : 10;
 
                         var ms = hundredths + seconds * 1000 + minutes * 1000 * 60;
-                        editorMap.Add(new NoteEvent { Time = ms, Content = text });
+                        EditorMap.Add(new NoteEvent { Time = ms, Content = text });
                     }
                 }
             }
@@ -675,14 +700,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         void seekToNote(int direction)
         {
-            var accurate = clock.CurrentTimeAccurate;
+            var accurate = EditorClock.CurrentTimeAccurate;
 
             var note = direction > 0
-                ? editorMap.MapEvents.NoteEvents.FirstOrDefault(n => n.Time > accurate)
-                : editorMap.MapEvents.NoteEvents.LastOrDefault(n => n.Time < accurate);
+                ? EditorMap.MapEvents.NoteEvents.FirstOrDefault(n => n.Time > accurate)
+                : EditorMap.MapEvents.NoteEvents.LastOrDefault(n => n.Time < accurate);
 
             if (note is not null)
-                clock.SeekSmoothly(note.Time);
+                EditorClock.SeekSmoothly(note.Time);
         }
     }
 
@@ -723,7 +748,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         if (isNewMap) // delete the map if it was new and not saved
-            mapStore.DeleteMapSet(editorMap.MapSet);
+            mapStore.DeleteMapSet(EditorMap.MapSet);
 
         if (fftProcessor is not null) fftProcessor.Enabled.Value = true;
 
@@ -732,8 +757,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         lowPass.CutoffTo(AudioFilter.MAX, 400);
         highPass.CutoffTo(0, 400);
-        clock.Track.Value.VolumeTo(0, EditorLoader.DURATION);
-        globalClock.Seek((float)clock.CurrentTime);
+        EditorClock.Track.Value.VolumeTo(0, EditorLoader.DURATION);
+        globalClock.Seek((float)EditorClock.CurrentTime);
         panels.Content?.Hide();
         setSystemCursorVisibility(false);
         return base.OnExiting(e);
@@ -777,7 +802,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         // this check won't work 100% of the time, we need a better way of storing the mappers
-        if (editorMap.RealmMap.Metadata.Mapper == api.User.Value?.Username)
+        if (EditorMap.RealmMap.Metadata.Mapper == api.User.Value?.Username)
             Activity.Value = new UserActivity.Editing(openTime);
         else
             Activity.Value = new UserActivity.Modding(openTime);
@@ -793,34 +818,34 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return false;
         }
 
-        if (editorMap.MapInfo.TimingPoints.Count == 0)
+        if (EditorMap.MapInfo.TimingPoints.Count == 0)
         {
             notifications.SendError("Map has no timing points!");
             return false;
         }
 
-        editorMap.Sort();
+        EditorMap.Sort();
 
         if (!HasUnsavedChanges)
         {
-            notifications.SendSmallText("Map is already up to date", FontAwesome6.Solid.Check);
+            notifications.SendSmallText("Map is already up to date", Phosphor.Bold.Check);
             return true;
         }
 
-        editorMap.ScriptWatcher.Disable();
+        EditorMap.ScriptWatcher.Disable();
 
         var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        editorMap.MapInfo.TimeInEditor += now - lastSaveTime;
+        EditorMap.MapInfo.TimeInEditor += now - lastSaveTime;
 
-        mapStore.Save(editorMap.RealmMap, editorMap.MapInfo, editorMap.MapEvents, editorMap.Storyboard, setStatus);
-        Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(editorMap.MapSet.ID), editorMap.MapSet));
+        mapStore.Save(EditorMap.RealmMap, EditorMap.MapInfo, EditorMap.MapEvents, EditorMap.Storyboard, setStatus);
+        Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(EditorMap.MapSet.ID), EditorMap.MapSet));
 
         isNewMap = false;
         updateStateHash();
-        notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
+        notifications.SendSmallText("Saved!", Phosphor.Bold.Check);
         lastSaveTime = now;
 
-        editorMap.ScriptWatcher.Enable();
+        EditorMap.ScriptWatcher.Enable();
         return true;
     }
 
@@ -828,9 +853,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         if (!save(false)) return;
 
-        mapStore.Export(editorMap.MapSet, new TaskNotificationData
+        mapStore.Export(EditorMap.MapSet, new TaskNotificationData
         {
-            Text = $"{editorMap.MapInfo.Metadata.Title} - {editorMap.MapInfo.Metadata.Artist}",
+            Text = $"{EditorMap.MapInfo.Metadata.Title} - {EditorMap.MapInfo.Metadata.Artist}",
             TextWorking = "Exporting..."
         });
     }
@@ -839,7 +864,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void submitToQueue()
     {
-        if (editorMap.MapSet.OnlineID <= 0)
+        if (EditorMap.MapSet.OnlineID <= 0)
             return;
 
         var panel = new EditorUploadOverlay
@@ -850,14 +875,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         panels.Content = panel;
 
-        var req = new MapSetSubmitQueueRequest(editorMap.MapSet.OnlineID);
+        var req = new MapSetSubmitQueueRequest(EditorMap.MapSet.OnlineID);
         req.Success += _ =>
         {
             notifications.SendSmallText("Submitted to queue!");
             panel.Hide();
         };
         req.Failure += ex => panels.Replace(new SingleButtonPanel(
-            FontAwesome6.Solid.ExclamationTriangle,
+            Phosphor.Bold.Warning,
             "Failed to submit!",
             ex.Message
         ));
@@ -882,13 +907,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return;
         }
 
-        var isUpdate = editorMap.MapSet.OnlineID > 0;
+        var isUpdate = EditorMap.MapSet.OnlineID > 0;
 
         if (isUpdate)
         {
             panels.Content = new ButtonPanel
             {
-                Icon = FontAwesome6.Solid.ExclamationTriangle,
+                Icon = Phosphor.Bold.Warning,
                 Text = "You are about to update a mapset!",
                 SubText = "Are you sure you want to continue?\nThis will wipe scores of updated maps.",
                 Buttons = new ButtonData[]
@@ -913,8 +938,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             var req = new MapLookupRequest
             {
                 MapperID = api.User.Value.ID,
-                Title = editorMap.MapInfo.Metadata.Title,
-                Artist = editorMap.MapInfo.Metadata.Artist
+                Title = EditorMap.MapInfo.Metadata.Title,
+                Artist = EditorMap.MapInfo.Metadata.Artist
             };
             req.Failure += _ => run(); // just run the upload if the request fails
 
@@ -929,7 +954,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
                 panels.Content = new ButtonPanel
                 {
-                    Icon = FontAwesome6.Solid.ExclamationTriangle,
+                    Icon = Phosphor.Bold.Warning,
                     Text = "You already have a mapset with the same title and artist uploaded!",
                     CreateSubText = flow =>
                     {
@@ -983,7 +1008,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
             var files = new Dictionary<string, int>();
 
-            foreach (var map in editorMap.MapSet.Maps)
+            foreach (var map in EditorMap.MapSet.Maps)
             {
                 overlay.SubText = $"Checking for issues in '{map.Difficulty}'...";
 
@@ -1005,7 +1030,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     builder.AppendLine($"{kvp.Key}: {kvp.Value} issue(s)");
 
                 Schedule(() => panels.Replace(new SingleButtonPanel(
-                    FontAwesome6.Solid.ExclamationTriangle,
+                    Phosphor.Bold.Warning,
                     "Issues found!",
                     builder.ToString()
                 )));
@@ -1023,14 +1048,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
             overlay.SubText = "Exporting...";
 
-            var realmMapSet = mapStore.GetFromGuid(editorMap.MapSet.ID);
+            var realmMapSet = mapStore.GetFromGuid(EditorMap.MapSet.ID);
             var path = mapStore.Export(realmMapSet.Detach(), new TaskNotificationData(), false);
             var buffer = await File.ReadAllBytesAsync(path);
 
             overlay.SubText = "0%";
 
             if (setID == -1 && isUpdate)
-                setID = editorMap.MapSet.OnlineID;
+                setID = EditorMap.MapSet.OnlineID;
 
             var request = new MapSetUploadRequest(buffer, setID);
             request.Progress += (l1, l2) => overlay.SubText = $"{l1.FormatBytes()}/{l1.FormatBytes()} {Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
@@ -1041,7 +1066,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (!request.IsSuccessful)
             {
                 Schedule(() => panels.Replace(new SingleButtonPanel(
-                    FontAwesome6.Solid.ExclamationTriangle,
+                    Phosphor.Bold.Warning,
                     $"Failed up {(isUpdate ? "update" : "upload")} mapset!",
                     request.FailReason?.Message ?? APIRequest.UNKNOWN_ERROR
                 )));
@@ -1052,21 +1077,21 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
             realm.RunWrite(r =>
             {
-                var set = r.Find<RealmMapSet>(editorMap.MapSet.ID);
-                set.OnlineID = editorMap.MapSet.OnlineID = request.Response!.Data.ID;
+                var set = r.Find<RealmMapSet>(EditorMap.MapSet.ID);
+                set.OnlineID = EditorMap.MapSet.OnlineID = request.Response!.Data.ID;
                 set.SetStatus(request.Response.Data.Status);
-                editorMap.MapSet.SetStatus(request.Response.Data.Status);
+                EditorMap.MapSet.SetStatus(request.Response.Data.Status);
 
                 foreach (var onlineMap in request.Response.Data.Maps)
                 {
                     var map = set.Maps.First(m => m.FileName == onlineMap.FileName);
-                    var loadedMap = editorMap.MapSet.Maps.First(m => m.FileName == onlineMap.FileName);
+                    var loadedMap = EditorMap.MapSet.Maps.First(m => m.FileName == onlineMap.FileName);
 
                     map.OnlineID = loadedMap.OnlineID = onlineMap.ID;
                 }
 
                 var detatch = set.Detach();
-                Schedule(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(editorMap.MapSet.ID), detatch));
+                Schedule(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(EditorMap.MapSet.ID), detatch));
             });
 
             overlay.SubText = "Success!";
@@ -1076,7 +1101,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             Logger.Error(e, "An error occurred while uploading the mapset!");
             Schedule(() => panels.Replace(new SingleButtonPanel(
-                FontAwesome6.Solid.ExclamationTriangle,
+                Phosphor.Bold.Warning,
                 $"Failed up {(isUpdate ? "update" : "upload")} mapset!",
                 e.Message
             )));

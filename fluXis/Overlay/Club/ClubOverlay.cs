@@ -19,8 +19,9 @@ using fluXis.Overlay.Club.Sidebar;
 using fluXis.Overlay.Club.Tabs;
 using fluXis.Overlay.Club.UI;
 using fluXis.Overlay.Notifications;
-using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using Midori.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -242,7 +243,7 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             ColorEnd = club.Colors.Last().Color
         };
 
-        panels.Content = new FormPanel<EditClubPayload>(FontAwesome6.Solid.Pencil, "Edit Club", startData.JsonCopy(), (form, data) =>
+        panels.Content = new FormPanel<EditClubPayload>(Phosphor.Bold.PencilSimple, "Edit Club", startData.JsonCopy(), (form, data) =>
         {
             form.StartLoading();
             data = data.NullWhereSame(startData);

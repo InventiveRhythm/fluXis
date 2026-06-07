@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Audio;
-using fluXis.Audio.FFT;
 using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
@@ -17,7 +16,9 @@ using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Localization.Stores;
+using fluXis.Online;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Spectator;
 using fluXis.Overlay.Achievements;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Browse;
@@ -89,13 +90,13 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private Dashboard dashboard;
     private LoginOverlay loginOverlay;
     private UserProfileOverlay userProfileOverlay;
+    private ClubOverlay clubOverlay;
     private MapSetOverlay mapSetOverlay;
     private Toolbar toolbar;
     private PanelContainer panelContainer;
     private FloatingNotificationContainer notificationContainer;
     private ExitAnimation exitAnimation;
 
-    private AudioAnalyzer audioAnalyzer;
     private GlobalFFTProcessor fftProcessor;
 
     private SentryClient sentry { get; }
@@ -140,6 +141,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         // GameDependencies.CacheAs<IAmplitudeProvider>(globalClock);
 
         loadComponent(NotificationManager, Add);
+        loadComponent<SpectatorClient>(new OnlineSpectatorClient(), Add, true);
 
         loadComponent(globalBackground = new GlobalBackground { InitialDim = 1 }, buffer.Add, true);
         loadComponent(screenContainer = new Container { RelativeSizeAxes = Axes.Both }, buffer.Add);
@@ -151,7 +153,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(mapSetOverlay = new MapSetOverlay(), overlayContainer.Add, true);
         loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
         loadComponent(new WikiOverlay(), overlayContainer.Add, true);
-        loadComponent(new ClubOverlay(), overlayContainer.Add, true);
+        loadComponent(clubOverlay = new ClubOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
         loadComponent(new SettingsMenu(), overlayContainer.Add, true);
 
@@ -172,7 +174,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(MenuScreen = new MenuScreen());
 
-        loadComponent(audioAnalyzer = new AudioAnalyzer(), Add, true);
         loadComponent(fftProcessor = new GlobalFFTProcessor(), Add, true);
         // GlobalClock was our main amplitude provider but have an actual processor now
         GameDependencies.CacheAs<IAmplitudeProvider>(fftProcessor);
@@ -234,7 +235,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         {
             panelContainer.Content = new ButtonPanel
             {
-                Icon = FontAwesome6.Solid.TriangleExclamation,
+                Icon = Phosphor.Bold.Warning,
                 Text = "Failed to download server config!",
                 SubText = "Online functionality will be unavailable.",
                 Buttons = new[]
@@ -310,8 +311,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         ScheduleAfterChildren(() => screenStack.Push(new LoadingScreen(LoadQueue)));
 
-        APIClient.FriendOnline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now online!", FontAwesome6.Solid.UserPlus));
-        APIClient.FriendOffline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now offline!", FontAwesome6.Solid.UserMinus));
+        APIClient.FriendOnline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now online!", Phosphor.Bold.UserPlus));
+        APIClient.FriendOffline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now offline!", Phosphor.Bold.UserMinus));
         APIClient.AchievementEarned += a => Schedule(() => LoadComponentAsync(new AchievementOverlay(a), ov => Schedule(() => panelContainer.Content = ov)));
         APIClient.NameChangeRequested += () => WaitForReady(() => Schedule(() => panelContainer.Content = new UsernameChangePanel()));
 
@@ -351,15 +352,28 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             globalBackground.AddBackgroundFromMap(map);
     }
 
-    public void OpenLink(string link, bool skipWarning = false)
+    public override void OpenLink(string link, bool skipWarning = false)
     {
+        var parsed = ParsedLink.Parse(link, APIClient.Endpoint);
+
+        switch (parsed.Action)
+        {
+            case LinkAction.MapSet:
+                PresentMapSet((long)parsed.Argument);
+                return;
+
+            case LinkAction.User:
+                PresentUser((long)parsed.Argument);
+                return;
+
+            case LinkAction.Club:
+                PresentClub((long)parsed.Argument);
+                return;
+        }
+
         if (skipWarning)
         {
-            if (Steam?.Initialized ?? false)
-                Steam.OpenLink(link);
-            else
-                Host.OpenUrlExternally(link);
-
+            base.OpenLink(link, true);
             return;
         }
 
@@ -415,6 +429,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public void PresentUser(long id)
         => userProfileOverlay.ShowUser(id);
+
+    public void PresentClub(long id)
+        => clubOverlay.ShowClub(id);
 
     public void PresentMapSet(long id)
     {
@@ -540,6 +557,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         globalClock.RateTo(0, 1500, Easing.Out);
         globalClock.VolumeOut(1300);
         exitAnimation.Show(buffer.Hide, () => base.Exit());
+        APIClient.Disconnect();
         isExiting = true;
     }
 

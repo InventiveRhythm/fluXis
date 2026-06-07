@@ -16,7 +16,7 @@ namespace fluXis.Overlay.Settings.Sections.General;
 public partial class GeneralLanguageSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Language;
-    public override IconUsage Icon => FontAwesome6.Solid.EarthAmericas;
+    public override IconUsage Icon => Phosphor.Bold.GlobeHemisphereWest;
 
     private SettingsGeneralStrings strings => LocalizationStrings.Settings.General;
 

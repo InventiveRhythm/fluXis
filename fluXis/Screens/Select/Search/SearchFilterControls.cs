@@ -118,7 +118,7 @@ public partial class SearchFilterControls : CompositeDrawable
                     icon = new FluXisSpriteIcon
                     {
                         Size = new Vector2(16),
-                        Icon = FontAwesome6.Solid.AngleDown,
+                        Icon = Phosphor.Bold.CaretDown,
                         Shear = new Vector2(.2f, 0),
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre

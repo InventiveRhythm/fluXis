@@ -12,7 +12,7 @@ public class TaskNotificationData
     public string TextFinished { get; set; } = "Finished!";
     public string TextFailed { get; set; } = "Failed! View logs for more info.";
 
-    public IconUsage WorkingIcon { get; set; } = FontAwesome6.Solid.ArrowsRotate;
+    public IconUsage WorkingIcon { get; set; } = Phosphor.Bold.ArrowsClockwise;
     public bool SpinIcon { get; set; } = true;
 
     public Action ClickAction { get; set; }

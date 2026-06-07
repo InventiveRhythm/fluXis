@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Payloads.Maps;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.MapSets.Votes;

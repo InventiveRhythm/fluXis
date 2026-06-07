@@ -60,7 +60,7 @@ public partial class HeaderEditButton : CircularContainer
                         Size = new Vector2(20),
                         Child = new FluXisSpriteIcon
                         {
-                            Icon = FontAwesome6.Solid.Pen,
+                            Icon = Phosphor.Bold.PencilSimple,
                             Size = new Vector2(20)
                         }
                     },

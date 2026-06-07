@@ -20,7 +20,7 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
 {
     protected virtual float TotalScore => score.Score;
     protected virtual double PerformanceRating => score.PerformanceRating;
-    protected virtual APIUser Player => users.Get(score.PlayerID) ?? APIUser.CreateUnknown(score.PlayerID);
+    protected virtual APIUser Player => score.Player ?? users.Get(score.PlayerID) ?? APIUser.CreateUnknown(score.PlayerID);
 
     [Resolved]
     private UserCache users { get; set; }

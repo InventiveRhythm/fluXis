@@ -18,7 +18,7 @@ public partial class ResultsFooter : Footer
     protected override CornerButton CreateLeftButton() => new()
     {
         ButtonText = LocalizationStrings.General.Back,
-        Icon = FontAwesome6.Solid.AngleLeft,
+        Icon = Phosphor.Bold.CaretLeft,
         Action = BackAction
     };
 
@@ -31,7 +31,7 @@ public partial class ResultsFooter : Footer
         {
             ButtonText = "Retry",
             Corner = Corner.BottomRight,
-            Icon = FontAwesome6.Solid.RotateRight,
+            Icon = Phosphor.Bold.ArrowClockwise,
             ButtonColor = Theme.Primary,
             Action = RestartAction
         };
@@ -44,7 +44,7 @@ public partial class ResultsFooter : Footer
             yield return new FooterButton
             {
                 Text = "View Replay",
-                Icon = FontAwesome6.Solid.Film,
+                Icon = Phosphor.Bold.FilmReel,
                 AccentColor = Theme.Footer1,
                 Action = ViewReplayAction
             };

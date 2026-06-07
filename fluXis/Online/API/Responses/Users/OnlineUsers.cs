@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Online.API.Models.Users;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Responses.Users;

@@ -97,7 +97,7 @@ public partial class ImageSelector : CompositeDrawable
                             Size = new Vector2(16),
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
-                            Icon = FontAwesome6.Solid.Pencil
+                            Icon = Phosphor.Bold.PencilSimple
                         },
                         new ForcedHeightText
                         {

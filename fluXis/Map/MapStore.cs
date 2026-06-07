@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -17,6 +18,7 @@ using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Import;
 using fluXis.Map.Builtin.Christmashouse;
+using fluXis.Map.Builtin.Floorboard;
 using fluXis.Map.Builtin.Roundhouse;
 using fluXis.Map.Builtin.Spoophouse;
 using fluXis.Map.Structures;
@@ -31,14 +33,15 @@ using fluXis.Utils;
 using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
-using osu.Framework.Graphics;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using Realms;
+using Component = osu.Framework.Graphics.Component;
 
 namespace fluXis.Map;
 
@@ -319,7 +322,7 @@ public partial class MapStore : Component
             {
                 Text = "Failed to download bundled maps!",
                 SubText = "Make sure you have a working and stable internet connection when launching the game!",
-                Icon = FontAwesome6.Solid.ExclamationTriangle,
+                Icon = Phosphor.Bold.Warning,
                 Buttons = new ButtonData[]
                 {
                     new PrimaryButtonData("Retry", () => DownloadBundledMaps(complete)),
@@ -744,6 +747,7 @@ public partial class MapStore : Component
             BuiltinMap.Roundhouse => new RoundhouseMapSet(),
             BuiltinMap.Spoophouse => new SpoophouseMapSet(),
             BuiltinMap.Christmashouse => new ChristmashouseMapSet(),
+            BuiltinMap.Floorboard => new FloorboardMapSet(),
             _ => throw new ArgumentOutOfRangeException(nameof(map), map, null)
         };
 
@@ -753,9 +757,16 @@ public partial class MapStore : Component
 
     public enum BuiltinMap
     {
+        [Description("Random from Library")]
+        None,
+
+        [Description("Akiri - Roundhouse")]
         Roundhouse,
         Spoophouse,
         Christmashouse,
+
+        [Description("Akiri - An Appetising Floorboard")]
+        Floorboard
     }
 
     public static RealmMap CreateDummyMap()

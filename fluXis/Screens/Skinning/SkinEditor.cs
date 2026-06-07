@@ -16,7 +16,7 @@ using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Edit.UI.Variable;
 using fluXis.Skinning;
 using fluXis.Skinning.Json;
-using fluXis.Utils;
+using Midori.Utils;
 using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -290,13 +290,13 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                 {
                     Items = new[]
                     {
-                        new MenuExpandItem("File", FontAwesome6.Solid.File, new FluXisMenuItem[]
+                        new MenuExpandItem("File", Phosphor.Bold.File, new FluXisMenuItem[]
                         {
-                            new MenuActionItem("Save", FontAwesome6.Solid.FloppyDisk, save),
-                            new MenuActionItem("Open Skin Folder", FontAwesome6.Solid.FolderOpen, skinManager.OpenFolder),
-                            new MenuActionItem("Exit", FontAwesome6.Solid.DoorOpen, this.Exit)
+                            new MenuActionItem("Save", Phosphor.Bold.FloppyDisk, save),
+                            new MenuActionItem("Open Skin Folder", Phosphor.Bold.FolderOpen, skinManager.OpenFolder),
+                            new MenuActionItem("Exit", Phosphor.Bold.DoorOpen, this.Exit)
                         }),
-                        new MenuExpandItem("Key Mode", FontAwesome6.Solid.Keyboard, getKeymodeItems())
+                        new MenuExpandItem("Key Mode", Phosphor.Bold.Keyboard, getKeymodeItems())
                     }
                 }
             }
@@ -306,13 +306,13 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private IReadOnlyList<MenuItem> getKeymodeItems()
     {
         return Enumerable.Range(1, 10)
-                         .Select(x => new MenuActionItem($"{x} Key{(x > 1 ? "s" : "")}", FontAwesome6.Solid.Circle, () => keyMode.Value = x))
+                         .Select(x => new MenuActionItem($"{x} Key{(x > 1 ? "s" : "")}", Phosphor.Bold.Circle, () => keyMode.Value = x))
                          .ToList();
     }
 
     private void save()
     {
-        notifications.SendText("Skin Saved", "", FontAwesome6.Solid.Check);
+        notifications.SendText("Skin Saved", "", Phosphor.Bold.Check);
         skinManager.UpdateAndSave(skinJson);
     }
 

@@ -11,7 +11,7 @@ namespace fluXis.Overlay.Notifications.Floating;
 public partial class SmallFloatingTextNotification : FloatingNotification
 {
     public string Text { get; init; }
-    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Info;
+    public IconUsage Icon { get; init; } = Phosphor.Bold.Info;
 
     private FillFlowContainer content;
 

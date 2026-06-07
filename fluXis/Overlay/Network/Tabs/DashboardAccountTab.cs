@@ -39,7 +39,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardAccountTab : DashboardTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Account;
-    public override IconUsage Icon => FontAwesome6.Solid.Gear;
+    public override IconUsage Icon => Phosphor.Bold.GearSix;
     public override DashboardTabType Type => DashboardTabType.Account;
 
     [Resolved]

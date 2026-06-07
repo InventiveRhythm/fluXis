@@ -10,7 +10,7 @@ public partial class EditorModdingToolbox : ToolboxCategory
     public EditorModdingToolbox(EditorModding modding)
     {
         Title = "Modding";
-        Icon = FontAwesome6.Solid.Pen;
+        Icon = Phosphor.Bold.PencilSimple;
         Tools = new ChartingTool[] { new EditorChangeRequestTool(modding) };
         Alpha = 0;
 

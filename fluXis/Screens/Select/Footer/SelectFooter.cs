@@ -60,7 +60,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     protected override CornerButton CreateLeftButton() => new()
     {
         ButtonText = LocalizationStrings.General.Back,
-        Icon = FontAwesome6.Solid.AngleLeft,
+        Icon = Phosphor.Bold.CaretLeft,
         Action = BackAction,
         PlayClickSound = false
     };
@@ -68,7 +68,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     protected override CornerButton CreateRightButton() => new()
     {
         ButtonText = LocalizationStrings.General.Play,
-        Icon = FontAwesome6.Solid.Play,
+        Icon = Phosphor.Bold.Play,
         ButtonColor = Theme.Primary,
         Corner = Corner.BottomRight,
         Action = PlayAction,
@@ -97,7 +97,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         yield return randomButton = new FooterButton
         {
             Text = LocalizationStrings.SongSelect.FooterRandom,
-            Icon = FontAwesome6.Solid.Shuffle,
+            Icon = Phosphor.Bold.ShuffleAngular,
             AccentColor = Theme.Footer2,
             Action = () =>
             {
@@ -112,7 +112,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         yield return options.Button = new FooterButton
         {
             Text = LocalizationStrings.SongSelect.FooterOptions,
-            Icon = FontAwesome6.Solid.Gear,
+            Icon = Phosphor.Bold.GearSix,
             AccentColor = Theme.Footer3,
             Action = OpenSettings,
             Index = 2
@@ -123,7 +123,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
             yield return practice.Button = new FooterButton
             {
                 Text = LocalizationStrings.SongSelect.FooterPractice,
-                Icon = FontAwesome6.Solid.BullseyeArrow,
+                Icon = Phosphor.Bold.Target,
                 AccentColor = Theme.Footer4,
                 Action = practice.ToggleVisibility,
                 Index = 3

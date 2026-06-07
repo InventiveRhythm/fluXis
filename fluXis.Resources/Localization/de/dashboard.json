@@ -5,5 +5,7 @@
     "club": "Klub",
     "online": "Online",
     "account": "Konto",
-    "notifications-empty": "Nichts hier..."
+    "notifications-empty": "Nichts hier...",
+    "chat": "Chat",
+    "mapping": "Mapping"
 }

@@ -35,6 +35,7 @@ public class ScriptRunner
         AddFunction("RandomRange", randomRange);
         AddFunction("Easing", (string str) => Enum.TryParse(str, out Easing easing) ? easing : Easing.None);
         AddFunction("Vector2", (float x, float y) => new LuaVector2(x, y));
+        AddFunction("Color4", (float r, float g, float b, float a) => new LuaColor4(r, g, b, a));
         AddFunction("Vector2Zero", () => new LuaVector2(0, 0));
         AddFunction("Vector2One", () => new LuaVector2(1, 1));
         AddFunction("BPMAtTime", findBpm);

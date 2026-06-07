@@ -104,7 +104,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Settings,
                                 TooltipSub = LocalizationStrings.Toolbar.SettingsDescription,
-                                Icon = FontAwesome6.Solid.Gear,
+                                Icon = Phosphor.Bold.GearSix,
                                 Overlay = settings,
                                 Keybind = FluXisGlobalKeybind.ToggleSettings
                             },
@@ -113,7 +113,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Home,
                                 TooltipSub = LocalizationStrings.Toolbar.HomeDescription,
-                                Icon = FontAwesome6.Solid.House,
+                                Icon = Phosphor.Bold.House,
                                 Screen = typeof(MenuScreen),
                                 Action = () => game.MenuScreen?.MakeCurrent(),
                                 Keybind = FluXisGlobalKeybind.Home
@@ -122,7 +122,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Maps,
                                 TooltipSub = LocalizationStrings.Toolbar.MapsDescription,
-                                Icon = FontAwesome6.Solid.Map,
+                                Icon = Phosphor.Bold.MapTrifold,
                                 Screen = typeof(SoloSelectScreen),
                                 Action = () => goToScreen(new SoloSelectScreen())
                             },
@@ -130,7 +130,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Multiplayer,
                                 TooltipSub = LocalizationStrings.Toolbar.MultiplayerDescription,
-                                Icon = FontAwesome6.Solid.Users,
+                                Icon = Phosphor.Bold.UsersThree,
                                 Screen = typeof(MultiplayerScreen),
                                 Action = () => goToScreen(new MultiplayerScreen()),
                                 RequireLogin = true
@@ -139,7 +139,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Ranking,
                                 TooltipSub = LocalizationStrings.Toolbar.RankingDescription,
-                                Icon = FontAwesome6.Solid.Trophy,
+                                Icon = Phosphor.Bold.Trophy,
                                 Screen = typeof(Rankings),
                                 Action = () => goToScreen(new Rankings()),
                                 RequireLogin = true
@@ -167,7 +167,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Dashboard,
                                 TooltipSub = LocalizationStrings.Toolbar.DashboardDescription,
-                                Icon = FontAwesome6.Solid.EarthAmericas,
+                                Icon = Phosphor.Bold.GlobeHemisphereWest,
                                 Overlay = dashboard,
                                 Keybind = FluXisGlobalKeybind.ToggleDashboard,
                                 ShowPulse = api.HasUnreadNotifications.GetBoundCopy(),
@@ -177,7 +177,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Browse,
                                 TooltipSub = LocalizationStrings.Toolbar.BrowseDescription,
-                                Icon = FontAwesome6.Solid.ArrowDownToLine,
+                                Icon = Phosphor.Bold.ArrowLineDown,
                                 Keybind = FluXisGlobalKeybind.ToggleBrowse,
                                 Overlay = browse,
                                 RequireLogin = true
@@ -186,7 +186,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Wiki,
                                 TooltipSub = LocalizationStrings.Toolbar.WikiDescription,
-                                Icon = FontAwesome6.Solid.Book,
+                                Icon = Phosphor.Bold.Book,
                                 Overlay = wiki,
                                 RequireLogin = true,
                                 OnVisibilityToggle = v =>
@@ -199,7 +199,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Music,
                                 TooltipSub = LocalizationStrings.Toolbar.MusicDescription,
-                                Icon = FontAwesome6.Solid.Music,
+                                Icon = Phosphor.Bold.MusicNotes,
                                 Overlay = musicPlayer,
                                 Keybind = FluXisGlobalKeybind.ToggleMusicPlayer,
                                 Margin = new MarginPadding { Right = 10 }

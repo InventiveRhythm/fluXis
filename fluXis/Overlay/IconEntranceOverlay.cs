@@ -21,8 +21,9 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
 
     protected virtual float OverlayPadding => 64;
     protected virtual float IconRotation => 60;
+    protected virtual float OpenedRoundness => 20;
     protected virtual ColourInfo BackgroundColor => Theme.Background2;
-    protected virtual IconUsage Icon => FontAwesome6.Solid.Question;
+    protected virtual IconUsage Icon => Phosphor.Bold.QuestionMark;
 
     [CanBeNull]
     protected Sample OpenSample { get; set; }
@@ -32,6 +33,7 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
 
     protected bool InitialAnimation { get; private set; } = true;
 
+    private Container container;
     private ClickableContainer scaling;
     private Container iconContainer;
     protected new FocusContainer Content { get; private set; }
@@ -55,7 +57,7 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
                     Alpha = .5f
                 }
             },
-            new Container
+            container = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
@@ -113,13 +115,14 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
         const int size = 200;
         const int scale_duration = 400;
 
-        var widthFactor = size / DrawSize.X;
-        var heightFactor = size / DrawSize.Y;
+        var widthFactor = size / container.DrawSize.X;
+        var heightFactor = size / container.DrawSize.Y;
 
-        scaling.ScaleTo(.8f)
+        scaling.ScaleTo(.8f).TransformTo(nameof(CornerRadius), 20f)
                .ResizeTo(new Vector2(widthFactor, heightFactor))
                .ScaleTo(1, scale_duration, Easing.OutQuint)
                .Delay(scale_duration)
+               .TransformTo(nameof(CornerRadius), OpenedRoundness)
                .ResizeTo(1, 600, Easing.OutQuint);
 
         iconContainer.FadeIn().RotateTo(-IconRotation)

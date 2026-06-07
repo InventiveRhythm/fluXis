@@ -26,7 +26,7 @@ public partial class DrawableSupporterBadge : CircularContainer
             new FluXisSpriteIcon()
             {
                 Size = new Vector2(10),
-                Icon = FontAwesome6.Solid.Heart,
+                Icon = Phosphor.Bold.HeartStraight,
                 Colour = Theme.Background2,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre

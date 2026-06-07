@@ -1,5 +1,19 @@
 ---@meta
 
+---@class Color4
+---@field r number
+---@field g number
+---@field b number
+---@field a number
+local __Color4 = {}
+
+---@param r number
+---@param g number
+---@param b number
+---@param a number
+---@return Color4
+function Color4(r, g, b, a) end
+
 ---@class Vector2
 ---@field x number
 ---@field y number
@@ -18,7 +32,7 @@ function Vector2(x, y) end
 ---@field hitSound string
 ---@field group string
 ---@field hidden boolean
----@field type string
+---@field type number
 HitObject = {}
 
 ---@class HitSoundFade

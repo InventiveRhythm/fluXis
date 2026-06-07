@@ -4,5 +4,10 @@
     "files-clean-up": "파일 정리하기",
     "files-clean-up-description": "불필요한 파일을 모두 삭제합니다.",
     "maps-title": "맵",
-    "maps-scores-clean-up": "점수 정리"
+    "maps-scores-clean-up": "점수 정리",
+    "stream-file-browser": "파일 탐색기에서 파일을 스트리밍하세요.",
+    "stream-file-browser-description": "대용량 디렉터리의 파일과 폴더를 스트리밍합니다. 이 기능을 끄면 대용량 디렉터리를 열 때 게임이 멈출 수 있습니다.",
+    "maps-recalculate-filters": "필터 재계산",
+    "maps-recalculate-filters-description": "모든 맵의 모든 필터를 다시 계산합니다.",
+    "maps-scores-clean-up-description": "보유하지 않은 맵의 점수를 삭제합니다."
 }

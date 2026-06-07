@@ -9,10 +9,10 @@ using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Lines;
 using fluXis.Storyboards;
-using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using Humanizer;
 using JetBrains.Annotations;
+using Midori.Utils;
 using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -47,7 +47,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
             {
                 new MenuExpandItem(
                     "Create new...",
-                    FontAwesome6.Solid.Plus,
+                    Phosphor.Bold.Plus,
                     groups.Select<IGrouping<string, StoryboardElementType>, FluXisMenuItem>(x =>
                     {
                         var items = x.OrderBy(y => y).ToList();

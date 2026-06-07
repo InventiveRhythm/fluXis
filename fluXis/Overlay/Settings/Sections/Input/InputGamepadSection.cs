@@ -14,7 +14,7 @@ namespace fluXis.Overlay.Settings.Sections.Input;
 public partial class InputGamepadSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Gamepad;
-    public override IconUsage Icon => FontAwesome6.Solid.Gamepad;
+    public override IconUsage Icon => Phosphor.Bold.GameController;
 
     private SettingsInputStrings strings => LocalizationStrings.Settings.Input;
 

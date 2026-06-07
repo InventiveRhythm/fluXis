@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;

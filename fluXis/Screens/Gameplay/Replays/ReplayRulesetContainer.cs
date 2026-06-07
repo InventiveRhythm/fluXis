@@ -17,6 +17,7 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
     public override bool AsyncScoreCalculations => true;
 
     public Replay Replay { get; }
+    public bool RequireSyncFrames { get; set; } = false;
 
     private List<ReplayFrame> frames { get; }
     private Stack<ReplayFrame> handledFrames { get; }
@@ -80,6 +81,19 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
             }
         }
 
+        if (RequireSyncFrames)
+        {
+            if (target > Replay.LastSync)
+            {
+                reset();
+                ParentClock.Stop();
+                return base.UpdateSubTree();
+            }
+
+            if (!ParentClock.IsRunning)
+                ParentClock.Start();
+        }
+
         CurrentTime = target;
 
         if (Math.Abs(ParentClock.CurrentTime - CurrentTime) > 40 && skippedFrames < 100 && skipElapsed < 10)
@@ -99,9 +113,14 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
             return true;
         }
 
-        skippedFrames = 0;
-        skipElapsed = 0;
+        reset();
         return base.UpdateSubTree();
+
+        void reset()
+        {
+            skippedFrames = 0;
+            skipElapsed = 0;
+        }
     }
 
     protected override void Update()
@@ -115,7 +134,9 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
                 var frame = frames[0];
                 frames.RemoveAt(0);
                 handledFrames.Push(frame);
-                handlePresses(frame.Actions);
+
+                if (frame.Type == ReplayFrameType.Input)
+                    handlePresses(frame.Actions);
             }
 
             while (handledFrames.Count > 0)
@@ -132,10 +153,18 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
 
     private void revertFrame(ReplayFrame frame)
     {
-        foreach (var keybind in currentPressed)
-            Input.ReleaseKey(keybind);
+        switch (frame.Type)
+        {
+            case ReplayFrameType.Input:
+            {
+                foreach (var keybind in currentPressed)
+                    Input.ReleaseKey(keybind);
 
-        currentPressed.Clear();
+                currentPressed.Clear();
+                break;
+            }
+        }
+
         frames.Insert(0, frame);
     }
 

@@ -61,7 +61,7 @@ public partial class TimelineTag : Container
         {
             Icon = new FluXisSpriteIcon
             {
-                Icon = FontAwesome6.Solid.Play,
+                Icon = Phosphor.Bold.Play,
                 Size = new Vector2(10),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -111,7 +111,7 @@ public partial class TimelineTag : Container
             return;
 
         UpdateAction?.Invoke();
-        
+
         trimText();
 
         this.ResizeTo(expandedSize, 200, Easing.OutQuint);
@@ -122,7 +122,7 @@ public partial class TimelineTag : Container
     }
 
     protected virtual void Retract()
-    {   
+    {
         if (!Expandable && !IsHovered)
             return;
 

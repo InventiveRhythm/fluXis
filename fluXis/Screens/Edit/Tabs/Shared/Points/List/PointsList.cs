@@ -129,7 +129,7 @@ public abstract partial class PointsList : Container
                                     {
                                         var i = currentEvent.Value;
                                         if (i is not null) scroll.ScrollIntoView(i);
-                                    }) { ButtonIcon = FontAwesome6.Solid.MagnifyingGlass }
+                                    }) { ButtonIcon = Phosphor.Bold.MagnifyingGlass }
                                 }
                             }
                         }
@@ -158,7 +158,7 @@ public abstract partial class PointsList : Container
                             },
                             iconUp = new FluXisSpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.AngleUp,
+                                Icon = Phosphor.Bold.CaretUp,
                                 Size = new Vector2(16),
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
@@ -166,7 +166,7 @@ public abstract partial class PointsList : Container
                             },
                             iconDown = new FluXisSpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.AngleDown,
+                                Icon = Phosphor.Bold.CaretDown,
                                 Size = new Vector2(16),
                                 Anchor = Anchor.BottomCentre,
                                 Origin = Anchor.BottomCentre,
@@ -248,7 +248,7 @@ public abstract partial class PointsList : Container
     {
         var obj = selectedEntries.Select(x => x.Object).ToList();
 
-        panels?.Add(new FormPanel<ApplyGroupForm>(FontAwesome6.Solid.ObjectGroup, "Apply Group", new ApplyGroupForm(), (_, d) =>
+        panels?.Add(new FormPanel<ApplyGroupForm>(Phosphor.Bold.SelectionAll, "Apply Group", new ApplyGroupForm(), (_, d) =>
         {
             obj.ForEach(x => x.Group = d.NewGroup.ToLowerInvariant());
             return true;
@@ -567,7 +567,7 @@ public abstract partial class PointsList : Container
         [Resolved]
         private UISamples samples { get; set; }
 
-        public IconUsage ButtonIcon { get; init; } = FontAwesome.Solid.Plus;
+        public IconUsage ButtonIcon { get; init; } = Phosphor.Bold.Plus;
         protected Action Action { get; init; }
 
         protected Box Background { get; private set; }

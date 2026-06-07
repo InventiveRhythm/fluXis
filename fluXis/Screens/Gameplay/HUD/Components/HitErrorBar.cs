@@ -34,7 +34,7 @@ public partial class HitErrorBar : GameplayHUDComponent
         {
             icon = new FluXisSpriteIcon
             {
-                Icon = FontAwesome6.Solid.AngleDown,
+                Icon = Phosphor.Bold.CaretDown,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Size = new Vector2(16)

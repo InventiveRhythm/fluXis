@@ -10,7 +10,7 @@ using fluXis.Map.Structures.Events.Camera;
 using fluXis.Map.Structures.Events.Groups;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Map.Structures.Events.Scrolling;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 

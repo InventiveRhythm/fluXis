@@ -15,11 +15,11 @@ public partial class ModdingActionTypeCircle : Container
 {
     private static readonly Dictionary<APIModdingActionType, (IconUsage, Colour4)> icon_map = new()
     {
-        { APIModdingActionType.Note, (FontAwesome6.Solid.NoteSticky, Theme.Cyan) },
-        { APIModdingActionType.Approve, (FontAwesome6.Solid.Check, Theme.Green) },
-        { APIModdingActionType.Deny, (FontAwesome6.Solid.XMark, Theme.Red) },
-        { APIModdingActionType.Update, (FontAwesome6.Solid.ArrowsRotate, Theme.Yellow) },
-        { APIModdingActionType.Submitted, (FontAwesome6.Solid.AngleDoubleRight, Theme.Pink) }
+        { APIModdingActionType.Note, (Phosphor.Bold.Note, Theme.Cyan) },
+        { APIModdingActionType.Approve, (Phosphor.Bold.Check, Theme.Green) },
+        { APIModdingActionType.Deny, (Phosphor.Bold.X, Theme.Red) },
+        { APIModdingActionType.Update, (Phosphor.Bold.ArrowsClockwise, Theme.Yellow) },
+        { APIModdingActionType.Submitted, (Phosphor.Bold.CaretDoubleRight, Theme.Pink) }
     };
 
     private readonly APIModdingActionType type;
@@ -34,7 +34,7 @@ public partial class ModdingActionTypeCircle : Container
     {
         (IconUsage icon, Colour4 colour) = icon_map.ContainsKey(type)
             ? icon_map[type]
-            : (FontAwesome6.Solid.Gear, Theme.Red); // fallback for unhandled types
+            : (Phosphor.Bold.GearSix, Theme.Red); // fallback for unhandled types
 
         Size = new Vector2(32, 32);
         Children = new Drawable[]

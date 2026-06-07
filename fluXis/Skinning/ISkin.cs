@@ -6,6 +6,7 @@ using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Course;
 using fluXis.Skinning.Bases.Judgements;
 using fluXis.Skinning.Json;
+using fluXis.Storyboards;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,6 +20,8 @@ public interface ISkin : IDisposable
 
     Texture GetIcon();
     Texture GetDefaultBackground();
+
+    float? GetSpriteAspectRatio(SkinSprite sprite);
 
     Sample GetUISample(UISamples.SampleType type);
     Sample GetCourseSample(CourseScreen.SampleType type);

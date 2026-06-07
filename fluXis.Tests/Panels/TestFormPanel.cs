@@ -5,7 +5,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Online.API.Payloads.Clubs;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Allocation;
 
 namespace fluXis.Tests.Panels;
@@ -23,7 +23,7 @@ public partial class TestFormPanel : FluXisTestScene
 
         AddStep("Add Panel", () =>
         {
-            var panel = new FormPanel<EditClubPayload>(FontAwesome6.Solid.Pencil, "Really, really long title that will hopefully cut off to show truncating", new EditClubPayload(), (_, data) =>
+            var panel = new FormPanel<EditClubPayload>(Phosphor.Bold.PencilSimple, "Really, really long title that will hopefully cut off to show truncating", new EditClubPayload(), (_, data) =>
             {
                 File.WriteAllText("form.json", data.Serialize());
                 return true;
