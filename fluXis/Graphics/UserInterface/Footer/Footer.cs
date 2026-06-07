@@ -16,6 +16,8 @@ namespace fluXis.Graphics.UserInterface.Footer;
 
 public abstract partial class Footer : CompositeDrawable
 {
+    public const float HEIGHT = 60;
+
     public CornerButton? LeftButton { get; private set; }
     protected Container<FooterButton> Buttons { get; private set; } = null!;
     public CornerButton? RightButton { get; private set; }
@@ -28,7 +30,7 @@ public abstract partial class Footer : CompositeDrawable
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 60;
+        Height = HEIGHT;
         Anchor = Origin = Anchor.BottomLeft;
 
         InternalChildren = new Drawable[]

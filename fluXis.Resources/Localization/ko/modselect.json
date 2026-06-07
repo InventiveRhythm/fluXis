@@ -1,0 +1,11 @@
+{
+    "title": "모드 선택",
+    "description": "게임을 어렵게 만들거나 쉽게 만들 수 있습니다!",
+    "section-rate": "재생 속도",
+    "section-difficulty-increase": "난이도 증가",
+    "section-difficulty-decrease": "난이도 감소",
+    "section-misc": "기타 모드",
+    "section-automation": "자동화",
+    "max-score": "최대 점수: {0:0}%",
+    "incompatible-mods": "호환되지 않는 모드:"
+}

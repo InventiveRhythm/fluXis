@@ -17,11 +17,11 @@ public partial class SettingsSubSection : FillFlowContainer
     protected FluXisConfig Config { get; private set; }
 
     public virtual LocalisableString Title => "Subsection";
-    public virtual IconUsage Icon => FontAwesome6.Solid.AngleRight;
+    public virtual IconUsage Icon => Phosphor.Bold.CaretRight;
 
     public BindableBool Visible { get; } = new(true);
 
-    protected Container RightSide { get; private set; }
+    protected FillFlowContainer RightSide { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -63,11 +63,13 @@ public partial class SettingsSubSection : FillFlowContainer
                         }
                     }
                 },
-                RightSide = new Container
+                RightSide = new FillFlowContainer
                 {
                     AutoSizeAxes = Axes.Both,
                     Anchor = Anchor.CentreRight,
                     Origin = Anchor.CentreRight,
+                    Direction = FillDirection.Horizontal,
+                    Spacing = new Vector2(8)
                 }
             }
         };

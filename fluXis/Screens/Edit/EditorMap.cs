@@ -11,6 +11,7 @@ using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Groups;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Verify;
@@ -18,6 +19,7 @@ using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
+using Midori.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Threading;
@@ -111,8 +113,9 @@ public class EditorMap : IVerifyContext
             new ChangeNotifier<CameraMoveEvent>(MapEvents.CameraMoveEvents),
             new ChangeNotifier<CameraScaleEvent>(MapEvents.CameraScaleEvents),
             new ChangeNotifier<CameraRotateEvent>(MapEvents.CameraRotateEvents),
-            new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents),
+            new ChangeNotifier<LoopEvent>(MapEvents.LoopEvents),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents),
+            new ChangeNotifier<StoryboardAnimation>(new List<StoryboardAnimation>()),
             MapInfo.Storyboard
         };
 
@@ -151,6 +154,7 @@ public class EditorMap : IVerifyContext
 
         MapInfo.AudioFile = file.Name;
         RealmMap.Metadata.Audio = file.Name;
+        RealmMap.AudioHash = MapUtils.GetXXHash(file.OpenRead());
         AudioChanged?.Invoke();
     }
 
@@ -323,7 +327,7 @@ public class EditorMap : IVerifyContext
 
     private void throwMissingHandler(ITimedObject obj) => throw new ArgumentException($"Type '{obj.GetType().Name}' does not have a change handler associated with it.");
 
-    public void ApplyOffsetToAll(float offset) => notifiers.ForEach(n => n.ApplyOffset(offset));
+    public void ApplyOffsetToAll(double offset) => notifiers.ForEach(n => n.ApplyOffset(offset));
 
     public void Sort()
     {
@@ -383,7 +387,7 @@ public class EditorMap : IVerifyContext
         void Remove(ITimedObject obj);
         void Update(ITimedObject obj);
 
-        void ApplyOffset(float offset);
+        void ApplyOffset(double offset);
 
         bool Matches(Type type);
     }
@@ -441,7 +445,7 @@ public class EditorMap : IVerifyContext
             OnTypedUpdate?.Invoke((T)obj);
         }
 
-        public void ApplyOffset(float offset)
+        public void ApplyOffset(double offset)
         {
             foreach (var obj in list)
             {

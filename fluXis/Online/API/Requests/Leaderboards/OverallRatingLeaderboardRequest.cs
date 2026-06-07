@@ -5,5 +5,5 @@ namespace fluXis.Online.API.Requests.Leaderboards;
 
 public class OverallRatingLeaderboardRequest : APIRequest<List<APIUser>>
 {
-    protected override string Path => "/leaderboards/overall";
+    protected override string Path => "/leaderboards/users/overall";
 }

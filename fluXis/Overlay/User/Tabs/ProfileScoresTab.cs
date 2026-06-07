@@ -18,7 +18,7 @@ namespace fluXis.Overlay.User.Tabs;
 
 public partial class ProfileScoresTab : TabContainer
 {
-    public override IconUsage Icon => FontAwesome6.Solid.ArrowTrendUp;
+    public override IconUsage Icon => Phosphor.Bold.Ranking;
     public override string Title => "Scores";
 
     [Resolved]

@@ -114,7 +114,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             new FooterOptionButton
                             {
                                 Text = LocalizationStrings.SongSelect.OptionsSettings,
-                                Icon = FontAwesome6.Solid.Gear,
+                                Icon = Phosphor.Bold.GearSix,
                                 Hotkey = Key.S,
                                 Action = () =>
                                 {
@@ -129,7 +129,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             viewOnlineButton = new FooterOptionButton
                             {
                                 Text = LocalizationStrings.General.ViewOnline,
-                                Icon = FontAwesome6.Solid.EarthAmericas,
+                                Icon = Phosphor.Bold.GlobeHemisphereWest,
                                 Hotkey = Key.O,
                                 Action = () =>
                                 {
@@ -140,7 +140,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             exportButton = new FooterOptionButton
                             {
                                 Text = LocalizationStrings.General.Export,
-                                Icon = FontAwesome6.Solid.BoxOpen,
+                                Icon = Phosphor.Bold.Package,
                                 Hotkey = Key.X,
                                 Action = () =>
                                 {
@@ -151,7 +151,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             new FooterOptionButton
                             {
                                 Text = LocalizationStrings.SongSelect.OptionsDeleteSet,
-                                Icon = FontAwesome6.Solid.Trash,
+                                Icon = Phosphor.Bold.Trash,
                                 Color = Theme.Red,
                                 Hotkey = Key.D,
                                 Action = () =>
@@ -167,7 +167,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             new FooterOptionButton
                             {
                                 Text = LocalizationStrings.General.Edit,
-                                Icon = FontAwesome6.Solid.Pen,
+                                Icon = Phosphor.Bold.PencilSimple,
                                 Hotkey = Key.E,
                                 Action = () =>
                                 {
@@ -178,7 +178,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             new FooterOptionButton
                             {
                                 Text = LocalizationStrings.SongSelect.OptionsWipeScores,
-                                Icon = FontAwesome6.Solid.Eraser,
+                                Icon = Phosphor.Bold.Eraser,
                                 Color = Theme.Red,
                                 Hotkey = Key.W,
                                 Action = () =>
@@ -187,7 +187,7 @@ public partial class FooterOptions : FocusedOverlayContainer
 
                                     panels.Content = new ButtonPanel
                                     {
-                                        Icon = FontAwesome6.Solid.Eraser,
+                                        Icon = Phosphor.Bold.Eraser,
                                         Text = LocalizationStrings.SongSelect.WipeScoresConfirmation,
                                         SubText = LocalizationStrings.General.CanNotBeUndone,
                                         Buttons = new ButtonData[]

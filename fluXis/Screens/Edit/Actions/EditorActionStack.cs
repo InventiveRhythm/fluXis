@@ -39,7 +39,7 @@ public class EditorActionStack
     {
         if (!CanUndo)
         {
-            NotificationManager?.SendSmallText("Nothing to undo.", FontAwesome6.Solid.XMark);
+            NotificationManager?.SendSmallText("Nothing to undo.", Phosphor.Bold.X);
             return;
         }
 
@@ -49,7 +49,7 @@ public class EditorActionStack
         var desc = action.Description;
 
         if (!string.IsNullOrWhiteSpace(desc))
-            NotificationManager?.SendSmallText($"Undo '{desc}'.", FontAwesome6.Solid.RotateLeft);
+            NotificationManager?.SendSmallText($"Undo '{desc}'.", Phosphor.Bold.ArrowCounterClockwise);
 
         index--;
     }
@@ -58,7 +58,7 @@ public class EditorActionStack
     {
         if (!CanRedo)
         {
-            NotificationManager?.SendSmallText("Nothing to redo.", FontAwesome6.Solid.XMark);
+            NotificationManager?.SendSmallText("Nothing to redo.", Phosphor.Bold.X);
             return;
         }
 
@@ -70,7 +70,7 @@ public class EditorActionStack
         var desc = action.Description;
 
         if (!string.IsNullOrWhiteSpace(desc))
-            NotificationManager?.SendSmallText($"Redo '{desc}'.", FontAwesome6.Solid.RotateRight);
+            NotificationManager?.SendSmallText($"Redo '{desc}'.", Phosphor.Bold.ArrowClockwise);
     }
 
     public override string ToString()

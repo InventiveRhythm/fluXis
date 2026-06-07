@@ -3,8 +3,9 @@ using fluXis.Database.Maps;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Scoring;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -13,11 +14,33 @@ namespace fluXis.Screens.Result.Center;
 
 public partial class ResultsCenterStats : CompositeDrawable
 {
+    [Resolved]
+    private Bindable<ScoreInfo> score { get; set; }
+
+    [Resolved]
+    private RealmMap map { get; set; }
+
     [BackgroundDependencyLoader]
-    private void load(RealmMap map, ScoreInfo score)
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
         Height = 38;
+
+        setContent();
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        score.BindValueChanged(_ => setContent());
+    }
+
+    private void setContent()
+    {
+        int noteCount = map.Filters.NoteCount + (score.Value.Mods.Contains("NLN") ? map.Filters.LongNoteCount : 0);
+        int longNoteCount = score.Value.Mods.Contains("NLN") ? 0 : map.Filters.LongNoteCount;
+        int landmineCount = score.Value.Mods.Contains("NMN") ? 0 : map.Filters.LandmineCount;
+        int mapMaxCombo = noteCount + longNoteCount * 2 + landmineCount;
 
         InternalChild = new GridContainer
         {
@@ -26,17 +49,17 @@ public partial class ResultsCenterStats : CompositeDrawable
             {
                 new Drawable[]
                 {
-                    new Statistic("Accuracy", $"{score.Accuracy.ToStringInvariant("00.00")}%"),
+                    new Statistic("Accuracy", $"{score.Value.Accuracy.ToStringInvariant("00.00")}%"),
                     new Statistic("Combo", "", flow =>
                     {
-                        flow.AddText($"{score.MaxCombo}x");
-                        flow.AddText<FluXisSpriteText>($"/{map.Filters.NoteCount + map.Filters.LongNoteCount * 2}x", text =>
+                        flow.AddText($"{score.Value.MaxCombo}x");
+                        flow.AddText<FluXisSpriteText>($"/{mapMaxCombo}x", text =>
                         {
                             text.WebFontSize = 14;
                             text.Alpha = .6f;
                         });
                     }),
-                    new Statistic("Performance", $"{score.PerformanceRating.ToStringInvariant("0.00")}"),
+                    new Statistic("Performance", $"{score.Value.PerformanceRating.ToStringInvariant("0.00")}"),
                 }
             }
         };

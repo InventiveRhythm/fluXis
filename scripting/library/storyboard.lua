@@ -11,6 +11,10 @@ function Add(element) end
 ---@nodiscard
 function StoryboardBox() end
 
+---@return StoryboardOutlineBox
+---@nodiscard
+function StoryboardOutlineBox() end
+
 ---@return StoryboardSprite
 ---@nodiscard
 function StoryboardSprite() end
@@ -56,6 +60,7 @@ metadata = {}
 ---@field y number
 ---@field z number
 ---@field blend boolean
+---@field blendMode number
 ---@field width number
 ---@field height number
 ---@field color number
@@ -82,7 +87,12 @@ local __StoryboardBox = {}
 ---@class StoryboardCircle: StoryboardElement
 local __StoryboardCircle = {}
 
+---@class StoryboardOutlineBox: StoryboardElement
+---@field border number
+local __StoryboardOutlineBox = {}
+
 ---@class StoryboardOutlineCircle: StoryboardElement
+---@field border number
 local __StoryboardOutlineCircle = {}
 
 ---@class StoryboardSkinSprite: StoryboardElement

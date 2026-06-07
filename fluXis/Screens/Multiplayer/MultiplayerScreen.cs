@@ -104,7 +104,7 @@ public partial class MultiplayerScreen : FluXisScreen
 
         client.OnConnectionError += ex => Schedule(() =>
         {
-            panels.Content = new SingleButtonPanel(FontAwesome6.Solid.TriangleExclamation, "Failed to connect to multiplayer server.", ex.Message, action: this.Exit);
+            panels.Content = new SingleButtonPanel(Phosphor.Bold.Warning, "Failed to connect to multiplayer server.", ex.Message, action: this.Exit);
             connectingContainer.FadeOut(Styling.TRANSITION_FADE);
         });
 

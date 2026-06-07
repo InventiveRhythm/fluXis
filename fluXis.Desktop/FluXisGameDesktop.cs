@@ -4,7 +4,8 @@ using fluXis.Configuration;
 using fluXis.Desktop.Integration;
 using fluXis.Integration;
 using fluXis.IPC;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
 
@@ -41,6 +42,9 @@ public partial class FluXisGameDesktop : FluXisGame
     private void load()
     {
         ipc = new IPCImportChannel(Host, this);
+
+        if (RuntimeInfo.IsUnix)
+            CreateComponentLoadTask(new LinuxMediaAdapter(), Add);
     }
 
     protected override void LoadComplete()

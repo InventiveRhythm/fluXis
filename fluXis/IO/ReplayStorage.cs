@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using fluXis.Replays;
-using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils;
 using osu.Framework.Platform;
 
 namespace fluXis.IO;

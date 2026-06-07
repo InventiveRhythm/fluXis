@@ -6,6 +6,7 @@ using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map;
+using fluXis.Map.Structures;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -24,7 +25,7 @@ public partial class FooterPracticeGraph : GridContainer
     private GlobalClock globalClock { get; set; }
 
     private readonly List<Bar> bars = new();
-    
+
     private BindableNumber<int> start { get; }
     private BindableNumber<int> end { get; }
 
@@ -99,7 +100,7 @@ public partial class FooterPracticeGraph : GridContainer
     private void updateCurrent()
     {
         if (globalClock.CurrentTrack == null || !globalClock.IsRunning) return;
-        
+
         for (var i = 0; i < bars.Count; i++)
         {
             var bar = bars[i];
@@ -152,7 +153,8 @@ public partial class FooterPracticeGraph : GridContainer
 
             var value = hit.Type switch
             {
-                1 => 0.1f, // tick
+                HitObjectType.Tick => 0.1f,
+                HitObjectType.Landmine => 0f,
                 _ => 1
             };
 
@@ -183,5 +185,8 @@ public partial class FooterPracticeGraph : GridContainer
         maps.MapBindable.ValueChanged -= mapChanged;
     }
 
-    public partial class Bar : Circle { public bool IsCurrent = false; }
+    public partial class Bar : Circle
+    {
+        public bool IsCurrent = false;
+    }
 }

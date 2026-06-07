@@ -13,6 +13,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK;
 using osuTK.Input;
 
@@ -31,8 +32,8 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 
     public MenuItem[] ContextMenuItems => new List<MenuItem>
     {
-        new MenuActionItem("Clone", FontAwesome6.Solid.Clone, MenuItemType.Normal, clone),
-        new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete),
+        new MenuActionItem("Clone", Phosphor.Bold.Copy, MenuItemType.Normal, clone),
+        new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, delete),
     }.ToArray();
 
     public override double FirstComparer => Object.StartTime;
@@ -59,7 +60,7 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
                     Alpha = .2f
                 }
             },
-            new BlueprintHandle
+            new BlueprintHandle(this)
             {
                 DragAction = vec =>
                 {
@@ -97,13 +98,18 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
         storyboard.Remove(Object);
     }
 
-    private partial class BlueprintHandle : Drawable
+    private partial class BlueprintHandle : Drawable, IHasCursorType
     {
+        CursorType IHasCursorType.Cursor => parent.IsSelected ? CursorType.SizeHorizontal : CursorType.Ignore;
+
+        private readonly TimelineElementBlueprint parent;
+
         public Action<Vector2> DragAction { get; init; }
         public Action StopAction { get; init; }
 
-        public BlueprintHandle()
+        public BlueprintHandle(TimelineElementBlueprint parent)
         {
+            this.parent = parent;
             Size = new Vector2(28, 36);
             Anchor = Origin = Anchor.CentreRight;
         }

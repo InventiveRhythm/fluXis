@@ -1,3 +1,4 @@
+using System;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using osu.Framework.Allocation;
@@ -14,8 +15,8 @@ public partial class TestTaskNotificationOverlay : FluXisTestScene
         var task = new TaskNotificationData();
         AddStep("Send task notification", () => notifications.AddTask(task));
         AddSliderStep("Set task progress", 0f, 1f, 0f, v => task.Progress = v);
-        AddStep("Start task notification", () => task.State = LoadingState.Working);
-        AddStep("Fail task notification", () => task.State = LoadingState.Failed);
-        AddStep("Finish task notification", () => task.State = LoadingState.Complete);
+
+        foreach (var state in Enum.GetValues<LoadingState>())
+            AddStep($"Update state to {state}", () => task.State = state);
     }
 }

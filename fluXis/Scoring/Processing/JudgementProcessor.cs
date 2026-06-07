@@ -29,15 +29,22 @@ public class JudgementProcessor
 
     public void AddResult(HitResult result)
     {
-        Results.Add(result);
+        lock (Results) Results.Add(result);
+
         dependants.ForEach(d => d.AddResult(result));
         ResultAdded?.Invoke(result);
     }
 
     public void RevertResult(HitResult result)
     {
-        Results.Remove(result);
+        lock (Results) Results.Remove(result);
+
         dependants.ForEach(d => d.RevertResult(result));
         ResultReverted?.Invoke(result);
+    }
+
+    public void RunLocked(Action act)
+    {
+        lock (Results) act?.Invoke();
     }
 }

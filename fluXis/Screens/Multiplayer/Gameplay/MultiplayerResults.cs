@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
+using fluXis.Online.API.Models.Users;
 using fluXis.Online.Multiplayer;
 using fluXis.Scoring;
 using fluXis.Screens.Result.Sides;
 using fluXis.Screens.Result.Sides.Presets;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;
@@ -14,6 +17,8 @@ namespace fluXis.Screens.Multiplayer.Gameplay;
 
 public partial class MultiplayerResults : Result.Results
 {
+    protected override bool PlayEnterAnimation => true;
+
     private List<ScoreInfo> scores { get; }
     private MultiplayerClient client { get; }
 
@@ -33,6 +38,12 @@ public partial class MultiplayerResults : Result.Results
     {
         protected override LocalisableString Title => "Leaderboard";
 
+        [Resolved]
+        private Bindable<APIUser> user { get; set; }
+
+        [Resolved]
+        private Bindable<ScoreInfo> score { get; set; }
+
         private List<ScoreInfo> scores { get; }
         private MultiplayerClient client { get; }
 
@@ -50,9 +61,19 @@ public partial class MultiplayerResults : Result.Results
             Spacing = new Vector2(16),
             ChildrenEnumerable = scores.Select((x, i) =>
             {
-                var player = client.Room.Participants.FirstOrDefault(y => y.ID == x.PlayerID);
+                var player = client.Room!.Participants.FirstOrDefault(y => y.ID == x.PlayerID);
                 var place = i + 1;
-                return new ResultsSideDoubleText($"#{place} {player?.Player.PreferredName ?? "??"}", x.Score.ToString("000000"));
+                return new ClickableContainer
+                {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Action = () =>
+                    {
+                        score.Value = x;
+                        user.Value = player?.Player ?? APIUser.Dummy;
+                    },
+                    Child = new ResultsSideDoubleText($"#{place} {player?.Player.PreferredName ?? "??"}", x.Score.ToString("000000"))
+                };
             })
         };
     }

@@ -14,13 +14,15 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
 
     protected override void InitialiseDefaults()
     {
-        SetDefault(ExperimentConfig.StoryboardTab, false);
         SetDefault(ExperimentConfig.ModView, false);
+        SetDefault(ExperimentConfig.LrcFeatures, false);
+        SetDefault(ExperimentConfig.NewSbBlendModes, false);
     }
 }
 
 public enum ExperimentConfig
 {
-    StoryboardTab,
-    ModView
+    ModView,
+    LrcFeatures,
+    NewSbBlendModes
 }

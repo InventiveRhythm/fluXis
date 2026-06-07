@@ -1,13 +1,13 @@
 ﻿using System.Net.Http;
 using fluXis.Online.API.Models.Maps;
-using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.MapSets.Favorite;
 
 public class MapFavoriteUpdateRequest : APIRequest<APIMapSetFavoriteState>
 {
-    protected override string Path => $"/mapset/{id}/favorite";
+    protected override string Path => $"/mapsets/{id}/favorite";
     protected override HttpMethod Method => HttpMethod.Patch;
 
     private long id { get; }

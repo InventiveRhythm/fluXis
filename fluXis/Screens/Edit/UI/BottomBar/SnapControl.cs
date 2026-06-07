@@ -5,7 +5,7 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Screens.Edit.UI.BottomBar.Snap;
 using fluXis.Skinning;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;

@@ -7,6 +7,7 @@ using fluXis.Screens.Result.Sides;
 using fluXis.Screens.Result.Sides.Types;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
@@ -16,7 +17,10 @@ namespace fluXis.Screens.Result;
 public partial class ResultsContent : CompositeDrawable
 {
     [Resolved]
-    private ScoreInfo score { get; set; }
+    private Bindable<ScoreInfo> score { get; set; }
+
+    [Resolved]
+    private ISkin skin { get; set; }
 
     private Drawable[] leftContent { get; }
     private Drawable[] rightContent { get; }
@@ -24,7 +28,7 @@ public partial class ResultsContent : CompositeDrawable
     private bool rankMoveSmoothly;
     private bool rankUseCenter;
 
-    private Drawable rank;
+    private Container rank;
     private ResultsHeader header;
     private ResultsSideList left;
     private ResultsCenter center;
@@ -37,19 +41,21 @@ public partial class ResultsContent : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISkin skin)
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
         Padding = new MarginPadding(20) { Bottom = 100 };
 
-        InternalChildren = new[]
-        {
-            rank = skin.GetResultsScoreRank(score.Rank).With(d =>
+        InternalChildren =
+        [
+            rank = new Container
             {
-                d.RelativePositionAxes = Axes.X;
-                d.X = 0.5f;
-                d.Origin = Anchor.Centre;
-            }),
+                RelativePositionAxes = Axes.X,
+                X = 0.5f,
+                Origin = Anchor.Centre,
+                AutoSizeAxes = Axes.Both,
+                Child = skin.GetResultsScoreRank(score.Value.Rank)
+            },
             new GridContainer
             {
                 RelativeSizeAxes = Axes.Both,
@@ -99,7 +105,7 @@ public partial class ResultsContent : CompositeDrawable
                     }
                 }
             }
-        };
+        ];
     }
 
     protected override void LoadComplete()
@@ -107,6 +113,7 @@ public partial class ResultsContent : CompositeDrawable
         base.LoadComplete();
 
         ScheduleAfterChildren(() => updateRankPosition(true));
+        score.BindValueChanged(v => rank.Child = skin.GetResultsScoreRank(score.Value.Rank));
     }
 
     protected override void Update()

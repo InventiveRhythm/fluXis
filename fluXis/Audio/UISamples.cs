@@ -1,17 +1,19 @@
 using System;
+using System.Diagnostics;
 using fluXis.Configuration;
 using fluXis.Overlay.Mouse;
 using fluXis.Skinning;
+using fluXis.Skinning.Default;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
-using osu.Framework.Graphics;
-using osu.Framework.Utils;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Audio;
 
-public partial class UISamples : Component
+public partial class UISamples : CompositeDrawable
 {
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -29,8 +31,8 @@ public partial class UISamples : Component
 
     private Sample back;
     private Sample select;
-    private Sample hover;
-    private Sample click;
+    private DebouncedSample hover;
+    private PitchVariatedSample click;
     private Sample clickDisabled;
     private Sample dropdownOpen;
     private Sample dropdownClose;
@@ -44,21 +46,20 @@ public partial class UISamples : Component
 
     private Bindable<double> panStrength;
 
-    private const float pitch_variation = 0.02f;
-    private const int debounce_time = 50;
-
-    private double lastHoverTime;
-
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples, FluXisConfig config)
+    private void load(TextureStore textures, ISampleStore samples, FluXisConfig config)
     {
         panStrength = config.GetBindable<double>(FluXisSetting.UIPanning);
 
-        back = skin?.GetUISample(SampleType.Back);
-        select = skin?.GetUISample(SampleType.Select);
-        hover = skin?.GetUISample(SampleType.Hover);
-        click = skin?.GetUISample(SampleType.Click);
-        clickDisabled = skin?.GetUISample(SampleType.ClickDisabled);
+        var sk = skin ?? new DefaultSkin(textures, samples);
+
+        back = sk.GetUISample(SampleType.Back);
+        select = sk.GetUISample(SampleType.Select);
+        AddInternal(hover = new DebouncedSample(new PitchVariatedSample(sk.GetUISample(SampleType.Hover))));
+        AddInternal(click = new PitchVariatedSample(sk.GetUISample(SampleType.Click)));
+        clickDisabled = sk.GetUISample(SampleType.ClickDisabled);
+        skinSelectClick = sk.GetUISample(SampleType.SkinSelectClick);
+
         dropdownOpen = samples.Get("UI/dropdown-open");
         dropdownClose = samples.Get("UI/dropdown-close");
         overlayOpen = samples.Get("UI/Overlay/open");
@@ -67,7 +68,6 @@ public partial class UISamples : Component
         panelDangerOpen = samples.Get("UI/panel-open-danger");
         panelClose = samples.Get("UI/panel-close");
         panelDangerClose = samples.Get("UI/panel-close-danger");
-        skinSelectClick = skin?.GetUISample(SampleType.SkinSelectClick);
     }
 
     protected override void LoadComplete()
@@ -87,8 +87,6 @@ public partial class UISamples : Component
 
         back?.Dispose();
         select?.Dispose();
-        hover?.Dispose();
-        click?.Dispose();
         clickDisabled?.Dispose();
         dropdownOpen?.Dispose();
         dropdownClose?.Dispose();
@@ -98,21 +96,22 @@ public partial class UISamples : Component
         panelDangerOpen?.Dispose();
         panelClose?.Dispose();
         panelDangerClose?.Dispose();
+        skinSelectClick?.Dispose();
     }
 
     private void onSkinChanged()
     {
         back?.Dispose();
         select?.Dispose();
-        hover?.Dispose();
-        click?.Dispose();
         clickDisabled?.Dispose();
+        skinSelectClick?.Dispose();
 
-        // we're sure skin is not null here
-        back = skin!.GetUISample(SampleType.Back);
+        Debug.Assert(skin != null);
+
+        back = skin.GetUISample(SampleType.Back);
         select = skin.GetUISample(SampleType.Select);
-        hover = skin.GetUISample(SampleType.Hover);
-        click = skin.GetUISample(SampleType.Click);
+        hover.ReplaceSample(new PitchVariatedSample(skin.GetUISample(SampleType.Hover)));
+        click.ReplaceSample(skin.GetUISample(SampleType.Click));
         clickDisabled = skin.GetUISample(SampleType.ClickDisabled);
         skinSelectClick = skin.GetUISample(SampleType.SkinSelectClick);
     }
@@ -122,12 +121,8 @@ public partial class UISamples : Component
 
     public void Hover(float customPan = -1)
     {
-        if (Time.Current - lastHoverTime < debounce_time)
-            return;
-
         customPan = customPan >= 0 ? customPan : pan;
-        PlayPanned(hover, customPan, true);
-        lastHoverTime = Time.Current;
+        PlayPanned(hover, customPan);
     }
 
     public void Click(bool disabled = false, float customPan = -1)
@@ -136,16 +131,7 @@ public partial class UISamples : Component
         PlayPanned(disabled ? clickDisabled : click, customPan);
     }
 
-    public void SkinSelectClick()
-    {
-        if (skinSelectClick == null)
-        {
-            Click();
-            return;
-        }
-
-        PlayPanned(skinSelectClick, pan, true);
-    }
+    public void SkinSelectClick() => skinSelectClick?.Play();
 
     public void Dropdown(bool close)
     {
@@ -166,20 +152,20 @@ public partial class UISamples : Component
     public void PanelOpen(bool danger = false) => (danger ? panelDangerOpen : panelOpen)?.Play();
     public void PanelClose(bool danger = false) => (danger ? panelDangerClose : panelClose)?.Play();
 
-    public void PlayPanned(Sample sample, float pan, bool randomizePitch = false)
+    public void PlayPanned(ISample sample, float pan)
     {
         if (sample == null)
             return;
+
+        var db = sample as DebouncedSample;
+        if (db is { CanPlay: false }) return;
 
         pan = Math.Clamp(pan, 0, 1);
 
         var channel = sample.GetChannel();
         channel.Balance.Value = (pan * 2 - 1) * panStrength.Value;
-
-        if (randomizePitch)
-            channel.Frequency.Value = 1f - pitch_variation / 2f + RNG.NextDouble(pitch_variation);
-
         channel.Play();
+        db?.UpdateLastPlayed();
     }
 
     public enum SampleType

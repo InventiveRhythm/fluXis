@@ -38,6 +38,21 @@
 ---| "InOutBounce"
 ---| "OutPow10"
 
+---@param input Easing
+---@return number
+---@nodiscard
+function Easing(input) end
+
+---@alias HitObjectType string
+---| "Normal"
+---| "Tick"
+---| "Landmine"
+
+---@param input HitObjectType
+---@return number
+---@nodiscard
+function HitObjectType(input) end
+
 ---@alias AnchorName string
 ---| "TopLeft"
 ---| "TopCentre"
@@ -54,7 +69,49 @@
 ---@nodiscard
 function Anchor(input) end
 
+---@alias BlendMode string
+---| "None"
+---| "Inherit"
+---| "Mix"
+---| "Difference"
+---| "Add"
+---| "Subtract"
+---| "Screen"
+---| "Multiply"
+---| "Premultiplied"
+
+---@param input BlendMode
+---@return number
+---@nodiscard
+function BlendMode(input) end
+
+---@alias FFTBandType string
+---| "Low"
+---| "Mid"
+---| "High"
+
+---@alias EventType string
+---| "BeatPulse"
+---| "ColorFade"
+---| "Flash"
+---| "LaneSwitch"
+---| "LayerFade"
+---| "Pulse"
+---| "Shader"
+---| "Shake"
+---| "HitObjectEase"
+---| "ScrollMultiplier"
+---| "TimeOffset"
+---| "PlayfieldMove"
+---| "PlayfieldRotate"
+---| "PlayfieldScale"
+---| "Loop"
+---| "CameraMove"
+---| "CameraRotate"
+---| "CameraScale"
+
 ---@alias ParameterDefinitionType string
 ---| "string"
 ---| "int"
 ---| "float"
+---| "boolean"

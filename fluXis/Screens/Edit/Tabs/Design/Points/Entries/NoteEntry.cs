@@ -5,8 +5,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Utils;
+using fluXis.Screens.Edit.UI.Variable;
+using Midori.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
@@ -30,12 +30,12 @@ public partial class NoteEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
     {
-        new PointSettingsTextBox
+        new EditorVariableTextBox
         {
             Text = "Content",
             TooltipText = "The content of the note.",
-            DefaultText = note.Content,
-            OnTextChanged = t =>
+            CurrentValue = note.Content,
+            OnValueChanged = t =>
             {
                 note.Content = t.Text;
                 Map.Update(note);

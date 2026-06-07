@@ -35,4 +35,7 @@ public class HitSoundFade : ITimedObject
     /// </summary>
     [JsonProperty("ease")]
     public Easing Easing { get; set; }
+
+    [JsonIgnore]
+    string ITimedObject.Group { get; set; }
 }

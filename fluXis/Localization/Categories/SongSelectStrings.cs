@@ -9,13 +9,13 @@ public class SongSelectStrings : LocalizationCategory
     protected override string File => "song-select";
 
     private static SongSelectStrings instance;
-
-    public SongSelectStrings()
-    {
-        instance = this;
-    }
+    public SongSelectStrings() => instance = this;
 
     public TranslatableString SearchPlaceholder => Get("search-placeholder", "Click to Search...");
+
+    public TranslatableString Collections => Get("collections", "collections");
+    public TranslatableString CollectionNone => Get("collection-none", "None");
+    public TranslatableString CollectionFavorite => Get("collection-favorite", "Favorite");
 
     // for the LocalisableString attribute to
     // work the fields have to be static...

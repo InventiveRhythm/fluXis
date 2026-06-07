@@ -20,5 +20,8 @@ public class TimingPoint : ITimedObject
     [JsonIgnore]
     public float MsPerBeat => 60000f / BPM;
 
+    [JsonIgnore]
+    string ITimedObject.Group { get; set; }
+
     public override string ToString() => $"Time: {Time}, BPM: {BPM}, Signature: {Signature}, HideLines: {HideLines}";
 }

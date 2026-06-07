@@ -19,7 +19,7 @@ namespace fluXis.Graphics.UserInterface.Panel.Types;
 
 public partial class ButtonPanel : Panel, IKeyBindingHandler<FluXisGlobalKeybind>, ICloseable
 {
-    public IconUsage Icon { get; init; } = FontAwesome.Solid.QuestionCircle;
+    public IconUsage Icon { get; init; } = Phosphor.Bold.Question;
     public LocalisableString Text { get; init; }
     public LocalisableString SubText { get; init; }
     public ButtonData[] Buttons { get; init; } = Array.Empty<ButtonData>();

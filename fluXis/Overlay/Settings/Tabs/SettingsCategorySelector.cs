@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Gamepad;
-using fluXis.Graphics.Sprites.Icons;
-using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Overlay.Settings.Sections;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -26,10 +26,11 @@ public partial class SettingsCategorySelector : Container, IKeyBindingHandler<Fl
     private Bindable<SettingsSection> currentSection { get; }
 
     public SettingsCategoryTab ExperimentsTab { get; private set; }
-    public Action CloseAction { get; init; }
 
-    private GamepadIcon leftIcon;
-    private GamepadIcon rightIcon;
+    [CanBeNull]
+    public Action<Drawable> ScrollToItem { get; set; }
+
+    private Drawable gamepadInfo;
 
     public SettingsCategorySelector(List<SettingsSection> list, Bindable<SettingsSection> bind)
     {
@@ -40,58 +41,80 @@ public partial class SettingsCategorySelector : Container, IKeyBindingHandler<Fl
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.X;
-        Height = 90;
+        RelativeSizeAxes = Axes.Both;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Theme.Background3
+                Colour = Theme.Background2
             },
-            new FillFlowContainer
+            new FluXisScrollContainer
             {
-                AutoSizeAxes = Axes.Both,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding(10),
-                Direction = FillDirection.Horizontal,
-                Spacing = new Vector2(10),
-                ChildrenEnumerable = (leftIcon = createGamepadIcon(ButtonGlyph.LeftBump))
-                                     .Yield<Drawable>()
-                                     .Concat(sections.Select(createTab))
-                                     .Concat((rightIcon = createGamepadIcon(ButtonGlyph.RightBump, true)).Yield<Drawable>())
+                RelativeSizeAxes = Axes.Both,
+                ScrollbarVisible = false,
+                ScrollbarOverlapsContent = true,
+                Child = new FillFlowContainer
+                {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Padding = new MarginPadding(16),
+                    Direction = FillDirection.Vertical,
+                    Spacing = new Vector2(4),
+                    ChildrenEnumerable = sections.Select(createTab)
+                },
             },
-            new IconButton
+            gamepadInfo = new FillFlowContainer()
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 120,
+                Direction = FillDirection.Horizontal,
+                Spacing = new Vector2(12),
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Children =
+                [
+                    createGamepadIcon(ButtonGlyph.LeftBump),
+                    new FluXisSpriteText
+                    {
+                        Text = "Change categories",
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        WebFontSize = 14
+                    },
+                    createGamepadIcon(ButtonGlyph.RightBump),
+                ]
+            },
+            /*new IconButton
             {
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Icon = FontAwesome6.Solid.XMark,
+                Icon = Phosphor.Bold.X,
                 ButtonSize = 70,
                 Action = CloseAction,
                 Margin = new MarginPadding(10)
-            }
+            }*/
         };
     }
 
     protected override void Update()
     {
         base.Update();
-        leftIcon.Alpha = rightIcon.Alpha = GamepadHandler.GamepadConnected ? 1f : 0f;
+        gamepadInfo.Alpha = GamepadHandler.GamepadConnected ? 1f : 0f;
     }
 
-    private GamepadIcon createGamepadIcon(ButtonGlyph glyph, bool right = false) => new(glyph)
+    private GamepadIcon createGamepadIcon(ButtonGlyph glyph) => new(glyph)
     {
         Size = new Vector2(32),
-        Anchor = Anchor.CentreLeft,
-        Origin = Anchor.CentreLeft,
-        Margin = new MarginPadding { Left = right ? 8 : 16, Right = right ? 0 : 8 }
+        Anchor = Anchor.Centre,
+        Origin = Anchor.Centre
     };
 
     private SettingsCategoryTab createTab(SettingsSection s)
     {
         var tab = new SettingsCategoryTab(s, currentSection);
+        tab.ScrollToItem = ScrollToItem;
 
         if (s is ExperimentsSection)
         {

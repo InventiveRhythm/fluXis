@@ -2,15 +2,22 @@
 using System.Text;
 using fluXis.Scripting;
 using fluXis.Scripting.Attributes;
+using fluXis.Utils;
+using Humanizer;
+using Midori.Utils.Extensions;
+using Newtonsoft.Json;
 using NLua;
 
 namespace LuaDefinitionMaker;
 
 public class BasicType : LuaType
 {
-    public BasicType(Type baseType, string name, LuaDefinitionAttribute attribute)
+    private readonly Type? fallbackType;
+
+    public BasicType(Type baseType, string name, LuaDefinitionAttribute attribute, Type? fallbackType = null)
         : base(baseType, name, attribute)
     {
+        this.fallbackType = fallbackType;
     }
 
     public override void Write(StringBuilder sb)
@@ -25,8 +32,8 @@ public class BasicType : LuaType
             {
                 var b = BaseType.BaseType;
 
-                if (b != typeof(ILuaModel) && b != typeof(object))
-                    sb.Append($": {Program.GetLuaType(b)}");
+                if (b != typeof(ILuaModel) && b != typeof(object) && b != typeof(ValueType)) // exclude ValueType cuz of structs
+                    sb.Append($": {Program.GetLuaType(b, fallback: fallbackType)}");
             }
 
             sb.AppendLine();
@@ -34,13 +41,32 @@ public class BasicType : LuaType
             foreach (var prop in BaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
             {
                 var memberAttr = prop.GetCustomAttribute<LuaMemberAttribute>();
-                if (memberAttr is null) continue;
 
-                sb.Append($"---@field {memberAttr.Name} {Program.GetLuaType(prop.PropertyType)}");
+                string? fieldName = null;
+
+                if (memberAttr is not null)
+                    fieldName = memberAttr.Name;
+
+                if (prop.GetCustomAttribute<JsonPropertyAttribute>() != null)
+                    fieldName = prop.Name.IsUpperCase() ? prop.Name.ToLower() : prop.Name.Camelize();
+
+                if (fieldName is null)
+                    continue;
+
+                sb.Append($"---@field {StringUtils.ToCamelCase(fieldName)} {Program.GetLuaType(prop.PropertyType, fallback: fallbackType)}");
 
                 var sum = Documentation.GetPropertySummary(prop);
                 if (sum is not null) sb.Append($" {sum.ReplaceLineEndings(" ")}");
 
+                sb.AppendLine();
+            }
+
+            foreach (var field in BaseType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
+            {
+                var memberAttr = field.GetCustomAttribute<LuaMemberAttribute>();
+                if (memberAttr is null) continue;
+
+                sb.Append($"---@field {memberAttr.Name} {Program.GetLuaType(field.FieldType, fallback: fallbackType)}");
                 sb.AppendLine();
             }
 
@@ -57,9 +83,26 @@ public class BasicType : LuaType
             var globalAttr = property.GetCustomAttribute<LuaGlobalAttribute>();
             if (globalAttr is null) continue;
 
-            sb.AppendLine($"---@type {Program.GetLuaType(property.PropertyType)}");
+            sb.AppendLine($"---@type {Program.GetLuaType(property.PropertyType, fallback: fallbackType)}");
             sb.AppendLine($"---@diagnostic disable-next-line: missing-fields");
             sb.AppendLine($"{globalAttr.Name ?? property.Name} = {{}}");
+            sb.AppendLine();
+        }
+
+        // handle static (global) properties separately
+        foreach (var prop in BaseType.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly))
+        {
+            var globalAttr = prop.GetCustomAttribute<LuaGlobalAttribute>();
+            if (globalAttr is null) continue;
+
+            var fieldName = globalAttr.Name ?? prop.Name;
+
+            var sum = Documentation.GetPropertySummary(prop);
+            if (sum is not null) sb.AppendLine($"---{sum.ReplaceLineEndings(" ")}");
+
+            sb.AppendLine($"---@type {Program.GetLuaType(prop.PropertyType, fallback: fallbackType)}");
+            sb.AppendLine($"---@diagnostic disable-next-line: missing-fields");
+            sb.AppendLine($"{Name}.{fieldName} = {{}}");
             sb.AppendLine();
         }
 
@@ -71,7 +114,7 @@ public class BasicType : LuaType
             foreach (var parameter in ctor.GetParameters())
             {
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
-                sb.AppendLine($"---@param {parameter.Name} {Program.GetLuaType(pType)}");
+                sb.AppendLine($"---@param {parameter.Name} {Program.GetLuaType(pType, fallback: fallbackType)}");
             }
 
             sb.AppendLine($"---@return {Name}");
@@ -99,8 +142,10 @@ public class BasicType : LuaType
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
                 bool isNullable = parameter.HasDefaultValue && parameter.DefaultValue == null ||
                           Nullable.GetUnderlyingType(pType) != null;
-                var lua = Program.GetLuaType(pType, false, isNullable);
-                sb.Append($"---@param {parameter.Name} {lua}");
+
+                var luaType = Program.GetLuaType(pType, false, typeof(string), isNullable);
+
+                sb.Append($"---@param {parameter.Name} {luaType}");
 
                 var desc = doc.GetParameterDescription(parameter.Name!);
                 if (desc is not null) sb.Append($" {desc.ReplaceLineEndings(" ")}");
@@ -112,7 +157,7 @@ public class BasicType : LuaType
 
             if (ret != typeof(void))
             {
-                var r = $"---@return {Program.GetLuaType(method.ReturnType)}";
+                var r = $"---@return {Program.GetLuaType(method.ReturnType, fallback: fallbackType)}";
 
                 if (doc.Returns is not null)
                     r += $" # {doc.Returns.ReplaceLineEndings(" ")}";

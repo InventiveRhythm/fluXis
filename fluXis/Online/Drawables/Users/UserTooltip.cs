@@ -2,6 +2,7 @@
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Localization;
 using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
@@ -217,41 +218,41 @@ public partial class UserTooltip : CustomTooltipContainer<APIUser>
                 {
                     case nameof(UserActivity.Playing):
                     case nameof(UserActivity.Paused):
-                        statusIcon.Icon = FontAwesome6.Solid.Gamepad;
+                        statusIcon.Icon = Phosphor.Bold.GameController;
                         statusIcon.Colour = Theme.Blue;
-                        statusText.Text = "Playing";
+                        statusText.Text = LocalizationStrings.General.StatusPlaying;
                         return;
 
                     case nameof(UserActivity.WatchingReplay):
-                        statusIcon.Icon = FontAwesome6.Solid.Film;
+                        statusIcon.Icon = Phosphor.Bold.FilmReel;
                         statusIcon.Colour = Theme.Purple;
-                        statusText.Text = "Watching Replay";
+                        statusText.Text = LocalizationStrings.General.StatusWatchingReplay;
                         return;
 
                     case nameof(UserActivity.MultiLobby):
-                        statusIcon.Icon = FontAwesome6.Solid.EarthAmericas;
+                        statusIcon.Icon = Phosphor.Bold.GlobeHemisphereWest;
                         statusIcon.Colour = Theme.Cyan;
-                        statusText.Text = "Playing Multiplayer";
+                        statusText.Text = LocalizationStrings.General.StatusMultiplayer;
                         return;
 
                     case nameof(UserActivity.Editing):
                     case nameof(UserActivity.Modding):
-                        statusIcon.Icon = FontAwesome6.Solid.PenRuler;
+                        statusIcon.Icon = Phosphor.Bold.PencilRuler;
                         statusIcon.Colour = Theme.Red;
-                        statusText.Text = "Editing";
+                        statusText.Text = LocalizationStrings.General.StatusEditing;
                         return;
                 }
             }
 
-            statusIcon.Icon = FontAwesome6.Solid.Circle;
+            statusIcon.Icon = Phosphor.Fill.Circle;
             statusIcon.Colour = Theme.Green;
-            statusText.Text = "Online";
+            statusText.Text = LocalizationStrings.General.StatusOnline;
         }
         else
         {
-            statusIcon.Icon = FontAwesome6.Regular.Circle;
+            statusIcon.Icon = Phosphor.Fill.Circle;
             statusIcon.Colour = Theme.Foreground;
-            statusText.Text = "Offline";
+            statusText.Text = LocalizationStrings.General.StatusOffline;
         }
     }
 }

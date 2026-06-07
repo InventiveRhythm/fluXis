@@ -9,7 +9,7 @@ namespace fluXis.Utils.Attributes;
 public class IconAttribute : Attribute
 {
     public int Code { get; init; }
-    public bool Regular { get; init; }
+    public bool Fill { get; init; }
 
     public IconAttribute(int code)
     {
@@ -27,6 +27,6 @@ public static class IconAttrExtensions
         Type type = value as Type ?? value.GetType();
         var attr = type.GetField(value.ToString() ?? string.Empty)?.GetCustomAttribute<IconAttribute>();
         var code = attr?.Code ?? 0x3f;
-        return attr is { Regular: true } ? FontAwesome6.Regular.GetRegular(code) : FontAwesome6.Solid.GetSolid(code);
+        return attr is { Fill: true } ? Phosphor.Fill.Get(code) : Phosphor.Bold.Get(code);
     }
 }

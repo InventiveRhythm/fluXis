@@ -2,13 +2,17 @@ using System;
 using fluXis.UI;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Blueprints.Selection;
 
-public partial class SelectionBlueprint<T> : Container
+public partial class SelectionBlueprint<T> : Container, IHasCursorType
 {
+    CursorType IHasCursorType.Cursor => IsSelected ? CursorType.SizeAll : CursorType.Ignore;
+
     public T Object { get; }
     public Drawable Drawable { get; internal set; }
 

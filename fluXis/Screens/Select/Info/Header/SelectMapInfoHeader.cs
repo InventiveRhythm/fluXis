@@ -10,6 +10,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Mods;
@@ -17,6 +18,7 @@ using fluXis.Scoring;
 using fluXis.Screens.Select.Mods;
 using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -94,7 +96,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                         Masking = true,
                         Children = new Drawable[]
                         {
-                            backgrounds = new SpriteStack<LoadWrapper<MapBackground>>(),
+                            backgrounds = new SpriteStack<LoadWrapper<MapBackground>> { AutoFill = false },
                             new SectionedGradient
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -194,14 +196,14 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                     new StatsRow(new[]
                     {
                         bpm = new BpmDisplay(),
-                        length = new StatDisplay("Length", v => TimeUtils.Format(v, false)),
-                        notesPerSecond = new StatDisplay("NPS", v => v.ToStringInvariant("0.00")),
-                        longNotePercentage = new StatDisplay("LN%", v => v.ToStringInvariant("0.00") + "%")
+                        length = new StatDisplay(LocalizationStrings.General.MapLength, v => TimeUtils.Format(v, false)),
+                        notesPerSecond = new StatDisplay(LocalizationStrings.General.MapNotesPerSecond, v => v.ToStringInvariant("0.00")),
+                        longNotePercentage = new StatDisplay(LocalizationStrings.General.MapLongNotePercent, v => v.ToStringInvariant("0.00") + "%")
                     }),
                     new StatsRow(new[]
                     {
-                        accuracy = new StatDisplay("Accuracy", v => v.ToStringInvariant("0.0")),
-                        health = new StatDisplay("Health", v => v.ToStringInvariant("0.0"))
+                        accuracy = new StatDisplay(LocalizationStrings.General.MapAccuracy, v => v.ToStringInvariant("0.0")),
+                        health = new StatDisplay(LocalizationStrings.General.MapHealth, v => v.ToStringInvariant("0.0"))
                     })
                 }
             }
@@ -365,7 +367,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         private Sample metronomeEndSample;
 
         public BpmDisplay()
-            : base("BPM", _ => "")
+            : base(LocalizationStrings.General.MapBPM, _ => "")
         {
         }
 
@@ -433,13 +435,13 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     {
         public LocalisableString TooltipText { get; set; } = "";
 
-        private string title { get; }
+        private LocalisableString title { get; }
         private Func<float, string> format { get; }
 
         private float value = 0;
         protected FluXisSpriteText ValueText { get; private set; }
 
-        public StatDisplay(string title, Func<float, string> format)
+        public StatDisplay(LocalisableString title, Func<float, string> format)
         {
             this.title = title;
             this.format = format;

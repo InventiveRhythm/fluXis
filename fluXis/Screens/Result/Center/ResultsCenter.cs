@@ -4,6 +4,7 @@ using fluXis.Mods.Drawables;
 using fluXis.Scoring;
 using fluXis.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -15,6 +16,9 @@ public partial class ResultsCenter : CompositeDrawable
 {
     public Vector2 ScreenSpaceRankPosition => rankCenter.ScreenSpaceDrawQuad.Centre;
 
+    [Resolved]
+    private Bindable<ScoreInfo> scoreInfo { get; set; }
+
     private Container rankCenter;
 
     private ResultsCenterScore score;
@@ -23,7 +27,7 @@ public partial class ResultsCenter : CompositeDrawable
     private ResultsCenterStats stats;
 
     [BackgroundDependencyLoader]
-    private void load(ScoreInfo scoreInfo)
+    private void load()
     {
         Width = 480;
         RelativeSizeAxes = Axes.Y;
@@ -64,8 +68,8 @@ public partial class ResultsCenter : CompositeDrawable
                         Height = 40,
                         Anchor = Anchor.BottomCentre,
                         Origin = Anchor.BottomCentre,
-                        Alpha = scoreInfo.Mods.Count != 0 ? 1 : 0,
-                        Mods = scoreInfo.Mods.Select(ModUtils.GetFromAcronym).ToList(),
+                        Alpha = scoreInfo.Value.Mods.Count != 0 ? 1 : 0,
+                        Mods = scoreInfo.Value.Mods.Select(ModUtils.GetFromAcronym).ToList(),
                         Margin = new MarginPadding { Top = 36 }
                     }
                 },
@@ -82,6 +86,16 @@ public partial class ResultsCenter : CompositeDrawable
                 new Drawable[] { stats = new ResultsCenterStats() }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        scoreInfo.BindValueChanged(v =>
+        {
+            mods.Alpha = v.NewValue.Mods.Count != 0 ? 1 : 0;
+            mods.Mods = v.NewValue.Mods.Select(ModUtils.GetFromAcronym).ToList();
+        });
     }
 
     public override void Show()

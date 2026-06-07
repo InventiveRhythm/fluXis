@@ -24,7 +24,7 @@ public abstract partial class EditorHitObject : CompositeDrawable
 
     public HitObject Data { get; }
 
-    public virtual bool Visible => Math.Abs(EditorClock.CurrentTime - Data.Time) <= 2000;
+    public virtual bool Visible => Math.Abs(EditorClock.CurrentTime - Data.Time) <= 2000 / settings.Zoom;
 
     private FluXisSpriteText text { get; set; }
 
@@ -50,7 +50,7 @@ public abstract partial class EditorHitObject : CompositeDrawable
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 RelativeSizeAxes = Axes.X,
-                Height = Data.Type == 1 ? 20 : 36,
+                Height = Data.Type == HitObjectType.Tick ? 20 : 36,
                 Child = text = new FluXisSpriteText
                 {
                     Anchor = Anchor.Centre,

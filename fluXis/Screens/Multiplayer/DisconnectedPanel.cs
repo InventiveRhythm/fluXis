@@ -7,7 +7,7 @@ namespace fluXis.Screens.Multiplayer;
 public partial class DisconnectedPanel : SingleButtonPanel
 {
     public DisconnectedPanel(Action closeAction)
-        : base(FontAwesome6.Solid.PlugCircleXMark, "Connection Lost", "The connection to the server was interrupted.", action: closeAction)
+        : base(Phosphor.Bold.Plugs, "Connection Lost", "The connection to the server was interrupted.", action: closeAction)
     {
     }
 }

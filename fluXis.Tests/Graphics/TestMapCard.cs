@@ -53,7 +53,7 @@ public partial class TestMapCard : FluXisTestScene
                 {
                     ID = 1,
                     MapSetID = 1,
-                    Mapper = APIUser.CreateUnknown(1),
+                    Mappers = [APIUser.CreateUnknown(1)],
                     SHA256Hash = "veryvalidhash",
                     Difficulty = "hard",
                     Title = "super cool song",

@@ -50,7 +50,7 @@ public partial class PlayfieldPlayer : CompositeDrawable, IHUDDependencyProvider
         JudgementProcessor.AddDependants(new JudgementDependant[]
         {
             HealthProcessor = ruleset.CreateHealthProcessor(),
-            ScoreProcessor = new ScoreProcessor
+            ScoreProcessor = new ScoreProcessor(x => Schedule(x), ruleset.AsyncScoreCalculations)
             {
                 Player = ruleset.CurrentPlayer ?? APIUser.Default,
                 HitWindows = ruleset.HitWindows,
@@ -105,6 +105,12 @@ public partial class PlayfieldPlayer : CompositeDrawable, IHUDDependencyProvider
             base.UpdateAfterChildren();
             SortInternal();
         }
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        ScoreProcessor.Dispose();
+        base.Dispose(isDisposing);
     }
 
     #region IHUDDependencyProvider

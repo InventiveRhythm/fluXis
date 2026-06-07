@@ -5,19 +5,6 @@ using fluXis.Configuration;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Shaders;
-using fluXis.Graphics.Shaders.Bloom;
-using fluXis.Graphics.Shaders.Chromatic;
-using fluXis.Graphics.Shaders.Glitch;
-using fluXis.Graphics.Shaders.Greyscale;
-using fluXis.Graphics.Shaders.HueShift;
-using fluXis.Graphics.Shaders.Invert;
-using fluXis.Graphics.Shaders.Mosaic;
-using fluXis.Graphics.Shaders.Noise;
-using fluXis.Graphics.Shaders.Retro;
-using fluXis.Graphics.Shaders.Vignette;
-using fluXis.Graphics.Shaders.SplitScreen;
-using fluXis.Graphics.Shaders.FishEye;
-using fluXis.Graphics.Shaders.Reflections;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
@@ -35,6 +22,7 @@ using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -190,7 +178,8 @@ public partial class DesignContainer : EditorTabContainer
     private RulesetContainer createRuleset()
     {
         var effects = Map.MapEvents.JsonCopy();
-        effects.RunScripts(scripts);
+        effects.Compile();
+        effects.Sort();
 
         backFlash.Rebuild(effects.FlashEvents.Where(x => x.InBackground).ToList());
         frontFlash.Rebuild(effects.FlashEvents.Where(x => !x.InBackground).ToList());
@@ -210,7 +199,9 @@ public partial class DesignContainer : EditorTabContainer
 
         foreach (var type in shaderTypes)
         {
-            ShaderContainer shader = type switch
+            var shader = ShaderStackContainer.CreateForType(type);
+
+            /*ShaderStep shader = type switch
             {
                 ShaderType.Chromatic => new ChromaticContainer(),
                 ShaderType.Greyscale => new GreyscaleContainer(),
@@ -226,12 +217,11 @@ public partial class DesignContainer : EditorTabContainer
                 ShaderType.FishEye => new FishEyeContainer(),
                 ShaderType.Reflections => new ReflectionsContainer(),
                 _ => null
-            };
+            };*/
 
             if (shader is null)
                 continue;
 
-            shader.RelativeSizeAxes = Axes.Both;
             shaders.AddShader(shader);
         }
 

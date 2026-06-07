@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Structures;
+using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -10,6 +11,8 @@ namespace fluXis.Screens.Gameplay.Audio.Hitsounds;
 
 public partial class HitSoundChannel : Component
 {
+    public override bool RemoveCompletedTransforms => false;
+
     /// <summary>
     /// See <see cref="Hitsounding.DirectVolume"/>.
     /// </summary>
@@ -25,11 +28,26 @@ public partial class HitSoundChannel : Component
 
     public HitSoundChannel(string name, Sample sample, Bindable<double> globalVolume, List<HitSoundFade> fades)
     {
-        SampleName = name;
+        Name = SampleName = name;
         this.sample = sample;
         this.globalVolume = globalVolume;
         channelVolume = new Bindable<double>(1);
         this.fades = fades;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        if (DirectVolume)
+            return;
+
+        foreach (var fade in fades)
+        {
+            using (BeginAbsoluteSequence(fade.Time))
+            {
+                this.TransformBindableTo(channelVolume, fade.Volume, fade.Duration, fade.Easing);
+            }
+        }
     }
 
     public void Play()
@@ -38,22 +56,6 @@ public partial class HitSoundChannel : Component
 
         sample.Volume.Value = globalVolume.Value * sampleVolume;
         sample?.Play();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        if (DirectVolume)
-            return;
-
-        while (fades.Count > 0 && Clock.CurrentTime > fades[0].Time)
-        {
-            var fade = fades[0];
-            fades.RemoveAt(0);
-
-            this.TransformBindableTo(channelVolume, fade.Volume, fade.Duration, fade.Easing);
-        }
     }
 
     private double getSampleVolume()

@@ -1,14 +1,18 @@
 using System;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
-public partial class DraggableSelectionPiece : Container
+public partial class DraggableSelectionPiece : Container, IHasCursorType
 {
+    CursorType IHasCursorType.Cursor => CursorType.SizeVertical;
+
     public Action<Vector2> DragAction { get; init; }
 
     private readonly BlueprintNotePiece piece;

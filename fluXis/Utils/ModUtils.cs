@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using fluXis.Mods;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 
 namespace fluXis.Utils;
 

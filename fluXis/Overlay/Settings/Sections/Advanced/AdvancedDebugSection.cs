@@ -17,7 +17,7 @@ namespace fluXis.Overlay.Settings.Sections.Advanced;
 public partial class AdvancedDebugSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Title;
-    public override IconUsage Icon => FontAwesome6.Solid.Bug;
+    public override IconUsage Icon => Phosphor.Bold.Bug;
 
     private SettingsDebugStrings strings => LocalizationStrings.Settings.Debug;
 

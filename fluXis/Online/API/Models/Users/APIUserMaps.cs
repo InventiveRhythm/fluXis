@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Online.API.Models.Maps;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Models.Users;
@@ -16,6 +16,12 @@ public class APIUserMaps
 
     [JsonProperty("guest_diffs")]
     public List<APIMapSet> Guest { get; set; } = null!;
+
+    [JsonProperty("limit_uploaded")]
+    public long? LimitUploadedCount { get; set; }
+
+    [JsonProperty("limit_max")]
+    public long? LimitMaximumCount { get; set; }
 
     public APIUserMaps(List<APIMapSet> pure, List<APIMapSet> impure, List<APIMapSet> guest)
     {

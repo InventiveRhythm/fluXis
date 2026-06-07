@@ -40,12 +40,12 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         {
             List<MenuItem> items = new()
             {
-                new MenuActionItem(LocalizationStrings.General.Play, FontAwesome6.Solid.Play, MenuItemType.Highlighted, () =>
+                new MenuActionItem(LocalizationStrings.General.Play, Phosphor.Bold.Play, MenuItemType.Highlighted, () =>
                 {
                     selection.Select(map);
                     item.SelectAction?.Invoke();
                 }),
-                new MenuActionItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => item.EditAction?.Invoke(map))
+                new MenuActionItem(LocalizationStrings.General.Edit, Phosphor.Bold.PencilSimple, MenuItemType.Normal, () => item.EditAction?.Invoke(map))
             };
 
             if (FluXisGameBase.IsDebug)
@@ -53,9 +53,9 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                 items.Add(new MenuSpacerItem());
 
                 if (map.OnlineID > 0)
-                    items.Add(new MenuActionItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
+                    items.Add(new MenuActionItem("Copy Online ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
 
-                items.Add(new MenuActionItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
+                items.Add(new MenuActionItem("Copy ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
             }
 
             return items.ToArray();
@@ -226,7 +226,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Colour = Colour4.Black,
+                        Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text,
                         Alpha = .75f,
                         Child = new FillFlowContainer
                         {

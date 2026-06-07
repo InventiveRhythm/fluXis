@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using fluXis.Audio.FFT;
+using fluXis.Graphics;
 using fluXis.Map;
+using fluXis.Map.Structures;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using fluXis.Scripting.Models.Skinning;
@@ -13,32 +17,50 @@ using osu.Framework.Logging;
 namespace fluXis.Scripting.Runners;
 
 [LuaDefinition("storyboard", Hide = true)]
-public class StoryboardScriptRunner : ScriptRunner
+public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
 {
+    private readonly List<StoryboardElement> addTo;
+
     private readonly Storyboard storyboard;
+
+    public bool Loaded { get; private set; }
 
     [LuaGlobal(Name = "screen")]
     public LuaVector2 ScreenResolution { get; }
 
-    public StoryboardScriptRunner(MapInfo map, Storyboard storyboard, LuaSettings settings, ISkin skin)
+    public StoryboardScriptRunner
+    (
+        MapInfo map,
+        AudioAnalyzer audioAnalyzer,
+        Storyboard storyboard,
+        LuaSettings settings,
+        ISkin skin,
+        List<StoryboardElement> addTo = null)
     {
         this.storyboard = storyboard;
         Map = map;
+
+        this.addTo = addTo ?? this.storyboard.Elements;
 
         ScreenResolution = new LuaVector2(storyboard.Resolution);
         AddField("screen", ScreenResolution);
         AddField("metadata", new LuaMetadata(map));
         AddField("settings", settings);
         AddField("skin", new LuaSkin(skin));
+        AddField("map", new LuaMap(map, Lua));
+        AddField("AudioAnalyzer", new LuaAudioAnalyzer(audioAnalyzer, Lua));
 
         AddFunction("Add", add);
 
         // enums
         AddFunction("Layer", (string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
         AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
+        AddFunction("BlendMode", (string str) => Enum.TryParse(str, out DefaultBlendingParameters blendMode) ? blendMode : DefaultBlendingParameters.Mix);
+        AddFunction("HitObjectType", (string str) => Enum.TryParse(str, out HitObjectType hitType) ? hitType : HitObjectType.Normal);
 
         // elements
         AddFunction("StoryboardBox", newBox);
+        AddFunction("StoryboardOutlineBox", newOutlineBox);
         AddFunction("StoryboardSprite", newSprite);
         AddFunction("StoryboardText", newText);
         AddFunction("StoryboardCircle", newCircle);
@@ -60,6 +82,7 @@ public class StoryboardScriptRunner : ScriptRunner
 
             var l = LuaStoryboardElement.FromElement(element);
             func.Call(l);
+            Loaded = true;
         }
         catch (Exception ex)
         {
@@ -68,10 +91,30 @@ public class StoryboardScriptRunner : ScriptRunner
     }
 
     [LuaGlobal(Name = "Add")]
-    private void add(LuaStoryboardElement element) => storyboard.Elements.Add(element.Build());
+    private void add(LuaStoryboardElement element)
+    {
+        var v = Version;
+
+        while (v < Storyboard.LATEST_VERSION)
+        {
+            v++;
+
+            switch (v)
+            {
+                case 2:
+                    element.Animations.ForEach(x => x.StartTime -= element.StartTime);
+                    break;
+            }
+        }
+
+        addTo.Add(element.Build());
+    }
 
     [LuaGlobal(Name = "StoryboardBox")]
     private LuaStoryboardBox newBox() => new();
+
+    [LuaGlobal(Name = "StoryboardOutlineBox")]
+    private LuaStoryboardOutlineBox newOutlineBox() => new();
 
     [LuaGlobal(Name = "StoryboardSprite")]
     private LuaStoryboardSprite newSprite() => new();

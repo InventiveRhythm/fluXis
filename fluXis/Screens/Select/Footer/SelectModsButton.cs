@@ -8,7 +8,7 @@ using fluXis.Localization;
 using fluXis.Mods;
 using fluXis.Mods.Drawables;
 using fluXis.Screens.Select.Mods;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -28,7 +28,7 @@ public partial class SelectModsButton : FooterButton
     public SelectModsButton(Action action)
     {
         Text = LocalizationStrings.SongSelect.FooterMods;
-        Icon = FontAwesome6.Solid.Cube;
+        Icon = Phosphor.Bold.Cube;
         AccentColor = Theme.Footer1;
         Action = action;
     }

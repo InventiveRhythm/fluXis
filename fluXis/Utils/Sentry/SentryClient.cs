@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
-using fluXis.Configuration;
 using fluXis.Map;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Users;
@@ -11,10 +9,8 @@ using NLua.Exceptions;
 using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
-using Sentry;
 
 namespace fluXis.Utils.Sentry;
 
@@ -36,14 +32,14 @@ public partial class SentryClient : Component
         if (FluXisGameBase.IsDebug || !RuntimeInfo.IsDesktop)
             return;
 
-        session = SentrySdk.Init(opt =>
+        /*session = SentrySdk.Init(opt =>
         {
             opt.Dsn = "https://a297495ce509e0643fb019fa5a264921@sentry.flux.moe/2";
             opt.IsEnvironmentUser = false;
             opt.AutoSessionTracking = true;
             opt.IsGlobalModeEnabled = true;
             opt.Release = FluXisGameBase.VersionString.TrimStart('v');
-        });
+        });*/
     }
 
     public void BindUser(IBindable<APIUser> bind)
@@ -54,11 +50,11 @@ public partial class SentryClient : Component
         user = bind.GetBoundCopy();
         user.BindValueChanged(e =>
         {
-            SentrySdk.ConfigureScope(s => s.User = new SentryUser
+            /*SentrySdk.ConfigureScope(s => s.User = new SentryUser
             {
                 Username = e.NewValue?.Username ?? "Guest User",
                 Id = $"{e.NewValue?.ID ?? 0}"
-            });
+            });*/
         }, true);
     }
 
@@ -83,7 +79,7 @@ public partial class SentryClient : Component
         if (session is null)
             return;
 
-        SentrySdk.CaptureEvent(new SentryEvent(ex)
+        /*SentrySdk.CaptureEvent(new SentryEvent(ex)
         {
             Message = entry.Message,
             Level = entry.Level switch
@@ -115,7 +111,7 @@ public partial class SentryClient : Component
                 game = game.ClientHash,
                 plugins = game.Plugins?.Plugins.ToDictionary(x => x.AssemblyName, x => x.Hash)
             };
-        });
+        });*/
     }
 
     private bool shouldIgnore(Exception ex)

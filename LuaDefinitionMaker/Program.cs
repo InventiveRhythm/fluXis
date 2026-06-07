@@ -3,7 +3,11 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using fluXis;
+using fluXis.Audio.FFT.Structures.Data;
+using fluXis.Map.Structures;
+using fluXis.Map.Structures.Events;
 using fluXis.Scripting.Attributes;
+using fluXis.Scripting.Models.Storyboarding;
 using fluXis.Storyboards;
 using osu.Framework.Graphics;
 
@@ -25,8 +29,7 @@ internal class Program
 
         Write("Compiling project...");
 
-        Directory.CreateDirectory("build");
-        runCommand("dotnet", "build fluXis -c Release -o build /p:DocumentationFile=build/xmldoc.xml");
+        runCommand("dotnet", "build fluXis -c Release -o build /p:DocumentationFile=xmldoc.xml");
 
         var xml = loadXml("build/xmldoc.xml");
         if (xml is null) return;
@@ -46,7 +49,8 @@ internal class Program
             typeList.Add(new BasicType(type, name, attr));
         }
 
-        typeList.Add(new EnumType<Easing>(false));
+        typeList.Add(new EnumType<Easing>(true, ctorName: "Easing", enumName: "Easing"));
+        typeList.Add(new EnumType<HitObjectType>(true, ctorName: "HitObjectType", enumName: "HitObjectType"));
         typeList.Add(new EnumType<Anchor>(true)
         {
             Values = new[]
@@ -56,12 +60,48 @@ internal class Program
                 Anchor.BottomLeft, Anchor.BottomCentre, Anchor.BottomRight
             }
         });
+        typeList.Add(new EnumType<DefaultBlendingParameters>(true, ctorName: "BlendMode", enumName: "BlendMode"));
+        typeList.Add(new EnumType<FFTBandType>(false));
+
+        var eventTypes = LuaMap.GetMapEventTypes();
+        eventTypes.Remove(typeof(NoteEvent));
+
+        var eventSb = new StringBuilder();
+        eventSb.AppendLine("---@alias EventType string");
+        eventTypes.ForEach(x => eventSb.AppendLine($"---| \"{x.Name.Replace("Event", "")}\""));
+        typeList.Add(new CustomTextType("enums", eventSb.ToString()));
 
         // yes this is stupid but i don't want to figure out how to make it right
-        typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\""));
+        typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\"\n---| \"boolean\""));
         typeList.Add(new EnumType<StoryboardAnimationType>(false, "AnimationType", "storyboard"));
         typeList.Add(new EnumType<SkinSprite>(false, nameof(SkinSprite), "storyboard"));
         typeList.Add(new EnumType<StoryboardLayer>(true, "Layer", "storyboard"));
+
+        typeList.Add(new NamespaceTypes(
+            types,
+            [
+                "fluXis.Map.Structures.Events",
+                "fluXis.Map.Structures.Events.Playfields",
+                "fluXis.Map.Structures.Events.Camera",
+                "fluXis.Map.Structures.Events.Scrolling"
+            ],
+            "events"
+        ));
+
+        typeList.Add(new NamespaceTypes(
+            types,
+            "fluXis.Map.Structures",
+            "struct"
+        ));
+
+        typeList.Add(new NamespaceTypes(
+            types,
+            [
+                "fluXis.Audio.FFT.Structures.Data",
+                "fluXis.Audio.FFT.Structures.Processor",
+            ],
+            "audio"
+        ));
 
         foreach (var type in typeList)
         {
@@ -93,20 +133,33 @@ internal class Program
             File.WriteAllText($"{out_dir}/{name}.lua", content.ToString().Trim());
     }
 
-    public static string GetLuaType(Type type, bool enumToNumber = true, bool nullable = false)
+    public static string GetLuaType(Type type, bool enumToNumber = true, Type? fallback = null, bool nullable = false)
     {
-        string? name = type.FullName switch
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
-            "System.Single" => "number",
-            "System.Double" => "number",
-            "System.Int32" => "number",
-            "System.UInt32" => "number",
-            "fluXis.Storyboards.StoryboardLayer" => "number",
-            "System.Boolean" => "boolean",
-            "System.String" => "string",
-            "System.Object" => "any",
-            _ => null
-        };
+            var underlying = type.GetGenericArguments()[0];
+            return GetLuaType(underlying, enumToNumber, fallback, nullable: true);
+        }
+
+        if (type.IsArray)
+        {
+            var elementType = type.GetElementType()!;
+            return GetLuaType(elementType, enumToNumber, fallback, false) + "[]";
+        }
+
+        if (type.IsGenericType)
+        {
+            var genericDef = type.GetGenericTypeDefinition();
+            var genericArgs = type.GetGenericArguments();
+
+            if (genericDef == typeof(List<>))
+                return GetLuaType(genericArgs[0], enumToNumber, fallback, false) + "[]";
+
+            if (genericDef == typeof(Dictionary<,>))
+                return "table";
+        }
+
+        string? name = getLuaTypeName(type);
 
         if (name is null)
         {
@@ -116,11 +169,36 @@ internal class Program
                 name = (t.BaseType.IsEnum && enumToNumber) ? "number" : t.Name;
         }
 
-        if (name is not null) 
+        if (name is not null)
             return nullable ? $"{name}?" : name;
 
-        Warn($"Failed to find matching lua type for '{type}'.");
-        return nullable ? $"{type.Name}?" : type.Name;
+        string fallbackType = getLuaTypeName(fallback) ?? fallback?.Name ?? type.Name;
+        Warn($"Failed to find matching lua type for '{type.FullName}', using '{fallbackType}' as fallback.");
+        return fallbackType;
+    }
+
+    private static string? getLuaTypeName(Type? type)
+    {
+        return type?.FullName switch
+        {
+            "System.Single" => "number",
+            "System.Double" => "number",
+            "System.Int32" => "number",
+            "System.Int64" => "number",
+            "System.UInt32" => "number",
+            "System.UInt64" => "number",
+            "fluXis.Storyboards.StoryboardLayer" => "number",
+            "fluXis.Map.Structures.Bases.IMapEvent" => "EventType",
+            "fluXis.Audio.FFT.Structures.Data.FFTBands" => "FFTBands",
+            "fluXis.Audio.FFT.Structures.Processor.FFTParameters" => "FFTParameters",
+            "osuTK.Graphics.Color4" => "Color4",
+            "osuTK.Vector2" => "Vector2",
+            "System.Boolean" => "boolean",
+            "System.String" => "string",
+            "NLua.LuaTable" => "table",
+            "System.Object" => "any",
+            _ => null
+        };
     }
 
     private static XmlDocument? loadXml(string file)

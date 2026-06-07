@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
+using fluXis.Localization;
 using fluXis.Online.Collections;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Sprites;
@@ -12,7 +13,7 @@ namespace fluXis.Screens.Select.Search.Filters;
 public partial class SearchCollectionFilter : SearchFilterControl<Collection?>
 {
     public SearchCollectionFilter(CollectionManager manager, Bindable<Collection?> collection)
-        : base("Collections", new Collection?[] { null }.Concat(manager.Collections).ToArray(), collection)
+        : base(LocalizationStrings.SongSelect.Collections, new Collection?[] { null }.Concat(manager.Collections).ToArray(), collection)
     {
     }
 
@@ -21,18 +22,26 @@ public partial class SearchCollectionFilter : SearchFilterControl<Collection?>
         switch (item?.Type)
         {
             case CollectionType.Favorite:
-                return FontAwesome6.Solid.Heart;
+                return Phosphor.Bold.HeartStraight;
 
             case CollectionType.Owned:
-                return FontAwesome6.Solid.ListMusic;
+                return Phosphor.Bold.Playlist;
 
             case CollectionType.Subscribed:
-                return FontAwesome6.Solid.EarthAmericas;
+                return Phosphor.Bold.GlobeHemisphereWest;
 
             default:
-                return FontAwesome6.Solid.XMark;
+                return Phosphor.Bold.X;
         }
     }
 
-    protected override LocalisableString GenerateItemText(Collection? item) => item?.Name ?? "None";
+    protected override LocalisableString GenerateItemText(Collection? item)
+    {
+        if (item?.Type == CollectionType.Favorite)
+            return LocalizationStrings.SongSelect.CollectionFavorite;
+        if (!string.IsNullOrWhiteSpace(item?.Name))
+            return item.Name;
+
+        return LocalizationStrings.SongSelect.CollectionNone;
+    }
 }

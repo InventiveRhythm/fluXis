@@ -111,10 +111,8 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     {
         var icon = sample switch
         {
-            "normal" => FontAwesome6.Solid.Drum,
-            "drum" => FontAwesome6.Solid.Drum,
-            "clap" => FontAwesome6.Solid.HandsClapping,
-            _ => FontAwesome6.Solid.Drum
+            "clap" => Phosphor.Bold.HandsClapping,
+            _ => Phosphor.Bold.Waveform
         };
 
         return new FluXisSpriteIcon

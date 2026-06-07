@@ -175,7 +175,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
                     break;
 
                 case SelectedState.Deselected:
-                    if (blueprint.IsAlive && blueprint.IsPresent && quad.Contains(blueprint.ScreenSpaceSelectionPoint))
+                    if (quad.Contains(blueprint.ScreenSpaceSelectionPoint))
                         blueprint.Select();
                     break;
             }

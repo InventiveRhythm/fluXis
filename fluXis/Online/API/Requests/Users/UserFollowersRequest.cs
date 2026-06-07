@@ -5,7 +5,7 @@ namespace fluXis.Online.API.Requests.Users;
 
 public class UserFollowersRequest : APIRequest<List<APIUser>>
 {
-    protected override string Path => $"/user/{id}/followers";
+    protected override string Path => $"/users/{id}/followers";
 
     private long id { get; }
 

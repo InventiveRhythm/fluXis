@@ -16,6 +16,9 @@ public partial class EditorTag : Container
     public virtual Colour4 TagColour => Colour4.White;
 
     [Resolved]
+    protected Editor Editor { get; private set; }
+
+    [Resolved]
     private EditorPlayfield playfield { get; set; }
 
     private EditorTagContainer parent { get; }

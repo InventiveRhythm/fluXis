@@ -14,6 +14,7 @@ using fluXis.Skinning.Default.Receptor;
 using fluXis.Skinning.Default.Results;
 using fluXis.Skinning.Default.Stage;
 using fluXis.Skinning.Json;
+using fluXis.Storyboards;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -52,18 +53,23 @@ public class DefaultSkin : ISkin
     public virtual Texture GetIcon() => Textures.Get("Skins/default.png");
     public Texture GetDefaultBackground() => Textures.Get("Backgrounds/default.png");
 
-    public Sample GetUISample(UISamples.SampleType type)
+    public virtual float? GetSpriteAspectRatio(SkinSprite sprite) => sprite switch
     {
-        return type switch
-        {
-            UISamples.SampleType.Back => samples.Get("UI/back"),
-            UISamples.SampleType.Select => samples.Get("UI/accept"),
-            UISamples.SampleType.Hover => samples.Get("UI/hover"),
-            UISamples.SampleType.Click => samples.Get("UI/click"),
-            UISamples.SampleType.ClickDisabled => samples.Get("UI/click-disabled"),
-            _ => null
-        };
-    }
+        SkinSprite.HitObject or SkinSprite.LongNoteStart or SkinSprite.LongNoteEnd => 114 / 42f,
+        SkinSprite.TickNote or SkinSprite.TickNoteSmall => 114 / 20f,
+        _ => null
+    };
+
+    public Sample GetUISample(UISamples.SampleType type) => type switch
+    {
+        UISamples.SampleType.Back => samples.Get("UI/back"),
+        UISamples.SampleType.Select => samples.Get("UI/accept"),
+        UISamples.SampleType.Hover => samples.Get("UI/hover"),
+        UISamples.SampleType.Click => samples.Get("UI/click"),
+        UISamples.SampleType.ClickDisabled => samples.Get("UI/click-disabled"),
+        UISamples.SampleType.SkinSelectClick => samples.Get("UI/click"),
+        _ => null
+    };
 
     public Sample GetCourseSample(CourseScreen.SampleType type)
     {
@@ -120,6 +126,8 @@ public class DefaultSkin : ISkin
     }
 
     public virtual Drawable GetTickNote(int lane, int keyCount, bool small) => new DefaultTickNote(small);
+
+    public virtual Drawable GetLandmine(int lane, int keyCount) => new DefaultLandmine();
 
     public virtual Drawable GetLongNoteStart(int lane, int keyCount) => GetHitObject(lane, keyCount);
 

@@ -5,9 +5,10 @@ using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Import.Stepmania.AutoImport;
 using fluXis.Import.Stepmania.Map;
+using fluXis.Map.Structures;
 using fluXis.Overlay.Notifications;
-using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
 
@@ -92,8 +93,9 @@ public class StepmaniaImport : MapImporter
 
             foreach (var info in infos)
             {
-                var hits = info.HitObjects.Count(x => !x.LongNote);
-                var lns = info.HitObjects.Count(x => x.LongNote);
+                var hits = info.HitObjects.Count(x => !x.LongNote && x.Type == HitObjectType.Tick);
+                var lns = info.HitObjects.Count(x => x.LongNote && x.Type == HitObjectType.Tick);
+                var mines = info.HitObjects.Count(x => x.Landmine);
                 var length = info.HitObjects.Max(x => x.Time);
 
                 var map = new StepManiaRealmMap
@@ -120,6 +122,7 @@ public class StepmaniaImport : MapImporter
                         BPMMax = info.TimingPoints.Max(x => x.BPM),
                         NoteCount = hits,
                         LongNoteCount = lns,
+                        LandmineCount = mines,
                         NotesPerSecond = (float)((hits + lns) / (length / 1000f))
                     }
                 };

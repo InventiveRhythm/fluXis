@@ -15,6 +15,8 @@ public class DashboardStrings : LocalizationCategory
 
     public TranslatableString Club => Get("club", "Club");
 
+    public TranslatableString Mapping => Get("mapping", "Mapping");
+
     public TranslatableString Chat => Get("chat", "Chat");
 
     public TranslatableString Online => Get("online", "Online");

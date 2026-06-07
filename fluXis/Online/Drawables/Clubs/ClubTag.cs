@@ -25,11 +25,19 @@ public partial class ClubTag : FillFlowContainer
     [BackgroundDependencyLoader]
     private void load()
     {
-        if (club == null || club.ID < 1)
-            return;
-
         Direction = FillDirection.Horizontal;
         AutoSizeAxes = Axes.Both;
+
+        ChangeClub(club);
+    }
+
+    public void ChangeClub(APIClub club)
+    {
+        if (club == null || club.ID < 1)
+        {
+            InternalChildren = [];
+            return;
+        }
 
         InternalChildren = new Drawable[]
         {

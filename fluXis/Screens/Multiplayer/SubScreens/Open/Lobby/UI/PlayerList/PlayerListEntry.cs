@@ -28,11 +28,11 @@ public partial class PlayerListEntry : Container, IHasContextMenu
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View Profile", FontAwesome6.Solid.User, () => game?.PresentUser(Participant.ID))
+                new MenuActionItem("View Profile", Phosphor.Bold.User, () => game?.PresentUser(Participant.ID))
             };
 
             if (client.Room!.Host.ID == client.Player.ID && Participant.ID != client.Player.ID)
-                list.Add(new MenuActionItem("Promote to Host", FontAwesome6.Solid.Crown, MenuItemType.Normal, () => client.TransferHost(Participant.ID)));
+                list.Add(new MenuActionItem("Promote to Host", Phosphor.Bold.CrownSimple, MenuItemType.Normal, () => client.TransferHost(Participant.ID)));
 
             return list.ToArray();
         }
@@ -81,7 +81,7 @@ public partial class PlayerListEntry : Container, IHasContextMenu
             hostCrown = new FluXisSpriteIcon
             {
                 Position = new Vector2(8, -4),
-                Icon = FontAwesome6.Solid.Crown,
+                Icon = Phosphor.Bold.CrownSimple,
                 Origin = Anchor.Centre,
                 Size = new Vector2(32),
                 Rotation = -14,

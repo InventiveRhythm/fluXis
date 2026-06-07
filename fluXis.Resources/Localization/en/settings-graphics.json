@@ -2,6 +2,7 @@
   "title": "Graphics",
   "layout-title": "Layout",
   "window-mode": "Window Mode",
+  "fullscreen-resolution": "Fullscreen Resolution",
   "rendering-title": "Rendering",
   "renderer": "Renderer",
   "renderer-description": "Requires a restart to take effect.",

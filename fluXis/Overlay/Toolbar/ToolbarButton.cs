@@ -29,7 +29,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
 {
     public LocalisableString TooltipTitle { get; init; }
     public LocalisableString TooltipSub { get; init; }
-    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
+    public IconUsage Icon { get; init; } = Phosphor.Bold.QuestionMark;
     public FluXisGlobalKeybind Keybind { get; init; } = FluXisGlobalKeybind.None;
     public bool RequireLogin { get; init; }
 

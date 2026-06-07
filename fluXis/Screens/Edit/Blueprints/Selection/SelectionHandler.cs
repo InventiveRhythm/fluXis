@@ -44,14 +44,6 @@ public partial class SelectionHandler<T> : Container, IKeyBindingHandler<FluXisG
         for (int i = 1; i < selected.Count; i++)
         {
             var blueprint = selected[i];
-
-            if (!blueprint.Visible)
-            {
-                blueprint.UpdatePosition(this);
-                // stupid fix but it works
-                blueprint.X += ScreenSpaceDrawQuad.TopLeft.X;
-            }
-
             rect = RectangleF.Union(rect, ToLocalSpace(blueprint.ScreenSpaceDrawQuad).AABBFloat);
         }
 

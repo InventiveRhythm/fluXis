@@ -6,9 +6,10 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
-using fluXis.Utils;
+using fluXis.Screens.Edit.UI.Variable;
+using fluXis.Screens.Edit.UI.Variable.Preset;
+using Midori.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -33,7 +34,7 @@ public partial class LayerFadeEntry : PointListEntry
     {
         var str = $"{fade.Layer.ToString()} {(fade.Alpha * 100).ToStringInvariant()}% {(int)fade.Duration}ms";
 
-        if (fade.Layer == LayerFadeEvent.FadeLayer.Playfield)
+        if (fade.Layer != LayerFadeEvent.FadeLayer.HUD)
             str += $" P{fade.PlayfieldIndex}S{fade.PlayfieldSubIndex}";
 
         return new FluXisSpriteText
@@ -45,12 +46,12 @@ public partial class LayerFadeEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings()
     {
-        var layerPlayfield = new BindableBool(fade.Layer == LayerFadeEvent.FadeLayer.Playfield);
+        var isNotHUD = new BindableBool(fade.Layer != LayerFadeEvent.FadeLayer.HUD);
 
         return base.CreateSettings().Concat(new Drawable[]
         {
-            new PointSettingsLength<LayerFadeEvent>(Map, fade, BeatLength),
-            new PointSettingsSlider<float>
+            new EditorVariableLength<LayerFadeEvent>(Map, fade, BeatLength),
+            new EditorVariableSlider<float>
             {
                 Text = "Alpha",
                 TooltipText = "The opacity of the hitobjects.",
@@ -63,8 +64,8 @@ public partial class LayerFadeEntry : PointListEntry
                     Map.Update(fade);
                 }
             },
-            new PointSettingsEasing<LayerFadeEvent>(Map, fade),
-            new PointSettingsDropdown<LayerFadeEvent.FadeLayer>
+            new EditorVariableEasing<LayerFadeEvent>(Map, fade),
+            new EditorVariableDropdown<LayerFadeEvent.FadeLayer>
             {
                 Text = "Layer",
                 TooltipText = "The layer to adjust the opacity of.",
@@ -73,11 +74,11 @@ public partial class LayerFadeEntry : PointListEntry
                 OnValueChanged = value =>
                 {
                     fade.Layer = value;
-                    layerPlayfield.Value = value == LayerFadeEvent.FadeLayer.Playfield;
+                    isNotHUD.Value = value != LayerFadeEvent.FadeLayer.HUD;
                     Map.Update(fade);
                 }
             },
-            new PointSettingsSlider<int>
+            new EditorVariableSlider<int>
             {
                 Text = "Player Index",
                 TooltipText = "The player to apply this to.",
@@ -85,7 +86,7 @@ public partial class LayerFadeEntry : PointListEntry
                 Min = 0,
                 Max = Map.MapInfo.IsDual ? 2 : 0,
                 Step = 1,
-                Enabled = layerPlayfield,
+                Enabled = isNotHUD,
                 HideWhenDisabled = true,
                 OnValueChanged = value =>
                 {
@@ -93,7 +94,7 @@ public partial class LayerFadeEntry : PointListEntry
                     Map.Update(fade);
                 }
             },
-            new PointSettingsSlider<int>
+            new EditorVariableSlider<int>
             {
                 Text = "Subfield Index",
                 TooltipText = "The subfield to apply this to.",
@@ -101,7 +102,7 @@ public partial class LayerFadeEntry : PointListEntry
                 Min = 0,
                 Max = Map.MapInfo.ExtraPlayfields + 1,
                 Step = 1,
-                Enabled = layerPlayfield,
+                Enabled = isNotHUD,
                 HideWhenDisabled = true,
                 OnValueChanged = value =>
                 {

@@ -31,9 +31,9 @@ public partial class TestContextMenu : FluXisTestScene
     {
         public MenuItem[] ContextMenuItems => new MenuItem[]
         {
-            new MenuActionItem("Make Gray", FontAwesome6.Solid.Circle, () => Colour = Colour4.Gray),
-            new MenuActionItem("Make Blue", FontAwesome6.Solid.Circle, MenuItemType.Highlighted, () => Colour = Colour4.Blue),
-            new MenuActionItem("Make Red", FontAwesome6.Solid.Circle, MenuItemType.Dangerous, () => Colour = Colour4.Red)
+            new MenuActionItem("Make Gray", Phosphor.Bold.Circle, () => Colour = Colour4.Gray),
+            new MenuActionItem("Make Blue", Phosphor.Bold.Circle, MenuItemType.Highlighted, () => Colour = Colour4.Blue),
+            new MenuActionItem("Make Red", Phosphor.Bold.Circle, MenuItemType.Dangerous, () => Colour = Colour4.Red)
         };
     }
 }

@@ -9,11 +9,13 @@ using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Lines;
 using fluXis.Storyboards;
-using fluXis.Utils;
 using fluXis.Utils.Attributes;
 using Humanizer;
 using JetBrains.Annotations;
+using Midori.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -45,7 +47,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
             {
                 new MenuExpandItem(
                     "Create new...",
-                    FontAwesome6.Solid.Plus,
+                    Phosphor.Bold.Plus,
                     groups.Select<IGrouping<string, StoryboardElementType>, FluXisMenuItem>(x =>
                     {
                         var items = x.OrderBy(y => y).ToList();
@@ -54,7 +56,13 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
                         if (items.Count == 1)
                             return createForEntry(first);
 
-                        return new MenuExpandItem(x.Key, first.GetIcon(), items.Select(createForEntry));
+                        var entries = items.Select(createForEntry).ToList();
+                        Colour4? color = null;
+
+                        if (entries.AllTheSame(e => e.Color))
+                            color = entries.First().Color;
+
+                        return new MenuExpandItem(x.Key, first.GetIcon(), entries) { Color = color };
 
                         MenuActionItem createForEntry(StoryboardElementType t) => new($"{t.Humanize(LetterCasing.Title)}", t.GetIcon(), () => create(t)) { Color = TimelineElement.GetColor(t) };
                     }))

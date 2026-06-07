@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
@@ -171,7 +172,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 Children = new Drawable[]
                                 {
                                     new MapSetFavoriteButton(set),
-                                    new MapSetButton(FontAwesome6.Solid.ShareNodes, ()
+                                    new MapSetButton(Phosphor.Bold.ShareNetwork, ()
                                         => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{set.ID}#{bindableMap.Value.ID}")),
                                     new MapSetDownloadButton(set),
                                     // new MapSetButton(FontAwesome6.Solid.EllipsisVertical, () => { })
@@ -199,12 +200,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                             {
                                 new TabControl
                                 {
-                                    Tabs = new TabContainer[]
-                                    {
-                                        // new MapSetInfoTab(),
-                                        new MapSetScoreTab(bindableMap),
-                                        // new MapSetCommentsTab()
-                                    }
+                                    Tabs = createTabs(set, bindableMap).ToArray()
                                 },
                                 Empty(),
                                 new FillFlowContainer
@@ -226,6 +222,17 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                 }
             }
         };
+    }
+
+    private IEnumerable<TabContainer> createTabs(APIMapSet set, Bindable<APIMap> bindableMap)
+    {
+        // yield return new MapSetInfoTab();
+        yield return new MapSetScoreTab(bindableMap);
+
+        if (set.ShowModActions)
+            yield return new MapSetModdingTab(set);
+
+        // yield return new MapSetCommentsTab();
     }
 
     protected override void PopIn()

@@ -63,8 +63,8 @@ public class APIMapSet
 
     #region Optional
 
-    [JsonProperty("queue_votes")]
-    public List<bool>? QueueVotes { get; set; }
+    [JsonProperty("queue")]
+    public APIQueueInfo? QueueInfo { get; set; }
 
     [JsonProperty("favorite")]
     public bool? Favorite { get; set; }

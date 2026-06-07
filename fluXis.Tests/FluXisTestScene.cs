@@ -2,10 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Audio.FFT;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
+using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Mouse;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,6 +24,54 @@ public partial class FluXisTestScene : TestScene
     protected DependencyContainer TestDependencies { get; private set; }
     protected GlobalClock GlobalClock => TestDependencies.Get<GlobalClock>();
 
+    [CanBeNull]
+    private TestMultiplayerClient multiClient = null;
+
+    [Resolved]
+    private AudioAnalyzer audioAnalyzer { get; set; }
+
+    [CanBeNull]
+    private GlobalFFTProcessor fftProcessor = null;
+
+    protected TestMultiplayerClient MultiplayerClient
+    {
+        get
+        {
+            if (multiClient != null)
+                return multiClient;
+
+            multiClient = new TestMultiplayerClient();
+            TestDependencies.CacheAs<MultiplayerClient>(multiClient);
+            return multiClient;
+        }
+    }
+
+    protected AudioAnalyzer AudioAnalyzer
+    {
+        get
+        {
+            if (audioAnalyzer != null)
+                return audioAnalyzer;
+
+            audioAnalyzer = new AudioAnalyzer();
+            TestDependencies.CacheAs<AudioAnalyzer>(audioAnalyzer);
+            return audioAnalyzer;
+        }
+    }
+
+    protected GlobalFFTProcessor FFTProcessor
+    {
+        get
+        {
+            if (fftProcessor != null)
+                return fftProcessor;
+
+            fftProcessor = new GlobalFFTProcessor();
+            TestDependencies.CacheAs<GlobalFFTProcessor>(fftProcessor);
+            return fftProcessor;
+        }
+    }
+
     protected TestAPIClient TestAPI => TestDependencies.Get<IAPIClient>() as TestAPIClient;
     protected virtual bool UseTestAPI => false;
 
@@ -29,6 +81,9 @@ public partial class FluXisTestScene : TestScene
         TestDependencies.CacheAs(clock);
         TestDependencies.CacheAs<IBeatSyncProvider>(clock);
         TestDependencies.CacheAs<IAmplitudeProvider>(clock);
+
+        fftProcessor = new GlobalFFTProcessor();
+        TestDependencies.CacheAs<GlobalFFTProcessor>(fftProcessor);
     }
 
     protected void CreateDummyBeatSync() => TestDependencies.CacheAs<IBeatSyncProvider>(new DummyBeatSyncProvider());
@@ -63,6 +118,33 @@ public partial class FluXisTestScene : TestScene
         }
 
         return new RealmMapSet(maps) { ID = setId };
+    }
+
+    protected virtual IEnumerable<APIUser> CreateDummyUsers(long count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            yield return CreateDummyUser();
+        }
+    }
+
+    protected virtual APIUser CreateDummyUser([CanBeNull] Action<APIUser> act = null)
+    {
+        var id = RNG.Next(ushort.MaxValue);
+        var user = new APIUser
+        {
+            ID = id,
+            Username = $"User{id}",
+            IsOnline = RNG.NextBool()
+        };
+
+        if (!user.IsOnline)
+        {
+            user.LastLogin = DateTimeOffset.Now.ToUnixTimeSeconds() - RNG.Next(ushort.MaxValue * 16);
+        }
+
+        act?.Invoke(user);
+        return user;
     }
 
     protected virtual RealmMap GetTestMap(MapStore maps)

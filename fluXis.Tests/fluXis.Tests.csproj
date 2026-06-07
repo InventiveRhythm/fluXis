@@ -3,7 +3,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <GenerateProgramFile>false</GenerateProgramFile>
-    <LangVersion>11</LangVersion>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\fluXis\fluXis.csproj" />

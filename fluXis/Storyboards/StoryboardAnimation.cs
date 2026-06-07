@@ -1,4 +1,6 @@
-using fluXis.Utils;
+using System.ComponentModel;
+using fluXis.Map.Structures.Bases;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK;
@@ -6,8 +8,13 @@ using SixLabors.ImageSharp;
 
 namespace fluXis.Storyboards;
 
-public class StoryboardAnimation : IDeepCloneable<StoryboardAnimation>
+public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeepCloneable<StoryboardAnimation>
 {
+    public StoryboardAnimation(StoryboardElement parentElement)
+    {
+        ParentElement = parentElement;
+    }
+
     /// <summary>
     /// The start time of the animation.
     /// </summary>
@@ -73,7 +80,10 @@ public class StoryboardAnimation : IDeepCloneable<StoryboardAnimation>
         }
     }
 
-    public StoryboardAnimation DeepClone() => new()
+    [JsonIgnore]
+    public StoryboardElement ParentElement;
+
+    public StoryboardAnimation DeepClone() => new(ParentElement)
     {
         StartTime = StartTime,
         Duration = Duration,
@@ -82,17 +92,36 @@ public class StoryboardAnimation : IDeepCloneable<StoryboardAnimation>
         ValueStart = ValueStart,
         ValueEnd = ValueEnd
     };
+
+    [JsonIgnore]
+    double ITimedObject.Time
+    {
+        get => StartTime;
+        set => StartTime = value;
+    }
+
+    [JsonIgnore]
+    string ITimedObject.Group { get; set; }
 }
 
 public enum StoryboardAnimationType
 {
+    [Description("X Position")]
     MoveX = 0,
+
+    [Description("Y Position")]
     MoveY = 1,
     Scale = 2,
+
+    [Description("Vector Scale")]
     ScaleVector = 3,
     Width = 4,
     Height = 5,
+
+    [Description("Rotation")]
     Rotate = 6,
+
+    [Description("Alpha")]
     Fade = 7,
     Color = 8,
     Border = 9

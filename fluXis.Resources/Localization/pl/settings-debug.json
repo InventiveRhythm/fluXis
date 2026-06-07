@@ -1,0 +1,9 @@
+{
+  "title": "Debugowanie",
+  "show-log-overlay": "Pokaż nakładkę dziennika zdarzeń",
+  "import-file": "Importuj plik",
+  "log-api": "Rejestruj odpowiedzi API.",
+  "log-api-description": "Rejestruje wszystkie odpowiedzi na żądania API w konsoli i plikach dziennika. Mogą one zawierać poufne informacje, takie jak adresy e-mail i tokeny.",
+  "show-missing-localizations": "Pokaż brakujące lokalizacje.",
+  "show-missing-localizations-description": "Pokazuje identyfikator ciągów, dla których nie zdefiniowano lokalizacji. (zmień język, aby zaktualizować)"
+}

@@ -13,22 +13,29 @@ public class OsuTimingPoint
 
     public bool IsScrollVelocity => Inherited == 0 || BeatLength < 0;
 
+    // some gimmick maps might have absurdly high bpm. fluxis doesn't like that, so let's cap it at a reasonable 10 millions bpm.
+    public float BPM => Math.Clamp(60000 / BeatLength, 1, 10000000);
+
+    public double ScrollMultiplier => Math.Clamp(-100 / (double)BeatLength, 0.1f, 10);
+
     public TimingPoint ToTimingPointInfo()
     {
         return new TimingPoint
         {
             Time = Time,
-            BPM = 60000 / BeatLength,
+            BPM = BPM,
             Signature = Meter
         };
     }
 
-    public ScrollVelocity ToScrollVelocityInfo()
+    public ScrollVelocity ToScrollVelocityInfo(float dominantBpm, float bpm)
     {
+        float bpmMultiplier = bpm / dominantBpm;
+
         return new ScrollVelocity
         {
             Time = Time,
-            Multiplier = Math.Clamp(-100 / (double)BeatLength, 0.1f, 10)
+            Multiplier = ScrollMultiplier * bpmMultiplier
         };
     }
 }

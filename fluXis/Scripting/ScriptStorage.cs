@@ -6,8 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using fluXis.Configuration;
-using fluXis.Utils;
+using fluXis.Storyboards;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Logging;
 
 namespace fluXis.Scripting;
@@ -134,6 +135,8 @@ public class ScriptStorage
             var sb = new StringBuilder();
             sb.AppendLine($"---@env {(env == Env.Effect ? "effect" : "storyboard")}");
             sb.AppendLine();
+            sb.AppendLine($"SetVersion({Storyboard.LATEST_VERSION})");
+            sb.AppendLine();
             sb.AppendLine("---@param parent StoryboardElement");
             sb.AppendLine("function process(parent)");
             sb.AppendLine("    -- your code here");
@@ -190,7 +193,7 @@ public class ScriptStorage
             Content = content;
         }
 
-        #nullable enable
+#nullable enable
         public void AddParam(string name, string title, string type, object? fallback)
         {
             try
@@ -203,6 +206,7 @@ public class ScriptStorage
                     "string" => typeof(string),
                     "int" => typeof(int),
                     "float" => typeof(float),
+                    "boolean" => typeof(bool),
                     _ => throw new ArgumentOutOfRangeException(nameof(type))
                 };
 
@@ -222,14 +226,16 @@ public class ScriptStorage
             return type switch
             {
                 "string" => defaultFallback ?? string.Empty,
-                "int" => isEmpty ? 0 : 
+                "int" => isEmpty ? 0 :
                     int.TryParse(defaultFallback, out var intValue) ? intValue : 0,
-                "float" => isEmpty ? 0f : 
+                "float" => isEmpty ? 0f :
                     float.TryParse(defaultFallback, out var floatValue) ? floatValue : 0f,
+                "boolean" => isEmpty ? false :
+                    bool.TryParse(defaultFallback, out var boolValue) ? boolValue : false,
                 _ => throw new ArgumentOutOfRangeException(nameof(type))
             };
         }
-        #nullable disable
+#nullable disable
     }
 
     public class ParameterDefinition
@@ -237,9 +243,9 @@ public class ScriptStorage
         public string Key { get; }
         public string Title { get; }
         public Type Type { get; }
-        
+
         private readonly object defaultFallback;
-        
+
         public T GetDefaultFallback<T>() => (T)defaultFallback ?? default;
 
         public ParameterDefinition(string key, string title, Type type, object defaultFallback = default)

@@ -10,7 +10,7 @@ namespace fluXis.Overlay.Settings.Sections;
 
 public partial class GameplaySection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.Gamepad;
+    public override IconUsage Icon => Phosphor.Bold.GameController;
     public override LocalisableString Title => LocalizationStrings.Settings.Gameplay.Title;
 
     [BackgroundDependencyLoader]

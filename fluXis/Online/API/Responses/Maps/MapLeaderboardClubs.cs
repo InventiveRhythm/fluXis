@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Scores;
-using fluXis.Utils;
+using Midori.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Responses.Maps;

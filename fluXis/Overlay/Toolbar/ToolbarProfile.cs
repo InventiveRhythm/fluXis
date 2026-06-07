@@ -115,7 +115,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
                             },
                             arrow = new FluXisSpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.AngleDown,
+                                Icon = Phosphor.Bold.CaretDown,
                                 Size = new Vector2(10),
                                 Y = 40,
                                 Anchor = Anchor.TopCentre,
@@ -177,7 +177,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
         if (!api.CanUseOnline || api.User.Value == null)
         {
             if (panels is not null)
-                panels.Content = new SingleButtonPanel(FontAwesome6.Solid.PlugCircleXMark, "You must be online to use this feature.", "Restart fluXis to connect to the online services.", "Okay");
+                panels.Content = new SingleButtonPanel(Phosphor.Bold.Plugs, "You must be online to use this feature.", "Restart fluXis to connect to the online services.", "Okay");
 
             return true;
         }

@@ -1,13 +1,16 @@
 ﻿using System;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Localization;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Utils;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Overlay.MapSet.Sidebar;
@@ -61,16 +64,16 @@ public partial class MapSetSidebarStats : FillFlowContainer
                         {
                             new Drawable[]
                             {
-                                length = new StatNumber("Length", v => TimeUtils.Format(v, false)),
-                                bpm = new StatNumber("BPM", v => $"{(int)v}"),
-                                hits = new StatNumber("Hits", v => $"{(int)v}"),
-                                lns = new StatNumber("LNs", v => $"{(int)v}"),
+                                length = new StatNumber(LocalizationStrings.General.MapLength, v => TimeUtils.Format(v, false)),
+                                bpm = new StatNumber(LocalizationStrings.General.MapBPM, v => $"{(int)v}"),
+                                hits = new StatNumber(LocalizationStrings.General.MapHitObjects, v => $"{(int)v}"),
+                                lns = new StatNumber(LocalizationStrings.General.MapLongNotes, v => $"{(int)v}"),
                             }
                         }
                     },
-                    rating = new StatBar("Rating", 30, v => v.ToStringInvariant("0.00")),
-                    accuracy = new StatBar("Accuracy", 10, v => v.ToStringInvariant("0.0")),
-                    health = new StatBar("Health", 10, v => v.ToStringInvariant("0.0")),
+                    rating = new StatBar(LocalizationStrings.General.MapRating, 30, v => v.ToStringInvariant("0.00")),
+                    accuracy = new StatBar(LocalizationStrings.General.MapAccuracy, 10, v => v.ToStringInvariant("0.0")),
+                    health = new StatBar(LocalizationStrings.General.MapHealth, 10, v => v.ToStringInvariant("0.0")),
                 }
             }
         };
@@ -112,7 +115,7 @@ public partial class MapSetSidebarStats : FillFlowContainer
             }
         }
 
-        public StatNumber(string label, Func<float, string> format)
+        public StatNumber(LocalisableString label, Func<float, string> format)
         {
             this.format = format;
 
@@ -123,7 +126,7 @@ public partial class MapSetSidebarStats : FillFlowContainer
 
             InternalChildren = new Drawable[]
             {
-                new ForcedHeightText
+                new ForcedHeightText(true, 80)
                 {
                     Text = label,
                     WebFontSize = 12,
@@ -177,7 +180,7 @@ public partial class MapSetSidebarStats : FillFlowContainer
             }
         }
 
-        public StatBar(string label, float max, Func<float, string> format)
+        public StatBar(LocalisableString label, float max, Func<float, string> format)
         {
             this.max = max;
             this.format = format;
@@ -194,8 +197,9 @@ public partial class MapSetSidebarStats : FillFlowContainer
             {
                 new Drawable[]
                 {
-                    new FluXisSpriteText
+                    new TruncatingText
                     {
+                        RelativeSizeAxes = Axes.X,
                         Text = label,
                         WebFontSize = 12,
                         Anchor = Anchor.CentreLeft,

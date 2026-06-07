@@ -14,6 +14,7 @@ using fluXis.Skinning.Custom.Judgements;
 using fluXis.Skinning.Custom.Lighting;
 using fluXis.Skinning.Custom.Receptor;
 using fluXis.Skinning.Json;
+using fluXis.Storyboards;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -50,6 +51,8 @@ public class CustomSkin : ISkin
         string path = SkinJson.GetOverrideOrDefault("UserInterface/background") + ".png";
         return storage.Exists(path) ? textures.Get(path) : null;
     }
+
+    public float? GetSpriteAspectRatio(SkinSprite sprite) => null;
 
     public Sample GetUISample(UISamples.SampleType type) => type switch
     {
@@ -192,6 +195,25 @@ public class CustomSkin : ISkin
     public Drawable GetTickNote(int lane, int keyCount, bool small)
     {
         var path = SkinJson.GetOverrideOrDefault($"HitObjects/Tick/{keyCount}k-{lane}{(small ? "-small" : "")}") + ".png";
+
+        if (storage.Exists(path))
+        {
+            return new SkinnableSprite
+            {
+                Texture = textures.Get(path),
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                RelativeSizeAxes = Axes.X,
+                Width = 1
+            };
+        }
+
+        return null;
+    }
+
+    public Drawable GetLandmine(int lane, int keyCount)
+    {
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/Landmine/{keyCount}k-{lane}") + ".png";
 
         if (storage.Exists(path))
         {

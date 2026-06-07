@@ -10,7 +10,7 @@ namespace fluXis.Overlay.Settings.Sections;
 
 public partial class ExperimentsSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome6.Solid.Flask;
+    public override IconUsage Icon => Phosphor.Bold.Flask;
     public override LocalisableString Title => "Experiments";
 
     [BackgroundDependencyLoader(true)]
@@ -20,13 +20,19 @@ public partial class ExperimentsSection : SettingsSection
         {
             new SettingsToggle
             {
-                Label = "Enable Storyboarding Tab",
-                Bindable = experiments.GetBindable<bool>(ExperimentConfig.StoryboardTab)
+                Label = "ModView",
+                Bindable = experiments.GetBindable<bool>(ExperimentConfig.ModView)
             },
             new SettingsToggle
             {
-                Label = "ModView",
-                Bindable = experiments.GetBindable<bool>(ExperimentConfig.ModView)
+                Label = ".lrc features",
+                Bindable = experiments.GetBindable<bool>(ExperimentConfig.LrcFeatures)
+            },
+            new SettingsToggle
+            {
+                Label = "Add new Blend Modes for storyboard elements",
+                Description = "Adds the option to use the new blend modes such as multiply and difference. Keep in mind, however, that they do not partially work with transparency.",
+                Bindable = experiments.GetBindable<bool>(ExperimentConfig.NewSbBlendModes)
             }
         });
     }

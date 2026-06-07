@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Storyboards;
-using fluXis.Utils;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -68,7 +68,7 @@ public class OsuStoryboardParser
             {
                 if (initialValues.Add(animation.Type))
                 {
-                    toAdd.Add(new StoryboardAnimation
+                    toAdd.Add(new StoryboardAnimation(element)
                     {
                         Type = animation.Type,
                         ValueStart = animation.ValueStart,
@@ -208,7 +208,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.Fade,
                                     StartTime = startTime,
@@ -229,7 +229,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.Scale,
                                     StartTime = startTime,
@@ -252,7 +252,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.ScaleVector,
                                     StartTime = startTime,
@@ -276,7 +276,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.Rotate,
                                     StartTime = startTime,
@@ -299,7 +299,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.MoveX,
                                     StartTime = startTime,
@@ -308,7 +308,7 @@ public class OsuStoryboardParser
                                     ValueStart = startX.ToStringInvariant(),
                                     ValueEnd = endX.ToStringInvariant()
                                 },
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.MoveY,
                                     StartTime = startTime,
@@ -329,7 +329,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.MoveX,
                                     StartTime = startTime,
@@ -350,7 +350,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.MoveY,
                                     StartTime = startTime,
@@ -378,7 +378,7 @@ public class OsuStoryboardParser
 
                             buffer = new[]
                             {
-                                new StoryboardAnimation
+                                new StoryboardAnimation(currentElement)
                                 {
                                     Type = StoryboardAnimationType.Color,
                                     StartTime = startTime,
@@ -399,6 +399,7 @@ public class OsuStoryboardParser
                             {
                                 case "A":
                                     currentElement.Blending = true;
+                                    currentElement.BlendingMode = DefaultBlendingParameters.Add;
                                     break;
                             }
 

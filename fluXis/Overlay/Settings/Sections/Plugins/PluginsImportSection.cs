@@ -12,7 +12,7 @@ namespace fluXis.Overlay.Settings.Sections.Plugins;
 public partial class PluginsImportSection : SettingsSubSection
 {
     public override LocalisableString Title => LocalizationStrings.Settings.Plugins.ImportPlugins;
-    public override IconUsage Icon => FontAwesome6.Solid.Plug;
+    public override IconUsage Icon => Phosphor.Bold.Plug;
 
     [BackgroundDependencyLoader]
     private void load(PluginManager plugins)

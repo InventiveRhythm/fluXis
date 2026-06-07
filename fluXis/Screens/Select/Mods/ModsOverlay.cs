@@ -233,6 +233,7 @@ public partial class ModsOverlay : VisibilityContainer
                                                             {
                                                                 new NoSvMod(),
                                                                 new NoLnMod(),
+                                                                new NoMineMod(),
                                                                 new NoEventMod(),
                                                                 new MirrorMod()
                                                             })
@@ -300,7 +301,7 @@ public partial class ModsOverlay : VisibilityContainer
     {
         background.FadeTo(0f, Styling.TRANSITION_FADE);
 
-        header.MoveToX(-50, 400, Easing.OutQuint).FadeOut(200);
+        header.MoveToX(-50, 400, Easing.In).FadeOut(200);
         RateMod.Hide();
         diffDecrease.Hide(STAGGER_DURATION * 2);
         diffIncrease.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);

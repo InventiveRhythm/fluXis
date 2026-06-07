@@ -11,7 +11,7 @@ public class FlawlessMod : IMod, IApplicableToHealthProcessor
     public string Name => "Flawless";
     public string Acronym => "FL";
     public string Description => "Only the best will do.";
-    public IconUsage Icon => FontAwesome6.Solid.ThumbsUp;
+    public IconUsage Icon => Phosphor.Bold.ThumbsUp;
     public ModType Type => ModType.DifficultyIncrease;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => true;

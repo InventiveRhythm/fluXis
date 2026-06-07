@@ -5,6 +5,7 @@ using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using JetBrains.Annotations;
 using NLua;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Utils;
 
@@ -20,6 +21,7 @@ public class ScriptRunner
 
     public Action<string, string, string, object> DefineParameter;
     protected Lua Lua { get; }
+    protected int Version { get; private set; }
 
     protected ScriptRunner()
     {
@@ -27,17 +29,21 @@ public class ScriptRunner
         Lua.State.Encoding = Encoding.UTF8;
 
         AddField("mathf", new LuaMath());
+        AddField("FFTParameters", new LuaFFTParameters());
 
         AddFunction("print", print);
         AddFunction("RandomRange", randomRange);
+        AddFunction("Easing", (string str) => Enum.TryParse(str, out Easing easing) ? easing : Easing.None);
         AddFunction("Vector2", (float x, float y) => new LuaVector2(x, y));
+        AddFunction("Color4", (float r, float g, float b, float a) => new LuaColor4(r, g, b, a));
         AddFunction("Vector2Zero", () => new LuaVector2(0, 0));
         AddFunction("Vector2One", () => new LuaVector2(1, 1));
         AddFunction("BPMAtTime", findBpm);
 
         AddFunction("DefineParameter", defineParameter);
+        AddFunction("SetVersion", setVersion);
 
-        Lua.DoString("import = function() end"); // disable importing
+        // Lua.DoString("import = function() end"); // disable importing
     }
 
     public void AddFunction(string name, Delegate function)
@@ -63,6 +69,9 @@ public class ScriptRunner
         Lua.DoString(code);
     }
 
+    [LuaGlobal(Name = "SetVersion")]
+    private void setVersion(double v) => Version = (int)v;
+
     [LuaGlobal(Name = "RandomRange")]
     private int randomRange(int from, int to) => RNG.Next(from, to + 1);
 
@@ -73,10 +82,11 @@ public class ScriptRunner
         return point.BPM;
     }
 
-    #nullable enable
+#nullable enable
     [LuaGlobal(Name = "DefineParameter")]
-    private void defineParameter(string key, string title, [LuaCustomType(typeof(ParameterDefinitionType))] string type, object? fallback = default) => DefineParameter?.Invoke(key, title, type, fallback);
-    #nullable disable
+    private void defineParameter(string key, string title, [LuaCustomType(typeof(ParameterDefinitionType))] string type, object? fallback = default) =>
+        DefineParameter?.Invoke(key, title, type, fallback);
+#nullable disable
 
     [LuaGlobal]
     private void print(string text) => Logger.Add($"[Script] {text}");

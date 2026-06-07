@@ -1,5 +1,4 @@
-﻿using fluXis.Map.Structures.Events;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -9,9 +8,7 @@ public partial class ShaderTransformHandler : CompositeComponent, IHasStrength
 {
     public override bool RemoveCompletedTransforms => false;
 
-    public ShaderType Type => shader.Type;
-
-    private ShaderContainer shader { get; }
+    private IHasStrength shader { get; }
 
     public float Strength
     {
@@ -31,9 +28,10 @@ public partial class ShaderTransformHandler : CompositeComponent, IHasStrength
         set => shader.Strength3 = value;
     }
 
-    public ShaderTransformHandler(ShaderContainer shader)
+    public ShaderTransformHandler(IHasStrength shader)
     {
         this.shader = shader;
+        Name = (shader as ShaderStep)?.Type.ToString() ?? "";
     }
 
     [BackgroundDependencyLoader]

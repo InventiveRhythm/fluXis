@@ -1,4 +1,5 @@
-﻿using fluXis.Graphics.Containers;
+﻿using System.Linq;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Maps;
@@ -41,14 +42,15 @@ public partial class MapSetSidebarMapper : CompositeDrawable
         CornerRadius = 8;
         Masking = true;
 
-        id = mapBind.Value.Mapper.ID;
+        var mapper = mapBind.Value.Mappers.First();
+        id = mapper.ID;
 
         InternalChildren = new Drawable[]
         {
             banner = new LoadWrapper<DrawableBanner>
             {
                 RelativeSizeAxes = Axes.Both,
-                LoadContent = () => new DrawableBanner(mapBind.Value.Mapper)
+                LoadContent = () => new DrawableBanner(mapper)
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
@@ -76,7 +78,7 @@ public partial class MapSetSidebarMapper : CompositeDrawable
                         Origin = Anchor.CentreLeft,
                         CornerRadius = 8,
                         Masking = true,
-                        LoadContent = () => new DrawableAvatar(mapBind.Value.Mapper)
+                        LoadContent = () => new DrawableAvatar(mapper)
                         {
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
@@ -86,7 +88,7 @@ public partial class MapSetSidebarMapper : CompositeDrawable
                     },
                     name = new FluXisSpriteText
                     {
-                        Text = mapBind.Value.Mapper.PreferredName,
+                        Text = mapper.PreferredName,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         WebFontSize = 14,
@@ -102,19 +104,20 @@ public partial class MapSetSidebarMapper : CompositeDrawable
 
         mapBind.ValueChanged += m =>
         {
-            if (id == m.NewValue.Mapper.ID)
+            var mapper = mapBind.Value.Mappers.First();
+            if (id == mapper.ID)
                 return;
 
             banner.Reload();
             avatar.Reload();
-            name.Text = m.NewValue.Mapper.PreferredName;
-            id = mapBind.Value.Mapper.ID;
+            name.Text = mapper.PreferredName;
+            id = mapper.ID;
         };
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        game?.PresentUser(mapBind.Value.Mapper.ID);
+        game?.PresentUser(mapBind.Value.Mappers.First().ID);
         return true;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
@@ -12,12 +13,12 @@ using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Screens;
+using fluXis.Screens.Multiplayer.Gameplay;
 using fluXis.Screens.Result;
 using NUnit.Framework;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
+using osu.Framework.Utils;
 
 namespace fluXis.Tests.Screens;
 
@@ -38,15 +39,7 @@ public partial class TestResults : FluXisTestScene
     [SetUp]
     public void Setup() => Schedule(() =>
     {
-        Children = new Drawable[]
-        {
-            new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Top = 60 },
-                Child = stack = new FluXisScreenStack()
-            }
-        };
+        Child = stack = new FluXisScreenStack();
     });
 
     private RealmMap getMap()
@@ -55,20 +48,21 @@ public partial class TestResults : FluXisTestScene
         return set?.Maps[0] ?? maps.MapSets[0].Maps[0];
     }
 
-    private ScoreInfo getScore() => new()
+    private ScoreInfo getScore(long player = -1) => new()
     {
-        Accuracy = 98.661736f,
-        Rank = ScoreRank.S,
-        PerformanceRating = 8,
-        Score = 1139289,
-        MaxCombo = 1218,
-        Flawless = 898,
-        Perfect = 290,
-        Great = 30,
-        Alright = 0,
-        Okay = 0,
-        Miss = 0,
-        Mods = new List<string> { "1.5x" }
+        Accuracy = RNG.NextSingle(80, 100),
+        Rank = (ScoreRank)RNG.Next(Enum.GetValues<ScoreRank>().Length),
+        PerformanceRating = RNG.NextSingle(4, 200),
+        Score = RNG.Next(800000, 1200000),
+        MaxCombo = RNG.Next(1219),
+        Flawless = RNG.Next(898),
+        Perfect = RNG.Next(290),
+        Great = RNG.Next(100),
+        Alright = RNG.Next(100),
+        Okay = RNG.Next(100),
+        Miss = RNG.Next(100),
+        Mods = new List<string> { "1.5x" },
+        PlayerID = player
     };
 
     [Test]
@@ -91,6 +85,15 @@ public partial class TestResults : FluXisTestScene
     public void WithRestart()
     {
         AddStep("Push With Restart", () => stack.Push(new Results(getMap(), getScore(), APIUser.Dummy) { OnRestart = () => Logger.Log("Restart pressed.") }));
+    }
+
+    [Test]
+    public void Multiplayer()
+    {
+        MultiplayerClient.Join(0).Wait();
+        MultiplayerClient.AddPlayer(APIUser.CreateUnknown(1));
+
+        AddStep("Push", () => stack.Push(new MultiplayerResults(getMap(), [getScore(), getScore(1)], MultiplayerClient)));
     }
 
     private class SimulatedScoreRequest : ScoreSubmitRequest

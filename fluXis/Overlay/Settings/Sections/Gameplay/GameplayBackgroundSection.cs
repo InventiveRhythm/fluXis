@@ -13,7 +13,7 @@ namespace fluXis.Overlay.Settings.Sections.Gameplay;
 public partial class GameplayBackgroundSection : SettingsSubSection
 {
     public override LocalisableString Title => strings.Background;
-    public override IconUsage Icon => FontAwesome6.Solid.Image;
+    public override IconUsage Icon => Phosphor.Bold.Image;
 
     private SettingsGameplayStrings strings => LocalizationStrings.Settings.Gameplay;
 

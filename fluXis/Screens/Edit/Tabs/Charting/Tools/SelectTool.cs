@@ -8,6 +8,6 @@ public class SelectTool : ChartingTool
 {
     public override string Name => "Select";
     public override string Description => "Select and move objects";
-    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = FontAwesome6.Solid.ArrowPointer };
+    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = Phosphor.Bold.Selection };
     public override PlacementBlueprint CreateBlueprint() => null;
 }

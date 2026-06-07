@@ -9,6 +9,7 @@ using fluXis.Scoring;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
@@ -19,21 +20,25 @@ namespace fluXis.Screens.Result.Header;
 public partial class ResultsPlayer : CompositeDrawable
 {
     [Resolved]
-    private ScoreInfo score { get; set; }
+    private Bindable<ScoreInfo> score { get; set; }
 
     [Resolved]
-    private APIUser user { get; set; }
+    private Bindable<APIUser> user { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay overlay { get; set; }
+
+    private LoadWrapper<DrawableAvatar> avatar;
+    private ClubTag club;
+    private FluXisSpriteText username;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         AutoSizeAxes = Axes.Both;
 
-        var date = TimeUtils.GetFromSeconds(score.Timestamp);
+        var date = TimeUtils.GetFromSeconds(score.Value.Timestamp);
 
         InternalChild = new FillFlowContainer
         {
@@ -42,7 +47,7 @@ public partial class ResultsPlayer : CompositeDrawable
             Spacing = new Vector2(12),
             Children = new Drawable[]
             {
-                new LoadWrapper<DrawableAvatar>
+                avatar = new LoadWrapper<DrawableAvatar>
                 {
                     Size = new Vector2(88),
                     Anchor = Anchor.CentreRight,
@@ -50,7 +55,7 @@ public partial class ResultsPlayer : CompositeDrawable
                     EdgeEffect = Styling.ShadowMedium,
                     CornerRadius = 12,
                     Masking = true,
-                    LoadContent = () => new DrawableAvatar(user)
+                    LoadContent = () => new DrawableAvatar(user.Value)
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
@@ -74,16 +79,16 @@ public partial class ResultsPlayer : CompositeDrawable
                             Origin = Anchor.TopRight,
                             Children = new Drawable[]
                             {
-                                new ClubTag(user.Club)
+                                club = new ClubTag(user.Value.Club)
                                 {
                                     WebFontSize = 16,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
                                     Shadow = true
                                 },
-                                new FluXisSpriteText
+                                username = new FluXisSpriteText
                                 {
-                                    Text = $" {user.Username}",
+                                    Text = $" {user.Value.Username}",
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
                                     WebFontSize = 20,
@@ -106,9 +111,21 @@ public partial class ResultsPlayer : CompositeDrawable
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        user.BindValueChanged(v =>
+        {
+            avatar.Reload();
+            club.ChangeClub(v.NewValue.Club);
+            username.Text = $" {user.Value.Username}";
+        });
+    }
+
     protected override bool OnClick(ClickEvent e)
     {
-        overlay?.ShowUser(user.ID);
+        if (user.Value.ID > 0) overlay?.ShowUser(user.Value.ID);
         return true;
     }
 }

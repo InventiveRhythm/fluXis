@@ -29,7 +29,7 @@ namespace fluXis.Overlay.Network.Tabs;
 public partial class DashboardChatTab : DashboardTab
 {
     public override LocalisableString Title => LocalizationStrings.Dashboard.Chat;
-    public override IconUsage Icon => FontAwesome6.Solid.Message;
+    public override IconUsage Icon => Phosphor.Bold.ChatsCircle;
     public override DashboardTabType Type => DashboardTabType.Chat;
     public override float DashboardWidth => 1600;
 
@@ -73,14 +73,21 @@ public partial class DashboardChatTab : DashboardTab
                         RelativeSizeAxes = Axes.Both,
                         Children = new Drawable[]
                         {
-                            channels = new FillFlowContainer<ChatChannelSection>
+                            new FluXisScrollContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
+                                ScrollbarAnchor = Anchor.TopRight,
                                 Padding = new MarginPadding { Bottom = 50 + 16 },
-                                Spacing = new Vector2(8),
-                                ChildrenEnumerable = Enum.GetValues<APIChannelType>()
-                                                         .GetValuesInOrder()
-                                                         .Select(x => new ChatChannelSection(x, Channel.GetBoundCopy()))
+                                HideScrollbarOnInactivity = true,
+                                Child = channels = new FillFlowContainer<ChatChannelSection>
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Spacing = new Vector2(8),
+                                    ChildrenEnumerable = Enum.GetValues<APIChannelType>()
+                                                             .GetValuesInOrder()
+                                                             .Select(x => new ChatChannelSection(x, Channel.GetBoundCopy()))
+                                },
                             },
                             new FluXisButton
                             {

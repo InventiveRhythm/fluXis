@@ -5,17 +5,20 @@ using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Overlay.Network.Tabs.Shared;
 
 public partial class DashboardItemList<T> : FillFlowContainer
 {
-    private string title { get; }
+    private LocalisableString title { get; }
     private IList<T> items { get; }
     private Func<T, Drawable> create { get; }
 
-    public DashboardItemList(string title, IList<T> items, Func<T, Drawable> create)
+    public string EmptyText { get; init; } = "Nobody here...";
+
+    public DashboardItemList(LocalisableString title, IList<T> items, Func<T, Drawable> create)
     {
         this.create = create;
         this.title = title;
@@ -59,7 +62,7 @@ public partial class DashboardItemList<T> : FillFlowContainer
             },
             new FluXisSpriteText
             {
-                Text = "Nobody here...",
+                Text = EmptyText,
                 WebFontSize = 14,
                 Alpha = items.Any() ? 0f : .8f
             },

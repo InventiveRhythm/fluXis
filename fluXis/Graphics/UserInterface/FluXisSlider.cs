@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -28,8 +29,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
     private ClickableSpriteIcon leftIcon;
     private ClickableSpriteIcon rightIcon;
 
-    private double lastSampleTime;
-    private Sample valueChange;
+    private DebouncedSample valueChange;
     private Bindable<double> valueChangePitch;
     private bool firstPlay = true;
 
@@ -45,7 +45,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
         {
             leftIcon = new ClickableSpriteIcon
             {
-                Icon = FontAwesome6.Solid.AngleLeft,
+                Icon = Phosphor.Bold.CaretLeft,
                 Size = new Vector2(10),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
@@ -65,7 +65,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             },
             rightIcon = new ClickableSpriteIcon
             {
-                Icon = FontAwesome6.Solid.AngleRight,
+                Icon = Phosphor.Bold.CaretRight,
                 Size = new Vector2(10),
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
@@ -74,7 +74,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             }
         };
 
-        valueChange = samples.Get("UI/slider-tick");
+        AddInternal(valueChange = new DebouncedSample(samples.Get("UI/slider-tick")));
         valueChange?.AddAdjustment(AdjustableProperty.Frequency, valueChangePitch = new BindableDouble(1f));
     }
 
@@ -98,12 +98,8 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
 
         if (valueChange != null && !firstPlay && IsPresent)
         {
-            if (Time.Current - lastSampleTime < 50) return;
-
             valueChangePitch.Value = .7f + percent * .6f;
             valueChange.Play();
-
-            lastSampleTime = Time.Current;
         }
         else firstPlay = false;
     }
