@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
@@ -36,7 +37,7 @@ public interface IPluginModule
 
     public Plugin Plugin
     {
-        get => host.GetOrCreateValue(this)!.Plugin;
+        get => host.TryGetValue(this, out var ctx) ? ctx?.Plugin : throw new InvalidOperationException("Module not initialized.");
         internal set => host.GetOrCreateValue(this)!.Plugin = value;
     }
 
