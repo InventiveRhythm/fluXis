@@ -1,29 +1,41 @@
 using System;
+using System.Collections.Concurrent;
+using System.Reflection;
 using osu.Framework.Logging;
 
 namespace fluXis.Plugins;
 
-public class PluginLogger
+public static class PluginLogger
 {
-    private readonly string prefix;
     private static Logger logger { get; } = Logger.GetLogger("plugins");
+    private static readonly ConcurrentDictionary<Assembly, string> plugin_names = new();
 
-    internal PluginLogger(string pluginName)
+    internal static void RegisterPlugin(Assembly assembly, string pluginName)
     {
-        prefix = $"[{pluginName}]";
+        plugin_names.TryAdd(assembly, pluginName);
     }
 
-    public void Log(string message) => log(message, LogLevel.Verbose);
-    public void Info(string message) => log(message, LogLevel.Important);
-    public void Error(string message, Exception e = null) => logError(message, e);
+    public static void Log(string message)
+        => log(message, LogLevel.Verbose, getPluginName(Assembly.GetCallingAssembly()));
 
-    private void log(string message, LogLevel level)
+    public static void Info(string message)
+        => log(message, LogLevel.Important, getPluginName(Assembly.GetCallingAssembly()));
+
+    public static void Error(string message, Exception e = null)
+        => logError(message, e, getPluginName(Assembly.GetCallingAssembly()));
+
+    private static string getPluginName(Assembly caller)
     {
-        logger.Add($"{prefix} {message}", level);
+        return plugin_names.TryGetValue(caller, out var name) ? name : caller.GetName().Name;
     }
 
-    private void logError(string message, Exception e = null)
+    private static void log(string message, LogLevel level, string pluginName)
     {
-        logger.Add($"{prefix} {message}", LogLevel.Error, e);
+        logger.Add($"[{pluginName}] {message}", level);
+    }
+
+    private static void logError(string message, Exception e, string pluginName)
+    {
+        logger.Add($"[{pluginName}] {message}", LogLevel.Error, e);
     }
 }

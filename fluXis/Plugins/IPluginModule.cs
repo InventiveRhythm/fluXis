@@ -27,24 +27,17 @@ namespace fluXis.Plugins;
 [UsedImplicitly]
 public interface IPluginModule
 {
-    private static readonly ConditionalWeakTable<IPluginModule, ModuleState> state = new();
+    private static readonly ConditionalWeakTable<IPluginModule, ModuleHost> host = new();
 
-    private class ModuleState
+    private class ModuleHost
     {
         public Plugin Plugin { get; set; } = null!;
-        public PluginLogger Logger { get; set; } = null!;
     }
 
     public Plugin Plugin
     {
-        get => state.GetOrCreateValue(this)!.Plugin;
-        internal set => state.GetOrCreateValue(this)!.Plugin = value;
-    }
-
-    public PluginLogger Logger
-    {
-        get => state.GetOrCreateValue(this)!.Logger;
-        internal set => state.GetOrCreateValue(this)!.Logger = value;
+        get => host.GetOrCreateValue(this)!.Plugin;
+        internal set => host.GetOrCreateValue(this)!.Plugin = value;
     }
 
     public T GetCapability<T>() where T : class, IPluginCapability

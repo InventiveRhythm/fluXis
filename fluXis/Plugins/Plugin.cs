@@ -39,8 +39,6 @@ public abstract class Plugin
     public virtual PluginType Type => PluginType.Misc; /* some older 3rd-porty plugins don't implement this so
     we need to make it virtual instead of abstract to have a default value */
 
-    public PluginLogger Logger { get; internal set; }
-
     public string AssemblyName { get; internal set; }
     public string Hash { get; internal set; }
 

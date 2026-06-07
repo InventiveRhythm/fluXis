@@ -96,6 +96,8 @@ public partial class PluginManager : Component
                     continue;
                 }
 
+                PluginLogger.RegisterPlugin(assembly, plugin.Name);
+
                 var capabilities = type.GetInterfaces()
                                        .Where(i => typeof(IPluginCapability).IsAssignableFrom(i) && i != typeof(IPluginCapability));
 
@@ -104,11 +106,9 @@ public partial class PluginManager : Component
 
                 plugin.CreateConfig(pluginStorage);
 
-                plugin.Logger = new PluginLogger(name);
                 plugin.Modules.ForEach(m =>
                 {
                     m.Plugin = plugin;
-                    m.Logger = plugin.Logger;
                 });
 
                 plugins.Add(plugin);
