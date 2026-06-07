@@ -1,6 +1,8 @@
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Overlay.Network.Sidebar;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,6 +21,8 @@ public abstract partial class DashboardTab : Container
 
     protected Container Header { get; private set; }
     protected new Container Content { get; private set; }
+
+    private LoadingIcon loading;
 
     private const int title_height = 50;
     private const int icon_size = 26;
@@ -89,6 +93,13 @@ public abstract partial class DashboardTab : Container
                         }
                     }
                 }
+            },
+            loading = new LoadingIcon
+            {
+                Size = new Vector2(32),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Alpha = 0
             }
         };
     }
@@ -101,6 +112,9 @@ public abstract partial class DashboardTab : Container
 
     public virtual void Enter() { }
     public virtual void Exit() { }
+
+    protected void StartLoading() => Scheduler.ScheduleIfNeeded(() => loading.Show());
+    protected void StopLoading() => Scheduler.ScheduleIfNeeded(() => loading.Hide());
 }
 
 public enum DashboardTabType

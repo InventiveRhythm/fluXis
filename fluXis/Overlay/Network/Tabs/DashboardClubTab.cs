@@ -93,8 +93,14 @@ public partial class DashboardClubTab : DashboardTab
             return;
         }
 
+        StartLoading();
+
         var req = new ClubRequest(club.ID);
-        req.Success += res => content.Child = createContent(res.Data!);
+        req.Success += res =>
+        {
+            StopLoading();
+            content.Child = createContent(res.Data!);
+        };
         api.PerformRequestAsync(req);
     }
 
