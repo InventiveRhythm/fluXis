@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
 using fluXis.Graphics.Drawables;
@@ -80,6 +81,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
 
     public Action RequestedResort { get; set; }
 
+    public Bindable<bool> groupByDiffsBindable;
+
     public float TargetY = 0;
 
     public DrawableMapSetDifficulty(DrawableMapSetItem parentEntry, RealmMap map)
@@ -89,8 +92,13 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        groupByDiffsBindable = config.GetBindable<bool>(FluXisSetting.SongSelectDiffGroup);
+        groupByDiffsBindable.BindValueChanged(_ => Scheduler.ScheduleIfNeeded(() =>
+            RequestedResort?.Invoke()
+        ));
+
         RelativeSizeAxes = Axes.X;
         Height = 48;
 
@@ -406,8 +414,11 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         if (ReferenceEquals(this, other)) return 0;
         if (other is null) return 1;
 
-        var keyResult = map.KeyCount.CompareTo(other.map.KeyCount);
-        if (keyResult != 0) return keyResult;
+        if (groupByDiffsBindable.Value)
+        {
+            var keyResult = map.KeyCount.CompareTo(other.map.KeyCount);
+            if (keyResult != 0) return keyResult;
+        }
 
         var ratingResult = map.Rating.CompareTo(other.map.Rating);
         return ratingResult == 0 ? (map.Filters?.NotesPerSecond ?? 0).CompareTo(other.map.Filters?.NotesPerSecond ?? 0) : ratingResult;

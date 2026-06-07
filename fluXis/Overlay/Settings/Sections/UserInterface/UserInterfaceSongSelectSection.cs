@@ -25,6 +25,12 @@ public partial class UserInterfaceSongSelectSection : SettingsSubSection
         {
             new SettingsToggle
             {
+                Label = strings.SongSelectDiffGroup,
+                Description = strings.SongSelectDiffGroupDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.SongSelectDiffGroup)
+            },
+            new SettingsToggle
+            {
                 Label = strings.SongSelectBlur,
                 Description = strings.SongSelectBlurDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.SongSelectBlur)
