@@ -19,7 +19,7 @@ using fluXis.Online.API.Models.Multi;
 using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Gameplay;
-using fluXis.Screens.Multiplayer.Gameplay;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI.Disc;
 using fluXis.Utils;
@@ -364,7 +364,11 @@ public partial class MultiLobby : MultiSubScreen
             return;
         }
 
-        MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods) { Scores = client.Room?.Scores }));
+        MultiScreen.Push(new GameplayLoader(
+            map, mods,
+            () => new GameplayScreen(map, mods) { Scores = client.Room?.Scores }
+                .RegisterCapability(new MultiplayerCapability(client))
+        ));
     }
 
     private void stopClockMusic() => clock.VolumeOut(Styling.TRANSITION_MOVE).OnComplete(_ => clock.Stop());

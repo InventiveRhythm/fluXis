@@ -18,6 +18,7 @@ using fluXis.Online.Spectator;
 using fluXis.Online.Spectator.Models;
 using fluXis.Overlay.Music;
 using fluXis.Screens.Gameplay;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Multiplayer;
 using fluXis.Utils;
 using fluXis.Utils.Downloading;
@@ -124,7 +125,7 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
     private void pushMap(RealmMap map, IEnumerable<string> rawMods)
     {
         var mods = rawMods.Select(ModUtils.GetFromAcronym).Where(x => x != null).ToList();
-        this.Push(new GameplayLoader(map, mods, () => new SpectatorGameplay(map, mods, spectator.Replays[userid])));
+        this.Push(new GameplayLoader(map, mods, () => new GameplayScreen(map, mods).RegisterCapability(new SpectatorCapability(spectator.Replays[userid]))));
     }
 
     private void onStopPlaying(long id)

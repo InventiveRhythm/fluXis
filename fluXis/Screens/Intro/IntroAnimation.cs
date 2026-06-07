@@ -1,6 +1,8 @@
 using System.Linq;
 using fluXis.Map;
-using fluXis.Screens.Gameplay.Tutorial;
+using fluXis.Mods;
+using fluXis.Screens.Gameplay;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.UI;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -112,7 +114,7 @@ public partial class IntroAnimation : FluXisScreen
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        var delay = e.Next is TutorialGameplay ? 800 : 0;
+        var delay = e.Next is GameplayScreen ? 800 : 0;
 
         logo.Delay(delay).FadeOut(bars_duration);
         this.Delay(bars_duration + bars_delay + delay).FadeOut();
@@ -168,7 +170,11 @@ public partial class IntroAnimation : FluXisScreen
             tutorial = false;
 
             var store = Dependencies.Get<MapStore>();
-            LoadComponentAsync(new TutorialGameplay(store.GetMapFromGuid("5cc4737e-ec31-48a8-9eec-5b089cb8f4f3")), this.Push);
+            LoadComponentAsync(
+                new GameplayScreen(store.GetMapFromGuid("5cc4737e-ec31-48a8-9eec-5b089cb8f4f3"), [new NoFailMod()])
+                    .RegisterCapability(new TutorialCapability()),
+                this.Push
+            );
         }
         else
             this.Push(TargetScreen ?? game.MenuScreen);

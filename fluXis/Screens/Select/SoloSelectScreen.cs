@@ -5,7 +5,7 @@ using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay;
-using fluXis.Screens.Gameplay.Practice;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Select.Footer;
 using osu.Framework.Input;
 using osu.Framework.Screens;
@@ -29,7 +29,11 @@ public partial class SoloSelectScreen : SelectScreen
         {
             var map = Maps.CurrentMap;
             var mods = CurrentMods.ToList();
-            this.Push(new GameplayLoader(Maps.CurrentMap, mods, () => new PracticeGameplayScreen(map, mods, s, e)));
+            this.Push(new GameplayLoader(
+                Maps.CurrentMap, mods,
+                () => new GameplayScreen(map, mods)
+                    .RegisterCapability(new PracticeCapability(s, e))
+            ));
         };
         return footer;
     }
@@ -52,6 +56,6 @@ public partial class SoloSelectScreen : SelectScreen
             });
         }
         else
-            this.Push(new GameplayLoader(map, mods, () => new SoloGameplayScreen(map, mods) { Scores = scores }));
+            this.Push(new GameplayLoader(map, mods, () => GameplayScreen.Solo(map, mods, scores)));
     }
 }

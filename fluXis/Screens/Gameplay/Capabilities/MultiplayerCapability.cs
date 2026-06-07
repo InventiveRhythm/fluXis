@@ -1,44 +1,52 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio.Transforms;
-using fluXis.Database.Maps;
 using fluXis.Graphics;
-using fluXis.Mods;
 using fluXis.Online.Activity;
 using fluXis.Online.Multiplayer;
 using fluXis.Scoring;
 using fluXis.Scoring.Structs;
-using fluXis.Screens.Gameplay;
+using fluXis.Screens.Gameplay.Capabilities.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Screens.Multiplayer.Gameplay;
 using fluXis.Utils.Extensions;
+using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
-namespace fluXis.Screens.Multiplayer.Gameplay;
+namespace fluXis.Screens.Gameplay.Capabilities;
 
-public partial class MultiGameplayScreen : GameplayScreen
+#nullable enable
+
+public partial class MultiplayerCapability : Component, IEndingCapability, IUserActivityCapability
 {
-    protected override bool InstantlyExitOnPause => true;
-    protected override bool AllowRestart => false;
-    protected override bool SubmitScore => false;
+    public GameplayScreen Screen { get; set; } = null!;
 
-    private PlayfieldPlayer player => PlayfieldManager.FirstPlayer;
-
+    private PlayfieldPlayer player => Screen.PlayfieldManager.FirstPlayer;
     private MultiplayerClient client { get; }
 
-    public MultiGameplayScreen(MultiplayerClient client, RealmMap realmMap, List<IMod> mods)
-        : base(realmMap, mods)
+    public MultiplayerCapability(MultiplayerClient client)
     {
         this.client = client;
     }
 
-    protected override UserActivity GetPlayingActivity()
+    void IGameplayCapability.PreLoad()
     {
-        var activity = base.GetPlayingActivity();
+        Screen.AllowPausing = false;
+        Screen.AllowRestarting = false;
+        Screen.InstantlyExitOnPause = true;
+    }
 
+    void IUserActivityCapability.Modify(UserActivity activity)
+    {
         if (activity is UserActivity.Playing playing)
             playing.Room = client.Room;
+    }
 
-        return activity;
+    Screen? IEndingCapability.OnEnd(ScoreInfo score, Action complete)
+    {
+        client.Finish(score);
+        return null;
     }
 
     protected override void LoadComplete()
@@ -53,20 +61,13 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.OnDisconnect += onDisconnect;
     }
 
-    protected override void Dispose(bool isDisposing)
+    public void Exit()
     {
-        base.Dispose(isDisposing);
-
         player.JudgementProcessor.ResultAdded -= sendScore;
 
         client.OnScore -= onScoreUpdate;
         client.OnResultsReady -= onOnResultsReady;
         client.OnDisconnect -= onDisconnect;
-    }
-
-    protected override void End()
-    {
-        client.Finish(player.ScoreProcessor.ToScoreInfo());
     }
 
     private void sendScore(HitResult _) => client.UpdateScore(player.ScoreProcessor.Score);
@@ -88,14 +89,14 @@ public partial class MultiGameplayScreen : GameplayScreen
     {
         Scheduler.ScheduleOnceIfNeeded(() =>
         {
-            if (this.IsCurrentScreen())
-                this.Push(new MultiplayerResults(RealmMap, scores, client));
+            if (Screen.IsCurrentScreen())
+                Screen.Push(new MultiplayerResults(Screen.RealmMap, scores, client));
         });
     }
 
     private void onDisconnect()
     {
-        CursorVisible = true;
-        GameplayClock.RateTo(0, Styling.TRANSITION_MOVE);
+        Screen.CursorVisible = true;
+        Screen.GameplayClock.RateTo(0, Styling.TRANSITION_MOVE);
     }
 }

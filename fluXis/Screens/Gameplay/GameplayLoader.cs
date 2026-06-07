@@ -268,11 +268,11 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }
 
         screen.OnRestart += requestRestart;
-        fadeBackToGlobalClock = screen.FadeBackToGlobalClock;
 
         LoadComponentAsync(screen, _ =>
         {
             allowExiting = false;
+            fadeBackToGlobalClock = screen.FadeBackToGlobalClock;
 
             if (!screen.ValidForPush)
             {
