@@ -15,12 +15,12 @@ namespace fluXis.Plugins;
 /// {
 ///     public (MenuItem Item, Func&lt;bool&gt; Predicate)[] MapSetContextMenuItems => new[]
 ///     {
-///         (new MenuItem("Hello", () => Logger.Log("Hello, world!"), () => true)
+///         (new MenuItem("Hello", () => PluginLogger.Log("Hello, world!"), () => true)
 ///     };
 ///
 ///     public void OnMapChanged(RealmMap map)
 ///     {
-///         Logger.Log($"Selected Song: {map.Metadata.Title}");
+///         PluginLogger.Log($"Selected Song: {map.Metadata.Title}");
 ///     }
 /// }
 /// </code>
