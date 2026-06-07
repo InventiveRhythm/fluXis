@@ -532,7 +532,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         EditorMap.ScriptWatcher.Enable();
 
         var capabilities = plugins?.Plugins?.GetCapabilities<IEditorCapability>().ToList() ?? [];
-        capabilities.ForEach(c => c?.OnEditorLoaded(editorMap));
+        capabilities.ForEach(c => c?.OnEditorLoaded(EditorMap));
     }
 
     protected override void Update()

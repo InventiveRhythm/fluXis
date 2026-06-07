@@ -3,6 +3,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Localization;
 using fluXis.Overlay.Settings.Sections.Plugins.Import;
 using fluXis.Plugins;
+using fluXis.Plugins.Capabilities;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
@@ -17,7 +18,7 @@ public partial class PluginsImportSection : SettingsSubSection
     [BackgroundDependencyLoader]
     private void load(PluginManager plugins)
     {
-        foreach (var plugin in plugins.Plugins.Where(p => p is { Importer: not null }))
+        foreach (var plugin in plugins.Plugins.Where(p => p.HasCapability<IMapImporterCapability>()))
             Add(new DrawableImportPlugin { Plugin = plugin });
     }
 }
