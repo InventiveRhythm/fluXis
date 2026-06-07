@@ -40,7 +40,7 @@ public partial class SpectatorCapability : ReplayCapability
         {
             case FluXisGlobalKeybind.GameplayPause:
                 Screen.Exit();
-                break;
+                return true;
         }
 
         return false;
