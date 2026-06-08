@@ -51,8 +51,11 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
         new ExperimentsSection()
     };
 
+    private Bindable<string> searchText = new();
+
     private SettingsCategorySelector categorySelector;
     private FluXisScrollContainer scrollContainer;
+    private SearchContainer searchContainer;
 
     private FluXisSpriteIcon titleIcon;
     private FluXisSpriteText titleText;
@@ -71,7 +74,11 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
 
     protected override Drawable[] CreateContent()
     {
-        sections.ForEach(LoadComponent);
+        sections.ForEach(s =>
+        {
+            s.CurrentSection = currentSection;
+            LoadComponent(s);
+        });
 
         return new Drawable[]
         {
@@ -89,6 +96,7 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
                     {
                         categorySelector = new SettingsCategorySelector(sections, currentSection)
                         {
+                            SearchTerm = searchText,
                             ScrollToItem = d => scrollContainer.ScrollTo(d)
                         },
                         new Container
@@ -146,7 +154,7 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
                                         }
                                     }
                                 },
-                                new Container
+                                searchContainer = new SearchContainer
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Padding = new MarginPadding { Top = 48 },
@@ -176,12 +184,13 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
 
     protected override void LoadComplete()
     {
-        currentSection.BindValueChanged(sectionChanged);
+        base.LoadComplete();
 
         if (sections.Count > 0)
             currentSection.Value = sections[0];
 
-        base.LoadComplete();
+        currentSection.BindValueChanged(sectionChanged);
+        searchText.BindValueChanged(v => searchContainer.SearchTerm = v.NewValue);
     }
 
     private void showExperiments()
@@ -229,6 +238,13 @@ public partial class SettingsMenu : IconEntranceOverlay, IKeyBindingHandler<FluX
 
         titleIcon.Icon = next.Icon;
         titleText.Text = next.Title;
+
+        // this sucks but it doesn't properly update without this
+        ScheduleAfterChildren(() => Schedule(() =>
+        {
+            searchContainer.SearchTerm = "";
+            searchContainer.SearchTerm = searchText.Value;
+        }));
     }
 
     protected override void Update()
