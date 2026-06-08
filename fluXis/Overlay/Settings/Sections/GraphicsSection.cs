@@ -19,7 +19,6 @@ public partial class GraphicsSection : SettingsSection
         AddRange(new Drawable[]
         {
             new GraphicsLayoutSection(),
-            Divider,
             new GraphicsRenderingSection()
         });
     }

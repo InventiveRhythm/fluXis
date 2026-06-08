@@ -25,7 +25,7 @@ public partial class PluginsSection : SettingsSection
             var ptype = types[i];
 
             Add(new PluginSubSection(ptype));
-            if (i != types.Length - 1) Add(new SettingsDivider());
         }
+        });
     }
 }

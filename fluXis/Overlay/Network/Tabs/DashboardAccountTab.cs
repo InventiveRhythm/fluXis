@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using fluXis.Audio;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
@@ -60,7 +59,6 @@ public partial class DashboardAccountTab : DashboardTab
     private APIUser user = null!;
     private Container editContent = null!;
     private Container unsavedContent = null!;
-    private LoadingIcon loadingIcon = null!;
 
     private SetupTextBox twitterEntry = null!;
     private SetupTextBox youtubeEntry = null!;
@@ -140,12 +138,6 @@ public partial class DashboardAccountTab : DashboardTab
                         }
                     }
                 }
-            },
-            loadingIcon = new LoadingIcon
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Alpha = 0
             }
         };
     }
@@ -455,24 +447,22 @@ public partial class DashboardAccountTab : DashboardTab
         base.Enter();
 
         editContent.Clear();
-        loadingIcon.FadeIn(400);
 
         if (api.User.Value is null)
-        {
-            loadingIcon.FadeOut(400);
             return;
-        }
+
+        StartLoading();
 
         var req = new UserRequest(api.User.Value.ID);
         req.Success += res =>
         {
+            StopLoading();
             user = res.Data;
             editContent.Child = createContent();
-            loadingIcon.FadeOut(400);
         };
         req.Failure += ex =>
         {
-            loadingIcon.FadeOut(400);
+            StopLoading();
             Logger.Error(ex, "Failed to get user!");
             notifications.SendError("Failed to get self!", ex.Message);
         };
