@@ -352,28 +352,31 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             globalBackground.AddBackgroundFromMap(map);
     }
 
-    public override void OpenLink(string link, bool skipWarning = false)
+    public override void OpenLink(string link, bool skipWarning = false, bool ingame = true)
     {
-        var parsed = ParsedLink.Parse(link, APIClient.Endpoint);
-
-        switch (parsed.Action)
+        if (ingame)
         {
-            case LinkAction.MapSet:
-                PresentMapSet((long)parsed.Argument);
-                return;
+            var parsed = ParsedLink.Parse(link, APIClient.Endpoint);
 
-            case LinkAction.User:
-                PresentUser((long)parsed.Argument);
-                return;
+            switch (parsed.Action)
+            {
+                case LinkAction.MapSet:
+                    PresentMapSet((long)parsed.Argument);
+                    return;
 
-            case LinkAction.Club:
-                PresentClub((long)parsed.Argument);
-                return;
+                case LinkAction.User:
+                    PresentUser((long)parsed.Argument);
+                    return;
+
+                case LinkAction.Club:
+                    PresentClub((long)parsed.Argument);
+                    return;
+            }
         }
 
         if (skipWarning)
         {
-            base.OpenLink(link, true);
+            base.OpenLink(link, true, false);
             return;
         }
 
@@ -384,7 +387,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return;
         }
 
-        panelContainer.Content = new ExternalLinkPanel(link);
+        panelContainer.Content = new ExternalLinkPanel(link, ingame);
     }
 
     public void OpenDashboard(DashboardTabType type)

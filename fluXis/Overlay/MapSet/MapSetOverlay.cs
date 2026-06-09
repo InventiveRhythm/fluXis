@@ -173,7 +173,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 {
                                     new MapSetFavoriteButton(set),
                                     new MapSetButton(Phosphor.Bold.ShareNetwork, ()
-                                        => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{set.ID}#{bindableMap.Value.ID}")),
+                                        => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{set.ID}#{bindableMap.Value.ID}", ingame: false)),
                                     new MapSetDownloadButton(set),
                                     // new MapSetButton(FontAwesome6.Solid.EllipsisVertical, () => { })
                                 }

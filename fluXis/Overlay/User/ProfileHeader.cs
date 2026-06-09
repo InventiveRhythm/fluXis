@@ -143,8 +143,8 @@ public partial class ProfileHeader : Container
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Horizontal,
                                             Spacing = new Vector2(12),
-                                            Children = new Drawable[]
-                                            {
+                                            Children =
+                                            [
                                                 new ClubTag(user.Club)
                                                 {
                                                     Alpha = user.Club?.ID > 0 ? 1 : 0,
@@ -153,15 +153,8 @@ public partial class ProfileHeader : Container
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
                                                 },
-                                                new ClickableContainer
-                                                {
-                                                    AutoSizeAxes = Axes.Both,
-                                                    Anchor = Anchor.CentreLeft,
-                                                    Origin = Anchor.CentreLeft,
-                                                    Child = getName(user.PreferredName),
-                                                    Action = () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}"),
-                                                }
-                                            }
+                                                getName(user.PreferredName)
+                                            ]
                                         },
                                         new FillFlowContainer
                                         {
@@ -262,7 +255,7 @@ public partial class ProfileHeader : Container
         yield return new HeaderButton
         {
             Icon = Phosphor.Bold.ShareNetwork,
-            Action = () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}"),
+            Action = () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}", ingame: false),
         };
 
         if (user.Following is UserFollowState.Mutual && api.User.Value?.ID != user.ID)

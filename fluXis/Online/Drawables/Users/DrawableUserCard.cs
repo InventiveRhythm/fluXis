@@ -39,7 +39,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
             var list = new List<MenuItem>
             {
                 new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
-                new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
+                new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}", ingame: false)),
             };
 
             if (DebugUtils.IsDebugBuild && user.IsOnline)

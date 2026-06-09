@@ -16,7 +16,7 @@ public partial class ExternalLinkPanel : ButtonPanel
     [Resolved]
     private Clipboard clipboard { get; set; }
 
-    public ExternalLinkPanel(string link)
+    public ExternalLinkPanel(string link, bool ingame = true)
     {
         Icon = Phosphor.Bold.Link;
         Text = "Just to make sure...";
@@ -27,7 +27,7 @@ public partial class ExternalLinkPanel : ButtonPanel
         };
         Buttons =
         [
-            new PrimaryButtonData(() => game.OpenLink(link, true)),
+            new PrimaryButtonData(() => game.OpenLink(link, true, ingame)),
             new SecondaryButtonData("Copy it instead.", () => clipboard.SetText(link)),
             new CancelButtonData()
         ];

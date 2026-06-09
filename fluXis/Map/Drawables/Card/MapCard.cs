@@ -58,7 +58,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
             else if (!downloading)
                 list.Add(new MenuActionItem("Download", Phosphor.Bold.ArrowLineDown, download));
 
-            list.Add(new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
+            list.Add(new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}", ingame: false)));
 
             if (RequestDelete != null && canDelete)
                 list.Add(new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
