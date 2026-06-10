@@ -2,8 +2,8 @@
 
 public class WikiPageRequest : APIRequest
 {
-    protected override string Path => $"/fluxis-wiki/{page.Trim('/')}/en.md";
-    protected override string RootUrl => APIClient.Endpoint.WebsiteRootUrl;
+    protected override string Path => $"/wiki/{page.Trim('/')}/en.md";
+    protected override string RootUrl => APIClient.Endpoint.AssetUrl;
 
     public string ResponseString { get; private set; }
 
