@@ -10,6 +10,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
@@ -39,7 +40,14 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
     public override double FirstComparer => Object.StartTime;
     public override double SecondComparer => Object.EndTime;
 
-    public override Vector2 ScreenSpaceSelectionPoint => Drawable.ScreenSpaceDrawQuad.TopLeft;
+    public override RectangleF ScreenSpaceSelectionRect
+    {
+        get
+        {
+            var ss = Drawable.ScreenSpaceDrawQuad;
+            return new RectangleF(ss.TopLeft, ss.Size);
+        }
+    }
 
     public TimelineElementBlueprint(StoryboardElement element)
         : base(element)
