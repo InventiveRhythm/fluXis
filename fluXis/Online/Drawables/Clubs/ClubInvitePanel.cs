@@ -5,7 +5,7 @@ using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
-using fluXis.Online.API.Models.Other;
+using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Requests.Invites;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
@@ -32,7 +32,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
     private PanelContainer panels { get; set; }
 
     private string code { get; }
-    private APIInvite invite;
+    private APIClubInvite invite;
 
     private Container background;
 
@@ -59,7 +59,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
                 new LoadWrapper<DrawableClubBanner>
                 {
                     RelativeSizeAxes = Axes.Both,
-                    LoadContent = () => new DrawableClubBanner(invite.TargetClub) { RelativeSizeAxes = Axes.Both },
+                    LoadContent = () => new DrawableClubBanner(invite.Club) { RelativeSizeAxes = Axes.Both },
                     OnComplete = d => d.FadeInFromZero(300)
                 },
                 new Box
@@ -85,7 +85,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
                         Masking = true,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        LoadContent = () => new DrawableClubIcon(invite.TargetClub)
+                        LoadContent = () => new DrawableClubIcon(invite.Club)
                         {
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
@@ -111,7 +111,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
                         Spacing = new Vector2(8),
                         Children = new Drawable[]
                         {
-                            new ClubTag(invite.TargetClub)
+                            new ClubTag(invite.Club)
                             {
                                 WebFontSize = 20,
                                 Anchor = Anchor.CentreLeft,
@@ -119,7 +119,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
                             },
                             new FluXisSpriteText
                             {
-                                Text = invite.TargetClub.Name,
+                                Text = invite.Club.Name,
                                 WebFontSize = 24,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
@@ -161,7 +161,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
         req.Success += _ =>
         {
             StopLoading();
-            navigator?.PushClub(invite.TargetClub.ID);
+            navigator?.PushClub(invite.Club.ID);
         };
         req.Failure += ex =>
         {
