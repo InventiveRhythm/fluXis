@@ -58,6 +58,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private EditorVariableTextBox hitPositionTextBox;
     private EditorVariableTextBox columnWidthTextBox;
     private EditorVariableToggle receptorsFirstToggle;
+    private EditorVariableToggle tintNotesToggle;
     private EditorVariableTextBox receptorsPositionTextBox;
 
     [BackgroundDependencyLoader]
@@ -76,6 +77,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             columnWidthTextBox.TextBox.Text = mode.ColumnWidth.ToString();
             receptorsFirstToggle.Bindable.Value = mode.ReceptorsFirst;
             receptorsPositionTextBox.TextBox.Text = mode.ReceptorOffset.ToString();
+            tintNotesToggle.Bindable.Value = mode.TintNotes;
         });
 
         InternalChild = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host)
@@ -180,6 +182,13 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                                 else
                                                                     box.NotifyError();
                                                             }
+                                                        },
+                                                        tintNotesToggle = new EditorVariableToggle
+                                                        {
+                                                            Text = "Tint notes",
+                                                            TooltipText = "Whether to tint the notes with the map/snap colors.",
+                                                            CurrentValue = skinJson.GetKeymode(keyMode.Value).TintNotes,
+                                                            OnValueChanged = v => skinJson.GetKeymode(keyMode.Value).TintNotes = v
                                                         },
                                                         new FluXisSpriteText
                                                         {
