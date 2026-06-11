@@ -168,5 +168,11 @@ public abstract class APIRequest
         TriggerFailure(e);
     }
 
+    public void ThrowIfFailed()
+    {
+        if (FailReason != null)
+            throw FailReason;
+    }
+
     protected virtual WebRequest CreateWebRequest(string url) => new APIWebRequest(url);
 }

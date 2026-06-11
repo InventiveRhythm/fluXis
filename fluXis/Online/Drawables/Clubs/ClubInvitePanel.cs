@@ -9,7 +9,8 @@ using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Requests.Invites;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
-using fluXis.Overlay.Club;
+using fluXis.Overlay.Navigator;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -23,8 +24,9 @@ public partial class ClubInvitePanel : Panel, ICloseable
     [Resolved]
     private IAPIClient api { get; set; }
 
-    [Resolved]
-    private ClubOverlay clubs { get; set; }
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private OnlineNavigator navigator { get; set; }
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -159,7 +161,7 @@ public partial class ClubInvitePanel : Panel, ICloseable
         req.Success += _ =>
         {
             StopLoading();
-            clubs.ShowClub(invite.TargetClub.ID);
+            navigator?.PushClub(invite.TargetClub.ID);
         };
         req.Failure += ex =>
         {

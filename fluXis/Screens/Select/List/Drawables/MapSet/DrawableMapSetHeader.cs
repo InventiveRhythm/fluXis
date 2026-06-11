@@ -15,6 +15,7 @@ using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Navigator;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -45,7 +46,8 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 items.Add(new MenuActionItem(LocalizationStrings.General.Select, Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => selection.Select(mapset.LowestDifficulty)));
 
             if (mapset.OnlineID > 0)
-                items.Add(new MenuActionItem(LocalizationStrings.General.ViewOnline, Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)) { IsEnabled = () => api.CanUseOnline });
+                items.Add(new MenuActionItem(LocalizationStrings.General.ViewOnline, Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => navigator?.PushMapSet(mapset.OnlineID))
+                    { IsEnabled = () => api.CanUseOnline });
 
             items.Add(new MenuActionItem(LocalizationStrings.General.Export, Phosphor.Bold.Package, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset))
                 { IsEnabled = () => !mapset.AutoImported });
@@ -79,7 +81,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private FluXisGame game { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]

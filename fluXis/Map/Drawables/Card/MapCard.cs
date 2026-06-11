@@ -14,6 +14,7 @@ using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Navigator;
 using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
@@ -39,6 +40,10 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
+    private OnlineNavigator navigator { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
     [Resolved]
@@ -50,7 +55,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View", Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
+                new MenuActionItem("View", Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => navigator?.PushMapSet(MapSet.ID))
             };
 
             if (downloaded)
@@ -342,7 +347,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         samples.Click();
 
         if (OnClickAction is null)
-            game?.PresentMapSet(MapSet.ID);
+            navigator?.PushMapSet(MapSet.ID);
         else
             OnClickAction?.Invoke(MapSet);
 

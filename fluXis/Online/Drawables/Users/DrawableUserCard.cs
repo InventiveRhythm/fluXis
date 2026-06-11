@@ -11,7 +11,7 @@ using fluXis.Online.Chat;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
-using fluXis.Overlay.User;
+using fluXis.Overlay.Navigator;
 using fluXis.Screens.Spectator;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
@@ -38,7 +38,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
+                new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Highlighted, () => navigator?.PushUser(user.ID)),
                 new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}", ingame: false)),
             };
 
@@ -70,7 +70,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private UserProfileOverlay profile { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -248,7 +248,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
 
     protected override bool OnClick(ClickEvent e)
     {
-        profile?.ShowUser(user.ID);
+        navigator?.PushUser(user.ID);
         return true;
     }
 }

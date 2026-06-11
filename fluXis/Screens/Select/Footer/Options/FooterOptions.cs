@@ -9,6 +9,7 @@ using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Localization;
 using fluXis.Map;
+using fluXis.Overlay.Navigator;
 using fluXis.Overlay.Settings;
 using fluXis.Scoring;
 using JetBrains.Annotations;
@@ -47,7 +48,7 @@ public partial class FooterOptions : FocusedOverlayContainer
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private FluXisGame game { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     private FooterOptionSection setSection;
     private FooterOptionButton viewOnlineButton;
@@ -133,7 +134,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 Hotkey = Key.O,
                                 Action = () =>
                                 {
-                                    game?.PresentMapSet(maps.CurrentMapSet.OnlineID);
+                                    navigator?.PushMapSet(maps.CurrentMapSet.OnlineID);
                                     State.Value = Visibility.Hidden;
                                 }
                             },

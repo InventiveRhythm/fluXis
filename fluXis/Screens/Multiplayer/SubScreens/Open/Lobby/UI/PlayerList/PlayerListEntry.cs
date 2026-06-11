@@ -8,6 +8,7 @@ using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Multiplayer;
+using fluXis.Overlay.Navigator;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -28,7 +29,7 @@ public partial class PlayerListEntry : Container, IHasContextMenu
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View Profile", Phosphor.Bold.User, () => game?.PresentUser(Participant.ID))
+                new MenuActionItem("View Profile", Phosphor.Bold.User, () => navigator?.PushUser(Participant.ID))
             };
 
             if (client.Room!.Host.ID == client.Player.ID && Participant.ID != client.Player.ID)
@@ -45,7 +46,7 @@ public partial class PlayerListEntry : Container, IHasContextMenu
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private FluXisGame game { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     private FluXisSpriteIcon hostCrown;
     private Box stateBackground;
