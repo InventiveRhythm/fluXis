@@ -204,7 +204,8 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                             TooltipText = "Whether to tint the body and end of a long note with the map/snap colors. Only applies when \"Tint notes\" is enabled.",
                                                             CurrentValue = skinJson.GetKeymode(keyMode.Value).TintLongNotes,
                                                             Enabled = { Value = skinJson.GetKeymode(keyMode.Value).TintNotes },
-                                                            OnValueChanged = v => skinJson.GetKeymode(keyMode.Value).TintLongNotes = v
+                                                            OnValueChanged = v => skinJson.GetKeymode(keyMode.Value).TintLongNotes = v,
+                                                            HideWhenDisabled = true
                                                         },
                                                         new FluXisSpriteText
                                                         {
