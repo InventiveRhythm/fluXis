@@ -63,6 +63,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // UI // Song Select
         SetDefault(FluXisSetting.SongSelectBlur, true);
+        SetDefault(FluXisSetting.SongSelectDiffGroup, false);
         SetDefault(FluXisSetting.LoopMode, LoopMode.Limited);
         SetDefault(FluXisSetting.GroupingMode, MapUtils.GroupingMode.Default);
         SetDefault(FluXisSetting.SortingMode, MapUtils.SortingMode.Title);
@@ -160,6 +161,7 @@ public enum FluXisSetting
 
     // UI // Song Select
     SongSelectBlur,
+    SongSelectDiffGroup,
     LoopMode,
     GroupingMode,
     SortingMode,
