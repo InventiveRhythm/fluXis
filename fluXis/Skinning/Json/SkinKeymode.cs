@@ -26,7 +26,6 @@ public class SkinKeymode
 
     /// <summary>
     /// tints the receptors.
-    /// only applies when <see cref="TintReceptors"/> is true.
     /// </summary>
     [JsonProperty("tint_receptors")]
     public bool TintReceptors { get; set; } = false;
