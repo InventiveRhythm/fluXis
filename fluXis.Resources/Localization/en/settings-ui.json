@@ -27,6 +27,8 @@
   "song-select-title": "Song Select",
   "song-select-blur": "Blur Background",
   "song-select-blur-description": "Blur the background of the song select screen.",
+  "song-select-diff-group": "Group difficulties by key count",
+  "song-select-diff-group-description": "All difficulties with the same key count will appear beside each other regardless of rating.",
   "loop-mode": "Loop Mode",
   "loop-mode-description": "How the song select music should loop.",
   "header-height": "Header Height",
