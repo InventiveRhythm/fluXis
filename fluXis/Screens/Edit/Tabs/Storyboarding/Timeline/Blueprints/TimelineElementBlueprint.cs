@@ -6,6 +6,7 @@ using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 using fluXis.Storyboards;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,8 +16,8 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
-using osuTK;
 using osuTK.Input;
+using Vector2 = osuTK.Vector2;
 
 namespace fluXis.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 
@@ -49,6 +50,15 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
         }
     }
 
+    [CanBeNull]
+    public Action<SelectionBlueprint<StoryboardElement>, Vector2, bool> OnHandleDrag;
+
+    [CanBeNull]
+    public Action OnHandleDragFinished;
+
+    private readonly BlueprintHandle leftHandle;
+    private readonly BlueprintHandle rightHandle;
+
     public TimelineElementBlueprint(StoryboardElement element)
         : base(element)
     {
@@ -68,18 +78,29 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
                     Alpha = .2f
                 }
             },
-            new BlueprintHandle(this)
+            leftHandle = new BlueprintHandle(this)
             {
-                DragAction = vec =>
-                {
-                    var newTime = timeline.TimeAtScreenSpacePosition(vec);
-                    newTime = snaps.SnapTime(newTime);
-                    var len = Math.Max(newTime - Object.StartTime, snaps.CurrentStep);
-                    Object.EndTime = Object.StartTime + len;
-                },
-                StopAction = () => storyboard.Update(element)
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                DragAction = vec => OnHandleDrag?.Invoke(this, vec, false),
+                StopAction = () => OnHandleDragFinished?.Invoke()
+            },
+            rightHandle = new BlueprintHandle(this)
+            {
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                DragAction = vec => OnHandleDrag?.Invoke(this, vec, true),
+                StopAction = () => OnHandleDragFinished?.Invoke()
             }
         };
+    }
+
+    protected override bool ShouldBeConsideredForInput(Drawable child)
+    {
+        if (child == leftHandle || child == rightHandle)
+            return true;
+
+        return false;
     }
 
     protected override void Update()
@@ -106,6 +127,13 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
         storyboard.Remove(Object);
     }
 
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        OnHandleDrag = null;
+        OnHandleDragFinished = null;
+    }
+
     private partial class BlueprintHandle : Drawable, IHasCursorType
     {
         CursorType IHasCursorType.Cursor => parent.IsSelected ? CursorType.SizeHorizontal : CursorType.Ignore;
@@ -119,7 +147,7 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
         {
             this.parent = parent;
             Size = new Vector2(28, 36);
-            Anchor = Origin = Anchor.CentreRight;
+            AlwaysPresent = true;
         }
 
         protected override bool OnDragStart(DragStartEvent e) => e.Button == MouseButton.Left;
