@@ -23,6 +23,8 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
     protected abstract T PullData();
     protected abstract Drawable CreateContent(T data);
 
+    private T? data;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -36,7 +38,7 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
 
         try
         {
-            var data = PullData();
+            data = PullData();
             InternalChild = CreateContent(data);
         }
         catch (Exception ex)
@@ -44,9 +46,14 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
             InternalChild = new OnlineErrorContainer(ex.Message) { ShowInstantly = true };
         }
     }
+
+    protected virtual Drawable? CreateBackground(T data) => null;
+    public sealed override Drawable? CreateBackground() => data is null ? null : CreateBackground(data);
 }
 
 public abstract partial class NavigatorPage : CompositeDrawable
 {
     public abstract string Path { get; }
+
+    public virtual Drawable? CreateBackground() => null;
 }

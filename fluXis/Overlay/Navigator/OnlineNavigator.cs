@@ -40,15 +40,17 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
     public NavigatorPage? CurrentPage => current.Value;
 
     private readonly Stack<NavigatorPage> pages = new();
+    private readonly Bindable<NavigatorPage?> current = new();
+    private bool locked;
+
+    private Container background = null!;
     private FluXisScrollContainer scroll = null!;
     private Container<NavigatorPage> content = null!;
     private LoadingIcon loading = null!;
 
-    private readonly Bindable<NavigatorPage?> current = new();
-    private bool locked;
-
     protected override IEnumerable<Drawable> CreateContent()
     {
+        yield return background = new Container { RelativeSizeAxes = Axes.Both };
         yield return new NavigatorBar(this, current);
         yield return new Container
         {
@@ -97,6 +99,7 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
         pages.Push(page);
         loading.Show();
 
+        background.ForEach(x => x.FadeOut(Styling.TRANSITION_FADE).Expire());
         current.Value?.FadeOut(Styling.TRANSITION_FADE);
         current.Value = page;
 
@@ -112,6 +115,9 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
 
                 content.Clear(false);
                 content.Add(p);
+
+                var bg = p.CreateBackground();
+                if (bg is not null) background.Add(bg);
 
                 p.FadeInFromZero(Styling.TRANSITION_FADE);
                 loading.Hide();
@@ -136,10 +142,15 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
         pages.Pop();
         var prev = pages.Peek();
 
+        background.ForEach(x => x.FadeOut(Styling.TRANSITION_FADE).Expire());
         current.Value?.FadeOut(Styling.TRANSITION_FADE).Then().OnComplete(_ =>
         {
             content.Clear(true);
             content.Add(prev);
+
+            var bg = prev.CreateBackground();
+            if (bg is not null) background.Add(bg);
+
             prev.FadeInFromZero(Styling.TRANSITION_FADE);
             current.Value = prev;
             locked = false;
