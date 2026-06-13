@@ -43,8 +43,8 @@ public partial class SetupTab : EditorTab
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
-                    Spacing = new Vector2(30),
-                    Padding = new MarginPadding { Horizontal = 200, Vertical = 50 },
+                    Spacing = new Vector2(32),
+                    Padding = new MarginPadding { Horizontal = 196, Vertical = 48 },
                     Children = new Drawable[]
                     {
                         new SetupHeader(),
@@ -52,7 +52,7 @@ public partial class SetupTab : EditorTab
                         {
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
-                            Padding = new MarginPadding { Horizontal = 40 },
+                            Padding = new MarginPadding { Horizontal = 24 },
                             Child = new GridContainer
                             {
                                 RelativeSizeAxes = Axes.X,
@@ -60,12 +60,12 @@ public partial class SetupTab : EditorTab
                                 ColumnDimensions = new[]
                                 {
                                     new Dimension(),
-                                    new Dimension(GridSizeMode.Absolute, 20),
+                                    new Dimension(GridSizeMode.Absolute, 16),
                                     new Dimension()
                                 },
                                 RowDimensions = new[]
                                 {
-                                    new Dimension(GridSizeMode.AutoSize),
+                                    new Dimension(GridSizeMode.AutoSize)
                                 },
                                 Content = new[]
                                 {
@@ -76,62 +76,56 @@ public partial class SetupTab : EditorTab
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Vertical,
-                                            Spacing = new Vector2(30),
+                                            Spacing = new Vector2(20),
                                             Children = new Drawable[]
                                             {
-                                                metadata = new SetupSection("Metadata")
-                                                {
-                                                    Entries = new Drawable[]
+                                                metadata = new SetupSection("Metadata", [
+                                                    new SetupTextBox("Title")
                                                     {
-                                                        new SetupTextBox("Title")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.Title,
-                                                            Placeholder = "...",
-                                                            OnChange = value => map.MapInfo.Metadata.Title = map.RealmMap.Metadata.Title = value
-                                                        },
-                                                        new SetupTextBox("Title (Romanized)")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.TitleRomanized ?? map.MapInfo.Metadata.Title,
-                                                            Placeholder = "...",
-                                                            OnChange = value => map.MapInfo.Metadata.TitleRomanized = map.RealmMap.Metadata.TitleRomanized = value
-                                                        },
-                                                        new SetupTextBox("Artist")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.Artist,
-                                                            Placeholder = "...",
-                                                            OnChange = value => map.MapInfo.Metadata.Artist = map.RealmMap.Metadata.Artist = value
-                                                        },
-                                                        new SetupTextBox("Artist (Romanized)")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.ArtistRomanized ?? map.MapInfo.Metadata.Artist,
-                                                            Placeholder = "...",
-                                                            OnChange = value => map.MapInfo.Metadata.ArtistRomanized = map.RealmMap.Metadata.ArtistRomanized = value
-                                                        },
-                                                        new SetupTextBox("Mapper")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.Mapper,
-                                                            Placeholder = "...",
-                                                            OnChange = value => map.MapInfo.Metadata.Mapper = map.RealmMap.Metadata.Mapper = value
-                                                        },
-                                                        new SetupTextBox("Difficulty")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.Difficulty,
-                                                            Placeholder = "...",
-                                                            OnChange = value => map.MapInfo.Metadata.Difficulty = map.RealmMap.Difficulty = value
-                                                        },
-                                                        new SetupTextBox("Tags")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.Tags,
-                                                            Placeholder = "No Tags",
-                                                            OnChange = value => map.MapInfo.Metadata.Tags = map.RealmMap.Metadata.Tags = value,
-                                                            MaxLength = 2048
-                                                        }
+                                                        Default = map.MapInfo.Metadata.Title,
+                                                        Placeholder = "...",
+                                                        OnChange = value => map.MapInfo.Metadata.Title = map.RealmMap.Metadata.Title = value
+                                                    },
+                                                    new SetupTextBox("Title (Romanized)")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.TitleRomanized ?? map.MapInfo.Metadata.Title,
+                                                        Placeholder = "...",
+                                                        OnChange = value => map.MapInfo.Metadata.TitleRomanized = map.RealmMap.Metadata.TitleRomanized = value
+                                                    },
+                                                    new SetupTextBox("Artist")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.Artist,
+                                                        Placeholder = "...",
+                                                        OnChange = value => map.MapInfo.Metadata.Artist = map.RealmMap.Metadata.Artist = value
+                                                    },
+                                                    new SetupTextBox("Artist (Romanized)")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.ArtistRomanized ?? map.MapInfo.Metadata.Artist,
+                                                        Placeholder = "...",
+                                                        OnChange = value => map.MapInfo.Metadata.ArtistRomanized = map.RealmMap.Metadata.ArtistRomanized = value
+                                                    },
+                                                    new SetupTextBox("Mapper")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.Mapper,
+                                                        Placeholder = "...",
+                                                        OnChange = value => map.MapInfo.Metadata.Mapper = map.RealmMap.Metadata.Mapper = value
+                                                    },
+                                                    new SetupTextBox("Difficulty")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.Difficulty,
+                                                        Placeholder = "...",
+                                                        OnChange = value => map.MapInfo.Metadata.Difficulty = map.RealmMap.Difficulty = value
+                                                    },
+                                                    new SetupTextBox("Tags")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.Tags,
+                                                        Placeholder = "No Tags",
+                                                        OnChange = value => map.MapInfo.Metadata.Tags = map.RealmMap.Metadata.Tags = value,
+                                                        MaxLength = 2048
                                                     }
-                                                },
-                                                new SetupSection("Colors")
-                                                {
-                                                    Entries = new Drawable[]
-                                                    {
+                                                ]),
+                                                new SetupSection("Colors", [
+                                                    new SetupSection.Row([
                                                         new SetupColor("Accent")
                                                         {
                                                             Color = map.RealmMap.Metadata.Color,
@@ -145,7 +139,9 @@ public partial class SetupTab : EditorTab
                                                                 map.MapInfo.Colors.PrimaryHex = color.ToHex();
                                                                 map.TriggerAnyChange();
                                                             }
-                                                        },
+                                                        }
+                                                    ]),
+                                                    new SetupSection.Row([
                                                         new SetupColor("Secondary")
                                                         {
                                                             Color = map.MapInfo.Colors.GetColor(2, Colour4.White),
@@ -164,12 +160,10 @@ public partial class SetupTab : EditorTab
                                                                 map.TriggerAnyChange();
                                                             }
                                                         }
-                                                    }
-                                                },
-                                                new SetupSection("Special")
-                                                {
-                                                    Entries = new Drawable[]
-                                                    {
+                                                    ])
+                                                ]),
+                                                new SetupSection("Special", [
+                                                    new SetupSection.Row([
                                                         new SetupToggle("Force 16:9 Aspect Ratio", map.MapInfo.Force16By9)
                                                         {
                                                             OnChange = value => map.MapInfo.Force16By9 = value
@@ -182,7 +176,9 @@ public partial class SetupTab : EditorTab
                                                                 map.MapInfo.NewLaneSwitchLayout = value;
                                                                 map.MapEvents.LaneSwitchEvents.ForEach(map.Update);
                                                             }
-                                                        },
+                                                        }
+                                                    ]),
+                                                    new SetupSection.Row([
                                                         new SetupToggle("Enable Visualization", map.MapInfo.EnableVisualization)
                                                         {
                                                             TooltipText = "Allows getting audio amplitude data in scripts",
@@ -199,8 +195,8 @@ public partial class SetupTab : EditorTab
                                                             Format = "0",
                                                             OnChange = value => map.MapInfo.ExtraPlayfields = value
                                                         }
-                                                    }
-                                                }
+                                                    ])
+                                                ])
                                             }
                                         },
                                         Empty(),
@@ -209,77 +205,62 @@ public partial class SetupTab : EditorTab
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Vertical,
-                                            Spacing = new Vector2(30),
+                                            Spacing = new Vector2(20),
                                             Children = new Drawable[]
                                             {
-                                                new SetupSection("Assets")
-                                                {
-                                                    Entries = new Drawable[]
+                                                new SetupSection("Assets", [
+                                                    new SetupAsset("Audio", map.MapInfo.AudioFile)
                                                     {
-                                                        new SetupAsset("Audio", map.MapInfo.AudioFile)
-                                                        {
-                                                            AllowedExtensions = FluXisGame.AUDIO_EXTENSIONS,
-                                                            OnChange = map.SetAudio
-                                                        },
-                                                        new SetupAsset("Background", map.MapInfo.BackgroundFile)
-                                                        {
-                                                            AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                                                            OnChange = map.SetBackground
-                                                        },
-                                                        new SetupAsset("Cover", map.MapInfo.CoverFile)
-                                                        {
-                                                            AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                                                            OnChange = map.SetCover
-                                                        },
-                                                        new SetupAsset("Video", map.MapInfo.VideoFile)
-                                                        {
-                                                            AllowedExtensions = FluXisGame.VIDEO_EXTENSIONS,
-                                                            OnChange = map.SetVideo
-                                                        }
-                                                    }
-                                                },
-                                                new SetupSection("Sources")
-                                                {
-                                                    Entries = new Drawable[]
+                                                        AllowedExtensions = FluXisGame.AUDIO_EXTENSIONS,
+                                                        OnChange = map.SetAudio
+                                                    },
+                                                    new SetupAsset("Background", map.MapInfo.BackgroundFile)
                                                     {
-                                                        new SetupTextBox("Audio")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.AudioSource,
-                                                            Placeholder = "No Source",
-                                                            OnChange = value => map.MapInfo.Metadata.AudioSource = map.RealmMap.Metadata.Source = value
-                                                        },
-                                                        new SetupTextBox("Background")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.BackgroundSource,
-                                                            Placeholder = "No Source",
-                                                            OnChange = value => map.MapInfo.Metadata.BackgroundSource = value
-                                                        },
-                                                        new SetupTextBox("Cover")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.CoverSource,
-                                                            Placeholder = "No Source",
-                                                            OnChange = value => map.MapInfo.Metadata.CoverSource = value
-                                                        },
-                                                    }
-                                                },
-                                                new SetupSection("Keymode")
-                                                {
-                                                    Entries = new Drawable[] { new SetupKeymode() }
-                                                },
-                                                new SetupSection("Difficulty")
-                                                {
-                                                    Entries = new Drawable[]
+                                                        AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
+                                                        OnChange = map.SetBackground
+                                                    },
+                                                    new SetupAsset("Cover", map.MapInfo.CoverFile)
                                                     {
-                                                        new SetupSlider<float>("Accuracy", map.MapInfo.AccuracyDifficulty, 1, 10, 0.1f)
-                                                        {
-                                                            OnChange = value => map.MapInfo.AccuracyDifficulty = map.RealmMap.AccuracyDifficulty = value
-                                                        },
-                                                        new SetupSlider<float>("Health", map.MapInfo.HealthDifficulty, 1, 10, 0.1f)
-                                                        {
-                                                            OnChange = value => map.MapInfo.HealthDifficulty = map.RealmMap.HealthDifficulty = value
-                                                        },
+                                                        AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
+                                                        OnChange = map.SetCover
+                                                    },
+                                                    new SetupAsset("Video", map.MapInfo.VideoFile)
+                                                    {
+                                                        AllowedExtensions = FluXisGame.VIDEO_EXTENSIONS,
+                                                        OnChange = map.SetVideo
                                                     }
-                                                },
+                                                ]),
+                                                new SetupSection("Sources", [
+                                                    new SetupTextBox("Audio")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.AudioSource,
+                                                        Placeholder = "No Source",
+                                                        OnChange = value => map.MapInfo.Metadata.AudioSource = map.RealmMap.Metadata.Source = value
+                                                    },
+                                                    new SetupTextBox("Background")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.BackgroundSource,
+                                                        Placeholder = "No Source",
+                                                        OnChange = value => map.MapInfo.Metadata.BackgroundSource = value
+                                                    },
+                                                    new SetupTextBox("Cover")
+                                                    {
+                                                        Default = map.MapInfo.Metadata.CoverSource,
+                                                        Placeholder = "No Source",
+                                                        OnChange = value => map.MapInfo.Metadata.CoverSource = value
+                                                    }
+                                                ]),
+                                                new SetupSection("Keymode", [new SetupKeymode()]),
+                                                new SetupSection("Difficulty", [
+                                                    new SetupSlider<float>("Accuracy", map.MapInfo.AccuracyDifficulty, 1, 10, 0.1f)
+                                                    {
+                                                        OnChange = value => map.MapInfo.AccuracyDifficulty = map.RealmMap.AccuracyDifficulty = value
+                                                    },
+                                                    new SetupSlider<float>("Health", map.MapInfo.HealthDifficulty, 1, 10, 0.1f)
+                                                    {
+                                                        OnChange = value => map.MapInfo.HealthDifficulty = map.RealmMap.HealthDifficulty = value
+                                                    }
+                                                ])
                                             }
                                         }
                                     }
