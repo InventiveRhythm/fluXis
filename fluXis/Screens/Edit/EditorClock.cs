@@ -19,6 +19,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public float TrackLength => (float)(track.Value?.Length ?? 10000);
 
     public event Action<DrawableTrack> TrackChanged;
+    public event Action<double> TimeChanged;
 
     public MapInfo MapInfo { get; set; }
     public BindableInt SnapDivisor { get; init; }
@@ -137,7 +138,9 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     {
         ClearTransforms();
         position = Math.Clamp(position, 0, TrackLength);
-        return underlying.Seek(position);
+        var result = underlying.Seek(position);
+        TimeChanged?.Invoke(position);
+        return result;
     }
 
     public override bool SeekForce(double position) => underlying.Seek(position);
@@ -188,6 +191,8 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         SeekSmoothly(sTime);
     }
 
+    private double lastCurrentTime;
+
     protected override void Update()
     {
         base.Update();
@@ -203,6 +208,11 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         if (isSeekingSmoothly) seekSmoothlyStep();
 
         updateStep();
+
+        if (Precision.AlmostEquals(CurrentTime, lastCurrentTime)) return;
+
+        lastCurrentTime = CurrentTime;
+        TimeChanged?.Invoke(CurrentTime);
     }
 
     public override void ResetSpeedAdjustments() => underlying.ResetSpeedAdjustments();

@@ -48,6 +48,7 @@ using fluXis.Screens.Edit.UI.BottomBar;
 using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Edit.UI.Panels;
 using fluXis.Screens.Edit.UI.TabSwitcher;
+using fluXis.Screens.Edit.UI.Variable.Timing;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Scripting;
 using fluXis.Skinning.Default;
@@ -70,6 +71,7 @@ using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit;
@@ -405,7 +407,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 }
             },
             keymapOverlay = new EditorKeymapOverlay(keybinds),
-            dependencies.CacheAsAndReturn(osd = new EditorOsd())
+            dependencies.CacheAsAndReturn(osd = new EditorOsd()),
+            dependencies.CacheAsAndReturn(new EditorVariableWaveform(editorMap.MapInfo.TimingPoints.FirstOrDefault())
+            {
+                Alpha = 0,
+                AlwaysPresent = true,
+                Size = Vector2.Zero // not needed but might be helpful not to take space in the inspector
+            })
         });
 
         return;
