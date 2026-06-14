@@ -408,7 +408,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             },
             keymapOverlay = new EditorKeymapOverlay(keybinds),
             dependencies.CacheAsAndReturn(osd = new EditorOsd()),
-            dependencies.CacheAsAndReturn(new EditorVariableWaveform(editorMap.MapInfo.TimingPoints.FirstOrDefault())
+            dependencies.CacheAsAndReturn(new EditorVariableWaveform(EditorMap.MapInfo.TimingPoints.FirstOrDefault())
             {
                 Alpha = 0,
                 AlwaysPresent = true,

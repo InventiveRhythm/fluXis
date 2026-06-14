@@ -42,6 +42,7 @@ public partial class EditorVariableWaveform : BufferedContainer
 
     // update every half beat since we already only move by a beat (caps at 30 fps or 1800 bpm)
     private double updateInterval => Math.Max((point?.MsPerBeat ?? 500) / 2, 1000d / 30);
+    private bool isShowing => trackedDrawables.Any(d => d.IsPresent);
 
     private Sample metronomeSample;
     private Sample metronomeEndSample;
@@ -76,7 +77,7 @@ public partial class EditorVariableWaveform : BufferedContainer
     private void updateBuffer(double _)
     {
         if (Clock.CurrentTime - lastUpdateTime < updateInterval) return;
-        if (!trackedDrawables.Any(d => d.IsPresent)) return;
+        if (!isShowing) return;
 
         ForceRedraw();
         lastUpdateTime = Clock.CurrentTime;
@@ -159,7 +160,7 @@ public partial class EditorVariableWaveform : BufferedContainer
         var index = (int)Math.Round((currentTime - point.Time) / point.MsPerBeat);
 
         // 10ms leniency
-        if (clock.IsRunning && lastIndex != index && clock.CurrentTime > point.Time - 10 && clock.CurrentTime < endTime + 10)
+        if (clock.IsRunning && lastIndex != index && clock.CurrentTime > point.Time - 10 && clock.CurrentTime < endTime + 10 && isShowing)
         {
             if (index % point.Signature == 0)
                 metronomeEndSample?.Play();
