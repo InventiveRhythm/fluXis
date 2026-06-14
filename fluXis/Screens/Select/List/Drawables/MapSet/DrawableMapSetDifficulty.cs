@@ -39,15 +39,17 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     {
         get
         {
-            List<MenuItem> items = new()
+            var items = new List<MenuItem>
             {
                 new MenuActionItem(LocalizationStrings.General.Play, Phosphor.Bold.Play, MenuItemType.Highlighted, () =>
                 {
                     selection.Select(map);
                     item.SelectAction?.Invoke();
-                }),
-                new MenuActionItem(LocalizationStrings.General.Edit, Phosphor.Bold.PencilSimple, MenuItemType.Normal, () => item.EditAction?.Invoke(map))
+                })
             };
+
+            if (item.EditAction != null)
+                items.Add(new MenuActionItem(LocalizationStrings.General.Edit, Phosphor.Bold.PencilSimple, MenuItemType.Normal, () => item.EditAction(map)));
 
             if (FluXisGameBase.IsDebug)
             {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Buttons;
@@ -106,106 +107,118 @@ public partial class FooterOptions : FocusedOverlayContainer
                         Direction = FillDirection.Vertical,
                         Spacing = new Vector2(0, 5),
                         Padding = new MarginPadding(10),
-                        Children = new Drawable[]
-                        {
-                            setSection = new FooterOptionSection
-                            {
-                                Title = LocalizationStrings.General.General
-                            },
-                            new FooterOptionButton
-                            {
-                                Text = LocalizationStrings.SongSelect.OptionsSettings,
-                                Icon = Phosphor.Bold.GearSix,
-                                Hotkey = Key.S,
-                                Action = () =>
-                                {
-                                    settings.Show();
-                                    State.Value = Visibility.Hidden;
-                                }
-                            },
-                            setSection = new FooterOptionSection
-                            {
-                                Title = LocalizationStrings.SongSelect.OptionsForAll
-                            },
-                            viewOnlineButton = new FooterOptionButton
-                            {
-                                Text = LocalizationStrings.General.ViewOnline,
-                                Icon = Phosphor.Bold.GlobeHemisphereWest,
-                                Hotkey = Key.O,
-                                Action = () =>
-                                {
-                                    navigator?.PushMapSet(maps.CurrentMapSet.OnlineID);
-                                    State.Value = Visibility.Hidden;
-                                }
-                            },
-                            exportButton = new FooterOptionButton
-                            {
-                                Text = LocalizationStrings.General.Export,
-                                Icon = Phosphor.Bold.Package,
-                                Hotkey = Key.X,
-                                Action = () =>
-                                {
-                                    ExportAction?.Invoke(maps.CurrentMapSet);
-                                    State.Value = Visibility.Hidden;
-                                }
-                            },
-                            new FooterOptionButton
-                            {
-                                Text = LocalizationStrings.SongSelect.OptionsDeleteSet,
-                                Icon = Phosphor.Bold.Trash,
-                                Color = Theme.Red,
-                                Hotkey = Key.D,
-                                Action = () =>
-                                {
-                                    DeleteAction?.Invoke(maps.CurrentMapSet);
-                                    State.Value = Visibility.Hidden;
-                                }
-                            },
-                            mapSection = new FooterOptionSection
-                            {
-                                Title = LocalizationStrings.SongSelect.OptionsForCurrent
-                            },
-                            new FooterOptionButton
-                            {
-                                Text = LocalizationStrings.General.Edit,
-                                Icon = Phosphor.Bold.PencilSimple,
-                                Hotkey = Key.E,
-                                Action = () =>
-                                {
-                                    EditAction?.Invoke(maps.CurrentMap);
-                                    State.Value = Visibility.Hidden;
-                                }
-                            },
-                            new FooterOptionButton
-                            {
-                                Text = LocalizationStrings.SongSelect.OptionsWipeScores,
-                                Icon = Phosphor.Bold.Eraser,
-                                Color = Theme.Red,
-                                Hotkey = Key.W,
-                                Action = () =>
-                                {
-                                    State.Value = Visibility.Hidden;
-
-                                    panels.Content = new ButtonPanel
-                                    {
-                                        Icon = Phosphor.Bold.Eraser,
-                                        Text = LocalizationStrings.SongSelect.WipeScoresConfirmation,
-                                        SubText = LocalizationStrings.General.CanNotBeUndone,
-                                        Buttons = new ButtonData[]
-                                        {
-                                            new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
-                                            {
-                                                scores.WipeFromMap(maps.CurrentMap.ID);
-                                                ScoresWiped?.Invoke();
-                                            }, true),
-                                            new CancelButtonData()
-                                        }
-                                    };
-                                }
-                            }
-                        }
+                        ChildrenEnumerable = createItems()
                     }
                 }
+            }
+        };
+    }
+
+    private IEnumerable<Drawable> createItems()
+    {
+        yield return setSection = new FooterOptionSection { Title = LocalizationStrings.General.General };
+        yield return new FooterOptionButton
+        {
+            Text = LocalizationStrings.SongSelect.OptionsSettings,
+            Icon = Phosphor.Bold.GearSix,
+            Hotkey = Key.S,
+            Action = () =>
+            {
+                settings.Show();
+                State.Value = Visibility.Hidden;
+            }
+        };
+
+        yield return setSection = new FooterOptionSection { Title = LocalizationStrings.SongSelect.OptionsForAll };
+
+        if (navigator != null)
+        {
+            yield return viewOnlineButton = new FooterOptionButton
+            {
+                Text = LocalizationStrings.General.ViewOnline,
+                Icon = Phosphor.Bold.GlobeHemisphereWest,
+                Hotkey = Key.O,
+                Action = () =>
+                {
+                    navigator.PushMapSet(maps.CurrentMapSet.OnlineID);
+                    State.Value = Visibility.Hidden;
+                }
+            };
+        }
+
+        if (ExportAction != null)
+        {
+            yield return exportButton = new FooterOptionButton
+            {
+                Text = LocalizationStrings.General.Export,
+                Icon = Phosphor.Bold.Package,
+                Hotkey = Key.X,
+                Action = () =>
+                {
+                    ExportAction(maps.CurrentMapSet);
+                    State.Value = Visibility.Hidden;
+                }
+            };
+        }
+
+        if (DeleteAction != null)
+        {
+            yield return new FooterOptionButton
+            {
+                Text = LocalizationStrings.SongSelect.OptionsDeleteSet,
+                Icon = Phosphor.Bold.Trash,
+                Color = Theme.Red,
+                Hotkey = Key.D,
+                Action = () =>
+                {
+                    DeleteAction(maps.CurrentMapSet);
+                    State.Value = Visibility.Hidden;
+                }
+            };
+        }
+
+        yield return mapSection = new FooterOptionSection { Title = LocalizationStrings.SongSelect.OptionsForCurrent };
+
+        if (EditAction != null)
+        {
+            yield return new FooterOptionButton
+            {
+                Text = LocalizationStrings.General.Edit,
+                Icon = Phosphor.Bold.PencilSimple,
+                Hotkey = Key.E,
+                Action = () =>
+                {
+                    EditAction(maps.CurrentMap);
+                    State.Value = Visibility.Hidden;
+                }
+            };
+        }
+
+        yield return new FooterOptionButton
+        {
+            Text = LocalizationStrings.SongSelect.OptionsWipeScores,
+            Icon = Phosphor.Bold.Eraser,
+            Color = Theme.Red,
+            Hotkey = Key.W,
+            Action = () =>
+            {
+                State.Value = Visibility.Hidden;
+
+                panels.Content = new ButtonPanel
+                {
+                    Icon = Phosphor.Bold.Eraser,
+                    Text = LocalizationStrings.SongSelect.WipeScoresConfirmation,
+                    SubText = LocalizationStrings.General.CanNotBeUndone,
+                    Buttons = new ButtonData[]
+                    {
+                        new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
+                        {
+                            scores.WipeFromMap(maps.CurrentMap.ID);
+                            ScoresWiped?.Invoke();
+                        }, true),
+                        new CancelButtonData()
+                    }
+                };
             }
         };
     }
