@@ -358,10 +358,21 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     new MenuActionItem("Paste", Phosphor.Bold.Clipboard, () => ChartingContainer?.Paste()),
                                     new MenuSpacerItem(),
                                     new MenuActionItem("Apply Offset...", Phosphor.Bold.Clock, applyOffset),
-                                    new MenuActionItem("Flip Selection", Phosphor.Bold.ArrowsHorizontal, () => ChartingContainer?.FlipSelection())
-                                        { IsEnabled = () => ChartingContainer?.CanFlipSelection ?? false },
-                                    new MenuActionItem("Shuffle Selection", Phosphor.Bold.ShuffleAngular, () => ChartingContainer?.ShuffleSelection())
-                                        { IsEnabled = () => ChartingContainer?.CanShuffleSelection ?? false },
+                                    new MenuActionItem(
+                                        "Flip Selection",
+                                        Phosphor.Bold.ArrowsHorizontal,
+                                        () => ChartingContainer?.FlipSelection()
+                                    ) { IsEnabled = () => ChartingContainer?.SelectedAny ?? false },
+                                    new MenuActionItem(
+                                        "Shuffle Selection",
+                                        Phosphor.Bold.ShuffleAngular,
+                                        () => ChartingContainer?.ShuffleSelection()
+                                    ) { IsEnabled = () => ChartingContainer?.SelectedAny ?? false },
+                                    new MenuActionItem(
+                                        "Apply Group to Selection",
+                                        Phosphor.Bold.ShuffleAngular,
+                                        () => ChartingContainer?.ApplyGroupToSelection()
+                                    ) { IsEnabled = () => ChartingContainer?.SelectedAny ?? false },
                                     new MenuActionItem("Re-snap all notes", Phosphor.Bold.ArrowsClockwise, () => ChartingContainer?.ReSnapAll()),
                                     new MenuSpacerItem(),
                                     new MenuActionItem("Select all", Phosphor.Bold.SelectionAll, () => ChartingContainer?.BlueprintContainer.SelectAll()),
@@ -654,6 +665,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 }
             }
         };
+    }
+
+    private void applyGroupToSelection()
+    {
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)

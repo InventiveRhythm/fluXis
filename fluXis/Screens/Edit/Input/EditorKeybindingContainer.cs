@@ -45,6 +45,7 @@ public partial class EditorKeybindingContainer : KeyBindingContainer<EditorKeybi
         new(new KeyCombination(InputKey.Control, InputKey.Y), EditorKeybinding.Redo),
         new(new KeyCombination(InputKey.Control, InputKey.F), EditorKeybinding.FlipSelection),
         new(new KeyCombination(InputKey.Control, InputKey.Q), EditorKeybinding.ShuffleSelection),
+        new(new KeyCombination(InputKey.Control, InputKey.G), EditorKeybinding.ApplyGroupSelection),
         new(new KeyCombination(InputKey.Control, InputKey.D), EditorKeybinding.CloneSelection),
         new(new KeyCombination(InputKey.BackSpace), EditorKeybinding.DeleteSelection),
         new(new KeyCombination(InputKey.Tab), EditorKeybinding.ToggleSidebar),

@@ -20,6 +20,9 @@ public enum EditorKeybinding
     [Description("Shuffle current selection")]
     ShuffleSelection,
 
+    [Description("Apply group to current selection")]
+    ApplyGroupSelection,
+
     [Description("Clone current selection")]
     CloneSelection,
 
