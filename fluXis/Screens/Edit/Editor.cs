@@ -230,10 +230,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
         dependencies.CacheAs(actionStack = new EditorActionStack(EditorMap) { NotificationManager = notifications });
         dependencies.CacheAs(modding = new EditorModding());
-        dependencies.CacheAs(settings = new EditorSettings(keybinds)
-        {
-            ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)
-        });
+        dependencies.CacheAs(settings = new EditorSettings(keybinds));
 
         updateStateHash();
 
@@ -426,8 +423,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 new MenuExpandItem("Background Blur", Phosphor.Bold.Aperture, createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)),
                 new MenuSpacerItem(),
                 new MenuExpandItem("Waveform opacity", Phosphor.Bold.Waveform, createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)),
-                new MenuSpacerItem(),
-                new MenuToggleItem("Show sample on notes", Phosphor.Bold.Stack, settings.ShowSamples),
                 new MenuSpacerItem(),
                 new MenuToggleItem("Force 16:9 Ratio", Phosphor.Bold.Rectangle, settings.ForceAspectRatio),
                 new MenuToggleItem("Compact Sidebar", Phosphor.Bold.ArrowsInLineVertical, config.GetBindable<bool>(FluXisSetting.EditorCompactMode)),
