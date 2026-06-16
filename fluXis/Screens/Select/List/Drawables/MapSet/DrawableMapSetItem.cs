@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Utils;
 
@@ -21,6 +22,9 @@ public partial class DrawableMapSetItem : CompositeDrawable
     public Action<RealmMap>? EditAction;
     public Action<RealmMapSet>? ExportAction;
     public Action<RealmMapSet>? DeleteAction;
+
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraSetMenuItems = [];
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraDiffMenuItems = [];
 
     private readonly MapSetItem item;
     private readonly RealmMapSet set;
@@ -52,15 +56,16 @@ public partial class DrawableMapSetItem : CompositeDrawable
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Padding = new MarginPadding { Horizontal = 10 }
+                Padding = new MarginPadding { Horizontal = 10 },
             },
-            header = new DrawableMapSetHeader(this, set)
+            header = new DrawableMapSetHeader(this, set) { ExtraMenuItems = ExtraSetMenuItems }
         };
 
         foreach (var map in maps)
         {
             difficultyFlow.Add(new DrawableMapSetDifficulty(this, map)
             {
+                ExtraMenuItems = ExtraDiffMenuItems,
                 RequestedResort = () =>
                 {
                     var children = difficultyFlow.Children.ToList();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
@@ -36,6 +37,8 @@ namespace fluXis.Screens.Select.List.Drawables.MapSet;
 
 public partial class DrawableMapSetHeader : Container, IHasContextMenu
 {
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraMenuItems = [];
+
     public MenuItem[] ContextMenuItems
     {
         get
@@ -52,6 +55,11 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
             items.Add(new MenuActionItem(LocalizationStrings.General.Export, Phosphor.Bold.Package, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset))
                 { IsEnabled = () => !mapset.AutoImported });
             items.Add(new MenuActionItem(LocalizationStrings.General.Delete, Phosphor.Bold.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
+
+            ExtraMenuItems.ForEach(extra =>
+            {
+                if (extra.Predicate()) items.Add(extra.Item);
+            });
 
             if (FluXisGameBase.IsDebug)
             {

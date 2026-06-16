@@ -7,6 +7,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Import;
 using fluXis.Overlay.Settings.UI;
 using fluXis.Plugins;
+using fluXis.Plugins.Capabilities;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -23,8 +24,10 @@ public abstract partial class TestPluginSettings : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load(PluginManager plugins, ImportManager imports, FluXisRealm realm)
     {
-        var plugin = plugins.Plugins.FirstOrDefault(x => x.GetType() == TargetType) ?? throw new InvalidOperationException("Target type is not a loaded plugin.");
-        var importer = plugin.Importer;
+        var plugin = plugins.Plugins.FirstOrDefault(x => x.GetType() == TargetType)
+                     ?? throw new InvalidOperationException("Target type is not a loaded plugin.");
+
+        var importer = plugin.GetCapability<IMapImporterCapability>()?.Importer;
 
         var list = new List<Drawable>();
 

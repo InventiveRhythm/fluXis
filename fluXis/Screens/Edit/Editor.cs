@@ -36,6 +36,8 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Overlay.Wiki;
+using fluXis.Plugins;
+using fluXis.Plugins.Capabilities;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Modding;
@@ -113,6 +115,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     [Resolved(CanBeNull = true)]
     private GlobalFFTProcessor fftProcessor { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PluginManager plugins { get; set; }
 
     /// <summary>
     /// overwrites the tab the editor opens with
@@ -266,6 +272,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             new VerifyTab()
             // new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
         };
+
+        var capabilities = plugins?.Plugins?.GetCapabilities<IEditorCapability>().ToList() ?? [];
+
+        capabilities.ForEach(c =>
+        {
+            var pluginTabs = c.CustomTabs;
+            if (tabs?.Count == 0 || pluginTabs == null) return;
+
+            tabList.AddRange(pluginTabs);
+        });
 
         verifyTab = tabList.OfType<VerifyTab>().First();
 
@@ -522,6 +538,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         EditorMap.BackgroundChanged += () => backgrounds.AddBackgroundFromMap(EditorMap.RealmMap);
 
         EditorMap.ScriptWatcher.Enable();
+
+        var capabilities = plugins?.Plugins?.GetCapabilities<IEditorCapability>().ToList() ?? [];
+        capabilities.ForEach(c => c?.OnEditorLoaded(EditorMap));
     }
 
     protected override void Update()

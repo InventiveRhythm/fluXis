@@ -27,6 +27,7 @@ using Humanizer;
 using JetBrains.Annotations;
 using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -53,6 +54,8 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     [Resolved(CanBeNull = true)]
     private OnlineNavigator navigator { get; set; }
 
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraMenuItems = [];
+
     public MenuItem[] ContextMenuItems
     {
         get
@@ -61,6 +64,11 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
             {
                 new MenuActionItem("View Details", Phosphor.Bold.Info, MenuItemType.Highlighted, viewDetails)
             };
+
+            ExtraMenuItems.ForEach(extra =>
+            {
+                if (extra.Predicate()) items.Add(extra.Item);
+            });
 
             if (DownloadAction != null)
                 items.Add(new MenuActionItem("Download Replay", Phosphor.Bold.ArrowDown, MenuItemType.Normal, download));

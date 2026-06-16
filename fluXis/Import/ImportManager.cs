@@ -11,6 +11,8 @@ using fluXis.Map;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Toolbar;
 using fluXis.Plugins;
+using fluXis.Plugins.Capabilities;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -57,10 +59,15 @@ public partial class ImportManager : Component
     [BackgroundDependencyLoader]
     private void load(PluginManager plugins)
     {
-        foreach (var plugin in plugins.Plugins)
+        foreach (var (plugin, capability) in plugins.Plugins.GetCapabilityPairs<IMapImporterCapability>())
         {
-            var importer = plugin.Importer;
-            if (importer == null) continue;
+            var importer = capability.Importer;
+
+            if (importer == null)
+            {
+                Logger.Log($"{plugin.AssemblyName} has map importing capabilities but no importers, skipping for ImportManager.");
+                continue;
+            }
 
             realm.RunWrite(r =>
             {
@@ -95,15 +102,13 @@ public partial class ImportManager : Component
                 var storageFor = new NativeStorage(path);
                 var resourceStore = new StorageBackedResourceStore(storageFor);
 
-                var resource = new MapSetResources
+                return new MapSetResources
                 {
                     TrackStore = audio.GetTrackStore(resourceStore),
                     SampleStore = audio.GetSampleStore(resourceStore),
                     BackgroundStore = new BackgroundTextureStore(host, storageFor),
                     CroppedBackgroundStore = new CroppedBackgroundStore(host, storageFor)
                 };
-
-                return resource;
             };
 
             importer.Realm = realm;

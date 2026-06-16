@@ -1,9 +1,11 @@
-﻿using fluXis.Database.Maps;
+﻿using System;
+using fluXis.Database.Maps;
 using fluXis.Screens.Select.List.Drawables.Difficulty;
 using fluXis.UI;
 using fluXis.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Screens.Select.List.Items;
 
@@ -16,6 +18,8 @@ public class MapDifficultyItem : IListItem
     public ISelectionManager Selection { get; set; }
 
     public RealmMapMetadata Metadata => map.Metadata;
+
+    public (MenuItem Item, Func<bool> Predicate)[] ExtraMenuItems = [];
 
     public float Size => 80;
     public float Position { get; set; }
@@ -34,6 +38,7 @@ public class MapDifficultyItem : IListItem
     {
         return Drawable = new DrawableDifficultyItem(this, map)
         {
+            ExtraMenuItems = ExtraMenuItems,
             SelectAction = Screen.Accept,
             EditAction = Screen.EditMap,
             DeleteAction = Screen.DeleteMapSet,

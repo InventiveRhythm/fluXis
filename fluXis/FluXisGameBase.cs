@@ -424,7 +424,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         host.ExceptionThrown += e =>
         {
-            exceptionCount++;
+            if (e is not PluginException)
+                exceptionCount++;
+
             Task.Delay(1000).ContinueWith(_ => exceptionCount--);
 
             NotificationManager?.SendError("An unhandled error occurred!", /*IsDebug ? */e.Message /* : "This has been automatically reported to the developers."*/, Phosphor.Bold.Bomb);
