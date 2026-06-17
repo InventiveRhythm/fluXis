@@ -29,12 +29,12 @@ public class FloorboardMap : RealmMap
     {
         var tracks = MapSet.Resources?.TrackStore;
         var track = tracks?.Get("Menu/An Appetising Floorboard");
-        
+
         if (track is not null)
         {
             track.Looping = true;
         }
-        
+
         return track;
     }
 }

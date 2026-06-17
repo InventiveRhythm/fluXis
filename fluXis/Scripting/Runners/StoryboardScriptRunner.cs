@@ -12,6 +12,7 @@ using fluXis.Scripting.Models.Storyboarding.Elements;
 using fluXis.Skinning;
 using fluXis.Storyboards;
 using JetBrains.Annotations;
+using NLua.Exceptions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
@@ -86,6 +87,9 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
         catch (Exception ex)
         {
             Logger.Add("Error when running process()!", LogLevel.Error, ex);
+
+            if (ex is LuaException lx)
+                Logger.Add(lx.Message, LogLevel.Error);
         }
     }
 

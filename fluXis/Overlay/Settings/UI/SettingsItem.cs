@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -16,10 +18,15 @@ using osuTK;
 
 namespace fluXis.Overlay.Settings.UI;
 
-public abstract partial class SettingsItem : Container, IFocusable
+public abstract partial class SettingsItem : Container, IFocusable, IFilterable
 {
     public LocalisableString Label { get; init; } = string.Empty;
     public LocalisableString Description { get; init; } = string.Empty;
+    public LocalisableString[] Keywords { get; init; } = [];
+
+    IEnumerable<LocalisableString> IHasFilterTerms.FilterTerms => new[] { Label, Description }.Concat(Keywords);
+    bool IFilterable.MatchingFilter { set => this.FadeTo(value ? 1 : 0); }
+    bool IFilterable.FilteringActive { set { } }
 
     protected virtual bool IsDefault => true;
     public bool HideWhenDisabled { get; init; }
@@ -111,7 +118,10 @@ public abstract partial class SettingsItem : Container, IFocusable
         EnabledBindable.BindValueChanged(e =>
         {
             var hideAlpha = HideWhenDisabled ? 0 : .5f;
-            this.FadeTo(e.NewValue ? 1 : hideAlpha, HideWhenDisabled ? 0 : 200);
+            var alpha = e.NewValue ? 1 : hideAlpha;
+            var duration = HideWhenDisabled ? 0 : 200;
+            TextFlow.FadeTo(alpha, duration);
+            Content.FadeTo(alpha, duration);
         }, true);
     }
 

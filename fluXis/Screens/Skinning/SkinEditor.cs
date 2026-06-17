@@ -59,6 +59,9 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private EditorVariableTextBox hitPositionTextBox;
     private EditorVariableTextBox columnWidthTextBox;
     private EditorVariableToggle receptorsFirstToggle;
+    private EditorVariableToggle tintNotesToggle;
+    private EditorVariableToggle tintLongNotesToggle;
+    private EditorVariableToggle tintReceptorsToggle;
     private EditorVariableTextBox receptorsPositionTextBox;
 
     [BackgroundDependencyLoader]
@@ -77,6 +80,12 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             columnWidthTextBox.TextBox.Text = mode.ColumnWidth.ToString();
             receptorsFirstToggle.Bindable.Value = mode.ReceptorsFirst;
             receptorsPositionTextBox.TextBox.Text = mode.ReceptorOffset.ToString();
+            tintNotesToggle.Bindable.Value = mode.TintNotes;
+
+            tintLongNotesToggle.Enabled.Value = mode.TintNotes;
+            tintLongNotesToggle.Bindable.Value = mode.TintLongNotes;
+
+            tintReceptorsToggle.Bindable.Value = mode.TintReceptors;
         });
 
         InternalChild = new EditorKeybindingContainer(this, config.GetBindable<string>(FluXisSetting.EditorKeymap), host)
@@ -181,6 +190,33 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                                 else
                                                                     box.NotifyError();
                                                             }
+                                                        },
+                                                        tintNotesToggle = new EditorVariableToggle
+                                                        {
+                                                            Text = "Tint notes",
+                                                            TooltipText = "Whether to tint the notes with the map/snap colors.",
+                                                            CurrentValue = skinJson.GetKeymode(keyMode.Value).TintNotes,
+                                                            OnValueChanged = v =>
+                                                            {
+                                                                skinJson.GetKeymode(keyMode.Value).TintNotes = v;
+                                                                tintLongNotesToggle.Enabled.Value = v;
+                                                            }
+                                                        },
+                                                        tintLongNotesToggle = new EditorVariableToggle
+                                                        {
+                                                            Text = "Tint long notes",
+                                                            TooltipText = "Whether to tint the body and end of a long note with the map/snap colors.\nOnly applies when \"Tint notes\" is enabled.",
+                                                            CurrentValue = skinJson.GetKeymode(keyMode.Value).TintLongNotes,
+                                                            Enabled = { Value = skinJson.GetKeymode(keyMode.Value).TintNotes },
+                                                            OnValueChanged = v => skinJson.GetKeymode(keyMode.Value).TintLongNotes = v,
+                                                            HideWhenDisabled = true
+                                                        },
+                                                        tintReceptorsToggle = new EditorVariableToggle
+                                                        {
+                                                            Text = "Tint receptors",
+                                                            TooltipText = "Whether to tint the receptors with the map/snap colors.",
+                                                            CurrentValue = skinJson.GetKeymode(keyMode.Value).TintReceptors,
+                                                            OnValueChanged = v => skinJson.GetKeymode(keyMode.Value).TintReceptors = v
                                                         },
                                                         new FluXisSpriteText
                                                         {

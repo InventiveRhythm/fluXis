@@ -67,7 +67,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     public Drawable CreateDrawable() => Drawable = new DrawableMapSetItem(this, set, maps)
     {
         SelectAction = () => Screen?.Accept(),
-        EditAction = m => Screen?.EditMap(m),
+        EditAction = Screen?.CreateEditAction(),
         DeleteAction = m => Screen?.DeleteMapSet(m),
         ExportAction = m => Screen?.ExportMapSet(m)
     };

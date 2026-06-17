@@ -79,6 +79,8 @@ public partial class SpectatorScreen : FluXisScreen, IKeyBindingHandler<FluXisGl
             },
             footer = new SpectatorFooter(this.Exit)
         ];
+
+        api.SubscribeToActivities(userid, user.IsOnline);
     }
 
     private void onStartPlaying(long id, SpectatorState state)

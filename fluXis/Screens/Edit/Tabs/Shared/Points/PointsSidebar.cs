@@ -171,6 +171,8 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
         showingSettings = false;
         Locked.Value = false;
 
+        pointsList.NotifyClose();
+
         settingsWrapper.FadeOut(200).ScaleTo(1.2f, 400, Easing.OutQuint);
         pointsList.FadeIn(200).ScaleTo(1, 400, Easing.OutQuint);
     }

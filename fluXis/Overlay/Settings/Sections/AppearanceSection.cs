@@ -19,7 +19,6 @@ public partial class AppearanceSection : SettingsSection
         AddRange(new Drawable[]
         {
             new AppearanceSkinSection(),
-            Divider,
             new AppearanceLayoutSection()
         });
     }

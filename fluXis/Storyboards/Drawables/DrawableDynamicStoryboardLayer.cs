@@ -77,7 +77,9 @@ public partial class DrawableDynamicStoryboardLayer : DrawSizePreservingFillCont
         var elementsList = elements.ToList();
         // micro optimization to speed up iteration instead of using LINQ
         var span = CollectionsMarshal.AsSpan(elementsList);
-        var startTime = source.StartTime;
+
+        double minStart = elementsList.Min(x => x.StartTime);
+        double maxEnd = elementsList.Max(x => x.EndTime);
 
         // Relative time doesn't work very well for our use case here so we convert to absolute time.
         // While we do not inherently need to match the time of the elements created by scripts as of now but,
@@ -85,13 +87,18 @@ public partial class DrawableDynamicStoryboardLayer : DrawSizePreservingFillCont
         // TODO: remove the above 2 comments after adding compounds to scripts
         foreach (ref var e in span)
         {
-            e.StartTime -= startTime;
-            e.EndTime -= startTime;
+            e.StartTime -= minStart;
+            e.EndTime -= minStart;
         }
 
         // we create a new compound for every script element. this doesn't match our normal DrawableStoryboardLayer,
         // but it's definitely cleaner and more effective to do so
         var compoundEl = createCompoundElement(source);
+
+        // prevent premature lifetimes on elements
+        compoundEl.StartTime = minStart;
+        compoundEl.EndTime = maxEnd;
+
         var compound = new DrawableMutableStoryboardCompound(compoundEl, elementsList);
         scriptDrawables[source] = compound;
         masterCompound.AddDrawable(compound, source);

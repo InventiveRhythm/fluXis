@@ -10,4 +10,7 @@ public class APIActivity
 
     [JsonProperty("data")]
     public JObject Data { get; set; }
+
+    public static APIActivity Online => new() { Name = "Online", Data = new JObject() };
+    public static APIActivity Offline => new() { Name = "Offline", Data = new JObject() };
 }

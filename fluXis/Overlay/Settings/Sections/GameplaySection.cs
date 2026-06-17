@@ -19,15 +19,10 @@ public partial class GameplaySection : SettingsSection
         AddRange(new Drawable[]
         {
             new GameplayGeneralSection(),
-            Divider,
             new GameplayScrollSpeedSection(),
-            Divider,
             new GameplayMapSection(),
-            Divider,
             new GameplayBackgroundSection(),
-            Divider,
             new GameplayEffectsSection(),
-            Divider,
             new GameplayHudSection()
         });
     }

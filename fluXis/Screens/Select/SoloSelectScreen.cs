@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Scoring;
+using fluXis.Screens.Edit;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Select.Footer;
@@ -21,6 +25,29 @@ public partial class SoloSelectScreen : SelectScreen
         base.LoadComplete();
         input = GetContainingInputManager();
     }
+
+    public override Action<RealmMap> CreateEditAction() => map =>
+    {
+        if (map == null) return;
+
+        Maps.Select(map, true);
+        if (Maps.CurrentMap == null) return;
+
+        if (map.MapSet.AutoImported)
+        {
+            Panels.Content = new SingleButtonPanel(
+                Phosphor.Bold.Warning,
+                "This map cannot be edited.",
+                "This map is auto-imported from a different game and cannot be opened in the editor.");
+            return;
+        }
+
+        var loadedMap = map.GetMapInfo();
+        if (loadedMap == null) return;
+
+        var editor = new EditorLoader(map, loadedMap);
+        this.Push(editor);
+    };
 
     protected override SelectFooter CreateFooter()
     {

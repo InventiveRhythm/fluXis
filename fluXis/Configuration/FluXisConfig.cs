@@ -63,6 +63,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // UI // Song Select
         SetDefault(FluXisSetting.SongSelectBlur, true);
+        SetDefault(FluXisSetting.SongSelectDiffGroup, false);
         SetDefault(FluXisSetting.LoopMode, LoopMode.Limited);
         SetDefault(FluXisSetting.GroupingMode, MapUtils.GroupingMode.Default);
         SetDefault(FluXisSetting.SortingMode, MapUtils.SortingMode.Title);
@@ -73,7 +74,6 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         // UI // Editor
         SetDefault(FluXisSetting.EditorDim, 0.4f, 0f, 1f, 0.2f);
         SetDefault(FluXisSetting.EditorBlur, 0f, 0f, 1f, 0.2f);
-        SetDefault(FluXisSetting.EditorShowSamples, false);
         SetDefault(FluXisSetting.EditorKeymap, "");
         SetDefault(FluXisSetting.EditorCompactMode, false);
         SetDefault(FluXisSetting.EditorAutoSave, false);
@@ -160,6 +160,7 @@ public enum FluXisSetting
 
     // UI // Song Select
     SongSelectBlur,
+    SongSelectDiffGroup,
     LoopMode,
     GroupingMode,
     SortingMode,
@@ -170,7 +171,6 @@ public enum FluXisSetting
     // UI // Editor
     EditorDim,
     EditorBlur,
-    EditorShowSamples,
     EditorKeymap,
     EditorCompactMode,
     EditorAutoSave,

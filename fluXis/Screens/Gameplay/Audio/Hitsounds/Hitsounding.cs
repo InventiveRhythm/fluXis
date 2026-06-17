@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Configuration;
+using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Map.Structures;
 using fluXis.Skinning;
@@ -73,26 +74,18 @@ public partial class Hitsounding : CompositeDrawable
             channels.Add(new HitSoundChannel($"{DEFAULT_PREFIX}{sample}", s, volume, fade));
         }
 
-        var dir = set.GetPathForFile(".");
-
-        if (Directory.Exists(dir))
+        foreach (var file in GetMapFiles())
         {
-            var wav = Directory.GetFiles(dir, "*.wav");
-            var ogg = Directory.GetFiles(dir, "*.ogg");
+            var name = Path.GetFileNameWithoutExtension(file);
+            var s = set.Resources?.SampleStore?.Get(file);
 
-            foreach (var file in wav.Concat(ogg))
-            {
-                var name = Path.GetFileNameWithoutExtension(file);
-                var s = set.Resources?.SampleStore?.Get(set.GetPathForFile(name));
+            if (s == null)
+                continue;
 
-                if (s == null)
-                    continue;
-
-                s.Frequency.BindTo(rate);
-                s.AddAdjustment(AdjustableProperty.Balance, PlayfieldPanning);
-                var fade = fades.Where(x => x.HitSound == name).ToList();
-                channels.Add(new HitSoundChannel(name, s, volume, fade));
-            }
+            s.Frequency.BindTo(rate);
+            s.AddAdjustment(AdjustableProperty.Balance, PlayfieldPanning);
+            var fade = fades.Where(x => x.HitSound == name).ToList();
+            channels.Add(new HitSoundChannel(name, s, volume, fade));
         }
 
         channels.ForEach(x => x.DirectVolume = DirectVolume);
@@ -119,5 +112,23 @@ public partial class Hitsounding : CompositeDrawable
 
         var name = sample.ToLower().EndsWith(".wav") || sample.ToLower().EndsWith(".ogg") ? Path.GetFileNameWithoutExtension(sample) : sample;
         return channels.Find(c => c.SampleName == name) ?? defaultChannel;
+    }
+
+    public string[] GetMapFiles(bool relative = false)
+    {
+        var dir = set.GetPathForFile(".");
+        if (!Path.IsPathRooted(dir)) dir = MapFiles.GetFullPath(dir);
+
+        if (!Directory.Exists(dir))
+            return [];
+
+        var wav = Directory.GetFiles(dir, "*.wav", SearchOption.AllDirectories);
+        var ogg = Directory.GetFiles(dir, "*.ogg", SearchOption.AllDirectories);
+        var result = wav.Concat(ogg).Order().Where(x => set.Maps.All(m => !x.EndsWith(m.FullAudioPath))).ToArray();
+
+        if (relative)
+            result = result.Select(x => Path.GetRelativePath(dir, x)).ToArray();
+
+        return result;
     }
 }

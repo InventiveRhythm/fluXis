@@ -19,7 +19,6 @@ public partial class PluginsSection : SettingsSection
         AddRange(new Drawable[]
         {
             new PluginsImportSection()
-            // Divider,
             // new PluginsEditorSection(),
         });
     }

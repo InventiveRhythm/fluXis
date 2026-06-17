@@ -28,8 +28,6 @@ public partial class LoadingIcon : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Masking = true;
-        CornerRadius = 10;
         Colour = Theme.Text;
 
         InternalChildren = new Drawable[]

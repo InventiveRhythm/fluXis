@@ -19,9 +19,7 @@ public partial class UserInterfaceSection : SettingsSection
         AddRange(new Drawable[]
         {
             new UserInterfaceGeneralSection(),
-            Divider,
             new UserInterfaceMainMenuSection(),
-            Divider,
             new UserInterfaceSongSelectSection()
         });
     }

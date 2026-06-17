@@ -73,7 +73,7 @@ public static class Program
             case false when sendIpcMessage(host, cwd, args):
                 return;
 
-            case false when !FluXisGameBase.IsDebug:
+            case false:
                 Logger.Log("fluXis does not support multiple running instances.", LoggingTarget.Runtime, LogLevel.Error);
                 return;
 

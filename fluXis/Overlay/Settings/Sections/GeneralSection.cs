@@ -22,7 +22,6 @@ public partial class GeneralSection : SettingsSection
         AddRange(new Drawable[]
         {
             new GeneralLanguageSection(),
-            Divider,
             new GeneralFoldersSection(),
             new Container
             {
