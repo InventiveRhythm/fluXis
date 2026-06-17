@@ -35,7 +35,7 @@ public class MapDifficultyItem : IListItem
         return Drawable = new DrawableDifficultyItem(this, map)
         {
             SelectAction = Screen.Accept,
-            EditAction = Screen.EditMap,
+            EditAction = Screen.CreateEditAction(),
             DeleteAction = Screen.DeleteMapSet,
             ExportAction = Screen.ExportMapSet
         };

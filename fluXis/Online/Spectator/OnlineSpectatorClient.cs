@@ -53,8 +53,6 @@ public partial class OnlineSpectatorClient : SpectatorClient
     protected override void Dispose(bool isDisposing)
     {
         connection?.Close(WebSocketCloseCode.NormalClosure, "Disconnecting.");
-        connection?.Dispose();
-
         base.Dispose(isDisposing);
     }
 

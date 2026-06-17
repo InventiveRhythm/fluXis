@@ -3,9 +3,9 @@ using fluXis.UI;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
-using osuTK;
 
 namespace fluXis.Screens.Edit.Blueprints.Selection;
 
@@ -45,7 +45,15 @@ public partial class SelectionBlueprint<T> : Container, IHasCursorType
     public event Action<SelectedState> StateChanged;
 
     public bool IsSelected => State == SelectedState.Selected;
-    public virtual Vector2 ScreenSpaceSelectionPoint => ScreenSpaceDrawQuad.Centre;
+
+    public virtual RectangleF ScreenSpaceSelectionRect
+    {
+        get
+        {
+            var ss = ScreenSpaceDrawQuad;
+            return new RectangleF(ss.TopLeft, ss.Size);
+        }
+    }
 
     public override bool HandlePositionalInput => ShouldBeAlive;
     public override bool RemoveWhenNotAlive => false;

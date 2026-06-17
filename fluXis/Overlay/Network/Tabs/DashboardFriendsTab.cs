@@ -55,16 +55,25 @@ public partial class DashboardFriendsTab : DashboardTab
     private void refresh()
     {
         content.Clear();
+        StartLoading();
 
         var req = new FriendsRequest();
-        req.Success += res => content.Child = createContent(res.Data!);
-        req.Failure += ex => content.Child = new OnlineErrorContainer
+        req.Success += res =>
         {
-            Text = ex.Message,
-            Anchor = Anchor.TopCentre,
-            Origin = Anchor.Centre,
-            ShowInstantly = true,
-            Y = 200
+            StopLoading();
+            content.Child = createContent(res.Data!);
+        };
+        req.Failure += ex =>
+        {
+            StopLoading();
+            content.Child = new OnlineErrorContainer
+            {
+                Text = ex.Message,
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.Centre,
+                ShowInstantly = true,
+                Y = 200
+            };
         };
         api.PerformRequestAsync(req);
     }

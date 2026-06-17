@@ -24,7 +24,7 @@ public partial class SetupHeader : CompositeDrawable
     {
         RelativeSizeAxes = Axes.X;
         Height = 260;
-        CornerRadius = 40;
+        CornerRadius = 32;
         Masking = true;
 
         InternalChildren = new Drawable[]

@@ -14,6 +14,9 @@ namespace fluXis.Screens.Gameplay.Replays;
 
 public partial class ReplayOverlay : FillFlowContainer
 {
+    [Resolved]
+    private UserCache users { get; set; } = null!;
+
     public string Title { get; set; } = "Replay Mode";
     public Func<APIUser?, string> SubTitle { get; set; } = u => $"Watching {u?.NameWithApostrophe} replay";
 
@@ -25,7 +28,7 @@ public partial class ReplayOverlay : FillFlowContainer
     }
 
     [BackgroundDependencyLoader]
-    private void load(UserCache users)
+    private void load()
     {
         AutoSizeAxes = Axes.Both;
         Anchor = Anchor.TopCentre;
@@ -33,7 +36,13 @@ public partial class ReplayOverlay : FillFlowContainer
         Direction = FillDirection.Vertical;
         Y = 80;
         Alpha = .8f;
+        createContent();
+    }
 
+    public void Recreate() => createContent();
+
+    private void createContent()
+    {
         InternalChildren = new Drawable[]
         {
             new FluXisSpriteText

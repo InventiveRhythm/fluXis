@@ -19,11 +19,8 @@ public partial class AudioSection : SettingsSection
         AddRange(new Drawable[]
         {
             new AudioDeviceSection(),
-            Divider,
             new AudioVolumeSection(),
-            Divider,
             new AudioOffsetSection(),
-            Divider,
             new AudioPanningSection()
         });
     }

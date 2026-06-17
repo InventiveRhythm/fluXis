@@ -1,1 +1,12 @@
-{}
+{
+  "title": "Graficos",
+  "layout-title": "Ventana",
+  "window-mode": "Modo de ventana",
+  "rendering-title": "Rendimiento",
+  "renderer": "Renderizado",
+  "renderer-description": "Reinicia el juego luego de cambiar los ajustes",
+  "frame-limiter": "Limite de FPS",
+  "threading-mode": "Modo de Hilos",
+  "show-fps": "Mostrar FPS",
+  "show-fps-description": "Muestra los fps"
+}

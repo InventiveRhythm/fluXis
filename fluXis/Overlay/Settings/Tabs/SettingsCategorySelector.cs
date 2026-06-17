@@ -5,6 +5,7 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Gamepad;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Input;
 using fluXis.Overlay.Settings.Sections;
 using JetBrains.Annotations;
@@ -30,6 +31,9 @@ public partial class SettingsCategorySelector : Container, IKeyBindingHandler<Fl
     [CanBeNull]
     public Action<Drawable> ScrollToItem { get; set; }
 
+    public Bindable<string> SearchTerm { get; set; } = new();
+    private FluXisTextBox searchBox;
+
     private Drawable gamepadInfo;
 
     public SettingsCategorySelector(List<SettingsSection> list, Bindable<SettingsSection> bind)
@@ -50,19 +54,41 @@ public partial class SettingsCategorySelector : Container, IKeyBindingHandler<Fl
                 RelativeSizeAxes = Axes.Both,
                 Colour = Theme.Background2
             },
-            new FluXisScrollContainer
+            new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                ScrollbarVisible = false,
-                ScrollbarOverlapsContent = true,
-                Child = new FillFlowContainer
+                Padding = new MarginPadding { Top = 48 + 12 },
+                Child = new FluXisScrollContainer
                 {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Padding = new MarginPadding(16),
-                    Direction = FillDirection.Vertical,
-                    Spacing = new Vector2(4),
-                    ChildrenEnumerable = sections.Select(createTab)
+                    RelativeSizeAxes = Axes.Both,
+                    ScrollbarVisible = false,
+                    ScrollbarOverlapsContent = true,
+                    Child = new FillFlowContainer<SettingsCategoryTab>
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Padding = new MarginPadding(16),
+                        Direction = FillDirection.Vertical,
+                        Spacing = new Vector2(4),
+                        ChildrenEnumerable = sections.Select(createTab)
+                    },
+                },
+            },
+            new Container
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 48 + 12,
+                Padding = new MarginPadding { Horizontal = 12, Top = 12 },
+                Child = searchBox = new FluXisTextBox
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    OnTextChanged = () => SearchTerm.Value = searchBox.Text,
+                    PlaceholderText = "Click to search...",
+                    FontSize = FluXisSpriteText.GetWebFontSize(16),
+                    BackgroundActive = Theme.Background2,
+                    BorderColour = Theme.Background4,
+                    BorderThickness = 3,
+                    SidePadding = 12
                 },
             },
             gamepadInfo = new FillFlowContainer()
@@ -85,16 +111,7 @@ public partial class SettingsCategorySelector : Container, IKeyBindingHandler<Fl
                     },
                     createGamepadIcon(ButtonGlyph.RightBump),
                 ]
-            },
-            /*new IconButton
-            {
-                Anchor = Anchor.CentreRight,
-                Origin = Anchor.CentreRight,
-                Icon = Phosphor.Bold.X,
-                ButtonSize = 70,
-                Action = CloseAction,
-                Margin = new MarginPadding(10)
-            }*/
+            }
         };
     }
 

@@ -35,15 +35,35 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
     {
         get
         {
-            List<MenuItem> items = new()
+            var items = new List<MenuItem>();
+
+            if (Equals(maps.CurrentMap, map))
+                items.Add(new MenuActionItem(LocalizationStrings.General.Select, Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => maps.Select(map, true)));
+            else if (SelectAction != null)
+                items.Add(new MenuActionItem(LocalizationStrings.General.Play, Phosphor.Bold.Play, MenuItemType.Highlighted, () => SelectAction()));
+
+            if (EditAction != null)
+                items.Add(new MenuActionItem(LocalizationStrings.General.Edit, Phosphor.Bold.PencilSimple, MenuItemType.Normal, () => EditAction(map)));
+
+            if (ExportAction != null)
             {
-                !Equals(maps.CurrentMap, map)
-                    ? new MenuActionItem(LocalizationStrings.General.Select, Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => maps.Select(map, true))
-                    : new MenuActionItem(LocalizationStrings.General.Play, Phosphor.Bold.Play, MenuItemType.Highlighted, () => SelectAction?.Invoke()),
-                new MenuActionItem(LocalizationStrings.General.Edit, Phosphor.Bold.PencilSimple, MenuItemType.Normal, () => EditAction?.Invoke(map)),
-                new MenuActionItem(LocalizationStrings.General.Export, Phosphor.Bold.Package, MenuItemType.Normal, () => ExportAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported },
-                new MenuActionItem(LocalizationStrings.General.Delete, Phosphor.Bold.Trash, MenuItemType.Dangerous, () => DeleteAction?.Invoke(map.MapSet)) { IsEnabled = () => !map.MapSet.AutoImported }
-            };
+                items.Add(new MenuActionItem(
+                    LocalizationStrings.General.Export,
+                    Phosphor.Bold.Package,
+                    MenuItemType.Normal,
+                    () => ExportAction(map.MapSet)
+                ) { IsEnabled = () => !map.MapSet.AutoImported });
+            }
+
+            if (DeleteAction != null)
+            {
+                items.Add(new MenuActionItem(
+                    LocalizationStrings.General.Delete,
+                    Phosphor.Bold.Trash,
+                    MenuItemType.Dangerous,
+                    () => DeleteAction(map.MapSet)
+                ) { IsEnabled = () => !map.MapSet.AutoImported });
+            }
 
             if (FluXisGameBase.IsDebug)
             {

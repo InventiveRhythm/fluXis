@@ -33,6 +33,8 @@ public partial class SettingsCategoryTab : Container
     private HoverLayer hover;
     private FlashLayer flash;
 
+    private float animation = 0f;
+
     public SettingsCategoryTab(SettingsSection section, Bindable<SettingsSection> bind)
     {
         this.section = section;
@@ -102,6 +104,7 @@ public partial class SettingsCategoryTab : Container
                         X = 6,
                         Origin = Anchor.TopCentre,
                         Padding = new MarginPadding { Vertical = 4 },
+                        Masking = true,
                         Child = new Circle
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -113,9 +116,11 @@ public partial class SettingsCategoryTab : Container
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
                         Padding = new MarginPadding { Left = 12 },
-                        ChildrenEnumerable = section.SubSections.Select(x => new SettingsSubCategoryButton(x)
+                        ChildrenEnumerable = section.SubSections.Select(x =>
                         {
-                            Action = () => ScrollToItem?.Invoke(x)
+                            var item = new SettingsSubCategoryButton(x) { Action = () => ScrollToItem?.Invoke(x) };
+                            x.OnMatchingChanged += v => item.FadeTo(v ? 1 : 0);
+                            return item;
                         })
                     },
                 }
@@ -127,21 +132,31 @@ public partial class SettingsCategoryTab : Container
     {
         base.LoadComplete();
 
+        section.OnMatchingChanged += v => this.FadeTo(v ? 1 : 0);
+
         currentSection.BindValueChanged(v =>
         {
             if (v.NewValue == section)
             {
                 scalingContainer.FadeTo(1f, 200);
-                this.ResizeHeightTo(48 + section.SubSections.Count() * 44, 400, Easing.OutQuint);
+                this.TransformTo(nameof(animation), 1f, 400, Easing.OutQuint);
             }
             else
             {
                 scalingContainer.FadeTo(0.75f, 200);
-                this.ResizeHeightTo(48, 400, Easing.OutQuint);
+                this.TransformTo(nameof(animation), 0f, 400, Easing.OutQuint);
             }
         }, true);
 
         FinishTransforms(true);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        var height = subsections.Height - scalingContainer.Height;
+        Height = scalingContainer.Height + height * animation;
     }
 
     protected override bool OnClick(ClickEvent e)

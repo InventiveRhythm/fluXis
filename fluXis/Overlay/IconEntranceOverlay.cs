@@ -11,6 +11,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Overlay;
@@ -149,4 +150,9 @@ public abstract partial class IconEntranceOverlay : OverlayContainer
         this.FadeOut(200);
         scaling.ScaleTo(.95f, 400, Easing.OutQuint);
     }
+
+    protected override bool OnDragStart(DragStartEvent e) => true;
+    protected override bool OnScroll(ScrollEvent e) => true;
+    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnMouseDown(MouseDownEvent e) => true;
 }

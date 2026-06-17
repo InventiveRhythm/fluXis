@@ -2,9 +2,7 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Overlay.Settings.Sections.Input;
-using fluXis.Overlay.Settings.UI;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Handlers.Mouse;
 using osu.Framework.Localisation;
@@ -22,7 +20,6 @@ public partial class InputSection : SettingsSection
     private InputKeybindingsSection bindings = null!;
     private InputGamepadSection gamepad = null!;
 
-    private SettingsDivider? mouseDiv;
     private InputMouseSection? mouse;
 
     [BackgroundDependencyLoader]
@@ -36,7 +33,6 @@ public partial class InputSection : SettingsSection
             switch (handler)
             {
                 case MouseHandler mh:
-                    Add(mouseDiv = Divider);
                     Add(mouse = new InputMouseSection(mh));
                     break;
             }
@@ -51,8 +47,6 @@ public partial class InputSection : SettingsSection
         {
             bindings.Visible.Value = !b;
             gamepad.Visible.Value = b;
-
-            mouseDiv?.FadeTo(b ? 0f : 1f);
             if (mouse != null) mouse.Visible.Value = !b;
         };
     }

@@ -1,1 +1,11 @@
-{}
+{
+  "title": "Mantenimiento",
+  "files-title": "Archivos",
+  "files-clean-up": "Limpiar archivos",
+  "files-clean-up-description": "Borra los archivos que no son utilizados por ningun mapa",
+  "maps-title": "Mapas",
+  "maps-recalculate-filters": "Recalcular dificultades",
+  "maps-recalculate-filters-description": "Recalcula las dificultades de cada mapa",
+  "maps-scores-clean-up": "Limpiar puntuaciones",
+  "maps-scores-clean-up-description": "Borra las puntuaciones de mapas que ya no tienes instalados"
+}
