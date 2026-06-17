@@ -45,6 +45,7 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<S
     [JsonProperty("start-params")]
     public ShaderParameters StartParameters { get; set; } = new();
 
+    [JsonIgnore]
     public ShaderParameters StartValue
     {
         get => StartParameters;
