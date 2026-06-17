@@ -19,7 +19,6 @@ using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -31,7 +30,6 @@ using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osu.Framework.Utils;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Screens.Select.List.Drawables.MapSet;
 
@@ -79,22 +77,15 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     private readonly DrawableMapSetItem item;
     private readonly RealmMap map;
     private Container outline;
-    private BufferedContainer content;
     private Box highlight;
     private DrawableScoreRank rank;
     private DifficultyChip ratingChip;
-
-    private Color4 keymodeColor;
-    private Color4 keymodeColorLight;
-    private readonly Color4 backgroundColor = Theme.Background2;
 
     public Action RequestedResort { get; set; }
 
     public Bindable<bool> groupByDiffsBindable;
 
     public float TargetY = 0;
-
-    public const float HEIGHT = 48f;
 
     public DrawableMapSetDifficulty(DrawableMapSetItem parentEntry, RealmMap map)
     {
@@ -111,10 +102,9 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         ));
 
         RelativeSizeAxes = Axes.X;
-        Height = HEIGHT;
+        Height = 48;
 
-        keymodeColor = Theme.GetKeyCountColor(map.KeyCount);
-        keymodeColorLight = keymodeColor.Lighten(1);
+        var color = Theme.GetKeyCountColor(map.KeyCount);
 
         InternalChildren = new Drawable[]
         {
@@ -132,26 +122,22 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = ColourInfo.GradientVertical(keymodeColorLight, keymodeColor)
+                            Colour = ColourInfo.GradientVertical(color.Lighten(1), color)
                         }
                     }
                 }
             },
-                // no pixel snapping for this because on small textures it causes a very pixelated look due to TextureFilteringMode.Nearest
-            content = new BufferedContainer(cachedFrameBuffer: true)
+            new Container
             {
-                // render it at 1.25x scale to prevent it from looking "low-res"
-                FrameBufferScale = new Vector2(1.25f),
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
                 Masking = true,
-                BackgroundColour = backgroundColor,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = keymodeColor
+                        Colour = color
                     },
                     new Container
                     {
@@ -172,7 +158,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                                 highlight = new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = ColourInfo.GradientHorizontal(keymodeColor.Opacity(0), keymodeColor.Opacity(0.25f))
+                                    Colour = ColourInfo.GradientHorizontal(color.Opacity(0), color.Opacity(0.25f))
                                 },
                                 new FillFlowContainer
                                 {
@@ -250,7 +236,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Colour = Theme.IsBright(keymodeColor) ? Theme.TextDark : Theme.Text,
+                        Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text,
                         Alpha = .75f,
                         Child = new FillFlowContainer
                         {
@@ -294,14 +280,6 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
 
         scores.TopScoreUpdated += updateTopScore;
         updateTopScore(map.ID, scores.GetCurrentTop(map.ID));
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        if (Time.Current < outline.LatestTransformEndTime || Time.Current < LatestTransformEndTime || IsHovered)
-            content.ForceRedraw();
     }
 
     public void UpdatePosition(double elapsed)
@@ -350,13 +328,11 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     {
         if (Equals(e.NewValue, map))
         {
-            content.BackgroundColour = keymodeColor.Opacity(0);
             outline.FadeIn(200);
             highlight.FadeIn(200);
         }
         else
         {
-            content.BackgroundColour = backgroundColor.Opacity(0);
             outline.FadeOut(200);
             highlight.FadeOut(200);
         }

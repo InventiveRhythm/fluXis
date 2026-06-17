@@ -8,8 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Primitives;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Utils;
 
@@ -28,16 +26,10 @@ public partial class DrawableMapSetItem : CompositeDrawable
     private readonly RealmMapSet set;
     private readonly List<RealmMap> maps;
 
-    private bool alreadyLoadedOnce;
     private SelectedState selectedState = SelectedState.Deselected;
 
     private DrawableMapSetHeader header = null!;
-    private Container<DrawableMapSetDifficulty>? difficultyFlow;
-    private ExpandedLoadWrapper difficultyWrapper = null!;
-
-    private const float unselected_pos = 20f;
-    private const float selected_pos = 85f;
-    private const float pos_velocity = 48 + 5;
+    private Container<DrawableMapSetDifficulty> difficultyFlow = null!;
 
     public DrawableMapSetItem(MapSetItem item, RealmMapSet set, List<RealmMap> maps)
     {
@@ -56,61 +48,28 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            difficultyWrapper = new ExpandedLoadWrapper(() =>
-            {
-                var flow = new Container<DrawableMapSetDifficulty>
-                {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Padding = new MarginPadding { Horizontal = 10 }
-                };
-
-                var isSelected = item.State.Value == SelectedState.Selected;
-                float initialPos = selected_pos;
-
-                foreach (var map in maps)
-                {
-                    flow.Add(new DrawableMapSetDifficulty(this, map)
-                    {
-                        Y = alreadyLoadedOnce ? (isSelected ? initialPos : unselected_pos) : 0,
-                        RequestedResort = () =>
-                        {
-                            var children = flow.Children.ToList();
-                            flow.Clear(false);
-                            children.Sort();
-                            flow.Children = children;
-                        }
-                    });
-
-                    if (alreadyLoadedOnce && isSelected) initialPos += pos_velocity;
-                }
-
-                alreadyLoadedOnce = true;
-                difficultyFlow = flow;
-                return flow;
-            }, 0, 250),
-            new Container
+            difficultyFlow = new Container<DrawableMapSetDifficulty>
             {
                 RelativeSizeAxes = Axes.X,
-                Height = DrawableMapSetHeader.HEIGHT,
-                Masking = true,
-                CornerRadius = 10,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = set.Metadata.Color
-                }
+                AutoSizeAxes = Axes.Y,
+                Padding = new MarginPadding { Horizontal = 10 }
             },
-            new ExpandedLoadWrapper(() => header = new DrawableMapSetHeader(this, set)
-            {
-                RelativeSizeAxes = Axes.Both
-            }, 0, 500)
-            {
-                RelativeSizeAxes = Axes.X,
-                Height = DrawableMapSetHeader.HEIGHT,
-                SSPadding = new MarginPadding { Vertical = 200 }
-            }
+            header = new DrawableMapSetHeader(this, set)
         };
+
+        foreach (var map in maps)
+        {
+            difficultyFlow.Add(new DrawableMapSetDifficulty(this, map)
+            {
+                RequestedResort = () =>
+                {
+                    var children = difficultyFlow.Children.ToList();
+                    difficultyFlow.Clear(false);
+                    children.Sort();
+                    difficultyFlow.Children = children;
+                }
+            });
+        }
     }
 
     protected override void LoadComplete()
@@ -129,15 +88,13 @@ public partial class DrawableMapSetItem : CompositeDrawable
         else
             Y = (float)Interpolation.Lerp(item.Position, Y, Math.Exp(-0.01 * Time.Elapsed));
 
-        if (difficultyFlow is not { IsAlive: true }) return;
-
         var selected = item.State.Value == SelectedState.Selected;
-        var pos = selected ? selected_pos : unselected_pos;
+        var pos = selected ? 85f : 20;
 
         foreach (var difficulty in difficultyFlow)
         {
             difficulty.TargetY = pos;
-            if (selected) pos += pos_velocity;
+            if (selected) pos += 48 + 5;
 
             difficulty.UpdatePosition(Time.Elapsed);
             difficulty.Alpha = difficulty.Y <= 30 ? 0 : 1;
@@ -169,8 +126,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
         if (selectedState == SelectedState.Selected)
             return;
 
-        header?.Show();
-        difficultyWrapper.AllowUnloading = false;
+        header.Show();
         selectedState = SelectedState.Selected;
     }
 
@@ -179,8 +135,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
         if (selectedState == SelectedState.Deselected)
             return;
 
-        header?.Hide();
-        difficultyWrapper.AllowUnloading = true;
+        header.Hide();
         selectedState = SelectedState.Deselected;
     }
 
@@ -191,31 +146,5 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
         item.Select();
         return true;
-    }
-
-    // a trick so it doesn't unload early if it's at the bottom or top of the scroll container
-    private partial class ExpandedLoadWrapper : DelayedLoadUnloadWrapper
-    {
-        public MarginPadding SSPadding { get; set; } = new(250f);
-
-        public ExpandedLoadWrapper(Func<Drawable> createContentAction, double timeBeforeLoad = 0, double timeBeforeUnload = 1000)
-            : base(createContentAction, timeBeforeLoad, timeBeforeUnload)
-        {
-        }
-
-        public override Quad ScreenSpaceDrawQuad
-        {
-            get
-            {
-                var rect = base.ScreenSpaceDrawQuad.AABBFloat;
-
-                return new RectangleF(
-                    rect.X - SSPadding.Left,
-                    rect.Y - SSPadding.Top,
-                    rect.Width + SSPadding.Left + SSPadding.Right,
-                    rect.Height + SSPadding.Top + SSPadding.Bottom
-                );
-            }
-        }
     }
 }
