@@ -8,11 +8,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-// ReSharper disable MissingBlankLines
-
 namespace fluXis.Screens.Edit.UI.BottomBar.Timeline;
 
-public partial class TimelineTagContainer : BufferedContainer
+public partial class TimelineTagContainer : Container
 {
     [Resolved]
     private EditorClock clock { get; set; }
@@ -24,19 +22,10 @@ public partial class TimelineTagContainer : BufferedContainer
     private Container<TimelineNoteTag> notePoints;
     // private Container chorusPoints;
 
-    private float childLatestAnimEndTime;
-
-    private const float width_scale = 1.1f;
-
     public float Offset
     {
         get => -Y;
         set => Y = -value;
-    }
-
-    public TimelineTagContainer()
-        : base(cachedFrameBuffer: true)
-    {
     }
 
     [BackgroundDependencyLoader]
@@ -45,10 +34,8 @@ public partial class TimelineTagContainer : BufferedContainer
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+        Height = 8;
         Y = -Offset;
-
-        // Height increased to accomodate for buffered containers getting clipped
-        Height = 40;
 
         // children order is important for priorety - first: lowest, last: highest
         Children = new Drawable[]
@@ -61,11 +48,6 @@ public partial class TimelineTagContainer : BufferedContainer
     protected override void LoadComplete()
     {
         base.LoadComplete();
-
-        // to prevent horizontal clipping
-        Width *= width_scale;
-
-        ForceRedraw();
 
         registerListeners(
             map.MapInfo.TimingPoints,
@@ -80,16 +62,6 @@ public partial class TimelineTagContainer : BufferedContainer
             n => new TimelineNoteTag(clock, n),
             t => (NoteEvent)t.TimedObject
         );
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        if (Time.Current < childLatestAnimEndTime)
-        {
-            ForceRedraw();
-        }
     }
 
     protected override void Dispose(bool isDisposing)
@@ -120,7 +92,7 @@ public partial class TimelineTagContainer : BufferedContainer
         Func<TObject, TTag> f,
         Func<TTag, TObject> getTimedObject)
         where TObject : class, ITimedObject
-        where TTag : TimelineTag
+        where TTag : Drawable
     {
         map.RegisterAddListener<TObject>(obj => addTag(container, f, obj));
         map.RegisterUpdateListener<TObject>(obj => updateTag(container, getTimedObject, obj));
@@ -134,7 +106,7 @@ public partial class TimelineTagContainer : BufferedContainer
         Func<TObject, TTag> f,
         Func<TTag, TObject> getTimedObject)
         where TObject : class, ITimedObject
-        where TTag : TimelineTag
+        where TTag : Drawable
     {
         map.DeregisterAddListener<TObject>(obj => addTag(container, f, obj));
         map.DeregisterUpdateListener<TObject>(obj => updateTag(container, getTimedObject, obj));
@@ -143,16 +115,14 @@ public partial class TimelineTagContainer : BufferedContainer
 
     private void addTag<TObject, TTag>(Container<TTag> container, Func<TObject, TTag> f, TObject obj)
         where TObject : class, ITimedObject
-        where TTag : TimelineTag
+        where TTag : Drawable
     {
-        var tag = createTag(f(obj));
-        container.Add(tag);
-        tag.X = calculatePosition(obj.Time);
+        container.Add(createTag(f(obj), obj.Time));
     }
 
     private void updateTag<TObject, TTag>(Container<TTag> container, Func<TTag, TObject> getTimedObject, TObject obj)
         where TObject : class, ITimedObject
-        where TTag : TimelineTag
+        where TTag : Drawable
     {
         var tag = container.FirstOrDefault(t => getTimedObject(t) == obj);
         if (tag != null)
@@ -161,26 +131,23 @@ public partial class TimelineTagContainer : BufferedContainer
 
     private void removeTag<TObject, TTag>(Container<TTag> container, Func<TTag, TObject> getTimedObject, TObject obj)
         where TObject : class, ITimedObject
-        where TTag : TimelineTag
+        where TTag : Drawable
     {
         var tag = container.FirstOrDefault(t => getTimedObject(t) == obj);
         if (tag != null)
             container.Remove(tag, true);
     }
 
-    private T createTag<T>(T tag) where T : TimelineTag
+    private T createTag<T>(T tag, double time) where T : Drawable
     {
-        tag.AnimationEnd = t => childLatestAnimEndTime = t;
-        tag.OnDeferredUpdate = ForceRedraw;
+        tag.X = calculatePosition(time);
         return tag;
     }
 
     private float calculatePosition(double time)
     {
         if (time == 0) return 0;
-
-        var p = time / clock.TrackLength;
-        var x = (p + (width_scale - 1) / 2.0) / width_scale;
+        var x = time / clock.TrackLength;
         return double.IsFinite(x) && !double.IsNaN(x) ? (float)x : 0;
     }
 }

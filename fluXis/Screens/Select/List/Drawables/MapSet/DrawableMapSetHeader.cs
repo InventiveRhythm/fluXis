@@ -43,23 +43,23 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
             List<MenuItem> items = new();
 
             if (!Equals(selection.CurrentMapSet, mapset))
-                items.Add(new MenuActionItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => selection.Select(mapset.LowestDifficulty)));
+                items.Add(new MenuActionItem(LocalizationStrings.General.Select, Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => selection.Select(mapset.LowestDifficulty)));
 
             if (mapset.OnlineID > 0)
-                items.Add(new MenuActionItem(LocalizationStrings.General.ViewOnline, FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)) { IsEnabled = () => api.CanUseOnline });
+                items.Add(new MenuActionItem(LocalizationStrings.General.ViewOnline, Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)) { IsEnabled = () => api.CanUseOnline });
 
-            items.Add(new MenuActionItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset))
+            items.Add(new MenuActionItem(LocalizationStrings.General.Export, Phosphor.Bold.Export, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset))
                 { IsEnabled = () => !mapset.AutoImported });
-            items.Add(new MenuActionItem(LocalizationStrings.General.Delete, FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
+            items.Add(new MenuActionItem(LocalizationStrings.General.Delete, Phosphor.Bold.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
 
             if (FluXisGameBase.IsDebug)
             {
                 items.Add(new MenuSpacerItem());
 
                 if (mapset.OnlineID > 0)
-                    items.Add(new MenuActionItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(mapset.OnlineID.ToString())));
+                    items.Add(new MenuActionItem("Copy Online ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard?.SetText(mapset.OnlineID.ToString())));
 
-                items.Add(new MenuActionItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(mapset.ID.ToString())));
+                items.Add(new MenuActionItem("Copy ID", Phosphor.Bold.Copy, MenuItemType.Normal, () => clipboard?.SetText(mapset.ID.ToString())));
             }
 
             return items.ToArray();
@@ -120,6 +120,8 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
         All = Background | Content
     }
 
+    public const float HEIGHT = 80f;
+
     public DrawableMapSetHeader(DrawableMapSetItem parent, RealmMapSet mapset)
         : base(cachedFrameBuffer: true, pixelSnapping: true)
     {
@@ -135,7 +137,7 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
         BackgroundColour = color.Opacity(0);
 
         RelativeSizeAxes = Axes.X;
-        Height = 80;
+        Height = HEIGHT;
         CornerRadius = 10;
         Masking = true;
         Children = new Drawable[]
@@ -208,7 +210,7 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
                 Child = arrow = new FluXisSpriteIcon
                 {
                     X = -2,
-                    Icon = FontAwesome6.Solid.AngleLeft,
+                    Icon = Phosphor.Bold.CaretLeft,
                     Size = new Vector2(16),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -530,7 +532,7 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
                 },
                 icon = new FluXisSpriteIcon
                 {
-                    Icon = FontAwesome6.Solid.ArrowsRotate,
+                    Icon = Phosphor.Bold.ArrowsClockwise,
                     Size = new Vector2(32),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre

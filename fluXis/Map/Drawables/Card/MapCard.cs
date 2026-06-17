@@ -29,7 +29,7 @@ using osuTK;
 
 namespace fluXis.Map.Drawables.Card;
 
-public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, IHasContextMenu, IHasLoadedValue
+public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasContextMenu
 {
     [Resolved]
     private MapStore maps { get; set; }
@@ -44,38 +44,24 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
     [Resolved]
     private IAPIClient api { get; set; }
 
-    public bool Loaded => loaded == LoadingStates.All;
-    private LoadingStates loaded;
-
-    private bool isHoveredDelayed; // to encompass the rest of the fade when unhovering
-
-    [Flags]
-    private enum LoadingStates
-    {
-        Background = 1,
-        Cover = 2,
-
-        All = Background | Cover
-    }
-
     public MenuItem[] ContextMenuItems
     {
         get
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
+                new MenuActionItem("View", Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
             };
 
             if (downloaded)
-                list.Add(new MenuActionItem("Show in Song Select", FontAwesome6.Solid.Eye, selectAndShow));
+                list.Add(new MenuActionItem("Show in Song Select", Phosphor.Bold.Eye, selectAndShow));
             else if (!downloading)
-                list.Add(new MenuActionItem("Download", FontAwesome6.Solid.Download, download));
+                list.Add(new MenuActionItem("Download", Phosphor.Bold.ArrowLineDown, download));
 
-            list.Add(new MenuActionItem("Open in Web", FontAwesome6.Solid.EarthAmericas, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
+            list.Add(new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
 
             if (RequestDelete != null && canDelete)
-                list.Add(new MenuActionItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
+                list.Add(new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
 
             return list.ToArray();
         }
@@ -118,7 +104,6 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
     private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet?.ID);
 
     public MapCard(APIMapSet mapSet)
-        : base(cachedFrameBuffer: true, pixelSnapping: true)
     {
         MapSet = mapSet;
         Height = 112;
@@ -130,8 +115,6 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
         Width = CardWidth;
         CornerRadius = 16;
         Masking = true;
-
-        AlwaysPresent = true;
 
         if (MapSet == null)
         {
@@ -176,11 +159,7 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
                     {
                         RelativeSizeAxes = Axes.Both,
                         LoadContent = () => new DrawableOnlineBackground(MapSet),
-                        OnComplete = d =>
-                        {
-                            d.FadeInFromZero(400);
-                            Scheduler.AddDelayed(() => loaded |= LoadingStates.Background, 400);
-                        }
+                        OnComplete = d => d.FadeInFromZero(400)
                     },
                     gradient = new SectionedGradient
                     {
@@ -208,11 +187,7 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
                                     CornerRadius = 16,
                                     Masking = true,
                                     LoadContent = () => new DrawableOnlineCover(MapSet),
-                                    OnComplete = d =>
-                                    {
-                                        d.FadeInFromZero(400);
-                                        Scheduler.AddDelayed(() => loaded |= LoadingStates.Cover, 400);
-                                    }
+                                    OnComplete = d => d.FadeInFromZero(400)
                                 },
                                 new Container
                                 {
@@ -350,17 +325,8 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
         maps.DownloadFinished -= downloadStateChanged;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-
-        if ((!Loaded) || isHoveredDelayed || Time.Current < content.LatestTransformEndTime)
-            ForceRedraw();
-    }
-
     protected override bool OnHover(HoverEvent e)
     {
-        isHoveredDelayed = true;
         samples.Hover();
         gradient.FadeTo(.5f, 50);
         return true;
@@ -368,7 +334,7 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        gradient.FadeTo(.6f, 200).Finally(_ => isHoveredDelayed = false);
+        gradient.FadeTo(.6f, 200);
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -439,7 +405,5 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
             background.Colour = Theme.DownloadFinished;
         else
             background.Colour = Theme.Background3;
-
-        ForceRedraw();
     }
 }
