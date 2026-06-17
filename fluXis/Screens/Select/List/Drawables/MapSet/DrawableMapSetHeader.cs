@@ -16,6 +16,7 @@ using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Navigator;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -45,11 +46,25 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
             if (!Equals(selection.CurrentMapSet, mapset))
                 items.Add(new MenuActionItem(LocalizationStrings.General.Select, Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => selection.Select(mapset.LowestDifficulty)));
 
-            if (mapset.OnlineID > 0)
-                items.Add(new MenuActionItem(LocalizationStrings.General.ViewOnline, Phosphor.Bold.GlobeHemisphereWest, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)) { IsEnabled = () => api.CanUseOnline });
+            if (mapset.OnlineID > 0 && navigator != null)
+            {
+                items.Add(new MenuActionItem(LocalizationStrings.General.ViewOnline,
+                    Phosphor.Bold.GlobeHemisphereWest,
+                    MenuItemType.Normal,
+                    () => navigator.PushMapSet(mapset.OnlineID)
+                ) { IsEnabled = () => api.CanUseOnline });
+            }
 
-            items.Add(new MenuActionItem(LocalizationStrings.General.Export, Phosphor.Bold.Package, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset))
-                { IsEnabled = () => !mapset.AutoImported });
+            if (parent.ExportAction != null)
+            {
+                items.Add(new MenuActionItem(
+                    LocalizationStrings.General.Export,
+                    Phosphor.Bold.Package,
+                    MenuItemType.Normal,
+                    () => parent.ExportAction(mapset)
+                ) { IsEnabled = () => !mapset.AutoImported });
+            }
+
             items.Add(new MenuActionItem(LocalizationStrings.General.Delete, Phosphor.Bold.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
 
             if (FluXisGameBase.IsDebug)
@@ -80,7 +95,7 @@ public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, 
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private FluXisGame game { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]

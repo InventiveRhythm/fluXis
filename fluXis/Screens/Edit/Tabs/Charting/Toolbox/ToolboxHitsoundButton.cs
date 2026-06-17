@@ -22,13 +22,13 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     {
         get
         {
-            switch (sample)
+            switch (Sample)
             {
                 case "normal":
                     return "Makes this note play the default hitsound.";
 
                 default:
-                    return $"Makes this note play the default {sample} hitsound.";
+                    return $"Makes this note play the default {Sample} hitsound.";
             }
         }
     }
@@ -42,22 +42,19 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     [Resolved]
     private EditorClock clock { get; set; }
 
-    [Resolved]
-    private ChartingContainer chartingContainer { get; set; }
-
-    private IEnumerable<HitObject> hits => BlueprintContainer.SelectionHandler.SelectedObjects.Where(o => o is HitObject).Cast<HitObject>();
+    private IEnumerable<HitObject> hits => BlueprintContainer.SelectionHandler.SelectedObjects;
 
     protected override bool IsSelected
     {
         get
         {
             if (!hits.Any())
-                return chartingContainer.CurrentHitSound.Value == sampleFormatted;
+                return ChartingContainer.CurrentHitSound.Value == sampleFormatted;
 
             return hits.All(h =>
             {
                 if (string.IsNullOrEmpty(h.HitSound))
-                    return sample == "normal";
+                    return Sample == "normal";
 
                 return h.HitSound == sampleFormatted;
             });
@@ -66,13 +63,15 @@ public partial class ToolboxHitsoundButton : ToolboxButton
 
     protected override bool PlayClickSound => false;
 
-    private string sample { get; }
-    private string sampleFormatted => $"{Hitsounding.DEFAULT_PREFIX}{sample}";
+    protected string Sample { get; set; }
+    private string sampleFormatted => $"{(included ? Hitsounding.DEFAULT_PREFIX : "")}{Sample}";
+    private readonly bool included;
 
-    public ToolboxHitsoundButton(string display, string sample)
+    public ToolboxHitsoundButton(string display, string sample, bool included = false)
     {
+        this.included = included;
         Text = display;
-        this.sample = sample;
+        Sample = sample;
     }
 
     protected override void LoadComplete()
@@ -81,8 +80,8 @@ public partial class ToolboxHitsoundButton : ToolboxButton
         BlueprintContainer.SelectionHandler.SelectedObjects.BindCollectionChanged((_, _) => UpdateSelectionState(), true);
         map.HitSoundsChanged += UpdateSelectionState;
 
-        chartingContainer.CurrentHitSound.BindValueChanged(_ => UpdateSelectionState(), true);
-        chartingContainer.Playfields.ForEach(p => p.HitSoundPlayed += sound =>
+        ChartingContainer.CurrentHitSound.BindValueChanged(_ => UpdateSelectionState(), true);
+        ChartingContainer.Playfields.ForEach(p => p.HitSoundPlayed += sound =>
         {
             if (sound == sampleFormatted)
                 Flash.FadeTo(Flash.Alpha + .2f).FadeOut(clock.BeatTime * 2, Easing.OutQuint);
@@ -93,7 +92,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     {
         if (!hits.Any())
         {
-            chartingContainer.CurrentHitSound.Value = sampleFormatted;
+            ChartingContainer.CurrentHitSound.Value = sampleFormatted;
             return;
         }
 
@@ -103,13 +102,15 @@ public partial class ToolboxHitsoundButton : ToolboxButton
 
     protected override bool OnClick(ClickEvent e)
     {
-        chartingContainer.Playfields.ForEach(p => p.PlayHitSound(new HitObject { HitSound = sampleFormatted }, true));
+        PlaySound();
         return base.OnClick(e);
     }
 
+    protected void PlaySound() => ChartingContainer.Playfields.ForEach(p => p.PlayHitSound(new HitObject { HitSound = sampleFormatted }, true));
+
     protected override Drawable CreateIcon()
     {
-        var icon = sample switch
+        var icon = Sample switch
         {
             "clap" => Phosphor.Bold.HandsClapping,
             _ => Phosphor.Bold.Waveform

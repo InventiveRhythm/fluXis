@@ -368,7 +368,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
-    public virtual void OpenLink(string link, bool skipWarning = false)
+    public virtual void OpenLink(string link, bool skipWarning = false, bool ingame = true)
     {
         if (Steam?.Initialized ?? false)
             Steam.OpenLink(link);

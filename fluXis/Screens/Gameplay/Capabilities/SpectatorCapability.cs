@@ -26,6 +26,7 @@ public partial class SpectatorCapability : ReplayCapability
         base.PostLoad();
         Overlay.Title = "Spectator Mode";
         Overlay.SubTitle = u => $"Watching {u?.Username}";
+        Overlay.Recreate();
     }
 
     protected override void ModifyRuleset(ReplayRulesetContainer ruleset)
@@ -40,7 +41,7 @@ public partial class SpectatorCapability : ReplayCapability
         {
             case FluXisGlobalKeybind.GameplayPause:
                 Screen.Exit();
-                break;
+                return true;
         }
 
         return false;

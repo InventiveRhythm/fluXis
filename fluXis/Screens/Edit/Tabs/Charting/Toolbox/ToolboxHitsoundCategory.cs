@@ -17,7 +17,8 @@ public partial class ToolboxHitsoundCategory : ToolboxCategory
         ExtraTitle = "(Q-R)";
         Icon = Phosphor.Bold.MusicNotes;
 
-        Items = Hitsounding.Defaults.Select(s => new ToolboxHitsoundButton(s.Humanize(LetterCasing.Title), s)).Cast<ToolboxButton>().ToList();
+        Items = Hitsounding.Defaults.Select(s => new ToolboxHitsoundButton(s.Humanize(LetterCasing.Title), s, true)).Cast<ToolboxButton>().ToList();
+        Items.Add(new ToolboxCustomHitsoundButton("Custom", "custom"));
     }
 
     protected override List<ToolboxButton> GetItems() => Items;

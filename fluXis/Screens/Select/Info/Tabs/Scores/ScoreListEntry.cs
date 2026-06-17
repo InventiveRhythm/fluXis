@@ -17,7 +17,7 @@ using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Mouse;
-using fluXis.Overlay.User;
+using fluXis.Overlay.Navigator;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Skinning;
@@ -52,7 +52,7 @@ public partial class ScoreListEntry : BufferedContainer, IHasCustomTooltip<Score
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private UserProfileOverlay profileOverlay { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     public ScoreListEntry()
         : base(cachedFrameBuffer: true)
@@ -72,8 +72,8 @@ public partial class ScoreListEntry : BufferedContainer, IHasCustomTooltip<Score
                 items.Add(new MenuActionItem("Download Replay", Phosphor.Bold.ArrowDown, MenuItemType.Normal, download));
             if (ReplayAction != null)
                 items.Add(new MenuActionItem("View Replay", Phosphor.Bold.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
-            if (profileOverlay != null)
-                items.Add(new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Normal, () => profileOverlay.ShowUser(Player.ID)) { IsEnabled = () => api.CanUseOnline });
+            if (navigator != null)
+                items.Add(new MenuActionItem("View Profile", Phosphor.Bold.User, MenuItemType.Normal, () => navigator.PushUser(Player.ID)) { IsEnabled = () => api.CanUseOnline });
             if (DeleteAction != null)
                 items.Add(new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => DeleteAction.Invoke()));
 

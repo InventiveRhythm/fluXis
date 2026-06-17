@@ -39,6 +39,7 @@ public partial class ToolboxButton : Container, IHasTooltip
     private HoverLayer hover;
     protected FlashLayer Flash { get; private set; }
     private Drawable icon;
+    private FluXisSpriteText text;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -85,7 +86,7 @@ public partial class ToolboxButton : Container, IHasTooltip
                                     Icon = Phosphor.Bold.QuestionMark
                                 }
                             },
-                            new FluXisSpriteText
+                            text = new FluXisSpriteText
                             {
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
@@ -108,6 +109,7 @@ public partial class ToolboxButton : Container, IHasTooltip
     });
 
     public virtual void Select() => BlueprintContainer.CurrentTool = Tool;
+    protected void UpdateText(LocalisableString str) => text.Text = str;
 
     protected override void LoadComplete()
     {
@@ -134,7 +136,7 @@ public partial class ToolboxButton : Container, IHasTooltip
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
-        content.ScaleTo(1, 100, Easing.OutElastic);
+        content.ScaleTo(1, 1000, Easing.OutElastic);
         base.OnMouseUp(e);
     }
 

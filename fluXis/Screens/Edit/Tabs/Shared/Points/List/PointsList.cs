@@ -61,6 +61,7 @@ public abstract partial class PointsList : Container
     private Bindable<bool> compactMode;
 
     private Bindable<PointListEntry> currentEvent = new();
+    private PointListEntry currentOpenEvent;
 
     private SpriteIcon iconUp;
     private bool iconUpShown;
@@ -370,7 +371,11 @@ public abstract partial class PointsList : Container
         if (entry != null)
         {
             entry.CurrentEvent = currentEvent;
-            entry.ShowSettings = openSettings;
+            entry.ShowSettings = list =>
+            {
+                currentOpenEvent = entry;
+                openSettings(list);
+            };
             entry.RequestClose = RequestClose;
             entry.RequestApplyGroup = applyGroupSelected;
             entry.CloneSelected = duplicateSelected;
@@ -392,6 +397,12 @@ public abstract partial class PointsList : Container
 
         if (!initialLoad)
             sortPoints();
+    }
+
+    public void NotifyClose()
+    {
+        currentOpenEvent?.TriggerOnClose();
+        currentOpenEvent = null;
     }
 
     public void ShowPoint(ITimedObject obj)

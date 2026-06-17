@@ -22,18 +22,16 @@ using fluXis.Online.Spectator;
 using fluXis.Overlay.Achievements;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Browse;
-using fluXis.Overlay.Club;
 using fluXis.Overlay.Exit;
 using fluXis.Overlay.FPS;
-using fluXis.Overlay.MapSet;
 using fluXis.Overlay.Music;
+using fluXis.Overlay.Navigator;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Overlay.Notifications.Types.Image;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar;
-using fluXis.Overlay.User;
 using fluXis.Overlay.Volume;
 using fluXis.Overlay.Wiki;
 using fluXis.Scoring;
@@ -89,9 +87,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private Container<VisibilityContainer> overlayContainer;
     private Dashboard dashboard;
     private LoginOverlay loginOverlay;
-    private UserProfileOverlay userProfileOverlay;
-    private ClubOverlay clubOverlay;
-    private MapSetOverlay mapSetOverlay;
+    private OnlineNavigator navigator;
     private Toolbar toolbar;
     private PanelContainer panelContainer;
     private FloatingNotificationContainer notificationContainer;
@@ -150,12 +146,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(dashboard = new Dashboard(), overlayContainer.Add, true);
         loadComponent(new BrowseOverlay(), overlayContainer.Add, true);
-        loadComponent(mapSetOverlay = new MapSetOverlay(), overlayContainer.Add, true);
-        loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
         loadComponent(new WikiOverlay(), overlayContainer.Add, true);
-        loadComponent(clubOverlay = new ClubOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
         loadComponent(new SettingsMenu(), overlayContainer.Add, true);
+        loadComponent(navigator = new OnlineNavigator(), overlayContainer.Add, true);
 
         loadComponent(loginOverlay = new LoginOverlay(), buffer.Add, true);
 
@@ -352,28 +346,31 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             globalBackground.AddBackgroundFromMap(map);
     }
 
-    public override void OpenLink(string link, bool skipWarning = false)
+    public override void OpenLink(string link, bool skipWarning = false, bool ingame = true)
     {
-        var parsed = ParsedLink.Parse(link, APIClient.Endpoint);
-
-        switch (parsed.Action)
+        if (ingame)
         {
-            case LinkAction.MapSet:
-                PresentMapSet((long)parsed.Argument);
-                return;
+            var parsed = ParsedLink.Parse(link, APIClient.Endpoint);
 
-            case LinkAction.User:
-                PresentUser((long)parsed.Argument);
-                return;
+            switch (parsed.Action)
+            {
+                case LinkAction.MapSet:
+                    navigator.PushMapSet((long)parsed.Argument);
+                    return;
 
-            case LinkAction.Club:
-                PresentClub((long)parsed.Argument);
-                return;
+                case LinkAction.User:
+                    navigator.PushUser((long)parsed.Argument);
+                    return;
+
+                case LinkAction.Club:
+                    navigator.PushClub((long)parsed.Argument);
+                    return;
+            }
         }
 
         if (skipWarning)
         {
-            base.OpenLink(link, true);
+            base.OpenLink(link, true, false);
             return;
         }
 
@@ -384,7 +381,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return;
         }
 
-        panelContainer.Content = new ExternalLinkPanel(link);
+        panelContainer.Content = new ExternalLinkPanel(link, ingame);
     }
 
     public void OpenDashboard(DashboardTabType type)
@@ -425,18 +422,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             throw new ArgumentNullException();
 
         screenStack.Push(new Results(map, score, player) { ViewReplay = replayAction });
-    }
-
-    public void PresentUser(long id)
-        => userProfileOverlay.ShowUser(id);
-
-    public void PresentClub(long id)
-        => clubOverlay.ShowClub(id);
-
-    public void PresentMapSet(long id)
-    {
-        mapSetOverlay.ShowSet(id);
-        userProfileOverlay.Hide();
     }
 
     public override void ShowMap(RealmMapSet set)

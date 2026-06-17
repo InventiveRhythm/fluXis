@@ -1,1 +1,15 @@
-{}
+{
+  "title": "Idioma",
+  "language-title": "Idioma",
+  "language-current": "Idioma seleccionado",
+  "updates-title": "Actualizaciones",
+  "release-channel": "Version",
+  "release-channel-description": "La version del juego actual",
+  "check-updates": "Buscar actualizaciones",
+  "check-updates-description": "Busca actualizaciones e instala la mas reciente",
+  "folders-title": "Carpetas",
+  "open-folder": "Abrir la carpeta del juego",
+  "export-logs": "Exportar registros",
+  "export-logs-description": "Comprime todos los archivos de registro en un .zip para compartirlos facilmente",
+  "change-folder": "Cambiar ubicacion de carpeta"
+}

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using fluXis.Skinning.Default.HitObject;
 using osu.Framework.Graphics;
@@ -7,6 +8,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
 
 public partial class EditorLandmine : EditorHitObject
 {
+    protected override Colour4 TextColor => Theme.Text;
     private Drawable landminePiece;
 
     public EditorLandmine(HitObject hit)

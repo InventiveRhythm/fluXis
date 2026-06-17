@@ -11,6 +11,12 @@ namespace fluXis.Graphics.UserInterface.Menus;
 
 public partial class FluXisMenu : Menu
 {
+    public float MaskingRadius
+    {
+        get => MaskingContainer.CornerRadius;
+        set => MaskingContainer.CornerRadius = value;
+    }
+
     public FluXisMenu(Direction direction, bool topLevelMenu = false)
         : base(direction, topLevelMenu)
     {

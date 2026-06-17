@@ -7,9 +7,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Blueprints;
@@ -34,7 +34,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     // movement
     private bool isDragging;
     protected SelectionBlueprint<T>[] DraggedBlueprints { get; set; }
-    protected Vector2[] DraggedBlueprintsPositions { get; set; }
+    protected RectangleF[] DraggedBlueprintsPositions { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -164,18 +164,19 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     public void UpdateSelection()
     {
         var quad = SelectionBox.Box.ScreenSpaceDrawQuad;
+        var rect = new RectangleF(quad.TopLeft, quad.Size);
 
         foreach (var blueprint in SelectionBlueprints.All)
         {
             switch (blueprint.State)
             {
                 case SelectedState.Selected:
-                    if (!quad.Contains(blueprint.ScreenSpaceSelectionPoint))
+                    if (!rect.IntersectsWith(blueprint.ScreenSpaceSelectionRect))
                         blueprint.Deselect();
                     break;
 
                 case SelectedState.Deselected:
-                    if (quad.Contains(blueprint.ScreenSpaceSelectionPoint))
+                    if (rect.IntersectsWith(blueprint.ScreenSpaceSelectionRect))
                         blueprint.Select();
                     break;
             }
@@ -206,7 +207,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
             return false;
 
         DraggedBlueprints = SelectionHandler.Selected.ToArray();
-        DraggedBlueprintsPositions = DraggedBlueprints.Select(m => m.ScreenSpaceSelectionPoint).ToArray();
+        DraggedBlueprintsPositions = DraggedBlueprints.Select(m => m.ScreenSpaceSelectionRect).ToArray();
         return true;
     }
 

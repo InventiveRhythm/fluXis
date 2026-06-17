@@ -5,9 +5,11 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Playfield;
 
@@ -25,8 +27,10 @@ public abstract partial class EditorHitObject : CompositeDrawable
     public HitObject Data { get; }
 
     public virtual bool Visible => Math.Abs(EditorClock.CurrentTime - Data.Time) <= 2000 / settings.Zoom;
+    protected virtual Colour4 TextColor => Theme.TextDark;
 
-    private FluXisSpriteText text { get; set; }
+    private FluXisSpriteText groupText;
+    private FluXisSpriteText sampleText;
 
     private bool overZero = true;
     private const int max_distance = 100;
@@ -43,24 +47,31 @@ public abstract partial class EditorHitObject : CompositeDrawable
         AutoSizeAxes = Axes.Y;
         Origin = Anchor.BottomLeft;
 
-        InternalChildren = CreateContent().Concat(new Drawable[]
+        InternalChildren = CreateContent().Concat(new FillFlowContainer
         {
-            new Container
-            {
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Height = Data.Type == HitObjectType.Tick ? 20 : 36,
-                Child = text = new FluXisSpriteText
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Vertical,
+            Spacing = new Vector2(-4),
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Children =
+            [
+                groupText = new FluXisSpriteText
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Colour = Theme.TextDark,
-                    WebFontSize = 14,
-                    Alpha = 0
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Colour = TextColor,
+                    WebFontSize = 12
+                },
+                sampleText = new FluXisSpriteText
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Colour = TextColor,
+                    WebFontSize = 10
                 }
-            }
-        }).ToArray();
+            ]
+        }.Yield()).ToArray();
     }
 
     protected abstract IEnumerable<Drawable> CreateContent();
@@ -69,8 +80,8 @@ public abstract partial class EditorHitObject : CompositeDrawable
     {
         base.Update();
 
-        text.Text = Data.HitSound?.Replace(".wav", "") ?? ":normal";
-        text.Alpha = settings.ShowSamples.Value ? 1 : 0;
+        groupText.Text = Data.Group;
+        sampleText.Text = Data.HitSound?.Replace(".wav", "") ?? ":normal";
 
         X = Playfield.HitObjectContainer.PositionFromLane(Data.Lane);
         Y = Playfield.HitObjectContainer.PositionAtTime(Data.Time);

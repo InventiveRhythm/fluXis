@@ -14,6 +14,7 @@ using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Navigator;
 using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
@@ -36,6 +37,10 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
 
     [Resolved]
     private UISamples samples { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private OnlineNavigator navigator { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -64,7 +69,7 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
         {
             var list = new List<MenuItem>
             {
-                new MenuActionItem("View", Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
+                new MenuActionItem("View", Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => navigator?.PushMapSet(MapSet.ID))
             };
 
             if (downloaded)
@@ -72,7 +77,7 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
             else if (!downloading)
                 list.Add(new MenuActionItem("Download", Phosphor.Bold.ArrowLineDown, download));
 
-            list.Add(new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
+            list.Add(new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}", ingame: false)));
 
             if (RequestDelete != null && canDelete)
                 list.Add(new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
@@ -376,7 +381,7 @@ public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, 
         samples.Click();
 
         if (OnClickAction is null)
-            game?.PresentMapSet(MapSet.ID);
+            navigator?.PushMapSet(MapSet.ID);
         else
             OnClickAction?.Invoke(MapSet);
 
