@@ -15,6 +15,7 @@ using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
+using fluXis.Online.Spectator;
 using fluXis.Overlay.Browse;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
@@ -30,6 +31,7 @@ using fluXis.Screens.Multiplayer;
 using fluXis.Screens.Select;
 using fluXis.UI;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -84,6 +86,10 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private PanelContainer panels { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private SpectatorClient spectator { get; set; }
 
     private FluXisTextFlow splashText;
     private FluXisSpriteText pressAnyKeyText;
@@ -466,6 +472,11 @@ public partial class MenuScreen : FluXisScreen
             default:
                 return CanPlayAnimation();
         }
+    }
+
+    private class SpectatorRequest
+    {
+        public string ID { get; set; }
     }
 
     protected override bool OnMouseDown(MouseDownEvent e) => CanPlayAnimation();

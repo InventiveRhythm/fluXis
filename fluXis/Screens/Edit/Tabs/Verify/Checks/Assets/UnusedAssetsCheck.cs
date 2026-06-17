@@ -44,7 +44,7 @@ public class UnusedAssetsCheck : IVerifyCheck
                         path = element.GetParameter("file", "");
                         break;
 
-                    case StoryboardElementType.Script:
+                    case StoryboardElementType.Script or StoryboardElementType.Video:
                         path = element.GetParameter("path", "");
                         break;
                 }

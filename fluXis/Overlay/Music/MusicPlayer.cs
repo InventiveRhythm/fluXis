@@ -299,7 +299,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         globalBackground.Alpha = screens.Alpha = dim.Alpha = animationProgress >= 1f ? 0 : 1;
         backgrounds.Alpha = video.Alpha >= 1f ? 0 : 1;
 
-        progress.Width = (float)((globalClock.CurrentTrack?.CurrentTime ?? 0) / (globalClock.CurrentTrack?.Length ?? 1000));
+        float width = (float)((globalClock.CurrentTrack?.CurrentTime ?? 0) / (globalClock.CurrentTrack?.Length ?? 1000));
+        progress.Width = float.IsFinite(width) ? width : 0;
 
         pausePlay.IconSprite.Icon = globalClock.IsRunning ? Phosphor.Bold.Pause : Phosphor.Bold.Play;
         fullscreenToggle.IconSprite.Icon = fullscreen ? Phosphor.Bold.ArrowsInSimple : Phosphor.Bold.ArrowsOutSimple;

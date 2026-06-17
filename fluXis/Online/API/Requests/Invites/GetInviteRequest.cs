@@ -1,8 +1,8 @@
-﻿using fluXis.Online.API.Models.Other;
+﻿using fluXis.Online.API.Models.Clubs;
 
 namespace fluXis.Online.API.Requests.Invites;
 
-public class GetInviteRequest : APIRequest<APIInvite>
+public class GetInviteRequest : APIRequest<APIClubInvite>
 {
     protected override string Path => $"/invites/{code}";
 

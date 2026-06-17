@@ -5,8 +5,9 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
-using fluXis.Overlay.User;
+using fluXis.Overlay.Navigator;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
@@ -21,8 +22,9 @@ namespace fluXis.Screens.Ranking.UI;
 
 public partial class LeaderboardUser : Container
 {
-    [Resolved]
-    private UserProfileOverlay profile { get; set; }
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private OnlineNavigator navigator { get; set; }
 
     private APIUser user { get; }
 
@@ -186,7 +188,7 @@ public partial class LeaderboardUser : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        profile.ShowUser(user.ID);
+        navigator?.PushUser(user.ID);
         return true;
     }
 

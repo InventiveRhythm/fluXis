@@ -10,12 +10,10 @@ using fluXis.Database.Score;
 using fluXis.Graphics;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Context;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
-using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
 using fluXis.Integration;
 using fluXis.IO;
@@ -29,7 +27,7 @@ using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Gameplay;
-using fluXis.Screens.Gameplay.Replays;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Select.Footer;
 using fluXis.Screens.Select.Info;
 using fluXis.Screens.Select.List;
@@ -40,6 +38,7 @@ using fluXis.Screens.Select.UI;
 using fluXis.UI;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -70,6 +69,9 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     protected MapStore Maps { get; private set; }
 
     [Resolved]
+    protected PanelContainer Panels { get; private set; }
+
+    [Resolved]
     private NotificationManager notifications { get; set; }
 
     [Resolved]
@@ -83,9 +85,6 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     [Resolved]
     private ReplayStorage replays { get; set; }
-
-    [Resolved]
-    private PanelContainer panels { get; set; }
 
     protected IEnumerable<IMod> CurrentMods => modsOverlay.SelectedMods;
 
@@ -247,7 +246,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         this.Push(new GameplayLoader(map, mods, () =>
         {
             var replay = replayFunc();
-            return replay == null ? null : new ReplayGameplayScreen(map, mods, replay) { Scores = selectMapInfo.ScoreList?.CurrentScores.ToList() };
+            return replay == null ? null : new GameplayScreen(map, mods) { Scores = selectMapInfo.ScoreList?.CurrentScores.ToList() }.RegisterCapability(new ReplayCapability(replay));
         }));
     }
 
@@ -267,7 +266,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         RandomAction = RandomMap,
         PlayAction = Accept,
         DeleteAction = DeleteMapSet,
-        EditAction = EditMap,
+        EditAction = CreateEditAction(),
         ExportAction = ExportMapSet,
         ScoresWiped = () => selectMapInfo.ScoreList?.Refresh()
     };
@@ -323,28 +322,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         });
     }
 
-    public void EditMap(RealmMap map)
-    {
-        if (map == null) return;
-
-        Maps.Select(map, true);
-        if (Maps.CurrentMap == null) return;
-
-        if (map.MapSet.AutoImported)
-        {
-            panels.Content = new SingleButtonPanel(
-                Phosphor.Bold.Warning,
-                "This map cannot be edited.",
-                "This map is auto-imported from a different game and cannot be opened in the editor.");
-            return;
-        }
-
-        var loadedMap = map.GetMapInfo();
-        if (loadedMap == null) return;
-
-        var editor = new EditorLoader(map, loadedMap);
-        this.Push(editor);
-    }
+    [CanBeNull]
+    public virtual Action<RealmMap> CreateEditAction() => null;
 
     public void ExportMapSet(RealmMapSet set)
     {
@@ -368,7 +347,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (set == null || items.Count == 0)
             return;
 
-        panels.Content ??= new ConfirmDeletionPanel(() =>
+        Panels.Content ??= new ConfirmDeletionPanel(() =>
         {
             if (Equals(set, Maps.CurrentMapSet))
                 changeItemSelection(1);

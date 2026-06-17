@@ -138,6 +138,32 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
     #endregion
 
+    #region Activities
+
+    public Dictionary<long, APIActivity> Activities { get; } = new();
+    public event Action<long, APIActivity>? ActivityUpdated;
+
+    void IAPIClient.SubscribeToActivities(long id, bool online)
+    {
+        if (connection?.State != WebSocketState.Open)
+            return;
+
+        if (!Activities.ContainsKey(id))
+            Activities[id] = online ? APIActivity.Online : APIActivity.Offline;
+
+        connection.Server.SubscribeToUser(id);
+    }
+
+    Task INotificationClient.NotifyUserActivity(long id, APIActivity activity)
+    {
+        Logger.Log($"Got activity update for UserID {id}. ({activity.Name}, {activity.Data.Count} fields)", LoggingTarget.Network, LogLevel.Debug);
+        Activities[id] = activity;
+        ActivityUpdated?.Invoke(id, activity);
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
     #region Socket Connect
 
     private TypedWebSocketClient<INotificationServer, INotificationClient>? connection;

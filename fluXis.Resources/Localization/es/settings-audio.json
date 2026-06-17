@@ -1,1 +1,23 @@
-{}
+{
+  "title": "Audio",
+  "device-title": "Dispositivo",
+  "output-device": "Dispositivo de salida",
+  "volume-title": "Volumen",
+  "master-volume": "Volumen General",
+  "master-volume-inactive": "Volumen General (Minimizado)",
+  "master-volume-inactive-description": "El volumen que tiene el juego mientras esta en segundo plano",
+  "music-volume": "Volumen de la musica",
+  "effect-volume": "Volumen de los efectos",
+  "hit-sound-volume": "Volumen de los HItsounds",
+  "offset-title": "Offset",
+"audio-offset": "Offset del Audio",
+"audio-offset-description": "Cambia el Offset de audio para todas las canciones. Un valor mas alto significa que las notas aparecen mas tarde",
+"disable-offset-in-replay": "Desactivar el Offset en Repeticiones",
+"disable-offset-in-replay-description": "Desactiva el Offset de audio al ver repeticiones. Esto es util para grabar videos de repeticiones",
+"open-offset-wizard": "Abrir ajustes de Offset",
+  "panning-title": "Audio Dinamico",
+  "ui-panning": "Sonidos del juego",
+  "ui-panning-description": "Cambia de que lado se escucha el sonido dependiendo de la pocision del mouse",
+  "hitsound-panning": "Hitsounds",
+  "hitsound-panning-description": "Cambia de que lado se escucha el sonido dependiendo la pocision de las notas"
+}

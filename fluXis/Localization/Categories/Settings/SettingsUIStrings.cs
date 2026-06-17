@@ -62,6 +62,9 @@ public class SettingsUIStrings : LocalizationCategory
     public TranslatableString SongSelectBlur => Get("song-select-blur", "Blur Background");
     public TranslatableString SongSelectBlurDescription => Get("song-select-blur-description", "Blur the background of the song select screen.");
 
+    public TranslatableString SongSelectDiffGroup => Get("song-select-diff-group", "Group difficulties by key count");
+    public TranslatableString SongSelectDiffGroupDescription => Get("song-select-diff-group-description", "All difficulties with the same key count will appear beside each other regardless of rating.");
+
     public TranslatableString LoopMode => Get("loop-mode", "Loop Mode");
     public TranslatableString LoopModeDescription => Get("loop-mode-description", "How the song select music should loop.");
 

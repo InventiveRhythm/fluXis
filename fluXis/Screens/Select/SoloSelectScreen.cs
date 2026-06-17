@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Scoring;
+using fluXis.Screens.Edit;
 using fluXis.Screens.Gameplay;
-using fluXis.Screens.Gameplay.Practice;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Select.Footer;
 using osu.Framework.Input;
 using osu.Framework.Screens;
@@ -22,6 +26,29 @@ public partial class SoloSelectScreen : SelectScreen
         input = GetContainingInputManager();
     }
 
+    public override Action<RealmMap> CreateEditAction() => map =>
+    {
+        if (map == null) return;
+
+        Maps.Select(map, true);
+        if (Maps.CurrentMap == null) return;
+
+        if (map.MapSet.AutoImported)
+        {
+            Panels.Content = new SingleButtonPanel(
+                Phosphor.Bold.Warning,
+                "This map cannot be edited.",
+                "This map is auto-imported from a different game and cannot be opened in the editor.");
+            return;
+        }
+
+        var loadedMap = map.GetMapInfo();
+        if (loadedMap == null) return;
+
+        var editor = new EditorLoader(map, loadedMap);
+        this.Push(editor);
+    };
+
     protected override SelectFooter CreateFooter()
     {
         var footer = base.CreateFooter();
@@ -29,7 +56,11 @@ public partial class SoloSelectScreen : SelectScreen
         {
             var map = Maps.CurrentMap;
             var mods = CurrentMods.ToList();
-            this.Push(new GameplayLoader(Maps.CurrentMap, mods, () => new PracticeGameplayScreen(map, mods, s, e)));
+            this.Push(new GameplayLoader(
+                Maps.CurrentMap, mods,
+                () => new GameplayScreen(map, mods)
+                    .RegisterCapability(new PracticeCapability(s, e))
+            ));
         };
         return footer;
     }
@@ -52,6 +83,6 @@ public partial class SoloSelectScreen : SelectScreen
             });
         }
         else
-            this.Push(new GameplayLoader(map, mods, () => new GameplayScreen(map, mods) { Scores = scores }));
+            this.Push(new GameplayLoader(map, mods, () => GameplayScreen.Solo(map, mods, scores)));
     }
 }

@@ -1,9 +1,13 @@
+using fluXis.Screens.Edit.Input;
 using osu.Framework.Bindables;
 
 namespace fluXis.Screens.Edit;
 
 public class EditorSettings
 {
+    private readonly EditorKeybindingContainer bindings;
+    public EditorKeymap Keymap => bindings.Keymap;
+
     public double Zoom
     {
         get => ZoomBindable.Value;
@@ -17,8 +21,6 @@ public class EditorSettings
     }
 
     public Bindable<float> WaveformOpacity { get; } = new(.2f);
-    public Bindable<bool> ShowSamples { get; init; }
-    public Bindable<bool> InvertedScroll { get; } = new();
     public BindableBool ForceAspectRatio { get; } = new();
 
     public BindableDouble ZoomBindable { get; } = new(2f)
@@ -35,6 +37,11 @@ public class EditorSettings
         MaxValue = 32,
         Default = 4
     };
+
+    public EditorSettings(EditorKeybindingContainer bindings)
+    {
+        this.bindings = bindings;
+    }
 
     public override string ToString()
     {

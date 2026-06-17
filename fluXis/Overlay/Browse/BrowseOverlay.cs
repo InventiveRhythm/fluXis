@@ -18,8 +18,9 @@ using fluXis.Online.API;
 using fluXis.Online.API.Requests.MapSets;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
+using fluXis.Overlay.Navigator;
+using fluXis.Overlay.Navigator.Pages.User.Header;
 using fluXis.Overlay.Notifications;
-using fluXis.Overlay.User.Header;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -52,7 +53,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private FluXisGame game { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -299,7 +300,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                     OnClickAction = set =>
                     {
                         previews.PlayPreview(set.ID);
-                        game?.PresentMapSet(set.ID);
+                        navigator?.PushMapSet(set.ID);
                     }
                 });
             }
@@ -385,6 +386,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         previousScrollY = currentScrollY;
     }
 
+    private bool wasPlaying = false;
+
     protected override void PopIn()
     {
         content.ResizeHeightTo(0).MoveToY(1)
@@ -392,7 +395,9 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                .MoveToY(0, 800, Easing.OutQuint);
 
         this.FadeIn(200);
-        clock?.VolumeOut(400).OnComplete(_ => clock?.Stop());
+
+        wasPlaying = clock?.IsRunning ?? false;
+        if (wasPlaying) clock?.VolumeOut(400).OnComplete(_ => clock?.Stop());
 
         if (firstOpen)
         {
@@ -407,6 +412,8 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         this.FadeOut(200);
 
         previews.StopPreview();
+
+        if (!wasPlaying) return;
 
         clock?.Start();
         clock?.VolumeIn(400);

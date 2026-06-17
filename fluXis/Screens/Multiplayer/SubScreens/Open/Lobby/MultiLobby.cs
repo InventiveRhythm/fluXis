@@ -17,9 +17,10 @@ using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Online.Multiplayer;
+using fluXis.Overlay.Navigator;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Gameplay;
-using fluXis.Screens.Multiplayer.Gameplay;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI.Disc;
 using fluXis.Utils;
@@ -61,8 +62,8 @@ public partial class MultiLobby : MultiSubScreen
     [Resolved]
     private PanelContainer panels { get; set; } = null!;
 
-    [Resolved]
-    private FluXisGame game { get; set; } = null!;
+    [Resolved(CanBeNull = true)]
+    private OnlineNavigator? navigator { get; set; }
 
     public MultiplayerRoom? Room => client.Room;
 
@@ -140,7 +141,7 @@ public partial class MultiLobby : MultiSubScreen
                 LeaveAction = this.Exit,
                 RightButtonAction = rightButtonPress,
                 ChangeMapAction = changeMap,
-                ViewMapAction = () => game.PresentMapSet(Room.Map.MapSetID)
+                ViewMapAction = () => navigator?.PushMapSet(Room.Map.MapSetID)
             },
             new MultiCountdown()
         };
@@ -364,7 +365,12 @@ public partial class MultiLobby : MultiSubScreen
             return;
         }
 
-        MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods) { Scores = client.Room?.Scores }));
+        MultiScreen.Push(new GameplayLoader(
+            map, mods,
+            () => new GameplayScreen(map, mods) { Scores = client.Room?.Scores }
+                  .RegisterCapability(new MultiplayerCapability(client))
+                  .RegisterCapability(new SpectatorSendCapability())
+        ));
     }
 
     private void stopClockMusic() => clock.VolumeOut(Styling.TRANSITION_MOVE).OnComplete(_ => clock.Stop());

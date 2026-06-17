@@ -73,7 +73,7 @@ public partial class TimelineElement : CompositeDrawable
                 {
                     new(GridSizeMode.AutoSize, minSize: HEIGHT),
                     new(),
-                    new(GridSizeMode.Absolute, 28)
+                    new(GridSizeMode.Absolute, 36)
                 },
                 Content = new[]
                 {
@@ -214,7 +214,7 @@ public partial class TimelineElement : CompositeDrawable
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            handle.FadeTo(0f, 600).ResizeWidthTo(4, 400, Easing.OutQuint);
+            handle.FadeTo(.6f, 600).ResizeWidthTo(4, 400, Easing.OutQuint);
             base.OnHoverLost(e);
         }
     }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Online.API.Models.Users;
-using fluXis.Overlay.User.Sidebar;
+using fluXis.Overlay.Navigator.Pages.User.Sidebar;
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

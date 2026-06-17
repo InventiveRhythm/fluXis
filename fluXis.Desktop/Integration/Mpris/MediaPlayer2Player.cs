@@ -93,73 +93,79 @@ public partial class MediaPlayer2Player(DBusConnection session) : Component
     {
         base.Update();
 
-        var map = maps.CurrentMap;
-        var playing = clock.IsRunning;
-        var length = clock.CurrentTrack?.Length ?? 0;
-        Position = (long)(clock.CurrentTime * 1000);
-
-        switch (screens.CurrentScreen)
-        {
-            case GameplayScreen gameplay:
-                map = gameplay.RealmMap;
-                playing = !gameplay.IsPaused.Value;
-                length = gameplay.GameplayClock.Track.Length;
-                Position = (long)(gameplay.GameplayClock.CurrentTime * 1000);
-                break;
-
-            case Editor edit:
-                map = edit.EditorMap.RealmMap;
-                playing = edit.EditorClock.IsRunning;
-                length = edit.EditorClock.Track.Value.Length;
-                Position = (long)(edit.EditorClock.CurrentTime * 1000);
-                break;
-        }
-
         Dictionary<string, DBusVariantValue>? changes = null;
 
-        if (!ReferenceEquals(lastMap, map))
+        try
         {
-            Metadata["xesam:title"] = new DBusVariantValue(map.Metadata.SortingTitle);
-            Metadata["xesam:artist"] = new DBusVariantValue(map.Metadata.SortingArtist);
+            var map = maps.CurrentMap;
+            var playing = clock.IsRunning;
+            var length = clock.CurrentTrack?.Length ?? 0;
+            Position = (long)(clock.CurrentTime * 1000);
 
-            var img = getPath(map.MapSet.Cover);
-            if (!File.Exists(img)) img = getPath(map.Metadata.Background);
-            Metadata["mpris:artUrl"] = new DBusVariantValue($"file://{img}");
+            switch (screens.CurrentScreen)
+            {
+                case GameplayScreen gameplay:
+                    map = gameplay.RealmMap;
+                    playing = !gameplay.IsPaused.Value;
+                    length = gameplay.GameplayClock.Track?.Length ?? 100;
+                    Position = (long)(gameplay.GameplayClock.CurrentTime * 1000);
+                    break;
 
-            addChange(nameof(Metadata), Metadata);
-            lastMap = map;
+                case Editor edit:
+                    map = edit.EditorMap.RealmMap;
+                    playing = edit.EditorClock.IsRunning;
+                    length = edit.EditorClock.Track.Value.Length;
+                    Position = (long)(edit.EditorClock.CurrentTime * 1000);
+                    break;
+            }
+
+            if (!ReferenceEquals(lastMap, map))
+            {
+                Metadata["xesam:title"] = new DBusVariantValue(map.Metadata.SortingTitle);
+                Metadata["xesam:artist"] = new DBusVariantValue(map.Metadata.SortingArtist);
+
+                var img = getPath(map.MapSet.Cover);
+                if (!File.Exists(img)) img = getPath(map.Metadata.Background);
+                Metadata["mpris:artUrl"] = new DBusVariantValue($"file://{img}");
+
+                addChange(nameof(Metadata), Metadata);
+                lastMap = map;
+            }
+
+            if (lastPlayState != playing)
+            {
+                PlaybackStatus = playing ? "Playing" : "Paused";
+                addChange(nameof(PlaybackStatus), PlaybackStatus);
+                lastPlayState = playing;
+            }
+
+            if (lastLength != length)
+            {
+                Metadata["mpris:length"] = new DBusVariantValue((long)(length * 1000));
+                addChange(nameof(Metadata), Metadata);
+                lastLength = length;
+            }
+
+            if (changes is null)
+                return;
+
+            var msg = new DBusMessage(DBusEndian.Little, DBusMessageType.Signal, DBusMessageFlags.NoReplyExpected, 1, 1)
+            {
+                Path = "/org/mpris/MediaPlayer2",
+                Interface = "org.freedesktop.DBus.Properties",
+                Member = "PropertiesChanged"
+            };
+            var writer = msg.GetBodyWriter();
+
+            writer.WriteString("org.mpris.MediaPlayer2.Player");
+            writer.WriteDictionary(changes);
+            writer.WriteArray<string>([]);
+
+            session.QueueMessage(msg);
         }
-
-        if (lastPlayState != playing)
+        catch (Exception e)
         {
-            PlaybackStatus = playing ? "Playing" : "Paused";
-            addChange(nameof(PlaybackStatus), PlaybackStatus);
-            lastPlayState = playing;
         }
-
-        if (lastLength != length)
-        {
-            Metadata["mpris:length"] = new DBusVariantValue((long)(length * 1000));
-            addChange(nameof(Metadata), Metadata);
-            lastLength = length;
-        }
-
-        if (changes is null)
-            return;
-
-        var msg = new DBusMessage(DBusEndian.Little, DBusMessageType.Signal, DBusMessageFlags.NoReplyExpected, 1, 1)
-        {
-            Path = "/org/mpris/MediaPlayer2",
-            Interface = "org.freedesktop.DBus.Properties",
-            Member = "PropertiesChanged"
-        };
-        var writer = msg.GetBodyWriter();
-
-        writer.WriteString("org.mpris.MediaPlayer2.Player");
-        writer.WriteDictionary(changes);
-        writer.WriteArray<string>([]);
-
-        session.QueueMessage(msg);
 
         void addChange(string key, object val)
         {

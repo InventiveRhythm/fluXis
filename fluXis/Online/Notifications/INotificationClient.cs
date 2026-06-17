@@ -17,6 +17,7 @@ public interface INotificationClient
 
     Task NotificationReceived(APINotification notification);
     Task NotifyFriendStatus(APIUser friend, bool online);
+    Task NotifyUserActivity(long id, APIActivity activity);
 
     Task RewardAchievement(Achievement achievement);
     Task DisplayMessage(ServerMessage message);

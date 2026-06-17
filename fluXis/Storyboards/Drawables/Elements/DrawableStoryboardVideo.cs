@@ -24,7 +24,7 @@ public partial class DrawableStoryboardVideo : DrawableStoryboardElement
     }
 
     [BackgroundDependencyLoader]
-    private void load(StoryboardStorage storage, IFrameBasedClock framedClock)
+    private void load(StoryboardStorage storage)
     {
         var path = Element.GetParameter("path", string.Empty);
 

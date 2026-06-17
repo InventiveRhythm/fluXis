@@ -51,7 +51,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Full,
-                Spacing = new Vector2(24),
+                Spacing = new Vector2(20),
                 Margin = new MarginPadding { Bottom = 8 }
             },
             new SettingsButton

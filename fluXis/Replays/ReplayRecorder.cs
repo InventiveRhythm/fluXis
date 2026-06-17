@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Input;
@@ -12,6 +13,8 @@ public partial class ReplayRecorder : Component
 
     public Replay Replay { get; } = new();
     public BindableBool IsRecording { get; } = new(true);
+
+    public event Action<ReplayFrame> OnFrameCreated;
 
     public void PressKey(FluXisGameplayKeybind keybind)
     {
@@ -29,6 +32,8 @@ public partial class ReplayRecorder : Component
     {
         if (!IsRecording.Value) return;
 
-        Replay.Frames.Add(new ReplayFrame(Time.Current, currentPressed.Cast<int>().ToArray()));
+        var frame = new ReplayFrame(Time.Current, currentPressed.Cast<int>().ToArray());
+        Replay.Frames.Add(frame);
+        OnFrameCreated?.Invoke(frame);
     }
 }

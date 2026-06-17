@@ -2,6 +2,7 @@ using System;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Primitives;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
@@ -13,7 +14,17 @@ public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
     public override double FirstComparer => Object.Time;
     public override double SecondComparer => Object.EndTime;
 
-    public override Vector2 ScreenSpaceSelectionPoint => PositionProvider.ScreenSpacePositionAtTime(Object.Time, Object.Lane);
+    public override RectangleF ScreenSpaceSelectionRect
+    {
+        get
+        {
+            var pos = PositionProvider.ScreenSpacePositionAtTime(Object.Time, Object.Lane);
+            var size = Drawable.ScreenSpaceDrawQuad.Size;
+            pos -= new Vector2(0, size.Y);
+            return new RectangleF(pos, size);
+        }
+    }
+
     public override bool Visible => Math.Abs(EditorClock.CurrentTime - Object.Time) <= 4000;
 
     protected ITimePositionProvider PositionProvider

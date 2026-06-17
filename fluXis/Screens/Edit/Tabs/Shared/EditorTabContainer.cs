@@ -9,6 +9,8 @@ using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Modding;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
+using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -45,6 +47,9 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
 
     protected virtual MarginPadding ContentPadding => new() { Vertical = 16 };
 
+    [CanBeNull]
+    public EditorToolbox Toolbox { get; private set; }
+
     private ClickableContainer sidebarClickHandler;
     public PointsSidebar Sidebar { get; private set; }
 
@@ -64,6 +69,9 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
         RelativeSizeAxes = Axes.Both;
 
         BeforeLoad();
+
+        var left = CreateLeftSide();
+        if (left is EditorToolbox et) Toolbox = et;
 
         InternalChildren = new Drawable[]
         {
@@ -85,7 +93,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
                 {
                     new[]
                     {
-                        CreateLeftSide(),
+                        left,
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -166,7 +174,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
                     scrollAccumulation = direction * (1 - Math.Abs(scrollAccumulation));
 
                 scrollAccumulation += delta;
-                scrollAccumulation *= Settings.InvertedScroll.Value ? -1 : 1;
+                scrollAccumulation *= Settings.Keymap.InvertScroll ? -1 : 1;
                 scrollAccumulation *= scrollDirection.Value == ScrollDirection.Up ? -1 : 1;
 
                 while (Math.Abs(scrollAccumulation) >= 1)

@@ -19,9 +19,7 @@ public partial class MaintenanceSection : SettingsSection
         AddRange(new Drawable[]
         {
             new AdvancedFilesSection(),
-            Divider,
             new AdvancedMapsSection(),
-            Divider,
             new AdvancedDebugSection()
         });
     }

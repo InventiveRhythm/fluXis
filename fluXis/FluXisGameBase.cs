@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using fluXis.Audio;
+using fluXis.Audio.FFT;
 using fluXis.Audio.Preview;
 using fluXis.Configuration;
 using fluXis.Configuration.Experiments;
@@ -98,6 +99,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private KeybindStore keybindStore;
     private ImportManager importManager;
+
+    private AudioAnalyzer audioAnalyzer;
 
     private Storage exportStorage;
     public Storage ExportStorage => exportStorage ??= Host.Storage.GetStorageForDirectory("export");
@@ -217,6 +220,8 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(new UISamples(), true, true);
             cacheComponent(CreateLightController(), true, true);
             cacheComponent(CursorOverlay = new GlobalCursorOverlay());
+
+            cacheComponent(audioAnalyzer = new AudioAnalyzer(), true, true);
 
             if (Steam is not null)
                 cacheComponent(Steam, true, true);
@@ -360,7 +365,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
-    public virtual void OpenLink(string link, bool skipWarning = false)
+    public virtual void OpenLink(string link, bool skipWarning = false, bool ingame = true)
     {
         if (Steam?.Initialized ?? false)
             Steam.OpenLink(link);

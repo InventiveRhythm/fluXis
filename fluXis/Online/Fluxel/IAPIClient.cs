@@ -63,6 +63,11 @@ public interface IAPIClient
 
     void UpdateLastRead();
 
+    // activities
+    Dictionary<long, APIActivity> Activities { get; }
+    event Action<long, APIActivity> ActivityUpdated;
+    void SubscribeToActivities(long id, bool online);
+
     TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path)
         where S : class where C : class;
 

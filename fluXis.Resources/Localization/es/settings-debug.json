@@ -1,1 +1,9 @@
-{}
+{
+  "title": "Registros",
+  "show-log-overlay": "Mostrar registros",
+  "import-file": "Importar archivo",
+  "log-api": "Registro de respuestas de la API.",
+  "log-api-description": "Registra todas las respuestas a las solicitudes de la API en la consola y en los archivos de registro. Esto puede contener informacion sensible como correos electronicos y tokens..",
+  "show-missing-localizations": "Mostrar localizaciones faltantes",
+  "show-missing-localizations-description": "Muestra el ID de las cadenas que no tienen una localizacion definida. (cambiar de idioma para actualizar)"
+}

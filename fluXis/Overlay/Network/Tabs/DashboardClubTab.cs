@@ -8,7 +8,7 @@ using fluXis.Online.API.Requests.Clubs;
 using fluXis.Online.Drawables;
 using fluXis.Online.Drawables.Users;
 using fluXis.Online.Fluxel;
-using fluXis.Overlay.Club;
+using fluXis.Overlay.Navigator;
 using fluXis.Overlay.Network.Tabs.Club;
 using fluXis.Overlay.Network.Tabs.Shared;
 using JetBrains.Annotations;
@@ -32,7 +32,7 @@ public partial class DashboardClubTab : DashboardTab
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private ClubOverlay clubOverlay { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     private FluXisScrollContainer content;
 
@@ -50,10 +50,10 @@ public partial class DashboardClubTab : DashboardTab
                 new DashboardRefreshButton(refresh),
                 new DashboardRefreshButton(() =>
                 {
-                    if (clubOverlay is null || api.User.Value.Club is null)
+                    if (navigator is null || api.User.Value.Club is null)
                         return;
 
-                    clubOverlay.ShowClub(api.User.Value.Club.ID);
+                    navigator.PushClub(api.User.Value.Club.ID);
                 }) { Text = "View Full" }
             }
         };
@@ -93,8 +93,14 @@ public partial class DashboardClubTab : DashboardTab
             return;
         }
 
+        StartLoading();
+
         var req = new ClubRequest(club.ID);
-        req.Success += res => content.Child = createContent(res.Data!);
+        req.Success += res =>
+        {
+            StopLoading();
+            content.Child = createContent(res.Data!);
+        };
         api.PerformRequestAsync(req);
     }
 

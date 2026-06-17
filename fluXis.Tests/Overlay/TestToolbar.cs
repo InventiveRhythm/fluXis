@@ -3,7 +3,6 @@ using fluXis.Overlay.Music;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar;
-using fluXis.Overlay.User;
 using fluXis.Overlay.Wiki;
 using fluXis.Screens;
 using NUnit.Framework;
@@ -33,7 +32,6 @@ public partial class TestToolbar : FluXisTestScene
             TestDependencies.Cache(new BrowseOverlay());
             TestDependencies.Cache(new WikiOverlay());
             TestDependencies.Cache(new MusicPlayer());
-            TestDependencies.Cache(new UserProfileOverlay());
         }
 
         cached = true;

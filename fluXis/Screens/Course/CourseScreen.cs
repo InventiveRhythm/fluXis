@@ -4,7 +4,6 @@ using fluXis.Graphics;
 using fluXis.Input;
 using fluXis.Mods;
 using fluXis.Scoring;
-using fluXis.Screens.Gameplay;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -58,12 +57,12 @@ public partial class CourseScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         sampleConfirm?.Play();
 
-        this.Push(new GameplayLoader(map, mods, () =>
+        /*this.Push(new GameplayLoader(map, mods, () =>
         {
             var screen = new CourseGameplayScreen(map, mods);
             screen.OnResults += onMapComplete;
             return screen;
-        }));
+        }));*/
     }
 
     private void onMapComplete(ScoreInfo score)
