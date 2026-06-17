@@ -4,7 +4,7 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
-using fluXis.Overlay.User;
+using fluXis.Overlay.Navigator;
 using fluXis.Scoring;
 using fluXis.Utils;
 using JetBrains.Annotations;
@@ -27,7 +27,7 @@ public partial class ResultsPlayer : CompositeDrawable
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
-    private UserProfileOverlay overlay { get; set; }
+    private OnlineNavigator navigator { get; set; }
 
     private LoadWrapper<DrawableAvatar> avatar;
     private ClubTag club;
@@ -125,7 +125,7 @@ public partial class ResultsPlayer : CompositeDrawable
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (user.Value.ID > 0) overlay?.ShowUser(user.Value.ID);
+        if (user.Value.ID > 0) navigator?.PushUser(user.Value.ID);
         return true;
     }
 }

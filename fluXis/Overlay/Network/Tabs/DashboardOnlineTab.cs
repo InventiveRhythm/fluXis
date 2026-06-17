@@ -46,19 +46,21 @@ public partial class DashboardOnlineTab : DashboardWipTab
     private void refresh()
     {
         content.Clear();
+        StartLoading();
 
         try
         {
             var req = new OnlineUsersRequest();
             req.Success += res =>
             {
+                StopLoading();
                 content.Child = new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
                     Direction = FillDirection.Full,
                     Spacing = new Vector2(12),
-                    ChildrenEnumerable = req.Response.Data.Users.Select(x => new DrawableUserCard(x)
+                    ChildrenEnumerable = res.Data.Users.Select(x => new DrawableUserCard(x)
                     {
                         Width = 346,
                         Anchor = Anchor.TopCentre,
@@ -66,13 +68,17 @@ public partial class DashboardOnlineTab : DashboardWipTab
                     })
                 };
             };
-            req.Failure += ex => content.Child = new OnlineErrorContainer
+            req.Failure += ex =>
             {
-                Text = ex.Message,
-                Anchor = Anchor.TopCentre,
-                Origin = Anchor.Centre,
-                ShowInstantly = true,
-                Y = 200
+                StopLoading();
+                content.Child = new OnlineErrorContainer
+                {
+                    Text = ex.Message,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.Centre,
+                    ShowInstantly = true,
+                    Y = 200
+                };
             };
             fluxel.PerformRequestAsync(req);
         }

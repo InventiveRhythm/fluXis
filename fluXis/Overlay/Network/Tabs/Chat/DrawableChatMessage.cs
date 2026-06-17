@@ -13,7 +13,7 @@ using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Requests.Chat;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
-using fluXis.Overlay.User;
+using fluXis.Overlay.Navigator;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
@@ -29,8 +29,9 @@ namespace fluXis.Overlay.Network.Tabs.Chat;
 
 public partial class DrawableChatMessage : Container
 {
-    [Resolved]
-    private UserProfileOverlay profile { get; set; }
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private OnlineNavigator navigator { get; set; }
 
     [Resolved]
     private IAPIClient api { get; set; }
@@ -56,7 +57,7 @@ public partial class DrawableChatMessage : Container
                 LoadContent = () => new DrawableAvatar(InitialMessage.Sender)
                 {
                     RelativeSizeAxes = Axes.Both,
-                    ClickAction = () => profile.ShowUser(InitialMessage.Sender.ID),
+                    ClickAction = () => navigator?.PushUser(InitialMessage.Sender.ID),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     ShowTooltip = true

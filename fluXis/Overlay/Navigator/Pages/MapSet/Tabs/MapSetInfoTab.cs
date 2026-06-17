@@ -1,0 +1,11 @@
+﻿using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.UserInterface.Tabs;
+using osu.Framework.Graphics.Sprites;
+
+namespace fluXis.Overlay.Navigator.Pages.MapSet.Tabs;
+
+public partial class MapSetInfoTab : TabContainer
+{
+    public override IconUsage Icon => Phosphor.Bold.Info;
+    public override string Title => "Info";
+}

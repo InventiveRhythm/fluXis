@@ -48,6 +48,7 @@ using fluXis.Screens.Edit.UI.BottomBar;
 using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Edit.UI.Panels;
 using fluXis.Screens.Edit.UI.TabSwitcher;
+using fluXis.Screens.Edit.UI.Variable.Timing;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Scripting;
 using fluXis.Skinning.Default;
@@ -70,6 +71,7 @@ using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit;
@@ -228,10 +230,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
         dependencies.CacheAs(actionStack = new EditorActionStack(EditorMap) { NotificationManager = notifications });
         dependencies.CacheAs(modding = new EditorModding());
-        dependencies.CacheAs(settings = new EditorSettings(keybinds)
-        {
-            ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)
-        });
+        dependencies.CacheAs(settings = new EditorSettings(keybinds));
 
         updateStateHash();
 
@@ -359,10 +358,21 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     new MenuActionItem("Paste", Phosphor.Bold.Clipboard, () => ChartingContainer?.Paste()),
                                     new MenuSpacerItem(),
                                     new MenuActionItem("Apply Offset...", Phosphor.Bold.Clock, applyOffset),
-                                    new MenuActionItem("Flip Selection", Phosphor.Bold.ArrowsHorizontal, () => ChartingContainer?.FlipSelection())
-                                        { IsEnabled = () => ChartingContainer?.CanFlipSelection ?? false },
-                                    new MenuActionItem("Shuffle Selection", Phosphor.Bold.ShuffleAngular, () => ChartingContainer?.ShuffleSelection())
-                                        { IsEnabled = () => ChartingContainer?.CanShuffleSelection ?? false },
+                                    new MenuActionItem(
+                                        "Flip Selection",
+                                        Phosphor.Bold.ArrowsHorizontal,
+                                        () => ChartingContainer?.FlipSelection()
+                                    ) { IsEnabled = () => ChartingContainer?.SelectedAny ?? false },
+                                    new MenuActionItem(
+                                        "Shuffle Selection",
+                                        Phosphor.Bold.ShuffleAngular,
+                                        () => ChartingContainer?.ShuffleSelection()
+                                    ) { IsEnabled = () => ChartingContainer?.SelectedAny ?? false },
+                                    new MenuActionItem(
+                                        "Apply Group to Selection",
+                                        Phosphor.Bold.ShuffleAngular,
+                                        () => ChartingContainer?.ApplyGroupToSelection()
+                                    ) { IsEnabled = () => ChartingContainer?.SelectedAny ?? false },
                                     new MenuActionItem("Re-snap all notes", Phosphor.Bold.ArrowsClockwise, () => ChartingContainer?.ReSnapAll()),
                                     new MenuSpacerItem(),
                                     new MenuActionItem("Select all", Phosphor.Bold.SelectionAll, () => ChartingContainer?.BlueprintContainer.SelectAll()),
@@ -405,7 +415,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 }
             },
             keymapOverlay = new EditorKeymapOverlay(keybinds),
-            dependencies.CacheAsAndReturn(osd = new EditorOsd())
+            dependencies.CacheAsAndReturn(osd = new EditorOsd()),
+            dependencies.CacheAsAndReturn(new EditorVariableWaveform(EditorMap.MapInfo.TimingPoints.FirstOrDefault())
+            {
+                Alpha = 0,
+                AlwaysPresent = true,
+                Size = Vector2.Zero // not needed but might be helpful not to take space in the inspector
+            })
         });
 
         return;
@@ -418,8 +434,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 new MenuExpandItem("Background Blur", Phosphor.Bold.Aperture, createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)),
                 new MenuSpacerItem(),
                 new MenuExpandItem("Waveform opacity", Phosphor.Bold.Waveform, createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)),
-                new MenuSpacerItem(),
-                new MenuToggleItem("Show sample on notes", Phosphor.Bold.Stack, settings.ShowSamples),
                 new MenuSpacerItem(),
                 new MenuToggleItem("Force 16:9 Ratio", Phosphor.Bold.Rectangle, settings.ForceAspectRatio),
                 new MenuToggleItem("Compact Sidebar", Phosphor.Bold.ArrowsInLineVertical, config.GetBindable<bool>(FluXisSetting.EditorCompactMode)),
@@ -651,6 +665,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 }
             }
         };
+    }
+
+    private void applyGroupToSelection()
+    {
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)

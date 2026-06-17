@@ -21,7 +21,6 @@ public class EditorSettings
     }
 
     public Bindable<float> WaveformOpacity { get; } = new(.2f);
-    public Bindable<bool> ShowSamples { get; init; }
     public BindableBool ForceAspectRatio { get; } = new();
 
     public BindableDouble ZoomBindable { get; } = new(2f)

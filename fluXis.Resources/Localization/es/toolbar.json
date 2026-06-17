@@ -1,1 +1,20 @@
-{}
+{
+  "settings": "Configuracion",
+  "settings-description": "Cambia tu configuracion",
+  "home": "Inicio",
+  "home-description": "Vuelve al menu principal",
+  "maps": "Mapas",
+  "maps-description": "Explora tus mapas",
+  "multiplayer": "Multijugador",
+  "multiplayer-description": "Juega con otras personas",
+  "ranking": "Clasificacion",
+  "ranking-description": "Ve a los mejores jugadores",
+  "dashboard": "Panel",
+  "dashboard-description": "Actualizaciones, chats, noticias y mas",
+  "browse": "Explorar",
+  "browse-description": "Descarga mapas creados por la comunidad",
+  "wiki": "Wiki",
+  "wiki-description": "Aprende mas sobre el juego",
+  "music": "Reproductor de musica",
+  "music-description": "Escucha tu musica"
+}

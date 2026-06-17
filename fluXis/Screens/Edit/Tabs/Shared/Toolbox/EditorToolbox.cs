@@ -12,9 +12,12 @@ namespace fluXis.Screens.Edit.Tabs.Shared.Toolbox;
 
 public partial class EditorToolbox : ExpandingContainer
 {
+    public const int CONTENT_CLOSED = 48;
+    public const int CONTENT_OPENED = 240;
+
     private const int padding = 5;
-    private const int size_closed = 48 + padding * 4;
-    private const int size_open = 240 + padding * 4;
+    private const int size_closed = CONTENT_CLOSED + padding * 4;
+    private const int size_open = CONTENT_OPENED + padding * 4;
 
     protected override double HoverDelay => 500;
 

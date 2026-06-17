@@ -12,6 +12,7 @@ using fluXis.Screens.Edit.UI.Variable.Timing;
 using JetBrains.Annotations;
 using Midori.Utils;
 using Midori.Utils.Extensions;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -24,6 +25,9 @@ public partial class TimingPointEntry : PointListEntry
     protected override Colour4 Color => Theme.TimingPoint;
 
     private TimingPoint timing => Object as TimingPoint;
+
+    [Resolved]
+    private EditorVariableWaveform waveformEditorVariable { get; set; }
 
     [CanBeNull]
     private EditorVariableTime timeBox;
@@ -52,53 +56,69 @@ public partial class TimingPointEntry : PointListEntry
             bpmBox.TextBox.Text = timing.BPM.ToStringInvariant("0.##");
     }
 
-    protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Take(1).Concat(new Drawable[]
+    protected override IEnumerable<Drawable> CreateSettings()
     {
-        timeBox = new EditorVariableTime(Map, Object),
-        new EditorVariableWaveform(timing),
-        new EditorVariableIncrements(Map, timing),
-        bpmBox = new EditorVariableTextBox
-        {
-            Text = "BPM",
-            TooltipText = "The beats per minute of the timing point.",
-            CurrentValue = timing.BPM.ToStringInvariant("0.##"),
-            OnValueChanged = box =>
-            {
-                if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var result) && result > 0)
-                    timing.BPM = result;
-                else
-                    box.NotifyError();
+        waveformEditorVariable.ChangePoint(timing);
 
-                Map.Update(timing);
-            }
-        },
-        new EditorVariableTextBox
+        return base.CreateSettings().Take(1).Concat(new Drawable[]
         {
-            Text = "Time Signature",
-            TooltipText = "The time signature of the timing point.",
-            ExtraText = "/ 4",
-            TextBoxWidth = 50,
-            CurrentValue = timing.Signature.ToString(),
-            OnValueChanged = box =>
+            timeBox = new EditorVariableTime(Map, Object),
+            waveformEditorVariable.CreateView(this).With(d =>
             {
-                if (int.TryParse(box.Text, CultureInfo.InvariantCulture, out var result))
-                    timing.Signature = result;
-                else
-                    box.NotifyError();
+                d.RelativeSizeAxes = Axes.X;
+                d.Height = 280;
+                d.SynchronisedDrawQuad = false;
+            }),
+            new EditorVariableIncrements(Map, timing),
+            bpmBox = new EditorVariableTextBox
+            {
+                Text = "BPM",
+                TooltipText = "The beats per minute of the timing point.",
+                CurrentValue = timing.BPM.ToStringInvariant("0.##"),
+                OnValueChanged = box =>
+                {
+                    if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var result) && result > 0)
+                        timing.BPM = result;
+                    else
+                        box.NotifyError();
 
-                Map.Update(timing);
-            }
-        },
-        new EditorVariableToggle
-        {
-            Text = "Hide Lines",
-            TooltipText = "Hides the lines that appear every 4 beats during gameplay.",
-            Bindable = new Bindable<bool>(timing.HideLines),
-            OnValueChanged = enabled =>
+                    Map.Update(timing);
+                }
+            },
+            new EditorVariableTextBox
             {
-                timing.HideLines = enabled;
-                Map.Update(timing);
+                Text = "Time Signature",
+                TooltipText = "The time signature of the timing point.",
+                ExtraText = "/ 4",
+                TextBoxWidth = 50,
+                CurrentValue = timing.Signature.ToString(),
+                OnValueChanged = box =>
+                {
+                    if (int.TryParse(box.Text, CultureInfo.InvariantCulture, out var result))
+                        timing.Signature = result;
+                    else
+                        box.NotifyError();
+
+                    Map.Update(timing);
+                }
+            },
+            new EditorVariableToggle
+            {
+                Text = "Hide Lines",
+                TooltipText = "Hides the lines that appear every 4 beats during gameplay.",
+                Bindable = new Bindable<bool>(timing.HideLines),
+                OnValueChanged = enabled =>
+                {
+                    timing.HideLines = enabled;
+                    Map.Update(timing);
+                }
             }
-        }
-    });
+        });
+    }
+
+    protected override void OnClose()
+    {
+        base.OnClose();
+        waveformEditorVariable.Untrack(this);
+    }
 }

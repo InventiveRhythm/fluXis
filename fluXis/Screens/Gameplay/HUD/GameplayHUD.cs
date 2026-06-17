@@ -39,6 +39,7 @@ public partial class GameplayHUD : Container
     private PlayfieldHUD[] playfields;
 
     private readonly List<Drawable> hidable = new();
+    private ModsDisplay mods;
     private GameplayLeaderboard leaderboard;
     private float lastAlpha = 1;
 
@@ -74,7 +75,7 @@ public partial class GameplayHUD : Container
         {
             AddRangeInternal(new Drawable[]
             {
-                new ModsDisplay(),
+                mods = new ModsDisplay(),
                 leaderboard = new GameplayLeaderboard(screen?.Scores ?? new List<ScoreInfo>())
             });
         }
@@ -130,6 +131,8 @@ public partial class GameplayHUD : Container
     {
         if (layout?.Gameplay == null)
             return;
+
+        hidable.Add(mods);
 
         foreach (var (key, settings) in layout.Gameplay)
         {

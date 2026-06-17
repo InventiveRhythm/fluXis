@@ -123,6 +123,13 @@ public class TestAPIClient : IAPIClient
     }
 
     public void UpdateLastRead() => LastReadTime = 0;
+    public Dictionary<long, APIActivity> Activities { get; } = new();
+    public event Action<long, APIActivity>? ActivityUpdated;
+
+    public void SubscribeToActivities(long id, bool online)
+    {
+        Activities[id] = online ? APIActivity.Online : APIActivity.Offline;
+    }
 
     public TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path) where S : class where C : class
     {
