@@ -137,7 +137,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         // GameDependencies.CacheAs<IAmplitudeProvider>(globalClock);
 
         loadComponent(NotificationManager, Add);
-        loadComponent<SpectatorClient>(new OnlineSpectatorClient(), Add, true);
 
         loadComponent(globalBackground = new GlobalBackground { InitialDim = 1 }, buffer.Add, true);
         loadComponent(screenContainer = new Container { RelativeSizeAxes = Axes.Both }, buffer.Add);
@@ -272,6 +271,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         void cont()
         {
             APIClient.TryConnecting();
+            loadComponent<SpectatorClient>(new OnlineSpectatorClient(), Add, true);
             c();
         }
     }
