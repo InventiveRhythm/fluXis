@@ -23,6 +23,7 @@ public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartVal
     [JsonProperty("start-offset")]
     public double StartOffset { get; set; }
 
+    [JsonIgnore]
     public double StartValue
     {
         get => StartOffset;
