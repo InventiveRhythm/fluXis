@@ -134,6 +134,7 @@ public abstract class UserActivity
         public override DiscordRichPresence CreateDiscord()
         {
             var rpc = base.CreateDiscord();
+            rpc.DisplayType = DiscordRichPresence.StatusDisplayTypes.Details;
             rpc.Details = $"{map.Metadata.Title} - {map.Metadata.Artist} [{map.Difficulty}]";
             rpc.LargeImage = "playing";
 
@@ -201,6 +202,7 @@ public abstract class UserActivity
         public override DiscordRichPresence CreateDiscord()
         {
             var rpc = base.CreateDiscord();
+            rpc.ActivityType = DiscordRichPresence.ActivityTypes.Watching;
             rpc.State = user != null ? $"Watching {user.Username}'s replay" : "Watching a replay";
             return rpc;
         }
