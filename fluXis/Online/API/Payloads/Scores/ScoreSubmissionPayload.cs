@@ -7,6 +7,9 @@ namespace fluXis.Online.API.Payloads.Scores;
 
 public class ScoreSubmissionPayload
 {
+    [JsonProperty("ticket")]
+    public string Ticket { get; set; }
+
     [JsonProperty("hash")]
     public string MapHash { get; set; }
 

@@ -696,8 +696,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
                     return true;
                 }
 
-                // only add when we have hit at least one note
-                if (!Mods.Any(m => m is PausedMod) && GameplayClock.CurrentTime > Map.StartTime)
+                if (!Mods.Any(m => m is PausedMod))
                     Mods.Add(new PausedMod());
 
                 IsPaused.Toggle();

@@ -131,7 +131,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public static Version Version => Assembly.GetEntryAssembly()?.GetName().Version;
     public static bool IsDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
 
-    public string ClientHash { get; private set; }
+    public static string ClientHash { get; private set; }
 
     public virtual LightController CreateLightController() => new();
 
