@@ -11,6 +11,7 @@ using fluXis.Scripting.Models.Storyboarding;
 using fluXis.Scripting.Models.Storyboarding.Elements;
 using fluXis.Skinning;
 using fluXis.Storyboards;
+using JetBrains.Annotations;
 using NLua.Exceptions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -29,10 +30,8 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
     [LuaGlobal(Name = "screen")]
     public LuaVector2 ScreenResolution { get; }
 
-    public StoryboardScriptRunner
-    (
-        MapInfo map,
-        AudioAnalyzer audioAnalyzer,
+    public StoryboardScriptRunner(
+        MapInfo map, [CanBeNull] AudioAnalyzer audioAnalyzer,
         Storyboard storyboard,
         LuaSettings settings,
         ISkin skin,
