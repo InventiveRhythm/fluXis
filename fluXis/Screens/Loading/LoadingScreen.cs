@@ -26,6 +26,9 @@ public partial class LoadingScreen : FluXisScreen
     [Resolved]
     private FluXisConfig config { get; set; }
 
+    [Resolved]
+    private FluXisGame game { get; set; }
+
     private FluXisGameBase.LoadInfo loadInfo { get; }
     private FluXisSpriteText loadingText { get; }
     private Circle bar { get; }
@@ -109,8 +112,9 @@ public partial class LoadingScreen : FluXisScreen
     private void load(ITrackStore tracks)
     {
         var track = tracks.Get("loading-screen") ?? tracks.GetVirtual(1000);
-        AddInternal(bgm = new DrawableTrack(track)
+        game.Add(bgm = new DrawableTrack(track)
         {
+            Name = "Loading BGM",
             RestartPoint = 8467,
             Looping = true
         });
@@ -149,7 +153,7 @@ public partial class LoadingScreen : FluXisScreen
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        bgm.VolumeTo(0, Styling.TRANSITION_FADE);
+        bgm.VolumeTo(0, Styling.TRANSITION_FADE).Expire();
         this.FadeOut(Styling.TRANSITION_FADE);
         this.MoveToY(20, Styling.TRANSITION_MOVE, Easing.OutQuint);
         base.OnSuspending(e);
