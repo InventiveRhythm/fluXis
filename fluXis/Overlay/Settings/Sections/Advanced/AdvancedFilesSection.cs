@@ -62,12 +62,6 @@ public partial class AdvancedFilesSection : SettingsSubSection
                     notifications.SendText($"Cleaned up {deleted} folder(s)", errors != 0 ? $"{errors} deletion(s) failed." : "", Phosphor.Bold.Check);
                 }
             },
-            new SettingsToggle
-            {
-                Label = strings.StreamFileBrowser,
-                Description = strings.StreamFileBrowserDescription,
-                Bindable = config.GetBindable<bool>(FluXisSetting.StreamFileBrowser)
-            },
             new SettingsTextBox
             {
                 Label = "External Editor Arguments",

@@ -299,7 +299,9 @@ public partial class ScoreListTab : SelectInfoTab
             currentEntries.Clear();
             currentEntries.AddRange(scores);
 
-            scores.ForEach(s => addScore(s, scores.IndexOf(s)));
+            for (int i = 0; i < scores.Count; i++)
+                addScore(scores[i], i);
+
             list.ScrollContent.Add(Empty().With(x =>
             {
                 var last = list.ScrollContent.LastOrDefault();
