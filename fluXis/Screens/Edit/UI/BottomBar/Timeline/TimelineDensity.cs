@@ -90,13 +90,12 @@ public partial class TimelineDensity : FillFlowContainer
         }
     }
 
-    private float getValue(HitObject hit)
+    private float getValue(HitObject hit) => hit.Type switch
     {
-        if (hit.Type == HitObjectType.Tick)
-            return .1f;
-
-        return 1f;
-    }
+        HitObjectType.Tick => .1f,
+        HitObjectType.Landmine => 0f,
+        _ => 1f
+    };
 
     protected override bool OnHover(HoverEvent e)
     {
