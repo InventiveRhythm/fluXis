@@ -33,7 +33,7 @@ public partial class ShaderEntry : PointListEntry
     {
         var text = $"{shader.ShaderName} {(int)shader.Duration}ms (";
 
-        if (shader.UseStartParams)
+        if (shader.UseStartValue)
             text += $"{shader.StartParameters.Strength} > ";
 
         text += $"{shader.EndParameters.Strength})";
@@ -54,10 +54,10 @@ public partial class ShaderEntry : PointListEntry
         {
             Text = "Use Start Value",
             TooltipText = "Enables whether start values should be used.",
-            Bindable = new Bindable<bool>(shader.UseStartParams),
+            Bindable = new Bindable<bool>(shader.UseStartValue),
             OnValueChanged = enabled =>
             {
-                shader.UseStartParams = enabled;
+                shader.UseStartValue = enabled;
                 Map.Update(shader);
             }
         };

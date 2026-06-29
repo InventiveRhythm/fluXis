@@ -75,7 +75,7 @@ PulseEvent = {}
 ---@field shaderName string
 ---@field duration number
 ---@field easing number
----@field useStartParams boolean
+---@field useStartValue boolean
 ---@field startParameters string
 ---@field endParameters string
 ---@field parameters string

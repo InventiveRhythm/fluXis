@@ -40,60 +40,58 @@ public partial class DrawableStoryboardElement : CompositeDrawable
             using (BeginAbsoluteSequence(Element.StartTime + animation.StartTime))
             {
                 var duration = Math.Max(animation.Duration, 0);
+                var useStart = animation.UseStartValue;
 
                 switch (animation.Type)
                 {
                     case StoryboardAnimationType.MoveX:
-                        this.MoveToX(animation.StartFloat).Then()
-                            .MoveToX(animation.EndFloat, duration, animation.Easing);
+                        if (useStart) this.MoveToX(animation.StartFloat);
+                        this.MoveToX(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.MoveY:
-                        this.MoveToY(animation.StartFloat).Then()
-                            .MoveToY(animation.EndFloat, duration, animation.Easing);
+                        if (useStart) this.MoveToY(animation.StartFloat);
+                        this.MoveToY(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Scale:
-                        this.ScaleTo(animation.StartFloat).Then()
-                            .ScaleTo(animation.EndFloat, duration, animation.Easing);
+                        if (useStart) this.ScaleTo(animation.StartFloat);
+                        this.ScaleTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.ScaleVector:
-                        this.ScaleTo(animation.StartVector).Then()
-                            .ScaleTo(animation.EndVector, duration, animation.Easing);
+                        if (useStart) this.ScaleTo(animation.StartVector);
+                        this.ScaleTo(animation.EndVector, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Width:
-                        this.ResizeWidthTo(animation.StartFloat).Then()
-                            .ResizeWidthTo(animation.EndFloat, duration, animation.Easing);
+                        if (useStart) this.ResizeWidthTo(animation.StartFloat);
+                        this.ResizeWidthTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Height:
-                        this.ResizeHeightTo(animation.StartFloat).Then()
-                            .ResizeHeightTo(animation.EndFloat, duration, animation.Easing);
+                        if (useStart) this.ResizeHeightTo(animation.StartFloat);
+                        this.ResizeHeightTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Rotate:
-                        this.RotateTo(animation.StartFloat).Then()
-                            .RotateTo(animation.EndFloat, duration, animation.Easing);
+                        if (useStart) this.RotateTo(animation.StartFloat);
+                        this.RotateTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Fade:
-                        this.FadeTo(animation.StartFloat).Then()
-                            .FadeTo(animation.EndFloat, duration, animation.Easing);
+                        if (useStart) this.FadeTo(animation.StartFloat);
+                        this.FadeTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Color:
-                        var startColour = Colour4.FromHex(animation.ValueStart);
-                        var endColour = Colour4.FromHex(animation.ValueEnd);
-
-                        this.FadeColour(startColour).Then()
-                            .FadeColour(endColour, duration, animation.Easing);
+                        if (useStart) this.FadeColour(Colour4.FromHex(animation.StartValue));
+                        this.FadeColour(Colour4.FromHex(animation.ValueEnd), duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Border when AllowBorder:
-                        this.BorderTo(animation.StartFloat).Then()
-                            .BorderTo(animation.EndFloat, duration, animation.Easing);
+                        if (useStart) this.BorderTo(animation.StartFloat);
+                        this.BorderTo(animation.EndFloat, duration, animation.Easing);
                         break;
                 }
             }
