@@ -67,7 +67,7 @@ public class LuaStoryboardElement : ILuaModel
     /// <param name="type">the type of animation</param>
     /// <param name="time">when this animation starts in ms (absolute from map start)</param>
     /// <param name="len">the total length of this animation in ms</param>
-    /// <param name="startVal">the value this animation starts with (input based on type)</param>
+    /// <param name="startVal">the value this animation starts with (input based on type). leave nil to not use startVal</param>
     /// <param name="endVal">the value this animation ends with (input based on type)</param>
     /// <param name="ease">the easing function used for this animation</param>
     [LuaMember(Name = "animate")]
