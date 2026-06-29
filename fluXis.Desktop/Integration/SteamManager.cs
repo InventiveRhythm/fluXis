@@ -19,7 +19,8 @@ public partial class SteamManager : Component, ISteamManager
     [Resolved]
     private IAPIClient api { get; set; }
 
-    public uint AppID => 3440100;
+    public const int APP_ID = 3440100;
+    public uint AppID => APP_ID;
     public bool Initialized { get; }
 
     public List<ulong> WorkshopItems

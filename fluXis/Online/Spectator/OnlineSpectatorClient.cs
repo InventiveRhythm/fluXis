@@ -18,13 +18,7 @@ public partial class OnlineSpectatorClient : SpectatorClient
 
     private TypedWebSocketClient<ISpectatorServer, ISpectatorClient> connection = null!;
 
-    [BackgroundDependencyLoader]
-    private void load()
-    {
-        queueConnect();
-    }
-
-    private void queueConnect() => Scheduler.AddDelayed(connect, 2000);
+    public void QueueConnect() => Scheduler.AddDelayed(connect, 2000);
 
     private void connect() => Task.Run(() =>
     {
@@ -40,14 +34,14 @@ public partial class OnlineSpectatorClient : SpectatorClient
         catch (Exception ex)
         {
             Logger.Error(ex, "Failed to connect to spectator server!", LoggingTarget.Network);
-            queueConnect();
+            QueueConnect();
         }
     });
 
     protected override void TriggerDisconnect()
     {
         base.TriggerDisconnect();
-        queueConnect();
+        QueueConnect();
     }
 
     protected override void Dispose(bool isDisposing)
