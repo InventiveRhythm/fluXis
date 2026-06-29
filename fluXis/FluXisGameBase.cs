@@ -226,6 +226,9 @@ public partial class FluXisGameBase : osu.Framework.Game
             if (Steam is not null)
                 cacheComponent(Steam, true, true);
 
+            var discord = CreateDiscord();
+            if (discord != null) cacheComponent(discord, true, true);
+
             Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
             GlobalKeybindContainer keybinds;
@@ -417,6 +420,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     [CanBeNull]
     protected virtual ISteamManager CreateSteam() => null;
+
+    [CanBeNull]
+    protected virtual IDiscordManager CreateDiscord() => null;
 
     public override void SetHost(GameHost host)
     {
