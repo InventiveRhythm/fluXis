@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -325,7 +326,28 @@ public class EditorMap : IVerifyContext
         throwMissingHandler(obj);
     }
 
-    private void throwMissingHandler(ITimedObject obj) => throw new ArgumentException($"Type '{obj.GetType().Name}' does not have a change handler associated with it.");
+    public List<object> GetObjectsOfType(Type type)
+    {
+        if (!type.IsClass || !typeof(ITimedObject).IsAssignableFrom(type))
+            throw new ArgumentException($"The type must be a class and implement {nameof(ITimedObject)}.");
+
+        var method = GetType().GetMethod(nameof(GetObjectsOfType), Type.EmptyTypes)!;
+        var generic = method.MakeGenericMethod(type);
+        var result = generic.Invoke(this, null)!;
+        return ((IEnumerable)result).Cast<object>().ToList();
+    }
+
+    public List<T> GetObjectsOfType<T>()
+        where T : class, ITimedObject
+    {
+        if (!tryFindNotifier<T>(out var n))
+            throwMissingHandler(typeof(T));
+
+        return n is not IHoldsList<T> hold ? throw new InvalidOperationException() : hold.Objects.ToList();
+    }
+
+    private void throwMissingHandler(ITimedObject obj) => throwMissingHandler(obj.GetType());
+    private void throwMissingHandler(Type type) => throw new ArgumentException($"Type '{type.Name}' does not have a change handler associated with it.");
 
     public void ApplyOffsetToAll(double offset) => notifiers.ForEach(n => n.ApplyOffset(offset));
 
@@ -392,10 +414,16 @@ public class EditorMap : IVerifyContext
         bool Matches(Type type);
     }
 
-    private class ChangeNotifier<T> : IChangeNotifier
+    public interface IHoldsList<T>
         where T : class, ITimedObject
     {
-        private List<T> list { get; }
+        List<T> Objects { get; }
+    }
+
+    private class ChangeNotifier<T> : IChangeNotifier, IHoldsList<T>
+        where T : class, ITimedObject
+    {
+        public List<T> Objects { get; }
 
         [CanBeNull]
         private Action<T> add { get; }
@@ -416,7 +444,7 @@ public class EditorMap : IVerifyContext
 
         public ChangeNotifier(List<T> list, Action<T> add = null, Action<T> remove = null, Action<T> update = null)
         {
-            this.list = list;
+            Objects = list;
             this.add = add;
             this.remove = remove;
             this.update = update;
@@ -424,7 +452,7 @@ public class EditorMap : IVerifyContext
 
         public void Add(ITimedObject obj)
         {
-            list.Add((T)obj);
+            Objects.Add((T)obj);
             add?.Invoke((T)obj);
             OnAdd?.Invoke(obj);
             OnTypedAdd?.Invoke((T)obj);
@@ -432,7 +460,7 @@ public class EditorMap : IVerifyContext
 
         public void Remove(ITimedObject obj)
         {
-            list.Remove((T)obj);
+            Objects.Remove((T)obj);
             remove?.Invoke((T)obj);
             OnRemove?.Invoke(obj);
             OnTypedRemove?.Invoke((T)obj);
@@ -447,7 +475,7 @@ public class EditorMap : IVerifyContext
 
         public void ApplyOffset(double offset)
         {
-            foreach (var obj in list)
+            foreach (var obj in Objects)
             {
                 obj.Time += offset;
                 Update(obj);
