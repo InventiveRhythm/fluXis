@@ -1,4 +1,6 @@
-﻿using fluXis.Screens.Edit.Blueprints.Selection;
+﻿using fluXis.Graphics.Sprites.Outline;
+using fluXis.Graphics.UserInterface.Color;
+using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Gameplay.HUD;
 using osu.Framework.Graphics;
 
@@ -10,12 +12,23 @@ public partial class ComponentSelectionBlueprint : SelectionBlueprint<GameplayHU
         : base(component)
     {
         Anchor = Origin = Anchor.TopLeft;
+
+        Child = new OutlinedSquare
+        {
+            RelativeSizeAxes = Axes.Both,
+            Colour = Theme.Highlight,
+            BorderThickness = 4,
+            CornerRadius = 4
+        };
     }
 
     protected override void Update()
     {
         base.Update();
-        Size = Drawable.ScreenSpaceDrawQuad.Size;
-        Position = Parent!.ToLocalSpace(Drawable.ScreenSpaceDrawQuad).TopLeft;
+
+        var quad = Parent!.ToLocalSpace(Drawable.ScreenSpaceDrawQuad);
+
+        Size = quad.Size;
+        Position = quad.TopLeft;
     }
 }
