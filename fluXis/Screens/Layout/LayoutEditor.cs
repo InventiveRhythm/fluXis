@@ -85,7 +85,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
 
     private HUDLayout layout { get; }
 
-    private BindableBool forceAspect { get; } = new();
+    private BindableBool forceAspect { get; } = new(true);
 
     private string lastHash = string.Empty;
     private string currentHash => MapUtils.GetHash(layout.Serialize(true));
