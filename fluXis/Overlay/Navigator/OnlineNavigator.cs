@@ -30,6 +30,7 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
     protected override float OverlayPadding => 32;
     protected override ColourInfo BackgroundColor => Theme.Background1;
     protected override IconUsage Icon => Phosphor.Bold.Compass;
+    protected override float MaxWidth => 1536;
 
     public const float HEADER_HEIGHT = 36;
 
@@ -172,6 +173,12 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
         reset();
         base.PopIn();
         scroll.ScrollTo(0, false);
+    }
+
+    protected override void PopOut()
+    {
+        locked = false;
+        base.PopOut();
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
