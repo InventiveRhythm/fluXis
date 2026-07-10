@@ -9,6 +9,7 @@ using fluXis.Online.Drawables;
 using fluXis.Online.Drawables.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Navigator;
+using fluXis.Overlay.Navigator.Pages.Club;
 using fluXis.Overlay.Network.Tabs.Club;
 using fluXis.Overlay.Network.Tabs.Shared;
 using JetBrains.Annotations;
@@ -54,7 +55,14 @@ public partial class DashboardClubTab : DashboardTab
                         return;
 
                     navigator.PushClub(api.User.Value.Club.ID);
-                }) { Text = "View Full" }
+                }) { Text = "View Full" },
+                new DashboardRefreshButton(() =>
+                {
+                    if (navigator is null)
+                        return;
+
+                    navigator.Push(new NavigatorClubsPage());
+                }) { Text = "Browse Clubs" }
             }
         };
 

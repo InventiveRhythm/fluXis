@@ -23,6 +23,6 @@ public partial class DrawableClubBanner : Sprite
     [BackgroundDependencyLoader]
     private void load()
     {
-        Texture = store.GetClubBanner(club.BannerHash);
+        Texture = store.GetClubBanner(string.IsNullOrWhiteSpace(club.BannerHash) ? "default" : club.BannerHash);
     }
 }

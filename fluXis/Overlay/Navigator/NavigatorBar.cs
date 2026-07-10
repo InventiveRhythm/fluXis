@@ -20,6 +20,7 @@ public partial class NavigatorBar : CompositeDrawable
     private readonly Bindable<NavigatorPage?> page;
 
     private readonly Button back;
+    private readonly Button refresh;
     private readonly FluXisSpriteText path;
 
     public NavigatorBar(OnlineNavigator nav, Bindable<NavigatorPage?> page)
@@ -45,6 +46,7 @@ public partial class NavigatorBar : CompositeDrawable
                 Children =
                 [
                     back = new Button(Phosphor.Bold.ArrowLeft) { Action = nav.Pop },
+                    refresh = new Button(Phosphor.Bold.ArrowsClockwise) { Action = nav.Refresh },
                     path = new FluXisSpriteText
                     {
                         Anchor = Anchor.CentreLeft,
