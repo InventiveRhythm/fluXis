@@ -1076,7 +1076,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 setID = EditorMap.MapSet.OnlineID;
 
             var request = new MapSetUploadRequest(buffer, setID);
-            request.Progress += (l1, l2) => overlay.SubText = $"{l1.FormatBytes()}/{l1.FormatBytes()} {Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
+            request.Progress += (l1, l2) => overlay.SubText = $"{l1.FormatBytes()}/{l2.FormatBytes()} {Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
             await api.PerformRequestAsync(request);
 
             overlay.SubText = "Reading response...";
