@@ -60,26 +60,29 @@ public class LuaStoryboardElement : ILuaModel
     [LuaHide]
     public Dictionary<string, JToken> ExtraParameters { get; set; } = new();
 
+#nullable enable
     /// <summary>
     /// applies a new animation to this element
     /// </summary>
     /// <param name="type">the type of animation</param>
     /// <param name="time">when this animation starts in ms (absolute from map start)</param>
     /// <param name="len">the total length of this animation in ms</param>
-    /// <param name="startVal">the value this animation starts with (input based on type)</param>
+    /// <param name="startVal">the value this animation starts with (input based on type). leave nil to not use startVal</param>
     /// <param name="endVal">the value this animation ends with (input based on type)</param>
     /// <param name="ease">the easing function used for this animation</param>
     [LuaMember(Name = "animate")]
-    public void AddAnimation([LuaCustomType(typeof(StoryboardAnimationType))] string type, float time, float len, string startVal, string endVal, [LuaCustomType(typeof(Easing))] string ease) =>
+    public void AddAnimation([LuaCustomType(typeof(StoryboardAnimationType))] string type, float time, float len, string? startVal, string endVal, [LuaCustomType(typeof(Easing))] string ease) =>
         Animations.Add(new LuaStoryboardAnimation(this)
         {
             StartTime = time,
             Duration = len,
             Easing = Enum.TryParse<Easing>(ease, out var easing) ? easing : Easing.None,
             Type = Enum.Parse<StoryboardAnimationType>(type),
-            Start = startVal,
-            End = endVal
+            UseStartValue = startVal != null,
+            Start = startVal ?? "",
+            End = endVal,
         });
+#nullable restore
 
     [LuaMember(Name = "param")]
     public object GetParameter(string key, object fallback)

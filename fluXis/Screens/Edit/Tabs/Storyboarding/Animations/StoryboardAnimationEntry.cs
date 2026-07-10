@@ -44,10 +44,14 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
     private readonly OutlinedCircle outlineLength;
     private readonly FluXisSpriteIcon outlineDiamond;
 
+    protected Bindable<bool> UseStartValueBindable;
+
     public StoryboardAnimationEntry(StoryboardAnimation animation, StoryboardAnimationRow row, Colour4 color)
     {
         Animation = animation;
         this.row = row;
+
+        UseStartValueBindable = new Bindable<bool>(Animation.UseStartValue);
 
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
@@ -140,20 +144,32 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                 new EditorVariableTitle(Animation.Type.GetDescription(), () => RequestRemove?.Invoke(Animation), false),
                 new EditorVariableTime(map, Animation, () => row.Item.StartTime),
                 new EditorVariableLength<StoryboardAnimation>(map, Animation, beatLength),
+                new EditorVariableToggle()
+                {
+                    Text = "Use Start Value",
+                    TooltipText = "Enables whether start values should be used.",
+                    Bindable = UseStartValueBindable,
+                    OnValueChanged = enabled =>
+                    {
+                        Animation.UseStartValue = enabled;
+                        map.Update(Animation);
+                    }
+                },
                 new EditorVariableTextBox
                 {
                     Text = "Start Value",
-                    CurrentValue = Animation.ValueStart,
+                    CurrentValue = Animation.StartValue,
+                    Enabled = UseStartValueBindable,
                     OnValueChanged = t =>
                     {
-                        if (validate(t.Text, out var parsed)) Animation.ValueStart = parsed;
+                        if (validate(t.Text, out var parsed)) Animation.StartValue = parsed;
                         else t.NotifyError();
                         map.Update(Animation);
                     },
                     OnCommit = t =>
                     {
                         if (t is not null && validate(t.Text, out var parsed)) t.Text = parsed;
-                        else { t.Text = Animation.ValueStart; t.NotifyError(); }
+                        else { t.Text = Animation.StartValue; t.NotifyError(); }
                     }
                 },
                 new EditorVariableTextBox

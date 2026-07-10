@@ -9,7 +9,7 @@ using osu.Framework.Logging;
 
 namespace fluXis.Map.Structures.Events;
 
-public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
+public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<ShaderEvent.ShaderParameters>
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -40,10 +40,17 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
     public Easing Easing { get; set; }
 
     [JsonProperty("use-start")]
-    public bool UseStartParams { get; set; }
+    public bool UseStartValue { get; set; }
 
     [JsonProperty("start-params")]
     public ShaderParameters StartParameters { get; set; } = new();
+
+    [JsonIgnore]
+    public ShaderParameters StartValue
+    {
+        get => StartParameters;
+        set => StartParameters = value;
+    }
 
     [JsonProperty("end-params")]
     public ShaderParameters EndParameters { get; set; } = new();
@@ -97,7 +104,7 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
     {
         using (shader.BeginAbsoluteSequence(Time))
         {
-            if (UseStartParams)
+            if (UseStartValue)
             {
                 shader.StrengthTo(StartParameters.Strength);
                 shader.Strength2To(StartParameters.Strength2);

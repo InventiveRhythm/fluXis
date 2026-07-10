@@ -8,7 +8,7 @@ using SixLabors.ImageSharp;
 
 namespace fluXis.Storyboards;
 
-public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeepCloneable<StoryboardAnimation>
+public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IHasStartValue<string>, IDeepCloneable<StoryboardAnimation>
 {
     public StoryboardAnimation(StoryboardElement parentElement)
     {
@@ -37,6 +37,12 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
     public Easing Easing { get; set; }
 
     /// <summary>
+    /// Whether to override the start value
+    /// </summary>
+    [JsonProperty("use-start", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public bool UseStartValue { get; set; } = true;
+
+    /// <summary>
     /// The type of the animation.
     /// </summary>
     [JsonProperty("type")]
@@ -46,7 +52,7 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
     /// The start value of the animation.
     /// </summary>
     [JsonProperty("start-value")]
-    public string ValueStart { get; set; }
+    public string StartValue { get; set; }
 
     /// <summary>
     /// The end value of the animation.
@@ -55,7 +61,7 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
     public string ValueEnd { get; set; }
 
     [JsonIgnore]
-    public float StartFloat => ValueStart.ToFloatInvariant();
+    public float StartFloat => StartValue.ToFloatInvariant();
 
     [JsonIgnore]
     public float EndFloat => ValueEnd.ToFloatInvariant();
@@ -65,7 +71,7 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
     {
         get
         {
-            var xy = ValueStart.Split(',');
+            var xy = StartValue.Split(',');
             return new Vector2(xy[0].ToFloatInvariant(), xy[1].ToFloatInvariant());
         }
     }
@@ -89,7 +95,7 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IDeep
         Duration = Duration,
         Easing = Easing,
         Type = Type,
-        ValueStart = ValueStart,
+        StartValue = StartValue,
         ValueEnd = ValueEnd
     };
 

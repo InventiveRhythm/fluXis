@@ -6,7 +6,7 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events.Scrolling;
 
-public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToHitManager
+public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<double>, IApplicableToHitManager
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -22,6 +22,13 @@ public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableT
 
     [JsonProperty("start-offset")]
     public double StartOffset { get; set; }
+
+    [JsonIgnore]
+    public double StartValue
+    {
+        get => StartOffset;
+        set => StartOffset = value;
+    }
 
     [JsonProperty("offset")]
     public double TargetOffset { get; set; }
