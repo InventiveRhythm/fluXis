@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Online.API.Models.Users;
@@ -40,7 +41,7 @@ public partial class ScoreSubmissionCapability : Component, IEndingCapability
     [Resolved(CanBeNull = true)]
     private NotificationManager notifications { get; set; }
 
-    private bool isOnlineMap => Screen.RealmMap.StatusInt < 100 && !Screen.RealmMap.MapSet.AutoImported;
+    private bool isOnlineMap => (Screen.RealmMap.StatusInt is < 100 and > (int)MapStatus.Local) && !Screen.RealmMap.MapSet.AutoImported;
     private ScoreSubmissionOverlay overlay;
     private string ticket;
 
