@@ -28,5 +28,9 @@
     "header-height": "Wysokość nagłówka",
     "header-height-description": "Zmienia rozmiar okładki w prawym górnym rogu ekranu.",
     "show-background-shaders": "Wyświetlaj shadery w tle",
-    "show-background-shaders-description": "Wyświetla shadery z storybordami, zmniejsza wydajność w menu. (Rozbłysk może być bardzo jasny gdy ta opcja jest włączona)"
+    "show-background-shaders-description": "Wyświetla shadery z storybordami, zmniejsza wydajność w menu. (Rozbłysk może być bardzo jasny gdy ta opcja jest włączona)",
+    "song-select-diff-group": "Grupuj poziomy trudności poprzez ilość klawiszy",
+    "song-select-diff-group-description": "Wszystkie poziomy trudności z tą samą liczbą klawiszy będą wyświetlane obok siebie niezależnie od ich oceny trudności.",
+    "intro-music": "Muzyka intro",
+    "intro-music-description": "Muzyka odtwarzana po uruchomieniu gry."
 }
