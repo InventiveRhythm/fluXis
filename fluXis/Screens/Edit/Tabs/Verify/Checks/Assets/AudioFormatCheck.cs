@@ -12,7 +12,7 @@ public class AudioFormatCheck : IVerifyCheck
             yield return new VerifyIssue(VerifyIssueSeverity.Problematic, VerifyIssueCategory.Audio, null, "Could not load audio file.");
         else
         {
-            track.Stop(); // this is needed, don't ask me why
+            track.StopAsync().Wait(); // this is needed, don't ask me why
 
             if (track.Bitrate is null or <= 0)
                 yield return new VerifyIssue(VerifyIssueSeverity.Problematic, VerifyIssueCategory.Audio, null, "Could not get audio bitrate.");
