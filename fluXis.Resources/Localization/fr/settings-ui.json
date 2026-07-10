@@ -1,1 +1,6 @@
-{}
+{
+    "title": "Interface",
+    "general-title": "Général",
+    "ui-scale": "Échelle de l'interface",
+    "ui-scale-description": "Ajuste la taille de l'interface."
+}

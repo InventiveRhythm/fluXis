@@ -1,1 +1,9 @@
-{}
+{
+    "title": "Graphismes",
+    "layout-title": "Affichage",
+    "window-mode": "Mode d'affichage",
+    "fullscreen-resolution": "Résolution en plein écran",
+    "rendering-title": "Rendu",
+    "renderer": "Moteur de rendu",
+    "renderer-description": "Un redémarrage est nécessaire pour appliquer les changements."
+}

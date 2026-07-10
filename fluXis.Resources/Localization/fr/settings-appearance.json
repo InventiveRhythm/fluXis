@@ -1,1 +1,26 @@
-{}
+{
+    "title": "Apparence",
+    "skin-title": "Skin",
+    "skin-current": "Skin actuel",
+    "skin-refresh": "Rafraichir la liste des skins",
+    "skin-refresh-description": "Rafraichit la liste des skins disponibles.",
+    "skin-open-editor": "Ouvrir l'éditeur de skin",
+    "skin-open-editor-description": "Ouvre le skin dans l'éditeur en jeu.",
+    "skin-open-folder": "Ouvrir le dossier des skins",
+    "skin-open-folder-description": "Ouvre le dossier contenant le skin dans l'explorateur de fichiers.",
+    "skin-export": "Exporter le skin",
+    "skin-export-description": "Exporte le skin actuel au format .fsk.",
+    "skin-delete": "Supprimer le skin",
+    "skin-delete-description": "Supprime le skin actuel.",
+    "layout-title": "Disposition du HUD",
+    "layout-current": "Layout actuel",
+    "layout-current-description": "Le layout que tu souhaites utiliser.",
+    "layout-reload": "Recharger les layouts",
+    "layout-reload-description": "Rafraichit la liste des layouts disponibles.",
+    "layout-create": "Créer un nouveau layout",
+    "layout-create-description": "Crée un nouveau layout.",
+    "layout-open-folder": "Ouvrir le dossier des layouts",
+    "layout-open-folder-description": "Ouvre le dossier contenant les layouts dans l'explorateur de fichiers.",
+    "layout-open-editor": "Ouvrir l'éditeur de layout",
+    "layout-open-editor-description": "Modifie le layout actuel dans l'éditeur en jeu."
+}

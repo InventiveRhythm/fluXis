@@ -1,1 +1,11 @@
-{}
+{
+    "notifications": "Notifications",
+    "news": "Annonces",
+    "friends": "Amis",
+    "club": "Club",
+    "mapping": "Mapping",
+    "chat": "Chat",
+    "online": "En ligne",
+    "account": "Compte",
+    "notifications-empty": "Rien à voir ici..."
+}

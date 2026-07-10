@@ -1,1 +1,5 @@
-{}
+{
+    "title": "Débug",
+    "show-log-overlay": "Voir l'overlay des logs",
+    "import-file": "Importer un fichier"
+}

@@ -1,1 +1,12 @@
-{}
+{
+    "title": "Général",
+    "language-title": "Langue",
+    "language-current": "Langue actuelle",
+    "original-meta": "Préférer les métadonnées d'origine",
+    "original-meta-description": "Affiche les métadonnées des chansons dans leur langue d'origine.",
+    "folders-title": "Dossiers",
+    "open-folder": "Ouvrir le dossier de fluXis",
+    "export-logs": "Exporter les logs",
+    "export-logs-description": "Compresse tous les fichiers de logs dans une seule archive zip pour les partager plus facilement.",
+    "change-folder": "Changer l'emplacement du dossier"
+}

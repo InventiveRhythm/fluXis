@@ -1,1 +1,6 @@
-{}
+{
+    "title": "Avancé",
+    "files-title": "Fichiers",
+    "files-clean-up": "Nettoyer les fichiers",
+    "files-clean-up-description": "Supprime tous les fichiers qui ne sont utilisés par aucune map."
+}

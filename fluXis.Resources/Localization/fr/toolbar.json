@@ -1,1 +1,5 @@
-{}
+{
+    "settings": "Paramètres",
+    "settings-description": "Change tes paramètres.",
+    "home-description": "Retourne au menu principal."
+}

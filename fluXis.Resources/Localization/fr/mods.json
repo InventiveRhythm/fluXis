@@ -16,5 +16,10 @@
     "nsv-name": "No VD",
     "nsv-description": "Retire tous les changements de vélocité.",
     "pa-name": "En Pause",
-    "pa-description": "Le jeu est en pause."
+    "pa-description": "Le jeu est en pause.",
+    "mr-name": "Miroir",
+    "mr-description": "Renverse les notes horizontalement.",
+    "nev-description": "Retire tous les effets visuels.",
+    "nmn-description": "Retire toutes les mines.",
+    "rate-description": "Change la vitesse de la map"
 }
