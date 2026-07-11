@@ -41,10 +41,15 @@ public partial class ScrollGroup : Component
 
         if (index == -1)
         {
-            for (index = 0; index < velocities.Count; index++)
+            index = velocities.BinarySearch(new ScrollVelocity { Time = time }, Comparer<ScrollVelocity>.Create((a, b) => a.Time.CompareTo(b.Time)));
+
+            if (index < 0)
+                index = ~index;
+            else
             {
-                if (time < velocities[index].Time)
-                    break;
+                // if there are multiple SVs stacked together at the same time then we want to use the last one
+                while (index < velocities.Count && velocities[index].Time == time)
+                    index++;
             }
         }
 
@@ -75,7 +80,7 @@ public partial class ScrollGroup : Component
             var prev = velocities[i - 1];
             var current = velocities[i];
 
-            time += (int)((current.Time - prev.Time) * prev.Multiplier);
+            time += (current.Time - prev.Time) * prev.Multiplier;
             marks.Add(time);
         }
     }
