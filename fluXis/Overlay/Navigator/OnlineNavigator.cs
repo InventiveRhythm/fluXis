@@ -12,6 +12,7 @@ using fluXis.Overlay.Navigator.Pages.MapSet;
 using fluXis.Overlay.Navigator.Pages.User;
 using fluXis.Overlay.Navigator.Pages.UserV2;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -54,6 +55,13 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
     private FluXisScrollContainer scroll = null!;
     private Container<NavigatorPage> content = null!;
     private LoadingIcon loading = null!;
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        OpenSample = samples.Get("UI/navigator-open");
+        CloseSample = samples.Get("UI/navigator-close");
+    }
 
     protected override IEnumerable<Drawable> CreateContent()
     {
