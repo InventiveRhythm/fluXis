@@ -13,7 +13,7 @@ namespace fluXis.Graphics.UserInterface.Tabs;
 
 public partial class TabControl : CompositeDrawable
 {
-    public TabContainer[] Tabs { get; init; } = Array.Empty<TabContainer>();
+    public TabContainer[] Tabs { get; init; } = [];
 
     private Bindable<TabContainer> current;
 

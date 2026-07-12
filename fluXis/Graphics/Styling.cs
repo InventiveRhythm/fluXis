@@ -8,6 +8,7 @@ namespace fluXis.Graphics;
 public static class Styling
 {
     public const float SHADOW_OPACITY = .25f;
+    public const float AVATAR_ROUNDING_FACTOR = 1f / 8f;
 
     public const float TRANSITION_MOVE = 600;
     public const float TRANSITION_FADE = 300;

@@ -33,7 +33,13 @@ public partial class ExperimentsSection : SettingsSection
                 Label = "Add new Blend Modes for storyboard elements",
                 Description = "Adds the option to use the new blend modes such as multiply and difference. Keep in mind, however, that they do not partially work with transparency.",
                 Bindable = experiments.GetBindable<bool>(ExperimentConfig.NewSbBlendModes)
-            }
+            },
+            new SettingsToggle
+            {
+                Label = "UserV2",
+                Description = "Enables the new user page. Uncompleted and missing features.",
+                Bindable = experiments.GetBindable<bool>(ExperimentConfig.UserV2)
+            },
         });
     }
 }

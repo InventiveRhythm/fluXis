@@ -41,6 +41,12 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
         else
             RelativeSizeAxes = Axes.X;
 
+        if (!AllowScrolling)
+        {
+            AutoSizeAxes = Axes.None;
+            RelativeSizeAxes |= Axes.Y;
+        }
+
         try
         {
             data = PullData();
@@ -96,6 +102,8 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
 public abstract partial class NavigatorPage : CompositeDrawable
 {
     public abstract string Path { get; }
+
+    public virtual bool AllowScrolling => true;
 
     public virtual Drawable? CreateBackground() => null;
 

@@ -89,7 +89,7 @@ public partial class NavigatorUserPage : NavigatorPage<APIUser>
                                     Tabs =
                                     [
                                         new ProfileScoresTab(data),
-                                        new ProfileMapsTab(data)
+                                        new ProfileMapsTab(data) {}
                                     ]
                                 }
                             }

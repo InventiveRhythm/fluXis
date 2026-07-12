@@ -21,6 +21,8 @@ public partial class ProfileMapsTab : TabContainer
     public override IconUsage Icon => Phosphor.Bold.MapTrifold;
     public override string Title => "Maps";
 
+    public int CardWidth { get; set; } = 450;
+
     [Resolved]
     private IAPIClient api { get; set; }
 
@@ -53,9 +55,9 @@ public partial class ProfileMapsTab : TabContainer
                 Alpha = 0,
                 Children = new Drawable[]
                 {
-                    pure = new ProfileMapsSection("Pure"),
-                    impure = new ProfileMapsSection("Impure/Unsubmitted"),
-                    guest = new ProfileMapsSection("Guest Difficulties"),
+                    pure = new ProfileMapsSection("Pure") { CardWidth = CardWidth },
+                    impure = new ProfileMapsSection("Impure/Unsubmitted") { CardWidth = CardWidth },
+                    guest = new ProfileMapsSection("Guest Difficulties") { CardWidth = CardWidth }
                 }
             },
             error = new FluXisSpriteText

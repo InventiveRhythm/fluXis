@@ -1,5 +1,3 @@
-using System;
-using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;

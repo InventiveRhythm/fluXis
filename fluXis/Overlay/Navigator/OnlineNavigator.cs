@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using fluXis.Configuration.Experiments;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
@@ -7,9 +8,12 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Overlay.Navigator.Pages.Club;
+using fluXis.Overlay.Navigator.Pages.MapSet;
 using fluXis.Overlay.Navigator.Pages.User;
+using fluXis.Overlay.Navigator.Pages.UserV2;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -18,7 +22,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
-using NavigatorMapSetPage = fluXis.Overlay.Navigator.Pages.MapSet.NavigatorMapSetPage;
 
 namespace fluXis.Overlay.Navigator;
 
@@ -36,6 +39,9 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
 
     [Resolved]
     private Toolbar.Toolbar? toolbar { get; set; }
+
+    [Resolved]
+    private ExperimentConfigManager? experiments { get; set; }
 
     public long PageCount => pages.Count;
     public NavigatorPage? CurrentPage => current.Value;
@@ -87,6 +93,9 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
 
         var pad = toolbar?.Height + toolbar?.Y ?? 0;
         if (Math.Abs(pad - Padding.Top) > 0.1f) Padding = new MarginPadding { Top = pad };
+
+        if (current.Value is { AllowScrolling: false } && !content.AutoSizeAxes.HasFlagFast(Axes.Y))
+            content.Height = scroll.DrawHeight;
     }
 
     public void Push(NavigatorPage page)
@@ -118,6 +127,7 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
             var bg = p.CreateBackground();
             if (bg is not null) background.Add(bg);
 
+            updateScrolling(p);
             p.FadeInFromZero(Styling.TRANSITION_FADE);
             loading.Hide();
             locked = false;
@@ -160,10 +170,25 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
             var bg = prev.CreateBackground();
             if (bg is not null) background.Add(bg);
 
+            updateScrolling(prev);
             prev.FadeInFromZero(Styling.TRANSITION_FADE);
             current.Value = prev;
             locked = false;
         }, Styling.TRANSITION_ENTER_DELAY * 2);
+    }
+
+    private void updateScrolling(NavigatorPage page)
+    {
+        if (page.AllowScrolling)
+        {
+            scroll.ClampExtension = 500;
+            content.AutoSizeAxes = Axes.Y;
+        }
+        else
+        {
+            scroll.ClampExtension = 0;
+            content.AutoSizeAxes = Axes.None;
+        }
     }
 
     private void reset()
@@ -205,7 +230,14 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
 
     #region Preset
 
-    public void PushUser(long id) => Push(new NavigatorUserPage(id));
+    public void PushUser(long id)
+    {
+        if (experiments?.Get<bool>(ExperimentConfig.UserV2) ?? false)
+            Push(new NavigatorUserV2Page(id));
+        else
+            Push(new NavigatorUserPage(id));
+    }
+
     public void PushMapSet(long id) => Push(new NavigatorMapSetPage(id));
     public void PushClub(long id) => Push(new NavigatorClubPage(id));
 
