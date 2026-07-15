@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
@@ -34,7 +35,7 @@ using osuTK;
 
 namespace fluXis.Screens.Select.List.Drawables.MapSet;
 
-public partial class DrawableMapSetHeader : Container, IHasContextMenu
+public partial class DrawableMapSetHeader : BufferedContainer, IHasContextMenu, IHasLoadedValue
 {
     public MenuItem[] ContextMenuItems
     {
@@ -120,7 +121,24 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
     private Container arrowContainer;
     private Drawable arrow;
 
+    public bool Loaded => loaded == LoadingStates.All;
+    private LoadingStates loaded;
+
+    private bool isHoveredDelayed; // to encompass the rest of the fade when unhovering
+
+    [Flags]
+    private enum LoadingStates
+    {
+        Background = 1,
+        Content = 2,
+
+        All = Background | Content
+    }
+
+    public const float HEIGHT = 80f;
+
     public DrawableMapSetHeader(DrawableMapSetItem parent, RealmMapSet mapset)
+        : base(cachedFrameBuffer: true, pixelSnapping: true)
     {
         this.parent = parent;
         this.mapset = mapset;
@@ -131,8 +149,10 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
     {
         var color = mapset.Metadata.Color;
 
+        BackgroundColour = color.Opacity(0);
+
         RelativeSizeAxes = Axes.X;
-        Height = 80;
+        Height = HEIGHT;
         CornerRadius = 10;
         Masking = true;
         Children = new Drawable[]
@@ -159,18 +179,18 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                     Masking = true,
                     Children = new Drawable[]
                     {
-                        backgroundWrapper = new DelayedLoadUnloadWrapper(() => new MapBackground(mapset.Maps[0], true)
+                        backgroundWrapper = new DelayedLoadWrapper(() => new MapBackground(mapset.Maps[0], true)
                         {
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre
-                        }, 100, 200)
+                        }, 100)
                         {
                             RelativeSizeAxes = Axes.Both
                         },
                         gradientBlack = new HeaderDim { Colour = Colour4.Black },
                         gradientColor = new HeaderDim { Colour = color },
-                        contentLoader = new DelayedLoadUnloadWrapper(getContent, 100, 200)
+                        contentLoader = new DelayedLoadWrapper(getContent, 100)
                         {
                             RelativeSizeAxes = Axes.Both
                         },
@@ -214,8 +234,16 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
             }
         };
 
-        backgroundWrapper.DelayedLoadComplete += background => background.FadeInFromZero(300);
-        contentLoader.DelayedLoadComplete += content => content.FadeInFromZero(300);
+        backgroundWrapper.DelayedLoadComplete += background =>
+        {
+            background.FadeInFromZero(300);
+            Scheduler.AddDelayed(() => loaded |= LoadingStates.Background, 310);
+        };
+        contentLoader.DelayedLoadComplete += content =>
+        {
+            content.FadeInFromZero(300);
+            Scheduler.AddDelayed(() => loaded |= LoadingStates.Content, 310);
+        };
     }
 
     protected override void LoadComplete()
@@ -223,6 +251,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
         base.LoadComplete();
 
         Hide();
+        ForceRedraw();
         FinishTransforms();
 
         if (beatSync is not null)
@@ -410,6 +439,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
     protected override bool OnHover(HoverEvent e)
     {
+        isHoveredDelayed = true;
         gradientBlack.Show();
         gradientColor.Show();
         samples.Hover();
@@ -418,13 +448,25 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
+        Scheduler.AddDelayed(() => isHoveredDelayed = false, 200);
         gradientBlack.Hide();
         gradientColor.Hide();
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        if (!Loaded ||
+            isHoveredDelayed ||
+            mapset.Maps.Any(m => !m.UpToDate) ||
+            selection.CurrentMapSet.ID == mapset.ID)
+            ForceRedraw();
+    }
+
     public override void Show()
     {
-        this.TransformTo(nameof(contentWrapperPadding), 27f, 400, Easing.OutQuint);
+        this.TransformTo(nameof(contentWrapperPadding), 27f, 400, Easing.OutQuint)
+            .During(() => Schedule(ForceRedraw));
         arrowContainer.ScaleTo(1, 400, Easing.OutQuint);
         colorBrighten.FadeIn(200);
         outlineBrighten.FadeIn(200);
@@ -432,7 +474,8 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
     public override void Hide()
     {
-        this.TransformTo(nameof(contentWrapperPadding), 10f, 400, Easing.OutQuint);
+        this.TransformTo(nameof(contentWrapperPadding), 10f, 400, Easing.OutQuint)
+            .During(() => Schedule(ForceRedraw));
         arrowContainer.ScaleTo(0.8f, 400, Easing.OutQuint);
         colorBrighten.FadeOut(200);
         outlineBrighten.FadeOut(200);
