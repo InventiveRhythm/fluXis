@@ -43,8 +43,12 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     private SpriteStack<LoadWrapper<MapBackground>> backgrounds;
     private SectionedGradient gradient;
     private SpriteStack<LoadWrapper<MapCover>> covers;
-    private TruncatingText title;
-    private TruncatingText artist;
+
+    private Marquee title;
+    private float titleSize;
+    private Marquee artist;
+    private float artistSize;
+
     private DifficultyChip difficulty;
     private FluXisSpriteText difficultyText;
     private FluXisSpriteText mapper;
@@ -139,20 +143,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                                             Padding = new MarginPadding { Horizontal = 20 },
                                             Children = new Drawable[]
                                             {
-                                                title = new TruncatingText
-                                                {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    WebFontSize = 36,
-                                                    Text = "no map selected",
-                                                    Shadow = true
-                                                },
-                                                artist = new TruncatingText
-                                                {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    WebFontSize = 24,
-                                                    Text = "select a map to view info",
-                                                    Shadow = true
-                                                }
+                                                title = new Marquee { RelativeSizeAxes = Axes.X },
+                                                artist = new Marquee { RelativeSizeAxes = Axes.X }
                                             }
                                         }
                                     }
@@ -223,20 +215,25 @@ public partial class SelectMapInfoHeader : CompositeDrawable
             switch (v.NewValue)
             {
                 case <= 132:
-                    title.WebFontSize = 24;
-                    artist.WebFontSize = 16;
-                    topFlow.Padding = new MarginPadding { Left = 12 };
+                    titleSize = 24;
+                    artistSize = 16;
+                    topFlow.Padding = new MarginPadding { Left = 12, Right = 32 };
                     break;
 
                 default:
-                    title.WebFontSize = 36;
-                    artist.WebFontSize = 24;
-                    topFlow.Padding = new MarginPadding { Left = 20 };
+                    titleSize = 36;
+                    artistSize = 24;
+                    topFlow.Padding = new MarginPadding { Left = 20, Right = 40 };
                     break;
             }
 
             headerTop.ResizeHeightTo(v.NewValue, dur, ease);
             coversContainer.ResizeTo(new Vector2(v.NewValue), dur, ease);
+
+            if (maps.CurrentMap is null) return;
+
+            updateText(title, maps.CurrentMap.Metadata.LocalizedTitle, titleSize);
+            updateText(artist, maps.CurrentMap.Metadata.LocalizedArtist, artistSize);
         }, true);
 
         if (mods is null) return;
@@ -256,6 +253,13 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         mods.RateMod.RateBindable.ValueChanged -= rateChanged;
     }
 
+    private void updateText(Marquee target, LocalisableString text, float size) => target.CreateFunc = () => new FluXisSpriteText
+    {
+        Text = text,
+        WebFontSize = size,
+        Shadow = true
+    };
+
     private void rateChanged(ValueChangedEvent<float> e)
     {
         if (maps.MapBindable.Value == null)
@@ -268,15 +272,15 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     {
         if (e.NewValue == null)
         {
-            title.Text = "no map selected";
-            artist.Text = "select a map to view info";
+            updateText(title, "no map selected", titleSize);
+            updateText(artist, "select a map to view info", artistSize);
             return;
         }
 
         var map = e.NewValue;
 
-        title.Text = map.Metadata.LocalizedTitle;
-        artist.Text = map.Metadata.LocalizedArtist;
+        updateText(title, map.Metadata.LocalizedTitle, titleSize);
+        updateText(artist, map.Metadata.LocalizedArtist, artistSize);
         gradient.FadeColour(map.Metadata.Color, 400, Easing.OutQuint);
         difficulty.RealmMap = map;
         difficultyText.Text = map.Difficulty;
