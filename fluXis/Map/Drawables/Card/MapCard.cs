@@ -30,7 +30,7 @@ using osuTK;
 
 namespace fluXis.Map.Drawables.Card;
 
-public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasContextMenu
+public partial class MapCard : BufferedContainer, IHasCustomTooltip<APIMapSet>, IHasContextMenu, IHasLoadedValue
 {
     [Resolved]
     private MapStore maps { get; set; }
@@ -48,6 +48,20 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
 
     [Resolved]
     private IAPIClient api { get; set; }
+
+    public bool Loaded => loaded == LoadingStates.All;
+    private LoadingStates loaded;
+
+    private bool isHoveredDelayed; // to encompass the rest of the fade when unhovering
+
+    [Flags]
+    private enum LoadingStates
+    {
+        Background = 1,
+        Cover = 2,
+
+        All = Background | Cover
+    }
 
     public MenuItem[] ContextMenuItems
     {
@@ -109,6 +123,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet?.ID);
 
     public MapCard(APIMapSet mapSet)
+        : base(cachedFrameBuffer: true, pixelSnapping: true)
     {
         MapSet = mapSet;
         Height = 112;
@@ -120,6 +135,8 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         Width = CardWidth;
         CornerRadius = 16;
         Masking = true;
+
+        AlwaysPresent = true;
 
         if (MapSet == null)
         {
@@ -164,7 +181,11 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                     {
                         RelativeSizeAxes = Axes.Both,
                         LoadContent = () => new DrawableOnlineBackground(MapSet),
-                        OnComplete = d => d.FadeInFromZero(400)
+                        OnComplete = d =>
+                        {
+                            d.FadeInFromZero(400);
+                            Scheduler.AddDelayed(() => loaded |= LoadingStates.Background, 400);
+                        }
                     },
                     gradient = new SectionedGradient
                     {
@@ -192,7 +213,11 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                     CornerRadius = 16,
                                     Masking = true,
                                     LoadContent = () => new DrawableOnlineCover(MapSet),
-                                    OnComplete = d => d.FadeInFromZero(400)
+                                    OnComplete = d =>
+                                    {
+                                        d.FadeInFromZero(400);
+                                        Scheduler.AddDelayed(() => loaded |= LoadingStates.Cover, 400);
+                                    }
                                 },
                                 new Container
                                 {
@@ -330,8 +355,17 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         maps.DownloadFinished -= downloadStateChanged;
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        if ((!Loaded) || isHoveredDelayed || Time.Current < content.LatestTransformEndTime)
+            ForceRedraw();
+    }
+
     protected override bool OnHover(HoverEvent e)
     {
+        isHoveredDelayed = true;
         samples.Hover();
         gradient.FadeTo(.5f, 50);
         return true;
@@ -339,7 +373,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        gradient.FadeTo(.6f, 200);
+        gradient.FadeTo(.6f, 200).Finally(_ => isHoveredDelayed = false);
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -410,5 +444,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
             background.Colour = Theme.DownloadFinished;
         else
             background.Colour = Theme.Background3;
+
+        ForceRedraw();
     }
 }
