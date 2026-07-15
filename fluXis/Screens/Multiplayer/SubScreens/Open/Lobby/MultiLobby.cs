@@ -8,6 +8,7 @@ using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
+using fluXis.Graphics.UserInterface.Footer;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Localization;
@@ -28,6 +29,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
@@ -74,6 +76,9 @@ public partial class MultiLobby : MultiSubScreen
 
     private List<IMod> mods = new();
 
+    private MultiLobbyMarquee titleMarquee = null!;
+    private MultiLobbyMarquee artistMarquee = null!;
+
     private MultiLobbyPlayerList playerList = null!;
     private MultiLobbyDisc disc = null!;
     private MultiLobbyFooter footer = null!;
@@ -104,6 +109,24 @@ public partial class MultiLobby : MultiSubScreen
 
         InternalChildren = new Drawable[]
         {
+            titleMarquee = new MultiLobbyMarquee
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 100,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Blending = BlendingParameters.Additive,
+                Alpha = 0.2f
+            },
+            artistMarquee = new MultiLobbyMarquee
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 64,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Blending = BlendingParameters.Additive,
+                Alpha = 0.2f
+            },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -272,6 +295,12 @@ public partial class MultiLobby : MultiSubScreen
         mods = modsString.Select(ModUtils.GetFromAcronym).Where(m => m != null).ToList();
         disc.UpdateMods(mods);
 
+        ScheduleAfterChildren(() =>
+        {
+            titleMarquee.Text = mapStore.CurrentMap?.Metadata.LocalizedTitle ?? new RomanisableString("", "");
+            artistMarquee.Text = mapStore.CurrentMap?.Metadata.LocalizedArtist ?? new RomanisableString("", "");
+        });
+
         var mapSet = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == map.ID));
 
         if (mapSet == null)
@@ -386,6 +415,8 @@ public partial class MultiLobby : MultiSubScreen
         base.FadeIn();
         footer.Show();
         disc.Show();
+        titleMarquee.MoveToY(Footer.HEIGHT).MoveToY(-Footer.HEIGHT, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        artistMarquee.MoveToY(Footer.HEIGHT - 100).MoveToY(-Footer.HEIGHT - 100, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     protected override void FadeOut(IScreen next)
@@ -393,6 +424,8 @@ public partial class MultiLobby : MultiSubScreen
         base.FadeOut(next);
         footer.Hide();
         disc.Hide();
+        titleMarquee.MoveToY(Footer.HEIGHT, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        artistMarquee.MoveToY(Footer.HEIGHT - 100, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

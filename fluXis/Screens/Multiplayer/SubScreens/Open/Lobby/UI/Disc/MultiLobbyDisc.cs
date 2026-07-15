@@ -159,7 +159,10 @@ public partial class MultiLobbyDisc : CircularContainer
         maps.MapBindable.BindValueChanged(v =>
         {
             var map = v.NewValue;
-            covers.Add(new MapCover(map.MapSet) { FadeDuration = 0 });
+
+            var cover = new MapCover(map.MapSet) { FadeDuration = 0 };
+            covers.Add(cover);
+            cover.Show();
 
             var col = map.Metadata.Color;
             var info = ColourInfo.GradientVertical(col.Lighten(0.2f), col);
@@ -187,7 +190,7 @@ public partial class MultiLobbyDisc : CircularContainer
         Size = new Vector2(size);
 
         var amp = amplitudes.Amplitudes[..3].Average();
-        spinning.Scale = new Vector2(1 + amp * 0.02f);
+        spinning.Scale = new Vector2(1 + amp * 0.05f);
     }
 
     public void UpdateMods(List<IMod> mods) => modsList.Mods = mods;
