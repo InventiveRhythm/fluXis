@@ -16,7 +16,6 @@ public partial class LaneSwitchManager : CompositeComponent
 
     public bool Mirror { get; init; }
 
-    public bool KeepTransforms { get; init; }
     public override bool RemoveCompletedTransforms => false;
 
     private List<LaneSwitchEvent> events { get; set; }

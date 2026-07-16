@@ -131,7 +131,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public static Version Version => Assembly.GetEntryAssembly()?.GetName().Version;
     public static bool IsDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
 
-    public string ClientHash { get; private set; }
+    public static string ClientHash { get; private set; }
 
     public virtual LightController CreateLightController() => new();
 
@@ -225,6 +225,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             if (Steam is not null)
                 cacheComponent(Steam, true, true);
+
+            var discord = CreateDiscord();
+            if (discord != null) cacheComponent(discord, true, true);
 
             Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
@@ -417,6 +420,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     [CanBeNull]
     protected virtual ISteamManager CreateSteam() => null;
+
+    [CanBeNull]
+    protected virtual IDiscordManager CreateDiscord() => null;
 
     public override void SetHost(GameHost host)
     {

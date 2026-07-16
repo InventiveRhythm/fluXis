@@ -95,6 +95,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     private GlobalFFTProcessor fftProcessor;
 
+    private OnlineSpectatorClient spectatorClient;
+
     private SentryClient sentry { get; }
 
     private bool isExiting;
@@ -137,7 +139,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         // GameDependencies.CacheAs<IAmplitudeProvider>(globalClock);
 
         loadComponent(NotificationManager, Add);
-        loadComponent<SpectatorClient>(new OnlineSpectatorClient(), Add, true);
+        loadComponent<SpectatorClient>(spectatorClient = new OnlineSpectatorClient(), Add, true);
 
         loadComponent(globalBackground = new GlobalBackground { InitialDim = 1 }, buffer.Add, true);
         loadComponent(screenContainer = new Container { RelativeSizeAxes = Axes.Both }, buffer.Add);
@@ -272,6 +274,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         void cont()
         {
             APIClient.TryConnecting();
+            spectatorClient.QueueConnect();
             c();
         }
     }

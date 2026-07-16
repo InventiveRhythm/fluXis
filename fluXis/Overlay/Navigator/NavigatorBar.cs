@@ -1,7 +1,10 @@
+using fluXis.Audio;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Interaction;
+using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,6 +23,7 @@ public partial class NavigatorBar : CompositeDrawable
     private readonly Bindable<NavigatorPage?> page;
 
     private readonly Button back;
+    private readonly Button refresh;
     private readonly FluXisSpriteText path;
 
     public NavigatorBar(OnlineNavigator nav, Bindable<NavigatorPage?> page)
@@ -45,6 +49,7 @@ public partial class NavigatorBar : CompositeDrawable
                 Children =
                 [
                     back = new Button(Phosphor.Bold.ArrowLeft) { Action = nav.Pop },
+                    refresh = new Button(Phosphor.Bold.ArrowsClockwise) { Action = nav.Refresh },
                     path = new FluXisSpriteText
                     {
                         Anchor = Anchor.CentreLeft,
@@ -55,6 +60,12 @@ public partial class NavigatorBar : CompositeDrawable
                 ]
             }
         ];
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        refresh.Sample = samples.Get("UI/click-reload");
     }
 
     protected override void LoadComplete()
@@ -73,6 +84,11 @@ public partial class NavigatorBar : CompositeDrawable
 
     private partial class Button : ClickableContainer
     {
+        [Resolved]
+        private UISamples samples { get; set; } = null!;
+
+        public Sample? Sample { get; set; }
+
         private readonly HoverLayer hover;
         private readonly FlashLayer flash;
         private readonly FluXisSpriteIcon icon;
@@ -106,6 +122,7 @@ public partial class NavigatorBar : CompositeDrawable
 
         protected override bool OnHover(HoverEvent e)
         {
+            samples.Hover();
             hover.Show();
             return true;
         }
@@ -117,6 +134,9 @@ public partial class NavigatorBar : CompositeDrawable
 
         protected override bool OnClick(ClickEvent e)
         {
+            if (Sample != null) Sample.Play();
+            else samples.Click();
+
             flash.Show();
             return base.OnClick(e);
         }

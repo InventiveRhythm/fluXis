@@ -62,9 +62,9 @@ public partial class DesignShaderHandler : CompositeComponent
         }
 
         var previous = events.LastOrDefault(e => e.Time < current.Time);
-        var startStrength = current.UseStartParams ? current.StartParameters.Strength : previous?.EndParameters.Strength ?? 0;
-        var startStrength2 = current.UseStartParams ? current.StartParameters.Strength2 : previous?.EndParameters.Strength2 ?? 0;
-        var startStrength3 = current.UseStartParams ? current.StartParameters.Strength3 : previous?.EndParameters.Strength3 ?? 0;
+        var startStrength = current.UseStartValue ? current.StartParameters.Strength : previous?.EndParameters.Strength ?? 0;
+        var startStrength2 = current.UseStartValue ? current.StartParameters.Strength2 : previous?.EndParameters.Strength2 ?? 0;
+        var startStrength3 = current.UseStartValue ? current.StartParameters.Strength3 : previous?.EndParameters.Strength3 ?? 0;
 
         if (progress < 0)
         {

@@ -120,6 +120,7 @@ public abstract class APIRequest
             Request.AddHeader("X-Multifactor-Token", APIClient.MultifactorToken);
 
         Request.AddHeader("X-Version", FluXisGameBase.VersionString);
+        Request.AddHeader("X-Client", FluXisGameBase.ClientHash);
 
         try
         {

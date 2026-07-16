@@ -11,6 +11,8 @@ namespace fluXis.Overlay.Navigator.Pages.User.Tabs.Maps;
 
 public partial class ProfileMapsSection : FillFlowContainer
 {
+    public int CardWidth { get; set; } = 450;
+
     public List<APIMapSet> Maps
     {
         set
@@ -20,7 +22,7 @@ public partial class ProfileMapsSection : FillFlowContainer
             noMaps.Alpha = empty ? .8f : 0;
             flow.Alpha = empty ? 0 : 1;
 
-            flow.ChildrenEnumerable = value.Select(map => new MapCard(map) { CardWidth = 450 });
+            flow.ChildrenEnumerable = value.Select(map => new MapCard(map) { CardWidth = CardWidth });
         }
     }
 

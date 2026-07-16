@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Map.Structures.Attributes;
+using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.Ruleset.HitObjects;
@@ -13,6 +16,7 @@ using fluXis.Skinning.Default;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
@@ -145,12 +149,25 @@ public partial class Playfield : Container
             new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(Math.Max(shake.Duration, 0), shake.Magnitude))
         };
 
-        MapEvents.ColorFadeEvents.ForEach(e => e.Apply(this));
-        MapEvents.LayerFadeEvents.ForEach(e => e.Apply(this));
-        MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
-        MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
-        MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
+        registerReloadableEvent(MapEvents.ColorFadeEvents);
+        registerReloadableEvent(MapEvents.LayerFadeEvents);
+        registerReloadableEvent(MapEvents.PlayfieldMoveEvents);
+        registerReloadableEvent(MapEvents.PlayfieldMoveEvents);
+        registerReloadableEvent(MapEvents.PlayfieldScaleEvents);
+        registerReloadableEvent(MapEvents.PlayfieldRotateEvents);
         MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
+    }
+
+    private void registerReloadableEvent<T>(List<T> initial) where T : IApplicableToPlayfield
+    {
+        var props = typeof(T).GetAnimatedProperties();
+        initial.ForEach(x => x.Apply(this));
+
+        ruleset.RegisterReload<T>(objs =>
+        {
+            props.ForEach(x => ClearTransforms(false, x));
+            objs.ForEach(x => x.Apply(this));
+        });
     }
 
     protected override void Update()

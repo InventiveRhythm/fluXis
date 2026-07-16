@@ -10,6 +10,7 @@
     <Authors>TeamFluXis</Authors>
     <PackageId>fluXis.Desktop</PackageId>
     <AssemblyName>fluXis</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
 
     <!-- you would not believe it but this actually fixes the dev environment on linux -->
@@ -30,12 +31,25 @@
     <EmbeddedResource Include="game.ico"/>
   </ItemGroup>
   <ItemGroup>
-    <None Update="libsteam_api.so">
+    <None Update="native\discord_partner_sdk.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>discord_partner_sdk.dll</PackagePath>
+      <TargetPath>discord_partner_sdk.dll</TargetPath>
+    </None>
+    <None Update="native\libdiscord_partner_sdk.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/linux-x64/native/libdiscord_partner_sdk.so</PackagePath>
+      <TargetPath>libdiscord_partner_sdk.so</TargetPath>
+    </None>
+    <None Update="native\steam_api64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>steam_api64.dll</PackagePath>
+      <TargetPath>steam_api64.dll</TargetPath>
+    </None>
+    <None Update="native\libsteam_api.so">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <PackagePath>runtimes/linux-x64/native/libsteam_api.so</PackagePath>
-    </None>
-    <None Update="steam_api64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>libsteam_api.so</TargetPath>
     </None>
   </ItemGroup>
   <ItemGroup>

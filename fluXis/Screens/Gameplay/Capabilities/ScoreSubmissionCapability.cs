@@ -2,15 +2,19 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using fluXis.Database.Maps;
 using fluXis.Graphics;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Scores;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Notifications;
 using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Capabilities.Bases;
 using fluXis.Screens.Gameplay.UI;
 using fluXis.Screens.Result;
+using JetBrains.Annotations;
 using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -33,17 +37,38 @@ public partial class ScoreSubmissionCapability : Component, IEndingCapability
     [Resolved]
     private Storage storage { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private NotificationManager notifications { get; set; }
+
+    private bool isOnlineMap => (Screen.RealmMap.StatusInt is < 100 and > (int)MapStatus.Local) && !Screen.RealmMap.MapSet.AutoImported;
     private ScoreSubmissionOverlay overlay;
+    private string ticket;
 
     public void PostLoad()
     {
         Screen.Add(overlay = new ScoreSubmissionOverlay());
+
+        if (!isOnlineMap)
+            return;
+
+        var req = new ScoreTicketRequest(Screen.Map.Hash, Screen.Map.EffectHash, Screen.Map.StoryboardHash, Screen.Mods);
+        api.PerformRequest(req);
+
+        if (!req.IsSuccessful)
+        {
+            notifications?.SendError("Failed to get score ticket.", "Your score will not be uploaded.", Phosphor.Bold.Warning);
+            return;
+        }
+
+        var res = req.Response;
+        ticket = res.Data;
     }
 
     public Screen OnEnd(ScoreInfo score, Action complete)
     {
         var screen = new SoloResults(Screen.RealmMap, score, Screen.PlayfieldManager.Players[0].ScoreProcessor.Player ?? APIUser.Default);
-        var canBeUploaded = Screen.Mods.All(m => m.Rankable) && Screen.RealmMap.StatusInt < 100 && !Screen.RealmMap.MapSet.AutoImported;
+        var canBeUploaded = !string.IsNullOrWhiteSpace(ticket) && Screen.Mods.All(m => m.Rankable) && isOnlineMap;
 
         if (canBeUploaded)
             overlay.FadeIn(Styling.TRANSITION_FADE);
@@ -62,7 +87,7 @@ public partial class ScoreSubmissionCapability : Component, IEndingCapability
 
                 if (canBeUploaded)
                 {
-                    var request = new ScoreSubmitRequest(score, Screen.Mods, replay, Screen.Map.Hash, Screen.Map.EffectHash, Screen.Map.StoryboardHash);
+                    var request = new ScoreSubmitRequest(score, Screen.Mods, replay, Screen.Map.Hash, Screen.Map.EffectHash, Screen.Map.StoryboardHash, ticket);
                     screen.SubmitRequest = request;
                     api.PerformRequest(request);
 

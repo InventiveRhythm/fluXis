@@ -1,10 +1,13 @@
 using System;
+using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events.Playfields;
 
+[AnimatesProperty(nameof(Playfield.Rotation))]
 public class PlayfieldRotateEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToPlayfield
 {
     [JsonProperty("time")]
@@ -37,7 +40,7 @@ public class PlayfieldRotateEvent : IMapEvent, IHasDuration, IHasEasing, IApplic
     [JsonProperty("subfield")]
     public int PlayfieldSubIndex { get; set; }
 
-    public void Apply(Screens.Gameplay.Ruleset.Playfields.Playfield playfield)
+    public void Apply(Playfield playfield)
     {
         if (!this.AppliesTo(playfield))
             return;

@@ -23,8 +23,9 @@ public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
     private string mapHash { get; }
     private string effectHash { get; }
     private string storyboardHash { get; }
+    private string ticket { get; }
 
-    public ScoreSubmitRequest(ScoreInfo score, List<IMod> mods, Replay replay, string hash, string eHash, string sHash)
+    public ScoreSubmitRequest(ScoreInfo score, List<IMod> mods, Replay replay, string hash, string eHash, string sHash, string ticket)
     {
         if (score.HitResults is null)
             throw new InvalidOperationException();
@@ -35,6 +36,7 @@ public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
         mapHash = hash;
         effectHash = eHash;
         storyboardHash = sHash;
+        this.ticket = ticket;
     }
 
     protected override WebRequest CreateWebRequest(string url)
@@ -49,6 +51,7 @@ public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
 
         var payload = new ScoreSubmissionPayload
         {
+            Ticket = ticket,
             MapHash = mapHash,
             EffectHash = effectHash,
             StoryboardHash = storyboardHash,
@@ -66,7 +69,6 @@ public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
         };
 
         req.AddRaw(payload.Serialize());
-
         return req;
     }
 }

@@ -8,7 +8,10 @@ using fluXis.Screens.Intro;
 using fluXis.Screens.Warning;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Screens;
@@ -23,9 +26,14 @@ public partial class LoadingScreen : FluXisScreen
     [Resolved]
     private FluXisConfig config { get; set; }
 
+    [Resolved]
+    private FluXisGame game { get; set; }
+
     private FluXisGameBase.LoadInfo loadInfo { get; }
     private FluXisSpriteText loadingText { get; }
     private Circle bar { get; }
+
+    private DrawableTrack bgm;
 
     public LoadingScreen(FluXisGameBase.LoadInfo loadInfo)
     {
@@ -100,6 +108,18 @@ public partial class LoadingScreen : FluXisScreen
         };
     }
 
+    [BackgroundDependencyLoader]
+    private void load(ITrackStore tracks)
+    {
+        var track = tracks.Get("loading-screen") ?? tracks.GetVirtual(1000);
+        game.Add(bgm = new DrawableTrack(track)
+        {
+            Name = "Loading BGM",
+            RestartPoint = 8467,
+            Looping = true
+        });
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -112,7 +132,7 @@ public partial class LoadingScreen : FluXisScreen
                 str += $" ({loadInfo.TasksFinished + 1}/{loadInfo.TasksTotal})";
 
             loadingText.Text = str;
-            bar.ResizeWidthTo(Math.Min(loadInfo.TasksFinished + 1, loadInfo.TasksTotal) / (float)loadInfo.TasksTotal, 300, Easing.OutQuint);
+            bar.ResizeWidthTo(Math.Min(loadInfo.TasksFinished + 1, loadInfo.TasksTotal) / (float)loadInfo.TasksTotal, 600, Easing.OutQuint);
         });
 
         loadInfo.AllFinished += complete;
@@ -126,8 +146,14 @@ public partial class LoadingScreen : FluXisScreen
             this.Push(new WarningScreen());
     });
 
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        bgm.Start();
+    }
+
     public override void OnSuspending(ScreenTransitionEvent e)
     {
+        bgm.VolumeTo(0, Styling.TRANSITION_FADE).Expire();
         this.FadeOut(Styling.TRANSITION_FADE);
         this.MoveToY(20, Styling.TRANSITION_MOVE, Easing.OutQuint);
         base.OnSuspending(e);

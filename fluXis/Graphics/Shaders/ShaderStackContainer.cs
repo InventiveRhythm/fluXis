@@ -30,7 +30,7 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
     public IShader TextureShader { get; private set; }
     public BufferedDrawNodeSharedData SharedData { get; } = new(3, null, false, true);
 
-    public Color4 BackgroundColour => new(0, 0, 0, 0);
+    public Color4 BackgroundColour { get; set; } = new(0, 0, 0, 0);
     public DrawColourInfo? FrameBufferDrawColour => base.DrawColourInfo;
     public Vector2 FrameBufferScale => Vector2.One;
 
@@ -95,7 +95,7 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
         return shader.TransformHandler;
     }
 
-    public ShaderStackContainer AddContent(Drawable[] content)
+    public ShaderStackContainer AddContent(params Drawable[] content)
     {
         InternalChildren = content;
         return this;

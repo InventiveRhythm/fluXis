@@ -71,8 +71,8 @@ public class OsuStoryboardParser
                     toAdd.Add(new StoryboardAnimation(element)
                     {
                         Type = animation.Type,
-                        ValueStart = animation.ValueStart,
-                        ValueEnd = animation.ValueStart
+                        StartValue = animation.StartValue,
+                        ValueEnd = animation.StartValue
                     });
                 }
 
@@ -214,7 +214,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = start.ToStringInvariant(),
+                                    StartValue = start.ToStringInvariant(),
                                     ValueEnd = end.ToStringInvariant()
                                 }
                             };
@@ -235,7 +235,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = start.ToStringInvariant(),
+                                    StartValue = start.ToStringInvariant(),
                                     ValueEnd = end.ToStringInvariant()
                                 }
                             };
@@ -258,7 +258,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = $"{startX},{startY}",
+                                    StartValue = $"{startX},{startY}",
                                     ValueEnd = $"{endX},{endY}"
                                 }
                             };
@@ -282,7 +282,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = startDeg.ToStringInvariant(),
+                                    StartValue = startDeg.ToStringInvariant(),
                                     ValueEnd = endDeg.ToStringInvariant()
                                 }
                             };
@@ -305,7 +305,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = startX.ToStringInvariant(),
+                                    StartValue = startX.ToStringInvariant(),
                                     ValueEnd = endX.ToStringInvariant()
                                 },
                                 new StoryboardAnimation(currentElement)
@@ -314,7 +314,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = startY.ToStringInvariant(),
+                                    StartValue = startY.ToStringInvariant(),
                                     ValueEnd = endY.ToStringInvariant()
                                 }
                             };
@@ -335,7 +335,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = start.ToStringInvariant(),
+                                    StartValue = start.ToStringInvariant(),
                                     ValueEnd = end.ToStringInvariant()
                                 }
                             };
@@ -356,7 +356,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = start.ToStringInvariant(),
+                                    StartValue = start.ToStringInvariant(),
                                     ValueEnd = end.ToStringInvariant()
                                 }
                             };
@@ -384,7 +384,7 @@ public class OsuStoryboardParser
                                     StartTime = startTime,
                                     Duration = duration,
                                     Easing = easing,
-                                    ValueStart = hexStart,
+                                    StartValue = hexStart,
                                     ValueEnd = hexEnd
                                 }
                             };

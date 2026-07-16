@@ -24,7 +24,7 @@ public partial class NoteEventTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        Editor.ChangeToTab<DesignTab>(x => x.Container.Sidebar.ShowPoint(note));
+        Editor.ChangeToTab<ChartingTab>(x => x.Container.Sidebar.ShowPoint(note));
         return true;
     }
 }

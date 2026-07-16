@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using fluXis.Configuration.Experiments;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
@@ -7,9 +8,13 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Overlay.Navigator.Pages.Club;
+using fluXis.Overlay.Navigator.Pages.MapSet;
 using fluXis.Overlay.Navigator.Pages.User;
+using fluXis.Overlay.Navigator.Pages.UserV2;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -18,7 +23,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
-using NavigatorMapSetPage = fluXis.Overlay.Navigator.Pages.MapSet.NavigatorMapSetPage;
 
 namespace fluXis.Overlay.Navigator;
 
@@ -30,11 +34,15 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
     protected override float OverlayPadding => 32;
     protected override ColourInfo BackgroundColor => Theme.Background1;
     protected override IconUsage Icon => Phosphor.Bold.Compass;
+    protected override float MaxWidth => 1536;
 
     public const float HEADER_HEIGHT = 36;
 
     [Resolved]
     private Toolbar.Toolbar? toolbar { get; set; }
+
+    [Resolved]
+    private ExperimentConfigManager? experiments { get; set; }
 
     public long PageCount => pages.Count;
     public NavigatorPage? CurrentPage => current.Value;
@@ -47,6 +55,13 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
     private FluXisScrollContainer scroll = null!;
     private Container<NavigatorPage> content = null!;
     private LoadingIcon loading = null!;
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        OpenSample = samples.Get("UI/navigator-open");
+        CloseSample = samples.Get("UI/navigator-close");
+    }
 
     protected override IEnumerable<Drawable> CreateContent()
     {
@@ -86,6 +101,9 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
 
         var pad = toolbar?.Height + toolbar?.Y ?? 0;
         if (Math.Abs(pad - Padding.Top) > 0.1f) Padding = new MarginPadding { Top = pad };
+
+        if (current.Value is { AllowScrolling: false } && !content.AutoSizeAxes.HasFlagFast(Axes.Y))
+            content.Height = scroll.DrawHeight;
     }
 
     public void Push(NavigatorPage page)
@@ -103,27 +121,34 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
         current.Value?.FadeOut(Styling.TRANSITION_FADE);
         current.Value = page;
 
-        this.Delay(Styling.TRANSITION_FADE).Then().OnComplete(_ =>
+        Scheduler.AddDelayed(() => LoadComponentAsync(page, p =>
         {
-            LoadComponentAsync(page, p =>
+            if (!pages.Contains(p))
             {
-                if (!pages.Contains(p))
-                {
-                    p.Dispose();
-                    return;
-                }
+                p.Dispose();
+                return;
+            }
 
-                content.Clear(false);
-                content.Add(p);
+            content.Clear(false);
+            content.Add(p);
 
-                var bg = p.CreateBackground();
-                if (bg is not null) background.Add(bg);
+            var bg = p.CreateBackground();
+            if (bg is not null) background.Add(bg);
 
-                p.FadeInFromZero(Styling.TRANSITION_FADE);
-                loading.Hide();
-                locked = false;
-            });
-        });
+            updateScrolling(p);
+            p.FadeInFromZero(Styling.TRANSITION_FADE);
+            loading.Hide();
+            locked = false;
+        }), Styling.TRANSITION_ENTER_DELAY * 2);
+    }
+
+    public void Refresh()
+    {
+        if (locked || current.Value is null)
+            return;
+
+        locked = true;
+        current.Value?.Refresh(() => locked = false);
     }
 
     public void Pop()
@@ -143,7 +168,9 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
         var prev = pages.Peek();
 
         background.ForEach(x => x.FadeOut(Styling.TRANSITION_FADE).Expire());
-        current.Value?.FadeOut(Styling.TRANSITION_FADE).Then().OnComplete(_ =>
+        current.Value?.FadeOut(Styling.TRANSITION_FADE);
+
+        Scheduler.AddDelayed(() =>
         {
             content.Clear(true);
             content.Add(prev);
@@ -151,10 +178,25 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
             var bg = prev.CreateBackground();
             if (bg is not null) background.Add(bg);
 
+            updateScrolling(prev);
             prev.FadeInFromZero(Styling.TRANSITION_FADE);
             current.Value = prev;
             locked = false;
-        });
+        }, Styling.TRANSITION_ENTER_DELAY * 2);
+    }
+
+    private void updateScrolling(NavigatorPage page)
+    {
+        if (page.AllowScrolling)
+        {
+            scroll.ClampExtension = 500;
+            content.AutoSizeAxes = Axes.Y;
+        }
+        else
+        {
+            scroll.ClampExtension = 0;
+            content.AutoSizeAxes = Axes.None;
+        }
     }
 
     private void reset()
@@ -174,6 +216,12 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
         scroll.ScrollTo(0, false);
     }
 
+    protected override void PopOut()
+    {
+        locked = false;
+        base.PopOut();
+    }
+
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
@@ -190,7 +238,14 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
 
     #region Preset
 
-    public void PushUser(long id) => Push(new NavigatorUserPage(id));
+    public void PushUser(long id)
+    {
+        if (experiments?.Get<bool>(ExperimentConfig.UserV2) ?? false)
+            Push(new NavigatorUserV2Page(id));
+        else
+            Push(new NavigatorUserPage(id));
+    }
+
     public void PushMapSet(long id) => Push(new NavigatorMapSetPage(id));
     public void PushClub(long id) => Push(new NavigatorClubPage(id));
 

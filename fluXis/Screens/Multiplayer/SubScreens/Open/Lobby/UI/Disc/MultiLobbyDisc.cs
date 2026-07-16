@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
@@ -18,6 +19,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI.Disc;
@@ -34,9 +36,9 @@ public partial class MultiLobbyDisc : CircularContainer
     private SpriteStack<MapCover> covers;
     private FlashLayer flash;
 
-    private ForcedHeightText title;
-    private ForcedHeightText artist;
-    private ForcedHeightText difficulty;
+    private Marquee title;
+    private Marquee artist;
+    private Marquee difficulty;
     private RoundedChip modeChip;
     private DifficultyChip difficultyChip;
     private ModList modsList;
@@ -96,28 +98,9 @@ public partial class MultiLobbyDisc : CircularContainer
                     Spacing = new Vector2(8),
                     Children = new Drawable[]
                     {
-                        title = new ForcedHeightText(true, 800)
-                        {
-                            WebFontSize = 32,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Shadow = true
-                        },
-                        artist = new ForcedHeightText(true, 800)
-                        {
-                            WebFontSize = 24,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Shadow = true
-                        },
-                        difficulty = new ForcedHeightText(true, 800)
-                        {
-                            WebFontSize = 16,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Shadow = true,
-                            Alpha = .8f
-                        },
+                        title = createMarquee(32),
+                        artist = createMarquee(24),
+                        difficulty = createMarquee(16).With(x => x.Alpha = .8f),
                         new FillFlowContainer
                         {
                             AutoSizeAxes = Axes.Both,
@@ -150,7 +133,24 @@ public partial class MultiLobbyDisc : CircularContainer
             },
             flash = new FlashLayer()
         };
+
+        Marquee createMarquee(float height) => new()
+        {
+            AutoSizeAxes = Axes.None,
+            Anchor = Anchor.TopCentre,
+            Origin = Anchor.TopCentre,
+            StaticAnchor = Anchor.Centre,
+            Width = 800,
+            Height = height,
+        };
     }
+
+    private static void replaceText(Marquee target, LocalisableString text) => target.CreateFunc = () => new ForcedHeightText
+    {
+        Text = text,
+        WebFontSize = target.Height,
+        Shadow = true
+    };
 
     protected override void LoadComplete()
     {
@@ -159,16 +159,19 @@ public partial class MultiLobbyDisc : CircularContainer
         maps.MapBindable.BindValueChanged(v =>
         {
             var map = v.NewValue;
-            covers.Add(new MapCover(map.MapSet) { FadeDuration = 0 });
+
+            var cover = new MapCover(map.MapSet) { FadeDuration = 0 };
+            covers.Add(cover);
+            cover.Show();
 
             var col = map.Metadata.Color;
             var info = ColourInfo.GradientVertical(col.Lighten(0.2f), col);
             this.BorderColorTo(info);
             FadeEdgeEffectTo(col.Opacity(.5f));
 
-            title.Text = map.Metadata.LocalizedTitle;
-            artist.Text = map.Metadata.LocalizedArtist;
-            difficulty.Text = map.Difficulty;
+            replaceText(title, map.Metadata.LocalizedTitle);
+            replaceText(artist, map.Metadata.LocalizedArtist);
+            replaceText(difficulty, map.Difficulty);
             modeChip.Text = $"{map.KeyCount}K";
             modeChip.BackgroundColour = Theme.GetKeyCountColor(map.KeyCount);
             difficultyChip.RealmMap = map;
@@ -187,7 +190,7 @@ public partial class MultiLobbyDisc : CircularContainer
         Size = new Vector2(size);
 
         var amp = amplitudes.Amplitudes[..3].Average();
-        spinning.Scale = new Vector2(1 + amp * 0.02f);
+        spinning.Scale = new Vector2(1 + amp * 0.05f);
     }
 
     public void UpdateMods(List<IMod> mods) => modsList.Mods = mods;

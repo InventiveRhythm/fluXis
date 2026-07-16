@@ -22,6 +22,7 @@ using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Scripting;
 using fluXis.Storyboards;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -56,11 +57,15 @@ public partial class DesignContainer : EditorTabContainer
 
     private SpriteStack<BlurableBackground> backgroundStack;
     private Box backgroundDim;
-    private Container rulesetWrapper;
     private LoadingIcon loadingIcon;
     private PulseEffect pulseEffect;
     private EditorFlashLayer backFlash;
     private EditorFlashLayer frontFlash;
+
+    [CanBeNull]
+    private RulesetContainer ruleset;
+
+    private Container rulesetWrapper;
 
     private IdleTracker rulesetIdleTracker;
 
@@ -87,16 +92,15 @@ public partial class DesignContainer : EditorTabContainer
 
         camera = new CameraContainer(Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList());
 
-        return new Drawable[]
-        {
+        return
+        [
             handler = new DesignShaderHandler(),
             rulesetIdleTracker = new IdleTracker(400, rebuildRuleset, () =>
             {
                 loadingIcon.Show();
                 rulesetWrapper.FirstOrDefault()?.FadeOut(100);
             }),
-            drawSizePreserve.WithChild(createShaderStack().AddContent(new[]
-            {
+            drawSizePreserve.WithChild(createShaderStack().AddContent(
                 camera.CreateProxyDrawable().With(x => x.Clock = EditorClock),
                 camera.WithChildren(new Drawable[]
                 {
@@ -125,8 +129,8 @@ public partial class DesignContainer : EditorTabContainer
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 }
-            }))
-        };
+            ))
+        ];
     }
 
     protected override void LoadComplete()
@@ -139,8 +143,19 @@ public partial class DesignContainer : EditorTabContainer
         Scheduler.AddOnce(rulesetIdleTracker.Reset);
         Map.AnyChange += t =>
         {
-            if (t is not null && ignoredForRebuild.Contains(t.GetType()))
-                return;
+            if (t is not null)
+            {
+                if (ignoredForRebuild.Contains(t.GetType()))
+                    return;
+
+                var type = t.GetType();
+
+                if (ruleset?.HasReloadListener(type) ?? false)
+                {
+                    var objs = Map.GetObjectsOfType(type);
+                    if (ruleset.TriggerReload(type, objs)) return;
+                }
+            }
 
             Scheduler.AddOnce(rulesetIdleTracker.Reset);
         };
@@ -200,27 +215,7 @@ public partial class DesignContainer : EditorTabContainer
         foreach (var type in shaderTypes)
         {
             var shader = ShaderStackContainer.CreateForType(type);
-
-            /*ShaderStep shader = type switch
-            {
-                ShaderType.Chromatic => new ChromaticContainer(),
-                ShaderType.Greyscale => new GreyscaleContainer(),
-                ShaderType.Invert => new InvertContainer(),
-                ShaderType.Bloom => new BloomContainer(),
-                ShaderType.Mosaic => new MosaicContainer(),
-                ShaderType.Noise => new NoiseContainer(),
-                ShaderType.Vignette => new VignetteContainer(),
-                ShaderType.Retro => new RetroContainer(),
-                ShaderType.HueShift => new HueShiftContainer(),
-                ShaderType.Glitch => new GlitchContainer(),
-                ShaderType.SplitScreen => new SplitScreenContainer(),
-                ShaderType.FishEye => new FishEyeContainer(),
-                ShaderType.Reflections => new ReflectionsContainer(),
-                _ => null
-            };*/
-
-            if (shader is null)
-                continue;
+            if (shader is null) continue;
 
             shaders.AddShader(shader);
         }
@@ -254,8 +249,9 @@ public partial class DesignContainer : EditorTabContainer
     private void rebuildRuleset()
     {
         rulesetWrapper.Clear();
+        ruleset = null;
 
-        var ruleset = createRuleset();
+        ruleset = createRuleset();
         rulesetWrapper.Child = ruleset;
         ruleset.FadeInFromZero(100);
 

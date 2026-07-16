@@ -1,9 +1,11 @@
 using System;
+using System.Threading.Tasks;
 using fluXis.Online.Drawables;
 using fluXis.Online.Fluxel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 
 namespace fluXis.Overlay.Navigator;
 
@@ -15,6 +17,9 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
 {
     [Resolved]
     protected IAPIClient API { get; private set; } = null!;
+
+    [Resolved]
+    protected OnlineNavigator Navigator { get; private set; } = null!;
 
     [Resolved]
     protected FluXisGame? Game { get; private set; }
@@ -36,16 +41,59 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
         else
             RelativeSizeAxes = Axes.X;
 
+        if (!AllowScrolling)
+        {
+            AutoSizeAxes = Axes.None;
+            RelativeSizeAxes |= Axes.Y;
+        }
+
         try
         {
             data = PullData();
-            InternalChild = CreateContent(data);
+            setContent();
         }
         catch (Exception ex)
         {
-            InternalChild = new OnlineErrorContainer(ex.Message) { ShowInstantly = true };
+            fail(ex);
         }
     }
+
+    private void setContent()
+    {
+        if (data is null) return;
+
+        InternalChild = CreateContent(data);
+    }
+
+    private void fail(Exception ex)
+    {
+        Logger.Error(ex, "Failed to load page.");
+
+        InternalChild = new OnlineErrorContainer
+        {
+            Text = ex.Message,
+            ShowInstantly = true,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
+        };
+    }
+
+    public override void Refresh(Action complete) => Task.Run(() =>
+    {
+        try
+        {
+            data = PullData();
+            Schedule(setContent);
+        }
+        catch (Exception ex)
+        {
+            Schedule(() => fail(ex));
+        }
+        finally
+        {
+            Schedule(complete);
+        }
+    });
 
     protected virtual Drawable? CreateBackground(T data) => null;
     public sealed override Drawable? CreateBackground() => data is null ? null : CreateBackground(data);
@@ -55,5 +103,9 @@ public abstract partial class NavigatorPage : CompositeDrawable
 {
     public abstract string Path { get; }
 
+    public virtual bool AllowScrolling => true;
+
     public virtual Drawable? CreateBackground() => null;
+
+    public abstract void Refresh(Action complete);
 }

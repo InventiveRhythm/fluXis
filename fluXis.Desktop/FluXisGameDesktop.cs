@@ -50,7 +50,6 @@ public partial class FluXisGameDesktop : FluXisGame
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        new DiscordActivity().Initialize(this, APIClient);
 
         var args = Program.Args.ToList();
 
@@ -72,5 +71,11 @@ public partial class FluXisGameDesktop : FluXisGame
     }
 
     protected override ISteamManager CreateSteam() => new SteamManager();
+
+    protected override IDiscordManager CreateDiscord() => new DiscordManager
+    {
+        OnInviteAccept = JoinMultiplayerRoom
+    };
+
     public override LightController CreateLightController() => Config.Get<bool>(FluXisSetting.OpenRGBIntegration) ? new OpenRGBController() : new LightController();
 }

@@ -1,11 +1,14 @@
 using fluXis.Configuration;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Shaders;
+using fluXis.Graphics.Shaders.Steps;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Skinning;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -26,7 +29,6 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
     private GameplaySamples samples => screen.Samples;
 
     private Box dim;
-    private FluXisSpriteText text;
     private FillFlowContainer flow;
     private Container buttonsContainer;
     private SelectionCycleContainer<GameplayMenuButton> buttons;
@@ -34,6 +36,10 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
 
     private Bindable<bool> dimOnLowHealth;
     private bool failed;
+
+    private Container textContainer;
+    private FluXisSpriteText text;
+    private ShaderTransformHandler glitchShader;
 
     [BackgroundDependencyLoader]
     private void load(ISkin skin, FluXisConfig config)
@@ -61,13 +67,12 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                 AutoSizeEasing = Easing.OutQuint,
                 Children = new Drawable[]
                 {
-                    text = new FluXisSpriteText
+                    textContainer = new Container
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Text = "FAILED",
-                        FontSize = 100,
-                        Scale = new Vector2(1.2f)
+                        Size = new Vector2(300, 150),
+                        Child = createGlitchyText().With(x => x.Anchor = x.Origin = Anchor.Centre)
                     },
                     buttonsContainer = new Container
                     {
@@ -124,6 +129,26 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
         };
     }
 
+    private Drawable createGlitchyText()
+    {
+        var stack = new ShaderStackContainer
+        {
+            RelativeSizeAxes = Axes.None,
+            Size = new Vector2(300),
+            BackgroundColour = Theme.Text.Opacity(0)
+        };
+
+        glitchShader = stack.AddShader(new Glitch2ShaderStep());
+        stack.AddContent(text = new FluXisSpriteText
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Text = "FAILED",
+            FontSize = 100
+        });
+        return stack;
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -136,12 +161,16 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
         this.FadeIn();
         flash.FadeOutFromOne(2400);
 
+        glitchShader.StrengthTo(1f).Strength2To(0.8f)
+                    .StrengthTo(0.2f, 1200, Easing.OutQuint).Strength2To(0.2f, 1200, Easing.OutQuint);
+
         failed = true;
         samples.Fail();
 
-        text.ScaleTo(8f).RotateTo(280)
-            .RotateTo(-6, 1600, Easing.OutQuint)
-            .ScaleTo(1, 1200, Easing.OutQuint)
+        textContainer.ScaleTo(8f).ScaleTo(1, 1200, Easing.OutQuint);
+
+        text.RotateTo(280)
+            .RotateTo(-6, 1200, Easing.OutQuint)
             .Then(400).FadeIn().OnComplete(_ =>
             {
                 flow.AutoSizeDuration = 600;

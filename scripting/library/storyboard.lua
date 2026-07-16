@@ -70,7 +70,7 @@ local __StoryboardElement = {}
 ---@param type AnimationType the type of animation
 ---@param time number when this animation starts in ms (absolute from map start)
 ---@param len number the total length of this animation in ms
----@param startVal string the value this animation starts with (input based on type)
+---@param startVal string the value this animation starts with (input based on type). leave nil to not use startVal
 ---@param endVal string the value this animation ends with (input based on type)
 ---@param ease Easing the easing function used for this animation
 function __StoryboardElement:animate(type, time, len, startVal, endVal, ease) end

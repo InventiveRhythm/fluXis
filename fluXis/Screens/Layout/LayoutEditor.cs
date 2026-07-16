@@ -8,6 +8,7 @@ using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
@@ -84,7 +85,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
 
     private HUDLayout layout { get; }
 
-    private BindableBool forceAspect { get; } = new();
+    private BindableBool forceAspect { get; } = new(true);
 
     private string lastHash = string.Empty;
     private string currentHash => MapUtils.GetHash(layout.Serialize(true));
@@ -243,6 +244,14 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
             catch (Exception e)
             {
                 Logger.Error(e, "Failed to create ruleset!");
+
+                Schedule(() => content.Add(new FluXisSpriteText
+                {
+                    Text = "Failed to load preview. Please select a different map!",
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    WebFontSize = 18
+                }));
             }
         });
     }

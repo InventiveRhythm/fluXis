@@ -77,7 +77,7 @@ public partial class TestResults : FluXisTestScene
         var score = getScore();
         AddStep("Push With Request", () => stack.Push(new SoloResults(getMap(), score, APIUser.Dummy)
         {
-            SubmitRequest = new SimulatedScoreRequest(score, new List<IMod>(), new Replay(), "", "", "")
+            SubmitRequest = new SimulatedScoreRequest(score, new List<IMod>(), new Replay(), "", "", "", "")
         }));
     }
 
@@ -98,8 +98,8 @@ public partial class TestResults : FluXisTestScene
 
     private class SimulatedScoreRequest : ScoreSubmitRequest
     {
-        public SimulatedScoreRequest(ScoreInfo score, List<IMod> mods, Replay replay, string hash, string eHash, string sHash)
-            : base(score, mods, replay, hash, eHash, sHash)
+        public SimulatedScoreRequest(ScoreInfo score, List<IMod> mods, Replay replay, string hash, string eHash, string sHash, string ticket)
+            : base(score, mods, replay, hash, eHash, sHash, ticket)
         {
             Response = new APIResponse<ScoreSubmissionStats>(200, "", new ScoreSubmissionStats(new APIScore { PerformanceRating = 7 }, 10, 10, 1, 12, 10, 2));
         }
