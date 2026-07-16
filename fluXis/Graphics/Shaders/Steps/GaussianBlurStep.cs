@@ -25,6 +25,8 @@ public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
 
     private const float max_sigma = 32f;
 
+    private const float buffer_scale = 0.5f;
+
     public override void EnsureParameters(IRenderer renderer)
     {
         ParameterBuffer ??= renderer.CreateUniformBuffer<BlurParameters>();
@@ -71,24 +73,24 @@ public class GaussianBlurStep : ShaderStep<GaussianBlurStep.BlurParameters>
         float min_scale = 0.5f;
         float downsampleScale = Math.Max(min_scale, 1f - Strength);
 
-        Vector2 downsampledSize = new Vector2(
-            (int)Math.Ceiling(current.Size.X * downsampleScale),
-            (int)Math.Ceiling(current.Size.Y * downsampleScale)
-        );
-
-        targetSize = downsampledSize;
-
         sigma = max_sigma * Strength * downsampleScale;
         kernelRadius = Blur.KernelSize(sigma);
         DrawColor = Colour4.White;
 
-        EnsureBuffer(renderer, ref bufferX, downsampledSize);
-        EnsureBuffer(renderer, ref bufferY, downsampledSize);
+        Vector2 bufferSize = new Vector2(
+            (int)Math.Ceiling(current.Size.X * buffer_scale),
+            (int)Math.Ceiling(current.Size.Y * buffer_scale)
+        );
+
+        targetSize = bufferSize;
+
+        EnsureBuffer(renderer, ref bufferX, bufferSize);
+        EnsureBuffer(renderer, ref bufferY, bufferSize);
 
         target.Unbind();
 
-        drawPass(renderer, current, bufferX, Vector2.UnitX, downsampledSize);
-        drawPass(renderer, bufferX, bufferY, Vector2.UnitY, downsampledSize);
+        drawPass(renderer, current, bufferX, Vector2.UnitX, bufferSize);
+        drawPass(renderer, bufferX, bufferY, Vector2.UnitY, bufferSize);
 
         ditherShader.BindUniformBlock($"m_{nameof(DitherParameters)}", ditherParameterBuffer);
 

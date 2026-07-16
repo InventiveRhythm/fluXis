@@ -35,6 +35,8 @@ public class MotionBlurStep : ShaderStep<MotionBlurStep.BlurParameters>
 
     private const float max_sigma = 45f;
 
+    private const float buffer_scale = 0.5f;
+
     private IFrameBuffer buffer;
 
     public override void EnsureParameters(IRenderer renderer)
@@ -69,19 +71,20 @@ public class MotionBlurStep : ShaderStep<MotionBlurStep.BlurParameters>
         float min_scale = 0.4f;
         float downsampleScale = Math.Max(min_scale, 1f - Strength);
 
-        Vector2 downsampledSize = new Vector2(
-            (int)Math.Ceiling(current.Size.X * downsampleScale),
-            (int)Math.Ceiling(current.Size.Y * downsampleScale)
-        );
-
-        targetSize = downsampledSize;
-
         sigma = max_sigma * Strength * downsampleScale;
         kernelRadius = Blur.KernelSize(sigma);
+
+        Vector2 bufferSize = new Vector2(
+            (int)Math.Ceiling(current.Size.X * buffer_scale),
+            (int)Math.Ceiling(current.Size.Y * buffer_scale)
+        );
+
+        targetSize = bufferSize;
+
         UpdateParameters(current);
         DrawColor = Colour4.White;
 
-        EnsureBuffer(renderer, ref buffer, downsampledSize);
+        EnsureBuffer(renderer, ref buffer, bufferSize);
 
         target.Unbind();
 
