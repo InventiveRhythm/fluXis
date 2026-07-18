@@ -37,13 +37,13 @@ public partial class WarningScreen : FluXisScreen
                 Direction = FillDirection.Vertical,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Spacing = new Vector2(0, 20),
+                Spacing = new Vector2(20),
                 Children = new Drawable[]
                 {
                     new FluXisSpriteText
                     {
                         Text = "Epilepsy warning!",
-                        FontSize = 60,
+                        WebFontSize = 48,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre
                     },
@@ -53,11 +53,10 @@ public partial class WarningScreen : FluXisScreen
                         AutoSizeAxes = Axes.Y,
                         Text = "This game contains flashing lights and colors that may cause discomfort and/or seizures for people with photosensitive epilepsy.",
                         TextAnchor = Anchor.TopCentre,
-                        FontSize = 30,
+                        WebFontSize = 20,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        Width = 800,
-                        Alpha = 0
+                        Width = 800
                     }
                 }
             }
@@ -67,11 +66,7 @@ public partial class WarningScreen : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         backgrounds.SetDim(1f);
-
         next();
-
-        // yes, this is stupid, and I know
-        this.Delay(200).FadeIn().OnComplete(_ => epilepsyContainer.AutoSizeDuration = 99999);
     }
 
     private void next()
@@ -84,14 +79,10 @@ public partial class WarningScreen : FluXisScreen
         {
             case 1:
                 seq = epilepsyContainer.ScaleTo(1.1f).FadeInFromZero(Styling.TRANSITION_FADE)
-                                       .ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint)
-                                       .Then(5000)
-                                       .ScaleTo(0.9f, Styling.TRANSITION_MOVE, Easing.OutQuint)
+                                       .ScaleTo(1, Styling.TRANSITION_MOVE, Easing.Out)
+                                       .Then(4000)
+                                       .ScaleTo(0.9f, Styling.TRANSITION_MOVE, Easing.Out)
                                        .FadeOut(Styling.TRANSITION_FADE);
-
-                epilepsyText.Delay(2000).ScaleTo(1.1f)
-                            .FadeIn(Styling.TRANSITION_FADE)
-                            .ScaleTo(1, Styling.TRANSITION_MOVE, Easing.OutQuint);
                 break;
 
             default:
