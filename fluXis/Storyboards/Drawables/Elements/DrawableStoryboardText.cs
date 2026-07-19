@@ -21,11 +21,13 @@ public partial class DrawableStoryboardText : DrawableStoryboardElement
 
         var text = Element.GetParameter("text", string.Empty);
         var size = Element.GetParameter("size", 20f);
+        var renderBoundsOnly = Element.GetParameter("renderBoundsOnly", false);
 
         InternalChild = new FluXisSpriteText
         {
             Text = text,
-            FontSize = size
+            FontSize = size,
+            RenderBoundsOnly = renderBoundsOnly
         };
     }
 }

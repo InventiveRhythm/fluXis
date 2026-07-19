@@ -108,6 +108,7 @@ local __StoryboardSprite = {}
 ---@class StoryboardText: StoryboardElement
 ---@field size number
 ---@field text string
+---@field renderBoundsOnly boolean
 local __StoryboardText = {}
 
 ---@alias AnimationType string
