@@ -11,6 +11,7 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Navigator;
+using fluXis.Overlay.Navigator.Pages.User;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -24,7 +25,6 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
-using NavigatorMapSetPage = fluXis.Overlay.Navigator.Pages.MapSet.NavigatorMapSetPage;
 
 namespace fluXis.Overlay.Toolbar;
 
@@ -184,7 +184,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBind
             return true;
         }
 
-        if (navigator?.CurrentPage is NavigatorMapSetPage u && u.ID == api.User.Value.ID)
+        if (navigator?.CurrentPage is NavigatorUserPage u && u.UserID == api.User.Value.ID)
             navigator.Hide();
         else
             navigator?.PushUser(api.User.Value.ID);

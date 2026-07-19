@@ -8,6 +8,8 @@ using fluXis.Localization;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Browse;
 using fluXis.Overlay.Music;
+using fluXis.Overlay.Navigator;
+using fluXis.Overlay.Navigator.Pages.Rankings;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar.Buttons;
@@ -15,10 +17,10 @@ using fluXis.Overlay.Wiki;
 using fluXis.Screens;
 using fluXis.Screens.Menu;
 using fluXis.Screens.Multiplayer;
-using fluXis.Screens.Ranking;
 using fluXis.Screens.Select;
 using fluXis.Utils;
 using Humanizer;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -49,6 +51,10 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     private FluXisScreenStack screens { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private OnlineNavigator navigator { get; set; }
 
     public BindableBool AllowOverlays { get; } = new();
 
@@ -134,15 +140,6 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 Screen = typeof(MultiplayerScreen),
                                 Action = () => goToScreen(new MultiplayerScreen()),
                                 RequireLogin = true
-                            },
-                            new ToolbarScreenButton
-                            {
-                                TooltipTitle = LocalizationStrings.Toolbar.Ranking,
-                                TooltipSub = LocalizationStrings.Toolbar.RankingDescription,
-                                Icon = Phosphor.Bold.Trophy,
-                                Screen = typeof(Rankings),
-                                Action = () => goToScreen(new Rankings()),
-                                RequireLogin = true
                             }
                         }
                     },
@@ -163,6 +160,20 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                         Origin = Anchor.CentreRight,
                         Children = new Drawable[]
                         {
+                            new ToolbarButton
+                            {
+                                TooltipTitle = LocalizationStrings.Toolbar.Ranking,
+                                TooltipSub = LocalizationStrings.Toolbar.RankingDescription,
+                                Icon = Phosphor.Bold.Trophy,
+                                RequireLogin = true,
+                                Action = () =>
+                                {
+                                    if (navigator?.CurrentPage is NavigatorRankingsPage)
+                                        navigator.Hide();
+                                    else
+                                        navigator?.Push(new NavigatorRankingsPage());
+                                }
+                            },
                             new ToolbarOverlayButton
                             {
                                 TooltipTitle = LocalizationStrings.Toolbar.Dashboard,
