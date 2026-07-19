@@ -30,8 +30,8 @@ public partial class DrawableStoryboardVideo : DrawableStoryboardElement
     private void load(StoryboardStorage storage)
     {
         var path = Element.GetParameter("path", string.Empty);
-        offset = Element.GetParameter("videoOffset", 0);
-        loop = Element.GetParameter("videoLoop", false);
+        offset = Element.GetParameter("offset", 0);
+        loop = Element.GetParameter("loop", false);
 
         if (!storage.Storage.Exists(path))
         {

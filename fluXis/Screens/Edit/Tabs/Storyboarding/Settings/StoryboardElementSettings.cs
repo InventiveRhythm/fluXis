@@ -551,23 +551,23 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             },
                             new EditorVariableNumber<float>
                             {
-                                Text = "Video Offset",
-                                CurrentValue = item.GetParameter("videoOffset", 0),
+                                Text = "Offset",
+                                CurrentValue = item.GetParameter("offset", 0),
                                 Min = 0,
                                 Step = 100,
                                 OnValueChanged = v =>
                                 {
-                                    item.Parameters["videoOffset"] = v;
+                                    item.Parameters["offset"] = v;
                                     map.Update(item);
                                 }
                             },
                             new EditorVariableToggle
                             {
-                                Text = "Loop Video",
-                                CurrentValue = item.GetParameter("videoLoop", false),
+                                Text = "Loop",
+                                CurrentValue = item.GetParameter("loop", false),
                                 OnValueChanged = enabled =>
                                 {
-                                    item.Parameters["videoLoop"] = enabled;
+                                    item.Parameters["loop"] = enabled;
                                     map.Update(item);
                                 }
                             }
