@@ -538,16 +538,40 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         break;
 
                     case StoryboardElementType.Video:
-                        drawables.Add(new EditorVariableTextBox
-                        {
-                            Text = "Path",
-                            CurrentValue = item.GetParameter("path", ""),
-                            OnValueChanged = t =>
+                        drawables.AddRange([
+                            new EditorVariableTextBox
                             {
-                                item.Parameters["path"] = t.Text;
-                                map.Update(item);
+                                Text = "Path",
+                                CurrentValue = item.GetParameter("path", ""),
+                                OnValueChanged = t =>
+                                {
+                                    item.Parameters["path"] = t.Text;
+                                    map.Update(item);
+                                }
+                            },
+                            new EditorVariableNumber<float>
+                            {
+                                Text = "Video Offset",
+                                CurrentValue = item.GetParameter("videoOffset", 0),
+                                Min = 0,
+                                Step = 100,
+                                OnValueChanged = v =>
+                                {
+                                    item.Parameters["videoOffset"] = v;
+                                    map.Update(item);
+                                }
+                            },
+                            new EditorVariableToggle
+                            {
+                                Text = "Loop Video",
+                                CurrentValue = item.GetParameter("videoLoop", false),
+                                OnValueChanged = enabled =>
+                                {
+                                    item.Parameters["videoLoop"] = enabled;
+                                    map.Update(item);
+                                }
                             }
-                        });
+                        ]);
                         break;
                 }
 
