@@ -73,12 +73,13 @@ function Anchor(input) end
 ---| "None"
 ---| "Inherit"
 ---| "Mix"
----| "Difference"
+---| "LegacyDifference"
 ---| "Add"
 ---| "Subtract"
 ---| "Screen"
 ---| "Multiply"
 ---| "Premultiplied"
+---| "Difference"
 
 ---@param input BlendMode
 ---@return number
