@@ -44,8 +44,8 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -274,6 +274,61 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         var camera = new CameraContainer(MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList());
 
+        var pulseContent = camera.WithChildren(new Drawable[]
+        {
+            new DrawSizePreservingFillContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                TargetDrawSize = new Vector2(1920, 1080),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Children = new Drawable[]
+                {
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
+                        {
+                            background = new GlobalBackground
+                            {
+                                DefaultMap = RealmMap,
+                                InitialBlur = BackgroundBlur
+                            },
+                            backgroundVideo = new BackgroundVideo
+                            {
+                                Clock = GameplayClock
+                            },
+                            new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Background),
+                            new Box
+                            {
+                                Colour = Color4.Black,
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = BackgroundDim,
+                            }
+                        }
+                    },
+                    new ComboBurst(RulesetContainer),
+                    clockContainer,
+                    new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Foreground)
+                }
+            },
+            hud = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = new GameplayHUD(RulesetContainer)
+            },
+            new DrawSizePreservingFillContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                TargetDrawSize = new Vector2(1920, 1080),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Child = new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Overlay)
+            }
+        });
+
+        Container pulseContainer;
+
         AddRangeInternal([
             keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount, Map.IsDual)
             {
@@ -281,80 +336,52 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
                 Origin = Anchor.Centre,
                 Children = new[]
                 {
-                    camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
-                    Samples,
-                    dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }),
-                    shaders.AddContent(new Drawable[]
+                    new LetterBoxedContainer
                     {
-                        new AspectRatioContainer(Map.Force16By9)
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Children = new Drawable[]
                         {
-                            Children = new Drawable[]
+                            camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
+                            Samples,
+                            dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }),
+                            pulseContainer = new Container
                             {
-                                camera.WithChildren(new Drawable[]
+                                RelativeSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Children = new Drawable[]
                                 {
-                                    new DrawSizePreservingFillContainer
+                                    shaders.AddContent(new Drawable[]
                                     {
-                                        RelativeSizeAxes = Axes.Both,
-                                        TargetDrawSize = new Vector2(1920, 1080),
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
-                                        Children = new Drawable[]
+                                        new AspectRatioContainer(Map.Force16By9)
                                         {
-                                            new Container
+                                            Masking = true,
+                                            Children = new Drawable[]
                                             {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Colour = ColourInfo.GradientHorizontal(Color4.White, Color4.Black).Interpolate(new Vector2(BackgroundDim, 0)),
-                                                Children = new Drawable[]
-                                                {
-                                                    background = new GlobalBackground
-                                                    {
-                                                        DefaultMap = RealmMap,
-                                                        InitialBlur = BackgroundBlur
-                                                    },
-                                                    backgroundVideo = new BackgroundVideo
-                                                    {
-                                                        Clock = GameplayClock
-                                                    },
-                                                    new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Background),
-                                                }
-                                            },
-                                            new ComboBurst(RulesetContainer),
-                                            clockContainer,
-                                            new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Foreground)
+                                                pulseContent,
+                                                new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
+                                                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
+                                            }
                                         }
-                                    },
-                                    hud = new Container
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Child = new GameplayHUD(RulesetContainer)
-                                    },
-                                    new DrawSizePreservingFillContainer
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        TargetDrawSize = new Vector2(1920, 1080),
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
-                                        Child = new DrawableStoryboardLayer(GameplayClock, storyboard, StoryboardLayer.Overlay)
-                                    }
-                                }),
-                                new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
-                                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
-                            }
-                        }
-                    }),
-                    new DangerHealthOverlay(),
-                    new SkipOverlay(),
-                    failMenu = new FailMenu(),
-                    fcOverlay = new FullComboOverlay(),
-                    quickActionOverlay = new QuickActionOverlay(),
-                    new GameplayTouchInput(RulesetContainer.Input),
-                    new PauseMenu()
+                                    }),
+                                    new DangerHealthOverlay(),
+                                    new SkipOverlay(),
+                                    failMenu = new FailMenu(),
+                                    fcOverlay = new FullComboOverlay(),
+                                    quickActionOverlay = new QuickActionOverlay(),
+                                    new GameplayTouchInput(RulesetContainer.Input),
+                                    new PauseMenu()
+                                }
+                            },
+                        },
+                    },
                 },
             },
             Debug = new DebugText()
         ]);
 
-        clockContainer.Add(new BeatPulseManager(Map, MapEvents.BeatPulseEvents, keybindContainer));
+        clockContainer.Add(new BeatPulseManager(Map, MapEvents.BeatPulseEvents, pulseContainer));
 
         backgroundVideo.LoadVideo(Map);
 
