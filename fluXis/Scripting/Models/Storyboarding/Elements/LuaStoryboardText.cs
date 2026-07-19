@@ -15,11 +15,15 @@ public class LuaStoryboardText : LuaStoryboardElement
     [LuaMember(Name = "text")]
     public string Text { get; set; } = "text";
 
+    [LuaMember(Name = "renderBoundsOnly")]
+    public bool RenderBoundsOnly { get; set; }
+
     public override StoryboardElement Build()
     {
         var el = base.Build();
         el.Parameters["size"] = FontSize;
         el.Parameters["text"] = Text;
+        el.Parameters["renderBoundsOnly"] = RenderBoundsOnly;
         return el;
     }
 }

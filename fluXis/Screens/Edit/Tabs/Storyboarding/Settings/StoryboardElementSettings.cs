@@ -349,6 +349,16 @@ public partial class StoryboardElementSettings : CompositeDrawable
                                     map.Update(item);
                                 }
                             },
+                            new EditorVariableToggle
+                            {
+                                Text = "Render Bounds Only",
+                                CurrentValue = item.GetParameter("renderBoundsOnly", false),
+                                OnValueChanged = enabled =>
+                                {
+                                    item.Parameters["renderBoundsOnly"] = enabled;
+                                    map.Update(item);
+                                }
+                            }
                         });
                         break;
 
