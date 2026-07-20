@@ -14,8 +14,10 @@ using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Mods;
+using fluXis.Overlay.Mouse;
 using fluXis.Scoring;
 using fluXis.Screens.Select.Mods;
+using fluXis.Skinning;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using Midori.Utils.Extensions;
@@ -35,6 +37,9 @@ public partial class SelectMapInfoHeader : CompositeDrawable
 {
     [Resolved]
     private MapStore maps { get; set; }
+
+    [Resolved]
+    private SkinManager skins { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -56,9 +61,9 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     private BpmDisplay bpm;
     private StatDisplay length;
     private StatDisplay notesPerSecond;
-    private StatDisplay longNotePercentage;
+    private TooltipStatDisplay longNotePercentage;
 
-    private StatDisplay accuracy;
+    private TooltipStatDisplay accuracy;
     private StatDisplay health;
 
     private Container headerTop;
@@ -190,11 +195,11 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                         bpm = new BpmDisplay(),
                         length = new StatDisplay(LocalizationStrings.General.MapLength, v => TimeUtils.Format(v, false)),
                         notesPerSecond = new StatDisplay(LocalizationStrings.General.MapNotesPerSecond, v => v.ToStringInvariant("0.00")),
-                        longNotePercentage = new StatDisplay(LocalizationStrings.General.MapLongNotePercent, v => v.ToStringInvariant("0.00") + "%")
+                        longNotePercentage = new TooltipStatDisplay(LocalizationStrings.General.MapLongNotePercent, v => v.ToStringInvariant("0.00") + "%")
                     }),
                     new StatsRow(new[]
                     {
-                        accuracy = new StatDisplay(LocalizationStrings.General.MapAccuracy, v => v.ToStringInvariant("0.0")),
+                        accuracy = new TooltipStatDisplay(LocalizationStrings.General.MapAccuracy, v => v.ToStringInvariant("0.0")),
                         health = new StatDisplay(LocalizationStrings.General.MapHealth, v => v.ToStringInvariant("0.0"))
                     })
                 }
@@ -289,7 +294,12 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         updateValues(map, mods?.RateMod.RateBindable.Value ?? 1);
 
         longNotePercentage.SetValue(map.Filters.LongNotePercentage * 100);
-        longNotePercentage.TooltipText = $"{map.Filters.NoteCount} / {map.Filters.LongNoteCount}";
+        longNotePercentage.TooltipContent =
+        [
+            ("Normal/Tick", $"{map.Filters.NoteCount}", Theme.Text),
+            ("Long Notes", $"{map.Filters.LongNoteCount}", Theme.Text),
+            ("Mines", $"{map.Filters.LandmineCount}", Theme.Text)
+        ];
 
         updateDifficultyValues(map, mods?.SelectedMods ?? new BindableList<IMod>());
 
@@ -333,8 +343,13 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         health.SetValue(hp);
 
         var windows = new HitWindows(acc, 1);
-        var timingsStr = windows.GetTimings().Aggregate("", (current, timing) => current + $"{timing.Judgement}: {timing.Milliseconds.ToStringInvariant("0.#")}ms\n");
-        accuracy.TooltipText = timingsStr.Trim();
+        accuracy.TooltipContent = windows.GetTimings()
+                                         .Select(x => (
+                                             x.Judgement.ToString(),
+                                             $"{x.Milliseconds:0.##}ms",
+                                             skins.SkinJson.GetColorForJudgement(x.Judgement))
+                                         )
+                                         .ToArray();
     }
 
     private void updateValues(RealmMap map, float rate)
@@ -435,10 +450,65 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         }
     }
 
-    private partial class StatDisplay : CompositeDrawable, IHasTooltip
+    private partial class TooltipStatDisplay : StatDisplay, IHasCustomTooltip<(string l, string r, Colour4 c)[]>
     {
-        public LocalisableString TooltipText { get; set; } = "";
+        public (string l, string r, Colour4 c)[] TooltipContent { get; set; } = [];
 
+        public TooltipStatDisplay(LocalisableString title, Func<float, string> format)
+            : base(title, format)
+        {
+        }
+
+        public ITooltip<(string l, string r, Colour4 c)[]> GetCustomTooltip() => new Tooltip();
+
+        private partial class Tooltip : CustomTooltipContainer<(string l, string r, Colour4 c)[]>
+        {
+            private readonly FillFlowContainer flow;
+
+            public Tooltip()
+            {
+                Child = flow = new FillFlowContainer
+                {
+                    Width = 240,
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Vertical,
+                    Spacing = new Vector2(6),
+                    Padding = new MarginPadding(12)
+                };
+            }
+
+            public override void SetContent((string l, string r, Colour4 c)[] content)
+            {
+                flow.Clear();
+                flow.AddRange(content.Select(x => new Container
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 20,
+                    Colour = x.c,
+                    Children =
+                    [
+                        new FluXisSpriteText
+                        {
+                            Text = x.l,
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            WebFontSize = 14
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = x.r,
+                            Anchor = Anchor.CentreRight,
+                            Origin = Anchor.CentreRight,
+                            WebFontSize = 14
+                        }
+                    ]
+                }));
+            }
+        }
+    }
+
+    private partial class StatDisplay : CompositeDrawable
+    {
         private LocalisableString title { get; }
         private Func<float, string> format { get; }
 
