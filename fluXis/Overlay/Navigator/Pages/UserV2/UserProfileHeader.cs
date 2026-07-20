@@ -5,9 +5,11 @@ using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
+using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Overlay.Navigator.Pages.UserV2;
@@ -43,7 +45,8 @@ public partial class UserProfileHeader : CompositeDrawable
                     Empty(),
                     new FillFlowContainer
                     {
-                        AutoSizeAxes = Axes.Both,
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         Direction = FillDirection.Vertical,
@@ -58,7 +61,7 @@ public partial class UserProfileHeader : CompositeDrawable
     {
         var top = new FillFlowContainer
         {
-            AutoSizeAxes = Axes.X,
+            RelativeSizeAxes = Axes.X,
             Height = 20,
             Direction = FillDirection.Horizontal,
             Spacing = new Vector2(6)
@@ -107,6 +110,67 @@ public partial class UserProfileHeader : CompositeDrawable
                 WebFontSize = 16,
                 Height = 16,
                 Alpha = .8f
+            };
+        }
+
+        var first = true;
+
+        if (!string.IsNullOrWhiteSpace(user.Pronouns))
+        {
+            first = false;
+            yield return new SmallText("pronouns", user.Pronouns) { Margin = new MarginPadding { Top = 24 } };
+        }
+
+        if (user.IsOnline)
+        {
+            yield return new SmallText("online", "right now")
+            {
+                Margin = new MarginPadding { Top = first ? 24 : 6 }
+            };
+        }
+        else
+        {
+            yield return new SmallText("last online", TimeUtils.Ago(TimeUtils.GetFromSeconds(user.LastLogin ?? 0)))
+            {
+                Margin = new MarginPadding { Top = first ? 24 : 6 }
+            };
+        }
+    }
+
+    private partial class SmallText : GridContainer
+    {
+        public SmallText(LocalisableString title, LocalisableString text)
+        {
+            RelativeSizeAxes = Axes.X;
+            Height = 12;
+            ColumnDimensions =
+            [
+                new Dimension(GridSizeMode.Absolute, 80),
+                new Dimension()
+            ];
+
+            Content = new[]
+            {
+                new Drawable[]
+                {
+                    new TruncatingText
+                    {
+                        Text = title,
+                        RelativeSizeAxes = Axes.X,
+                        WebFontSize = 12,
+                        Alpha = .6f,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft
+                    },
+                    new TruncatingText
+                    {
+                        Text = text,
+                        RelativeSizeAxes = Axes.X,
+                        WebFontSize = 12,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft
+                    }
+                }
             };
         }
     }
