@@ -407,6 +407,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         AddFont(Resources, "Fonts/Phosphor/PhosphorBold");
         AddFont(Resources, "Fonts/Phosphor/PhosphorFill");
+        Fonts.AddStore(new FluXisIcon.Store(Textures));
 
         AddFont(Resources, "Fonts/JetBrainsMono/JetBrainsMono");
         // Resharper restore StringLiteralTypo

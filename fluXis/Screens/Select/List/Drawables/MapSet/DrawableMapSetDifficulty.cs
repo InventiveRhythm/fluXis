@@ -386,15 +386,15 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         return icons.ToArray();
     }
 
-    private partial class GimmickIcon : FluXisIcon, IHasTooltip
+    private partial class GimmickIcon : FluXisSpriteIcon, IHasTooltip
     {
         public LocalisableString TooltipText { get; }
 
         public GimmickIcon(FluXisIconType type, string tooltip)
         {
             Size = new Vector2(14);
-            Type = type;
             TooltipText = tooltip;
+            Icon = FluXisIcon.Get(type);
         }
 
         protected override bool OnHover(HoverEvent e) => true;

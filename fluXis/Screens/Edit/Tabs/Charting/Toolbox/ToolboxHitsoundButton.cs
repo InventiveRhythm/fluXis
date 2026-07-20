@@ -113,7 +113,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
         var icon = Sample switch
         {
             "clap" => Phosphor.Bold.HandsClapping,
-            _ => Phosphor.Bold.Waveform
+            _ => FluXisIcon.Get(FluXisIconType.Drum)
         };
 
         return new FluXisSpriteIcon

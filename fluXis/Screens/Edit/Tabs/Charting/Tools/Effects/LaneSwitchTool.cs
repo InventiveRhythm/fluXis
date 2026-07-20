@@ -9,6 +9,6 @@ public class LaneSwitchTool : EffectTool
     public override string Name => "Lane Switch";
     public override string Description => "Changes the amount of lanes mid-song.";
     public override string Letter => "L";
-    public override Drawable CreateIcon() => new FluXisIcon { Type = FluXisIconType.LaneSwitch };
+    public override Drawable CreateIcon() => new FluXisSpriteIcon { Icon = FluXisIcon.Get(FluXisIconType.LaneSwitch) };
     public override PlacementBlueprint CreateBlueprint() => new LaneSwitchPlacementBlueprint();
 }
