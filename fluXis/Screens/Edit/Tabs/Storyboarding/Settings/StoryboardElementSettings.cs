@@ -557,16 +557,40 @@ public partial class StoryboardElementSettings : CompositeDrawable
                         break;
 
                     case StoryboardElementType.Video:
-                        drawables.Add(new EditorVariableTextBox
-                        {
-                            Text = "Path",
-                            CurrentValue = item.GetParameter("path", ""),
-                            OnValueChanged = t =>
+                        drawables.AddRange([
+                            new EditorVariableTextBox
                             {
-                                item.Parameters["path"] = t.Text;
-                                map.Update(item);
+                                Text = "Path",
+                                CurrentValue = item.GetParameter("path", ""),
+                                OnValueChanged = t =>
+                                {
+                                    item.Parameters["path"] = t.Text;
+                                    map.Update(item);
+                                }
+                            },
+                            new EditorVariableNumber<float>
+                            {
+                                Text = "Offset",
+                                CurrentValue = item.GetParameter("offset", 0),
+                                Min = 0,
+                                Step = 100,
+                                OnValueChanged = v =>
+                                {
+                                    item.Parameters["offset"] = v;
+                                    map.Update(item);
+                                }
+                            },
+                            new EditorVariableToggle
+                            {
+                                Text = "Loop",
+                                CurrentValue = item.GetParameter("loop", false),
+                                OnValueChanged = enabled =>
+                                {
+                                    item.Parameters["loop"] = enabled;
+                                    map.Update(item);
+                                }
                             }
-                        });
+                        ]);
                         break;
                 }
 

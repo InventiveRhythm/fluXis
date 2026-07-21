@@ -16,6 +16,9 @@ public partial class DrawableStoryboardVideo : DrawableStoryboardElement
     [CanBeNull]
     private Video video;
 
+    private float offset;
+    private bool loop;
+
     public DrawableStoryboardVideo(StoryboardElement element)
         : base(element)
     {
@@ -27,6 +30,8 @@ public partial class DrawableStoryboardVideo : DrawableStoryboardElement
     private void load(StoryboardStorage storage)
     {
         var path = Element.GetParameter("path", string.Empty);
+        offset = Element.GetParameter("offset", 0);
+        loop = Element.GetParameter("loop", false);
 
         if (!storage.Storage.Exists(path))
         {
@@ -48,6 +53,18 @@ public partial class DrawableStoryboardVideo : DrawableStoryboardElement
         if (video is null)
             return;
 
-        video.PlaybackPosition = Math.Max(framedClock.CurrentTime - Element.StartTime, 0);
+        var position = Math.Max((framedClock.CurrentTime + offset) - Element.StartTime, 0);
+
+        if (loop && video.Duration > 0)
+        {
+            // just in case the last frame doesn't get skipped
+            const float loop_margin = 50f;
+
+            position %= video.Duration + loop_margin;
+            if (position > video.Duration)
+                position = video.Duration;
+        }
+
+        video.PlaybackPosition = position;
     }
 }
