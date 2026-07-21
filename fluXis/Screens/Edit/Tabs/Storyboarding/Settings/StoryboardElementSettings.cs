@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using fluXis.Configuration;
-using fluXis.Configuration.Experiments;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
@@ -63,23 +62,18 @@ public partial class StoryboardElementSettings : CompositeDrawable
         Anchor.BottomRight
     };
 
-    private DefaultBlendingParameters[] nonExperimentalBlends { get; } =
-    {
-        DefaultBlendingParameters.None,
-        DefaultBlendingParameters.Mix,
-        DefaultBlendingParameters.Add,
-    };
-
-    private bool useExperimentalBlends;
+    private readonly List<DefaultBlendingParameters> validBlends = Enum.GetValues<DefaultBlendingParameters>()
+                                                                       .Where(b => b != DefaultBlendingParameters.LegacyDifference
+                                                                                   && b != DefaultBlendingParameters.Inherit
+                                                                                   && b != DefaultBlendingParameters.Premultiplied)
+                                                                       .ToList();
 
     private FillFlowContainer flow;
 
     [BackgroundDependencyLoader]
-    private void load(ExperimentConfigManager experiments)
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
-
-        useExperimentalBlends = experiments.Get<bool>(ExperimentConfig.NewSbBlendModes);
 
         InternalChildren = new Drawable[]
         {
@@ -247,21 +241,36 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             item.Blending = enabled;
                             map.Update(item);
                         }
-                    },
-                    new EditorVariableDropdown<DefaultBlendingParameters>
-                    {
-                        Text = "Blend Mode",
-                        CurrentValue = item.BlendingMode,
-                        Items = useExperimentalBlends ? Enum.GetValues<DefaultBlendingParameters>().ToList() : nonExperimentalBlends.ToList(),
-                        Enabled = blendingEnabled,
-                        HideWhenDisabled = true,
-                        OnValueChanged = mode =>
-                        {
-                            item.BlendingMode = mode;
-                            map.Update(item);
-                        }
                     }
                 };
+
+            {
+                // has pretty generic names so we'd rather have it be in its own scope
+                var legacyCompatibility = new Dictionary<DefaultBlendingParameters, DefaultBlendingParameters>
+                {
+                    { DefaultBlendingParameters.LegacyDifference, DefaultBlendingParameters.Difference },
+                };
+
+                bool isLegacy(DefaultBlendingParameters mode) => legacyCompatibility.ContainsKey(mode);
+
+                var dropdown = new EditorVariableDropdown<DefaultBlendingParameters>
+                {
+                    Text = "Blend Mode",
+                    Items = validBlends,
+                    Enabled = blendingEnabled,
+                    HideWhenDisabled = true,
+                    CurrentValue = isLegacy(item.BlendingMode)
+                        ? legacyCompatibility[item.BlendingMode]
+                        : item.BlendingMode,
+                    OnValueChanged = mode =>
+                    {
+                        item.BlendingMode = mode;
+                        map.Update(item);
+                    }
+                };
+
+                drawables.Add(dropdown);
+            }
 
                 if (item.Type.HasAttribute<StoryboardElementType, WidthHeightAttribute>())
                 {
