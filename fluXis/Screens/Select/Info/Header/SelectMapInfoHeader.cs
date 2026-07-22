@@ -28,6 +28,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
 
@@ -448,6 +449,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
 
             return $"{(int)min}-{(int)max}";
         }
+
+        protected override bool OnHover(HoverEvent e) => true;
     }
 
     private partial class TooltipStatDisplay : StatDisplay, IHasCustomTooltip<(string l, string r, Colour4 c)[]>
