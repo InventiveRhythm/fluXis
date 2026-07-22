@@ -151,5 +151,21 @@ public enum ShaderType
 
     [ShaderStrength(ParamName = "Amount")]
     [ShaderStrength(2, ParamName = "Speed")]
-    Glitch2
+    Glitch2,
+
+    GaussianBlur,
+
+    [ShaderStrength(1, Min = -1f)]
+    [ShaderStrength(2, Min = -1f, ParamName = "CenterX", Tooltip = "Horizontal center of the blur.")]
+    [ShaderStrength(3, Min = -1f, ParamName = "CenterY", Tooltip = "Vertical center of the blur.")]
+    RadialBlur,
+
+    [ShaderStrength(1, Min = -1f)]
+    [ShaderStrength(2, Min = -1f, ParamName = "CenterX", Tooltip = "Horizontal center of the blur.")]
+    [ShaderStrength(3, Min = -1f, ParamName = "CenterY", Tooltip = "Vertical center of the blur.")]
+    ZoomBlur,
+
+    [ShaderStrength(1)]
+    [ShaderStrength(2, Min = -180f, Max = 180f, Step = 1f, ParamName = "Angle", Tooltip = "The direction of the motion blur in degrees.")]
+    MotionBlur
 }
