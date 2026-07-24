@@ -69,6 +69,8 @@ public partial class Playfield : Container
     private Drawable topCover;
     private Drawable bottomCover;
 
+    private ShakeContainer shakeContainer;
+
     private Bindable<float> topCoverHeight;
     private Bindable<float> bottomCoverHeight;
     private Bindable<ScrollDirection> scrollDirection;
@@ -122,6 +124,7 @@ public partial class Playfield : Container
 
         InternalChildren = new[]
         {
+            shakeContainer = new ShakeContainer(),
             ColorManager,
             new LaneSwitchAlert(),
             Stage = new Stage(),
@@ -145,17 +148,46 @@ public partial class Playfield : Container
                     bottomCover = skin.GetLaneCover(true)
                 }
             },
-            new KeyOverlay(),
-            new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(Math.Max(shake.Duration, 0), shake.Magnitude))
+            new KeyOverlay()
         };
 
         registerReloadableEvent(MapEvents.ColorFadeEvents);
         registerReloadableEvent(MapEvents.LayerFadeEvents);
         registerReloadableEvent(MapEvents.PlayfieldMoveEvents);
-        registerReloadableEvent(MapEvents.PlayfieldMoveEvents);
         registerReloadableEvent(MapEvents.PlayfieldScaleEvents);
         registerReloadableEvent(MapEvents.PlayfieldRotateEvents);
         MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
+
+        // only register on the primary playfield
+        if (Index == 0 && !IsSubPlayfield)
+        {
+            registerReloadableShake(MapEvents.ShakeEvents);
+        }
+    }
+
+    // Shake is not an IApplicableToPlayfield
+    private void registerReloadableShake(List<ShakeEvent> shakes)
+    {
+        applyShakes(shakes);
+
+        ruleset.RegisterReload<ShakeEvent>(objs =>
+        {
+            shakeContainer.ClearTransforms(false, nameof(Position));
+            applyShakes(objs);
+        });
+    }
+
+    private void applyShakes(List<ShakeEvent> shakes)
+    {
+        shakeContainer.Position = Vector2.Zero;
+
+        foreach (var shake in shakes)
+        {
+            using (shakeContainer.BeginAbsoluteSequence(shake.Time))
+            {
+                shakeContainer.Shake(Math.Max(shake.Duration, 0), shake.Magnitude);
+            }
+        }
     }
 
     private void registerReloadableEvent<T>(List<T> initial) where T : IApplicableToPlayfield
@@ -184,6 +216,12 @@ public partial class Playfield : Container
 
         if (!IsSubPlayfield)
             hitsounding.PlayfieldPanning.Value = Math.Clamp(RelativePosition * 2 - 1, -1, 1) * hitsoundPanStrength.Value;
+
+        // We use ShakeContainer as a proxy for our shake for the ruleset container
+        if (Index == 0 && !IsSubPlayfield && ruleset.ShakeTarget != null)
+        {
+            ruleset.ShakeTarget.Position = shakeContainer.Position;
+        }
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -213,4 +251,9 @@ public partial class Playfield : Container
     private float scaleForZ(float z) => -camera.Z / Math.Max(1f, z - camera.Z);
 
     #endregion
+
+    private partial class ShakeContainer : Container
+    {
+        public override bool RemoveCompletedTransforms => false;
+    }
 }

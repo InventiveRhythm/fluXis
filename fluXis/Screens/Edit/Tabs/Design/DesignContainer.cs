@@ -6,9 +6,11 @@ using fluXis.Graphics.Background;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Shaders;
 using fluXis.Graphics.Sprites;
+using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Groups;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Edit.Tabs.Design.Effects;
@@ -47,7 +49,8 @@ public partial class DesignContainer : EditorTabContainer
         typeof(PulseEvent),
         typeof(ShaderEvent),
         typeof(NoteEvent),
-        typeof(StoryboardElement)
+        typeof(StoryboardElement),
+        typeof(LoopEvent)
     };
 
     private DrawSizePreservingFillContainer drawSizePreserve;
@@ -74,11 +77,26 @@ public partial class DesignContainer : EditorTabContainer
 
     private BackgroundVideo backgroundVideo;
 
+    private MapEvents cachedEvents;
+
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
         userScrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
     }
+
+    private MapEvents getCompiledEvents()
+    {
+        if (cachedEvents != null)
+            return cachedEvents;
+
+        var effects = Map.MapEvents.JsonCopy();
+        effects.Compile();
+        effects.Sort();
+        return cachedEvents = effects;
+    }
+
+    private void invalidateCompiled() => cachedEvents = null;
 
     protected override IEnumerable<Drawable> CreateContent()
     {
@@ -90,11 +108,19 @@ public partial class DesignContainer : EditorTabContainer
             Origin = Anchor.Centre,
         };
 
-        camera = new CameraContainer(Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList());
+        var compiled = getCompiledEvents();
+
+        camera = new CameraContainer(compiled.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList())
+        {
+            Clock = EditorClock
+        };
 
         return
         [
-            handler = new DesignShaderHandler(),
+            handler = new DesignShaderHandler
+            {
+                CompiledShaders = compiled.ShaderEvents
+            },
             rulesetIdleTracker = new IdleTracker(400, rebuildRuleset, () =>
             {
                 loadingIcon.Show();
@@ -121,7 +147,7 @@ public partial class DesignContainer : EditorTabContainer
                     backFlash = new EditorFlashLayer { Clock = EditorClock },
                     rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both },
                 }),
-                pulseEffect = new PulseEffect(Map.MapEvents.PulseEvents) { Clock = EditorClock },
+                pulseEffect = new PulseEffect(compiled.PulseEvents) { Clock = EditorClock },
                 frontFlash = new EditorFlashLayer { Clock = EditorClock },
                 loadingIcon = new LoadingIcon
                 {
@@ -143,6 +169,8 @@ public partial class DesignContainer : EditorTabContainer
         Scheduler.AddOnce(rulesetIdleTracker.Reset);
         Map.AnyChange += t =>
         {
+            invalidateCompiled();
+
             if (t is not null)
             {
                 if (ignoredForRebuild.Contains(t.GetType()))
@@ -160,26 +188,23 @@ public partial class DesignContainer : EditorTabContainer
             Scheduler.AddOnce(rulesetIdleTracker.Reset);
         };
 
-        Map.RegisterAddListener<ShaderEvent>(_ => checkForRebuild());
-        Map.RegisterUpdateListener<ShaderEvent>(_ => checkForRebuild());
-        Map.RegisterRemoveListener<ShaderEvent>(_ => checkForRebuild());
+        registerListeners<LoopEvent>(rebuildAllCompiled);
+        registerListeners<ShaderEvent>(checkForShaderRebuild);
+        registerListeners<PulseEvent>(rebuildPulseEffect);
 
-        Map.RegisterAddListener<PulseEvent>(_ => pulseEffect.Rebuild());
-        Map.RegisterUpdateListener<PulseEvent>(_ => pulseEffect.Rebuild());
-        Map.RegisterRemoveListener<PulseEvent>(_ => pulseEffect.Rebuild());
-
-        registerCameraUpdate<CameraMoveEvent>();
-        registerCameraUpdate<CameraScaleEvent>();
-        registerCameraUpdate<CameraRotateEvent>();
+        registerListeners<CameraMoveEvent>(rebuildCamera);
+        registerListeners<CameraScaleEvent>(rebuildCamera);
+        registerListeners<CameraRotateEvent>(rebuildCamera);
 
         Editor.BindableBackgroundDim.BindValueChanged(e => backgroundDim.FadeTo(e.NewValue, 300));
         Editor.BindableBackgroundBlur.BindValueChanged(e => backgroundStack.Add(new BlurableBackground(Map.RealmMap, e.NewValue)), true);
+        return;
 
-        void registerCameraUpdate<T>() where T : class, ICameraEvent
+        void registerListeners<T>(Action action) where T : class, ITimedObject
         {
-            Map.RegisterAddListener<T>(_ => rebuildCamera());
-            Map.RegisterUpdateListener<T>(_ => rebuildCamera());
-            Map.RegisterRemoveListener<T>(_ => rebuildCamera());
+            Map.RegisterAddListener<T>(_ => action());
+            Map.RegisterUpdateListener<T>(_ => action());
+            Map.RegisterRemoveListener<T>(_ => action());
         }
     }
 
@@ -192,9 +217,7 @@ public partial class DesignContainer : EditorTabContainer
 
     private RulesetContainer createRuleset()
     {
-        var effects = Map.MapEvents.JsonCopy();
-        effects.Compile();
-        effects.Sort();
+        var effects = getCompiledEvents();
 
         backFlash.Rebuild(effects.FlashEvents.Where(x => x.InBackground).ToList());
         frontFlash.Rebuild(effects.FlashEvents.Where(x => !x.InBackground).ToList());
@@ -208,9 +231,10 @@ public partial class DesignContainer : EditorTabContainer
 
     private ShaderStackContainer createShaderStack()
     {
-        shaders = new ShaderStackContainer();
+        shaders = new ShaderStackContainer { Clock = EditorClock };
 
-        var shaderTypes = Map.MapEvents.ShaderEvents.Select(x => x.Type).Distinct();
+        var compiled = getCompiledEvents();
+        var shaderTypes = compiled.ShaderEvents.Select(x => x.Type).Distinct();
 
         foreach (var type in shaderTypes)
         {
@@ -224,13 +248,18 @@ public partial class DesignContainer : EditorTabContainer
         return shaders;
     }
 
-    private void checkForRebuild()
+    private void checkForShaderRebuild()
     {
         var current = shaders.ShaderTypes;
-        var shaderTypes = Map.MapEvents.ShaderEvents.Select(x => x.Type).Distinct();
+        var compiled = getCompiledEvents();
+        var shaderTypes = compiled.ShaderEvents.Select(x => x.Type).Distinct();
+
+        handler.CompiledShaders = compiled.ShaderEvents;
 
         if (!current.SequenceEqual(shaderTypes))
+        {
             rebuildShaderStack();
+        }
     }
 
     private void rebuildShaderStack()
@@ -242,8 +271,23 @@ public partial class DesignContainer : EditorTabContainer
 
     private void rebuildCamera()
     {
-        var events = Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList();
+        var compiled = getCompiledEvents();
+        var events = compiled.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList();
         camera.Refresh(events);
+    }
+
+    private void rebuildPulseEffect()
+    {
+        pulseEffect.Pulses = getCompiledEvents().PulseEvents;
+        pulseEffect.Rebuild();
+    }
+
+    private void rebuildAllCompiled()
+    {
+        checkForShaderRebuild();
+        rebuildCamera();
+        rebuildPulseEffect();
+        rulesetIdleTracker.Reset();
     }
 
     private void rebuildRuleset()
