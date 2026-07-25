@@ -16,7 +16,7 @@ public class OsuTimingPoint
     // some gimmick maps might have absurdly high bpm. fluxis doesn't like that, so let's cap it at a reasonable 10 millions bpm.
     public float BPM => Math.Clamp(60000 / BeatLength, 1, 10000000);
 
-    public double ScrollMultiplier => Math.Clamp(-100 / (double)BeatLength, 0.1f, 10);
+    public double ScrollMultiplier => Math.Clamp(-100 / (double)BeatLength, 0.01f, 10);
 
     public TimingPoint ToTimingPointInfo()
     {
