@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
@@ -75,12 +76,25 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         map.RegisterAddListener<HitObject>(AddBlueprint);
         map.RegisterRemoveListener<HitObject>(RemoveBlueprint);
 
+        foreach (var (type, _) in map.MapEvents.GetListsForTypes())
+        {
+            var method = GetType().GetMethod(nameof(registerEffect), BindingFlags.Instance | BindingFlags.NonPublic)!;
+            method = method.MakeGenericMethod(type);
+            method.Invoke(this, []);
+        }
+
         SelectionBlueprints.StartBulk();
 
         foreach (var hitObject in ChartingContainer.HitObjects)
             AddBlueprint(hitObject.Data);
 
         SelectionBlueprints.EndBulk();
+    }
+
+    private void registerEffect<T>() where T : class, ITimedObject
+    {
+        map.RegisterAddListener<T>(AddBlueprint);
+        map.RegisterRemoveListener<T>(RemoveBlueprint);
     }
 
     protected override void Update()

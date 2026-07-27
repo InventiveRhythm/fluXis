@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Events;
@@ -39,37 +40,23 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
     {
         RelativeSizeAxes = Axes.Both;
 
-        register(map.MapInfo.HitObjects);
-        register(map.MapInfo.TimingPoints);
-        register(map.MapInfo.ScrollVelocities);
+        registerEffect(map.MapInfo.HitObjects);
+        registerEffect(map.MapInfo.TimingPoints);
+        registerEffect(map.MapInfo.ScrollVelocities);
 
-        // TODO: please make this use reflection
-        register(map.MapEvents.LaneSwitchEvents);
-        register(map.MapEvents.FlashEvents);
-        register(map.MapEvents.ColorFadeEvents);
-        register(map.MapEvents.PulseEvents);
-        register(map.MapEvents.ShakeEvents);
-        register(map.MapEvents.PlayfieldMoveEvents);
-        register(map.MapEvents.PlayfieldScaleEvents);
-        register(map.MapEvents.HitObjectEaseEvents);
-        register(map.MapEvents.LayerFadeEvents);
-        register(map.MapEvents.ShaderEvents);
-        register(map.MapEvents.BeatPulseEvents);
-        register(map.MapEvents.PlayfieldRotateEvents);
-        register(map.MapEvents.ScrollMultiplyEvents);
-        register(map.MapEvents.TimeOffsetEvents);
-        register(map.MapEvents.CameraMoveEvents);
-        register(map.MapEvents.CameraScaleEvents);
-        register(map.MapEvents.CameraRotateEvents);
-        register(map.MapEvents.LoopEvents);
-
-        void register<T>(List<T> list)
-            where T : class, ITimedObject
+        foreach (var (type, list) in map.MapEvents.GetListsForTypes())
         {
-            map.RegisterAddListener<T>(add);
-            map.RegisterRemoveListener<T>(remove);
-            list.ForEach(add);
+            var method = GetType().GetMethod(nameof(registerEffect), BindingFlags.Instance | BindingFlags.NonPublic)!;
+            method = method.MakeGenericMethod(type);
+            method.Invoke(this, [list]);
         }
+    }
+
+    private void registerEffect<T>(List<T> list) where T : class, ITimedObject
+    {
+        map.RegisterAddListener<T>(add);
+        map.RegisterRemoveListener<T>(remove);
+        list.ForEach(add);
     }
 
     private void add(ITimedObject obj)

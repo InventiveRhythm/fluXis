@@ -53,9 +53,9 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         RateBindable.MinValue = .2f;
     }
 
-    public bool SeekSnapped(float position)
+    public bool SeekSnapped(double position)
     {
-        return Seek(snap(position));
+        return Seek(Snap(position));
     }
 
     public void SeekSmoothly(double time)
@@ -97,7 +97,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
             Seek(Interpolation.ValueAt(smoothSeekTime, smoothSeekStartTime, smoothSeekTarget, 0, interpolationDuration, Easing.OutQuint));
     }
 
-    private double snap(double position)
+    public double Snap(double position)
     {
         var point = MapInfo.GetTimingPoint((float)position);
         float snapLength = point.Signature * point.MsPerBeat / (4 * 4);

@@ -236,13 +236,58 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         }
     }
 
-    protected override bool OnDragStart(DragStartEvent e)
-        => e.ShiftPressed && e.Button == MouseButton.Left;
+    private bool movingCamera;
+    private bool didMove;
+    private double lastMove;
+    private float moveAccumulate;
 
-    protected override void OnDrag(DragEvent e)
+    protected override bool OnMouseDown(MouseDownEvent e)
     {
+        if (e.Button != MouseButton.Middle)
+            return false;
+
+        if (e.ShiftPressed)
+            Playfield.MoveToX(Map.MapInfo.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH, 400, Easing.OutQuint);
+
+        movingCamera = true;
+        return true;
+    }
+
+    protected override bool OnMouseMove(MouseMoveEvent e)
+    {
+        if (!movingCamera)
+            return false;
+
         Playfield.X += e.Delta.X;
         Playfield.X = Math.Clamp(Playfield.X, -Playfield.DrawWidth, 0);
+        didMove = true;
+
+        moveAccumulate += e.Delta.Y;
+
+        if (Math.Abs(lastMove - Time.Current) < 16)
+            return true;
+
+        var zero = Playfield.HitObjectContainer.TimeAtPosition(0);
+        var offset = Playfield.HitObjectContainer.TimeAtPosition(moveAccumulate);
+
+        EditorClock.Seek(EditorClock.CurrentTime + (zero - offset));
+
+        lastMove = Time.Current;
+        moveAccumulate = 0;
+
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        if (e.Button != MouseButton.Middle || !movingCamera)
+            return;
+
+        if (didMove)
+            EditorClock.SeekSmoothly(EditorClock.Snap(EditorClock.CurrentTime));
+
+        movingCamera = false;
+        didMove = false;
     }
 
     private void placeNote(int lane)
