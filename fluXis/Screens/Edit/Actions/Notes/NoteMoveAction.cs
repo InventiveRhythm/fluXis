@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Bases;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Actions.Notes;
@@ -44,6 +45,6 @@ public class NoteMoveAction : EditorAction
         }
     }
 
-    public static Vector2d[] CreateFrom(HitObject[] objs)
+    public static Vector2d[] CreateFrom(ITimedObject[] objs)
         => objs.Select(x => new Vector2d(x.Time, x.Lane)).ToArray();
 }

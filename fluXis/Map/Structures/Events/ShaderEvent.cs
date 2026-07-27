@@ -14,6 +14,9 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<S
     [JsonProperty("time")]
     public double Time { get; set; }
 
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
+
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 

@@ -5,9 +5,9 @@ using fluXis.Skinning.Bases;
 using fluXis.Skinning.Default.HitObject;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
+namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
 
-public partial class EditorLongNote : EditorHitObject
+public partial class EditorLongNote : EditorDrawableHitObject
 {
     public override bool Visible
     {

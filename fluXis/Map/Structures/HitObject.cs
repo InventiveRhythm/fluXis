@@ -1,6 +1,6 @@
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using fluXis.Scoring.Structs;
-using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Gameplay.Ruleset;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -8,6 +8,7 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures;
 
+[Description("hit object")]
 public class HitObject : ITimedObject
 {
     [JsonProperty("time")]
@@ -87,10 +88,6 @@ public class HitObject : ITimedObject
     /// </summary>
     [JsonIgnore]
     public Easing EndEasing { get; set; } = Easing.None;
-
-    [CanBeNull]
-    [JsonIgnore]
-    public EditorHitObject EditorDrawable { get; set; }
 }
 
 public enum HitObjectType

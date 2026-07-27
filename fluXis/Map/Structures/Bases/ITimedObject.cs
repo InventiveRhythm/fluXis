@@ -8,6 +8,9 @@ public interface ITimedObject
     [JsonProperty("time")]
     double Time { get; set; }
 
+    [JsonProperty("lane")]
+    int Lane { get; set; }
+
     [DefaultValue("")]
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     string Group { get; set; }

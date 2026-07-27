@@ -5,9 +5,9 @@ using fluXis.Skinning.Default.HitObject;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
+namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
 
-public partial class EditorSingleNote : EditorHitObject
+public partial class EditorSingleNote : EditorDrawableHitObject
 {
     private Drawable piece;
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
@@ -8,25 +7,14 @@ using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Tabs.Charting.Playfield;
+namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
 
-public abstract partial class EditorHitObject : CompositeDrawable
+public abstract partial class EditorDrawableHitObject : EditorDrawableObject
 {
-    [Resolved]
-    protected EditorPlayfield Playfield { get; private set; }
+    public new HitObject Data => base.Data as HitObject;
 
-    [Resolved]
-    protected EditorClock EditorClock { get; private set; }
-
-    [Resolved]
-    private EditorSettings settings { get; set; }
-
-    public HitObject Data { get; }
-
-    public virtual bool Visible => Math.Abs(EditorClock.CurrentTime - Data.Time) <= 2000 / settings.Zoom;
     protected virtual Colour4 TextColor => Theme.TextDark;
 
     private FluXisSpriteText groupText;
@@ -35,19 +23,15 @@ public abstract partial class EditorHitObject : CompositeDrawable
     private bool overZero = true;
     private const int max_distance = 100;
 
-    protected EditorHitObject(HitObject hit)
+    protected EditorDrawableHitObject(HitObject hit)
+        : base(hit)
     {
-        Data = hit;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Width = EditorHitObjectContainer.NOTEWIDTH;
-        AutoSizeAxes = Axes.Y;
-        Origin = Anchor.BottomLeft;
-
-        InternalChildren = CreateContent().Concat(new FillFlowContainer
+        InternalChildrenEnumerable = CreateContent().Concat(new FillFlowContainer
         {
             AutoSizeAxes = Axes.Both,
             Direction = FillDirection.Vertical,
@@ -71,7 +55,7 @@ public abstract partial class EditorHitObject : CompositeDrawable
                     WebFontSize = 10
                 }
             ]
-        }.Yield()).ToArray();
+        }.Yield());
     }
 
     protected abstract IEnumerable<Drawable> CreateContent();
@@ -83,14 +67,9 @@ public abstract partial class EditorHitObject : CompositeDrawable
         groupText.Text = Data.Group;
         sampleText.Text = Data.HitSound?.Replace(".wav", "") ?? ":normal";
 
-        X = Playfield.HitObjectContainer.PositionFromLane(Data.Lane);
-        Y = Playfield.HitObjectContainer.PositionAtTime(Data.Time);
-
         if (Data.Time <= EditorClock.CurrentTime && EditorClock.CurrentTime - Data.Time <= max_distance && overZero)
             Playfield.PlayHitSound(Data);
 
         overZero = Data.Time > EditorClock.CurrentTime;
     }
-
-    protected override bool OnHover(HoverEvent e) => true;
 }

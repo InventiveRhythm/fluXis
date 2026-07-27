@@ -1,7 +1,6 @@
-using System;
 using fluXis.Audio;
 using fluXis.Map.Structures;
-using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -11,17 +10,13 @@ using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
-public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
+public partial class LongNoteSelectionBlueprint : ChartingSelectionBlueprint
 {
-    // public override Vector2 ScreenSpaceSelectionPoint => head.ScreenSpaceDrawQuad.Centre;
-
     private DraggableSelectionPiece head;
     private DraggableSelectionPiece end;
     private DebouncedSample sample;
 
     private EditorLongNote drawable => Drawable as EditorLongNote;
-
-    public override bool Visible => base.Visible || Math.Abs(EditorClock.CurrentTime - Object.EndTime) <= 4000;
 
     public LongNoteSelectionBlueprint(HitObject info)
         : base(info)
@@ -67,14 +62,11 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
     public override void UpdatePosition(Drawable parent)
     {
         base.UpdatePosition(parent);
-
-        var delta = PositionProvider.PositionAtTime(Object.EndTime) - PositionProvider.PositionAtTime(Object.Time);
-        Height = -(delta - drawable.End.DrawHeight);
     }
 
     private void dragStart(Vector2 vec)
     {
-        var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
+        /*var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
         newTime = Snaps.SnapTime(newTime);
         var newLen = Object.EndTime - newTime;
 
@@ -85,12 +77,12 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
             sample?.Play();
 
         Object.Time = newTime;
-        Object.HoldTime = newLen;
+        Object.HoldTime = newLen;*/
     }
 
     private void dragEnd(Vector2 vec)
     {
-        var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
+        /*var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
         newTime = Snaps.SnapTime(newTime);
         var newLen = newTime - Object.Time;
 
@@ -100,6 +92,6 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         if (Math.Abs(Object.EndTime - newTime) > 0.1f)
             sample?.Play();
 
-        Object.EndTime = newTime;
+        Object.EndTime = newTime;*/
     }
 }

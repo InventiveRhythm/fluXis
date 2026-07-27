@@ -42,9 +42,6 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
-    public int Index { get; }
-    public bool MainPlayfield => Index == 0;
-
     private DependencyContainer dependencies;
     private InputManager inputManager;
 
@@ -56,20 +53,16 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     private Bindable<ScrollDirection> scrollDirection;
 
-    public EditorPlayfield(int idx)
-    {
-        Index = idx;
-    }
-
     [BackgroundDependencyLoader]
     private void load(Bindable<Waveform> waveformBind, ISampleStore samples)
     {
         dependencies.CacheAs(this);
         dependencies.CacheAs(HitObjectContainer);
 
-        Width = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount;
+        Width = EditorHitObjectContainer.NOTEWIDTH * 16;
         RelativeSizeAxes = Axes.Y;
-        Anchor = Origin = Anchor.Centre;
+        Anchor = Anchor.Centre;
+        Origin = Anchor.CentreLeft;
 
         hitSound = samples.Get("Gameplay/hitsound.mp3");
 
@@ -88,8 +81,8 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             waveform = new WaveformGraph
             {
                 Height = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount,
-                Anchor = Anchor.BottomRight,
-                Origin = Anchor.BottomLeft,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.TopLeft,
                 Rotation = -90,
             },
             Effects = new EditorEffectContainer(),
@@ -109,6 +102,21 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             modComments,
             new EditorPlayfieldModding(modHighlight, modComments)
         };
+
+        var playfields = (map.MapInfo.IsSplit ? 2 : 1);
+
+        for (int i = 0; i < playfields; i++)
+        {
+            AddInternal(new Box
+            {
+                RelativeSizeAxes = Axes.Y,
+                Width = 2,
+                Anchor = Anchor.TopLeft,
+                Origin = Anchor.TopCentre,
+                // ReSharper disable once PossibleLossOfFraction
+                X = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount * (i + 1)
+            });
+        }
 
         map.KeyModeChanged += count =>
         {

@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
@@ -15,7 +16,7 @@ public partial class ChartingSidebar : PointsSidebar
     [Resolved]
     private ChartingContainer chartingContainer { get; set; }
 
-    private SelectionHandler<HitObject> selectionHandler => chartingContainer.BlueprintContainer.SelectionHandler;
+    private SelectionHandler<ITimedObject> selectionHandler => chartingContainer.BlueprintContainer.SelectionHandler;
 
     private SelectionInspector inspector;
 
@@ -41,9 +42,8 @@ public partial class ChartingSidebar : PointsSidebar
                 inspector.AddSection("Nothing selected", "");
                 break;
 
-            case 1:
+            case 1 when selectionHandler.SelectedObjects.Single() is HitObject selected:
             {
-                var selected = selectionHandler.SelectedObjects.Single();
                 inspector.AddSection("Type", selected.GetType().ReadableName());
                 inspector.AddSection("Time", TimeUtils.Format(selected.Time));
 

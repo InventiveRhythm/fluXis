@@ -8,6 +8,9 @@ public class LoopEvent : IMapEvent
     [JsonProperty("time")]
     public double Time { get; set; }
 
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
+
     [JsonProperty("target")]
     public string TargetGroup { get; set; }
 

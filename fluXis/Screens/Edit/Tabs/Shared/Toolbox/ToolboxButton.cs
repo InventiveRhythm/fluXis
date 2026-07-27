@@ -47,6 +47,8 @@ public partial class ToolboxButton : Container, IHasTooltip
         RelativeSizeAxes = Axes.X;
         Height = 48;
 
+        var color = Tool?.Color ?? Theme.Text;
+
         Children = new Drawable[]
         {
             content = new Container
@@ -63,8 +65,8 @@ public partial class ToolboxButton : Container, IHasTooltip
                         RelativeSizeAxes = Axes.Both,
                         Colour = Theme.Background4
                     },
-                    hover = new HoverLayer(),
-                    Flash = new FlashLayer(),
+                    hover = new HoverLayer { Colour = color },
+                    Flash = new FlashLayer { Colour = color },
                     new FillFlowContainer
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -83,7 +85,8 @@ public partial class ToolboxButton : Container, IHasTooltip
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Icon = Phosphor.Bold.QuestionMark
+                                    Icon = Phosphor.Bold.QuestionMark,
+                                    Colour = color
                                 }
                             },
                             text = new FluXisSpriteText
@@ -91,7 +94,8 @@ public partial class ToolboxButton : Container, IHasTooltip
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Text = Text,
-                                WebFontSize = 14
+                                WebFontSize = 14,
+                                Colour = color
                             }
                         }
                     }

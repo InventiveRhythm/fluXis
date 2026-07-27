@@ -166,8 +166,8 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
         {
             Width = EditorHitObjectContainer.NOTEWIDTH;
             RelativeSizeAxes = Axes.Y;
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
+            Anchor = Anchor.CentreLeft;
+            Origin = Anchor.CentreLeft;
             Colour = Colour4.FromHex("#FF5555");
             Masking = true;
 

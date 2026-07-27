@@ -1,32 +1,32 @@
 using System;
 using System.Collections.Generic;
-using fluXis.Map.Structures;
+using fluXis.Map.Structures.Bases;
 
-namespace fluXis.Screens.Edit.Actions.Notes.Shortcuts;
+namespace fluXis.Screens.Edit.Actions.Generic;
 
-public class NoteReSnapAction : EditorAction
+public class ObjectReSnapAction : EditorAction
 {
-    public override string Description => "Re-snap all notes";
+    public override string Description => "Re-snap all objects.";
 
-    private IEnumerable<HitObject> notes { get; }
+    private IEnumerable<ITimedObject> objs { get; }
     private Func<double, double> snapTime { get; }
     private int snapDivisor { get; }
 
-    private Dictionary<HitObject, double> oldTimes { get; } = new();
+    private Dictionary<ITimedObject, double> oldTimes { get; } = new();
 
-    public NoteReSnapAction(List<HitObject> notes, Func<double, double> snapTime, int snapDivisor)
+    public ObjectReSnapAction(List<ITimedObject> objs, Func<double, double> snapTime, int snapDivisor)
     {
-        this.notes = notes;
+        this.objs = objs;
         this.snapTime = snapTime;
         this.snapDivisor = snapDivisor;
 
-        foreach (var note in notes)
+        foreach (var note in objs)
             oldTimes[note] = note.Time;
     }
 
     public override void Run(EditorMap map)
     {
-        foreach (var note in notes)
+        foreach (var note in objs)
         {
             var tp = map.MapInfo.GetTimingPoint(note.Time);
             float increase = tp.Signature * tp.MsPerBeat / (4 * snapDivisor);
@@ -43,7 +43,7 @@ public class NoteReSnapAction : EditorAction
 
     public override void Undo(EditorMap map)
     {
-        foreach (var note in notes)
+        foreach (var note in objs)
             note.Time = oldTimes[note];
     }
 }

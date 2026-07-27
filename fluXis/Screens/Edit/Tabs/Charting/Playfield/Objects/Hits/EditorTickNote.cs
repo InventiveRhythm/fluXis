@@ -3,9 +3,9 @@ using fluXis.Map.Structures;
 using fluXis.Skinning.Default.HitObject;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
+namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
 
-public partial class EditorTickNote : EditorHitObject
+public partial class EditorTickNote : EditorDrawableHitObject
 {
     private Drawable tickNotePiece;
     private Drawable tickNoteGhost;

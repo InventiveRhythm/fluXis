@@ -107,6 +107,9 @@ public class StoryboardAnimation : ITimedObject, IHasDuration, IHasEasing, IHasS
     }
 
     [JsonIgnore]
+    int ITimedObject.Lane { get; set; }
+
+    [JsonIgnore]
     string ITimedObject.Group { get; set; }
 }
 
