@@ -32,12 +32,12 @@ public partial class DrawableStoryboardCompound : DrawableStoryboardElement
     public DrawableStoryboardCompound(StoryboardElement element)
         : this(element, [])
     {
-        ID = element.GetParameter("id", "");
     }
 
     public DrawableStoryboardCompound(StoryboardElement element, List<StoryboardElement> children)
         : base(element)
     {
+        ID = element.GetParameter("id", "");
         Children = children;
 
         if (element.Type != StoryboardElementType.Compound)
