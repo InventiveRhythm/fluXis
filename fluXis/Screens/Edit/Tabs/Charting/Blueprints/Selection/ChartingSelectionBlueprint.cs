@@ -1,8 +1,10 @@
 ﻿using System;
+using fluXis.Audio;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
 using osuTK;
@@ -57,35 +59,69 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
         }
     }
 
+    private readonly BlueprintNotePiece piece;
+    private DraggableSelectionPiece head;
+    private DraggableSelectionPiece end;
+
+    private DebouncedSample sample;
+
     public ChartingSelectionBlueprint(ITimedObject obj)
         : base(obj)
     {
         InternalChildren =
         [
-            new BlueprintNotePiece
+            piece = new BlueprintNotePiece
             {
                 RelativeSizeAxes = Axes.X,
                 Width = 0.5f,
                 Anchor = Anchor.Centre
-            }
+            },
+            head = new DraggableSelectionPiece
+            {
+                DragAction = dragStart,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Alpha = 0
+            },
+            end = new DraggableSelectionPiece
+            {
+                DragAction = dragEnd,
+                Origin = Anchor.TopLeft,
+                Alpha = 0
+            },
         ];
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        sample = new DebouncedSample(samples.Get("UI/slider-tick"));
+        AddInternal(sample);
     }
 
     public override void UpdatePosition(Drawable parent)
     {
         base.UpdatePosition(parent);
 
+        if (IsSelected)
+        {
+            if (Object is IHasDuration { Duration: > 0 })
+            {
+                piece.Alpha = 0;
+                end.Alpha = head.Alpha = 1f;
+            }
+            else
+            {
+                piece.Alpha = 1;
+                end.Alpha = head.Alpha = 0;
+            }
+        }
+
         Width = EditorHitObjectContainer.NOTEWIDTH * EditorSettings.ObjectZoom;
 
         if (parent != null)
             Position = parent.ToLocalSpace(PositionProvider.ScreenSpacePositionAtTime(Object.Time, Object.Lane));
 
-        /*if (Object is IHasDuration { Duration: > 0 } d)
-        {
-            var delta = PositionProvider.PositionAtTime(d.GetEndTime()) - PositionProvider.PositionAtTime(Object.Time);
-            Height = -(delta - (Drawable as EditorLongNote)?.End.DrawHeight ?? 0);
-        }
-        else*/
         Height = Drawable.DrawHeight;
     }
 
@@ -99,4 +135,41 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
            return true;
        }
      */
+
+    private void dragStart(Vector2 vec)
+    {
+        if (Object is not IHasDuration d)
+            return;
+
+        var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
+        newTime = Snaps.SnapTime(newTime);
+        var newLen = d.GetEndTime() - newTime;
+
+        if (newLen <= 10)
+            return;
+
+        if (Math.Abs(d.Time - newTime) > 0.1f)
+            sample?.Play();
+
+        d.Time = newTime;
+        d.Duration = newLen;
+    }
+
+    private void dragEnd(Vector2 vec)
+    {
+        if (Object is not IHasDuration d)
+            return;
+
+        var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
+        newTime = Snaps.SnapTime(newTime);
+        var newLen = newTime - Object.Time;
+
+        if (newLen <= 10)
+            return;
+
+        if (Math.Abs(d.GetEndTime() - newTime) > 0.1f)
+            sample?.Play();
+
+        d.Duration = newTime - d.Time;
+    }
 }

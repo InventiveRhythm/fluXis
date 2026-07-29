@@ -9,7 +9,7 @@ using osu.Framework.Graphics;
 namespace fluXis.Map.Structures;
 
 [Description("hit object")]
-public class HitObject : ITimedObject
+public class HitObject : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -88,6 +88,8 @@ public class HitObject : ITimedObject
     /// </summary>
     [JsonIgnore]
     public Easing EndEasing { get; set; } = Easing.None;
+
+    double IHasDuration.Duration { get => HoldTime; set => HoldTime = value; }
 }
 
 public enum HitObjectType

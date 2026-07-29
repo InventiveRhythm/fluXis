@@ -22,13 +22,16 @@ public partial class DraggableSelectionPiece : Container, IHasCursorType
         RelativeSizeAxes = Axes.X;
         Height = 42;
 
-        Child = piece = new BlueprintNotePiece
-        {
-            RelativeSizeAxes = Axes.X,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Width = .5f
-        };
+        InternalChildren =
+        [
+            piece = new BlueprintNotePiece
+            {
+                RelativeSizeAxes = Axes.X,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Width = .5f
+            }
+        ];
     }
 
     protected override void Update()
