@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using fluXis.Scoring.Structs;
 using fluXis.Screens.Gameplay.Ruleset;
@@ -8,7 +7,6 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures;
 
-[Description("hit object")]
 public class HitObject : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]

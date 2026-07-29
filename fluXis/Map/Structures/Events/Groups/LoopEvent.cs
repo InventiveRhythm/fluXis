@@ -1,8 +1,10 @@
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using Newtonsoft.Json;
 
 namespace fluXis.Map.Structures.Events.Groups;
 
+[Description("Repeat specific events by group.")]
 public class LoopEvent : IMapEvent
 {
     [JsonProperty("time")]

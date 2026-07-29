@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel;
 using fluXis.Graphics.Shaders;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Bases;
 using fluXis.Utils.Attributes;
 using fluXis.Utils.Extensions;
@@ -9,6 +11,8 @@ using osu.Framework.Logging;
 
 namespace fluXis.Map.Structures.Events;
 
+[Description("Applies shader effects to the entire screen.")]
+[Icon(FluXisIconType.Shader)]
 public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<ShaderEvent.ShaderParameters>
 {
     [JsonProperty("time")]

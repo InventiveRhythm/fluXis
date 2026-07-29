@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace fluXis.Map.Structures;
 
 [DoNotShowInEditorPlayfield]
-[Description("scroll velocity")]
+[Description("Changes note and scroll velocity.")]
 public class ScrollVelocity : ITimedObject, IHasGroups
 {
     [JsonProperty("time")]

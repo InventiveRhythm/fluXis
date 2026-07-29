@@ -15,7 +15,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Toolbox;
 
 public partial class ToolboxHitsoundButton : ToolboxButton
 {
-    protected override string Text { get; }
+    protected override LocalisableString Text { get; }
 
     public override LocalisableString TooltipText
     {

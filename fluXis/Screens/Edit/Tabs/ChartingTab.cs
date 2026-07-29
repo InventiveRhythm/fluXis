@@ -5,7 +5,6 @@ using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting;
 using Humanizer;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
@@ -57,18 +56,13 @@ public partial class ChartingTab : EditorTab
     public static string FormatTypeName<T>(bool multiple = false, bool title = false) where T : ITimedObject
     {
         var type = typeof(T);
-        var desc = type.GetDescription();
-
-        if (desc == type.ToString())
-        {
-            desc = type.Name.Replace("Event", "").Titleize();
-            desc = desc.Replace("Hit Object", "HitObject");
-
-            if (!title) desc = desc.ToLower();
-        }
+        var desc = type.Name.Replace("Event", "").Titleize();
+        desc = desc.Replace("Hit Object", "HitObject");
 
         if (type == typeof(ITimedObject))
-            desc = "object";
+            desc = "Object";
+
+        if (!title) desc = desc.ToLower();
 
         if (multiple)
             desc = desc.Pluralize();

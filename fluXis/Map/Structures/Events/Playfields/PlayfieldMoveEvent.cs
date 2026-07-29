@@ -1,7 +1,10 @@
 using System;
+using System.ComponentModel;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Utils.Attributes;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
@@ -10,6 +13,8 @@ namespace fluXis.Map.Structures.Events.Playfields;
 [AnimatesProperty(nameof(Playfield.AnimationX))]
 [AnimatesProperty(nameof(Playfield.AnimationY))]
 [AnimatesProperty(nameof(Playfield.AnimationZ))]
+[Description("Moves the playfield.")]
+[Icon(FluXisIconType.PlayfieldMove)]
 public class PlayfieldMoveEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToPlayfield
 {
     [JsonProperty("time")]

@@ -1,8 +1,13 @@
+using System.ComponentModel;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Bases;
+using fluXis.Utils.Attributes;
 using Newtonsoft.Json;
 
 namespace fluXis.Map.Structures.Events;
 
+[Description("Shakes the screen.")]
+[Icon(FluXisIconType.Shake)]
 public class ShakeEvent : IMapEvent, IHasDuration
 {
     [JsonProperty("time")]

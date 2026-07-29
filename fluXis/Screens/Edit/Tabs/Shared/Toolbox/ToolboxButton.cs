@@ -28,7 +28,7 @@ public partial class ToolboxButton : Container, IHasTooltip
     public ChartingTool Tool { get; init; }
     public virtual LocalisableString TooltipText => Tool.Description;
 
-    protected virtual string Text => Tool.Name;
+    protected virtual LocalisableString Text => Tool.Name;
     protected virtual bool IsSelected => BlueprintContainer.CurrentTool == Tool;
     protected virtual bool PlayClickSound => true;
 

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events.Camera;
 
+[Description("Scales the camera.")]
 public class CameraScaleEvent : ICameraEvent, IHasDuration, IHasEasing
 {
     [JsonProperty("time")]

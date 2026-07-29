@@ -1,8 +1,12 @@
 using System;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
+using fluXis.Utils.Attributes;
+using fluXis.Utils.Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Localisation;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Tools;
@@ -10,8 +14,8 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Tools;
 public class DesignTool<T> : ChartingTool
     where T : IMapEvent, new()
 {
-    public override string Name => ChartingTab.FormatTypeName<T>(title: true);
-    public override string Description => "yea";
+    public override LocalisableString Name => ChartingTab.FormatTypeName<T>(title: true);
+    public override LocalisableString Description => typeof(T).GetTypeDescription();
 
     public override Key Shortcut
     {
@@ -20,7 +24,7 @@ public class DesignTool<T> : ChartingTool
             if (key != null)
                 return key.Value;
 
-            key = Enum.Parse<Key>([Name[0]]);
+            key = Enum.Parse<Key>([Name.ToString()[0]]);
             return key.Value;
         }
     }
@@ -33,5 +37,17 @@ public class DesignTool<T> : ChartingTool
     {
         var obj = new T();
         return obj.CreateEditorBlueprint() ?? new ObjectPlacementBlueprint<T>(obj);
+    }
+
+    public override Drawable CreateIcon()
+    {
+        var icon = typeof(T).GetIcon();
+        if (icon.Icon == 0x3f) return null;
+
+        return new FluXisSpriteIcon
+        {
+            Icon = icon,
+            Colour = Theme.GetEventColor(new T())
+        };
     }
 }

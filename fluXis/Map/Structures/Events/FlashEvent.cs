@@ -1,10 +1,15 @@
+using System.ComponentModel;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Bases;
+using fluXis.Utils.Attributes;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK.Graphics;
 
 namespace fluXis.Map.Structures.Events;
 
+[Description("Overlays a solid color over the screen.")]
+[Icon(FluXisIconType.Flash)]
 public class FlashEvent : IMapEvent, IHasDuration, IHasEasing
 {
     [JsonProperty("time")]

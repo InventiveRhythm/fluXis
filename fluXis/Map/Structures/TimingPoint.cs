@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace fluXis.Map.Structures;
 
-[Description("timing point")]
+[Description("Changes the BPM and time signature.")]
 public class TimingPoint : ITimedObject
 {
     [JsonProperty("time")]

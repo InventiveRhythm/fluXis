@@ -1,9 +1,11 @@
-﻿using fluXis.Map.Structures.Bases;
+﻿using System.ComponentModel;
+using fluXis.Map.Structures.Bases;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events.Scrolling;
 
+[Description("Changes how hit objects approach the receptors.")]
 public class HitObjectEaseEvent : IMapEvent, IHasEasing
 {
     [JsonProperty("time")]

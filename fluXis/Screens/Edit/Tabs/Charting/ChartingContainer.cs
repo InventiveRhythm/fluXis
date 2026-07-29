@@ -103,7 +103,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         {
             var tool = typeof(DesignTool<>).MakeGenericType(x);
             return (ChartingTool)Activator.CreateInstance(tool)!;
-        }).OrderBy(x => x.Name).ToArray();
+        }).OrderBy(x => x.Name.ToString()).ToArray();
     }
 
     protected override void BeforeLoad()
