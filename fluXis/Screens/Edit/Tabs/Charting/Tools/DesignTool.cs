@@ -29,5 +29,9 @@ public class DesignTool<T> : ChartingTool
 
     public override Colour4 Color { get; } = Theme.GetEventColor(new T());
 
-    public override PlacementBlueprint CreateBlueprint() => new ObjectPlacementBlueprint<T>(new T());
+    public override PlacementBlueprint CreateBlueprint()
+    {
+        var obj = new T();
+        return obj.CreateEditorBlueprint() ?? new ObjectPlacementBlueprint<T>(obj);
+    }
 }

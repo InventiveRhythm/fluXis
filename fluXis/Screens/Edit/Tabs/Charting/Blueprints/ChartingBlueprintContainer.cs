@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.Actions;
@@ -78,6 +79,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
 
         foreach (var (type, _) in map.MapEvents.GetListsForTypes())
         {
+            if (type.GetCustomAttribute<DoNotShowInEditorPlayfieldAttribute>() != null)
+                continue;
+
             var method = GetType().GetMethod(nameof(registerEffect), BindingFlags.Instance | BindingFlags.NonPublic)!;
             method = method.MakeGenericMethod(type);
             method.Invoke(this, []);

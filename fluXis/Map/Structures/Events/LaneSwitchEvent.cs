@@ -1,10 +1,15 @@
+using System.ComponentModel;
 using System.Linq;
+using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events;
 
+[DoNotShowInEditorPlayfield]
+[Description("lane switch")]
 public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
 {
     [JsonProperty("time")]
@@ -24,6 +29,8 @@ public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
 
     [JsonProperty("easing")]
     public Easing Easing { get; set; } = Easing.OutQuint;
+
+    public PlacementBlueprint CreateEditorBlueprint() => new LaneSwitchPlacementBlueprint();
 
     // improved version that actually considers finger positions properly
     public static readonly bool[][][] SWITCH_VISIBILITY_V2 =

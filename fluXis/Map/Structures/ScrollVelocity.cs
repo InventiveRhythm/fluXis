@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset;
 using Newtonsoft.Json;
 
 namespace fluXis.Map.Structures;
 
+[DoNotShowInEditorPlayfield]
 [Description("scroll velocity")]
 public class ScrollVelocity : ITimedObject, IHasGroups
 {

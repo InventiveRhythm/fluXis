@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Events;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
@@ -48,6 +49,9 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
 
         foreach (var (type, list) in map.MapEvents.GetListsForTypes())
         {
+            if (type.GetCustomAttribute<DoNotShowInEditorPlayfieldAttribute>() != null)
+                continue;
+
             var method = GetType().GetMethod(nameof(registerEffect), BindingFlags.Instance | BindingFlags.NonPublic)!;
             method = method.MakeGenericMethod(type);
             method.Invoke(this, [list]);
