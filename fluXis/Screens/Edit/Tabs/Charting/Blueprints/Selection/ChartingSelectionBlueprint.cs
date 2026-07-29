@@ -23,6 +23,9 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
     [Resolved]
     protected EditorClock EditorClock { get; private set; }
 
+    [Resolved]
+    protected EditorSettings EditorSettings { get; private set; }
+
     public override RectangleF ScreenSpaceSelectionRect
     {
         get
@@ -57,8 +60,6 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
     public ChartingSelectionBlueprint(ITimedObject obj)
         : base(obj)
     {
-        Width = EditorHitObjectContainer.NOTEWIDTH;
-
         InternalChildren =
         [
             new BlueprintNotePiece
@@ -73,6 +74,8 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
     public override void UpdatePosition(Drawable parent)
     {
         base.UpdatePosition(parent);
+
+        Width = EditorHitObjectContainer.NOTEWIDTH * EditorSettings.ObjectZoom;
 
         if (parent != null)
             Position = parent.ToLocalSpace(PositionProvider.ScreenSpacePositionAtTime(Object.Time, Object.Lane));

@@ -60,7 +60,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
 
     public void SeekSmoothly(double time)
     {
-        time = Math.Clamp(time, 0, TrackLength);
+        time = Math.Clamp(time, Math.Min(0, MapInfo.TimingPoints.First().Time), TrackLength);
 
         if (IsRunning)
             Seek(time);
@@ -137,7 +137,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public override bool Seek(double position)
     {
         ClearTransforms();
-        position = Math.Clamp(position, 0, TrackLength);
+        position = Math.Clamp(position, Math.Min(0, MapInfo.TimingPoints.First().Time), TrackLength);
         var result = underlying.Seek(position);
         TimeChanged?.Invoke(position);
         return result;

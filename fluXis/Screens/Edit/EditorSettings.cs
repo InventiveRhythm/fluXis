@@ -8,6 +8,8 @@ public class EditorSettings
     private readonly EditorKeybindingContainer bindings;
     public EditorKeymap Keymap => bindings.Keymap;
 
+    public float ObjectZoom => (float)(Zoom / 2f);
+
     public double Zoom
     {
         get => ZoomBindable.Value;
@@ -25,8 +27,8 @@ public class EditorSettings
 
     public BindableDouble ZoomBindable { get; } = new(2f)
     {
-        MinValue = .5f,
-        MaxValue = 5f,
+        MinValue = 1f,
+        MaxValue = 2f,
         Default = 2f,
         Precision = .1f
     };

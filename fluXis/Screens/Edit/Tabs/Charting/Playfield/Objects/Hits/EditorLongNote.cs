@@ -68,8 +68,8 @@ public partial class EditorLongNote : EditorDrawableHitObject
         base.Update();
 
         var endY = Playfield.HitObjectContainer.PositionAtTime(Data.EndTime);
-        body.Height = Y - endY - End.Height + 4;
-        body.Y = -End.Height + 2;
+        body.Height = Y - endY;
+        body.Y = -(End.Height / 2f);
         End.Y = endY - Y;
     }
 }

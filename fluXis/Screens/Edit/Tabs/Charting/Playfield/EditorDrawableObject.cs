@@ -30,7 +30,6 @@ public abstract partial class EditorDrawableObject : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        Width = EditorHitObjectContainer.NOTEWIDTH;
         AutoSizeAxes = Axes.Y;
         Origin = Anchor.BottomLeft;
     }
@@ -38,6 +37,8 @@ public abstract partial class EditorDrawableObject : CompositeDrawable
     protected override void Update()
     {
         base.Update();
+
+        Width = EditorHitObjectContainer.NOTEWIDTH * settings.ObjectZoom;
 
         X = Playfield.HitObjectContainer.PositionFromLane(Data.Lane);
         Y = Playfield.HitObjectContainer.PositionAtTime(Data.Time);

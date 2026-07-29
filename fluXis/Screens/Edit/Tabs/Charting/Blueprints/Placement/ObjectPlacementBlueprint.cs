@@ -75,9 +75,9 @@ public partial class ObjectPlacementBlueprint<T> : PlacementBlueprint
     {
         base.Update();
 
-        piece.Width = EditorHitObjectContainer.NOTEWIDTH;
-        body.Width = EditorHitObjectContainer.NOTEWIDTH;
-        end.Width = EditorHitObjectContainer.NOTEWIDTH;
+        piece.Width = EditorHitObjectContainer.NOTEWIDTH * Settings.ObjectZoom;
+        body.Width = EditorHitObjectContainer.NOTEWIDTH * Settings.ObjectZoom;
+        end.Width = EditorHitObjectContainer.NOTEWIDTH * Settings.ObjectZoom;
     }
 
     protected override void OnPlacementFinished(bool commit)

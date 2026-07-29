@@ -75,8 +75,8 @@ public partial class EditorDrawableEvent : EditorDrawableObject
         body.Alpha = end.Alpha = 1;
 
         var endY = Playfield.HitObjectContainer.PositionAtTime(d.GetEndTime());
-        body.Height = Y - endY - end.Height + 4;
-        body.Y = -end.Height + 2;
+        body.Height = Y - endY;
+        body.Y = -(end.Height / 2f);
         end.Y = endY - Y;
     }
 }

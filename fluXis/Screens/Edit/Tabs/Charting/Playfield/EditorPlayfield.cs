@@ -59,7 +59,6 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         dependencies.CacheAs(this);
         dependencies.CacheAs(HitObjectContainer);
 
-        Width = EditorHitObjectContainer.NOTEWIDTH * 16;
         RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.Centre;
         Origin = Anchor.CentreLeft;
@@ -80,7 +79,6 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             new Stage(),
             waveform = new WaveformGraph
             {
-                Height = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount,
                 Anchor = Anchor.BottomLeft,
                 Origin = Anchor.TopLeft,
                 Rotation = -90,
@@ -109,12 +107,12 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         {
             AddInternal(new Box
             {
+                RelativePositionAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
                 Width = 2,
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.TopCentre,
-                // ReSharper disable once PossibleLossOfFraction
-                X = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount * (i + 1)
+                X = map.RealmMap.KeyCount * (i + 1f) / 24
             });
         }
 
@@ -140,6 +138,9 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     protected override void Update()
     {
         base.Update();
+
+        Width = HitObjectContainer.ScaledNoteWidth * 24;
+        waveform.Height = HitObjectContainer.ScaledNoteWidth * map.RealmMap.KeyCount;
 
         var songLengthInPixels = .5f * (clock.TrackLength * settings.Zoom);
         var songTimeInPixels = (float)(-EditorHitObjectContainer.HITPOSITION - .5f * (-(clock.CurrentTime + ChartingContainer.WAVEFORM_OFFSET) * settings.Zoom));

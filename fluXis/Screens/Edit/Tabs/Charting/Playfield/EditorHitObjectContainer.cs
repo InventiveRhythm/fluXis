@@ -19,6 +19,8 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
     public const int HITPOSITION = 130;
     public const int NOTEWIDTH = 98;
 
+    public float ScaledNoteWidth => NOTEWIDTH * settings.ObjectZoom;
+
     public IEnumerable<EditorDrawableObject> Objects => back.Concat(InternalChildren.OfType<EditorDrawableObject>());
 
     private readonly List<EditorDrawableObject> back = new();
@@ -141,10 +143,10 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
 
     public Vector2 ScreenSpacePositionAtTime(double time, int lane) => ToScreenSpace(new Vector2(PositionFromLane(lane), PositionAtTime(time)));
     public float PositionAtTime(double time) => (float)(DrawHeight - HITPOSITION - .5f * ((time - clock.CurrentTime) * settings.Zoom));
-    public float PositionFromLane(float lane) => (lane - 1) * NOTEWIDTH;
+    public float PositionFromLane(float lane) => (lane - 1) * (ScaledNoteWidth);
 
     public double TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / settings.Zoom + clock.CurrentTime;
-    public int LaneAtPosition(float x) => (int)((x + NOTEWIDTH) / NOTEWIDTH);
+    public int LaneAtPosition(float x) => (int)((x + ScaledNoteWidth) / (ScaledNoteWidth));
 
     public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition) => TimeAtPosition(ToLocalSpace(screenSpacePosition).Y);
     public int LaneAtScreenSpacePosition(Vector2 position) => LaneAtPosition(ToLocalSpace(position).X);
