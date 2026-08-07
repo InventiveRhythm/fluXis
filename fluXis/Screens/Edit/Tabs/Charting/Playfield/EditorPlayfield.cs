@@ -42,9 +42,6 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
-    public int Index { get; }
-    public bool MainPlayfield => Index == 0;
-
     private DependencyContainer dependencies;
     private InputManager inputManager;
 
@@ -56,20 +53,15 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     private Bindable<ScrollDirection> scrollDirection;
 
-    public EditorPlayfield(int idx)
-    {
-        Index = idx;
-    }
-
     [BackgroundDependencyLoader]
     private void load(Bindable<Waveform> waveformBind, ISampleStore samples)
     {
         dependencies.CacheAs(this);
         dependencies.CacheAs(HitObjectContainer);
 
-        Width = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount;
         RelativeSizeAxes = Axes.Y;
-        Anchor = Origin = Anchor.Centre;
+        Anchor = Anchor.Centre;
+        Origin = Anchor.CentreLeft;
 
         hitSound = samples.Get("Gameplay/hitsound.mp3");
 
@@ -87,9 +79,8 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             new Stage(),
             waveform = new WaveformGraph
             {
-                Height = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount,
-                Anchor = Anchor.BottomRight,
-                Origin = Anchor.BottomLeft,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.TopLeft,
                 Rotation = -90,
             },
             Effects = new EditorEffectContainer(),
@@ -109,6 +100,21 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             modComments,
             new EditorPlayfieldModding(modHighlight, modComments)
         };
+
+        var playfields = (map.MapInfo.IsSplit ? 2 : 1);
+
+        for (int i = 0; i < playfields; i++)
+        {
+            AddInternal(new Box
+            {
+                RelativePositionAxes = Axes.X,
+                RelativeSizeAxes = Axes.Y,
+                Width = 2,
+                Anchor = Anchor.TopLeft,
+                Origin = Anchor.TopCentre,
+                X = map.RealmMap.KeyCount * (i + 1f) / 24
+            });
+        }
 
         map.KeyModeChanged += count =>
         {
@@ -132,6 +138,9 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     protected override void Update()
     {
         base.Update();
+
+        Width = HitObjectContainer.ScaledNoteWidth * 24;
+        waveform.Height = HitObjectContainer.ScaledNoteWidth * map.RealmMap.KeyCount;
 
         var songLengthInPixels = .5f * (clock.TrackLength * settings.Zoom);
         var songTimeInPixels = (float)(-EditorHitObjectContainer.HITPOSITION - .5f * (-(clock.CurrentTime + ChartingContainer.WAVEFORM_OFFSET) * settings.Zoom));

@@ -83,7 +83,11 @@ public class StoryboardElement : ITimedObject
     [JsonIgnore]
     double ITimedObject.Time { get => StartTime; set => StartTime = value; }
 
-    public string Group { get; set; }
+    [JsonIgnore]
+    int ITimedObject.Lane { get => ZIndex; set => ZIndex = value; }
+
+    [JsonIgnore]
+    string ITimedObject.Group { get; set; }
 
     public T GetParameter<T>(string key, T fallback)
     {

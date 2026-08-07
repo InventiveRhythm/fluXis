@@ -7,9 +7,10 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Map.Structures;
-using fluXis.Online.API.Models.Maps;
+using fluXis.Map.Structures.Bases;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.Actions.Events;
+using fluXis.Screens.Edit.Actions.Generic;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Actions.Notes.Shortcuts;
 using fluXis.Screens.Edit.Input;
@@ -17,9 +18,9 @@ using fluXis.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Charting.Points;
+using fluXis.Screens.Edit.Tabs.Charting.Preview;
 using fluXis.Screens.Edit.Tabs.Charting.Toolbox;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
-using fluXis.Screens.Edit.Tabs.Charting.Tools.Effects;
 using fluXis.Screens.Edit.Tabs.Shared;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
@@ -30,7 +31,6 @@ using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
@@ -53,10 +53,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         new LandmineTool()
     };
 
-    public IReadOnlyList<EffectTool> EffectTools { get; } = new EffectTool[]
-    {
-        new LaneSwitchTool()
-    };
+    public IReadOnlyList<ChartingTool> EffectTools { get; }
 
     public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };
     public static readonly Key[] TOP_ROW_KEYS = { Key.Q, Key.W, Key.E, Key.R, Key.T, Key.Y, Key.U, Key.I, Key.O, Key.P };
@@ -88,21 +85,39 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     private SpriteStack<BlurableBackground> backgrounds;
     private Box backgroundDim;
 
-    public EditorPlayfield[] Playfields { get; private set; }
+    public EditorPlayfield Playfield { get; private set; }
     public ChartingBlueprintContainer BlueprintContainer { get; private set; }
-    public IEnumerable<EditorHitObject> HitObjects => Playfields.SelectMany(x => x.HitObjectContainer.HitObjects);
-    public bool CursorInPlacementArea => Playfields.Any(p => p.CursorInPlacementArea);
+    public IEnumerable<EditorDrawableObject> HitObjects => Playfield.HitObjectContainer.Objects;
+    public bool CursorInPlacementArea => Playfield.CursorInPlacementArea;
 
     public bool SelectedAny => BlueprintContainer.SelectionHandler.SelectedObjects.Count != 0;
+
+    public Dictionary<ITimedObject, EditorDrawableObject> ObjectDrawables { get; set; } = new();
+
+    public ChartingContainer()
+    {
+        var effectTypes = GetType().Assembly.GetTypes()
+                                   .Where(x => x.IsAssignableTo(typeof(IMapEvent)))
+                                   .Where(x => !x.IsAbstract && !x.IsInterface);
+
+        EffectTools = effectTypes.Select(x =>
+        {
+            var tool = typeof(DesignTool<>).MakeGenericType(x);
+            return (ChartingTool)Activator.CreateInstance(tool)!;
+        }).OrderBy(x => x.Name.ToString()).ToArray();
+    }
 
     protected override void BeforeLoad()
     {
         Editor.ChartingContainer = this;
 
-        Playfields = Enumerable.Range(0, Map.MapInfo.DualMode == DualMode.Separate ? 2 : 1).Select(x => new EditorPlayfield(x)).ToArray();
+        Playfield = new EditorPlayfield
+        {
+            X = Map.MapInfo.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH
+        };
 
         dependencies.Cache(this);
-        dependencies.CacheAs<ITimePositionProvider>(Playfields[0]);
+        dependencies.CacheAs<ITimePositionProvider>(Playfield);
         dependencies.CacheAs(sidebar = new ChartingSidebar());
     }
 
@@ -130,12 +145,9 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             Colour = Colour4.Black,
             Alpha = 0
         },
-        new GridContainer
-        {
-            RelativeSizeAxes = Axes.Both,
-            Content = new[] { Playfields }
-        },
-        BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this }
+        Playfield,
+        BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this },
+        new ChartingPreviewContainer()
     };
 
     protected override Drawable CreateLeftSide() => new EditorToolbox
@@ -149,14 +161,14 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
                 Icon = Phosphor.Bold.PencilSimple,
                 Tools = Tools
             },
+            toolboxHitsounds = new ToolboxHitsoundCategory(),
+            new EditorModdingToolbox(Modding),
             new()
             {
                 Title = "Effects",
                 Icon = Phosphor.Bold.MagicWand,
                 Tools = EffectTools
-            },
-            toolboxHitsounds = new ToolboxHitsoundCategory(),
-            new EditorModdingToolbox(Modding)
+            }
         }
     };
 
@@ -214,9 +226,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
             case >= Key.A and <= Key.Z when !e.ControlPressed:
             {
-                var letter = e.Key.ToString();
-                var tool = EffectTools.FirstOrDefault(t => t.Letter == letter);
-
+                var tool = EffectTools.FirstOrDefault(t => t.Shortcut == e.Key);
                 if (tool == null) return false;
 
                 BlueprintContainer.CurrentTool = tool;
@@ -226,6 +236,63 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             default:
                 return base.OnKeyDown(e);
         }
+    }
+
+    private bool movingCamera;
+    private bool didMove;
+    private double lastMove;
+    private float moveAccumulate;
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button != MouseButton.Middle)
+            return false;
+
+        if (e.ShiftPressed)
+            Playfield.MoveToX(Map.MapInfo.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH, 400, Easing.OutQuint);
+
+        movingCamera = true;
+        return true;
+    }
+
+    protected override bool OnMouseMove(MouseMoveEvent e)
+    {
+        if (!movingCamera)
+            return false;
+
+        Playfield.X += e.Delta.X;
+        Playfield.X = Math.Clamp(Playfield.X, -Playfield.DrawWidth, 0);
+        didMove = true;
+
+        if (!EditorClock.IsRunning)
+        {
+            moveAccumulate += e.Delta.Y;
+
+            if (Math.Abs(lastMove - Time.Current) < 16)
+                return true;
+
+            var zero = Playfield.HitObjectContainer.TimeAtPosition(0);
+            var offset = Playfield.HitObjectContainer.TimeAtPosition(moveAccumulate);
+
+            EditorClock.Seek(EditorClock.CurrentTime + (zero - offset));
+
+            lastMove = Time.Current;
+            moveAccumulate = 0;
+        }
+
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        if (e.Button != MouseButton.Middle || !movingCamera)
+            return;
+
+        if (didMove && !EditorClock.IsRunning)
+            EditorClock.SeekSmoothly(EditorClock.Snap(EditorClock.CurrentTime));
+
+        movingCamera = false;
+        didMove = false;
     }
 
     private void placeNote(int lane)
@@ -250,7 +317,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             Lane = lane
         };
 
-        ActionStack.Add(new NotePlaceAction(note));
+        ActionStack.Add(new ObjectPlaceAction<HitObject>(note));
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -331,7 +398,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e) { }
 
-    private bool getSelectedObjects(out List<HitObject> objects, bool copy = false)
+    private bool getSelectedObjects(out List<ITimedObject> objects, bool copy = false)
     {
         objects = BlueprintContainer.SelectionHandler.SelectedObjects.ToList();
 
@@ -352,7 +419,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         if (!getSelectedObjects(out var objects))
             return;
 
-        ActionStack.Add(new NoteFlipAction(objects, Map.RealmMap.KeyCount));
+        // TODO: make it work for all
+        ActionStack.Add(new NoteFlipAction(objects.OfType<HitObject>(), Map.RealmMap.KeyCount));
     }
 
     public void ShuffleSelection()
@@ -360,7 +428,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         if (!getSelectedObjects(out var objects))
             return;
 
-        ActionStack.Add(new NoteShuffleAction(objects, Map.RealmMap.KeyCount));
+        // TODO: make it work for all
+        ActionStack.Add(new NoteShuffleAction(objects.OfType<HitObject>().ToList(), Map.RealmMap.KeyCount));
     }
 
     public void ApplyGroupToSelection()
@@ -370,7 +439,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         panels?.Add(new FormPanel<EditorApplyGroup>(Phosphor.Bold.ShuffleAngular, "Apply Group to Selection", new EditorApplyGroup(), (_, group) =>
         {
-            ActionStack.Add(new NoteApplyGroupAction(objects, group.Group));
+            // TODO: make it work for all
+            ActionStack.Add(new NoteApplyGroupAction(objects.OfType<HitObject>(), group.Group));
             return true;
         }));
     }
@@ -394,7 +464,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             return clone;
         });
 
-        ActionStack.Add(new NoteMultiPlaceAction(added.ToArray()));
+        ActionStack.Add(new ObjectMultiPlaceAction<ITimedObject>(added.ToArray()));
     }
 
     public void ReSnapAll()
@@ -404,7 +474,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         if (!objects.Any())
             objects = HitObjects.Select(h => h.Data).ToList();
 
-        ActionStack.Add(new NoteReSnapAction(objects, snaps.SnapTime, settings.SnapDivisor));
+        ActionStack.Add(new ObjectReSnapAction(objects, snaps.SnapTime, settings.SnapDivisor));
     }
 
     public void Copy(bool deleteAfter = false)
@@ -417,7 +487,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         foreach (var hit in hits)
             hit.Time -= minTime;
 
-        var content = new EditorClipboardContent { HitObjects = hits };
+        // TODO: fix clipboard content (make it not copy to system)
+        /*var content = new EditorClipboardContent { HitObjects = hits };
         clipboard.SetText(content.Serialize());
 
         if (deleteAfter)
@@ -426,7 +497,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             BlueprintContainer.SelectionHandler.DeleteSelected();
         }
         else
-            notifications.SendSmallText($"Copied {content.HitObjects.Count} hit objects.", Phosphor.Bold.Check);
+            notifications.SendSmallText($"Copied {content.HitObjects.Count} hit objects.", Phosphor.Bold.Check);*/
     }
 
     public void Paste()

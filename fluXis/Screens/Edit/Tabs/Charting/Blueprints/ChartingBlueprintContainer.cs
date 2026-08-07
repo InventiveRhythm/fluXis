@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Attributes;
+using fluXis.Map.Structures.Bases;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.Actions;
-using fluXis.Screens.Edit.Actions.Notes;
+using fluXis.Screens.Edit.Actions.Generic;
 using fluXis.Screens.Edit.Blueprints;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
@@ -20,7 +23,7 @@ using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints;
 
-public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
+public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObject>
 {
     protected override bool InArea => ChartingContainer.CursorInPlacementArea;
 
@@ -74,12 +77,28 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
         map.RegisterAddListener<HitObject>(AddBlueprint);
         map.RegisterRemoveListener<HitObject>(RemoveBlueprint);
 
+        foreach (var (type, _) in map.MapEvents.GetListsForTypes())
+        {
+            if (type.GetCustomAttribute<DoNotShowInEditorPlayfieldAttribute>() != null)
+                continue;
+
+            var method = GetType().GetMethod(nameof(registerEffect), BindingFlags.Instance | BindingFlags.NonPublic)!;
+            method = method.MakeGenericMethod(type);
+            method.Invoke(this, []);
+        }
+
         SelectionBlueprints.StartBulk();
 
         foreach (var hitObject in ChartingContainer.HitObjects)
             AddBlueprint(hitObject.Data);
 
         SelectionBlueprints.EndBulk();
+    }
+
+    private void registerEffect<T>() where T : class, ITimedObject
+    {
+        map.RegisterAddListener<T>(AddBlueprint);
+        map.RegisterRemoveListener<T>(RemoveBlueprint);
     }
 
     protected override void Update()
@@ -108,7 +127,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
             updatePlacementPosition();
     }
 
-    protected override SelectionHandler<HitObject> CreateSelectionHandler() => new ChartingSelectionHandler();
+    protected override SelectionHandler<ITimedObject> CreateSelectionHandler() => new ChartingSelectionHandler();
 
     private void createPlacement()
     {
@@ -122,12 +141,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
 
     private void updatePlacementPosition()
     {
-        var playfield = ChartingContainer.Playfields.FirstOrDefault(p => p.CursorInPlacementArea);
-
-        if (playfield is null)
-            return;
-
-        var container = playfield.HitObjectContainer;
+        var container = ChartingContainer.Playfield.HitObjectContainer;
         var mousePosition = InputManager.CurrentState.Mouse.Position;
 
         var time = snaps.SnapTime(container.TimeAtScreenSpacePosition(mousePosition), settings.Keymap.SnapNext);
@@ -154,25 +168,26 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
         return true;
     }
 
-    protected override SelectionBlueprint<HitObject> CreateBlueprint(HitObject hit)
+    protected override SelectionBlueprint<ITimedObject> CreateBlueprint(ITimedObject obj)
     {
-        var hitDrawable = hit.EditorDrawable;
-        if (hitDrawable == null) return null;
+        if (!ChartingContainer.ObjectDrawables.TryGetValue(obj, out var draw))
+            return null;
 
-        ChartingSelectionBlueprint blueprint = hit.LongNote
-            ? new LongNoteSelectionBlueprint(hit)
-            : new SingleNoteSelectionBlueprint(hit);
+        /*ChartingSelectionBlueprint blueprint = obj is IHasDuration
+            ? new LongNoteSelectionBlueprint(obj)
+            : new SingleNoteSelectionBlueprint(obj);*/
 
-        blueprint.Drawable = hitDrawable;
+        SelectionBlueprint<ITimedObject> blueprint = new ChartingSelectionBlueprint(obj);
+        blueprint.Drawable = draw;
         return blueprint;
     }
 
     [CanBeNull]
-    private NoteMoveAction moveAction;
+    private ObjectMoveAction<ITimedObject> moveAction;
 
     protected override void StartedMoving()
     {
-        moveAction = new NoteMoveAction(SelectedObjects.OfType<HitObject>().ToArray());
+        moveAction = new ObjectMoveAction<ITimedObject>([.. SelectedObjects]);
     }
 
     protected override void MoveSelection(DragEvent e)
@@ -180,17 +195,18 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
         if (DraggedBlueprints == null) return;
 
         var delta = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
+        var first = DraggedBlueprintsPositions.First();
 
-        var position = DraggedBlueprintsPositions.First().Location + delta;
-        var time = ChartingContainer.Playfields[0].HitObjectContainer.TimeAtScreenSpacePosition(position);
-        int lane = ChartingContainer.Playfields[0].HitObjectContainer.LaneAtScreenSpacePosition(position);
+        var position = new Vector2(first.Centre.X, first.Bottom) + delta;
+        var time = ChartingContainer.Playfield.HitObjectContainer.TimeAtScreenSpacePosition(position);
+        int lane = ChartingContainer.Playfield.HitObjectContainer.LaneAtScreenSpacePosition(position);
         var snappedTime = snaps.SnapTime(time, true);
 
         var timeDelta = snappedTime - DraggedBlueprints.First().Object.Time;
         int laneDelta = 0;
 
 #pragma warning disable CA2021 // Rethrow to preserve stack details
-        var hitBlueprints = DraggedBlueprints.OfType<NoteSelectionBlueprint>().ToArray();
+        var hitBlueprints = DraggedBlueprints.OfType<ChartingSelectionBlueprint>().ToArray();
 #pragma warning restore CA2021
 
         if (hitBlueprints.Length != 0)
@@ -200,13 +216,31 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
             var minLane = hitBlueprints.Min(b => b.Object.Lane);
             var maxLane = hitBlueprints.Max(b => b.Object.Lane);
 
-            if (minLane + laneDelta <= 0 || maxLane + laneDelta > map.RealmMap.KeyCount)
+            if (minLane + laneDelta <= 0)
                 laneDelta = 0;
+            else
+            {
+                var hits = hitBlueprints.Where(x => x.Object is HitObject).ToArray();
+                var hasHit = hits.Length != 0;
+
+                if (hasHit)
+                {
+                    var maxHit = hits.Max(x => x.Object.Lane);
+
+                    if (maxHit + laneDelta > map.RealmMap.KeyCount)
+                        laneDelta = 0;
+                }
+                else
+                {
+                    if (maxLane + laneDelta > 24)
+                        laneDelta = 0;
+                }
+            }
         }
 
-        var hits = hitBlueprints.Select(b => b.HitObject.Data).ToArray();
-        var vecs = NoteMoveAction.CreateFrom(hits);
-        moveAction?.Apply(vecs.Select(v => new Vector2d(v.X + timeDelta, v.Y + laneDelta)).ToArray(), true);
+        var objs = hitBlueprints.Select(b => b.Object).ToArray();
+        var vecs = ObjectMoveAction<ITimedObject>.CreateFrom(objs);
+        moveAction?.Apply([.. vecs.Select(v => new Vector2d(v.X + timeDelta, v.Y + laneDelta))], true);
     }
 
     protected override void FinishedMoving()
@@ -248,7 +282,8 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
 
             var changed = false;
 
-            var action = new NoteMoveAction(selected.ToArray());
+            // TODO: make it work for all
+            var action = new ObjectMoveAction<HitObject>([.. selected.OfType<HitObject>()]);
 
             var minLane = selected.Min(x => x.Lane);
             var maxLane = selected.Max(x => x.Lane);
@@ -271,7 +306,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<HitObject>
             if (!changed)
                 return false;
 
-            action.Apply(NoteMoveAction.CreateFrom(selected.ToArray()), true);
+            action.Apply(ObjectMoveAction<HitObject>.CreateFrom([.. selected]), true);
             actions.Add(action);
             return true;
         }

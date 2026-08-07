@@ -8,6 +8,9 @@ public class NoteEvent : IMapEvent
     [JsonProperty("time")]
     public double Time { get; set; }
 
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
+
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 

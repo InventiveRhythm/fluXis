@@ -1,6 +1,6 @@
 using System;
 using fluXis.Map.Structures;
-using fluXis.Screens.Edit.Actions.Notes;
+using fluXis.Screens.Edit.Actions.Generic;
 using fluXis.Screens.Edit.Tabs.Verify;
 using Midori.Utils;
 using osu.Framework.Allocation;
@@ -12,15 +12,6 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
 {
     [Resolved]
     private ChartingContainer chartingContainer { get; set; }
-
-    protected override ITimePositionProvider PositionProvider
-    {
-        get
-        {
-            var index = (Hit.Lane - 1) / Map.RealmMap.KeyCount;
-            return ChartingContainer.Playfields[index];
-        }
-    }
 
     protected HitObject Hit => Object as HitObject;
 
@@ -59,10 +50,10 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
             else
                 clone.Lane += Map.RealmMap.KeyCount;
 
-            Actions.Add(new NoteMultiPlaceAction(new[] { Hit, clone }));
+            Actions.Add(new ObjectMultiPlaceAction<HitObject>([Hit, clone]));
             return;
         }
 
-        Actions.Add(new NotePlaceAction(Hit));
+        Actions.Add(new ObjectPlaceAction<HitObject>(Hit));
     }
 }

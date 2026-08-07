@@ -151,6 +151,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
     private GameplayClockContainer clockContainer;
     private Container hud { get; set; }
 
+    public ShaderStackContainer ShaderStack { get; private set; }
     public RulesetContainer RulesetContainer { get; private set; }
     public PlayfieldManager PlayfieldManager { get; private set; }
 
@@ -245,8 +246,8 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         dependencies.CacheAs<ICustomColorProvider>(colors);
 
-        var shaders = buildShaders();
-        var transforms = shaders.TransformHandlers.ToList();
+        ShaderStack = buildShaders();
+        var transforms = ShaderStack.TransformHandlers.ToList();
 
         clockContainer = new GameplayClockContainer(tracks, RealmMap, Map, new Drawable[]
         {
@@ -358,17 +359,14 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
                                     Origin = Anchor.Centre,
                                     Children =
                                     [
-                                        shaders.AddContent(new Drawable[]
+                                        ShaderStack.AddContent(new AspectRatioContainer(Map.Force16By9)
                                         {
-                                            new AspectRatioContainer(Map.Force16By9)
+                                            Masking = true,
+                                            Children = new Drawable[]
                                             {
-                                                Masking = true,
-                                                Children = new Drawable[]
-                                                {
-                                                    pulseContent,
-                                                    new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
-                                                    new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
-                                                }
+                                                pulseContent,
+                                                new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
+                                                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
                                             }
                                         }),
                                         new DangerHealthOverlay(),

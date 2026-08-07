@@ -21,7 +21,8 @@ public partial class PlacementBlueprint : Container
     [Resolved]
     protected EditorMap Map { get; private set; }
 
-    protected virtual ITimePositionProvider PositionProvider => ChartingContainer.Playfields[0];
+    [Resolved]
+    protected ITimePositionProvider PositionProvider { get; private set; }
 
     public virtual bool AllowPainting => false;
 
@@ -41,8 +42,11 @@ public partial class PlacementBlueprint : Container
 
     public virtual void UpdatePlacement(double time, int lane)
     {
-        if (State == PlacementState.Waiting)
-            Object.Time = time;
+        if (State != PlacementState.Waiting)
+            return;
+
+        Object.Time = time;
+        Object.Lane = lane;
     }
 
     public void FinishPlacement(bool commit)
@@ -71,6 +75,7 @@ public partial class PlacementBlueprint : Container
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
+        if (e.ShiftPressed) return false;
         if (e.Button != MouseButton.Left)
             return false;
 

@@ -1,3 +1,9 @@
+using fluXis.Map.Structures.Bases;
+using fluXis.Map.Structures.Events;
+using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Groups;
+using fluXis.Map.Structures.Events.Playfields;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Mods;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -73,6 +79,32 @@ public static class Theme
     public static Colour4 Note => Text;
     public static Colour4 NoteTag => Colour4.FromHex("#235284");
     public static Colour4 Shader => Colour4.FromHex("#D65C5C");
+
+    public static Colour4 GetEventColor(ITimedObject obj) => obj switch
+    {
+        Map.Structures.TimingPoint => TimingPoint,
+        Map.Structures.ScrollVelocity => ScrollVelocity,
+        LaneSwitchEvent => LaneSwitch,
+        FlashEvent => Flash,
+        PulseEvent => Pulse,
+        ShakeEvent => Shake,
+        PlayfieldMoveEvent => PlayfieldMove,
+        PlayfieldScaleEvent => PlayfieldScale,
+        PlayfieldRotateEvent => PlayfieldRotate,
+        ColorFadeEvent => ColorFade,
+        HitObjectEaseEvent => HitObjectEase,
+        LayerFadeEvent => LayerFade,
+        BeatPulseEvent => BeatPulse,
+        ScrollMultiplierEvent => ScrollMultiply,
+        TimeOffsetEvent => TimeOffset,
+        CameraMoveEvent => CameraMove,
+        CameraScaleEvent => CameraScale,
+        CameraRotateEvent => CameraRotate,
+        LoopEvent => Loop,
+        NoteEvent => NoteTag,
+        ShaderEvent => Shader,
+        _ => Colour4.White
+    };
 
     public static Colour4 Selection => Highlight;
 

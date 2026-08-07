@@ -37,4 +37,5 @@ public class EditorChangeRequest : ITimedObject, IHasDuration
     }
 
     string ITimedObject.Group { get; set; } = string.Empty;
+    int ITimedObject.Lane { get; set; } = 0;
 }

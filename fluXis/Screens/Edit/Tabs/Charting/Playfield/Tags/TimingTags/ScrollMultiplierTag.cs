@@ -55,7 +55,7 @@ public partial class ScrollMultiplierTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        Editor.ChangeToTab<DesignTab>(x => x.Container.Sidebar.ShowPoint(mult));
+        Editor.ChangeToTab<ChartingTab>(x => x.Container.Sidebar.ShowPoint(mult));
         return true;
     }
 }

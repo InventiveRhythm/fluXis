@@ -53,14 +53,14 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         RateBindable.MinValue = .2f;
     }
 
-    public bool SeekSnapped(float position)
+    public bool SeekSnapped(double position)
     {
-        return Seek(snap(position));
+        return Seek(Snap(position));
     }
 
     public void SeekSmoothly(double time)
     {
-        time = Math.Clamp(time, 0, TrackLength);
+        time = Math.Clamp(time, Math.Min(0, MapInfo.TimingPoints.First().Time), TrackLength);
 
         if (IsRunning)
             Seek(time);
@@ -97,7 +97,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
             Seek(Interpolation.ValueAt(smoothSeekTime, smoothSeekStartTime, smoothSeekTarget, 0, interpolationDuration, Easing.OutQuint));
     }
 
-    private double snap(double position)
+    public double Snap(double position)
     {
         var point = MapInfo.GetTimingPoint((float)position);
         float snapLength = point.Signature * point.MsPerBeat / (4 * 4);
@@ -137,7 +137,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public override bool Seek(double position)
     {
         ClearTransforms();
-        position = Math.Clamp(position, 0, TrackLength);
+        position = Math.Clamp(position, Math.Min(0, MapInfo.TimingPoints.First().Time), TrackLength);
         var result = underlying.Seek(position);
         TimeChanged?.Invoke(position);
         return result;

@@ -1,7 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using fluXis.Map.Structures;
-using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
+using fluXis.Map.Structures.Attributes;
+using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Events;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
+using fluXis.Screens.Edit.Tabs.Verify;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -9,14 +15,16 @@ using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Playfield;
 
-public partial class EditorHitObjectContainer : Container<EditorHitObject>
+public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
 {
     public const int HITPOSITION = 130;
     public const int NOTEWIDTH = 98;
 
-    public IEnumerable<EditorHitObject> HitObjects => back.Concat(InternalChildren.OfType<EditorHitObject>());
+    public float ScaledNoteWidth => NOTEWIDTH * settings.ObjectZoom;
 
-    private readonly List<EditorHitObject> back = new();
+    public IEnumerable<EditorDrawableObject> Objects => back.Concat(InternalChildren.OfType<EditorDrawableObject>());
+
+    private readonly List<EditorDrawableObject> back = new();
 
     [Resolved]
     private EditorSettings settings { get; set; }
@@ -25,46 +33,76 @@ public partial class EditorHitObjectContainer : Container<EditorHitObject>
     private EditorMap map { get; set; }
 
     [Resolved]
-    private EditorPlayfield playfield { get; set; }
-
-    [Resolved]
     private EditorClock clock { get; set; }
 
-    public int LaneOffset => playfield.Index * map.RealmMap.KeyCount;
+    [Resolved]
+    private ChartingContainer charting { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
 
-        map.RegisterAddListener<HitObject>(add);
-        map.RegisterRemoveListener<HitObject>(remove);
-        map.MapInfo.HitObjects.ForEach(add);
+        registerEffect(map.MapInfo.HitObjects);
+        registerEffect(map.MapInfo.TimingPoints);
+        registerEffect(map.MapInfo.ScrollVelocities);
+
+        foreach (var (type, list) in map.MapEvents.GetListsForTypes())
+        {
+            if (type.GetCustomAttribute<DoNotShowInEditorPlayfieldAttribute>() != null)
+                continue;
+
+            var method = GetType().GetMethod(nameof(registerEffect), BindingFlags.Instance | BindingFlags.NonPublic)!;
+            method = method.MakeGenericMethod(type);
+            method.Invoke(this, [list]);
+        }
     }
 
-    private void add(HitObject info)
+    private void registerEffect<T>(List<T> list) where T : class, ITimedObject
     {
-        var idx = (info.Lane - 1) / map.RealmMap.KeyCount;
-        if (idx != playfield.Index) return;
+        map.RegisterAddListener<T>(add);
+        map.RegisterRemoveListener<T>(remove);
+        list.ForEach(add);
+    }
 
-        EditorHitObject draw = null;
-
-        switch (info.Type)
+    private void add(ITimedObject obj)
+    {
+        if (obj.Lane < 1)
         {
-            case HitObjectType.Normal:
-                if (info.LongNote)
-                    draw = new EditorLongNote(info);
-                else
-                    draw = new EditorSingleNote(info);
+            var atTime = Objects.Where(x => x.Data is not HitObject && Math.Abs(x.Data.Time - obj.Time) < 0.1f);
+            obj.Lane = atTime.Count() + 1 + ((IVerifyContext)map).MaxKeyCount;
+        }
+
+        EditorDrawableObject draw = null;
+
+        switch (obj)
+        {
+            case HitObject hit:
+            {
+                switch (hit.Type)
+                {
+                    case HitObjectType.Normal:
+                        if (hit.LongNote)
+                            draw = new EditorLongNote(hit);
+                        else
+                            draw = new EditorSingleNote(hit);
+
+                        break;
+
+                    case HitObjectType.Tick:
+                        draw = new EditorTickNote(hit);
+                        break;
+
+                    case HitObjectType.Landmine:
+                        draw = new EditorLandmine(hit);
+                        break;
+                }
 
                 break;
+            }
 
-            case HitObjectType.Tick:
-                draw = new EditorTickNote(info);
-                break;
-
-            case HitObjectType.Landmine:
-                draw = new EditorLandmine(info);
+            default:
+                draw = new EditorDrawableEvent(obj);
                 break;
         }
 
@@ -72,22 +110,19 @@ public partial class EditorHitObjectContainer : Container<EditorHitObject>
             return;
 
         LoadComponent(draw);
-        info.EditorDrawable = draw;
+        charting.ObjectDrawables[obj] = draw;
         back.Add(draw);
     }
 
-    private void remove(HitObject info)
+    private void remove(ITimedObject info)
     {
-        var idx = (info.Lane - 1) / map.RealmMap.KeyCount;
-        if (idx != playfield.Index) return;
-
-        var draw = info.EditorDrawable;
-        if (draw == null) return;
+        if (!charting.ObjectDrawables.TryGetValue(info, out var draw))
+            return;
 
         Remove(draw, false);
         back.Remove(draw);
 
-        info.EditorDrawable = null;
+        charting.ObjectDrawables.Remove(info);
         draw.Dispose();
     }
 
@@ -112,10 +147,10 @@ public partial class EditorHitObjectContainer : Container<EditorHitObject>
 
     public Vector2 ScreenSpacePositionAtTime(double time, int lane) => ToScreenSpace(new Vector2(PositionFromLane(lane), PositionAtTime(time)));
     public float PositionAtTime(double time) => (float)(DrawHeight - HITPOSITION - .5f * ((time - clock.CurrentTime) * settings.Zoom));
-    public float PositionFromLane(float lane) => (lane - 1 - LaneOffset) * NOTEWIDTH;
+    public float PositionFromLane(float lane) => (lane - 1) * (ScaledNoteWidth);
 
     public double TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / settings.Zoom + clock.CurrentTime;
-    public int LaneAtPosition(float x) => (int)((x + NOTEWIDTH) / NOTEWIDTH) + LaneOffset;
+    public int LaneAtPosition(float x) => (int)((x + ScaledNoteWidth) / (ScaledNoteWidth));
 
     public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition) => TimeAtPosition(ToLocalSpace(screenSpacePosition).Y);
     public int LaneAtScreenSpacePosition(Vector2 position) => LaneAtPosition(ToLocalSpace(position).X);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
@@ -6,10 +7,14 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events;
 
+[Description("Fades specific elements in/out.")]
 public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, IHasEasing
 {
     [JsonProperty("time")]
     public double Time { get; set; }
+
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
 
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }

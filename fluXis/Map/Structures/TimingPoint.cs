@@ -1,12 +1,17 @@
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using Newtonsoft.Json;
 
 namespace fluXis.Map.Structures;
 
+[Description("Changes the BPM and time signature.")]
 public class TimingPoint : ITimedObject
 {
     [JsonProperty("time")]
     public double Time { get; set; }
+
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
 
     [JsonProperty("bpm")]
     public float BPM { get; set; } = 120;

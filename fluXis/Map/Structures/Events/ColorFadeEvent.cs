@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
@@ -7,10 +8,14 @@ using osuTK.Graphics;
 
 namespace fluXis.Map.Structures.Events;
 
+[Description("Changes the colors of hit objects and other skin elements.")]
 public class ColorFadeEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToPlayfield
 {
     [JsonProperty("time")]
     public double Time { get; set; }
+
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
 
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }

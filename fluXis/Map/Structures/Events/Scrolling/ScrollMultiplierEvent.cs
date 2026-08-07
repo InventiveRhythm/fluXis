@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset;
 using Newtonsoft.Json;
@@ -7,10 +8,14 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events.Scrolling;
 
+[Description("Adjusts scroll speed directly.")]
 public class ScrollMultiplierEvent : IMapEvent, IHasDuration, IHasEasing, IHasGroups
 {
     [JsonProperty("time")]
     public double Time { get; set; }
+
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
 
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }

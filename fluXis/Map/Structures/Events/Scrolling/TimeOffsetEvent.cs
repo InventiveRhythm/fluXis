@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.HitObjects;
 using Newtonsoft.Json;
@@ -6,10 +7,14 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events.Scrolling;
 
+[Description("Offsets the hit objects visually.")]
 public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<double>, IApplicableToHitManager
 {
     [JsonProperty("time")]
     public double Time { get; set; }
+
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
 
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }

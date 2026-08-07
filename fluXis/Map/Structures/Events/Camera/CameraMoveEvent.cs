@@ -1,14 +1,19 @@
 ﻿using System;
+using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Map.Structures.Events.Camera;
 
+[Description("Moves the camera.")]
 public class CameraMoveEvent : ICameraEvent, IHasDuration, IHasEasing
 {
     [JsonProperty("time")]
     public double Time { get; set; }
+
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
 
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }

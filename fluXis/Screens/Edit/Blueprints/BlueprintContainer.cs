@@ -61,7 +61,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     protected override bool OnDragStart(DragStartEvent e)
     {
-        if (e.Button != MouseButton.Left) return false;
+        if (e.ShiftPressed) return false;
 
         lastDragEvent = e;
 
@@ -79,6 +79,8 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
+        if (e.ShiftPressed) return false;
+
         var foundByClick = selectByClick(e);
         var canMove = prepareMovement(e);
 

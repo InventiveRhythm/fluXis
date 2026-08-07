@@ -12,6 +12,9 @@ public class HitSoundFade : ITimedObject
     [JsonProperty("time")]
     public double Time { get; set; }
 
+    [JsonProperty("lane")]
+    public int Lane { get; set; }
+
     /// <summary>
     /// The sound to change the volume of.
     /// </summary>
