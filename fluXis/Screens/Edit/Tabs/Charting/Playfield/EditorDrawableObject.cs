@@ -1,5 +1,8 @@
 using System;
+using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,7 +23,13 @@ public abstract partial class EditorDrawableObject : CompositeDrawable
 
     public ITimedObject Data { get; }
 
+    public float Zoom => settings.ObjectZoom;
+
     public virtual bool Visible => Math.Abs(EditorClock.CurrentTime - Data.Time) <= 2000 / settings.Zoom;
+    public virtual Colour4 TextColor => Theme.TextDark;
+
+    [CanBeNull]
+    public FluXisSpriteText GroupText;
 
     protected EditorDrawableObject(ITimedObject hit)
     {
@@ -37,6 +46,9 @@ public abstract partial class EditorDrawableObject : CompositeDrawable
     protected override void Update()
     {
         base.Update();
+
+        if (GroupText != null)
+            GroupText.Text = Data.Group;
 
         Width = EditorHitObjectContainer.NOTEWIDTH * settings.ObjectZoom;
 

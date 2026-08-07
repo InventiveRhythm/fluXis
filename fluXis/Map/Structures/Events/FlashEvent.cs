@@ -1,9 +1,15 @@
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Utils.Attributes;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osuTK.Graphics;
 
 namespace fluXis.Map.Structures.Events;
@@ -41,4 +47,29 @@ public class FlashEvent : IMapEvent, IHasDuration, IHasEasing
 
     [JsonProperty("end-alpha")]
     public float EndOpacity { get; set; }
+
+    public IEnumerable<Drawable> CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var color = new Box { Width = 12, RelativeSizeAxes = Axes.Y };
+        yield return color;
+
+        var opacity = new Box { Width = 12, RelativeSizeAxes = Axes.Y, X = 12 };
+        yield return opacity;
+
+        obj.OnUpdate += _ =>
+        {
+            color.Colour = ColourInfo.GradientVertical(
+                EndColor,
+                StartColor
+            );
+
+            opacity.Colour = ColourInfo.GradientVertical(
+                Colour4.White.Opacity(EndOpacity),
+                Colour4.White.Opacity(StartOpacity)
+            );
+        };
+
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        yield return flow;
+    }
 }

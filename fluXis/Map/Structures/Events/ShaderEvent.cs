@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Graphics.Shaders;
 using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Utils.Attributes;
 using fluXis.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
 
 namespace fluXis.Map.Structures.Events;
@@ -122,6 +127,41 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<S
             shader.Strength2To(EndParameters.Strength2, Math.Max(Duration, 0), Easing);
             shader.Strength3To(EndParameters.Strength3, Math.Max(Duration, 0), Easing);
         }
+    }
+
+    public IEnumerable<Drawable> CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        yield return flow;
+
+        var name = new FluXisSpriteText
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Colour = obj.TextColor,
+            WebFontSize = 10
+        };
+
+        var strength = new FluXisSpriteText
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Colour = obj.TextColor,
+            WebFontSize = 10
+        };
+
+        flow.Add(name);
+        flow.Add(strength);
+
+        obj.OnUpdate += _ =>
+        {
+            name.Text = ShaderName;
+
+            var sh = "";
+            if (UseStartValue) sh += $"{StartParameters.Strength} > ";
+            sh += $"{EndParameters.Strength}";
+            strength.Text = sh;
+        };
     }
 }
 

@@ -8,7 +8,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
 
 public partial class EditorLandmine : EditorDrawableHitObject
 {
-    protected override Colour4 TextColor => Theme.Text;
+    public override Colour4 TextColor => Theme.Text;
     private Drawable landminePiece;
 
     public EditorLandmine(HitObject hit)

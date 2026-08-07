@@ -50,6 +50,8 @@ public partial class EditorDrawableEvent : EditorDrawableObject
                 e.Origin = Anchor.BottomCentre;
             }),
         ];
+
+        AddRangeInternal(Data.CreateObjectOverlay(this));
     }
 
     protected override void LoadComplete()

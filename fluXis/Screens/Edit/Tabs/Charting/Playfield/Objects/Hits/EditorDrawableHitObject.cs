@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
-using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -15,9 +14,6 @@ public abstract partial class EditorDrawableHitObject : EditorDrawableObject
 {
     public new HitObject Data => base.Data as HitObject;
 
-    protected virtual Colour4 TextColor => Theme.TextDark;
-
-    private FluXisSpriteText groupText;
     private FluXisSpriteText sampleText;
 
     private bool overZero = true;
@@ -40,7 +36,7 @@ public abstract partial class EditorDrawableHitObject : EditorDrawableObject
             Origin = Anchor.Centre,
             Children =
             [
-                groupText = new FluXisSpriteText
+                GroupText = new FluXisSpriteText
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
@@ -64,7 +60,6 @@ public abstract partial class EditorDrawableHitObject : EditorDrawableObject
     {
         base.Update();
 
-        groupText.Text = Data.Group;
         sampleText.Text = Data.HitSound?.Replace(".wav", "") ?? ":normal";
 
         if (Data.Time <= EditorClock.CurrentTime && EditorClock.CurrentTime - Data.Time <= max_distance && overZero)
