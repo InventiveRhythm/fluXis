@@ -13,7 +13,7 @@ using Midori.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries.Groups;
+namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Groups;
 
 public partial class LoopEventEntry : PointListEntry
 {

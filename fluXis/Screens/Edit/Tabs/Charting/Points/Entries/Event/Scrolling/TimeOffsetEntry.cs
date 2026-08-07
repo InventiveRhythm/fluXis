@@ -11,7 +11,7 @@ using Midori.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries.Scrolling;
+namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Scrolling;
 
 public partial class TimeOffsetEntry : PointListEntry
 {

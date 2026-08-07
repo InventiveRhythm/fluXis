@@ -258,7 +258,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             new SetupTab(),
             new ChartingTab(),
-            new DesignTab(),
             new StoryboardTab(),
             new VerifyTab()
             // new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")

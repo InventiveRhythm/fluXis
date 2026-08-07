@@ -12,7 +12,7 @@ using Midori.Utils.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries.Scrolling;
+namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Scrolling;
 
 public partial class ScrollMultiplierEntry : PointListEntry
 {

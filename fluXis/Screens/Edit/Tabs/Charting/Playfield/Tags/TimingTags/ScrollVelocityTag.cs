@@ -25,7 +25,7 @@ public partial class ScrollVelocityTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        Editor.ChangeToTab<DesignTab>(x => x.Container.Sidebar.ShowPoint(velocity));
+        Editor.ChangeToTab<ChartingTab>(x => x.Container.Sidebar.ShowPoint(velocity));
         return true;
     }
 }

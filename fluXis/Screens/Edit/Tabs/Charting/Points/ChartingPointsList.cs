@@ -9,11 +9,11 @@ using fluXis.Map.Structures.Events.Groups;
 using fluXis.Map.Structures.Events.Playfields;
 using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Screens.Edit.Tabs.Charting.Points.Entries;
-using fluXis.Screens.Edit.Tabs.Design.Points.Entries;
-using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Camera;
-using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Groups;
-using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Playfields;
-using fluXis.Screens.Edit.Tabs.Design.Points.Entries.Scrolling;
+using fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event;
+using fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Camera;
+using fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Groups;
+using fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Playfields;
+using fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Scrolling;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Points;

@@ -13,7 +13,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
+namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event;
 
 public partial class ColorFadeEntry : PointListEntry
 {

@@ -15,7 +15,6 @@ using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Events;
-using fluXis.Screens.Edit.Tabs.Design.Points;
 using fluXis.UI;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -117,7 +116,7 @@ public abstract partial class PointsList : Container
                                 Spacing = new Vector2(8),
                                 Children = new Drawable[]
                                 {
-                                    new DesignPointListDropdown
+                                    new PointsListFilter
                                     {
                                         Current = bind,
                                         Items = new DropdownEntry[]

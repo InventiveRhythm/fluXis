@@ -12,7 +12,7 @@ using Midori.Utils.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries.Camera;
+namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Camera;
 
 public partial class CameraScaleEntry : PointListEntry
 {

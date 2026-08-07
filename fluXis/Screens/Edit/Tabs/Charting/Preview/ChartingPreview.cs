@@ -12,8 +12,6 @@ using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
 using fluXis.Mods;
 using fluXis.Replays;
-using fluXis.Screens.Edit.Tabs.Design;
-using fluXis.Screens.Edit.Tabs.Design.Effects;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Replays;
@@ -56,8 +54,8 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
     private Container rulesetWrapper = null!;
     private RulesetContainer? ruleset;
 
-    private EditorFlashLayer backFlash = null!;
-    private EditorFlashLayer frontFlash = null!;
+    private PreviewFlashLayer backFlash = null!;
+    private PreviewFlashLayer frontFlash = null!;
     private PulseEffect pulseEffect = null!;
 
     private LoadingIcon loading = null!;
@@ -93,7 +91,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
                 loading.Show();
                 ruleset?.FadeOut(Styling.TRANSITION_FADE);
             }),
-            handler = new DesignShaderHandler(),
+            handler = new PreviewShaderHandler(),
             createShaderStack().WithChildren([
                 camera.CreateProxyDrawable().With(x => x.Clock = EditorClock),
                 camera.WithChildren(new Drawable[]
@@ -112,10 +110,10 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
                         RelativeSizeAxes = Axes.Both,
                         Alpha = Editor.BackgroundDim,
                     },
-                    backFlash = new EditorFlashLayer { Clock = EditorClock },
+                    backFlash = new PreviewFlashLayer { Clock = EditorClock },
                     rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both }
                 }),
-                frontFlash = new EditorFlashLayer { Clock = EditorClock },
+                frontFlash = new PreviewFlashLayer { Clock = EditorClock },
                 pulseEffect = new PulseEffect(Map.MapEvents.PulseEvents) { Clock = EditorClock }
             ]),
             loading = new LoadingIcon
@@ -196,7 +194,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
     #region Shaders
 
     private ShaderStackContainer shaders = null!;
-    private DesignShaderHandler handler = null!;
+    private PreviewShaderHandler handler = null!;
 
     private ShaderStackContainer createShaderStack()
     {

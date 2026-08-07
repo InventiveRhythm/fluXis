@@ -6,9 +6,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Effects;
+namespace fluXis.Screens.Edit.Tabs.Charting.Preview;
 
-public partial class EditorFlashLayer : CompositeDrawable
+public partial class PreviewFlashLayer : CompositeDrawable
 {
     public override bool RemoveCompletedTransforms => false;
 

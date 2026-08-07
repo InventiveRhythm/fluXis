@@ -11,7 +11,7 @@ using Midori.Utils;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries.Playfields;
+namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Playfields;
 
 public partial class PlayfieldRotateEntry : PointListEntry
 {

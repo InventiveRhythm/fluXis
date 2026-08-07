@@ -1,16 +1,15 @@
 ﻿using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
-using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Tabs.Design.Points;
+namespace fluXis.Screens.Edit.Tabs.Shared.Points.List;
 
-public partial class DesignPointListDropdown : FluXisDropdown<PointsList.DropdownEntry>
+public partial class PointsListFilter : FluXisDropdown<PointsList.DropdownEntry>
 {
-    public DesignPointListDropdown()
+    public PointsListFilter()
     {
         Width = 150;
     }
@@ -22,9 +21,9 @@ public partial class DesignPointListDropdown : FluXisDropdown<PointsList.Dropdow
 
     private partial class CustomHeader : FluXisDropdownHeader
     {
-        private DesignPointListDropdown dropdown { get; }
+        private PointsListFilter dropdown { get; }
 
-        public CustomHeader(DesignPointListDropdown dropdown)
+        public CustomHeader(PointsListFilter dropdown)
         {
             this.dropdown = dropdown;
 

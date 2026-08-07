@@ -6,9 +6,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
 
-namespace fluXis.Screens.Edit.Tabs.Design;
+namespace fluXis.Screens.Edit.Tabs.Charting.Preview;
 
-public partial class DesignShaderHandler : CompositeComponent
+public partial class PreviewShaderHandler : CompositeComponent
 {
     [Resolved]
     private EditorMap map { get; set; }
