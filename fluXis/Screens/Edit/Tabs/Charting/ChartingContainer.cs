@@ -262,18 +262,21 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         Playfield.X = Math.Clamp(Playfield.X, -Playfield.DrawWidth, 0);
         didMove = true;
 
-        moveAccumulate += e.Delta.Y;
+        if (!EditorClock.IsRunning)
+        {
+            moveAccumulate += e.Delta.Y;
 
-        if (Math.Abs(lastMove - Time.Current) < 16)
-            return true;
+            if (Math.Abs(lastMove - Time.Current) < 16)
+                return true;
 
-        var zero = Playfield.HitObjectContainer.TimeAtPosition(0);
-        var offset = Playfield.HitObjectContainer.TimeAtPosition(moveAccumulate);
+            var zero = Playfield.HitObjectContainer.TimeAtPosition(0);
+            var offset = Playfield.HitObjectContainer.TimeAtPosition(moveAccumulate);
 
-        EditorClock.Seek(EditorClock.CurrentTime + (zero - offset));
+            EditorClock.Seek(EditorClock.CurrentTime + (zero - offset));
 
-        lastMove = Time.Current;
-        moveAccumulate = 0;
+            lastMove = Time.Current;
+            moveAccumulate = 0;
+        }
 
         return true;
     }
@@ -283,7 +286,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         if (e.Button != MouseButton.Middle || !movingCamera)
             return;
 
-        if (didMove)
+        if (didMove && !EditorClock.IsRunning)
             EditorClock.SeekSmoothly(EditorClock.Snap(EditorClock.CurrentTime));
 
         movingCamera = false;
