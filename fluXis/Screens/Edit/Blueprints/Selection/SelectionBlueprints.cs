@@ -61,6 +61,12 @@ public partial class SelectionBlueprints<T> : Container<SelectionBlueprint<T>>
         var add = back.Where(x => x.IsSelected || x.Visible).ToList();
         add.ForEach(x =>
         {
+            // TODO: bandaid fix
+            // should probably figure out the actual cause
+            // of why its being added multiple times
+            if (x.Parent != null)
+                return;
+
             base.Add(x);
             back.Remove(x);
         });
