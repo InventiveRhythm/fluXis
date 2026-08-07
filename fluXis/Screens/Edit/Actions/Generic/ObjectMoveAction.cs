@@ -1,34 +1,28 @@
 ﻿using System.Linq;
-using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs;
 using osuTK;
 
-namespace fluXis.Screens.Edit.Actions.Notes;
+namespace fluXis.Screens.Edit.Actions.Generic;
 
-public class NoteMoveAction : EditorAction
+public class ObjectMoveAction<T> : EditorAction
+    where T : ITimedObject
 {
-    public override string Description => $"Move {infos.Length} note(s)";
+    public override string Description => $"Move {infos.Length} {ChartingTab.FormatTypeName<T>(infos.Length > 1)}";
 
-    private HitObject[] infos { get; }
+    private T[] infos { get; }
     private Vector2d[] originalPos { get; }
     private Vector2d[] newPos;
 
-    public NoteMoveAction(HitObject[] infos)
+    public ObjectMoveAction(T[] infos)
     {
         this.infos = infos;
-        originalPos = CreateFrom(infos);
-        newPos = originalPos.ToArray(); // copy, since it gets updated later
+        originalPos = CreateFrom([.. infos]);
+        newPos = [.. originalPos]; // copy, since it gets updated later
     }
 
-    public override void Run(EditorMap map)
-    {
-        Apply(newPos, false);
-    }
-
-    public override void Undo(EditorMap map)
-    {
-        Apply(originalPos, false);
-    }
+    public override void Run(EditorMap map) => Apply(newPos, false);
+    public override void Undo(EditorMap map) => Apply(originalPos, false);
 
     public void Apply(Vector2d[] vecs, bool update)
     {

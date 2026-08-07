@@ -878,7 +878,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         });
     }
 
-    private void tryExit() => this.Exit(); // TODO: unsaved changes check
+    private void tryExit() => this.Exit();
 
     private void submitToQueue()
     {

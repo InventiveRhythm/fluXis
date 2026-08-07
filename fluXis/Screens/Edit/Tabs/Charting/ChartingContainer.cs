@@ -466,9 +466,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     {
         var objects = BlueprintContainer.SelectionHandler.SelectedObjects.ToList();
 
-        // TODO: add a way to get all objects
-        // if (!objects.Any())
-        // objects = HitObjects.Select(h => h.Data).ToList();
+        if (!objects.Any())
+            objects = HitObjects.Select(h => h.Data).ToList();
 
         ActionStack.Add(new ObjectReSnapAction(objects, snaps.SnapTime, settings.SnapDivisor));
     }

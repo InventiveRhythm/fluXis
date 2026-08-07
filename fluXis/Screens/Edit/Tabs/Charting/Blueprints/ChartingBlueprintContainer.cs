@@ -7,7 +7,7 @@ using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.Actions;
-using fluXis.Screens.Edit.Actions.Notes;
+using fluXis.Screens.Edit.Actions.Generic;
 using fluXis.Screens.Edit.Blueprints;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
@@ -183,11 +183,11 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
     }
 
     [CanBeNull]
-    private NoteMoveAction moveAction;
+    private ObjectMoveAction<ITimedObject> moveAction;
 
     protected override void StartedMoving()
     {
-        moveAction = new NoteMoveAction(SelectedObjects.OfType<HitObject>().ToArray());
+        moveAction = new ObjectMoveAction<ITimedObject>([.. SelectedObjects]);
     }
 
     protected override void MoveSelection(DragEvent e)
@@ -215,13 +215,31 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
             var minLane = hitBlueprints.Min(b => b.Object.Lane);
             var maxLane = hitBlueprints.Max(b => b.Object.Lane);
 
-            if (minLane + laneDelta <= 0 || maxLane + laneDelta > map.RealmMap.KeyCount)
+            if (minLane + laneDelta <= 0)
                 laneDelta = 0;
+            else
+            {
+                var hits = hitBlueprints.Where(x => x.Object is HitObject).ToArray();
+                var hasHit = hits.Length != 0;
+
+                if (hasHit)
+                {
+                    var maxHit = hits.Max(x => x.Object.Lane);
+
+                    if (maxHit + laneDelta > map.RealmMap.KeyCount)
+                        laneDelta = 0;
+                }
+                else
+                {
+                    if (maxLane + laneDelta > 24)
+                        laneDelta = 0;
+                }
+            }
         }
 
-        var hits = hitBlueprints.Select(b => b.Object).ToArray();
-        var vecs = NoteMoveAction.CreateFrom(hits);
-        moveAction?.Apply(vecs.Select(v => new Vector2d(v.X + timeDelta, v.Y + laneDelta)).ToArray(), true);
+        var objs = hitBlueprints.Select(b => b.Object).ToArray();
+        var vecs = ObjectMoveAction<ITimedObject>.CreateFrom(objs);
+        moveAction?.Apply([.. vecs.Select(v => new Vector2d(v.X + timeDelta, v.Y + laneDelta))], true);
     }
 
     protected override void FinishedMoving()
@@ -264,7 +282,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
             var changed = false;
 
             // TODO: make it work for all
-            var action = new NoteMoveAction(selected.OfType<HitObject>().ToArray());
+            var action = new ObjectMoveAction<HitObject>([.. selected.OfType<HitObject>()]);
 
             var minLane = selected.Min(x => x.Lane);
             var maxLane = selected.Max(x => x.Lane);
@@ -287,8 +305,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
             if (!changed)
                 return false;
 
-            // TODO: make it work for all
-            action.Apply(NoteMoveAction.CreateFrom(selected.OfType<HitObject>().ToArray()), true);
+            action.Apply(ObjectMoveAction<HitObject>.CreateFrom([.. selected]), true);
             actions.Add(action);
             return true;
         }
