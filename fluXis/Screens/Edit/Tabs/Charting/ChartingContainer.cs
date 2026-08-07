@@ -18,6 +18,7 @@ using fluXis.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Charting.Points;
+using fluXis.Screens.Edit.Tabs.Charting.Preview;
 using fluXis.Screens.Edit.Tabs.Charting.Toolbox;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Screens.Edit.Tabs.Shared;
@@ -145,7 +146,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             Alpha = 0
         },
         Playfield,
-        BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this }
+        BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this },
+        new ChartingPreviewContainer()
     };
 
     protected override Drawable CreateLeftSide() => new EditorToolbox

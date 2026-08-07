@@ -16,8 +16,8 @@ public abstract partial class EditorDrawableHitObject : EditorDrawableObject
 
     private FluXisSpriteText sampleText;
 
-    private bool overZero = true;
-    private const int max_distance = 100;
+    // private bool overZero = true;
+    // private const int max_distance = 100;
 
     protected EditorDrawableHitObject(HitObject hit)
         : base(hit)
@@ -62,9 +62,9 @@ public abstract partial class EditorDrawableHitObject : EditorDrawableObject
 
         sampleText.Text = Data.HitSound?.Replace(".wav", "") ?? ":normal";
 
-        if (Data.Time <= EditorClock.CurrentTime && EditorClock.CurrentTime - Data.Time <= max_distance && overZero)
+        /*if (Data.Time <= EditorClock.CurrentTime && EditorClock.CurrentTime - Data.Time <= max_distance && overZero)
             Playfield.PlayHitSound(Data);
 
-        overZero = Data.Time > EditorClock.CurrentTime;
+        overZero = Data.Time > EditorClock.CurrentTime;*/
     }
 }

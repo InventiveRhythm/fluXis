@@ -5,6 +5,7 @@ using fluXis.Map.Structures.Events;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -93,6 +94,13 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
 
         shaders.Add(shader);
         return shader.TransformHandler;
+    }
+
+    public void ClearShaders()
+    {
+        var copy = shaders.ToArray();
+        copy.ForEach(x => x.TransformHandler.Expire());
+        shaders.Clear();
     }
 
     public ShaderStackContainer AddContent(params Drawable[] content)
