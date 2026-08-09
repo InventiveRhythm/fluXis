@@ -11,7 +11,6 @@ using fluXis.Map.Structures.Bases;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.Actions.Events;
 using fluXis.Screens.Edit.Actions.Generic;
-using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Actions.Notes.Shortcuts;
 using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints;
@@ -28,6 +27,7 @@ using fluXis.Screens.Edit.UI.Panels;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using JetBrains.Annotations;
 using Midori.Utils;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -35,7 +35,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Platform;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting;
@@ -60,9 +59,6 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     [Resolved]
     private EditorSettings settings { get; set; }
-
-    [Resolved]
-    private Clipboard clipboard { get; set; }
 
     [Resolved]
     private EditorSnapProvider snaps { get; set; }
@@ -409,7 +405,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         }
 
         if (copy)
-            objects = objects.Select(x => x.JsonCopy()).ToList();
+            objects = copyInterfaceArray(objects);
 
         return true;
     }
@@ -477,49 +473,55 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         ActionStack.Add(new ObjectReSnapAction(objects, snaps.SnapTime, settings.SnapDivisor));
     }
 
+    public List<ITimedObject> Clipboard { get; } = new();
+
     public void Copy(bool deleteAfter = false)
     {
-        if (!getSelectedObjects(out var hits, true))
+        if (!getSelectedObjects(out var objs, true))
             return;
 
-        var minTime = hits.Min(x => x.Time);
+        var minTime = objs.Min(x => x.Time);
 
-        foreach (var hit in hits)
+        foreach (var hit in objs)
             hit.Time -= minTime;
 
-        // TODO: fix clipboard content (make it not copy to system)
-        /*var content = new EditorClipboardContent { HitObjects = hits };
-        clipboard.SetText(content.Serialize());
+        Clipboard.Clear();
+        Clipboard.AddRange(objs);
 
         if (deleteAfter)
         {
-            notifications.SendSmallText($"Cut {content.HitObjects.Count} hit objects.", Phosphor.Bold.Check);
+            notifications.SendSmallText($"Cut {objs.Count} hit objects.", Phosphor.Bold.Check);
             BlueprintContainer.SelectionHandler.DeleteSelected();
         }
         else
-            notifications.SendSmallText($"Copied {content.HitObjects.Count} hit objects.", Phosphor.Bold.Check);*/
+            notifications.SendSmallText($"Copied {objs.Count} hit objects.", Phosphor.Bold.Check);
     }
 
     public void Paste()
     {
-        // ReSharper disable once RedundantAssignment
-        EditorClipboardContent content = null;
-
-        if ((!clipboard.GetText()?.TryDeserialize(out content) ?? true) || !content.HitObjects.Any())
+        if (Clipboard.Count == 0)
         {
             notifications.SendSmallText("Clipboard is empty.", Phosphor.Bold.X);
             return;
         }
 
         BlueprintContainer.SelectionHandler.DeselectAll();
+        var obj = copyInterfaceArray(Clipboard);
 
-        foreach (var hitObject in content.HitObjects)
+        foreach (var hitObject in obj)
         {
             hitObject.Time += EditorClock.CurrentTime;
         }
 
-        ActionStack.Add(new NotePasteAction(content.HitObjects.ToArray()));
+        ActionStack.Add(new ObjectPasteAction<ITimedObject>([.. obj]));
 
-        notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", Phosphor.Bold.Check);
+        notifications.SendSmallText($"Pasted {obj.Count} hit objects.", Phosphor.Bold.Check);
+    }
+
+    private static List<T> copyInterfaceArray<T>(List<T> input)
+    {
+        var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+        var json = JsonConvert.SerializeObject(input, settings);
+        return JsonConvert.DeserializeObject<List<T>>(json, settings);
     }
 }
