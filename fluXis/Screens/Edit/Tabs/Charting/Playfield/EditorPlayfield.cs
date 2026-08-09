@@ -96,7 +96,6 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
                 Y = -EditorHitObjectContainer.HITPOSITION
             },
             new TimingTagContainer(),
-            new EffectTagContainer(),
             modComments,
             new EditorPlayfieldModding(modHighlight, modComments)
         };

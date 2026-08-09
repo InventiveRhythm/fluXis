@@ -22,7 +22,7 @@ public partial class EditorTagContainer : Container<EditorTag>
 
     protected List<EditorTag> Tags { get; } = new();
     protected virtual bool RightSide => false;
-    
+
     private bool needsSort = false;
     private EditorTag[] sortedChildrenCache;
 
