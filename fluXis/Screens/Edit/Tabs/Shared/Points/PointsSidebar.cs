@@ -147,7 +147,8 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
 
     private void showPointSettings(IEnumerable<Drawable> drawables)
     {
-        if (showingSettings) return;
+        if (showingSettings)
+            close();
 
         showingSettings = true;
         Locked.Value = true;

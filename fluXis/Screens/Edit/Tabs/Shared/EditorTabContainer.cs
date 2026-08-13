@@ -16,6 +16,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK.Input;
@@ -56,6 +57,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     private Bindable<ScrollDirection> scrollDirection;
 
     private double scrollAccumulation;
+    private InputManager input;
 
     protected virtual void BeforeLoad() { }
     protected virtual Container CreateContentContainer() => new() { RelativeSizeAxes = Axes.Both };
@@ -108,7 +110,13 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
                                 sidebarClickHandler = new ClickableContainer
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Action = () => Sidebar.OnWrapperClick?.Invoke()
+                                    Action = () =>
+                                    {
+                                        if (input.CurrentState.Keyboard.ShiftPressed)
+                                            return;
+
+                                        Sidebar.OnWrapperClick?.Invoke();
+                                    }
                                 }
                             }
                         },
@@ -125,6 +133,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     {
         base.LoadComplete();
 
+        input = GetContainingInputManager();
         Sidebar.Expanded.BindValueChanged(v => sidebarClickHandler.FadeTo(v.NewValue ? 1 : 0), true);
     }
 

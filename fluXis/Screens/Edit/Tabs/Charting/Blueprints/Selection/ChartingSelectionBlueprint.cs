@@ -130,6 +130,14 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
+        if (e.ShiftPressed && e.Button == MouseButton.Left)
+        {
+            ChartingContainer.BlueprintContainer.SelectionHandler.DeselectAll();
+            ChartingContainer.Sidebar.ShowPoint(Object);
+            Select();
+            return true;
+        }
+
         if (Object is not HitObject { Type: HitObjectType.Tick } h || e.Button != MouseButton.Middle)
             return false;
 
