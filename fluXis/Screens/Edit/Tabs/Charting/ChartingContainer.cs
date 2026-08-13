@@ -109,7 +109,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         Playfield = new EditorPlayfield
         {
-            X = Map.MapInfo.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH
+            X = Map.RealmMap.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH
         };
 
         dependencies.Cache(this);
@@ -245,7 +245,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             return false;
 
         if (e.ShiftPressed)
-            Playfield.MoveToX(Map.MapInfo.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH, 400, Easing.OutQuint);
+            Playfield.MoveToX(Map.RealmMap.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH, 400, Easing.OutQuint);
 
         movingCamera = true;
         return true;
