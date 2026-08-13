@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Screens.Edit;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using fluXis.Screens.Edit.UI.Variable.Preset;
+using fluXis.Utils.Inspect;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -25,6 +28,9 @@ public interface ITimedObject
 
     [CanBeNull]
     PlacementBlueprint CreateEditorBlueprint() => null;
+
+    static EditorVariableTime CreateVariableTime(ObjectProperty _, object obj, object ctx)
+        => new((EditorMap)ctx, (ITimedObject)obj);
 
     IEnumerable<Drawable> CreateObjectOverlay(EditorDrawableObject obj)
         => CreateDefaultOverlay(obj);

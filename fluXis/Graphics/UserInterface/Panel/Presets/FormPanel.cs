@@ -15,6 +15,7 @@ using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Screens.Edit.Tabs.Setup.Entries;
 using fluXis.Utils.Attributes;
+using fluXis.Utils.Inspect;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
@@ -212,7 +213,7 @@ public partial class FormPanel<T> : Panel, ICloseable
                 case TypeOverrideAttribute.Type.Image:
                 {
                     if (type != typeof(string))
-                        throwInvalidCombo(owr.Value);
+                        throw new ObjectInspectInvalidComboException(owr.Value, prop);
 
                     var selector = new ImageSelector
                     {
@@ -235,7 +236,7 @@ public partial class FormPanel<T> : Panel, ICloseable
                 case TypeOverrideAttribute.Type.Color:
                 {
                     if (type != typeof(string))
-                        throwInvalidCombo(owr.Value);
+                        throw new ObjectInspectInvalidComboException(owr.Value, prop);
 
                     return new SetupColor(name)
                     {
@@ -281,9 +282,6 @@ public partial class FormPanel<T> : Panel, ICloseable
         }
 
         return new FluXisSpriteText { Text = $"could not create input for type {type} ({name})" };
-
-        void throwInvalidCombo(TypeOverrideAttribute.Type attr)
-            => throw new InvalidOperationException($"Custom type '{attr}' can not be represented with '{prop.PropertyType}'.");
     }
 
     public void Close()

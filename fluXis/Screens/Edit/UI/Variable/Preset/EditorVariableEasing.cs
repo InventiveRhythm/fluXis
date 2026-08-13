@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using fluXis.Map.Structures.Bases;
 using osu.Framework.Graphics;
 
@@ -12,7 +11,7 @@ public partial class EditorVariableEasing<T> : EditorVariableDropdown<Easing>
     {
         Text = "Easing";
         TooltipText = "The easing function used to interpolate between scales.";
-        Items = Enum.GetValues<Easing>().ToList();
+        Items = Enum.GetValues<Easing>();
         CurrentValue = obj.Easing;
         OnValueChanged = easing =>
         {

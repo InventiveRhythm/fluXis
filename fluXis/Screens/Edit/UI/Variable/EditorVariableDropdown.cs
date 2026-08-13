@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
@@ -13,7 +12,7 @@ namespace fluXis.Screens.Edit.UI.Variable;
 public partial class EditorVariableDropdown<T> : EditorVariableBase
 {
     public T CurrentValue { get; init; }
-    public List<T> Items { get; init; }
+    public T[] Items { get; init; }
     public Action<T> OnValueChanged { get; set; }
 
     public Bindable<T> Bindable { get; set; }

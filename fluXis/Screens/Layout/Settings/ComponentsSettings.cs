@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Screens.Edit.UI.Variable;
@@ -20,12 +19,12 @@ public partial class ComponentsSettings : FluXisScrollContainer
     [Resolved]
     private LayoutEditor editor { get; set; }
 
-    private static List<Anchor> anchors => new()
-    {
+    private static Anchor[] anchors =>
+    [
         Anchor.TopLeft, Anchor.TopCentre, Anchor.TopRight,
         Anchor.CentreLeft, Anchor.Centre, Anchor.CentreRight,
         Anchor.BottomLeft, Anchor.BottomCentre, Anchor.BottomRight
-    };
+    ];
 
     private LayoutBlueprintContainer blueprints { get; }
     private BindableList<GameplayHUDComponent> selected => blueprints.SelectionHandler.SelectedObjects;

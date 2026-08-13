@@ -1,5 +1,6 @@
 ﻿using fluXis.Configuration;
 using fluXis.Graphics;
+using fluXis.Utils.Inspect;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -12,8 +13,8 @@ namespace fluXis.Screens.Edit.UI.Variable;
 
 public abstract partial class EditorVariableBase : CompositeDrawable, IHasTooltip
 {
-    public string Text { get; init; }
-    public LocalisableString TooltipText { get; init; } = string.Empty;
+    public string Text { get; set; }
+    public LocalisableString TooltipText { get; set; } = string.Empty;
 
     public Bindable<bool> Enabled { get; init; } = new(true);
     public bool HideWhenDisabled { get; init; } = false;
@@ -40,7 +41,14 @@ public abstract partial class EditorVariableBase : CompositeDrawable, IHasToolti
         FinishTransforms(true);
     }
 
+    public virtual void AssignProperty(ObjectProperty prop, object obj)
+    {
+        Text = prop.Label;
+        TooltipText = prop.Tooltip;
+    }
+
     protected virtual void UpdateEnabledState(bool state) { }
+    protected virtual void CompactModeChanged(bool compact) { }
 
     protected override void Dispose(bool isDisposing)
     {
@@ -58,6 +66,4 @@ public abstract partial class EditorVariableBase : CompositeDrawable, IHasToolti
         InternalChildren.ForEach(x => x.ScaleTo(compact ? 0.75f : 1f, Styling.TRANSITION_MOVE, Easing.OutQuint));
         CompactModeChanged(compact);
     }
-
-    protected virtual void CompactModeChanged(bool compact) { }
 }

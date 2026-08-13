@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using fluXis.Map.Structures.Bases;
+using fluXis.Utils.Attributes;
 using Newtonsoft.Json;
 
 namespace fluXis.Map.Structures;
@@ -8,6 +9,7 @@ namespace fluXis.Map.Structures;
 public class TimingPoint : ITimedObject
 {
     [JsonProperty("time")]
+    [CustomCreateMethod(typeof(ITimedObject), nameof(ITimedObject.CreateVariableTime))]
     public double Time { get; set; }
 
     [JsonProperty("lane")]

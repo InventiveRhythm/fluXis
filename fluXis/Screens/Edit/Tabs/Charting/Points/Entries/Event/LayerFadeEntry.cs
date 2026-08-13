@@ -70,7 +70,7 @@ public partial class LayerFadeEntry : PointListEntry
                 Text = "Layer",
                 TooltipText = "The layer to adjust the opacity of.",
                 CurrentValue = fade.Layer,
-                Items = Enum.GetValues<LayerFadeEvent.FadeLayer>().ToList(),
+                Items = Enum.GetValues<LayerFadeEvent.FadeLayer>(),
                 OnValueChanged = value =>
                 {
                     fade.Layer = value;

@@ -243,6 +243,8 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     public void OpenSettings()
     {
+        // var props = ObjectInspect.GetProperties(Object);
+        // ShowSettings?.Invoke(props.Select(x => x.CreateVariableControl(Object, Map)).Where(x => x != null));
         ShowSettings?.Invoke(CreateSettings());
     }
 

@@ -70,7 +70,7 @@ public partial class ShaderEntry : PointListEntry
                 Text = "Shader",
                 TooltipText = "The shader to apply to the playfield.",
                 CurrentValue = shader.Type,
-                Items = Enum.GetValues<ShaderType>().ToList(),
+                Items = Enum.GetValues<ShaderType>(),
                 OnValueChanged = value =>
                 {
                     RequestClose?.Invoke(); // until there is a way to refresh

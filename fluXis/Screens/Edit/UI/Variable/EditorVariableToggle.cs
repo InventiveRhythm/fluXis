@@ -1,6 +1,7 @@
 using System;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
+using fluXis.Utils.Inspect;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -9,8 +10,8 @@ namespace fluXis.Screens.Edit.UI.Variable;
 
 public partial class EditorVariableToggle : EditorVariableBase
 {
-    public bool CurrentValue { get; init; }
-    public Action<bool> OnValueChanged { get; init; }
+    public bool CurrentValue { get; set; }
+    public Action<bool> OnValueChanged { get; set; }
 
     public Bindable<bool> Bindable { get; set; }
 
@@ -40,11 +41,10 @@ public partial class EditorVariableToggle : EditorVariableBase
         };
     }
 
-    protected override void LoadComplete()
+    public override void AssignProperty(ObjectProperty prop, object obj)
     {
-        base.LoadComplete();
-
-        Bindable.BindValueChanged(valueChanged);
+        base.AssignProperty(prop, obj);
+        CurrentValue = prop.Value as bool? ?? false;
     }
 
     protected override void Dispose(bool isDisposing)

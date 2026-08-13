@@ -62,11 +62,10 @@ public partial class StoryboardElementSettings : CompositeDrawable
         Anchor.BottomRight
     };
 
-    private readonly List<DefaultBlendingParameters> validBlends = Enum.GetValues<DefaultBlendingParameters>()
-                                                                       .Where(b => b != DefaultBlendingParameters.LegacyDifference
-                                                                                   && b != DefaultBlendingParameters.Inherit
-                                                                                   && b != DefaultBlendingParameters.Premultiplied)
-                                                                       .ToList();
+    private readonly DefaultBlendingParameters[] validBlends = Enum.GetValues<DefaultBlendingParameters>()
+                                                                   .Where(b => b != DefaultBlendingParameters.LegacyDifference
+                                                                               && b != DefaultBlendingParameters.Inherit
+                                                                               && b != DefaultBlendingParameters.Premultiplied).ToArray();
 
     private FillFlowContainer flow;
 
@@ -202,7 +201,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     {
                         Text = "Layer",
                         CurrentValue = item.Layer,
-                        Items = Enum.GetValues<StoryboardLayer>().ToList(),
+                        Items = Enum.GetValues<StoryboardLayer>(),
                         OnValueChanged = l =>
                         {
                             item.Layer = l;
@@ -213,7 +212,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     {
                         Text = "Anchor",
                         CurrentValue = item.Anchor,
-                        Items = validAnchors.ToList(),
+                        Items = validAnchors,
                         OnValueChanged = a =>
                         {
                             item.Anchor = a;
@@ -224,7 +223,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                     {
                         Text = "Origin",
                         CurrentValue = item.Origin,
-                        Items = validAnchors.ToList(),
+                        Items = validAnchors,
                         OnValueChanged = o =>
                         {
                             item.Origin = o;
@@ -378,7 +377,7 @@ public partial class StoryboardElementSettings : CompositeDrawable
                             {
                                 Text = "Sprite",
                                 CurrentValue = item.GetParameter("sprite", SkinSprite.HitObject),
-                                Items = Enum.GetValues<SkinSprite>().ToList(),
+                                Items = Enum.GetValues<SkinSprite>(),
                                 OnValueChanged = l =>
                                 {
                                     item.Parameters["sprite"] = (int)l;
