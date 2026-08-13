@@ -1,5 +1,6 @@
 ﻿using System;
 using fluXis.Audio;
+using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
@@ -7,7 +8,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
+using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
@@ -60,8 +63,8 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
     }
 
     private readonly BlueprintNotePiece piece;
-    private DraggableSelectionPiece head;
-    private DraggableSelectionPiece end;
+    private readonly DraggableSelectionPiece head;
+    private readonly DraggableSelectionPiece end;
 
     private DebouncedSample sample;
 
@@ -125,16 +128,14 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
         Height = Drawable.DrawHeight;
     }
 
-    /*
-       protected override bool OnMouseDown(MouseDownEvent e)
-       {
-           if (Object.Type != HitObjectType.Tick || e.Button != MouseButton.Middle)
-               return false;
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (Object is not HitObject { Type: HitObjectType.Tick } h || e.Button != MouseButton.Middle)
+            return false;
 
-           Object.HoldTime = Object.HoldTime > 0 ? 0 : 1;
-           return true;
-       }
-     */
+        h.HoldTime = h.HoldTime > 0 ? 0 : 1;
+        return true;
+    }
 
     private void dragStart(Vector2 vec)
     {
