@@ -10,10 +10,13 @@ using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Files;
 using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Localization;
 using fluXis.Online;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.API.Payloads;
 using fluXis.Online.API.Payloads.Users;
+using fluXis.Online.API.Requests;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
@@ -57,7 +60,7 @@ public partial class DashboardAccountTab : DashboardTab
     private UISamples samples { get; set; } = null!;
 
     private APIUser user = null!;
-    private Container editContent = null!;
+    private FluXisScrollContainer editContent = null!;
     private Container unsavedContent = null!;
 
     private SetupTextBox twitterEntry = null!;
@@ -78,7 +81,7 @@ public partial class DashboardAccountTab : DashboardTab
         Header.Child = new DashboardAccountLogoutButton();
         Content.Children = new Drawable[]
         {
-            editContent = new Container
+            editContent = new FluXisScrollContainer
             {
                 RelativeSizeAxes = Axes.Both
             },
@@ -318,6 +321,10 @@ public partial class DashboardAccountTab : DashboardTab
                                     OnChange = updateUnsavedStatus
                                 }
                             }
+                        },
+                        new DashboardAccountCategory("Misc")
+                        {
+                            Children = [new SetupButton("Code Redemption", "Click to redeem code.", redeemCode)]
                         }
                     }
                 }
@@ -440,6 +447,30 @@ public partial class DashboardAccountTab : DashboardTab
         pronounsEntry.Value = user.Pronouns;
 
         updateUnsavedStatus();
+    }
+
+    private void redeemCode()
+    {
+        panels.Add(new FormPanel<CodeRedeemPayload>(Phosphor.Bold.Ticket, "Redeem Code", new CodeRedeemPayload(), (form, payload) =>
+        {
+            form.StartLoading();
+
+            var req = new CodeRedeemRequest(payload);
+            req.Success += _ => Schedule(() =>
+            {
+                form.StopLoading();
+                form.Close();
+            });
+            req.Failure += ex => Schedule(() =>
+            {
+                form.StopLoading(false);
+                notifications.SendError("Failed to redeem code!", ex.Message);
+            });
+
+            api.PerformRequestAsync(req);
+
+            return false;
+        }, "Redeem"));
     }
 
     public override void Enter()
