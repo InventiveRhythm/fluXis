@@ -33,4 +33,7 @@ public class TaskNotificationData
     }
 
     public TaskNotification Create() => new(this);
+
+    public event Action UpdateTexts;
+    public void TriggerTextUpdate() => UpdateTexts?.Invoke();
 }

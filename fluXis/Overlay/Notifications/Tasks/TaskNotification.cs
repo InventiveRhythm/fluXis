@@ -24,6 +24,7 @@ public partial class TaskNotification : CompositeDrawable
     private Container content;
     private Box iconBox;
     private SpriteIcon icon;
+    private TruncatingText titleText;
     private TruncatingText statusText;
     private Box progressBackground;
     private CircularContainer progress;
@@ -119,7 +120,7 @@ public partial class TaskNotification : CompositeDrawable
                                             Spacing = new Vector2(0, -3),
                                             Children = new Drawable[]
                                             {
-                                                new TruncatingText
+                                                titleText = new TruncatingText
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     Text = data.Text,
@@ -178,6 +179,12 @@ public partial class TaskNotification : CompositeDrawable
     {
         base.LoadComplete();
         Show();
+
+        data.UpdateTexts += () =>
+        {
+            titleText.Text = data.Text;
+            updateState(data.State);
+        };
 
         updateState(LoadingState.Working);
         data.ProgressBindable.BindValueChanged(e => Scheduler.ScheduleIfNeeded(() => resize(e.NewValue)));

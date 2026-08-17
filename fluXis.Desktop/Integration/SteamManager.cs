@@ -113,6 +113,7 @@ public partial class SteamManager : Component, ISteamManager
 
     public List<ulong> WorkshopItems { get; } = [];
     private readonly Dictionary<PublishedFileId_t, TaskNotificationData> downloadProgress = [];
+    private readonly Dictionary<PublishedFileId_t, SteamUGCDetails_t> itemInfo = [];
 
     public event Action<bool> ItemCreated;
     public event Action<bool> ItemUpdated;
@@ -124,6 +125,39 @@ public partial class SteamManager : Component, ISteamManager
     private readonly Callback<UserSubscribedItemsListChanged_t> subscribedListChangedCb;
     private readonly CallResult<CreateItemResult_t> createItemCr;
     private readonly CallResult<SubmitItemUpdateResult_t> submitItemCr;
+
+    [CanBeNull]
+    private CallResult<SteamUGCQueryCompleted_t> queryCompleteCr;
+
+    private void requestItemDetails(PublishedFileId_t id)
+    {
+        var query = SteamUGC.CreateQueryUGCDetailsRequest([id], 1);
+        SteamUGC.SetReturnLongDescription(query, true);
+
+        var call = SteamUGC.SendQueryUGCRequest(query);
+
+        queryCompleteCr ??= CallResult<SteamUGCQueryCompleted_t>.Create(receiveItemDetails);
+        queryCompleteCr?.Set(call);
+    }
+
+    private void receiveItemDetails(SteamUGCQueryCompleted_t complete, bool fail)
+    {
+        if (fail || complete.m_eResult != EResult.k_EResultOK)
+        {
+            SteamUGC.ReleaseQueryUGCRequest(complete.m_handle);
+            return;
+        }
+
+        for (uint i = 0; i < complete.m_unNumResultsReturned; i++)
+        {
+            if (!SteamUGC.GetQueryUGCResult(complete.m_handle, i, out var details)) continue;
+            if (details.m_eResult != EResult.k_EResultOK) continue;
+
+            itemInfo[details.m_nPublishedFileId] = details;
+        }
+
+        SteamUGC.ReleaseQueryUGCRequest(complete.m_handle);
+    }
 
     private void syncWorkshopItems()
     {
@@ -159,6 +193,8 @@ public partial class SteamManager : Component, ISteamManager
             if (downloadProgress.ContainsKey(item))
                 return;
 
+            requestItemDetails(item);
+
             var notification = new TaskNotificationData { Text = "Downloading workshop item..." };
             downloadProgress[item] = notification;
             notifications?.AddTask(notification);
@@ -172,6 +208,17 @@ public partial class SteamManager : Component, ISteamManager
         foreach (var (id, task) in downloadProgress)
         {
             var state = (EItemState)SteamUGC.GetItemState(id);
+
+            if (itemInfo.TryGetValue(id, out var details))
+            {
+                var text = $"Downloading '{details.m_rgchTitle}'...";
+
+                if (text != task.Text)
+                {
+                    task.Text = text;
+                    task.TriggerTextUpdate();
+                }
+            }
 
             if (state.HasFlagFast(EItemState.k_EItemStateDownloadPending) && !state.HasFlagFast(EItemState.k_EItemStateDownloading))
                 continue;
