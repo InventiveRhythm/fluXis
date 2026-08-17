@@ -20,7 +20,7 @@
     <PackageReference Include="NLua" Version="1.7.9" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Realm" Version="20.1.0" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="3.1.0" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="System.IO.Hashing" Version="10.0.11" />
   </ItemGroup>
   <ItemGroup Label="Code Analysis">

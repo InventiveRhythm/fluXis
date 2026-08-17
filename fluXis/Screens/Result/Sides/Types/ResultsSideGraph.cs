@@ -15,6 +15,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Localisation;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -187,14 +188,14 @@ public partial class ResultsSideGraph : ResultsSideContainer
 
             var image = new Image<Rgba32>(800, (int)Math.Ceiling(miss) * 2, new Rgba32(0, 0, 0, 0));
 
-            image.Mutate(ctx => ctx.Paint(canvas =>
+            image.Mutate(ctx =>
             {
                 var penWhite = Pens.Solid(Color.White, 2);
                 var judgeColors = timings.Select(x => x.Judgement)
                                          .ToDictionary(x => x, x => Color.FromPixel(new Rgba32(skins.SkinJson.GetColorForJudgement(x).Vector)));
 
                 // center line
-                canvas.DrawLine(penWhite, new PointF(0, miss - 1), new PointF(image.Width, miss - 1));
+                ctx.DrawLine(penWhite, new PointF(0, miss - 1), new PointF(image.Width, miss - 1));
 
                 // judgement lines
                 for (int i = 0; i < timings.Count - 1; i++)
@@ -205,8 +206,8 @@ public partial class ResultsSideGraph : ResultsSideContainer
                     var yEarly = miss - 1 - timing.Milliseconds;
                     var yLate = miss - 1 + timing.Milliseconds;
 
-                    if (yEarly >= 0) canvas.DrawLine(pen, new PointF(0, yEarly), new PointF(image.Width, yEarly));
-                    if (yLate < image.Height) canvas.DrawLine(pen, new PointF(0, yLate), new PointF(image.Width, yLate));
+                    if (yEarly >= 0) ctx.DrawLine(pen, new PointF(0, yEarly), new PointF(image.Width, yEarly));
+                    if (yLate < image.Height) ctx.DrawLine(pen, new PointF(0, yLate), new PointF(image.Width, yLate));
                 }
 
                 var start = score.HitResults.MinBy(x => x.Time).Time;
@@ -218,7 +219,7 @@ public partial class ResultsSideGraph : ResultsSideContainer
                 foreach (var result in misses)
                 {
                     var x = (float)((image.Width - 8) * ((result.Time - start) / end)) + 4;
-                    canvas.Fill(missBrush, new Rectangle((int)x - 2, 0, 4, image.Height));
+                    ctx.Fill(missBrush, new Rectangle((int)x - 2, 0, 4, image.Height));
                 }
 
                 var judgeBrushes = judgeColors.ToDictionary(x => x.Key, x => Brushes.Solid(x.Value));
@@ -235,9 +236,9 @@ public partial class ResultsSideGraph : ResultsSideContainer
                     if (result.Judgement == Judgement.Miss || result.Type == ResultType.Landmine)
                         y = image.Height / 2f;
 
-                    canvas.FillEllipse(brush, new PointF(x, y), new SizeF(8, 8));
+                    ctx.Fill(brush, new EllipsePolygon(new PointF(x, y), 4));
                 }
-            }));
+            });
 
             var upload = new TextureUpload(image);
             var texture = renderer.CreateTexture(image.Width, image.Height, true);
