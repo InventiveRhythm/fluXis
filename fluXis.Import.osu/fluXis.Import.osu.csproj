@@ -10,7 +10,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="HoLLy.osu.DatabaseReader" Version="3.3.0" />
+    <PackageReference Include="HoLLy.osu.DatabaseReader" Version="3.4.0" />
   </ItemGroup>
 
 </Project>

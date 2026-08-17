@@ -15,7 +15,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Localisation;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -188,53 +187,57 @@ public partial class ResultsSideGraph : ResultsSideContainer
 
             var image = new Image<Rgba32>(800, (int)Math.Ceiling(miss) * 2, new Rgba32(0, 0, 0, 0));
 
-            image.Mutate(ctx => ctx.DrawLine(new Color(new Rgba32(1f, 1f, 1f)), 2, new PointF(0, miss - 1), new PointF(image.Width, miss - 1)));
-
-            for (int i = 0; i < timings.Count - 1; i++)
+            image.Mutate(ctx => ctx.Paint(canvas =>
             {
-                var timing = timings[i];
-                var color = skins.SkinJson.GetColorForJudgement(timing.Judgement);
-                var lineColor = new Color(new Rgba32(color.Opacity(0.4f).Vector));
+                var penWhite = Pens.Solid(Color.White, 2);
+                var judgeColors = timings.Select(x => x.Judgement)
+                                         .ToDictionary(x => x, x => Color.FromPixel(new Rgba32(skins.SkinJson.GetColorForJudgement(x).Vector)));
 
-                var yEarly = miss - 1 - timing.Milliseconds;
-                if (yEarly >= 0)
-                    image.Mutate(ctx => ctx.DrawLine(lineColor, 2, new PointF(0, yEarly), new PointF(image.Width, yEarly)));
+                // center line
+                canvas.DrawLine(penWhite, new PointF(0, miss - 1), new PointF(image.Width, miss - 1));
 
-                var yLate = miss - 1 + timing.Milliseconds;
-                if (yLate < image.Height)
-                    image.Mutate(ctx => ctx.DrawLine(lineColor, 2, new PointF(0, yLate), new PointF(image.Width, yLate)));
-            }
+                // judgement lines
+                for (int i = 0; i < timings.Count - 1; i++)
+                {
+                    var timing = timings[i];
+                    var pen = Pens.Solid(judgeColors[timing.Judgement].WithAlpha(.4f), 2);
 
-            var start = score.HitResults.MinBy(x => x.Time).Time;
-            var end = score.HitResults.MaxBy(x => x.Time).Time - start;
+                    var yEarly = miss - 1 - timing.Milliseconds;
+                    var yLate = miss - 1 + timing.Milliseconds;
 
-            var misses = score.HitResults.Where(x => x.Judgement == Judgement.Miss).ToList();
+                    if (yEarly >= 0) canvas.DrawLine(pen, new PointF(0, yEarly), new PointF(image.Width, yEarly));
+                    if (yLate < image.Height) canvas.DrawLine(pen, new PointF(0, yLate), new PointF(image.Width, yLate));
+                }
 
-            foreach (var result in misses)
-            {
-                var color = skins.SkinJson.GetColorForJudgement(result.Judgement);
-                var x = (float)((image.Width - 8) * ((result.Time - start) / end)) + 4;
+                var start = score.HitResults.MinBy(x => x.Time).Time;
+                var end = score.HitResults.MaxBy(x => x.Time).Time - start;
 
-                image.Mutate(ctx => ctx.Fill(new Color(new Rgba32(color.Opacity(.4f).Vector)), new RectangleF(x - 2, 0, 4, image.Height)));
-            }
+                var misses = score.HitResults.Where(x => x.Judgement == Judgement.Miss).ToList();
+                var missBrush = Brushes.Solid(judgeColors[Judgement.Miss].WithAlpha(0.4f));
 
-            foreach (var result in score.HitResults)
-            {
-                var color = skins.SkinJson.GetColorForJudgement(result.Judgement);
+                foreach (var result in misses)
+                {
+                    var x = (float)((image.Width - 8) * ((result.Time - start) / end)) + 4;
+                    canvas.Fill(missBrush, new Rectangle((int)x - 2, 0, 4, image.Height));
+                }
 
-                var x = (float)((image.Width - 8) * ((result.Time - start) / end)) + 4;
-                var y = (float)(image.Height / 2f - result.Difference / rate);
+                var judgeBrushes = judgeColors.ToDictionary(x => x.Key, x => Brushes.Solid(x.Value));
 
-                if (!float.IsFinite(x))
-                    x = image.Width / 2f;
-                if (result.Judgement == Judgement.Miss || result.Type == ResultType.Landmine)
-                    y = image.Height / 2f;
+                foreach (var result in score.HitResults)
+                {
+                    var brush = judgeBrushes[result.Judgement];
 
-                var poly = new EllipsePolygon(x, y, 4);
-                var brush = new SolidBrush(new Color(color.Vector));
+                    var x = (float)((image.Width - 8) * ((result.Time - start) / end)) + 4;
+                    var y = (float)(image.Height / 2f - result.Difference / rate);
 
-                image.Mutate(ctx => ctx.Fill(brush, poly));
-            }
+                    if (!float.IsFinite(x))
+                        x = image.Width / 2f;
+                    if (result.Judgement == Judgement.Miss || result.Type == ResultType.Landmine)
+                        y = image.Height / 2f;
+
+                    canvas.FillEllipse(brush, new PointF(x, y), new SizeF(8, 8));
+                }
+            }));
 
             var upload = new TextureUpload(image);
             var texture = renderer.CreateTexture(image.Width, image.Height, true);
