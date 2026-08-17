@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Gameplay.Ruleset.HitObjects;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Map.Structures.Events.Scrolling;
 
@@ -50,5 +54,19 @@ public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartVal
 
             manager.TransformTo(nameof(manager.VisualTimeOffset), TargetOffset, Math.Max(Duration, 0), Easing);
         }
+    }
+
+    IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        flow.Add(ITimedObject.CreateSmallText(obj, () =>
+        {
+            var text = "";
+            if (UseStartValue) text += $"{(int)StartOffset}ms > ";
+            text += $"{(int)TargetOffset}ms";
+            return text;
+        }));
+        flow.Add(ITimedObject.CreateSmallText(obj, () => Easing.ToString()));
+        yield return flow;
     }
 }

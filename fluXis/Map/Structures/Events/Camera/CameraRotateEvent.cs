@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Map.Structures.Events.Camera;
 
@@ -31,5 +35,12 @@ public class CameraRotateEvent : ICameraEvent, IHasDuration, IHasEasing
     {
         using (draw.BeginAbsoluteSequence(Time))
             draw.RotateTo(Roll, Math.Max(Duration, 0), Easing);
+    }
+
+    IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        flow.Add(ITimedObject.CreateSmallText(obj, () => $"{(int)Roll}deg"));
+        yield return flow;
     }
 }

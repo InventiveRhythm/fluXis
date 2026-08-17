@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Utils.Attributes;
 using fluXis.Utils.Extensions;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Map.Structures.Events;
 
@@ -44,5 +49,12 @@ public class PulseEvent : IMapEvent, IHasDuration, IHasEasing
             effect.BorderTo(Width, InPercent * dur, Easing).Then()
                   .BorderTo(0, (float)dur * (1 - InPercent), Easing);
         }
+    }
+
+    IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        flow.Add(ITimedObject.CreateSmallText(obj, () => $"{Width.ToStringInvariant("0")}px"));
+        yield return flow;
     }
 }

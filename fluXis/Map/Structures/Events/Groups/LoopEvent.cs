@@ -45,7 +45,7 @@ public class LoopEvent : IMapEvent
             WebFontSize = 12
         };
 
-        obj.OnUpdate += _ => text.Text = TargetGroup;
+        obj.DataUpdate += () => text.Text = TargetGroup;
         flow.Add(text);
         yield return flow;
     }

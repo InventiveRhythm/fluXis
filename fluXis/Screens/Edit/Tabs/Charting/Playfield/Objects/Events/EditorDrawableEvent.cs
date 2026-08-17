@@ -22,6 +22,8 @@ public partial class EditorDrawableEvent : EditorDrawableObject
         }
     }
 
+    public override Colour4 TextColor { get; }
+
     private readonly DefaultHitObjectPiece head;
     private readonly DefaultHitObjectBody body;
     private readonly DefaultHitObjectEnd end;
@@ -29,6 +31,8 @@ public partial class EditorDrawableEvent : EditorDrawableObject
     public EditorDrawableEvent(ITimedObject hit)
         : base(hit)
     {
+        TextColor = Theme.IsBright(Theme.GetEventColor(hit)) ? Theme.TextDark : Theme.Text;
+
         InternalChildren =
         [
             body = new DefaultHitObjectBody(null, 0).With(b =>

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Map.Structures.Events.Camera;
 
@@ -31,5 +36,12 @@ public class CameraScaleEvent : ICameraEvent, IHasDuration, IHasEasing
     {
         using (draw.BeginAbsoluteSequence(Time))
             draw.ScaleTo(Scale, Math.Max(Duration, 0), Easing);
+    }
+
+    IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        flow.Add(ITimedObject.CreateSmallText(obj, () => $"{Scale.ToStringInvariant("0.00")}x"));
+        yield return flow;
     }
 }

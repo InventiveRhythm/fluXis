@@ -56,7 +56,7 @@ public class FlashEvent : IMapEvent, IHasDuration, IHasEasing
         var opacity = new Box { Width = 12, RelativeSizeAxes = Axes.Y, X = 12 };
         yield return opacity;
 
-        obj.OnUpdate += _ =>
+        obj.DataUpdate += () =>
         {
             color.Colour = ColourInfo.GradientVertical(
                 EndColor,

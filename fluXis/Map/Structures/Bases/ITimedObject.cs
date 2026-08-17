@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using fluXis.Graphics.Sprites.Text;
@@ -39,11 +40,12 @@ public interface ITimedObject
     {
         var flow = new FillFlowContainer
         {
-            AutoSizeAxes = Axes.X,
+            RelativeSizeAxes = Axes.X,
             Direction = FillDirection.Vertical,
             Spacing = new Vector2(-4),
             Anchor = Anchor.BottomCentre,
             Origin = Anchor.BottomCentre,
+            Masking = true,
             Child = obj.GroupText = new FluXisSpriteText
             {
                 Anchor = Anchor.Centre,
@@ -55,5 +57,19 @@ public interface ITimedObject
 
         obj.OnUpdate += _ => flow.Height = 36 * obj.Zoom;
         yield return flow;
+    }
+
+    protected static Drawable CreateSmallText(EditorDrawableObject obj, Func<string> update)
+    {
+        var text = new FluXisSpriteText
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Colour = obj.TextColor,
+            WebFontSize = 10
+        };
+
+        obj.DataUpdate += () => text.Text = update();
+        return text;
     }
 }

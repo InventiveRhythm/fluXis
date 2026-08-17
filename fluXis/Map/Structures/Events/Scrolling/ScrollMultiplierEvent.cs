@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Gameplay.Ruleset;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Map.Structures.Events.Scrolling;
 
@@ -36,5 +40,13 @@ public class ScrollMultiplierEvent : IMapEvent, IHasDuration, IHasEasing, IHasGr
     {
         using (group.BeginAbsoluteSequence(Time))
             group.TransformTo(nameof(group.ScrollMultiplier), Multiplier, Math.Max(Duration, 0), Easing);
+    }
+
+    IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        flow.Add(ITimedObject.CreateSmallText(obj, () => $"{Multiplier.ToStringInvariant("0.##")}x"));
+        flow.Add(ITimedObject.CreateSmallText(obj, () => Easing.ToString()));
+        yield return flow;
     }
 }

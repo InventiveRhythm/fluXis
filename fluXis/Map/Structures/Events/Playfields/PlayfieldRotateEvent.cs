@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Utils.Attributes;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Map.Structures.Events.Playfields;
 
@@ -55,5 +60,13 @@ public class PlayfieldRotateEvent : IMapEvent, IHasDuration, IHasEasing, IApplic
 
         using (playfield.BeginAbsoluteSequence(Time))
             playfield.RotateTo(Roll, Math.Max(Duration, 0), Easing);
+    }
+
+    IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        flow.Add(ITimedObject.CreateSmallText(obj, () => $"{Roll.ToStringInvariant("0")}deg"));
+        flow.Add(ITimedObject.CreateSmallText(obj, () => $"P{PlayfieldIndex}S{PlayfieldSubIndex}"));
+        yield return flow;
     }
 }

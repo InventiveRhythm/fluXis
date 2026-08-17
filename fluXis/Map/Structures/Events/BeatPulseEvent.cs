@@ -1,6 +1,12 @@
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using Midori.Utils.Extensions;
 using Newtonsoft.Json;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Map.Structures.Events;
 
@@ -27,4 +33,11 @@ public class BeatPulseEvent : IMapEvent
 
     [JsonProperty("interval")]
     public float Interval { get; set; } = 1;
+
+    IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        flow.Add(ITimedObject.CreateSmallText(obj, () => $"{Strength.ToStringInvariant("0.00")}x {Interval.ToStringInvariant("0.##")}/beat"));
+        yield return flow;
+    }
 }

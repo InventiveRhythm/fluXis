@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shapes;
 using osuTK.Graphics;
 
 namespace fluXis.Map.Structures.Events;
@@ -21,25 +25,25 @@ public class ColorFadeEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableTo
     public string Group { get; set; }
 
     [JsonProperty("fade-primary")]
-    public bool FadePrimary { get; set; } = false;
+    public bool FadePrimary { get; set; }
 
     [JsonProperty("primary")]
     public Color4 Primary { get; set; } = Color4.White;
 
     [JsonProperty("fade-secondary")]
-    public bool FadeSecondary { get; set; } = false;
+    public bool FadeSecondary { get; set; }
 
     [JsonProperty("secondary")]
     public Color4 Secondary { get; set; } = Color4.White;
 
     [JsonProperty("fade-middle")]
-    public bool FadeMiddle { get; set; } = false;
+    public bool FadeMiddle { get; set; }
 
     [JsonProperty("middle")]
     public Color4 Middle { get; set; } = Color4.White;
 
     [JsonProperty("duration")]
-    public double Duration { get; set; } = 0;
+    public double Duration { get; set; }
 
     [JsonProperty("ease")]
     public Easing Easing { get; set; } = Easing.None;
@@ -65,5 +69,31 @@ public class ColorFadeEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableTo
             if (FadeMiddle)
                 manager.TransformTo(nameof(ColorManager.Middle), (Colour4)Middle, Math.Max(Duration, 0), Easing);
         }
+    }
+
+    public IEnumerable<Drawable> CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var p = new Box { Width = 12, RelativeSizeAxes = Axes.Y };
+        yield return p;
+
+        var s = new Box { Width = 12, RelativeSizeAxes = Axes.Y, X = 12 };
+        yield return s;
+
+        var m = new Box { Width = 12, RelativeSizeAxes = Axes.Y, X = 24 };
+        yield return m;
+
+        obj.DataUpdate += () =>
+        {
+            p.Colour = Primary;
+            p.Alpha = FadePrimary ? 1 : 0;
+
+            s.Colour = Secondary;
+            s.Alpha = FadeSecondary ? 1 : 0;
+
+            m.Colour = Middle;
+            m.Alpha = FadeMiddle ? 1 : 0;
+        };
+
+        yield return ITimedObject.CreateDefaultOverlay(obj).First();
     }
 }

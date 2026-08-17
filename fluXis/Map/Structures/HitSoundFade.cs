@@ -1,6 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Map.Structures;
 
@@ -41,4 +45,12 @@ public class HitSoundFade : ITimedObject
 
     [JsonIgnore]
     string ITimedObject.Group { get; set; }
+
+    IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
+    {
+        var flow = (FillFlowContainer)ITimedObject.CreateDefaultOverlay(obj).First();
+        flow.Add(ITimedObject.CreateSmallText(obj, () => HitSound));
+        flow.Add(ITimedObject.CreateSmallText(obj, () => $"{(int)(Volume * 100)}%"));
+        yield return flow;
+    }
 }

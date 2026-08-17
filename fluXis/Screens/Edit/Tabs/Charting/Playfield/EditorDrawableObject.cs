@@ -13,6 +13,9 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Playfield;
 public abstract partial class EditorDrawableObject : CompositeDrawable
 {
     [Resolved]
+    protected EditorMap Map { get; private set; }
+
+    [Resolved]
     protected EditorPlayfield Playfield { get; private set; }
 
     [Resolved]
@@ -22,6 +25,7 @@ public abstract partial class EditorDrawableObject : CompositeDrawable
     private EditorSettings settings { get; set; }
 
     public ITimedObject Data { get; }
+    public event Action DataUpdate;
 
     public float Zoom => settings.ObjectZoom;
 
@@ -43,12 +47,39 @@ public abstract partial class EditorDrawableObject : CompositeDrawable
         Origin = Anchor.BottomLeft;
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Map.AnyChange += onChange;
+        UpdateOverlay();
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        Map.AnyChange -= onChange;
+    }
+
+    private void onChange([CanBeNull] ITimedObject obj)
+    {
+        if (obj != Data)
+            return;
+
+        Scheduler.AddOnce(UpdateOverlay);
+    }
+
+    protected virtual void UpdateOverlay()
+    {
+        if (GroupText != null)
+            GroupText.Text = Data.Group;
+
+        DataUpdate?.Invoke();
+    }
+
     protected override void Update()
     {
         base.Update();
-
-        if (GroupText != null)
-            GroupText.Text = Data.Group;
 
         Width = EditorHitObjectContainer.NOTEWIDTH * settings.ObjectZoom;
 
