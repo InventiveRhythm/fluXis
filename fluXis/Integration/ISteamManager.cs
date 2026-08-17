@@ -12,8 +12,9 @@ public interface ISteamManager
 
     List<ulong> WorkshopItems { get; }
 
-    Action<bool> ItemCreated { get; set; }
-    Action<bool> ItemUpdated { get; set; }
+    event Action<bool> ItemCreated;
+    event Action<bool> ItemUpdated;
+    event Action ItemListUpdated;
 
     void OpenLink(string url);
     void SetRichPresence(SteamRichPresenceKey key, string value);

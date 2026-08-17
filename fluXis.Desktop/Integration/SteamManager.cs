@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Integration;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Notifications;
+using fluXis.Overlay.Notifications.Tasks;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using Steamworks;
@@ -19,36 +21,19 @@ public partial class SteamManager : Component, ISteamManager
     [Resolved]
     private IAPIClient api { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private NotificationManager notifications { get; set; }
+
     public const int APP_ID = 3440100;
     public uint AppID => APP_ID;
     public bool Initialized { get; }
-
-    public List<ulong> WorkshopItems
-    {
-        get
-        {
-            var num = SteamUGC.GetNumSubscribedItems();
-            var items = new PublishedFileId_t[num];
-
-            SteamUGC.GetSubscribedItems(items, num);
-            return new List<ulong>(items.Select(x => x.m_PublishedFileId));
-        }
-    }
-
-    public Action<bool> ItemCreated { get; set; }
-    public Action<bool> ItemUpdated { get; set; }
 
     private Logger logger { get; } = Logger.GetLogger("Steam");
     private Dictionary<string, string> rpc { get; } = new();
     private double lastUpdate;
 
     private Callback<GetTicketForWebApiResponse_t> ticketCb { get; }
-    private CallResult<CreateItemResult_t> createItemCb { get; }
-    private CallResult<SubmitItemUpdateResult_t> submitItemCb { get; }
-    private Callback<FloatingGamepadTextInputDismissed_t> keyboardClose { get; }
-
-    [CanBeNull]
-    private IWorkshopItem currentItem;
 
     public SteamManager()
     {
@@ -61,9 +46,14 @@ public partial class SteamManager : Component, ISteamManager
                 throw new Exception("SteamAPI.Init() failed.");
 
             ticketCb = Callback<GetTicketForWebApiResponse_t>.Create(authTicketCallback);
-            createItemCb = CallResult<CreateItemResult_t>.Create(createItemCallback);
-            submitItemCb = CallResult<SubmitItemUpdateResult_t>.Create(onItemSubmitted);
+
+            subscribedListChangedCb = Callback<UserSubscribedItemsListChanged_t>.Create(subscribedItemsChanged);
+            createItemCr = CallResult<CreateItemResult_t>.Create(createItemCallback);
+            submitItemCr = CallResult<SubmitItemUpdateResult_t>.Create(onItemSubmitted);
+
             keyboardClose = Callback<FloatingGamepadTextInputDismissed_t>.Create(onKeyboardClosed);
+
+            syncWorkshopItems();
         }
         catch (Exception e)
         {
@@ -111,52 +101,106 @@ public partial class SteamManager : Component, ISteamManager
 
         var delta = Time.Current - lastUpdate;
 
-        if (delta < 50)
+        if (delta < 16)
             return;
 
         lastUpdate = Time.Current;
         SteamAPI.RunCallbacks();
+        updateDownloadProgress();
     }
 
-    public void OpenLink(string url) => SteamFriends.ActivateGameOverlayToWebPage(url);
+    #region Workshop
 
-    public void SetRichPresence(SteamRichPresenceKey key, string value)
-    {
-        var pchKey = key switch
-        {
-            SteamRichPresenceKey.Status => "status",
-            SteamRichPresenceKey.Details => "details",
-            _ => throw new ArgumentOutOfRangeException(nameof(key), key, null)
-        };
+    public List<ulong> WorkshopItems { get; } = [];
+    private readonly Dictionary<PublishedFileId_t, TaskNotificationData> downloadProgress = [];
 
-        SteamFriends.SetRichPresence(pchKey, value);
-        rpc[pchKey] = value;
-    }
+    public event Action<bool> ItemCreated;
+    public event Action<bool> ItemUpdated;
+    public event Action ItemListUpdated;
 
     [CanBeNull]
-    private FluXisTextBox currentTextBox;
+    private IWorkshopItem currentItem;
 
-    public void OpenKeyboard(FluXisTextBox box)
+    private readonly Callback<UserSubscribedItemsListChanged_t> subscribedListChangedCb;
+    private readonly CallResult<CreateItemResult_t> createItemCr;
+    private readonly CallResult<SubmitItemUpdateResult_t> submitItemCr;
+
+    private void syncWorkshopItems()
     {
-        currentTextBox = box;
-        var size = box.ScreenSpaceDrawQuad;
+        var num = SteamUGC.GetNumSubscribedItems();
+        var items = new PublishedFileId_t[num];
 
-        SteamUtils.ShowFloatingGamepadTextInput(
-            EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeSingleLine,
-            (int)size.TopLeft.X,
-            (int)size.TopLeft.Y,
-            (int)size.Width,
-            (int)size.Height
-        );
+        SteamUGC.GetSubscribedItems(items, num);
+        WorkshopItems.Clear();
+
+        foreach (var item in items)
+        {
+            var state = (EItemState)SteamUGC.GetItemState(item);
+
+            var downloading = state.HasFlagFast(EItemState.k_EItemStateDownloading);
+            var needsUpdate = state.HasFlagFast(EItemState.k_EItemStateNeedsUpdate);
+            var installed = state.HasFlagFast(EItemState.k_EItemStateInstalled);
+
+            if (downloading || needsUpdate || !installed)
+            {
+                startDownload(item);
+
+                // force steam to download the item if it didn't start it automatically
+                if (!downloading) SteamUGC.DownloadItem(item, false);
+            }
+            else
+            {
+                WorkshopItems.Add(item.m_PublishedFileId);
+            }
+        }
+
+        void startDownload(PublishedFileId_t item)
+        {
+            if (downloadProgress.ContainsKey(item))
+                return;
+
+            var notification = new TaskNotificationData { Text = "Downloading workshop item..." };
+            downloadProgress[item] = notification;
+            notifications?.AddTask(notification);
+        }
     }
 
-    public void CloseKeyboard()
+    private void updateDownloadProgress()
     {
-        currentTextBox = null;
-        SteamUtils.DismissFloatingGamepadTextInput();
-    }
+        var complete = new List<PublishedFileId_t>();
 
-    private void onKeyboardClosed(FloatingGamepadTextInputDismissed_t param) => currentTextBox?.RemoveFocus();
+        foreach (var (id, task) in downloadProgress)
+        {
+            var state = (EItemState)SteamUGC.GetItemState(id);
+
+            if (state.HasFlagFast(EItemState.k_EItemStateDownloadPending) && !state.HasFlagFast(EItemState.k_EItemStateDownloading))
+                continue;
+
+            if (state.HasFlagFast(EItemState.k_EItemStateDownloading))
+            {
+                if (SteamUGC.GetItemDownloadInfo(id, out ulong current, out ulong total))
+                {
+                    if (total <= 0)
+                        continue;
+
+                    task.Progress = current / (float)total;
+                }
+            }
+            else
+            {
+                if (state.HasFlagFast(EItemState.k_EItemStateInstalled))
+                    WorkshopItems.Add(id.m_PublishedFileId);
+
+                complete.Add(id);
+            }
+        }
+
+        complete.ForEach(x =>
+        {
+            downloadProgress[x].State = LoadingState.Complete;
+            downloadProgress.Remove(x);
+        });
+    }
 
     public void UploadItem(IWorkshopItem item)
     {
@@ -164,7 +208,7 @@ public partial class SteamManager : Component, ISteamManager
         logger.Add($"Uploading item: {item}.");
 
         var handle = SteamUGC.CreateItem((AppId_t)AppID, EWorkshopFileType.k_EWorkshopFileTypeCommunity);
-        createItemCb.Set(handle);
+        createItemCr.Set(handle);
     }
 
     public void UpdateItem(ulong id, IWorkshopItem item)
@@ -179,7 +223,7 @@ public partial class SteamManager : Component, ISteamManager
 
         SteamUGC.SetItemContent(handle, item.Folder);
         var submitHandle = SteamUGC.SubmitItemUpdate(handle, "");
-        submitItemCb.Set(submitHandle);
+        submitItemCr.Set(submitHandle);
     }
 
     public string GetWorkshopItemDirectory(ulong id)
@@ -188,35 +232,15 @@ public partial class SteamManager : Component, ISteamManager
         return folder;
     }
 
-    private void startAccountLink()
+    #region Callbacks
+
+    private void subscribedItemsChanged(UserSubscribedItemsListChanged_t change)
     {
-        if (api.User.Value is null || api.User.Value.SteamID is not null)
+        if (change.m_nAppID.m_AppId != APP_ID)
             return;
 
-        logger.Add("Linking accounts...");
-        SteamUser.GetAuthTicketForWebApi(null);
-    }
-
-    private void authTicketCallback(GetTicketForWebApiResponse_t ticket)
-    {
-        if (ticket.m_eResult != EResult.k_EResultOK)
-        {
-            logger.Add($"Failed to get auth ticket! [{ticket.m_eResult}]", LogLevel.Error);
-            return;
-        }
-
-        if (api.User.Value is null)
-            return;
-
-        logger.Add($"Received ticket. [{ticket.m_cubTicket}]");
-
-        var bytes = ticket.m_rgubTicket;
-        var str = BitConverter.ToString(bytes).Replace("-", "").ToLower();
-
-        var req = new UserConnectionCreateRequest(api.User.Value.ID, "steam", str);
-        req.Success += res => api.User.Value.SteamID = res.Data?.ToObject<ulong>() ?? 0;
-        req.Failure += ex => logger.Add("Failed to link account!", LogLevel.Error, ex);
-        api.PerformRequestAsync(req);
+        logger.Add("Items changed.");
+        syncWorkshopItems();
     }
 
     private void createItemCallback(CreateItemResult_t result, bool biofail)
@@ -255,6 +279,87 @@ public partial class SteamManager : Component, ISteamManager
         OpenLink($"https://steamcommunity.com/sharedfiles/filedetails/?id={result.m_nPublishedFileId}");
     }
 
+    #endregion
+
+    #endregion
+
+    #region Big Picture Keyboard
+
+    [CanBeNull]
+    private FluXisTextBox currentTextBox;
+
+    private Callback<FloatingGamepadTextInputDismissed_t> keyboardClose { get; }
+
+    public void OpenKeyboard(FluXisTextBox box)
+    {
+        currentTextBox = box;
+        var size = box.ScreenSpaceDrawQuad;
+
+        SteamUtils.ShowFloatingGamepadTextInput(
+            EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeSingleLine,
+            (int)size.TopLeft.X,
+            (int)size.TopLeft.Y,
+            (int)size.Width,
+            (int)size.Height
+        );
+    }
+
+    public void CloseKeyboard()
+    {
+        currentTextBox = null;
+        SteamUtils.DismissFloatingGamepadTextInput();
+    }
+
+    private void onKeyboardClosed(FloatingGamepadTextInputDismissed_t param) => currentTextBox?.RemoveFocus();
+
+    #endregion
+
+    public void OpenLink(string url) => SteamFriends.ActivateGameOverlayToWebPage(url);
+
+    public void SetRichPresence(SteamRichPresenceKey key, string value)
+    {
+        var pchKey = key switch
+        {
+            SteamRichPresenceKey.Status => "status",
+            SteamRichPresenceKey.Details => "details",
+            _ => throw new ArgumentOutOfRangeException(nameof(key), key, null)
+        };
+
+        SteamFriends.SetRichPresence(pchKey, value);
+        rpc[pchKey] = value;
+    }
+
+    private void startAccountLink()
+    {
+        if (api.User.Value is null || api.User.Value.SteamID is not null)
+            return;
+
+        logger.Add("Linking accounts...");
+        SteamUser.GetAuthTicketForWebApi(null);
+    }
+
+    private void authTicketCallback(GetTicketForWebApiResponse_t ticket)
+    {
+        if (ticket.m_eResult != EResult.k_EResultOK)
+        {
+            logger.Add($"Failed to get auth ticket! [{ticket.m_eResult}]", LogLevel.Error);
+            return;
+        }
+
+        if (api.User.Value is null)
+            return;
+
+        logger.Add($"Received ticket. [{ticket.m_cubTicket}]");
+
+        var bytes = ticket.m_rgubTicket;
+        var str = BitConverter.ToString(bytes).Replace("-", "").ToLower();
+
+        var req = new UserConnectionCreateRequest(api.User.Value.ID, "steam", str);
+        req.Success += res => api.User.Value.SteamID = res.Data?.ToObject<ulong>() ?? 0;
+        req.Failure += ex => logger.Add("Failed to link account!", LogLevel.Error, ex);
+        api.PerformRequestAsync(req);
+    }
+
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
@@ -263,8 +368,9 @@ public partial class SteamManager : Component, ISteamManager
             SteamAPI.Shutdown();
 
         ticketCb?.Dispose();
-        createItemCb?.Dispose();
-        submitItemCb?.Dispose();
+        subscribedListChangedCb?.Dispose();
+        createItemCr?.Dispose();
+        submitItemCr?.Dispose();
         keyboardClose?.Dispose();
     }
 }
