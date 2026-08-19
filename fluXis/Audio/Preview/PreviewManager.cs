@@ -5,12 +5,14 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Audio;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 
 namespace fluXis.Audio.Preview;
 
-public partial class PreviewManager : Component
+public partial class PreviewManager : CompositeComponent
 {
     [Resolved]
     private IAPIClient api { get; set; }
@@ -19,7 +21,7 @@ public partial class PreviewManager : Component
 
     private ITrackStore trackStore;
     private long currentId = -1;
-    private Track track;
+    private DrawableTrack track;
 
     [BackgroundDependencyLoader]
     private void load(AudioManager audio)
@@ -43,13 +45,13 @@ public partial class PreviewManager : Component
 
             if (track != null)
             {
-                await track.StopAsync();
-                track.Dispose();
+                track.VolumeTo(0f, Styling.TRANSITION_FADE).Expire();
+                track = null;
             }
 
-            track = await trackStore.GetAsync($"{api.Endpoint.AssetUrl}/preview/{id}");
+            var tr = await trackStore.GetAsync($"{api.Endpoint.AssetUrl}/preview/{id}");
 
-            if (track == null)
+            if (tr == null)
             {
                 Logger.Log($"Failed to load preview track for {id}", LoggingTarget.Runtime, LogLevel.Error);
                 return;
@@ -59,8 +61,10 @@ public partial class PreviewManager : Component
             if (currentId != id)
                 return;
 
+            track = new DrawableTrack(tr);
             track.Looping = true;
             await track.RestartAsync();
+            AddInternal(track);
         }
         finally
         {
@@ -78,8 +82,8 @@ public partial class PreviewManager : Component
 
             if (track is not null)
             {
-                await track.StopAsync();
-                track.Dispose();
+                track.VolumeTo(0f, Styling.TRANSITION_FADE).Expire();
+                track = null;
             }
         }
         finally

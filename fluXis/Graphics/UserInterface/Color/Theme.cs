@@ -134,6 +134,8 @@ public static class Theme
     public static Colour4 Difficulty25 => Colour4.FromHex("#FEFF33");
     public static Colour4 Difficulty30 => Colour4.FromHex("#FF3333");
 
+    public static Colour4 GetDifficultyColor(double difficulty) => GetDifficultyColor((float)difficulty);
+
     public static Colour4 GetDifficultyColor(float difficulty) => difficulty switch
     {
         <= 0 => DifficultyZero,

@@ -148,10 +148,10 @@ public partial class DashboardMappingTab : DashboardTab
                         }
                     }
                 },
-                new DashboardItemList<APIMapSet>("In Queue", pending, s => new MapCard(s) { CardWidth = 348 }) { EmptyText = "Nothing here..." },
-                new DashboardItemList<APIMapSet>("Pure", maps.Pure, s => new MapCard(s) { CardWidth = 348 }) { EmptyText = "Nothing here..." },
-                new DashboardItemList<APIMapSet>("Impure", impure, s => new MapCard(s) { CardWidth = 348 }) { EmptyText = "Nothing here..." },
-                new DashboardItemList<APIMapSet>("Guest Difficulties", maps.Guest, s => new MapCard(s) { CardWidth = 348 }) { EmptyText = "Nothing here..." },
+                new DashboardItemList<APIMapSet>("In Queue", pending, s => new MapCard(s) { Width = 348 }) { EmptyText = "Nothing here..." },
+                new DashboardItemList<APIMapSet>("Pure", maps.Pure, s => new MapCard(s) { Width = 348 }) { EmptyText = "Nothing here..." },
+                new DashboardItemList<APIMapSet>("Impure", impure, s => new MapCard(s) { Width = 348 }) { EmptyText = "Nothing here..." },
+                new DashboardItemList<APIMapSet>("Guest Difficulties", maps.Guest, s => new MapCard(s) { Width = 348 }) { EmptyText = "Nothing here..." },
             }
         };
     }

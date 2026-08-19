@@ -67,7 +67,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer scrollFlow;
-    private FillFlowContainer<MapCard> flow;
+    private ReverseFillFlowContainer<MapCard> flow;
     private FillFlowContainer loading;
 
     private bool fetchingMore = true;
@@ -138,7 +138,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     Spacing = new Vector2(20),
                                     Children = new Drawable[]
                                     {
-                                        flow = new FillFlowContainer<MapCard>
+                                        flow = new ReverseFillFlowContainer<MapCard>
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
@@ -292,16 +292,26 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
             {
                 flow.Add(new MapCard(mapSet)
                 {
-                    CardWidth = 410,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
-                    EdgeEffect = Styling.ShadowSmall,
-                    RequestDelete = confirmDeleteMapSet,
+                    ExpandAction = v =>
+                    {
+                        if (v)
+                        {
+                            stopMusic();
+                            previews.PlayPreview(mapSet.ID);
+                        }
+                        else
+                        {
+                            previews.StopPreview();
+                            continueMusic();
+                        }
+                    }
+                    /*RequestDelete = confirmDeleteMapSet,
                     OnClickAction = set =>
                     {
-                        previews.PlayPreview(set.ID);
                         navigator?.PushMapSet(set.ID);
-                    }
+                    }*/
                 });
             }
 
@@ -388,6 +398,20 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
     private bool wasPlaying = false;
 
+    private void stopMusic()
+    {
+        wasPlaying = clock?.IsRunning ?? false;
+        if (wasPlaying) clock?.VolumeOut(Styling.TRANSITION_FADE).OnComplete(_ => clock?.Stop());
+    }
+
+    private void continueMusic()
+    {
+        if (!wasPlaying) return;
+
+        clock?.Start();
+        clock?.VolumeIn(Styling.TRANSITION_FADE);
+    }
+
     protected override void PopIn()
     {
         content.ResizeHeightTo(0).MoveToY(1)
@@ -395,9 +419,6 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                .MoveToY(0, 800, Easing.OutQuint);
 
         this.FadeIn(200);
-
-        wasPlaying = clock?.IsRunning ?? false;
-        if (wasPlaying) clock?.VolumeOut(400).OnComplete(_ => clock?.Stop());
 
         if (firstOpen)
         {
@@ -410,13 +431,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     {
         content.ResizeHeightTo(0, 800, Easing.OutQuint);
         this.FadeOut(200);
-
         previews.StopPreview();
-
-        if (!wasPlaying) return;
-
-        clock?.Start();
-        clock?.VolumeIn(400);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

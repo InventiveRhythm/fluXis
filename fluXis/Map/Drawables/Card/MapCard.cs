@@ -1,310 +1,47 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using fluXis.Audio;
-using fluXis.Database.Maps;
 using fluXis.Graphics;
-using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites.Icons;
-using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Graphics.UserInterface.Menus;
-using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Online.API.Models.Maps;
-using fluXis.Online.Drawables.Images;
-using fluXis.Online.Fluxel;
 using fluXis.Overlay.Navigator;
-using fluXis.Utils.Downloading;
-using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Map.Drawables.Card;
 
-public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasContextMenu
+public partial class MapCard : CompositeDrawable
 {
-    [Resolved]
-    private MapStore maps { get; set; }
-
-    [Resolved]
-    private UISamples samples { get; set; }
+    public const int CARD_HEIGHT = 128;
+    public const int CARD_RADIUS = 12;
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private OnlineNavigator navigator { get; set; }
 
-    [CanBeNull]
-    [Resolved(CanBeNull = true)]
-    private FluXisGame game { get; set; }
-
-    [Resolved]
-    private IAPIClient api { get; set; }
-
-    public MenuItem[] ContextMenuItems
-    {
-        get
-        {
-            var list = new List<MenuItem>
-            {
-                new MenuActionItem("View", Phosphor.Bold.ArrowRight, MenuItemType.Highlighted, () => navigator?.PushMapSet(MapSet.ID))
-            };
-
-            if (downloaded)
-                list.Add(new MenuActionItem("Show in Song Select", Phosphor.Bold.Eye, selectAndShow));
-            else if (!downloading)
-                list.Add(new MenuActionItem("Download", Phosphor.Bold.ArrowLineDown, download));
-
-            list.Add(new MenuActionItem("Open in Web", Phosphor.Bold.GlobeHemisphereWest, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}", ingame: false)));
-
-            if (RequestDelete != null && canDelete)
-                list.Add(new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
-
-            return list.ToArray();
-        }
-    }
-
-    public APIMapSet TooltipContent => MapSet;
-
-    public int CardWidth { get; init; } = 430;
     public APIMapSet MapSet { get; }
-    public Action<APIMapSet> OnClickAction { get; set; }
-    public bool ShowDownloadedState { get; set; } = true;
 
-    [CanBeNull]
-    public Action<long> RequestDelete { get; set; }
+    public Func<bool> ClickAction { get; init; } = () => false;
+    public Action<bool> ExpandAction { get; init; }
 
-    private Box background;
-    private Container content;
-    private SectionedGradient gradient;
+    private readonly Container scaling;
+    private readonly Expand expand;
 
-    private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet?.ID);
-    private bool downloading => maps.DownloadQueue.Any(x => x.OnlineID == MapSet?.ID);
-
-    private bool canDelete
+    public MapCard(APIMapSet set)
     {
-        get
+        MapSet = set;
+        Size = new Vector2(410, CARD_HEIGHT);
+
+        InternalChild = scaling = new Container
         {
-            var user = api.User.Value;
-
-            if (user == null)
-                return false;
-
-            if (user.CanModerate() || MapSet?.Creator.ID == user.ID)
-                return true;
-
-            return false;
-        }
-    }
-
-    [CanBeNull]
-    private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet?.ID);
-
-    public MapCard(APIMapSet mapSet)
-    {
-        MapSet = mapSet;
-        Height = 112;
-    }
-
-    [BackgroundDependencyLoader]
-    private void load()
-    {
-        Width = CardWidth;
-        CornerRadius = 16;
-        Masking = true;
-
-        if (MapSet == null)
-        {
-            InternalChildren = new Drawable[]
-            {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Theme.Background3
-                },
-                new FluXisSpriteText
-                {
-                    Text = "MapSet was not found.",
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
-                }
-            };
-            return;
-        }
-
-        InternalChildren = new Drawable[]
-        {
-            background = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Theme.Background3
-            },
-            content = new Container
-            {
-                Width = CardWidth,
-                RelativeSizeAxes = Axes.Y,
-                Masking = true,
-                CornerRadius = 16,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Theme.Background3
-                    },
-                    new LoadWrapper<DrawableOnlineBackground>
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        LoadContent = () => new DrawableOnlineBackground(MapSet),
-                        OnComplete = d => d.FadeInFromZero(400)
-                    },
-                    gradient = new SectionedGradient
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Theme.Background2,
-                        SplitPoint = .3f,
-                        EndAlpha = .5f,
-                        Alpha = .6f
-                    },
-                    new GridContainer
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        ColumnDimensions = new[]
-                        {
-                            new Dimension(GridSizeMode.Absolute, Height),
-                            new Dimension()
-                        },
-                        Content = new[]
-                        {
-                            new Drawable[]
-                            {
-                                new LoadWrapper<DrawableOnlineCover>
-                                {
-                                    Size = new Vector2(Height),
-                                    CornerRadius = 16,
-                                    Masking = true,
-                                    LoadContent = () => new DrawableOnlineCover(MapSet),
-                                    OnComplete = d => d.FadeInFromZero(400)
-                                },
-                                new Container
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Padding = new MarginPadding(12),
-                                    Children = new Drawable[]
-                                    {
-                                        new FillFlowContainer
-                                        {
-                                            RelativeSizeAxes = Axes.X,
-                                            AutoSizeAxes = Axes.Y,
-                                            Direction = FillDirection.Vertical,
-                                            Spacing = new Vector2(4),
-                                            Children = new Drawable[]
-                                            {
-                                                new GridContainer
-                                                {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    Height = 16,
-                                                    ColumnDimensions = new Dimension[]
-                                                    {
-                                                        new(),
-                                                        new(GridSizeMode.AutoSize)
-                                                    },
-                                                    Content = new[]
-                                                    {
-                                                        new Drawable[]
-                                                        {
-                                                            new TruncatingText
-                                                            {
-                                                                RelativeSizeAxes = Axes.X,
-                                                                Text = MapSet.LocalizedTitle,
-                                                                Anchor = Anchor.CentreLeft,
-                                                                Origin = Anchor.CentreLeft,
-                                                                WebFontSize = 18,
-                                                                Shadow = true
-                                                            },
-                                                            new RoundedChip
-                                                            {
-                                                                Alpha = MapSet.Flags.HasFlag(MapSetFlag.Explicit) ? 1f : 0f,
-                                                                Text = "EXPLICIT",
-                                                                Anchor = Anchor.CentreRight,
-                                                                Origin = Anchor.CentreRight,
-                                                                BackgroundColour = Colour4.Black.Opacity(.5f),
-                                                                TextColour = Theme.Text,
-                                                                WebFontSize = 8,
-                                                                Height = 16,
-                                                                Margin = new MarginPadding { Left = 8 }
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                new ForcedHeightText(true)
-                                                {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    Text = MapSet.LocalizedArtist,
-                                                    Height = 16,
-                                                    WebFontSize = 14,
-                                                    Shadow = true
-                                                },
-                                                new ForcedHeightText(true)
-                                                {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    Text = $"mapped by {MapSet.Creator?.PreferredName}",
-                                                    Height = 10,
-                                                    WebFontSize = 12,
-                                                    Shadow = true,
-                                                    Alpha = .8f
-                                                }
-                                            }
-                                        },
-                                        new Container
-                                        {
-                                            RelativeSizeAxes = Axes.X,
-                                            Height = 20,
-                                            Anchor = Anchor.BottomLeft,
-                                            Origin = Anchor.BottomLeft,
-                                            Children = new Drawable[]
-                                            {
-                                                new RoundedChip
-                                                {
-                                                    Text = MapSet.Status switch
-                                                    {
-                                                        -1 => "BLACKLISTED",
-                                                        0 => "UNSUBMITTED",
-                                                        1 => "PENDING",
-                                                        2 => "IMPURE",
-                                                        3 => "PURE",
-                                                        _ => "UNKNOWN"
-                                                    },
-                                                    TextColour = Colour4.Black.Opacity(.75f),
-                                                    BackgroundColour = Theme.GetStatusColor(MapSet.Status),
-                                                    EdgeEffect = Styling.ShadowSmallNoOffset
-                                                },
-                                                new RoundedChip
-                                                {
-                                                    Text = getKeymodeString(),
-                                                    TextColour = Colour4.Black.Opacity(.75f),
-                                                    BackgroundColour = getKeymodeColor(),
-                                                    EdgeEffect = Styling.ShadowSmallNoOffset,
-                                                    Anchor = Anchor.CentreRight,
-                                                    Origin = Anchor.CentreRight
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Children = [expand = new Expand(set, TriggerClick), new Header(set)]
         };
     }
 
@@ -312,103 +49,36 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     {
         base.LoadComplete();
 
-        if (ShowDownloadedState)
+        expand.Expanded.BindValueChanged(v =>
         {
-            maps.MapSetAdded += mapsetsUpdated;
-            maps.DownloadStarted += downloadStateChanged;
-            maps.DownloadFinished += downloadStateChanged;
-            updateState();
-        }
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-        base.Dispose(isDisposing);
-
-        maps.MapSetAdded -= mapsetsUpdated;
-        maps.DownloadStarted -= downloadStateChanged;
-        maps.DownloadFinished -= downloadStateChanged;
-    }
-
-    protected override bool OnHover(HoverEvent e)
-    {
-        samples.Hover();
-        gradient.FadeTo(.5f, 50);
-        return true;
-    }
-
-    protected override void OnHoverLost(HoverLostEvent e)
-    {
-        gradient.FadeTo(.6f, 200);
+            ExpandAction?.Invoke(v.NewValue);
+            scaling.ScaleTo(v.NewValue ? 1.04f : 1f, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            expand.ResizeHeightTo(v.NewValue ? CARD_HEIGHT + expand.ContentHeight : CARD_HEIGHT, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            expand.FadeEdgeEffectTo(v.NewValue ? Styling.SHADOW_OPACITY : 0f, Styling.TRANSITION_FADE);
+        }, true);
+        FinishTransforms(true);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        samples.Click();
+        if (ClickAction())
+            return true;
 
-        if (OnClickAction is null)
-            navigator?.PushMapSet(MapSet.ID);
-        else
-            OnClickAction?.Invoke(MapSet);
-
+        navigator?.PushMapSet(MapSet.ID);
         return true;
     }
 
-    protected override bool OnDoubleClick(DoubleClickEvent e)
+    private static RoundedChip createChip(string text, ColourInfo color)
     {
-        if (downloaded)
-            selectAndShow();
-        else if (!downloading)
-            download();
+        var light = Theme.IsBright(color.AverageColour);
 
-        return true;
-    }
-
-    public ITooltip<APIMapSet> GetCustomTooltip() => new MapCardTooltip();
-
-    private void selectAndShow()
-    {
-        if (localSet == null)
-            return;
-
-        game?.ShowMap(localSet);
-    }
-
-    private void download() => maps.DownloadMapSet(MapSet);
-
-    private string getKeymodeString()
-    {
-        var lowest = MapSet.Maps.Min(x => x.Mode);
-        var highest = MapSet.Maps.Max(x => x.Mode);
-
-        return lowest == highest ? $"{lowest}K" : $"{lowest}-{highest}K";
-    }
-
-    private ColourInfo getKeymodeColor()
-    {
-        var lowest = MapSet.Maps.Min(x => x.Mode);
-        var highest = MapSet.Maps.Max(x => x.Mode);
-
-        return ColourInfo.GradientHorizontal(Theme.GetKeyCountColor(lowest), Theme.GetKeyCountColor(highest));
-    }
-
-    private void mapsetsUpdated(RealmMapSet set) => Schedule(updateState);
-    private void downloadStateChanged(DownloadStatus status) => Schedule(updateState);
-
-    private void updateState()
-    {
-        if (content == null || background == null)
-            return;
-
-        bool shouldShow = downloading || downloaded;
-
-        content.ResizeWidthTo(shouldShow ? CardWidth - 10 : CardWidth, 400, Easing.OutQuint);
-
-        if (downloading)
-            background.Colour = Theme.DownloadQueued;
-        else if (downloaded)
-            background.Colour = Theme.DownloadFinished;
-        else
-            background.Colour = Theme.Background3;
+        return new RoundedChip
+        {
+            Text = text,
+            TextColour = (light ? Colour4.Black : Colour4.White).Opacity(.75f),
+            BackgroundColour = color,
+            WebFontSize = 10,
+            Height = 16
+        };
     }
 }

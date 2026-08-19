@@ -215,7 +215,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(SkinManager = new SkinManager(), true, true);
             cacheComponent<ISkin>(SkinManager);
             cacheComponent(LayoutManager = new LayoutManager(), true);
-            cacheComponent(new PreviewManager(), true);
+            cacheComponent(new PreviewManager(), true, true);
 
             cacheComponent(new UISamples(), true, true);
             cacheComponent(CreateLightController(), true, true);

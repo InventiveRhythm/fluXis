@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Map.Drawables.Card;
 using fluXis.Online.API.Models.Maps;
@@ -22,12 +23,12 @@ public partial class ProfileMapsSection : FillFlowContainer
             noMaps.Alpha = empty ? .8f : 0;
             flow.Alpha = empty ? 0 : 1;
 
-            flow.ChildrenEnumerable = value.Select(map => new MapCard(map) { CardWidth = CardWidth });
+            flow.ChildrenEnumerable = value.Select(map => new MapCard(map) { Width = CardWidth });
         }
     }
 
     private FluXisSpriteText noMaps { get; }
-    private FillFlowContainer flow { get; }
+    private ReverseFillFlowContainer<MapCard> flow { get; }
 
     public ProfileMapsSection(string title)
     {
@@ -58,7 +59,7 @@ public partial class ProfileMapsSection : FillFlowContainer
                     }
                 }
             },
-            flow = new FillFlowContainer
+            flow = new ReverseFillFlowContainer<MapCard>
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,

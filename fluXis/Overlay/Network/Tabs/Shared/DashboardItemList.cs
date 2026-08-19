@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -66,7 +67,7 @@ public partial class DashboardItemList<T> : FillFlowContainer
                 WebFontSize = 14,
                 Alpha = items.Any() ? 0f : .8f
             },
-            new FillFlowContainer
+            new ReverseFillFlowContainer<Drawable>
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,

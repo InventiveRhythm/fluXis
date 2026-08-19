@@ -13,6 +13,12 @@ public partial class ForcedHeightText : CompositeDrawable
         set => text.Text = value;
     }
 
+    public new ColourInfo Colour
+    {
+        get => TextColor;
+        set => TextColor = value;
+    }
+
     public ColourInfo TextColor
     {
         get => text.Colour;

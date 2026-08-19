@@ -9,6 +9,7 @@ namespace fluXis.Graphics.UserInterface;
 public partial class VerticalSectionedGradient : CompositeDrawable
 {
     public float SplitPoint { get; init; } = .2f;
+    public float StartAlpha { get; init; } = 1f;
     public float EndAlpha { get; init; }
 
     [BackgroundDependencyLoader]
@@ -19,7 +20,7 @@ public partial class VerticalSectionedGradient : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = ColourInfo.GradientVertical(Colour4.White.Opacity(EndAlpha), Colour4.White),
+                Colour = ColourInfo.GradientVertical(Colour4.White.Opacity(EndAlpha), Colour4.White.Opacity(StartAlpha)),
                 Height = 1f - SplitPoint
             },
             new Box
@@ -27,7 +28,8 @@ public partial class VerticalSectionedGradient : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 RelativePositionAxes = Axes.Y,
                 Height = SplitPoint,
-                Y = 1f - SplitPoint
+                Y = 1f - SplitPoint,
+                Alpha = StartAlpha
             }
         };
     }

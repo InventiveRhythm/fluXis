@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Audio;
+using fluXis.Audio.Preview;
+using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Tabs;
 using fluXis.Online.API.Models.Maps;
@@ -8,6 +11,8 @@ using fluXis.Overlay.Navigator.Pages.MapSet.Buttons;
 using fluXis.Overlay.Navigator.Pages.MapSet.Sidebar;
 using fluXis.Overlay.Navigator.Pages.MapSet.Tabs;
 using fluXis.Overlay.Navigator.Pages.MapSet.UI.Difficulties;
+using JetBrains.Annotations;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,6 +24,14 @@ public partial class NavigatorMapSetPage : NavigatorPage<APIMapSet>
 {
     public override string Path => $"/mapsets/{ID}";
     protected override float ContentWidth => 1280;
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private GlobalClock clock { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PreviewManager previews { get; set; }
 
     public readonly long ID;
 
@@ -146,5 +159,33 @@ public partial class NavigatorMapSetPage : NavigatorPage<APIMapSet>
             yield return new MapSetModdingTab(set);
 
         // yield return new MapSetCommentsTab();
+    }
+
+    public override void OnEnter(APIMapSet data)
+    {
+        stopMusic();
+        previews?.PlayPreview(data.ID);
+    }
+
+    public override void OnLeave(APIMapSet data)
+    {
+        continueMusic();
+        previews?.StopPreview();
+    }
+
+    private bool wasPlaying;
+
+    private void stopMusic()
+    {
+        wasPlaying = clock?.IsRunning ?? false;
+        if (wasPlaying) clock?.VolumeOut(Styling.TRANSITION_FADE).OnComplete(_ => clock?.Stop());
+    }
+
+    private void continueMusic()
+    {
+        if (!wasPlaying) return;
+
+        clock?.Start();
+        clock?.VolumeIn(Styling.TRANSITION_FADE);
     }
 }

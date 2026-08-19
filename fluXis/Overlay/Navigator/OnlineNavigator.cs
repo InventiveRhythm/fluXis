@@ -118,6 +118,7 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
         loading.Show();
 
         background.ForEach(x => x.FadeOut(Styling.TRANSITION_FADE).Expire());
+        current.Value?.OnLeave();
         current.Value?.FadeOut(Styling.TRANSITION_FADE);
         current.Value = page;
 
@@ -169,6 +170,7 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
 
         background.ForEach(x => x.FadeOut(Styling.TRANSITION_FADE).Expire());
         current.Value?.FadeOut(Styling.TRANSITION_FADE);
+        current.Value?.OnLeave();
 
         Scheduler.AddDelayed(() =>
         {
@@ -218,6 +220,7 @@ public partial class OnlineNavigator : IconEntranceOverlay, IKeyBindingHandler<F
 
     protected override void PopOut()
     {
+        current.Value?.OnLeave();
         locked = false;
         base.PopOut();
     }

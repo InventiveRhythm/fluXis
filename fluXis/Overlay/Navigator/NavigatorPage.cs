@@ -63,6 +63,7 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
         if (data is null) return;
 
         InternalChild = CreateContent(data);
+        Schedule(OnEnter);
     }
 
     private void fail(Exception ex)
@@ -78,25 +79,48 @@ public abstract partial class NavigatorPage<T> : NavigatorPage
         };
     }
 
-    public override void Refresh(Action complete) => Task.Run(() =>
+    public override void Refresh(Action complete)
     {
-        try
+        OnLeave();
+
+        Task.Run(() =>
         {
-            data = PullData();
-            Schedule(setContent);
-        }
-        catch (Exception ex)
-        {
-            Schedule(() => fail(ex));
-        }
-        finally
-        {
-            Schedule(complete);
-        }
-    });
+            try
+            {
+                data = PullData();
+                Schedule(setContent);
+            }
+            catch (Exception ex)
+            {
+                Schedule(() => fail(ex));
+            }
+            finally
+            {
+                Schedule(complete);
+            }
+        });
+    }
 
     protected virtual Drawable? CreateBackground(T data) => null;
     public sealed override Drawable? CreateBackground() => data is null ? null : CreateBackground(data);
+
+    public override void OnEnter()
+    {
+        if (Navigator.CurrentPage != this || Navigator.State.Value == Visibility.Hidden) return;
+        if (data is null) return;
+
+        OnEnter(data);
+    }
+
+    public override void OnLeave()
+    {
+        if (data is null) return;
+
+        OnLeave(data);
+    }
+
+    public virtual void OnEnter(T data) { }
+    public virtual void OnLeave(T data) { }
 }
 
 public abstract partial class NavigatorPage : CompositeDrawable
@@ -108,4 +132,7 @@ public abstract partial class NavigatorPage : CompositeDrawable
     public virtual Drawable? CreateBackground() => null;
 
     public abstract void Refresh(Action complete);
+
+    public abstract void OnEnter();
+    public abstract void OnLeave();
 }
