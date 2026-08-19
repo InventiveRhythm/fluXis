@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 using osu.Framework.Localisation;
@@ -83,6 +84,9 @@ public class APIMap
 
     [JsonProperty("has_voted_rate")]
     public bool HasVotedRate { get; set; }
+
+    [JsonProperty("color")]
+    public uint Color { get; set; } = Theme.Highlight.ToRGBA();
 
     #region Optional
 
