@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Screens.Gameplay.Overlay.Effect;
 
@@ -11,11 +12,11 @@ public partial class PulseEffect : Container
 {
     public override bool RemoveCompletedTransforms => false;
 
-    private List<PulseEvent> pulses { get; }
+    public List<PulseEvent> Pulses { get; set; }
 
     public PulseEffect(List<PulseEvent> pulses)
     {
-        this.pulses = pulses;
+        Pulses = pulses;
 
         RelativeSizeAxes = Axes.Both;
         BorderColour = Colour4.White;
@@ -38,6 +39,13 @@ public partial class PulseEffect : Container
     public void Rebuild()
     {
         ClearTransforms();
-        pulses.ForEach(p => p.Apply(this));
+
+        // Explicitly reset state, if we don't do this, seeking backwards PulseEffect gets stuck with
+        // whatever Transforms it had
+        Alpha = 1;
+        Scale = Vector2.One;
+        BorderThickness = 0;
+
+        Pulses.ForEach(p => p.Apply(this));
     }
 }
