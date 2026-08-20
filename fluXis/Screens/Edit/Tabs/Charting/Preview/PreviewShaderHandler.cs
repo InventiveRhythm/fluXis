@@ -11,12 +11,11 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Preview;
 public partial class PreviewShaderHandler : CompositeComponent
 {
     [Resolved]
-    private EditorMap map { get; set; }
-
-    [Resolved]
     private EditorClock clock { get; set; }
 
     public ShaderStackContainer ShaderStack { get; set; }
+
+    public IEnumerable<ShaderEvent> ShaderEvents { get; set; } = [];
 
     protected override void Update()
     {
@@ -25,7 +24,7 @@ public partial class PreviewShaderHandler : CompositeComponent
         if (ShaderStack is null)
             return;
 
-        var groups = map.MapEvents.ShaderEvents.GroupBy(x => x.Type);
+        var groups = ShaderEvents.GroupBy(x => x.Type);
 
         foreach (var group in groups)
             handleGroup(group.Key, group);
@@ -48,12 +47,11 @@ public partial class PreviewShaderHandler : CompositeComponent
             return;
         }
 
-        var progress = (clock.CurrentTime - current.Time) / current.Duration;
         var endStrength = current.EndParameters.Strength;
         var endStrength2 = current.EndParameters.Strength2;
         var endStrength3 = current.EndParameters.Strength3;
 
-        if (progress >= 1)
+        if (current.Duration <= 0 || clock.CurrentTime >= current.Time + current.Duration)
         {
             container.Strength = endStrength;
             container.Strength2 = endStrength2;
@@ -66,7 +64,7 @@ public partial class PreviewShaderHandler : CompositeComponent
         var startStrength2 = current.UseStartValue ? current.StartParameters.Strength2 : previous?.EndParameters.Strength2 ?? 0;
         var startStrength3 = current.UseStartValue ? current.StartParameters.Strength3 : previous?.EndParameters.Strength3 ?? 0;
 
-        if (progress < 0)
+        if (clock.CurrentTime < current.Time)
         {
             container.Strength = startStrength;
             container.Strength2 = startStrength2;
@@ -74,8 +72,8 @@ public partial class PreviewShaderHandler : CompositeComponent
             return;
         }
 
-        container.Strength = Interpolation.ValueAt(clock.CurrentTime, startStrength, endStrength, current.Time, current.Time + current.Duration);
-        container.Strength2 = Interpolation.ValueAt(clock.CurrentTime, startStrength2, endStrength2, current.Time, current.Time + current.Duration);
-        container.Strength3 = Interpolation.ValueAt(clock.CurrentTime, startStrength3, endStrength3, current.Time, current.Time + current.Duration);
+        container.Strength = Interpolation.ValueAt(clock.CurrentTime, startStrength, endStrength, current.Time, current.Time + current.Duration, current.Easing);
+        container.Strength2 = Interpolation.ValueAt(clock.CurrentTime, startStrength2, endStrength2, current.Time, current.Time + current.Duration, current.Easing);
+        container.Strength3 = Interpolation.ValueAt(clock.CurrentTime, startStrength3, endStrength3, current.Time, current.Time + current.Duration, current.Easing);
     }
 }

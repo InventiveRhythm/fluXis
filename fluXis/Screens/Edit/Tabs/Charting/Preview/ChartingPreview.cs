@@ -7,9 +7,11 @@ using fluXis.Graphics.Background;
 using fluXis.Graphics.Shaders;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
+using fluXis.Map.Structures.Events.Groups;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Gameplay;
@@ -43,6 +45,8 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
     [Resolved]
     protected EditorMap Map { get; private set; } = null!;
+
+    private MapEvents? cachedEvents;
 
     private IdleTracker idleTracker = null!;
     private Bindable<float> userScrollSpeed = null!;
@@ -81,7 +85,9 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        camera = new CameraContainer([.. Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>()]);
+        var compiled = getCompiledEvents();
+
+        camera = new CameraContainer([.. Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>()]) { Clock = EditorClock };
 
         Children =
         [
@@ -91,7 +97,10 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
                 loading.Show();
                 ruleset?.FadeOut(Styling.TRANSITION_FADE);
             }),
-            handler = new PreviewShaderHandler(),
+            handler = new PreviewShaderHandler
+            {
+                ShaderEvents = compiled.ShaderEvents
+            },
             createShaderStack().WithChildren([
                 camera.CreateProxyDrawable().With(x => x.Clock = EditorClock),
                 camera.WithChildren(new Drawable[]
@@ -114,7 +123,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
                     rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both }
                 }),
                 frontFlash = new PreviewFlashLayer { Clock = EditorClock },
-                pulseEffect = new PulseEffect(Map.MapEvents.PulseEvents) { Clock = EditorClock }
+                pulseEffect = new PulseEffect(compiled.PulseEvents) { Clock = EditorClock }
             ]),
             loading = new LoadingIcon
             {
@@ -140,6 +149,8 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
         {
             if (t is not null)
             {
+                invalidateCompiled();
+
                 if (ignoredForRebuild.Contains(t.GetType()))
                     return;
 
@@ -155,23 +166,19 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
             Scheduler.AddOnce(idleTracker.Reset);
         };
 
-        Map.RegisterAddListener<ShaderEvent>(_ => checkShaderRebuild());
-        Map.RegisterUpdateListener<ShaderEvent>(_ => checkShaderRebuild());
-        Map.RegisterRemoveListener<ShaderEvent>(_ => checkShaderRebuild());
+        registerListeners<LoopEvent>(rebuildAllCompiled);
+        registerListeners<ShaderEvent>(() => checkShaderRebuild());
+        registerListeners<PulseEvent>(rebuildPulseEffect);
 
-        Map.RegisterAddListener<PulseEvent>(_ => pulseEffect.Rebuild());
-        Map.RegisterUpdateListener<PulseEvent>(_ => pulseEffect.Rebuild());
-        Map.RegisterRemoveListener<PulseEvent>(_ => pulseEffect.Rebuild());
+        registerListeners<CameraMoveEvent>(rebuildCamera);
+        registerListeners<CameraScaleEvent>(rebuildCamera);
+        registerListeners<CameraRotateEvent>(rebuildCamera);
 
-        registerCameraUpdate<CameraMoveEvent>();
-        registerCameraUpdate<CameraScaleEvent>();
-        registerCameraUpdate<CameraRotateEvent>();
-
-        void registerCameraUpdate<T>() where T : class, ICameraEvent
+        void registerListeners<T>(Action action) where T : class, ITimedObject
         {
-            Map.RegisterAddListener<T>(_ => rebuildCamera());
-            Map.RegisterUpdateListener<T>(_ => rebuildCamera());
-            Map.RegisterRemoveListener<T>(_ => rebuildCamera());
+            Map.RegisterAddListener<T>(_ => action());
+            Map.RegisterUpdateListener<T>(_ => action());
+            Map.RegisterRemoveListener<T>(_ => action());
         }
     }
 
@@ -191,6 +198,26 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
         }
     }
 
+    #region Compilation
+
+    private MapEvents getCompiledEvents()
+    {
+        if (cachedEvents != null)
+            return cachedEvents;
+
+        var effects = Map.MapEvents.JsonCopy()!;
+        if (effects is null)
+            throw new ArgumentNullException(nameof(effects));
+
+        effects.Compile();
+        effects.Sort();
+        return cachedEvents = effects;
+    }
+
+    private void invalidateCompiled() => cachedEvents = null;
+
+    #endregion
+
     #region Shaders
 
     private ShaderStackContainer shaders = null!;
@@ -198,10 +225,13 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
     private ShaderStackContainer createShaderStack()
     {
-        shaders = new ShaderStackContainer();
+        shaders = new ShaderStackContainer { Clock = EditorClock };
 
-        var shaderTypes = Map.MapEvents.ShaderEvents.Select(x => x.Type).Distinct();
+        var compiled = getCompiledEvents();
+        var shaderTypes = compiled.ShaderEvents.Select(x => x.Type).Distinct();
+
         rebuildShaders(shaderTypes);
+
         handler.ShaderStack = shaders;
         return shaders;
     }
@@ -209,10 +239,14 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
     private void checkShaderRebuild(bool force = false)
     {
         var current = shaders.ShaderTypes;
-        var shaderTypes = Map.MapEvents.ShaderEvents.Select(x => x.Type).Distinct().ToArray();
+        var compiled = getCompiledEvents();
+        var shaderTypes = compiled.ShaderEvents.Select(x => x.Type).Distinct();
 
-        if (!current.SequenceEqual(shaderTypes) || force)
-            rebuildShaders(shaderTypes);
+        handler.ShaderEvents = compiled.ShaderEvents;
+
+        var shaderTypesArr = shaderTypes as ShaderType[] ?? [.. shaderTypes];
+        if (!current.SequenceEqual(shaderTypesArr) || force)
+            rebuildShaders(shaderTypesArr);
     }
 
     private void rebuildShaders(IEnumerable<ShaderType> types)
@@ -268,8 +302,26 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
     private void rebuildCamera()
     {
-        var events = Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList();
+        var events = getCompiledEvents().Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList();
         camera.Refresh(events);
+    }
+
+    #endregion
+
+    #region Other Events Rebuilding
+
+    private void rebuildPulseEffect()
+    {
+        pulseEffect.Pulses = getCompiledEvents().PulseEvents;
+        pulseEffect.Rebuild();
+    }
+
+    private void rebuildAllCompiled()
+    {
+        checkShaderRebuild();
+        rebuildCamera();
+        rebuildPulseEffect();
+        idleTracker.Reset();
     }
 
     #endregion
