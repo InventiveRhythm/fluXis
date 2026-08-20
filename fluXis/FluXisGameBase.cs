@@ -232,6 +232,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
             GlobalKeybindContainer keybinds;
+            CursorTypeContainer cursorTypeContainer;
 
             base.Content.Add(new SafeAreaContainer
             {
@@ -244,7 +245,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                     {
                         keybinds = new GlobalKeybindContainer(this, Realm)
                         {
-                            Child = new CursorTypeContainer
+                            Child = cursorTypeContainer = new CursorTypeContainer
                             {
                                 RelativeSizeAxes = Axes.Both
                             }.WithChild(CursorOverlay.WithChild(content = new GlobalTooltipContainer(CursorOverlay.Cursor)
@@ -262,6 +263,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             keybindStore.AssignDefaults(new GameplayKeybindContainer(Realm, 0, true));
 
             cacheComponent(keybinds);
+            cacheComponent(cursorTypeContainer);
         }
         catch (Exception ex)
         {

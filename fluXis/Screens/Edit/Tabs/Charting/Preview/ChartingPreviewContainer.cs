@@ -1,3 +1,4 @@
+using System;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using JetBrains.Annotations;
@@ -15,11 +16,20 @@ public partial class ChartingPreviewContainer : CompositeDrawable
 {
     private Box dim;
     private ClickableContainer wrapper;
+    private DraggableContainer dragContainer;
     private bool full;
 
     [UsedImplicitly]
     // ReSharper disable once RedundantDefaultMemberInitializer
     private float fullProgress = 0f;
+
+    [UsedImplicitly]
+    // ReSharper disable once RedundantDefaultMemberInitializer
+    private float dimProgress = 0f;
+
+    [UsedImplicitly]
+    // ReSharper disable once RedundantDefaultMemberInitializer
+    private float resizeProgress = 0f;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -34,35 +44,110 @@ public partial class ChartingPreviewContainer : CompositeDrawable
                 Colour = Colour4.Black,
                 Alpha = 0f
             },
-            wrapper = new ClickableContainer
+            dragContainer = new DraggableContainer
             {
-                Action = toggle,
+                DraggableArea = 6,
                 Padding = new MarginPadding(12),
-                Child = new AspectRatioContainer(true)
+                Child = wrapper = new ClickableContainer
                 {
-                    CornerRadius = 12,
-                    Masking = true,
-                    Child = new ChartingPreview()
+                    Action = toggle,
+                    Child = new AspectRatioContainer(true)
+                    {
+                        CornerRadius = 12,
+                        Masking = true,
+                        Child = new ChartingPreview()
+                    }
                 }
             }
         ];
+
+        dragContainer.OnMouseDownAction = e =>
+        {
+            if (e.Button != MouseButton.Right) return;
+
+            resizeProgress = 0f;
+            this.TransformTo(nameof(fullProgress), resizeProgress, Styling.TRANSITION_MOVE, Easing.OutQuint);
+            if (full) toggle();
+        };
+        dragContainer.OnDraggingStart = _ => dragContainer.ClearTransforms(targetMember: nameof(dragContainer.Position));
+        dragContainer.OnDraggingEnd = _ =>
+        {
+            var screenCenter = dragContainer.ToScreenSpace(dragContainer.DrawRectangle.Centre);
+            var localCenter = Parent!.ToLocalSpace(screenCenter);
+
+            bool isLeft = localCenter.X < Parent.DrawWidth / 2f;
+            bool isTop = localCenter.Y < Parent.DrawHeight / 2f;
+
+            Anchor targetAnchor = (isLeft ? Anchor.x0 : Anchor.x2) | (isTop ? Anchor.y0 : Anchor.y2);
+
+            Vector2 targetCornerLocal = new Vector2(
+                isLeft ? 0 : dragContainer.DrawWidth,
+                isTop ? 0 : dragContainer.DrawHeight
+            );
+
+            Vector2 parentAnchorLocal = new Vector2(
+                isLeft ? 0 : Parent.DrawWidth,
+                isTop ? 0 : Parent.DrawHeight
+            );
+
+            Vector2 currentCornerParentLocal = Parent.ToLocalSpace(dragContainer.ToScreenSpace(targetCornerLocal));
+
+            dragContainer.Anchor = targetAnchor;
+            dragContainer.Origin = targetAnchor;
+
+            dragContainer.Position = currentCornerParentLocal - parentAnchorLocal;
+
+            dragContainer.MoveTo(Vector2.Zero, 500, Easing.OutElasticQuarter);
+        };
     }
 
     protected override void Update()
     {
         base.Update();
-        updateSize();
+        updateSizeAndPosition();
 
         return;
 
-        void updateSize()
+        void updateSizeAndPosition()
         {
-            var min = new Vector2(384, 216) + new Vector2(Padding.TotalHorizontal, Padding.TotalVertical);
-            var max = Parent!.DrawSize;
+            var padding = new Vector2(dragContainer.Padding.TotalHorizontal, dragContainer.Padding.TotalVertical);
+            var min = new Vector2(384, 216) + padding;
+            var max = Parent!.DrawSize - padding;
 
             var delta = max - min;
+
+            var dragDelta = dragContainer.DragDelta;
+
+            if (dragDelta != Vector2.Zero)
+            {
+                dragContainer.DragDelta = Vector2.Zero;
+
+                switch (full)
+                {
+                    case false when delta is { X: > 0, Y: > 0 } && dragContainer.IsResizing:
+                    {
+                        ClearTransforms(true, nameof(fullProgress));
+
+                        float dirX = dragContainer.Anchor.HasFlag(Anchor.x2) ? -1f : 1f;
+                        float dirY = dragContainer.Anchor.HasFlag(Anchor.y2) ? -1f : 1f;
+
+                        var progressDelta = ((dragDelta.X * dirX) / delta.X + (dragDelta.Y * dirY) / delta.Y) / 2f;
+                        resizeProgress = progressDelta;
+                        fullProgress = Math.Clamp(fullProgress + resizeProgress, 0f, 0.5f);
+                        break;
+                    }
+
+                    case false when delta is { X: > 0, Y: > 0 } && !dragContainer.IsResizing:
+                        dragContainer.Position += dragDelta;
+                        break;
+                }
+            }
+
+            if (delta.X <= 0 || delta.Y <= 0)
+                return;
+
             wrapper.Size = min + delta * fullProgress;
-            dim.Alpha = fullProgress * 0.9f;
+            dim.Alpha = dimProgress * 0.9f;
         }
     }
 
@@ -79,7 +164,19 @@ public partial class ChartingPreviewContainer : CompositeDrawable
 
     private void toggle()
     {
+        ClearTransforms(true, nameof(fullProgress));
+
+        if (!full)
+        {
+            resizeProgress = fullProgress;
+            this.TransformTo(nameof(fullProgress), 1f, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        }
+        else
+        {
+            this.TransformTo(nameof(fullProgress), resizeProgress, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        }
+
         full = !full;
-        this.TransformTo(nameof(fullProgress), full ? 1f : 0f, Styling.TRANSITION_MOVE, Easing.OutQuint);
+        this.TransformTo(nameof(dimProgress), full ? 1f : 0f, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 }
