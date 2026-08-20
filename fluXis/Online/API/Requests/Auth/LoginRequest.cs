@@ -11,20 +11,18 @@ public class LoginRequest : APIRequest<LoginResponse>
     protected override string Path => "/auth/login";
     protected override HttpMethod Method => HttpMethod.Post;
 
-    private string username { get; }
-    private string password { get; }
+    private LoginPayload payload { get; }
 
-    public LoginRequest(string username, string password)
+    public LoginRequest(LoginPayload payload)
     {
-        this.username = username;
-        this.password = password;
+        this.payload = payload;
     }
 
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
-        var json = new LoginPayload(username, password);
-        req.AddRaw(json.Serialize());
+        var json = payload.Serialize();
+        req.AddRaw(json);
         return req;
     }
 }

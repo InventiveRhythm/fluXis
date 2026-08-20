@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using fluXis.Utils;
 using Midori.Utils;
 using Newtonsoft.Json;
 
@@ -9,19 +11,17 @@ namespace fluXis.Online.API.Payloads.Auth;
 public class RegisterPayload
 {
     [JsonProperty("username")]
+    [Required, RegularExpression(Validate.USERNAME)]
     public string Username { get; set; } = null!;
 
-    [JsonProperty("password")]
-    public string Password { get; set; } = null!;
+    [JsonProperty("steam")]
+    [Required]
+    public string SteamTicket { get; set; } = null!;
 
-    [JsonProperty("email")]
-    public string Email { get; set; } = null!;
-
-    public RegisterPayload(string username, string password, string email)
+    public RegisterPayload(string username, string ticket)
     {
         Username = username;
-        Password = password;
-        Email = email;
+        SteamTicket = ticket;
     }
 
     [JsonConstructor]

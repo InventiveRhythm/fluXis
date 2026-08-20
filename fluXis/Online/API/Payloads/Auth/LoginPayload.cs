@@ -1,21 +1,25 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Midori.Utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace fluXis.Online.API.Payloads.Auth;
 
 public class LoginPayload
 {
-    [JsonProperty("username")]
-    public string Username { get; set; } = null!;
+    [JsonProperty("method")]
+    [Required]
+    public string Method { get; set; } = null!;
 
-    [JsonProperty("password")]
-    public string Password { get; set; } = null!;
+    [JsonProperty("data")]
+    [Required]
+    public JObject Data { get; set; } = null!;
 
-    public LoginPayload(string username, string password)
+    public LoginPayload(string method, JObject data)
     {
-        Username = username;
-        Password = password;
+        Method = method;
+        Data = data;
     }
 
     [JsonConstructor]
@@ -23,4 +27,7 @@ public class LoginPayload
     public LoginPayload()
     {
     }
+
+    public static LoginPayload CreateSteam(string ticket) => new("steam", JObject.FromObject(new { ticket }));
+    public static LoginPayload CreateLegacy(string username, string password) => new("legacy", JObject.FromObject(new { username, password }));
 }

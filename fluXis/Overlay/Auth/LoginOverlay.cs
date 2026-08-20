@@ -1,18 +1,25 @@
 using System;
 using fluXis.Audio;
 using fluXis.Configuration;
+using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Types;
+using fluXis.Integration;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth.UI;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Overlay.Auth;
@@ -30,13 +37,30 @@ public partial class LoginOverlay : CompositeDrawable
     [Resolved(CanBeNull = true)]
     private RegisterOverlay registerOverlay { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private ISteamManager steam { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PanelContainer panels { get; set; }
+
     [Resolved]
     private UISamples samples { get; set; }
 
     private Container content;
     private FluXisSpriteText errorText;
-    private AuthOverlayTextBox username;
-    private AuthOverlayTextBox password;
+
+    private AuthOverlayButton switchToNew;
+    private AuthOverlayButton loginWithSteam;
+    private AuthOverlayButton register;
+
+    private AuthOverlayButton switchToLegacy;
+    private AuthOverlayTextBox legacyUsername;
+    private AuthOverlayTextBox legacyPassword;
+    private AuthOverlayButton legacyContinue;
+    private AuthOverlayButton legacyForgot;
+
     private Container loadingLayer;
 
     private Action loginAction;
@@ -93,22 +117,39 @@ public partial class LoginOverlay : CompositeDrawable
                                 Alpha = 0
                             },
                             Empty().With(d => d.Anchor = d.Origin = Anchor.TopCentre),
-                            username = new AuthOverlayTextBox
+                            loginWithSteam = new AuthOverlayIconButton(FontAwesome.Brands.Steam, "Login with Steam")
+                            {
+                                Action = steamLogin,
+                                Color = ColourInfo.GradientVertical(Colour4.FromHex("#1C2B43"), Colour4.FromHex("#106691")),
+                                TextColor = Colour4.FromHex("#EDEDED")
+                            },
+                            legacyUsername = new AuthOverlayTextBox
                             {
                                 TabbableContentContainer = this,
                                 Text = config.Get<string>(FluXisSetting.Username),
-                                PlaceholderText = "Username"
+                                PlaceholderText = "Username",
+                                Alpha = 0
                             },
-                            password = new AuthOverlayTextBox
+                            legacyPassword = new AuthOverlayTextBox
                             {
                                 TabbableContentContainer = this,
                                 PlaceholderText = "Password",
-                                IsPassword = true
+                                IsPassword = true,
+                                Alpha = 0
                             },
                             Empty().With(d => d.Anchor = d.Origin = Anchor.TopCentre),
-                            new AuthOverlayButton("Continue") { Action = login },
-                            new AuthOverlayButton("Forgot password?") { Action = openPasswordReset },
-                            new AuthOverlayButton("Create new account") { Action = openRegister },
+                            register = new AuthOverlayButton("Create new account") { Action = openRegister },
+                            switchToLegacy = new AuthOverlayButton("Login with username/email")
+                            {
+                                Action = () => switchModes(true)
+                            },
+                            legacyContinue = new AuthOverlayButton("Continue") { Action = legacyLogin, Alpha = 0 },
+                            legacyForgot = new AuthOverlayButton("Forgot password?") { Action = openPasswordReset, Alpha = 0 },
+                            switchToNew = new AuthOverlayButton("Back")
+                            {
+                                Alpha = 0,
+                                Action = () => switchModes()
+                            },
                             new AuthOverlayButton("Play offline")
                             {
                                 Action = () =>
@@ -150,28 +191,64 @@ public partial class LoginOverlay : CompositeDrawable
     {
         base.LoadComplete();
 
-        password.OnCommit += (_, _) => login();
+        legacyPassword.OnCommit += (_, _) => legacyLogin();
     }
 
-    private async void login()
+    private void switchModes(bool legacy = false)
+    {
+        errorText.Alpha = 0;
+
+        loginWithSteam.Alpha = switchToLegacy.Alpha = register.Alpha = legacy ? 0f : 1f;
+        legacyUsername.Alpha = legacyPassword.Alpha = legacyContinue.Alpha = legacyForgot.Alpha = switchToNew.Alpha = legacy ? 1f : 0f;
+    }
+
+    private async void steamLogin()
+    {
+        try
+        {
+            Scheduler.ScheduleIfNeeded(() => loadingLayer.FadeIn(Styling.TRANSITION_FADE));
+
+            var ticket = "invalid-ticket";
+            if (steam != null) ticket = await steam.GetAuthTicket();
+            var error = await api.LoginSteam(ticket);
+
+            Scheduler.ScheduleIfNeeded(() => loadingLayer.FadeOut(Styling.TRANSITION_FADE));
+
+            if (error != null)
+            {
+                panels?.Add(new SingleButtonPanel(Phosphor.Bold.Warning, "Failed to login with steam!", error.Message));
+                if (panels == null) setError(error.Message);
+                return;
+            }
+
+            loginAction?.Invoke();
+            Hide();
+        }
+        catch (Exception e)
+        {
+            setError($"{e}: {e.Message}");
+        }
+    }
+
+    private async void legacyLogin()
     {
         try
         {
             setError("");
 
-            if (string.IsNullOrEmpty(username.Text))
+            if (string.IsNullOrEmpty(legacyUsername.Text))
             {
                 setError("Username cannot be empty.");
                 return;
             }
 
-            if (string.IsNullOrEmpty(password.Text))
+            if (string.IsNullOrEmpty(legacyPassword.Text))
             {
                 setError("Password cannot be empty.");
                 return;
             }
 
-            var error = await api.Login(username.Text, password.Text);
+            var error = await api.LoginLegacy(legacyUsername.Text, legacyPassword.Text);
 
             if (error != null)
             {
@@ -223,7 +300,7 @@ public partial class LoginOverlay : CompositeDrawable
         content.ScaleTo(.75f).ScaleTo(1f, 800, Easing.OutElasticHalf);
         samples.Overlay(false);
 
-        Schedule(() => GetContainingFocusManager()?.ChangeFocus(string.IsNullOrEmpty(username.Text) ? username : password));
+        Schedule(() => GetContainingFocusManager()?.ChangeFocus(string.IsNullOrEmpty(legacyUsername.Text) ? legacyUsername : legacyPassword));
     }
 
     public override void Hide()

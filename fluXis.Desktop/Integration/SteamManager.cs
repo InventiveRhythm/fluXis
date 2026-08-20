@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Integration;
 using fluXis.Online.API.Requests.Users;
@@ -376,6 +377,23 @@ public partial class SteamManager : Component, ISteamManager
         rpc[pchKey] = value;
     }
 
+    #region Authentication
+
+    [CanBeNull]
+    private TaskCompletionSource<string> authTicketAwait;
+
+    public async Task<string> GetAuthTicket()
+    {
+        var awt = authTicketAwait = new TaskCompletionSource<string>();
+        SteamUser.GetAuthTicketForWebApi(null);
+
+        await Task.WhenAny(awt.Task, Task.Delay(10000));
+
+        return string.IsNullOrWhiteSpace(awt.Task.Result)
+            ? throw new TimeoutException("Ticket fetch timed out.")
+            : awt.Task.Result;
+    }
+
     private void startAccountLink()
     {
         if (api.User.Value is null || api.User.Value.SteamID is not null)
@@ -393,19 +411,27 @@ public partial class SteamManager : Component, ISteamManager
             return;
         }
 
-        if (api.User.Value is null)
-            return;
-
         logger.Add($"Received ticket. [{ticket.m_cubTicket}]");
 
         var bytes = ticket.m_rgubTicket;
         var str = BitConverter.ToString(bytes).Replace("-", "").ToLower();
+
+        if (authTicketAwait != null)
+        {
+            authTicketAwait.SetResult(str);
+            authTicketAwait = null;
+        }
+
+        if (api.User.Value is null)
+            return;
 
         var req = new UserConnectionCreateRequest(api.User.Value.ID, "steam", str);
         req.Success += res => api.User.Value.SteamID = res.Data?.ToObject<ulong>() ?? 0;
         req.Failure += ex => logger.Add("Failed to link account!", LogLevel.Error, ex);
         api.PerformRequestAsync(req);
     }
+
+    #endregion
 
     protected override void Dispose(bool isDisposing)
     {

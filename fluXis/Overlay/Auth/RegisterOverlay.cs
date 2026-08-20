@@ -6,6 +6,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
+using fluXis.Integration;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth.UI;
 using fluXis.Overlay.Notifications;
@@ -40,6 +41,10 @@ public partial class RegisterOverlay : Container
     [Resolved(CanBeNull = true)]
     private LoginOverlay loginOverlay { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private ISteamManager steam { get; set; }
+
     private Container content;
     private FillFlowContainer warningContainer;
     private FillFlowContainer formContainer;
@@ -47,8 +52,6 @@ public partial class RegisterOverlay : Container
 
     private FluXisSpriteText errorText;
     private AuthOverlayTextBox username;
-    private AuthOverlayTextBox password;
-    private AuthOverlayTextBox email;
 
     private FullInputBlockingContainer background;
     private AuthOverlayButton understandButton;
@@ -67,7 +70,6 @@ public partial class RegisterOverlay : Container
             background = new FullInputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                OnClickAction = Hide,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -147,17 +149,6 @@ public partial class RegisterOverlay : Container
                                 PlaceholderText = "Username",
                                 TabbableContentContainer = this
                             },
-                            email = new AuthOverlayTextBox
-                            {
-                                PlaceholderText = "Email",
-                                TabbableContentContainer = this
-                            },
-                            password = new AuthOverlayTextBox
-                            {
-                                PlaceholderText = "Password",
-                                TabbableContentContainer = this,
-                                IsPassword = true
-                            },
                             Empty().With(d => d.Anchor = d.Origin = Anchor.TopCentre),
                             new AuthOverlayButton("Create!") { Action = register },
                             new AuthOverlayButton("Back") { Action = openLogin }
@@ -192,9 +183,7 @@ public partial class RegisterOverlay : Container
     {
         base.LoadComplete();
 
-        username.OnCommit += (_, _) => switchFocus(email);
-        email.OnCommit += (_, _) => switchFocus(password);
-        password.OnCommit += (_, _) => register();
+        username.OnCommit += (_, _) => register();
     }
 
     protected override void Update()
@@ -302,19 +291,9 @@ public partial class RegisterOverlay : Container
                 return;
             }
 
-            if (string.IsNullOrEmpty(email.Text))
-            {
-                setError("Email cannot be empty.");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(password.Text) || password.Text.Length < 8 || password.Text.Length > 32)
-            {
-                setError("Password must be between 8 and 32 characters.");
-                return;
-            }
-
-            var error = await api.Register(username.Text, password.Text, email.Text);
+            var ticket = "invalid-ticket";
+            if (steam != null) ticket = await steam.GetAuthTicket();
+            var error = await api.Register(username.Text, ticket);
 
             if (error != null)
             {

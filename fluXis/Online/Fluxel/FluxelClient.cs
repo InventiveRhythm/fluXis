@@ -13,6 +13,7 @@ using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.API.Payloads.Auth;
 using fluXis.Online.API.Requests;
 using fluXis.Online.API.Requests.Auth;
 using fluXis.Online.API.Requests.Users;
@@ -344,14 +345,34 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
     private Bindable<string> username = null!;
 
-    public async Task<Exception?> Login(string username, string password)
+    public async Task<Exception?> LoginSteam(string ticket)
+    {
+        Logger.Log("Logging in...", LoggingTarget.Network);
+        Status.Value = ConnectionStatus.Authenticating;
+
+        var req = new LoginRequest(LoginPayload.CreateSteam(ticket));
+        await PerformRequestAsync(req);
+
+        if (!req.IsSuccessful)
+        {
+            Logger.Error(req.FailReason, "Failed to get access token!", LoggingTarget.Network);
+            LastException = req.FailReason;
+            Status.Value = ConnectionStatus.Failed;
+            return req.FailReason;
+        }
+
+        tokenBindable.Value = req.Response.Data!.AccessToken;
+        return await ReLogin();
+    }
+
+    public async Task<Exception?> LoginLegacy(string username, string password)
     {
         Logger.Log("Logging in...", LoggingTarget.Network);
         this.username.Value = username;
 
         Status.Value = ConnectionStatus.Authenticating;
 
-        var req = new LoginRequest(username, password);
+        var req = new LoginRequest(LoginPayload.CreateLegacy(username, password));
         await PerformRequestAsync(req);
 
         if (!req.IsSuccessful)
@@ -390,14 +411,14 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
         return null;
     }
 
-    public async Task<Exception?> Register(string username, string password, string email)
+    public async Task<Exception?> Register(string username, string ticket)
     {
         Logger.Log("Registering account...", LoggingTarget.Network);
         this.username.Value = username;
 
         Status.Value = ConnectionStatus.Authenticating;
 
-        var req = new RegisterRequest(username, password, email);
+        var req = new RegisterRequest(username, ticket);
         await PerformRequestAsync(req);
 
         if (!req.IsSuccessful)

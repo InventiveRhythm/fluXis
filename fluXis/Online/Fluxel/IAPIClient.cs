@@ -56,9 +56,10 @@ public interface IAPIClient
     void PullServerConfig(Action complete, Action<Exception> failure);
     void TryConnecting();
 
-    Task<Exception?> Login(string username, string password);
+    Task<Exception?> LoginSteam(string ticket);
+    Task<Exception?> LoginLegacy(string username, string password);
     Task<Exception?> ReLogin();
-    Task<Exception?> Register(string username, string password, string email);
+    Task<Exception?> Register(string username, string ticket);
     void Logout();
 
     void UpdateLastRead();

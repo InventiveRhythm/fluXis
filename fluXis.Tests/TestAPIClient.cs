@@ -78,9 +78,11 @@ public class TestAPIClient : IAPIClient
 
     public Task<Exception?> ReLogin() => throw new NotImplementedException();
 
-    public void TestLogin() => Login(USERNAME, PASSWORD).Wait();
+    public void TestLogin() => LoginLegacy(USERNAME, PASSWORD).Wait();
 
-    public Task<Exception?> Login(string username, string password)
+    public Task<Exception?> LoginSteam(string ticket) => LoginLegacy(USERNAME, PASSWORD);
+
+    public Task<Exception?> LoginLegacy(string username, string password)
     {
         if (username == USERNAME && password == PASSWORD)
         {
@@ -102,7 +104,7 @@ public class TestAPIClient : IAPIClient
         return Task.FromResult<Exception?>(LastException);
     }
 
-    public Task<Exception?> Register(string username, string password, string email)
+    public Task<Exception?> Register(string username, string ticket)
     {
         Status.Value = ConnectionStatus.Online;
         User.Value = new APIUser

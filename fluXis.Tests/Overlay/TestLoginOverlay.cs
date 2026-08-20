@@ -45,7 +45,7 @@ public partial class TestLoginOverlay : FluXisTestScene
     [Test]
     public void TestDontShowWhenLoggedIn()
     {
-        AddStep("log in", () => TestAPI.Login(TestAPIClient.USERNAME, TestAPIClient.PASSWORD));
+        AddStep("log in", () => TestAPI.LoginLegacy(TestAPIClient.USERNAME, TestAPIClient.PASSWORD));
         AddStep("show overlay", () => overlay.Show());
         AddRepeatStep("wait", () => { }, 4);
         AddAssert("check overlay is hidden", () => overlay.Alpha == 0);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using fluXis.Graphics.UserInterface.Text;
 using JetBrains.Annotations;
 
@@ -15,6 +16,8 @@ public interface ISteamManager
     event Action<bool> ItemCreated;
     event Action<bool> ItemUpdated;
     event Action ItemListUpdated;
+
+    Task<string> GetAuthTicket();
 
     void OpenLink(string url);
     void SetRichPresence(SteamRichPresenceKey key, string value);

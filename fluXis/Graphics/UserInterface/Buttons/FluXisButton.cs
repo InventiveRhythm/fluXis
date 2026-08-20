@@ -8,6 +8,7 @@ using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
@@ -29,12 +30,12 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
         {
             text = value;
 
-            if (textSprite != null)
-                textSprite.Text = value;
+            if (TextSprite != null)
+                TextSprite.Text = value;
         }
     }
 
-    public Colour4 Color { get; set; } = Theme.Background4;
+    public ColourInfo Color { get; set; } = Theme.Background4;
     public Colour4 TextColor { get; set; } = Theme.Text;
     public bool HoldToConfirm { get; set; }
 
@@ -78,7 +79,8 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
     private Box holdBox;
     private FlashLayer flashBox;
     private CircularContainer content;
-    private FluXisSpriteText textSprite;
+
+    protected FluXisSpriteText TextSprite;
 
     private HoldToConfirmHandler holdToConfirmHandler;
 
@@ -113,22 +115,26 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
                     Width = 0
                 },
                 flashBox = new FlashLayer(),
-                new Container
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Child = textSprite = new FluXisSpriteText
-                    {
-                        Text = Text,
-                        FontSize = FontSize,
-                        Colour = TextColor,
-                        Shadow = true,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    }
-                }
+                CreateContent()
             }
         };
     }
+
+    protected virtual Drawable CreateContent() => new Container
+    {
+        RelativeSizeAxes = Axes.Both,
+        Child = TextSprite = CreateTextSprite()
+    };
+
+    protected virtual FluXisSpriteText CreateTextSprite() => new()
+    {
+        Text = Text,
+        FontSize = FontSize,
+        Colour = TextColor,
+        Shadow = true,
+        Anchor = Anchor.Centre,
+        Origin = Anchor.Centre
+    };
 
     protected override void Update()
     {

@@ -12,20 +12,18 @@ public class RegisterRequest : APIRequest<RegisterResponse>
     protected override HttpMethod Method => HttpMethod.Post;
 
     private string username { get; }
-    private string password { get; }
-    private string email { get; }
+    private string ticket { get; }
 
-    public RegisterRequest(string username, string password, string email)
+    public RegisterRequest(string username, string ticket)
     {
         this.username = username;
-        this.password = password;
-        this.email = email;
+        this.ticket = ticket;
     }
 
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
-        var json = new RegisterPayload(username, password, email);
+        var json = new RegisterPayload(username, ticket);
         req.AddRaw(json.Serialize());
         return req;
     }
