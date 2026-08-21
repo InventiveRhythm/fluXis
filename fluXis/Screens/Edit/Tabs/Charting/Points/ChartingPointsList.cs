@@ -23,8 +23,7 @@ public partial class ChartingPointsList : PointsList
     protected override void RegisterEvents()
     {
         RegisterTypeEvents(Map.MapInfo.TimingPoints);
-        RegisterTypeEvents(Map.MapEvents.LaneSwitchEvents);
-        RegisterTypeEvents(Map.MapEvents.NoteEvents);
+        RegisterTypeEvents(Map.MapInfo.ScrollVelocities);
 
         foreach (var (type, list) in Map.MapEvents.GetListsForTypes())
         {
