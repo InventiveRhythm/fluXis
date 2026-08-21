@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,10 +17,6 @@ public partial class DraggableContainer : Container
 
     private InputManager input;
 
-    private CursorType lastCursorType => (CursorType)typeof(CursorTypeContainer)
-                                                     .GetField("last", BindingFlags.NonPublic | BindingFlags.Instance)
-                                                     ?.GetValue(cursorTypeContainer)!;
-
     public float DraggableArea = 12f;
     public Vector2 DragDelta;
 
@@ -32,6 +27,8 @@ public partial class DraggableContainer : Container
 
     /// if false then it means it would be moving if there was dragging
     public bool IsResizing;
+
+    public bool AllowCursorChange = true;
 
     [Resolved]
     private GameHost host { get; set; } = null!;
@@ -87,8 +84,15 @@ public partial class DraggableContainer : Container
 
         var mousePos = input.CurrentState.Mouse.Position;
 
-        Anchor anchor = getPos(mousePos);
-        host.Window.ChangeCursor(getCursorType(anchor));
+        if (AllowCursorChange)
+        {
+            Anchor anchor = getPos(mousePos);
+            host.Window.ChangeCursor(getCursorType(anchor));
+        }
+        else
+        {
+            host.Window.ChangeCursor(CursorType.Arrow);
+        }
 
         base.Update();
     }
@@ -97,7 +101,7 @@ public partial class DraggableContainer : Container
     {
         base.OnHoverLost(e);
 
-        host.Window.ChangeCursor(lastCursorType);
+        host.Window.ChangeCursor(cursorTypeContainer.LastCursorType);
     }
 
     protected override bool OnDragStart(DragStartEvent e)

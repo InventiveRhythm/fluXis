@@ -177,6 +177,7 @@ public partial class ChartingPreviewContainer : CompositeDrawable
         }
 
         full = !full;
+        dragContainer.AllowCursorChange = !dragContainer.AllowCursorChange;
         this.TransformTo(nameof(dimProgress), full ? 1f : 0f, Styling.TRANSITION_MOVE, Easing.OutQuint);
     }
 }
