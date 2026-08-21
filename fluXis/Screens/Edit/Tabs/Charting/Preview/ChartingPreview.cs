@@ -41,6 +41,9 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
     protected Editor Editor { get; private set; } = null!;
 
     [Resolved]
+    protected EditorSettings Settings { get; private set; } = null!;
+
+    [Resolved]
     protected EditorClock EditorClock { get; private set; } = null!;
 
     [Resolved]
@@ -50,6 +53,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
     private IdleTracker idleTracker = null!;
     private Bindable<float> userScrollSpeed = null!;
+    private Bindable<float> zoomedScrollSpeed = null!;
 
     private SpriteStack<BlurableBackground> background = null!;
     private BackgroundVideo backgroundVideo = null!;
@@ -79,6 +83,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
     private void load(FluXisConfig config)
     {
         userScrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
+        zoomedScrollSpeed = new Bindable<float>();
 
         RelativeSizeAxes = Axes.Both;
         TargetDrawSize = new Vector2(1920, 1080);
@@ -144,6 +149,8 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
         Editor.BindableBackgroundDim.BindValueChanged(e => backgroundDim.FadeTo(e.NewValue, 300));
         Editor.BindableBackgroundBlur.BindValueChanged(e => background.Add(new BlurableBackground(Map.RealmMap, e.NewValue)), true);
 
+        Settings.ApplyZoomToPreview.BindValueChanged(_ => idleTracker.Reset());
+
         Scheduler.AddOnce(idleTracker.Reset);
         Map.AnyChange += t =>
         {
@@ -180,6 +187,12 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
             Map.RegisterUpdateListener<T>(_ => action());
             Map.RegisterRemoveListener<T>(_ => action());
         }
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        zoomedScrollSpeed.Value = (float)(userScrollSpeed.Value * (Settings.Zoom / 2f));
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
@@ -289,7 +302,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
         var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap.KeyCount);
         var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, effects, [new NoFailMod()]);
-        container.ScrollSpeed = userScrollSpeed;
+        container.ScrollSpeed = Settings.ApplyZoomToPreview.Value ? zoomedScrollSpeed : userScrollSpeed;
         container.ParentClock = EditorClock;
         return container;
     }

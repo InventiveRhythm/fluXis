@@ -77,6 +77,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.EditorKeymap, "");
         SetDefault(FluXisSetting.EditorCompactMode, false);
         SetDefault(FluXisSetting.EditorAutoSave, false);
+        SetDefault(FluXisSetting.EditorZoomPreview, false);
 
         // Audio
         SetDefault(FluXisSetting.InactiveVolume, 0.5d, 0d, 1d, 0.01d);
@@ -174,6 +175,7 @@ public enum FluXisSetting
     EditorKeymap,
     EditorCompactMode,
     EditorAutoSave,
+    EditorZoomPreview,
 
     // Audio
     InactiveVolume,

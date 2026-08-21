@@ -1,3 +1,4 @@
+using fluXis.Configuration;
 using fluXis.Screens.Edit.Input;
 using osu.Framework.Bindables;
 
@@ -23,7 +24,7 @@ public class EditorSettings
     }
 
     public Bindable<float> WaveformOpacity { get; } = new(.2f);
-    public BindableBool ForceAspectRatio { get; } = new();
+    public Bindable<bool> ApplyZoomToPreview { get; }
 
     public BindableDouble ZoomBindable { get; } = new(2f)
     {
@@ -40,8 +41,9 @@ public class EditorSettings
         Default = 4
     };
 
-    public EditorSettings(EditorKeybindingContainer bindings)
+    public EditorSettings(FluXisConfig config, EditorKeybindingContainer bindings)
     {
+        ApplyZoomToPreview = config.GetBindable<bool>(FluXisSetting.EditorZoomPreview);
         this.bindings = bindings;
     }
 
