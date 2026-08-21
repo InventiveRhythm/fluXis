@@ -26,7 +26,7 @@ public partial class DrawableMapSetItem : CompositeDrawable
     private readonly RealmMapSet set;
     private readonly List<RealmMap> maps;
 
-    private SelectedState selectedState = SelectedState.Deselected;
+    public SelectedState SelectedState { get; private set; } = SelectedState.Deselected;
 
     private DrawableMapSetHeader header = null!;
     private Container<DrawableMapSetDifficulty> difficultyFlow = null!;
@@ -123,20 +123,20 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
     private void select()
     {
-        if (selectedState == SelectedState.Selected)
+        if (SelectedState == SelectedState.Selected)
             return;
 
         header.Show();
-        selectedState = SelectedState.Selected;
+        SelectedState = SelectedState.Selected;
     }
 
     private void deselect()
     {
-        if (selectedState == SelectedState.Deselected)
+        if (SelectedState == SelectedState.Deselected)
             return;
 
         header.Hide();
-        selectedState = SelectedState.Deselected;
+        SelectedState = SelectedState.Deselected;
     }
 
     protected override bool OnClick(ClickEvent e)

@@ -16,6 +16,7 @@ using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Navigator;
+using fluXis.UI;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -222,7 +223,9 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
     {
         base.LoadComplete();
 
-        Hide();
+        if (parent.SelectedState == SelectedState.Selected) Show();
+        else Hide();
+
         FinishTransforms();
 
         if (beatSync is not null)
