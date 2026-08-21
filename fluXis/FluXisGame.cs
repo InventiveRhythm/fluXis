@@ -150,13 +150,13 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(new BrowseOverlay(), overlayContainer.Add, true);
         loadComponent(new WikiOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
-        loadComponent(new SettingsMenu(), overlayContainer.Add, true);
         loadComponent(navigator = new OnlineNavigator(), overlayContainer.Add, true);
 
         loadComponent(loginOverlay = new LoginOverlay(), buffer.Add, true);
-
         loadComponent(new RegisterOverlay(), buffer.Add, true);
         loadComponent(new MultifactorOverlay(), buffer.Add, true);
+
+        loadComponent(new SettingsMenu(), overlayContainer.Add, true);
         loadComponent(toolbar = new Toolbar(), buffer.Add, true);
 
         loadComponent(panelContainer = new PanelContainer { BlurContainer = buffer }, Add, true);
