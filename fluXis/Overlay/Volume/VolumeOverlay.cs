@@ -20,7 +20,7 @@ public partial class VolumeOverlay : VisibilityContainer, IKeyBindingHandler<Flu
     public override bool PropagatePositionalInputSubTree => true;
     protected override bool StartHidden => true;
 
-    private const int max_inactive = 2000;
+    private const int max_inactive = 800;
 
     [Resolved]
     private UISamples samples { get; set; }
