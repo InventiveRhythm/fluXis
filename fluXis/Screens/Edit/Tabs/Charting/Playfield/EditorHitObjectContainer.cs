@@ -45,7 +45,6 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
 
         registerEffect(map.MapInfo.HitObjects);
         registerEffect(map.MapInfo.TimingPoints);
-        registerEffect(map.MapInfo.ScrollVelocities);
 
         foreach (var (type, list) in map.MapEvents.GetListsForTypes())
         {
