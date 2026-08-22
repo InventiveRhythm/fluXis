@@ -65,6 +65,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
     private PreviewFlashLayer backFlash = null!;
     private PreviewFlashLayer frontFlash = null!;
     private PulseEffect pulseEffect = null!;
+    private BeatPulseManager beatPulseManager = null!;
 
     private LoadingIcon loading = null!;
 
@@ -94,8 +95,10 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
         camera = new CameraContainer([.. Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>()]) { Clock = EditorClock };
 
-        Children =
-        [
+        Container pulseContainer;
+
+        Children = new Drawable[]
+        {
             new Box { RelativeSizeAxes = Axes.Both, Colour = Theme.Background2 },
             idleTracker = new IdleTracker(400, rebuildRuleset, () =>
             {
@@ -106,37 +109,49 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
             {
                 ShaderEvents = compiled.ShaderEvents
             },
-            createShaderStack().WithChildren([
-                camera.CreateProxyDrawable().With(x => x.Clock = EditorClock),
-                camera.WithChildren(new Drawable[]
-                {
-                    background = new SpriteStack<BlurableBackground> { AutoFill = false },
-                    backgroundVideo = new BackgroundVideo
+
+            camera.CreateProxyDrawable().With(x => x.Clock = EditorClock),
+
+            pulseContainer = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Child = createShaderStack().WithChildren<ShaderStackContainer, Drawable>([
+                    camera.WithChildren(new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        VideoClock = EditorClock
-                    },
-                    backgroundDim = new Box
-                    {
-                        Colour = Color4.Black,
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = Editor.BackgroundDim,
-                    },
-                    backFlash = new PreviewFlashLayer { Clock = EditorClock },
-                    rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both }
-                }),
-                frontFlash = new PreviewFlashLayer { Clock = EditorClock },
-                pulseEffect = new PulseEffect(compiled.PulseEvents) { Clock = EditorClock }
-            ]),
+                        background = new SpriteStack<BlurableBackground> { AutoFill = false },
+                        backgroundVideo = new BackgroundVideo
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            VideoClock = EditorClock
+                        },
+                        backgroundDim = new Box
+                        {
+                            Colour = Color4.Black,
+                            RelativeSizeAxes = Axes.Both,
+                            Alpha = Editor.BackgroundDim,
+                        },
+                        backFlash = new PreviewFlashLayer { Clock = EditorClock },
+                        rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both }
+                    }),
+                    pulseEffect = new PulseEffect(compiled.PulseEvents) { Clock = EditorClock },
+                    frontFlash = new PreviewFlashLayer { Clock = EditorClock }
+                ])
+            },
+
             loading = new LoadingIcon
             {
                 Size = new Vector2(32),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             }
-        ];
+        };
+
+        beatPulseManager = new BeatPulseManager(Map.MapInfo, compiled.BeatPulseEvents, pulseContainer) { Clock = EditorClock };
+        AddInternal(beatPulseManager);
     }
 
     protected override void LoadComplete()
@@ -173,9 +188,10 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
             Scheduler.AddOnce(idleTracker.Reset);
         };
 
-        registerListeners<LoopEvent>(rebuildAllCompiled);
+        registerListeners<LoopEvent>(() => rebuildAllCompiled());
         registerListeners<ShaderEvent>(() => checkShaderRebuild());
         registerListeners<PulseEvent>(rebuildPulseEffect);
+        registerListeners<BeatPulseEvent>(rebuildBeatPulse);
 
         registerListeners<CameraMoveEvent>(rebuildCamera);
         registerListeners<CameraScaleEvent>(rebuildCamera);
@@ -200,10 +216,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
         switch (e.Key)
         {
             case Key.R when e.ShiftPressed:
-                rebuildRuleset();
-                rebuildCamera();
-                checkShaderRebuild(true);
-                pulseEffect.Rebuild();
+                rebuildAllCompiled(true);
                 return true;
 
             default:
@@ -329,11 +342,15 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
         pulseEffect.Rebuild();
     }
 
-    private void rebuildAllCompiled()
+    private void rebuildBeatPulse() =>
+        beatPulseManager.Rebuild(getCompiledEvents().BeatPulseEvents);
+
+    private void rebuildAllCompiled(bool force = false)
     {
-        checkShaderRebuild();
+        checkShaderRebuild(force);
         rebuildCamera();
         rebuildPulseEffect();
+        rebuildBeatPulse();
         idleTracker.Reset();
     }
 
