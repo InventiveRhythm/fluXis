@@ -56,11 +56,17 @@ public partial class ChartingTab : EditorTab
     public static string FormatTypeName<T>(bool multiple = false, bool title = false) where T : ITimedObject
     {
         var type = typeof(T);
-        var desc = type.Name.Replace("Event", "").Titleize();
-        desc = desc.Replace("Hit Object", "HitObject");
+        string desc;
 
-        if (type == typeof(ITimedObject))
+        if (type.IsInterface)
+        {
             desc = "Object";
+        }
+        else
+        {
+            desc = type.Name.Replace("Event", "").Titleize();
+            desc = desc.Replace("Hit Object", "HitObject");
+        }
 
         if (!title) desc = desc.ToLower();
 
