@@ -240,7 +240,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
 
         var objs = hitBlueprints.Select(b => b.Object).ToArray();
         var vecs = ObjectMoveAction<ITimedObject>.CreateFrom(objs);
-        moveAction?.Apply([.. vecs.Select(v => new Vector2d(v.X + timeDelta, v.Y + laneDelta))], true);
+        moveAction?.Apply(map, [.. vecs.Select(v => new Vector2d(v.X + timeDelta, v.Y + laneDelta))], true);
     }
 
     protected override void FinishedMoving()
@@ -306,7 +306,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
             if (!changed)
                 return false;
 
-            action.Apply(ObjectMoveAction<HitObject>.CreateFrom([.. selected]), true);
+            action.Apply(map, ObjectMoveAction<HitObject>.CreateFrom([.. selected]), true);
             actions.Add(action);
             return true;
         }

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Actions.Generic;
@@ -21,10 +22,10 @@ public class ObjectMoveAction<T> : EditorAction
         newPos = [.. originalPos]; // copy, since it gets updated later
     }
 
-    public override void Run(EditorMap map) => Apply(newPos, false);
-    public override void Undo(EditorMap map) => Apply(originalPos, false);
+    public override void Run(EditorMap map) => Apply(map, newPos, false);
+    public override void Undo(EditorMap map) => Apply(map, originalPos, false);
 
-    public void Apply(Vector2d[] vecs, bool update)
+    public void Apply(EditorMap map, Vector2d[] vecs, bool update)
     {
         if (update)
             newPos = vecs;
@@ -34,8 +35,12 @@ public class ObjectMoveAction<T> : EditorAction
             var info = infos[i];
             var vec = vecs[i];
 
+            bool timeChanged = !Precision.AlmostEquals(info.Time, vec[0]);
+
             info.Time = vec[0];
             info.Lane = (int)vec[1];
+
+            if (timeChanged && update) map.Update(info);
         }
     }
 
