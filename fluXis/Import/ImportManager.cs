@@ -57,7 +57,7 @@ public partial class ImportManager : Component
     [BackgroundDependencyLoader]
     private void load(PluginManager plugins)
     {
-        foreach (var plugin in plugins.Plugins)
+        foreach (var plugin in plugins.Loaded)
         {
             var importer = plugin.Importer;
             if (importer == null) continue;

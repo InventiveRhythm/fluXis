@@ -17,7 +17,7 @@ public partial class PluginsImportSection : SettingsSubSection
     [BackgroundDependencyLoader]
     private void load(PluginManager plugins)
     {
-        foreach (var plugin in plugins.Plugins.Where(p => p is { Importer: not null }))
+        foreach (var plugin in plugins.Loaded.Where(p => p is { Importer: not null }))
             Add(new DrawableImportPlugin { Plugin = plugin });
     }
 }

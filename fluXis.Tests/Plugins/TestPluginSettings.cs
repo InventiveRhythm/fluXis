@@ -23,7 +23,7 @@ public abstract partial class TestPluginSettings : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load(PluginManager plugins, ImportManager imports, FluXisRealm realm)
     {
-        var plugin = plugins.Plugins.FirstOrDefault(x => x.GetType() == TargetType) ?? throw new InvalidOperationException("Target type is not a loaded plugin.");
+        var plugin = plugins.Loaded.FirstOrDefault(x => x.GetType() == TargetType) ?? throw new InvalidOperationException("Target type is not a loaded plugin.");
         var importer = plugin.Importer;
 
         var list = new List<Drawable>();
