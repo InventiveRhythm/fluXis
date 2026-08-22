@@ -54,6 +54,7 @@ public partial class ShaderEntry : PointListEntry
         {
             Text = "Use Start Value",
             TooltipText = "Enables whether start values should be used.",
+            CurrentValue = shader.UseStartValue,
             Bindable = new Bindable<bool>(shader.UseStartValue),
             OnValueChanged = enabled =>
             {

@@ -22,6 +22,7 @@ public partial class EditorVariableToggle : EditorVariableBase
         Height = 32;
 
         Bindable ??= new Bindable<bool>(CurrentValue);
+        Bindable.ValueChanged += valueChanged;
 
         InternalChildren = new Drawable[]
         {
