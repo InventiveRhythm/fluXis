@@ -108,7 +108,7 @@ public partial class SelectionHandler<T> : Container, IKeyBindingHandler<FluXisG
                 blueprint.Select();
                 return true;
 
-            case MouseButton.Right:
+            case MouseButton.Right when !e.ShiftPressed:
                 quickDelete(blueprint);
                 return true;
 
