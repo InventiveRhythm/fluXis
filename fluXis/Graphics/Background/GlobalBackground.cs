@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using System.Threading;
 using fluXis.Audio;
+using fluXis.Audio.FFT;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Containers;
@@ -33,12 +33,12 @@ public partial class GlobalBackground : CompositeDrawable
     private string currentBackground;
     private float blur;
 
+    private float currentScale = 1f;
+
     private Bindable<bool> backgroundPulse;
 
     [CanBeNull]
     private CancellationTokenSource cancellationSource;
-
-    private float amplitude;
 
     public float Zoom { set => stack.ScaleTo(value, 1000, Easing.OutQuint); }
     public float ParallaxStrength { set => parallaxContainer.Strength = value; }
@@ -112,18 +112,20 @@ public partial class GlobalBackground : CompositeDrawable
 
         if (backgroundPulse.Value)
         {
-            var amplitudes = amplitudeProvider.Amplitudes
-                                              .Where((_, i) => i is > 0 and < 128)
-                                              .Select((amp, i) => (amp, index: i + 1))
-                                              .ToList();
+            float bass = AudioAnalyzer.ComputeLowIntensity(amplitudeProvider.Amplitudes);
+            const float noiseFloor = 0.02f;
+            float bassShaped = MathF.Max(0f, bass - noiseFloor) / (1f - noiseFloor);
+            float amplitude = MathF.Min(MathF.Pow(bassShaped, 4f), 4f);
 
-            float decay = 0.15f; // the lower the value the more biased we are to the bass
-            float weightedSum = amplitudes.Sum(x => x.amp * MathF.Pow(decay, x.index));
-            float totalWeight = amplitudes.Sum(x => MathF.Pow(decay, x.index));
-            float newSample = totalWeight > 0 ? weightedSum / totalWeight : 0f;
+            if (float.IsNaN(amplitude) || !float.IsFinite(amplitude))
+                amplitude = 1;
 
-            amplitude = Math.Min(amplitude * 0.7f + newSample * 0.3f, 1f);
-            Scale = new Vector2(1 + amplitude * .02f);
+            float target = 1 + amplitude * .055f; // increase this number a bit to zoom into the universe
+
+            float delta = (float)Time.Elapsed / 1000f;
+
+            currentScale = target > currentScale ? target : MathF.Max(target, currentScale - 2.5f * delta);
+            Scale = new Vector2(currentScale);
         }
 
         base.Update();
