@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using fluXis.Audio;
+using fluXis.Audio.FFT;
 using fluXis.Configuration;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -21,11 +21,11 @@ public partial class MenuVisualizer : Container
     private const int max_extra_speed = 2;
     private const int max_extra_scale = 0;
 
-    private float amplitude = 0f;
-
     private bool loaded;
     private Bindable<bool> visualizerEnabled;
     private Bindable<bool> swayEnabled;
+
+    private float smoothedAmplitude;
 
     public MenuVisualizer()
     {
@@ -73,17 +73,31 @@ public partial class MenuVisualizer : Container
 
     protected override void Update()
     {
-        var amplitudes = amplitudeProvider.Amplitudes
-                                          .Where((_, i) => i is > 0 and < 128)
-                                          .Select((amp, i) => (amp, index: i + 1))
-                                          .ToList();
+        float bass = AudioAnalyzer.ComputeLowIntensity(amplitudeProvider.Amplitudes);
+        float mid = AudioAnalyzer.ComputeMidIntensity(amplitudeProvider.Amplitudes);
+        float high = AudioAnalyzer.ComputeHighIntensity(amplitudeProvider.Amplitudes);
 
-        float decay = 0.85f; // the lower the value the more biased we are to the bass
-        float weightedSum = amplitudes.Sum(x => x.amp * x.amp * MathF.Pow(decay, x.index));
-        float totalWeight = amplitudes.Sum(x => x.amp * MathF.Pow(decay, x.index));
-        float newSample = totalWeight > 0 ? weightedSum / totalWeight : 0f;
+        const float noiseFloor = 0.05f;
+        float bassSmooth = MathF.Max(0f, bass - noiseFloor) / (1f - noiseFloor);
+        float midSmooth = MathF.Max(0f, mid - noiseFloor) / (1f - noiseFloor);
+        float highSmooth = MathF.Max(0f, high - noiseFloor) / (1f - noiseFloor);
 
-        amplitude = Math.Min(amplitude * 0.75f + newSample * 0.3f, 0.65f);
+        float bassContrib = MathF.Pow(bassSmooth, 3f);
+        float midContrib = midSmooth * 1.25f;
+        float highContrib = highSmooth * 10f;
+
+        float targetAmplitude = MathF.Min(bassContrib + midContrib + highContrib, 1f) * 0.975f + 0.05f;
+
+        if (float.IsNaN(targetAmplitude) || !float.IsFinite(targetAmplitude))
+            targetAmplitude = 1;
+
+        const double attackHalfTime = 15; // rise
+        const double decayHalfTime = 180; // fall off
+
+        double halfTime = targetAmplitude > smoothedAmplitude ? attackHalfTime : decayHalfTime;
+        smoothedAmplitude = (float)Interpolation.DampContinuously(smoothedAmplitude, targetAmplitude, halfTime, Time.Elapsed);
+
+        float amplitude = smoothedAmplitude;
 
         foreach (var child in Children)
         {

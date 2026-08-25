@@ -98,29 +98,7 @@ public partial class AudioAnalyzer : Component
     public long ChannelLength { get; private set; }
     private bool isReady;
 
-    private FFTCache getOrCreateCache(string hash)
-    {
-        if (caches.TryGetValue(hash, out var existing))
-        {
-            lru.Remove(hash);
-            lru.AddFirst(hash);
-            return existing;
-        }
-
-        if (caches.Count >= max_cached)
-        {
-            string lruKey = lru.Last!.Value;
-            lru.RemoveLast();
-            caches[lruKey].Dispose();
-            caches.Remove(lruKey);
-        }
-
-        var cache = tryLoadCacheFromDisk(hash) ?? new FFTCache { Hash = hash };
-        caches[hash] = cache;
-        lru.AddFirst(hash);
-
-        return cache;
-    }
+    #region Public Interface
 
     public virtual void SetAudio(RealmMap map)
     {
@@ -206,26 +184,6 @@ public partial class AudioAnalyzer : Component
         ComputeComplete = Task.Run(() => precomputeFullTrack(token), token);
     }
 
-    private void precomputeFullTrack(CancellationToken token = default)
-    {
-        if (!isReady || currentCache == null) return;
-
-        double lengthMs = Bass.ChannelBytes2Seconds(decodeStreamHandle, ChannelLength) * 1000.0;
-        uint totalTime = (uint)Math.Ceiling(lengthMs / RESOLUTION) * RESOLUTION + RESOLUTION;
-
-        currentCache.ContainsAndAllocate(0, totalTime, out var missing);
-
-        foreach (var range in missing)
-        {
-            token.ThrowIfCancellationRequested();
-            ComputeRange(range);
-        }
-
-        SaveCacheToDisk();
-
-        Logger.Log($"FFT Full track cached for {AudioFileName}, mapSetID: {ID}.");
-    }
-
     public virtual FFTFrame[] GetAmplitudes(
         int tStart,
         int tEnd,
@@ -256,25 +214,7 @@ public partial class AudioAnalyzer : Component
         )).ToArray();
     }
 
-    private static float[] resizeArray(float[] data, int newSize)
-    {
-        if (data.Length == newSize) return data;
-
-        var result = new float[newSize];
-        float ratio = (float)data.Length / newSize;
-
-        for (int i = 0; i < newSize; i++)
-        {
-            float position = i * ratio;
-            int index1 = (int)position;
-            int index2 = Math.Min(index1 + 1, data.Length - 1);
-            float fraction = position - index1;
-
-            result[i] = (float)Interpolation.Lerp(data[index1], data[index2], fraction);
-        }
-
-        return result;
-    }
+    #endregion
 
     protected virtual void ComputeRange([In, Out] FFTRange range)
     {
@@ -309,12 +249,101 @@ public partial class AudioAnalyzer : Component
             range.Data[offset + FFT_BINS + 0] = floatToByte(computeIntensity(channelInfo, bins, low_min, mid_min));
             range.Data[offset + FFT_BINS + 1] = floatToByte(computeIntensity(channelInfo, bins, mid_min, high_min));
             range.Data[offset + FFT_BINS + 2] = floatToByte(computeIntensity(channelInfo, bins, high_min, high_max));
-            range.Data[offset + FFT_BINS + 3] = floatToByte(computeTotalIntensity(bins));
+            range.Data[offset + FFT_BINS + 3] = floatToByte(ComputeTotalIntensity(bins));
         }
     }
 
-    private static byte floatToByte(float value) =>
-        (byte)(Math.Clamp(value, 0f, 1f) * 255f);
+    // In the (very far) future we'd like to actually be able to compute proper fft data in ranges
+    private void precomputeFullTrack(CancellationToken token = default)
+    {
+        if (!isReady || currentCache == null) return;
+
+        double lengthMs = Bass.ChannelBytes2Seconds(decodeStreamHandle, ChannelLength) * 1000.0;
+        uint totalTime = (uint)Math.Ceiling(lengthMs / RESOLUTION) * RESOLUTION + RESOLUTION;
+
+        currentCache.ContainsAndAllocate(0, totalTime, out var missing);
+
+        foreach (var range in missing)
+        {
+            token.ThrowIfCancellationRequested();
+            ComputeRange(range);
+        }
+
+        SaveCacheToDisk();
+
+        Logger.Log($"FFT Full track cached for {AudioFileName}, mapSetID: {ID}.");
+    }
+
+    #region Intensity
+
+    // These might need a lot of rework to their weights in the future but I guess these work with what we're using
+
+    public static float ComputeLowIntensity(float[] bins)
+    {
+        int bassBinCount = FFT_BINS / 8;
+
+        float sum = 0;
+        float maxPossibleSum = 0;
+
+        for (int i = 0; i < bassBinCount; i++)
+        {
+            float weight = 1.0f + ((float)i / bassBinCount) * 3.0f;
+            sum += bins[i] * weight;
+            maxPossibleSum += weight;
+        }
+
+        float normalized = sum / maxPossibleSum;
+        return MathF.Sqrt(normalized);
+    }
+
+    public static float ComputeMidIntensity(float[] bins)
+    {
+        int low = (int)(bins.Length * 0.25f);
+        int high = (int)(bins.Length * 0.60f);
+        int count = high - low;
+
+        float sum = 0;
+        float maxPossibleSum = 0;
+
+        for (int i = low; i < high; i++)
+        {
+            float weight = 1.0f;
+            sum += bins[i] * weight;
+            maxPossibleSum += weight;
+        }
+
+        return sum / maxPossibleSum;
+    }
+
+    public static float ComputeHighIntensity(float[] bins)
+    {
+        int low = (int)(bins.Length * 0.60f);
+
+        float sum = 0;
+        float maxPossibleSum = 0;
+
+        for (int i = low; i < bins.Length; i++)
+        {
+            float weight = 1.0f;
+            sum += bins[i] * weight;
+            maxPossibleSum += weight;
+        }
+
+        return sum / maxPossibleSum;
+    }
+
+    public static float ComputeTotalIntensity(float[] bins)
+    {
+        float sum = 0;
+
+        for (int i = 0; i < FFT_BINS; i++)
+        {
+            float weight = 1.0f + ((float)i / FFT_BINS) * 15.0f;
+            sum += bins[i] * weight;
+        }
+
+        return MathF.Sqrt(sum / FFT_BINS) * 1.5f;
+    }
 
     private static float computeIntensity(ChannelInfo info, float[] bins, float startFrequency, float endFrequency)
     {
@@ -340,17 +369,32 @@ public partial class AudioAnalyzer : Component
         return MathF.Sqrt(sum / (endBin - startBin)) * 1.5f;
     }
 
-    private static float computeTotalIntensity(float[] bins)
-    {
-        float sum = 0;
+    #endregion
 
-        for (int i = 0; i < FFT_BINS; i++)
+    #region Cache
+
+    private FFTCache getOrCreateCache(string hash)
+    {
+        if (caches.TryGetValue(hash, out var existing))
         {
-            float weight = 1.0f + ((float)i / FFT_BINS) * 15.0f;
-            sum += bins[i] * weight;
+            lru.Remove(hash);
+            lru.AddFirst(hash);
+            return existing;
         }
 
-        return MathF.Sqrt(sum / FFT_BINS) * 1.5f;
+        if (caches.Count >= max_cached)
+        {
+            string lruKey = lru.Last!.Value;
+            lru.RemoveLast();
+            caches[lruKey].Dispose();
+            caches.Remove(lruKey);
+        }
+
+        var cache = tryLoadCacheFromDisk(hash) ?? new FFTCache { Hash = hash };
+        caches[hash] = cache;
+        lru.AddFirst(hash);
+
+        return cache;
     }
 
     private FFTCache tryLoadCacheFromDisk(string hash)
@@ -410,8 +454,37 @@ public partial class AudioAnalyzer : Component
         }
     }
 
+    #endregion
+
+    #region Helpers
+
+    private static float[] resizeArray(float[] data, int newSize)
+    {
+        if (data.Length == newSize) return data;
+
+        var result = new float[newSize];
+        float ratio = (float)data.Length / newSize;
+
+        for (int i = 0; i < newSize; i++)
+        {
+            float position = i * ratio;
+            int index1 = (int)position;
+            int index2 = Math.Min(index1 + 1, data.Length - 1);
+            float fraction = position - index1;
+
+            result[i] = (float)Interpolation.Lerp(data[index1], data[index2], fraction);
+        }
+
+        return result;
+    }
+
+    private static byte floatToByte(float value) =>
+        (byte)(Math.Clamp(value, 0f, 1f) * 255f);
+
     protected static void LogBassError(string reason) =>
         Logger.Log($"BASS failure in {nameof(AudioAnalyzer)}: {reason} ({Bass.LastError})");
+
+    #endregion
 
     protected override void Dispose(bool isDisposing)
     {

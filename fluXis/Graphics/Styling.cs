@@ -56,9 +56,12 @@ public static class Styling
         SpatialWindowSize = 1,
         Gamma = 1.1f,
         ReleaseHigh = 0.2f,
-        BassFloor = 0.5f,
+        BassFloor = 0.35f,
+        MidFloor = 0.04f,
+        HighFloor = 0.015f,
         BassMultiplier = 1f,
-        HighMultiplier = 1.15f,
+        MidMultiplier = 1.3f,
+        HighMultiplier = 1.5f,
         MaxAdaptationRate = 0.2f
     };
 
