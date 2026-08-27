@@ -2,6 +2,8 @@
 using fluXis.Audio;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
+using fluXis.Screens.Edit.Actions;
+using fluXis.Screens.Edit.Actions.Generic;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
@@ -30,6 +32,9 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
 
     [Resolved]
     protected EditorSettings EditorSettings { get; private set; }
+
+    [Resolved]
+    private EditorActionStack actions { get; set; }
 
     public override RectangleF ScreenSpaceSelectionRect
     {
@@ -67,6 +72,7 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
     private readonly DraggableSelectionPiece end;
 
     private DebouncedSample sample;
+    private ObjectRescaledAction<IHasDuration> rescaleAction;
 
     public ChartingSelectionBlueprint(ITimedObject obj)
         : base(obj)
@@ -82,6 +88,7 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
             head = new DraggableSelectionPiece
             {
                 DragAction = dragStart,
+                DragEndAction = finishRescale,
                 Anchor = Anchor.BottomLeft,
                 Origin = Anchor.BottomLeft,
                 Alpha = 0
@@ -89,6 +96,7 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
             end = new DraggableSelectionPiece
             {
                 DragAction = dragEnd,
+                DragEndAction = finishRescale,
                 Origin = Anchor.TopLeft,
                 Alpha = 0
             },
@@ -150,6 +158,8 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
         if (Object is not IHasDuration d)
             return;
 
+        rescaleAction ??= new ObjectRescaledAction<IHasDuration>([d]);
+
         var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
         newTime = Snaps.SnapTime(newTime);
         var newLen = d.GetEndTime() - newTime;
@@ -160,8 +170,7 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
         if (Math.Abs(d.Time - newTime) > 0.1f)
             sample?.Play();
 
-        d.Time = newTime;
-        d.Duration = newLen;
+        rescaleAction.Apply(Map, [new Vector2d(newTime, newLen)], true);
     }
 
     private void dragEnd(Vector2 vec)
@@ -169,9 +178,11 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
         if (Object is not IHasDuration d)
             return;
 
+        rescaleAction ??= new ObjectRescaledAction<IHasDuration>([d]);
+
         var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
         newTime = Snaps.SnapTime(newTime);
-        var newLen = newTime - Object.Time;
+        var newLen = newTime - d.Time;
 
         if (newLen <= 10)
             return;
@@ -179,6 +190,17 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
         if (Math.Abs(d.GetEndTime() - newTime) > 0.1f)
             sample?.Play();
 
-        d.Duration = newTime - d.Time;
+        rescaleAction.Apply(Map, [new Vector2d(d.Time, newLen)], true);
+    }
+
+    private void finishRescale()
+    {
+        if (rescaleAction is null)
+        {
+            return;
+        }
+
+        actions.Add(rescaleAction);
+        rescaleAction = null;
     }
 }
