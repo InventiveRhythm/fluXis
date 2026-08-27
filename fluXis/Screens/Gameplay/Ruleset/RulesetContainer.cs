@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Audio.Transforms;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
+using fluXis.Modes;
 using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
@@ -32,6 +33,9 @@ public partial class RulesetContainer : CompositeDrawable
     public GameplayInput Input { get; }
     public PlayfieldManager PlayfieldManager { get; }
 
+    public GameMode Mode { get; }
+    public PlayableGameMode PlayableMode { get; }
+
     public virtual bool AsyncScoreCalculations => false;
     public HitWindows HitWindows { get; private set; }
     public ReleaseWindows ReleaseWindows { get; private set; }
@@ -55,11 +59,14 @@ public partial class RulesetContainer : CompositeDrawable
 
     protected override bool ForceChildUpdate => true;
 
-    public RulesetContainer(MapInfo map, MapEvents events, List<IMod> mods)
+    public RulesetContainer(GameMode mode, MapInfo map, MapEvents events, List<IMod> mods)
     {
         MapInfo = map;
         MapEvents = events;
         Mods = mods;
+
+        Mode = mode;
+        PlayableMode = mode.CreatePlayable(this, map, events, [.. mods]);
 
         Rate = Mods.OfType<RateMod>().FirstOrDefault()?.Rate ?? 1;
 
@@ -83,33 +90,14 @@ public partial class RulesetContainer : CompositeDrawable
         InternalChildrenEnumerable = new Drawable[]
         {
             dependencies.CacheAsAndReturn(Input),
+            PlayableMode,
             PlayfieldManager,
             DebugText
         }.Concat(scrolls.Values.ToArray());
     }
 
     protected virtual GameplayInput CreateInput() => new(IsPaused.GetBoundCopy(), MapInfo.RealmEntry!.KeyCount, MapInfo.IsDual);
-
-    public HealthProcessor CreateHealthProcessor()
-    {
-        var processor = null as HealthProcessor;
-
-        var difficulty = Math.Clamp(MapInfo.HealthDifficulty == 0 ? 8 : MapInfo.HealthDifficulty, 1, 10);
-        difficulty *= Mods.Any(m => m is HardMod) ? 1.2f : 1f;
-
-        if (Mods.Any(m => m is HardMod)) processor = new DrainHealthProcessor(difficulty);
-        else if (Mods.Any(m => m is EasyMod)) processor = new RequirementHeathProcessor(difficulty) { HealthRequirement = EasyMod.HEALTH_REQUIREMENT };
-
-        processor ??= new HealthProcessor(difficulty);
-        processor.Clock = Clock;
-        processor.InBreak = PlayfieldManager.InBreak;
-        processor.OnFail = () => OnDeath?.Invoke();
-
-        foreach (var mod in Mods.OfType<IApplicableToHealthProcessor>())
-            mod.Apply(processor);
-
-        return processor;
-    }
+    public HealthProcessor CreateHealthProcessor() => Mode.CreateHealthProcessor(MapInfo, [.. Mods], Clock, PlayableMode.InBreak, OnDeath);
 
     private void createHitWindows()
     {

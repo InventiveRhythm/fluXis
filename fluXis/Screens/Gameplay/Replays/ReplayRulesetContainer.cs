@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using fluXis.Input;
 using fluXis.Map;
+using fluXis.Modes;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Gameplay.Input;
@@ -36,8 +37,8 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
         set => ParentClock.Rate = value;
     }
 
-    public ReplayRulesetContainer(Replay replay, MapInfo map, MapEvents events, List<IMod> mods)
-        : base(map, events, mods)
+    public ReplayRulesetContainer(GameMode mode, Replay replay, MapInfo map, MapEvents events, List<IMod> mods)
+        : base(mode, map, events, mods)
     {
         Replay = replay;
         AllowReverting = true;

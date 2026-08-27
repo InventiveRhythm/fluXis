@@ -18,6 +18,7 @@ using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Map.Structures;
+using fluXis.Modes.Keys;
 using fluXis.Mods;
 using fluXis.Overlay.Notifications;
 using fluXis.Replays;
@@ -226,7 +227,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                 var replay = auto.Generate();
                 var events = map.GetMapEvents();
 
-                Schedule(() => LoadComponentAsync(ruleset = new ReplayRulesetContainer(replay, map, events, new List<IMod> { new AutoPlayMod() })
+                Schedule(() => LoadComponentAsync(ruleset = new ReplayRulesetContainer(new KeysGameMode(), replay, map, events, new List<IMod> { new AutoPlayMod() })
                 {
                     ParentClock = clock
                 }, c =>

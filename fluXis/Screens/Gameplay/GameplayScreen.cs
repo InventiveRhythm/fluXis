@@ -14,6 +14,7 @@ using fluXis.Graphics.Shaders;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
+using fluXis.Modes.Keys;
 using fluXis.Mods;
 using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Users;
@@ -489,7 +490,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
             if (ruleset != null) break;
         }
 
-        ruleset ??= new RulesetContainer(Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
+        ruleset ??= new RulesetContainer(new KeysGameMode(), Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
         rsc.ForEach(x => x.Modify(ruleset));
         return ruleset;
     }
