@@ -721,7 +721,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
             var note = direction > 0
                 ? EditorMap.MapEvents.NoteEvents.FirstOrDefault(n => n.Time > accurate)
-                : EditorMap.MapEvents.NoteEvents.LastOrDefault(n => n.Time < accurate);
+                : EditorMap.MapEvents.NoteEvents.LastOrDefault(n => n.Time < accurate - 1000);
 
             if (note is not null)
                 EditorClock.SeekSmoothly(note.Time);
