@@ -66,9 +66,6 @@ public class APIUser
     [JsonProperty("lastlogin")]
     public long? LastLogin { get; set; }
 
-    [JsonProperty("socials")]
-    public APIUserSocials? Socials { get; set; }
-
     [JsonProperty("stats")]
     public APIUserStatistics? Statistics { get; set; }
 
