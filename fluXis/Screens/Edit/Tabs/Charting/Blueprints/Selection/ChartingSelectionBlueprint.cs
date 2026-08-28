@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
@@ -9,15 +10,36 @@ using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Primitives;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
-public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObject>
+public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObject>, IHasContextMenu
 {
+    #region Context Menu
+
+    MenuItem[] IHasContextMenu.ContextMenuItems
+    {
+        get
+        {
+            var list = new List<MenuItem>();
+
+            if (Object is IWithContext ctx)
+                list.AddRange(ctx.CreateContextItems(Map, Snaps));
+
+            return [.. list];
+        }
+    }
+
+    bool IHasContextMenu.ContextRequireShift => true;
+
+    #endregion
+
     [Resolved]
     protected EditorSnapProvider Snaps { get; private set; }
 
