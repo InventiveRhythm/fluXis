@@ -29,7 +29,7 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
     public IReadOnlyList<ShaderType> ShaderTypes => shaders.DistinctBy(x => x.Type).Select(x => x.Type).ToList();
 
     public IShader TextureShader { get; private set; }
-    public BufferedDrawNodeSharedData SharedData { get; } = new(3, null, false, true);
+    public BufferedDrawNodeSharedData SharedData { get; } = new(3, TexturePixelFormat.R8G8B8A8Float, null, false, true);
 
     public Color4 BackgroundColour { get; set; } = new(0, 0, 0, 0);
     public DrawColourInfo? FrameBufferDrawColour => base.DrawColourInfo;
