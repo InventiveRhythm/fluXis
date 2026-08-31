@@ -24,7 +24,6 @@ using fluXis.Overlay.Network.Tabs.Account;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Screens.Edit.Tabs.Setup.Entries;
-using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -62,11 +61,6 @@ public partial class DashboardAccountTab : DashboardTab
     private APIUser user = null!;
     private FluXisScrollContainer editContent = null!;
     private Container unsavedContent = null!;
-
-    private SetupTextBox twitterEntry = null!;
-    private SetupTextBox youtubeEntry = null!;
-    private SetupTextBox twitchEntry = null!;
-    private SetupTextBox discordEntry = null!;
 
     private SetupTextBox displayNameEntry = null!;
     private SetupTextBox aboutmeEntry = null!;
@@ -147,9 +141,6 @@ public partial class DashboardAccountTab : DashboardTab
 
     private FillFlowContainer createContent()
     {
-        if (user.Socials is null)
-            return new FillFlowContainer();
-
         return new FillFlowContainer
         {
             RelativeSizeAxes = Axes.X,
@@ -246,11 +237,6 @@ public partial class DashboardAccountTab : DashboardTab
                                 {
                                     Default = user.Username,
                                     ReadOnly = true
-                                },
-                                new SetupTextBox("E-Mail")
-                                {
-                                    Default = user.Email?.CensorEmail(),
-                                    ReadOnly = true
                                 }
                             }
                         },
@@ -260,41 +246,9 @@ public partial class DashboardAccountTab : DashboardTab
                             {
                                 new DashboardAccountButton
                                 {
-                                    LabelText = "Change Password",
-                                    ButtonText = "Change",
-                                    Alpha = .5f
-                                },
-                                new DashboardAccountButton
-                                {
                                     LabelText = "Setup 2FA",
                                     ButtonText = "Setup",
                                     Alpha = .5f
-                                }
-                            }
-                        },
-                        new DashboardAccountCategory("Socials")
-                        {
-                            Children = new Drawable[]
-                            {
-                                twitterEntry = new SetupTextBox("Twitter")
-                                {
-                                    Default = user.Socials.Twitter,
-                                    OnChange = updateUnsavedStatus
-                                },
-                                youtubeEntry = new SetupTextBox("YouTube")
-                                {
-                                    Default = user.Socials.YouTube,
-                                    OnChange = updateUnsavedStatus
-                                },
-                                twitchEntry = new SetupTextBox("Twitch")
-                                {
-                                    Default = user.Socials.Twitch,
-                                    OnChange = updateUnsavedStatus
-                                },
-                                discordEntry = new SetupTextBox("Discord")
-                                {
-                                    Default = user.Socials.Discord,
-                                    OnChange = updateUnsavedStatus
                                 }
                             }
                         },
@@ -336,11 +290,6 @@ public partial class DashboardAccountTab : DashboardTab
     {
         hasUnsavedChanges = false;
 
-        hasUnsavedChanges |= twitterEntry.Value != user.Socials?.Twitter;
-        hasUnsavedChanges |= youtubeEntry.Value != user.Socials?.YouTube;
-        hasUnsavedChanges |= twitchEntry.Value != user.Socials?.Twitch;
-        hasUnsavedChanges |= discordEntry.Value != user.Socials?.Discord;
-
         hasUnsavedChanges |= displayNameEntry.Value != user.DisplayName;
         hasUnsavedChanges |= aboutmeEntry.Value != user.AboutMe;
         hasUnsavedChanges |= pronounsEntry.Value != user.Pronouns;
@@ -360,10 +309,6 @@ public partial class DashboardAccountTab : DashboardTab
 
         var req = new UserProfileUpdateRequest(user.ID, new UserProfileUpdatePayload
         {
-            Twitter = getValue(user.Socials?.Twitter, twitterEntry.Value),
-            YouTube = getValue(user.Socials?.YouTube, youtubeEntry.Value),
-            Twitch = getValue(user.Socials?.Twitch, twitchEntry.Value),
-            Discord = getValue(user.Socials?.Discord, discordEntry.Value),
             DisplayName = getValue(user.DisplayName, displayNameEntry.Value),
             AboutMe = getValue(user.AboutMe, aboutmeEntry.Value),
             Pronouns = getValue(user.Pronouns, pronounsEntry.Value)
@@ -437,11 +382,6 @@ public partial class DashboardAccountTab : DashboardTab
 
     private void reset()
     {
-        twitterEntry.Value = user.Socials?.Twitter;
-        youtubeEntry.Value = user.Socials?.YouTube;
-        twitchEntry.Value = user.Socials?.Twitch;
-        discordEntry.Value = user.Socials?.Discord;
-
         displayNameEntry.Value = user.DisplayName;
         aboutmeEntry.Value = user.AboutMe;
         pronounsEntry.Value = user.Pronouns;

@@ -24,12 +24,28 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
     private ShaderManager manager { get; set; }
 
     private readonly List<ShaderStep> shaders = new();
+    private readonly object shaderLock = new();
 
-    public IEnumerable<ShaderTransformHandler> TransformHandlers => shaders.Select(x => x.TransformHandler);
-    public IReadOnlyList<ShaderType> ShaderTypes => shaders.DistinctBy(x => x.Type).Select(x => x.Type).ToList();
+    public IEnumerable<ShaderTransformHandler> TransformHandlers
+    {
+        get
+        {
+            lock (shaderLock)
+                return shaders.Select(x => x.TransformHandler);
+        }
+    }
+
+    public IReadOnlyList<ShaderType> ShaderTypes
+    {
+        get
+        {
+            lock (shaderLock)
+                return shaders.DistinctBy(x => x.Type).Select(x => x.Type).ToList();
+        }
+    }
 
     public IShader TextureShader { get; private set; }
-    public BufferedDrawNodeSharedData SharedData { get; } = new(3, null, false, true);
+    public BufferedDrawNodeSharedData SharedData { get; } = new(3, TexturePixelFormat.R8G8B8A8Float, null, false, true);
 
     public Color4 BackgroundColour { get; set; } = new(0, 0, 0, 0);
     public DrawColourInfo? FrameBufferDrawColour => base.DrawColourInfo;
@@ -49,7 +65,9 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
     private void load()
     {
         TextureShader = manager.Load(VertexShaderDescriptor.TEXTURE_2, FragmentShaderDescriptor.TEXTURE);
-        shaders.ForEach(x => x.LoadShader(manager));
+
+        lock (shaderLock)
+            shaders.ForEach(x => x.LoadShader(manager));
     }
 
     protected override DrawNode CreateDrawNode()
@@ -92,15 +110,20 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
         if (manager != null)
             shader.LoadShader(manager);
 
-        shaders.Add(shader);
+        lock (shaderLock)
+            shaders.Add(shader);
+
         return shader.TransformHandler;
     }
 
     public void ClearShaders()
     {
-        var copy = shaders.ToArray();
-        copy.ForEach(x => x.TransformHandler.Expire());
-        shaders.Clear();
+        lock (shaderLock)
+        {
+            var copy = shaders.ToArray();
+            copy.ForEach(x => x.TransformHandler.Expire());
+            shaders.Clear();
+        }
     }
 
     public ShaderStackContainer AddContent(params Drawable[] content)
@@ -118,7 +141,10 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
 
     [CanBeNull]
     public ShaderStep GetShader(ShaderType type)
-        => shaders.FirstOrDefault(s => s.Type == type);
+    {
+        lock (shaderLock)
+            return shaders.FirstOrDefault(s => s.Type == type);
+    }
 
     [CanBeNull]
     public static ShaderStep CreateForType(ShaderType type) => type switch
@@ -176,7 +202,12 @@ public partial class ShaderStackContainer : Container, IBufferedDrawable
         {
             base.PopulateContents(renderer);
 
-            foreach (var shader in Source.shaders)
+            ShaderStep[] shaders;
+
+            lock (Source.shaderLock)
+                shaders = Source.shaders.ToArray();
+
+            foreach (var shader in shaders)
             {
                 shader.Time = Source.Time;
                 // OpenGL needs different implementations in some shaders

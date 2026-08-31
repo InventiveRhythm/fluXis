@@ -14,6 +14,7 @@ public partial class DraggableSelectionPiece : Container, IHasCursorType
     CursorType IHasCursorType.Cursor => CursorType.SizeVertical;
 
     public Action<Vector2> DragAction { get; init; }
+    public Action DragEndAction { get; init; }
 
     private readonly BlueprintNotePiece piece;
 
@@ -41,6 +42,12 @@ public partial class DraggableSelectionPiece : Container, IHasCursorType
     }
 
     protected override bool OnDragStart(DragStartEvent e) => e.Button == MouseButton.Left;
+
+    protected override void OnDragEnd(DragEndEvent e)
+    {
+        DragEndAction?.Invoke();
+        base.OnDragEnd(e);
+    }
 
     protected override void OnDrag(DragEvent e)
     {

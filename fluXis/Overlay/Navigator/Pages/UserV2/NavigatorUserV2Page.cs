@@ -1,5 +1,6 @@
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Tabs;
@@ -7,6 +8,9 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Drawables.Images;
 using fluXis.Overlay.Navigator.Pages.User.Tabs;
+using fluXis.Utils;
+using fluXis.Utils.Extensions;
+using Humanizer;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -61,9 +65,32 @@ public partial class NavigatorUserV2Page : NavigatorPage<APIUser>
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Direction = FillDirection.Vertical,
+                                Spacing = new Vector2(12),
                                 Children =
                                 [
-                                    new UserProfileHeader(data)
+                                    new UserProfileHeader(data).WithMargin(bottom: 20),
+                                    new UserProfileTiles(
+                                        new UserProfileStatTile("Global", $"#{data.Statistics?.GlobalRank}", new FluXisSpriteIcon
+                                        {
+                                            Size = new Vector2(24),
+                                            Icon = Phosphor.Bold.GlobeHemisphereWest
+                                        }),
+                                        new UserProfileStatTile("Country", $"#{data.Statistics?.CountryRank}", new DrawableCountry(data.GetCountry())
+                                        {
+                                            Size = new Vector2(24)
+                                        })
+                                    ),
+                                    new UserProfileTiles(
+                                        new UserProfileStatTile("Overall Rating", $"{data.Statistics?.OverallRating:0.00}"),
+                                        new UserProfileStatTile("Potential Rating", $"{data.Statistics?.PotentialRating:0.00}"),
+                                        new UserProfileStatTile("Avg. Accuracy", $"{data.Statistics?.OverallAccuracy:00.00}%"),
+                                        new UserProfileStatTile("Ranked Score", $"{data.Statistics?.RankedScore.ToMetric(decimals: 2)}")
+                                    ),
+                                    /*new UserProfileTiles(
+                                        new UserProfileStatTile("Followers", ""),
+                                        new UserProfileStatTile("Following", "")
+                                    ),*/
+                                    new UserProfileClubTile(data, data.Club)
                                 ]
                             }
                         ]

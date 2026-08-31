@@ -15,8 +15,53 @@ using osuTK;
 
 namespace fluXis.Utils.Extensions;
 
+#nullable enable
+
 public static class DrawableExtensions
 {
+    #region Composable UI
+
+    public static T WíthRelativeSize<T>(this T draw, Axes axis)
+        where T : Drawable
+    {
+        draw.RelativeSizeAxes = axis;
+        return draw;
+    }
+
+    public static T WíthAnchor<T>(this T draw, Anchor anchor, Anchor? origin = null)
+        where T : Drawable
+    {
+        draw.Anchor = anchor;
+        draw.Origin = origin ?? anchor;
+        return draw;
+    }
+
+    public static T WithMargin<T>(this T draw, float? all = null, float? left = null, float? right = null, float? top = null, float? bottom = null)
+        where T : Drawable
+    {
+        var margin = new MarginPadding(all ?? 0);
+        if (left != null) margin.Left = left.Value;
+        if (right != null) margin.Right = right.Value;
+        if (top != null) margin.Top = top.Value;
+        if (bottom != null) margin.Bottom = bottom.Value;
+        draw.Margin = margin;
+        return draw;
+    }
+
+    public static T WithPadding<T>(this T draw, float? all = null, float? left = null, float? right = null, float? top = null, float? bottom = null)
+        where T : Container
+    {
+        var pad = new MarginPadding(all ?? 0);
+        if (left != null) pad.Left = left.Value;
+        if (right != null) pad.Right = right.Value;
+        if (top != null) pad.Top = top.Value;
+        if (bottom != null) pad.Bottom = bottom.Value;
+        draw.Padding = pad;
+        return draw;
+    }
+
+    #endregion
+
     public static T CacheAsAndReturn<T>(this DependencyContainer deps, T draw)
         where T : class
     {

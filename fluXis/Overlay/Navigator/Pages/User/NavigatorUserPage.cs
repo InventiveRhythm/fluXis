@@ -78,7 +78,6 @@ public partial class NavigatorUserPage : NavigatorPage<APIUser>
                                     [
                                         new ProfileSidebarClub(data.Club),
                                         new ProfileAboutMe(data.AboutMe),
-                                        new ProfileSocials(data.Socials),
                                         new ProfileFollowerList(data.ID)
                                     ]
                                 },
@@ -89,7 +88,7 @@ public partial class NavigatorUserPage : NavigatorPage<APIUser>
                                     Tabs =
                                     [
                                         new ProfileScoresTab(data),
-                                        new ProfileMapsTab(data) {}
+                                        new ProfileMapsTab(data)
                                     ]
                                 }
                             }
