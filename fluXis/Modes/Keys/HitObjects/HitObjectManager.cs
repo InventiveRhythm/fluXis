@@ -21,7 +21,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
     private RulesetContainer ruleset { get; set; }
 
     [Resolved]
-    private Playfield playfield { get; set; }
+    private KeysPlayfield playfield { get; set; }
 
     [Resolved]
     private Hitsounding hitsounding { get; set; }
@@ -120,7 +120,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
         while (lane > KeyCount)
             lane -= KeyCount;
 
-        var receptors = (playfield as KeysPlayfield)?.Receptors;
+        var receptors = playfield.Receptors;
         if (receptors is null) return 0;
 
         var x = 0f;
