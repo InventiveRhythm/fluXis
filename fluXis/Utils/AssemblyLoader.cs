@@ -25,8 +25,8 @@ public abstract partial class AssemblyLoader<T> : Component
 
     protected Storage Storage { get; private set; } = null!;
 
-    public IReadOnlyList<T> Loaded => [.. items];
-    private List<T> items { get; } = [];
+    public IReadOnlyList<T> Loaded => [.. Items];
+    protected List<T> Items { get; } = [];
 
     [BackgroundDependencyLoader]
     private void load(Storage storage)
@@ -34,7 +34,7 @@ public abstract partial class AssemblyLoader<T> : Component
         Storage = storage.GetStorageForDirectory(StorageFolder);
         Lookup();
 
-        Logger.Log($"Loaded {items.Count} items of type {typeof(T).Name}.");
+        Logger.Log($"Loaded {Items.Count} items of type {typeof(T).Name}.");
     }
 
     protected virtual void Lookup()
@@ -77,7 +77,7 @@ public abstract partial class AssemblyLoader<T> : Component
                 type.AssemblyHash = hash;
                 SetupType(type);
 
-                items.Add(type);
+                Items.Add(type);
                 Logger.Log($"Loaded assembly '{name}' ({t.Name}) as {typeof(T).Name}!");
             }
         }

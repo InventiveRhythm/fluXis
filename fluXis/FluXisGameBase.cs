@@ -25,6 +25,7 @@ using fluXis.Integration;
 using fluXis.IO;
 using fluXis.Localization;
 using fluXis.Map;
+using fluXis.Modes;
 using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Chat;
@@ -95,6 +96,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected ISteamManager Steam { get; }
 
     public PluginManager Plugins { get; private set; }
+    public GameModeManager GameModes { get; private set; }
     public MenuScreen MenuScreen { get; protected set; }
 
     private KeybindStore keybindStore;
@@ -211,6 +213,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(Collections = new CollectionManager(), true);
 
             cacheComponent(Plugins = new PluginManager(), true);
+            cacheComponent(GameModes = new GameModeManager(), true);
             cacheComponent(importManager = new ImportManager(), true, true);
             cacheComponent(SkinManager = new SkinManager(), true, true);
             cacheComponent<ISkin>(SkinManager);
