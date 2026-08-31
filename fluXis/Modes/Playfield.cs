@@ -73,6 +73,7 @@ public abstract partial class Playfield : CompositeDrawable
         Alpha = IsSubPlayfield ? 0 : 1;
 
         Dependencies.CacheAs(this);
+        Dependencies.Cache(this);
 
         LoadComponent(ColorManager = new ColorManager());
         Dependencies.CacheAs<ICustomColorProvider>(ColorManager);

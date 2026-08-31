@@ -1,5 +1,4 @@
 using fluXis.Modes.Keys.HitObjects;
-using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -9,10 +8,9 @@ namespace fluXis.Modes.Keys.TimingLines;
 public partial class TimingLine : Box
 {
     [Resolved]
-    private Playfield playfield { get; set; }
+    private KeysPlayfield playfield { get; set; }
 
-    [CanBeNull]
-    private HitObjectColumn column => (playfield as KeysPlayfield)?.HitManager[0];
+    private HitObjectColumn column => playfield.HitManager[0];
 
     public double OriginalTime { get; }
     private double scrollVelocityTime;
@@ -31,7 +29,7 @@ public partial class TimingLine : Box
         Origin = Anchor.BottomLeft;
 
         scrollVelocityTime = column?.DefaultScrollGroup.PositionFromTime(OriginalTime) ?? OriginalTime;
-        easing = (playfield as KeysPlayfield)?.HitManager.EasingAtTime(OriginalTime) ?? Easing.None;
+        easing = playfield?.HitManager.EasingAtTime(OriginalTime) ?? Easing.None;
     }
 
     protected override void Update()

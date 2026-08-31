@@ -3,7 +3,6 @@ using System.Linq;
 using fluXis.Configuration;
 using fluXis.Map;
 using fluXis.Modes.Keys.HitObjects;
-using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -14,10 +13,9 @@ namespace fluXis.Modes.Keys.TimingLines;
 public partial class TimingLineManager : CompositeDrawable
 {
     [Resolved]
-    private Playfield playfield { get; set; }
+    private KeysPlayfield playfield { get; set; }
 
-    [CanBeNull]
-    private HitObjectColumn column => (playfield as KeysPlayfield)?.HitManager[0];
+    private HitObjectColumn column => playfield.HitManager[0];
 
     private Bindable<bool> showTimingLines;
 
