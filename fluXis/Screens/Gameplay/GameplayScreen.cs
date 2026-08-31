@@ -15,7 +15,6 @@ using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Modes;
-using fluXis.Modes.Keys;
 using fluXis.Mods;
 using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Users;
@@ -116,6 +115,9 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     [Resolved]
     private GlobalClock globalClock { get; set; }
+
+    [Resolved]
+    private GameModeManager modes { get; set; }
 
     [Resolved(CanBeNull = true)]
     private GlobalFFTProcessor fftProcessor { get; set; }
@@ -495,7 +497,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
             if (ruleset != null) break;
         }
 
-        ruleset ??= new RulesetContainer(new KeysGameMode(), Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
+        ruleset ??= new RulesetContainer(modes.Find(Map.GameMode) ?? throw GameModeManager.FailedToLoadException(), Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
         rsc.ForEach(x => x.Modify(ruleset));
         return ruleset;
     }

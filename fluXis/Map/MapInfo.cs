@@ -42,6 +42,9 @@ public class MapInfo
     public float AccuracyDifficulty { get; set; } = 8;
     public float HealthDifficulty { get; set; } = 8;
 
+    [JsonProperty("mode")]
+    public ResourceLocation GameMode { get; set; } = new("flustix", "keys");
+
     [JsonProperty("dual")]
     public DualMode DualMode { get; set; } = DualMode.Disabled;
 

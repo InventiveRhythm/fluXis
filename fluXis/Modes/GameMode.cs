@@ -4,6 +4,8 @@ using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Gameplay.Ruleset;
+using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Bindables;
 using osu.Framework.Timing;
 
@@ -11,8 +13,11 @@ namespace fluXis.Modes;
 
 #nullable enable
 
-public abstract class GameMode
+[UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
+public abstract class GameMode : IFromAssembly
 {
+    public abstract ResourceLocation Location { get; }
+
     public abstract PlayableGameMode CreatePlayable(RulesetContainer ruleset, MapInfo map, MapEvents events, IMod[] mods);
 
     public virtual HealthProcessor CreateHealthProcessor(MapInfo map, IMod[] mods, IFrameBasedClock clock, Bindable<bool> inBreak, Action? onDeath = null)
@@ -23,7 +28,8 @@ public abstract class GameMode
         difficulty *= mods.Any(m => m is HardMod) ? 1.2f : 1f;
 
         if (mods.Any(m => m is HardMod)) processor = new DrainHealthProcessor(difficulty);
-        else if (mods.Any(m => m is EasyMod)) processor = new RequirementHeathProcessor(difficulty) { HealthRequirement = EasyMod.HEALTH_REQUIREMENT };
+        else if (mods.Any(m => m is EasyMod))
+            processor = new RequirementHeathProcessor(difficulty) { HealthRequirement = EasyMod.HEALTH_REQUIREMENT };
 
         processor ??= new HealthProcessor(difficulty);
         processor.Clock = clock;
@@ -35,4 +41,7 @@ public abstract class GameMode
 
         return processor;
     }
+
+    string IFromAssembly.AssemblyName { get; set; } = string.Empty;
+    string IFromAssembly.AssemblyHash { get; set; } = string.Empty;
 }

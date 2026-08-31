@@ -28,6 +28,7 @@ using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Map.Structures.Events;
+using fluXis.Modes;
 using fluXis.Online.Activity;
 using fluXis.Online.API;
 using fluXis.Online.API.Requests.Maps;
@@ -128,6 +129,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     public Bindable<Waveform> Waveform { get; private set; }
     public EditorMap EditorMap { get; private set; }
+    public GameMode GameMode { get; private set; }
 
     public EditorClock EditorClock { get; private set; }
     private EditorSettings settings;
@@ -187,7 +189,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     }
 
     [BackgroundDependencyLoader]
-    private void load(AudioManager audioManager, GameHost host, FluXisConfig config, ExperimentConfigManager experiments)
+    private void load(AudioManager audioManager, GameHost host, FluXisConfig config, ExperimentConfigManager experiments, GameModeManager modes)
     {
         BindableBackgroundDim = config.GetBindable<float>(FluXisSetting.EditorDim);
         BindableBackgroundBlur = config.GetBindable<float>(FluXisSetting.EditorBlur);
@@ -213,6 +215,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         EditorMap.MapInfo ??= new EditorMap.EditorMapInfo(new MapMetadata { Mapper = EditorMap.RealmMap.Metadata.Mapper }) { NewLaneSwitchLayout = true, RealmEntry = EditorMap.RealmMap };
         EditorMap.MapInfo.MapEvents ??= new MapEvents();
         EditorMap.MapInfo.Storyboard ??= new Storyboard { Version = Storyboard.LATEST_VERSION };
+
+        GameMode = modes.Find(EditorMap.MapInfo.GameMode) ?? throw GameModeManager.FailedToLoadException();
 
         EditorMap.SetupWatcher();
         EditorMap.SetupNotifiers();

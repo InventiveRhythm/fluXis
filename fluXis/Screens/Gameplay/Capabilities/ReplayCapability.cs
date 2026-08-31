@@ -1,7 +1,7 @@
 using System;
 using fluXis.Configuration;
 using fluXis.Input;
-using fluXis.Modes.Keys;
+using fluXis.Modes;
 using fluXis.Online;
 using fluXis.Online.Activity;
 using fluXis.Replays;
@@ -24,6 +24,9 @@ namespace fluXis.Screens.Gameplay.Capabilities;
 public partial class ReplayCapability : Component, IRulesetCapability, IEndingCapability, IUserActivityCapability, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public GameplayScreen Screen { get; set; } = null!;
+
+    [Resolved]
+    private GameModeManager modes { get; set; } = null!;
 
     [Resolved]
     private UserCache users { get; set; } = null!;
@@ -62,7 +65,11 @@ public partial class ReplayCapability : Component, IRulesetCapability, IEndingCa
         Screen.OnSeek += (_, now) => Screen.GameplayClock.Seek(now);
     }
 
-    RulesetContainer IRulesetCapability.Create() => new ReplayRulesetContainer(new KeysGameMode(), Replay, Screen.Map, Screen.MapEvents, Screen.Mods) { CurrentPlayer = Replay.GetPlayer(users) };
+    RulesetContainer IRulesetCapability.Create() => new ReplayRulesetContainer(
+        modes.Find(Screen.Map.GameMode) ?? throw GameModeManager.FailedToLoadException()
+        , Replay, Screen.Map, Screen.MapEvents, Screen.Mods
+    ) { CurrentPlayer = Replay.GetPlayer(users) };
+
     void IRulesetCapability.Modify(RulesetContainer ruleset) => ModifyRuleset((ReplayRulesetContainer)ruleset);
     protected virtual void ModifyRuleset(ReplayRulesetContainer ruleset) => ruleset.AllowReverting = true;
 
