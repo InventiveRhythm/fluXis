@@ -3,12 +3,13 @@ using fluXis.Input;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Input;
+using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
+namespace fluXis.Modes.Keys.HitObjects;
 
 public partial class DrawableHitObject : CompositeDrawable
 {

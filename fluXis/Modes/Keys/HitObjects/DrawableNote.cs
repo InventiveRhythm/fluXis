@@ -4,7 +4,7 @@ using fluXis.Skinning.Bases.HitObjects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
+namespace fluXis.Modes.Keys.HitObjects;
 
 public partial class DrawableNote : DrawableHitObject
 {

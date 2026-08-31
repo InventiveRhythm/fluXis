@@ -1,13 +1,13 @@
 using fluXis.Input;
 using fluXis.Map.Structures;
+using fluXis.Modes.Keys.HitObjects.Long;
 using fluXis.Scoring.Enums;
-using fluXis.Screens.Gameplay.Ruleset.HitObjects.Long;
 using fluXis.Skinning.Bases.HitObjects;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
+namespace fluXis.Modes.Keys.HitObjects;
 
 public partial class DrawableLongNote : DrawableHitObject
 {

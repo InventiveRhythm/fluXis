@@ -1,4 +1,4 @@
-﻿using fluXis.Screens.Gameplay.Ruleset.Playfields;
+﻿using fluXis.Modes;
 
 namespace fluXis.Map.Structures.Bases;
 
@@ -14,9 +14,9 @@ public static class ApplicableToPlayfieldExtensions
 {
     public static bool AppliesTo(this IApplicableToPlayfield ev, Playfield playfield)
     {
-        if (ev.PlayfieldIndex != 0 && playfield.Index + 1 != ev.PlayfieldIndex)
+        if (ev.PlayfieldIndex != 0 && playfield.PlayerIndex + 1 != ev.PlayfieldIndex)
             return false;
 
-        return ev.PlayfieldSubIndex == 0 || playfield.SubIndex + 1 == ev.PlayfieldSubIndex;
+        return ev.PlayfieldSubIndex == 0 || playfield.PlayfieldIndex + 1 == ev.PlayfieldSubIndex;
     }
 }

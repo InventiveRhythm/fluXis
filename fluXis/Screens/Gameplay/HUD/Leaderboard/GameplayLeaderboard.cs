@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Configuration;
+using fluXis.Modes;
 using fluXis.Scoring;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -18,7 +18,7 @@ namespace fluXis.Screens.Gameplay.HUD.Leaderboard;
 public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 {
     [Resolved]
-    private PlayfieldManager playfields { get; set; } = null!;
+    private PlayableGameMode mode { get; set; } = null!;
 
     public float HUDAlpha { get; set; } = 1f;
 
@@ -46,7 +46,7 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 
         InternalChildrenEnumerable = scores.Take(10).Select(s => new LeaderboardEntry(this, s)).OrderDescending();
 
-        playfields.Players.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
+        mode.Players.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
     }
 
     public void PerformSort() => SortInternal();
@@ -70,7 +70,7 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 
     private void updateOpacity()
     {
-        var playfield = playfields.FirstPlayer.MainPlayfield;
+        var playfield = mode.FirstPlayer.MainPlayfield;
 
         // lowers the opacity of the list when the playfield gets close to it
         var alpha = visible.Value ? 1f : 0f;

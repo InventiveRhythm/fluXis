@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using fluXis.Map.Structures.Bases;
+using fluXis.Modes;
+using fluXis.Modes.Keys;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -49,9 +50,9 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
 
         Drawable drawable = Layer switch
         {
-            FadeLayer.HitObjects => playfield.HitManager,
-            FadeLayer.Stage => playfield.Stage,
-            FadeLayer.Receptors => playfield.Receptors,
+            FadeLayer.HitObjects => (playfield as KeysPlayfield)?.HitManager,
+            FadeLayer.Stage => (playfield as KeysPlayfield)?.Stage,
+            FadeLayer.Receptors => (playfield as KeysPlayfield)?.Receptors,
             FadeLayer.Playfield => playfield,
             FadeLayer.HUD => playfield,
             _ => throw new ArgumentOutOfRangeException()

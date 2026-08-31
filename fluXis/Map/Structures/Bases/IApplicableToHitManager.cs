@@ -1,4 +1,4 @@
-﻿using fluXis.Screens.Gameplay.Ruleset.HitObjects;
+﻿using fluXis.Modes.Keys.HitObjects;
 
 namespace fluXis.Map.Structures.Bases;
 

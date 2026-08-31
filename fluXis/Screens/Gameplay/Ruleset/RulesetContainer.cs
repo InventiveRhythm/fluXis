@@ -10,7 +10,6 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Gameplay.Input;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -31,7 +30,6 @@ public partial class RulesetContainer : CompositeDrawable
     public Bindable<float> ScrollSpeed { get; set; } = new(3);
 
     public GameplayInput Input { get; }
-    public PlayfieldManager PlayfieldManager { get; }
 
     public GameMode Mode { get; }
     public PlayableGameMode PlayableMode { get; }
@@ -71,7 +69,6 @@ public partial class RulesetContainer : CompositeDrawable
         Rate = Mods.OfType<RateMod>().FirstOrDefault()?.Rate ?? 1;
 
         Input = CreateInput();
-        PlayfieldManager = new PlayfieldManager(MapInfo);
         DebugText = new DebugText();
 
         ShakeTarget ??= this;
@@ -91,7 +88,6 @@ public partial class RulesetContainer : CompositeDrawable
         {
             dependencies.CacheAsAndReturn(Input),
             PlayableMode,
-            PlayfieldManager,
             DebugText
         }.Concat(scrolls.Values.ToArray());
     }

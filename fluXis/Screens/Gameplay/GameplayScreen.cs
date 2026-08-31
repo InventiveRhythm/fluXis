@@ -14,6 +14,7 @@ using fluXis.Graphics.Shaders;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
+using fluXis.Modes;
 using fluXis.Modes.Keys;
 using fluXis.Mods;
 using fluXis.Online.Activity;
@@ -31,7 +32,6 @@ using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Overlay;
 using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Ruleset;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Gameplay.UI;
 using fluXis.Screens.Gameplay.UI.Menus;
 using fluXis.Screens.Intro;
@@ -63,7 +63,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
     public override float BackgroundDim => backgroundDim?.Value ?? .4f;
     public override bool ShowToolbar => false;
     public override bool AllowMusicControl => false;
-    public override bool ShowCursor => PlayfieldManager.AnyFailed || IsPaused.Value || CursorVisible;
+    public override bool ShowCursor => PlayableGameMode.AnyFailed || IsPaused.Value || CursorVisible;
     public override bool ApplyValuesAfterLoad => true;
     public override bool AllowExit => false;
 
@@ -154,7 +154,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     public ShaderStackContainer ShaderStack { get; private set; }
     public RulesetContainer RulesetContainer { get; private set; }
-    public PlayfieldManager PlayfieldManager { get; private set; }
+    public PlayableGameMode PlayableGameMode { get; private set; }
 
     private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
@@ -265,13 +265,18 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
         RulesetContainer.ShakeTarget = this;
         RulesetContainer.OnDeath += onDeath;
 
-        dependencies.Cache(PlayfieldManager = RulesetContainer.PlayfieldManager);
+        dependencies.CacheAs(PlayableGameMode = RulesetContainer.PlayableMode);
+        dependencies.Cache(RulesetContainer.PlayableMode); // caches it as the mode itself i.e "KeysPlayableGameMode"
 
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
         dependencies.CacheAs<IBeatSyncProvider>(GameplayClock);
         LoadComponent(GameplayClock);
 
         var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(Map, new Storyboard(), ".");
+
+        LoadComponent(GameplayClock);
+        LoadComponent(dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }));
+        LoadComponent(RulesetContainer);
         LoadComponent(storyboard);
 
         var camera = new CameraContainer(MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList());
@@ -346,7 +351,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
                         {
                             camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
                             Samples,
-                            dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }),
+                            Hitsounding,
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -444,11 +449,11 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         background.ParallaxStrength = 0;
 
-        PlayfieldManager.OnFinish += () =>
+        PlayableGameMode.OnFinish += () =>
         {
-            if (PlayfieldManager.AnyFailed) return;
+            if (PlayableGameMode.AnyFailed) return;
 
-            if (PlayfieldManager.OnComplete())
+            if (PlayableGameMode.OnComplete())
                 end();
         };
 
@@ -526,8 +531,8 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
         hudVisible = hudVisibility.Value switch
         {
             HudVisibility.Hidden => false,
-            HudVisibility.ShowDuringBreaks => PlayfieldManager.InBreak.Value,
-            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayfieldManager.InBreak.Value,
+            HudVisibility.ShowDuringBreaks => PlayableGameMode.InBreak.Value,
+            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayableGameMode.InBreak.Value,
             _ => true
         };
 
@@ -550,7 +555,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
             return;
         }
 
-        PlayfieldManager.Players.ForEach(p => p.HealthProcessor.Kill());
+        PlayableGameMode.Players.ForEach(p => p.HealthProcessor.Kill());
         failed = true;
         failMenu.Show();
         GameplayClock.RateTo(Rate * .75f, 2000, Easing.OutQuart);
@@ -558,7 +563,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     private void end()
     {
-        var field = PlayfieldManager.FirstPlayer;
+        var field = PlayableGameMode.FirstPlayer;
 
         // no fail was enabled, but the player never actually failed
         // so, we just remove the mod to make the score count normally
@@ -706,7 +711,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
-        if (e.Repeat || PlayfieldManager.Finished) return false;
+        if (e.Repeat || PlayableGameMode.Finished) return false;
 
         switch (e.Action)
         {
@@ -721,7 +726,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
                 return true;
 
             case FluXisGlobalKeybind.GameplayPause when AllowPausing:
-                if (PlayfieldManager.AnyFailed) return false;
+                if (PlayableGameMode.AnyFailed) return false;
 
                 if (InstantlyExitOnPause)
                 {

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Modes;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.HUD.Leaderboard;
 using fluXis.Screens.Gameplay.Ruleset;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Gameplay.UI;
 using fluXis.Skinning.Default;
 using JetBrains.Annotations;
@@ -66,7 +66,7 @@ public partial class GameplayHUD : Container
                 RelativeSizeAxes = Axes.Both,
                 Content = new[]
                 {
-                    playfields = ruleset.PlayfieldManager.Players.Select(x => new PlayfieldHUD(x)).ToArray()
+                    playfields = ruleset.PlayableMode.Players.Select(x => new PlayfieldHUD(x)).ToArray()
                 }
             }
         };
@@ -187,12 +187,12 @@ public partial class GameplayHUD : Container
 
     private partial class PlayfieldHUD : Container<GameplayHUDComponent>
     {
-        public PlayfieldPlayer Player { get; }
+        public GameModePlayer Player { get; }
         public Playfield Playfield => Player.MainPlayfield;
 
         private DependencyContainer dependencies;
 
-        public PlayfieldHUD(PlayfieldPlayer player)
+        public PlayfieldHUD(GameModePlayer player)
         {
             Player = player;
 
@@ -221,7 +221,7 @@ public partial class GameplayHUD : Container
 
             var scale = Playfield.Scale;
 
-            if (Playfield.IsUpScroll)
+            if (Playfield.IsFlipped)
                 scale *= new Vector2(1, -1);
 
             Scale = scale;

@@ -3,13 +3,14 @@ using System.Linq;
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Events;
+using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
 
-namespace fluXis.Screens.Gameplay.Ruleset.Playfields.UI;
+namespace fluXis.Modes.Keys.UI;
 
 public partial class LaneSwitchAlert : Container
 {

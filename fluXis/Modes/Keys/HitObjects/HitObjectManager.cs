@@ -3,14 +3,14 @@ using fluXis.Configuration;
 using fluXis.Map.Structures;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.Input;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
+namespace fluXis.Modes.Keys.HitObjects;
 
 public partial class HitObjectManager : Container<HitObjectColumn>
 {
@@ -77,7 +77,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
                                                    var lane = i + 1;
 
                                                    if (ruleset.MapInfo.IsSplit)
-                                                       lane += KeyCount * playfield.Index;
+                                                       lane += KeyCount * playfield.PlayerIndex;
 
                                                    return new HitObjectColumn(ruleset.MapInfo, ruleset, this, lane);
                                                });
@@ -95,7 +95,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
             input.OnPress += key =>
             {
                 var lane = input.Keys.IndexOf(key) + 1;
-                lane -= KeyCount * playfield.Index;
+                lane -= KeyCount * playfield.PlayerIndex;
 
                 if (lane > KeyCount || lane <= 0)
                     return;
@@ -120,7 +120,9 @@ public partial class HitObjectManager : Container<HitObjectColumn>
         while (lane > KeyCount)
             lane -= KeyCount;
 
-        var receptors = playfield.Receptors;
+        var receptors = (playfield as KeysPlayfield)?.Receptors;
+        if (receptors is null) return 0;
+
         var x = 0f;
 
         var frac = lane % 1;
@@ -156,8 +158,8 @@ public partial class HitObjectManager : Container<HitObjectColumn>
         var drawable = GetDrawableFor(hitObject);
         var idx = hitObject.Lane - 1;
 
-        if (playfield.Index > 0 && !playfield.MapInfo.IsSplit)
-            idx += playfield.Index * (input.Keys.Count / 2);
+        if (playfield.PlayerIndex > 0 && !playfield.MapInfo.IsSplit)
+            idx += playfield.PlayerIndex * (input.Keys.Count / 2);
 
         if (input.Keys.Count > idx)
             drawable.Keybind = input.Keys[idx];

@@ -19,7 +19,7 @@ public partial class ComboBurst : CompositeDrawable
     private IBeatSyncProvider beatSync { get; set; }
 
     private readonly RulesetContainer ruleset;
-    private ScoreProcessor score => ruleset.PlayfieldManager.FirstPlayer.ScoreProcessor;
+    private ScoreProcessor score => ruleset.PlayableMode.FirstPlayer.ScoreProcessor;
 
     private List<Sample> samples;
     private int lastIdx;

@@ -2,21 +2,22 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Map;
-using fluXis.Screens.Gameplay.Ruleset.HitObjects;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Modes.Keys.HitObjects;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Screens.Gameplay.Ruleset.TimingLines;
+namespace fluXis.Modes.Keys.TimingLines;
 
 public partial class TimingLineManager : CompositeDrawable
 {
     [Resolved]
     private Playfield playfield { get; set; }
 
-    private HitObjectColumn column => playfield.HitManager[0];
+    [CanBeNull]
+    private HitObjectColumn column => (playfield as KeysPlayfield)?.HitManager[0];
 
     private Bindable<bool> showTimingLines;
 
@@ -73,7 +74,7 @@ public partial class TimingLineManager : CompositeDrawable
 
     protected override void Update()
     {
-        while (futureTimingLines is { Count: > 0 } && column.ShouldDisplay(futureTimingLines[0].OriginalTime))
+        while (futureTimingLines is { Count: > 0 } && (column?.ShouldDisplay(futureTimingLines[0].OriginalTime) ?? true))
         {
             TimingLine line = futureTimingLines[0];
             futureTimingLines.RemoveAt(0);
