@@ -7,7 +7,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Screens.Gameplay.Ruleset;
+namespace fluXis.Modes.Keys;
 
 public partial class LaneSwitchManager : CompositeComponent
 {

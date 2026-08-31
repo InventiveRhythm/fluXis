@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
+namespace fluXis.Screens.Gameplay.Ruleset;
 
 public partial class ColorManager : Component, ICustomColorProvider
 {

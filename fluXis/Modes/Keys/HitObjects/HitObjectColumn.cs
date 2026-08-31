@@ -6,7 +6,7 @@ using fluXis.Map.Structures;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Structs;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Screens.Gameplay.Ruleset;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -14,7 +14,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
 using osuTK;
 
-namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
+namespace fluXis.Modes.Keys.HitObjects;
 
 public partial class HitObjectColumn : Container<DrawableHitObject>
 {
@@ -24,7 +24,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     public Playfield Playfield { get; private set; }
 
     [Resolved]
-    private PlayfieldPlayer player { get; set; }
+    private GameModePlayer player { get; set; }
 
     [Resolved]
     private RulesetContainer ruleset { get; set; }

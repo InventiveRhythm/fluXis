@@ -335,9 +335,9 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     #region IHUDDependencyProvider Implementation
 
     RulesetContainer IHUDDependencyProvider.Ruleset => ruleset;
-    JudgementProcessor IHUDDependencyProvider.JudgementProcessor => ruleset.PlayfieldManager.Players[0].JudgementProcessor;
-    HealthProcessor IHUDDependencyProvider.HealthProcessor => ruleset.PlayfieldManager.Players[0].HealthProcessor;
-    ScoreProcessor IHUDDependencyProvider.ScoreProcessor => ruleset.PlayfieldManager.Players[0].ScoreProcessor;
+    JudgementProcessor IHUDDependencyProvider.JudgementProcessor => ruleset.PlayableMode.FirstPlayer.JudgementProcessor;
+    HealthProcessor IHUDDependencyProvider.HealthProcessor => ruleset.PlayableMode.FirstPlayer.HealthProcessor;
+    ScoreProcessor IHUDDependencyProvider.ScoreProcessor => ruleset.PlayableMode.FirstPlayer.ScoreProcessor;
     HitWindows IHUDDependencyProvider.HitWindows => ruleset.HitWindows;
     RealmMap IHUDDependencyProvider.RealmMap => ruleset.MapInfo.RealmEntry;
     MapInfo IHUDDependencyProvider.MapInfo => ruleset.MapInfo;

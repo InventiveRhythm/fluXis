@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio.Transforms;
 using fluXis.Graphics;
+using fluXis.Modes;
 using fluXis.Online.Activity;
 using fluXis.Online.Multiplayer;
 using fluXis.Scoring;
 using fluXis.Scoring.Structs;
 using fluXis.Screens.Gameplay.Capabilities.Bases;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Multiplayer.Gameplay;
 using fluXis.Utils.Extensions;
 using osu.Framework.Graphics;
@@ -22,7 +22,7 @@ public partial class MultiplayerCapability : Component, IEndingCapability, IUser
 {
     public GameplayScreen Screen { get; set; } = null!;
 
-    private PlayfieldPlayer player => Screen.PlayfieldManager.FirstPlayer;
+    private GameModePlayer player => Screen.PlayableGameMode.FirstPlayer;
     private MultiplayerClient client { get; }
 
     public MultiplayerCapability(MultiplayerClient client)

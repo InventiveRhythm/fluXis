@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
+using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using fluXis.Skinning.Bases.HitObjects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Screens.Gameplay.Ruleset.HitObjects.Long;
+namespace fluXis.Modes.Keys.HitObjects.Long;
 
 public partial class DrawableLongNotePart : CompositeDrawable
 {

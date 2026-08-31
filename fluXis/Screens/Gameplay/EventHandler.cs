@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Structures.Bases;
-using fluXis.Screens.Gameplay.Ruleset.HitObjects;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Modes;
+using fluXis.Modes.Keys.HitObjects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
 

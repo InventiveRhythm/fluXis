@@ -3,7 +3,7 @@ using fluXis.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Screens.Gameplay.Ruleset.HitObjects.Long;
+namespace fluXis.Modes.Keys.HitObjects.Long;
 
 public partial class DrawableLongNoteTail : DrawableLongNotePart
 {

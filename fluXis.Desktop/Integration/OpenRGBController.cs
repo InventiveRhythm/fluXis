@@ -57,7 +57,7 @@ public partial class OpenRGBController : LightController
 
         if (stack?.CurrentScreen is GameplayScreen gameplay)
         {
-            var manager = gameplay.RulesetContainer.PlayfieldManager.FirstPlayer.MainPlayfield.ColorManager;
+            var manager = gameplay.RulesetContainer.PlayableMode.FirstPlayer.MainPlayfield.ColorManager;
             var greyscale = gameplay.ShaderStack.GetShader(ShaderType.Greyscale)?.Strength ?? 0;
             var hue = gameplay.ShaderStack.GetShader(ShaderType.HueShift)?.Strength ?? 0;
 

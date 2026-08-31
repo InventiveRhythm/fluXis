@@ -1,3 +1,4 @@
+using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Map;
 using fluXis.Online.API.Models.Users;
@@ -31,15 +32,29 @@ public abstract partial class GameModePlayer : CompositeDrawable, IHUDDependency
 
     public int PlayerIndex { get; }
 
+    public Playfield MainPlayfield { get; private set; } = null!;
+    public Playfield[] SubPlayfields { get; private set; } = null!;
+
+    public bool IsFinished => MainPlayfield.IsFinished && SubPlayfields.All(p => p.IsFinished);
+
     protected GameModePlayer(int index)
     {
         PlayerIndex = index;
     }
 
+    /// <summary>
+    /// Gets called before the rest of load() executes. Should be used to register needed dependencies for playfields.
+    /// </summary>
+    protected virtual void BeforeLoad() { }
+
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+        Dependencies.CacheAs(this);
+        Dependencies.Cache(this);
+
+        BeforeLoad();
 
         JudgementProcessor = new JudgementProcessor();
         JudgementProcessor.AddDependants([
@@ -52,6 +67,14 @@ public abstract partial class GameModePlayer : CompositeDrawable, IHUDDependency
                 Mods = Ruleset.Mods
             }
         ]);
+
+        MainPlayfield = CreatePlayfield(PlayerIndex, 0);
+        SubPlayfields = Enumerable.Range(1, Ruleset.MapInfo.ExtraPlayfields).Select(x => CreatePlayfield(PlayerIndex, x)).ToArray();
+
+        var content = new SortingContainer { RelativeSizeAxes = Axes.Both };
+        content.Child = MainPlayfield;
+        content.AddRange(SubPlayfields);
+        AddInternal(content);
     }
 
     protected override void LoadComplete()
@@ -69,6 +92,8 @@ public abstract partial class GameModePlayer : CompositeDrawable, IHUDDependency
         };
     }
 
+    protected abstract Playfield CreatePlayfield(int player, int subIndex);
+
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => Dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
@@ -76,6 +101,28 @@ public abstract partial class GameModePlayer : CompositeDrawable, IHUDDependency
     {
         ScoreProcessor.Dispose();
         base.Dispose(isDisposing);
+    }
+
+    private partial class SortingContainer : Container<Playfield>
+    {
+        protected override int Compare(Drawable x, Drawable y)
+        {
+            var a = (Playfield)x;
+            var b = (Playfield)y;
+
+            var result = -a.AnimationZ.CompareTo(b.AnimationZ);
+
+            if (result != 0)
+                return result;
+
+            return -a.PlayfieldIndex.CompareTo(b.PlayfieldIndex);
+        }
+
+        protected override void UpdateAfterChildren()
+        {
+            base.UpdateAfterChildren();
+            SortInternal();
+        }
     }
 
     #region IHUDDependencyProvider

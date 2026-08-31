@@ -1,13 +1,14 @@
 using System.Linq;
 using fluXis.Database;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 
-namespace fluXis.Screens.Gameplay.Ruleset.Playfields.UI;
+namespace fluXis.Modes.Keys.UI;
 
 public partial class KeyOverlay : Container
 {
@@ -42,7 +43,7 @@ public partial class KeyOverlay : Container
         if (ruleset.Input.Dual)
         {
             var half = ruleset.Input.Keys.Count / 2;
-            var start = half * playfield.Index;
+            var start = half * playfield.PlayerIndex;
             binds = binds.GetRange(start, half);
         }
 

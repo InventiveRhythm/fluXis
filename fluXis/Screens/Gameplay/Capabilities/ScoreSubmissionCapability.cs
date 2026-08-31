@@ -67,7 +67,7 @@ public partial class ScoreSubmissionCapability : Component, IEndingCapability
 
     public Screen OnEnd(ScoreInfo score, Action complete)
     {
-        var screen = new SoloResults(Screen.RealmMap, score, Screen.PlayfieldManager.Players[0].ScoreProcessor.Player ?? APIUser.Default);
+        var screen = new SoloResults(Screen.RealmMap, score, Screen.PlayableGameMode.Players[0].ScoreProcessor.Player ?? APIUser.Default);
         var canBeUploaded = !string.IsNullOrWhiteSpace(ticket) && Screen.Mods.All(m => m.Rankable) && isOnlineMap;
 
         if (canBeUploaded)

@@ -8,7 +8,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
+namespace fluXis.Modes.Keys.HitObjects;
 
 public partial class DrawableTickNote : DrawableHitObject
 {

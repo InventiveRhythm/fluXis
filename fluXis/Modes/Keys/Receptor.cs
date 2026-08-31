@@ -1,11 +1,11 @@
-﻿using fluXis.Screens.Gameplay.Ruleset.Playfields;
+﻿using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Screens.Gameplay.Ruleset;
+namespace fluXis.Modes.Keys;
 
 public partial class Receptor : CompositeDrawable
 {
@@ -82,7 +82,7 @@ public partial class Receptor : CompositeDrawable
     {
         var i = idx;
 
-        if (playfield.Index > 0)
+        if (playfield.PlayerIndex > 0)
             i += playfield.RealmMap.KeyCount;
 
         isDown.Value = ruleset.Input.Pressed[i];

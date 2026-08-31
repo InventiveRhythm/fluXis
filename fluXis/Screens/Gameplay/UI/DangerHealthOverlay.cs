@@ -1,8 +1,8 @@
 using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Graphics;
+using fluXis.Modes;
 using fluXis.Scoring.Processing.Health;
-using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -19,9 +19,9 @@ public partial class DangerHealthOverlay : Container
     private GameplayScreen screen { get; set; }
 
     [Resolved]
-    private PlayfieldManager playfieldManager { get; set; }
+    private PlayableGameMode mode { get; set; }
 
-    private PlayfieldPlayer player => playfieldManager.FirstPlayer;
+    private GameModePlayer player => mode.FirstPlayer;
 
     private Bindable<bool> dimOnLowHealth;
 
