@@ -41,6 +41,7 @@ using fluXis.Skinning;
 using fluXis.UI;
 using fluXis.Utils;
 using fluXis.Utils.Exceptions;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -346,14 +347,14 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             Logger.Log($"Loading {name}...", LoggingTarget.Runtime, LogLevel.Debug);
 
-            LoadComponentAsync(component, c =>
+            Scheduler.ScheduleIfNeeded(() => LoadComponentAsync(component, c =>
             {
                 action?.Invoke(c);
                 complete.Invoke();
 
                 sw.Stop();
                 Logger.Log($"Finished loading {name} in {sw.ElapsedMilliseconds}ms.", LoggingTarget.Runtime, LogLevel.Debug);
-            });
+            }));
         });
 
         LoadQueue.Push(task);
