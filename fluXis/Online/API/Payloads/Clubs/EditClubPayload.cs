@@ -18,8 +18,8 @@ public class EditClubPayload
     /// <summary>
     /// the join type of the club
     /// </summary>
-    [Hidden]
     [JsonProperty("join-type")]
+    [Description("Join Type")]
     public ClubJoinType? JoinType { get; set; }
 
     /// <summary>

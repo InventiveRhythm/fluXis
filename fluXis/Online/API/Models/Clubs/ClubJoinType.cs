@@ -1,14 +1,12 @@
-﻿namespace fluXis.Online.API.Models.Clubs;
+﻿using System.ComponentModel;
+
+namespace fluXis.Online.API.Models.Clubs;
 
 public enum ClubJoinType
 {
-    /// <summary>
-    /// Anyone can join
-    /// </summary>
+    [Description("Anyone can join")]
     Open = 0,
 
-    /// <summary>
-    /// Only users with an invitation can join
-    /// </summary>
+    [Description("Invite Only")]
     InviteOnly = 1
 }

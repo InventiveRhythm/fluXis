@@ -13,7 +13,6 @@ using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Form;
 using fluXis.Graphics.UserInterface.Interaction;
-using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Utils.Attributes;
 using fluXis.Utils.Inspect;
 using osu.Framework.Allocation;
@@ -257,13 +256,13 @@ public partial class FormPanel<T> : Panel, ICloseable
                             .First(x => x.IsGenericMethod);
 
             var values = getValues.MakeGenericMethod(type).Invoke(null, []);
-            var dropdown = typeof(FluXisDropdown<>).MakeGenericType(type);
+            var dropdown = typeof(FormDropdown<>).MakeGenericType(type);
 
-            var inst = (Drawable)Activator.CreateInstance(dropdown)!;
-            inst.RelativeSizeAxes = Axes.X;
+            var bind = (IBindable)Activator.CreateInstance(typeof(Bindable<>).MakeGenericType(type), val ?? ((Array)values!).GetValue(0));
+            var inst = (Drawable)Activator.CreateInstance(dropdown, (LocalisableString)name, bind, values)!;
 
-            var items = dropdown.GetProperty(nameof(FluXisDropdown<object>.Items), BindingFlags.Public | BindingFlags.Instance)!;
-            items.SetValue(inst, values);
+            var reg = typeof(FormPanel<T>).GetMethod(nameof(addDropdownListener), BindingFlags.NonPublic | BindingFlags.Static)!;
+            reg.MakeGenericMethod(type).Invoke(null, [inst, data, prop]);
 
             return inst;
         }
@@ -282,6 +281,9 @@ public partial class FormPanel<T> : Panel, ICloseable
 
         return new FluXisSpriteText { Text = $"could not create input for type {type} ({name})" };
     }
+
+    private static void addDropdownListener<D>(FormDropdown<D> drop, object data, PropertyInfo prop)
+        => drop.OnValueChanged = (_, v) => prop.SetValue(data, v);
 
     public void Close()
     {
