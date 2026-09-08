@@ -9,6 +9,7 @@ using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Files;
+using fluXis.Graphics.UserInterface.Form;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Localization;
@@ -62,9 +63,9 @@ public partial class DashboardAccountTab : DashboardTab
     private FluXisScrollContainer editContent = null!;
     private Container unsavedContent = null!;
 
-    private SetupTextBox displayNameEntry = null!;
-    private SetupTextBox aboutmeEntry = null!;
-    private SetupTextBox pronounsEntry = null!;
+    private FormInput displayNameEntry = null!;
+    private FormInput aboutmeEntry = null!;
+    private FormInput pronounsEntry = null!;
 
     private bool hasUnsavedChanges;
     private bool saving;
@@ -233,11 +234,7 @@ public partial class DashboardAccountTab : DashboardTab
                         {
                             Children = new Drawable[]
                             {
-                                new SetupTextBox("Username")
-                                {
-                                    Default = user.Username,
-                                    ReadOnly = true
-                                }
+                                new FormInput("Username", user.Username) { ReadOnly = true }
                             }
                         },
                         new DashboardAccountCategory("Auth")
@@ -256,23 +253,20 @@ public partial class DashboardAccountTab : DashboardTab
                         {
                             Children = new Drawable[]
                             {
-                                displayNameEntry = new SetupTextBox("Display Name")
+                                displayNameEntry = new FormInput("Display Name", user.DisplayName)
                                 {
                                     Placeholder = "...",
-                                    Default = user.DisplayName,
-                                    OnChange = updateUnsavedStatus
+                                    OnValueChanged = updateUnsavedStatus
                                 },
-                                aboutmeEntry = new SetupTextBox("About Me")
+                                aboutmeEntry = new FormInput("About Me", user.AboutMe)
                                 {
                                     Placeholder = "Tell the world about yourself...",
-                                    Default = user.AboutMe,
-                                    OnChange = updateUnsavedStatus
+                                    OnValueChanged = updateUnsavedStatus
                                 },
-                                pronounsEntry = new SetupTextBox("Pronouns")
+                                pronounsEntry = new FormInput("Pronouns", user.Pronouns)
                                 {
                                     Placeholder = "../..",
-                                    Default = user.Pronouns,
-                                    OnChange = updateUnsavedStatus
+                                    OnValueChanged = updateUnsavedStatus
                                 }
                             }
                         },
@@ -286,7 +280,7 @@ public partial class DashboardAccountTab : DashboardTab
         };
     }
 
-    private void updateUnsavedStatus(object? _ = null)
+    private void updateUnsavedStatus(object? _ = null, object? __ = null)
     {
         hasUnsavedChanges = false;
 

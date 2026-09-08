@@ -34,7 +34,7 @@ public partial class FluXisTextBox : BasicTextBox, IHasCursorType
     protected override Color4 InputErrorColour => Theme.ButtonRed;
     protected override float LeftRightPadding => SidePadding;
 
-    public int SidePadding { get; init; } = 5;
+    public int SidePadding { get; init; }
     public float TextContainerHeight { get; set; } = .75f;
     public bool IsPassword { get; init; }
     public bool FixedWidth { get; init; }
@@ -63,6 +63,7 @@ public partial class FluXisTextBox : BasicTextBox, IHasCursorType
 
     public FluXisTextBox()
     {
+        SidePadding = 5;
         CornerRadius = 5;
         Masking = true;
         LengthLimit = 256;

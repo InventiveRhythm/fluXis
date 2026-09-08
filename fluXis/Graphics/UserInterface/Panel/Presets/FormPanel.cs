@@ -11,12 +11,13 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Form;
 using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Menus;
-using fluXis.Screens.Edit.Tabs.Setup.Entries;
 using fluXis.Utils.Attributes;
 using fluXis.Utils.Inspect;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -238,10 +239,9 @@ public partial class FormPanel<T> : Panel, ICloseable
                     if (type != typeof(string))
                         throw new ObjectInspectInvalidComboException(owr.Value, prop);
 
-                    return new SetupColor(name)
+                    return new FormColor(name, Colour4.TryParseHex(val as string ?? "#ffffff", out var c) ? c : Colour4.White)
                     {
-                        Color = Colour4.TryParseHex(val as string ?? "#ffffff", out var c) ? c : Colour4.White,
-                        OnColorChanged = v => prop.SetValue(data, v.ToHex())
+                        OnValueChanged = (_, v) => prop.SetValue(data, v.ToHex())
                     };
                 }
             }
@@ -270,14 +270,13 @@ public partial class FormPanel<T> : Panel, ICloseable
 
         if (type == typeof(string))
         {
-            return new SetupTextBox(name)
+            return new FormInput(name, new Bindable<string>(val as string))
             {
-                Default = val as string,
                 Placeholder = prop.GetCustomAttribute<PlaceholderAttribute>()?.Placeholder ?? string.Empty,
                 MaxLength = prop.GetCustomAttribute<MaxLengthAttribute>()?.Length ?? 256,
                 ReadOnly = prop.GetCustomAttribute<ReadOnlyAttribute>()?.IsReadOnly ?? false,
                 Password = prop.GetCustomAttribute<PasswordPropertyTextAttribute>()?.Password ?? false,
-                OnChange = v => prop.SetValue(data, v)
+                OnValueChanged = (_, v) => prop.SetValue(data, v)
             };
         }
 

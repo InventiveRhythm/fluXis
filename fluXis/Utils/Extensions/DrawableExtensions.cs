@@ -21,14 +21,14 @@ public static class DrawableExtensions
 {
     #region Composable UI
 
-    public static T WíthRelativeSize<T>(this T draw, Axes axis)
+    public static T WithRelativeSize<T>(this T draw, Axes axis)
         where T : Drawable
     {
         draw.RelativeSizeAxes = axis;
         return draw;
     }
 
-    public static T WíthAnchor<T>(this T draw, Anchor anchor, Anchor? origin = null)
+    public static T WithAnchor<T>(this T draw, Anchor anchor, Anchor? origin = null)
         where T : Drawable
     {
         draw.Anchor = anchor;

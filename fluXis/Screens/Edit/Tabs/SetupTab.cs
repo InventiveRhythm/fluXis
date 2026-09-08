@@ -1,11 +1,14 @@
+using System.IO;
 using System.Linq;
 using fluXis.Audio.FFT;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Form;
 using fluXis.Screens.Edit.Tabs.Setup;
 using fluXis.Screens.Edit.Tabs.Setup.Entries;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -80,83 +83,72 @@ public partial class SetupTab : EditorTab
                                             Children = new Drawable[]
                                             {
                                                 metadata = new SetupSection("Metadata", [
-                                                    new SetupTextBox("Title")
+                                                    new FormInput("Title", map.MapInfo.Metadata.Title)
                                                     {
-                                                        Default = map.MapInfo.Metadata.Title,
                                                         Placeholder = "...",
-                                                        OnChange = value => map.MapInfo.Metadata.Title = map.RealmMap.Metadata.Title = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.Title = map.RealmMap.Metadata.Title = v
                                                     },
-                                                    new SetupTextBox("Title (Romanized)")
+                                                    new FormInput("Title (Romanized)", map.MapInfo.Metadata.TitleRomanized ?? map.MapInfo.Metadata.Title)
                                                     {
-                                                        Default = map.MapInfo.Metadata.TitleRomanized ?? map.MapInfo.Metadata.Title,
                                                         Placeholder = "...",
-                                                        OnChange = value => map.MapInfo.Metadata.TitleRomanized = map.RealmMap.Metadata.TitleRomanized = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.TitleRomanized = map.RealmMap.Metadata.TitleRomanized = v
                                                     },
-                                                    new SetupTextBox("Artist")
+                                                    new FormInput("Artist", map.MapInfo.Metadata.Artist)
                                                     {
-                                                        Default = map.MapInfo.Metadata.Artist,
                                                         Placeholder = "...",
-                                                        OnChange = value => map.MapInfo.Metadata.Artist = map.RealmMap.Metadata.Artist = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.Artist = map.RealmMap.Metadata.Artist = v
                                                     },
-                                                    new SetupTextBox("Artist (Romanized)")
+                                                    new FormInput("Artist (Romanized)", map.MapInfo.Metadata.ArtistRomanized ?? map.MapInfo.Metadata.Artist)
                                                     {
-                                                        Default = map.MapInfo.Metadata.ArtistRomanized ?? map.MapInfo.Metadata.Artist,
                                                         Placeholder = "...",
-                                                        OnChange = value => map.MapInfo.Metadata.ArtistRomanized = map.RealmMap.Metadata.ArtistRomanized = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.ArtistRomanized = map.RealmMap.Metadata.ArtistRomanized = v
                                                     },
-                                                    new SetupTextBox("Mapper")
+                                                    new FormInput("Mapper", map.MapInfo.Metadata.Mapper)
                                                     {
-                                                        Default = map.MapInfo.Metadata.Mapper,
                                                         Placeholder = "...",
-                                                        OnChange = value => map.MapInfo.Metadata.Mapper = map.RealmMap.Metadata.Mapper = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.Mapper = map.RealmMap.Metadata.Mapper = v
                                                     },
-                                                    new SetupTextBox("Difficulty")
+                                                    new FormInput("Difficulty", map.MapInfo.Metadata.Difficulty)
                                                     {
-                                                        Default = map.MapInfo.Metadata.Difficulty,
                                                         Placeholder = "...",
-                                                        OnChange = value => map.MapInfo.Metadata.Difficulty = map.RealmMap.Difficulty = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.Difficulty = map.RealmMap.Difficulty = v
                                                     },
-                                                    new SetupTextBox("Tags")
+                                                    new FormInput("Tags", map.MapInfo.Metadata.Tags)
                                                     {
-                                                        Default = map.MapInfo.Metadata.Tags,
                                                         Placeholder = "No Tags",
-                                                        OnChange = value => map.MapInfo.Metadata.Tags = map.RealmMap.Metadata.Tags = value,
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.Tags = map.RealmMap.Metadata.Tags = v,
                                                         MaxLength = 2048
                                                     }
                                                 ]),
                                                 new SetupSection("Colors", [
                                                     new SetupSection.Row([
-                                                        new SetupColor("Accent")
+                                                        new FormColor("Accent", map.RealmMap.Metadata.Color)
                                                         {
-                                                            Color = map.RealmMap.Metadata.Color,
-                                                            OnColorChanged = color => map.MapInfo.Colors.Accent = map.RealmMap.Metadata.Color = color
+                                                            OnValueChanged = (_, v) => map.MapInfo.Colors.Accent = map.RealmMap.Metadata.Color = v
                                                         },
-                                                        new SetupColor("Primary")
+                                                        new FormColor("Primary", map.MapInfo.Colors.GetColor(1, Colour4.White))
                                                         {
-                                                            Color = map.MapInfo.Colors.GetColor(1, Colour4.White),
-                                                            OnColorChanged = color =>
+                                                            OnValueChanged = (_, v) =>
                                                             {
-                                                                map.MapInfo.Colors.PrimaryHex = color.ToHex();
+                                                                map.MapInfo.Colors.PrimaryHex = v.ToHex();
                                                                 map.TriggerAnyChange();
                                                             }
                                                         }
                                                     ]),
                                                     new SetupSection.Row([
-                                                        new SetupColor("Secondary")
+                                                        new FormColor("Secondary", map.MapInfo.Colors.GetColor(2, Colour4.White))
                                                         {
-                                                            Color = map.MapInfo.Colors.GetColor(2, Colour4.White),
-                                                            OnColorChanged = color =>
+                                                            OnValueChanged = (_, v) =>
                                                             {
-                                                                map.MapInfo.Colors.SecondaryHex = color.ToHex();
+                                                                map.MapInfo.Colors.SecondaryHex = v.ToHex();
                                                                 map.TriggerAnyChange();
                                                             }
                                                         },
-                                                        new SetupColor("Middle")
+                                                        new FormColor("Middle", map.MapInfo.Colors.GetColor(3, Colour4.White))
                                                         {
-                                                            Color = map.MapInfo.Colors.GetColor(3, Colour4.White),
-                                                            OnColorChanged = color =>
+                                                            OnValueChanged = (_, v) =>
                                                             {
-                                                                map.MapInfo.Colors.MiddleHex = color.ToHex();
+                                                                map.MapInfo.Colors.MiddleHex = v.ToHex();
                                                                 map.TriggerAnyChange();
                                                             }
                                                         }
@@ -164,36 +156,35 @@ public partial class SetupTab : EditorTab
                                                 ]),
                                                 new SetupSection("Special", [
                                                     new SetupSection.Row([
-                                                        new SetupToggle("Force 16:9 Aspect Ratio", map.MapInfo.Force16By9)
+                                                        new FormCheckbox("Force 16:9 Aspect Ratio", map.MapInfo.Force16By9)
                                                         {
-                                                            OnChange = value => map.MapInfo.Force16By9 = value
+                                                            OnValueChanged = (_, v) => map.MapInfo.Force16By9 = v
                                                         },
-                                                        new SetupToggle("New Lane Switch Layout", map.MapInfo.NewLaneSwitchLayout)
+                                                        new FormCheckbox("New Lane Switch Layout", map.MapInfo.NewLaneSwitchLayout)
                                                         {
-                                                            TooltipText = "Improves the 6k and 8k layouts for lane switches",
-                                                            OnChange = value =>
+                                                            Description = "Improves the 6k and 8k layouts for lane switches",
+                                                            OnValueChanged = (_, v) =>
                                                             {
-                                                                map.MapInfo.NewLaneSwitchLayout = value;
+                                                                map.MapInfo.NewLaneSwitchLayout = v;
                                                                 map.MapEvents.LaneSwitchEvents.ForEach(map.Update);
                                                             }
                                                         }
                                                     ]),
                                                     new SetupSection.Row([
-                                                        new SetupToggle("Enable Visualization", map.MapInfo.EnableVisualization)
+                                                        new FormCheckbox("Enable Visualization", map.MapInfo.EnableVisualization)
                                                         {
-                                                            TooltipText = "Allows getting audio amplitude data in scripts",
-                                                            OnChange = value =>
+                                                            Description = "Allows getting audio amplitude data in scripts",
+                                                            OnValueChanged = (_, v) =>
                                                             {
-                                                                map.MapInfo.EnableVisualization = value;
+                                                                map.MapInfo.EnableVisualization = v;
 
                                                                 // immediately start fft processing
-                                                                if (value) analyzer.SetAudio(map.RealmMap);
+                                                                if (v) analyzer.SetAudio(map.RealmMap);
                                                             }
                                                         },
-                                                        new SetupSlider<int>("Extra Playfields", map.MapInfo.ExtraPlayfields, 0, 9, 1)
+                                                        new FormSlider<int>("Extra Playfields", map.MapInfo.ExtraPlayfields, 0, 9)
                                                         {
-                                                            Format = "0",
-                                                            OnChange = value => map.MapInfo.ExtraPlayfields = value
+                                                            OnValueChanged = (_, v) => map.MapInfo.ExtraPlayfields = v
                                                         }
                                                     ])
                                                 ])
@@ -209,57 +200,56 @@ public partial class SetupTab : EditorTab
                                             Children = new Drawable[]
                                             {
                                                 new SetupSection("Assets", [
-                                                    new SetupAsset("Audio", map.MapInfo.AudioFile)
+                                                    new FormBasicFilePicker("Audio", map.MapInfo.AudioFile)
                                                     {
                                                         AllowedExtensions = FluXisGame.AUDIO_EXTENSIONS,
-                                                        OnChange = map.SetAudio
+                                                        OnValueChanged = (_, v) => map.SetAudio(new FileInfo(v))
                                                     },
-                                                    new SetupAsset("Background", map.MapInfo.BackgroundFile)
+                                                    new FormBasicFilePicker("Background", map.MapInfo.BackgroundFile)
                                                     {
                                                         AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                                                        OnChange = map.SetBackground
+                                                        OnValueChanged = (_, v) => map.SetBackground(new FileInfo(v))
                                                     },
-                                                    new SetupAsset("Cover", map.MapInfo.CoverFile)
+                                                    new FormBasicFilePicker("Cover", map.MapInfo.CoverFile)
                                                     {
                                                         AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                                                        OnChange = map.SetCover
+                                                        OnValueChanged = (_, v) => map.SetCover(new FileInfo(v))
                                                     },
-                                                    new SetupAsset("Video", map.MapInfo.VideoFile)
+                                                    new FormBasicFilePicker("Video", map.MapInfo.VideoFile)
                                                     {
                                                         AllowedExtensions = FluXisGame.VIDEO_EXTENSIONS,
-                                                        OnChange = map.SetVideo
+                                                        OnValueChanged = (_, v) => map.SetVideo(new FileInfo(v))
                                                     }
                                                 ]),
                                                 new SetupSection("Sources", [
-                                                    new SetupTextBox("Audio")
+                                                    new FormInput("Audio", map.MapInfo.Metadata.AudioSource)
                                                     {
-                                                        Default = map.MapInfo.Metadata.AudioSource,
                                                         Placeholder = "No Source",
-                                                        OnChange = value => map.MapInfo.Metadata.AudioSource = map.RealmMap.Metadata.Source = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.AudioSource = map.RealmMap.Metadata.Source = v
                                                     },
-                                                    new SetupTextBox("Background")
+                                                    new FormInput("Background", map.MapInfo.Metadata.BackgroundSource)
                                                     {
-                                                        Default = map.MapInfo.Metadata.BackgroundSource,
                                                         Placeholder = "No Source",
-                                                        OnChange = value => map.MapInfo.Metadata.BackgroundSource = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.BackgroundSource = v
                                                     },
-                                                    new SetupTextBox("Cover")
+                                                    new FormInput("Cover", map.MapInfo.Metadata.CoverSource)
                                                     {
-                                                        Default = map.MapInfo.Metadata.CoverSource,
                                                         Placeholder = "No Source",
-                                                        OnChange = value => map.MapInfo.Metadata.CoverSource = value
+                                                        OnValueChanged = (_, v) => map.MapInfo.Metadata.CoverSource = v
                                                     }
                                                 ]),
                                                 new SetupSection("Keymode", [new SetupKeymode()]),
                                                 new SetupSection("Difficulty", [
-                                                    new SetupSlider<float>("Accuracy", map.MapInfo.AccuracyDifficulty, 1, 10, 0.1f)
+                                                    new FormSlider<float>("Accuracy", new BindableNumber<float>(8)
                                                     {
-                                                        OnChange = value => map.MapInfo.AccuracyDifficulty = map.RealmMap.AccuracyDifficulty = value
-                                                    },
-                                                    new SetupSlider<float>("Health", map.MapInfo.HealthDifficulty, 1, 10, 0.1f)
+                                                        Value = map.MapInfo.AccuracyDifficulty,
+                                                        MinValue = 1, MaxValue = 10, Precision = 0.1f
+                                                    }) { OnValueChanged = (_, v) => map.MapInfo.AccuracyDifficulty = map.RealmMap.AccuracyDifficulty = v },
+                                                    new FormSlider<float>("Health", new BindableNumber<float>(8)
                                                     {
-                                                        OnChange = value => map.MapInfo.HealthDifficulty = map.RealmMap.HealthDifficulty = value
-                                                    }
+                                                        Value = map.MapInfo.HealthDifficulty,
+                                                        MinValue = 1, MaxValue = 10, Precision = 0.1f
+                                                    }) { OnValueChanged = (_, v) => map.MapInfo.HealthDifficulty = map.RealmMap.HealthDifficulty = v }
                                                 ])
                                             }
                                         }
@@ -273,6 +263,6 @@ public partial class SetupTab : EditorTab
         };
 
         // tabbing support
-        metadata.OfType<SetupTextBox>().ForEach(textBox => textBox.TabbableContentContainer = metadata);
+        metadata.OfType<FormInput>().ForEach(i => i.TabbableContentContainer = metadata);
     }
 }

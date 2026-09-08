@@ -30,6 +30,7 @@ public static class Theme
     private static Colour4 getThemeColor(float saturation, float lightness) => Colour4.FromHSL(240 / 360f, saturation, lightness);
 
     public static Colour4 Text => Colour4.FromHex("#E1E2F8");
+    public static Colour4 TextVariant => Colour4.FromHex("#b2b3d2");
     public static Colour4 Text2 => Text.Opacity(.8f);
     public static Colour4 TextDark => Background3;
 

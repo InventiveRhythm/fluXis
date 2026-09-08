@@ -52,7 +52,7 @@ public partial class UserProfileClubTile : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 6,
                 Masking = true,
-                LoadContent = () => new DrawableClubBanner(club).WíthRelativeSize(Axes.Both).WíthAnchor(Anchor.Centre),
+                LoadContent = () => new DrawableClubBanner(club).WithRelativeSize(Axes.Both).WithAnchor(Anchor.Centre),
                 OnComplete = d => d.FadeInFromZero(Styling.TRANSITION_FADE),
                 Alpha = .33f
             },
@@ -74,7 +74,7 @@ public partial class UserProfileClubTile : CompositeDrawable
                             RelativeSizeAxes = Axes.Both,
                             CornerRadius = 6,
                             Masking = true,
-                            LoadContent = () => new DrawableClubIcon(club).WíthRelativeSize(Axes.Both).WíthAnchor(Anchor.Centre),
+                            LoadContent = () => new DrawableClubIcon(club).WithRelativeSize(Axes.Both).WithAnchor(Anchor.Centre),
                             OnComplete = d => d.FadeInFromZero(Styling.TRANSITION_FADE)
                         },
                         Empty(),
