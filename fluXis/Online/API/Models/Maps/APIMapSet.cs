@@ -80,4 +80,12 @@ public class APIMapSet
     public RomanisableString LocalizedArtist => new(Artist, ArtistRomanized);
 
     #endregion
+
+    public static APIMapSet CreateUnknown(long id, long mapper = 0) => new()
+    {
+        ID = id,
+        Title = $"Unknown Map {id}",
+        Artist = "Unknown Artist",
+        Creator = APIUser.CreateUnknown(mapper)
+    };
 }

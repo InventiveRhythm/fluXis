@@ -13,7 +13,7 @@ namespace fluXis.Overlay.Navigator.Pages.MapSet.UI.Modding;
 
 public partial class ModdingActionTypeCircle : Container
 {
-    private static readonly Dictionary<APIModdingActionType, (IconUsage, Colour4)> icon_map = new()
+    internal static readonly Dictionary<APIModdingActionType, (IconUsage, Colour4)> ICON_MAP = new()
     {
         { APIModdingActionType.Note, (Phosphor.Bold.Note, Theme.Cyan) },
         { APIModdingActionType.Approve, (Phosphor.Bold.Check, Theme.Green) },
@@ -32,8 +32,8 @@ public partial class ModdingActionTypeCircle : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        (IconUsage icon, Colour4 colour) = icon_map.ContainsKey(type)
-            ? icon_map[type]
+        (IconUsage icon, Colour4 colour) = ICON_MAP.ContainsKey(type)
+            ? ICON_MAP[type]
             : (Phosphor.Bold.GearSix, Theme.Red); // fallback for unhandled types
 
         Size = new Vector2(32, 32);

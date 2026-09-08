@@ -9,12 +9,16 @@ using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Localization;
+using fluXis.Online.API.Models.Maps.Modding;
 using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Notifications.Data;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Navigator;
+using fluXis.Overlay.Navigator.Pages.MapSet.UI.Modding;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -102,6 +106,10 @@ public partial class DashboardNotificationsTab : DashboardTab
     {
         [Resolved]
         private PanelContainer panels { get; set; }
+
+        [CanBeNull]
+        [Resolved(CanBeNull = true)]
+        private OnlineNavigator navigator { get; set; }
 
         private APINotification notification { get; }
         private bool unread { get; }
@@ -254,6 +262,63 @@ public partial class DashboardNotificationsTab : DashboardTab
 
                     text.Text = $"You have been invited to join the '{data.Club.Name}' club!";
                     action = () => panels.Content = new ClubInvitePanel(data.InviteCode);
+                    break;
+                }
+
+                case NotificationType.QueueStatus:
+                {
+                    var data = notification.GetDataAs<QueueUpdateNotification>();
+                    title.Text = "Queue Update";
+
+                    var ico = ModdingActionTypeCircle.ICON_MAP.TryGetValue(data.Type, out var value)
+                        ? value
+                        : (Phosphor.Bold.GearSix, Theme.Red);
+
+                    switch (data.Type)
+                    {
+                        case APIModdingActionType.Approve:
+                            text.AddText("Your map '");
+                            text.AddText(data.MapSet.LocalizedTitle);
+                            text.AddText(" - ");
+                            text.AddText(data.MapSet.LocalizedArtist);
+                            text.AddText("' has been approved by a purifier!");
+                            break;
+
+                        case APIModdingActionType.Deny:
+                            text.AddText("Your map '");
+                            text.AddText(data.MapSet.LocalizedTitle);
+                            text.AddText(" - ");
+                            text.AddText(data.MapSet.LocalizedArtist);
+                            text.AddText("' has been denied.");
+                            break;
+
+                        case APIModdingActionType.Note:
+                            text.AddText("A purifier added a note to your map '");
+                            text.AddText(data.MapSet.LocalizedTitle);
+                            text.AddText(" - ");
+                            text.AddText(data.MapSet.LocalizedArtist);
+                            text.AddText("'.");
+                            break;
+
+                        case APIModdingActionType.RequestChanges:
+                            text.AddText("A purifier requested changes on your map '");
+                            text.AddText(data.MapSet.LocalizedTitle);
+                            text.AddText(" - ");
+                            text.AddText(data.MapSet.LocalizedArtist);
+                            text.AddText("'.");
+                            break;
+                    }
+
+                    icon.Child = new FluXisSpriteIcon
+                    {
+                        Size = new Vector2(24),
+                        Icon = ico.Item1,
+                        Colour = ico.Item2,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    };
+
+                    action = () => navigator?.PushMapSet(data.MapSet.ID);
                     break;
                 }
             }
