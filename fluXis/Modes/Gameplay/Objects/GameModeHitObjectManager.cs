@@ -33,7 +33,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
         Events = events;
 
         AlwaysPresent = true;
-        ActiveObjects = new Container<DrawableHitObject>().WíthRelativeSize(Axes.Both);
+        ActiveObjects = new Container<DrawableHitObject>().WithRelativeSize(Axes.Both);
     }
 
     [BackgroundDependencyLoader]

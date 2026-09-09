@@ -50,7 +50,7 @@ public abstract partial class PlayableGameMode : CompositeDrawable
     {
         RelativeSizeAxes = Axes.Both;
         InternalChild = Keybinds = CreateBindContainer()
-                                   .WíthRelativeSize(Axes.Both)
+                                   .WithRelativeSize(Axes.Both)
                                    .WithChild(CreatePlayerGrid(Players));
 
         Dependencies.CacheAs(Keybinds);
