@@ -1,17 +1,19 @@
 using System;
 using fluXis.Input;
 using fluXis.Map.Structures;
+using fluXis.Modes.Keys.Gameplay;
 using fluXis.Scoring;
-using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Modes.Keys.HitObjects;
 
-public partial class DrawableHitObject : CompositeDrawable
+public abstract partial class DrawableHitObject : CompositeDrawable, IKeyBindingHandler<FluXisGameplayKeybind>
 {
     [Resolved]
     protected RulesetContainer Ruleset { get; private set; }
@@ -23,7 +25,7 @@ public partial class DrawableHitObject : CompositeDrawable
     protected HitObjectColumn Column { get; private set; }
 
     [Resolved]
-    protected GameplayInput Input { get; private set; }
+    protected KeysKeybindContainer Keybinds { get; private set; }
 
     [Resolved]
     public ISkin Skin { get; private set; }
@@ -72,14 +74,6 @@ public partial class DrawableHitObject : CompositeDrawable
         ScrollVelocityEndTime = group.PositionFromTime(Data.EndTime);
     }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        Input.OnPress += OnPressed;
-        Input.OnRelease += OnReleased;
-    }
-
     protected override void Update()
     {
         base.Update();
@@ -89,20 +83,13 @@ public partial class DrawableHitObject : CompositeDrawable
         Width = ObjectManager.WidthOfLane(Data.Lane);
     }
 
-    protected override void Dispose(bool isDisposing)
-    {
-        base.Dispose(isDisposing);
-
-        Input.OnPress -= OnPressed;
-        Input.OnRelease -= OnReleased;
-    }
-
-    protected void UpdateJudgement(bool byUser)
+    protected bool UpdateJudgement(bool byUser)
     {
         if (Judged)
-            return;
+            return false;
 
         CheckJudgement(byUser, TimeDelta);
+        return Judged;
     }
 
     protected virtual void CheckJudgement(bool byUser, double offset) { }
@@ -122,6 +109,9 @@ public partial class DrawableHitObject : CompositeDrawable
         UpdateJudgement(false);
     }
 
-    public virtual void OnPressed(FluXisGameplayKeybind key) { }
-    public virtual void OnReleased(FluXisGameplayKeybind key) { }
+    protected abstract bool OnPressed(FluXisGameplayKeybind bind);
+    protected virtual void OnReleased(FluXisGameplayKeybind bind) { }
+
+    bool IKeyBindingHandler<FluXisGameplayKeybind>.OnPressed(KeyBindingPressEvent<FluXisGameplayKeybind> e) => OnPressed(e.Action);
+    void IKeyBindingHandler<FluXisGameplayKeybind>.OnReleased(KeyBindingReleaseEvent<FluXisGameplayKeybind> e) => OnReleased(e.Action);
 }

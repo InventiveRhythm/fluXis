@@ -16,7 +16,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace fluXis.Modes;
+namespace fluXis.Modes.Gameplay;
 
 public abstract partial class Playfield : CompositeDrawable
 {

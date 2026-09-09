@@ -12,7 +12,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Modes;
+namespace fluXis.Modes.Gameplay;
 
 #nullable enable
 

@@ -5,6 +5,7 @@ using fluXis.Audio.Transforms;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Modes;
+using fluXis.Modes.Gameplay;
 using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;

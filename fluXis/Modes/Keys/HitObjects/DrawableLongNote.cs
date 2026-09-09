@@ -111,20 +111,21 @@ public partial class DrawableLongNote : DrawableHitObject
         tailPiece.Y = -height;
     }
 
-    public override void OnPressed(FluXisGameplayKeybind key)
+    protected override bool OnPressed(FluXisGameplayKeybind action)
     {
-        if (key != Keybind || !Column.IsFirst(this))
-            return;
+        if (action != Keybind || !Column.IsFirst(this))
+            return false;
 
         if (!headPiece.Hittable || missed)
-            return;
+            return false;
 
         IsBeingHeld.Value = true;
+        return true;
     }
 
-    public override void OnReleased(FluXisGameplayKeybind key)
+    protected override void OnReleased(FluXisGameplayKeybind action)
     {
-        if (key != Keybind)
+        if (action != Keybind)
             return;
 
         IsBeingHeld.Value = false;

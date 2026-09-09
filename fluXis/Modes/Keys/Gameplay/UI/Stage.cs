@@ -7,7 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace fluXis.Modes.Keys.UI;
+namespace fluXis.Modes.Keys.Gameplay.UI;
 
 public partial class Stage : Container
 {

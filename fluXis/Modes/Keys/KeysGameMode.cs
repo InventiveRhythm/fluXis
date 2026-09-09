@@ -1,4 +1,6 @@
 using fluXis.Map;
+using fluXis.Modes.Gameplay;
+using fluXis.Modes.Keys.Gameplay;
 using fluXis.Mods;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;

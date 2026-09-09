@@ -7,7 +7,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Modes.Keys;
+namespace fluXis.Modes.Keys.Gameplay;
 
 public partial class LaneSwitchManager : CompositeComponent
 {
@@ -48,6 +48,12 @@ public partial class LaneSwitchManager : CompositeComponent
     }
 
     public float WidthFor(int lane) => getLane(lane).Width;
+
+    public float PositionOf(int lane)
+    {
+        var l = getLane(lane);
+        return InternalChildren.TakeWhile(x => x != l).Sum(x => x.Width);
+    }
 
     private void build()
     {

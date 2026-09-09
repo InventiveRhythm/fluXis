@@ -3,7 +3,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Modes.Keys.TimingLines;
+namespace fluXis.Modes.Keys.Gameplay.TimingLines;
 
 public partial class TimingLine : Box
 {

@@ -1,3 +1,4 @@
+using System;
 using fluXis.Input;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
@@ -29,7 +30,7 @@ public partial class DrawableLandmine : DrawableHitObject
     [Resolved]
     private GameplayInput input { get; set; }
 
-    private bool isBeingHeld;
+    private bool isBeingHeld => Keybinds.Pressed[Array.IndexOf(Keybinds.Keys, Keybind)];
 
     // next non-landmine HitObject on the column. Only set if the landmine is in the hit window of the next note, null otherwise.
     private HitObject nextNote;
@@ -86,23 +87,16 @@ public partial class DrawableLandmine : DrawableHitObject
             ApplyResult(offset);
     }
 
-    public override void OnPressed(FluXisGameplayKeybind key)
+    protected override bool OnPressed(FluXisGameplayKeybind action)
     {
-        if (key != Keybind)
-            return;
+        if (action != Keybind)
+            return false;
 
-        if (Column.IsFirst(this))
-            UpdateJudgement(true);
+        if (!Column.IsFirst(this))
+            return false;
 
-        isBeingHeld = true;
-    }
-
-    public override void OnReleased(FluXisGameplayKeybind key)
-    {
-        if (key != Keybind)
-            return;
-
-        isBeingHeld = false;
+        UpdateJudgement(true);
+        return true;
     }
 
     private HitObject findNextNote()

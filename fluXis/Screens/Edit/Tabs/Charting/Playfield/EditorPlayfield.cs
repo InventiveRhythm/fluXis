@@ -1,7 +1,7 @@
 using System;
 using fluXis.Configuration;
 using fluXis.Map.Structures;
-using fluXis.Modes.Keys.UI;
+using fluXis.Modes.Keys.Gameplay.UI;
 using fluXis.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;

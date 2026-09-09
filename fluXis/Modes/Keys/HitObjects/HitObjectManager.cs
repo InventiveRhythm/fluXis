@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Map.Structures;
+using fluXis.Modes.Keys.Gameplay;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Ruleset;
@@ -170,9 +171,6 @@ public partial class HitObjectManager : Container<HitObjectColumn>
             {
                 if (!input.Pressed[i])
                     continue;
-
-                var bind = input.Keys[i];
-                drawable.OnPressed(bind);
             }
         };
 

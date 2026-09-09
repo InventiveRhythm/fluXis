@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using fluXis.Map.Structures.Bases;
-using fluXis.Modes;
+using fluXis.Modes.Gameplay;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Gameplay.Ruleset;
 using Newtonsoft.Json;

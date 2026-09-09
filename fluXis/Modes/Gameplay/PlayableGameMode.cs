@@ -6,13 +6,15 @@ using fluXis.Map.Structures;
 using fluXis.Mods;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Ruleset;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Bindings;
 
-namespace fluXis.Modes;
+namespace fluXis.Modes.Gameplay;
 
 #nullable enable
 
@@ -24,6 +26,7 @@ public abstract partial class PlayableGameMode : CompositeDrawable
     protected IMod[] Mods { get; }
 
     public HitWindows HitWindows { get; private set; } = null!;
+    public KeyBindingContainer Keybinds { get; private set; } = null!;
 
     public BindableBool InBreak { get; } = new();
     public bool Finished { get; private set; }
@@ -46,7 +49,12 @@ public abstract partial class PlayableGameMode : CompositeDrawable
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        InternalChild = CreatePlayerGrid(Players);
+        InternalChild = Keybinds = CreateBindContainer()
+                                   .WíthRelativeSize(Axes.Both)
+                                   .WithChild(CreatePlayerGrid(Players));
+
+        Dependencies.CacheAs(Keybinds);
+        Dependencies.Cache(Keybinds);
 
         HitWindows = CreateHitWindowFor(null);
     }
@@ -66,6 +74,20 @@ public abstract partial class PlayableGameMode : CompositeDrawable
 
     public bool OnComplete() => Players.All(p => p.HealthProcessor.OnComplete());
 
+    #region Required Overrides
+
+    protected abstract KeyBindingContainer CreateBindContainer();
     protected abstract GridContainer CreatePlayerGrid(IEnumerable<Drawable> drawable);
-    protected abstract HitWindows CreateHitWindowFor(HitObject? obj);
+    public abstract HitWindows CreateHitWindowFor(HitObject? obj);
+
+    #endregion
+
+    #region Dependencies
+
+    protected new DependencyContainer Dependencies { get; private set; } = null!;
+
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        => Dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    #endregion
 }

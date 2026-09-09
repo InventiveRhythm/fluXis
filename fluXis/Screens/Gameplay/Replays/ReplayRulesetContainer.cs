@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using fluXis.Input;
 using fluXis.Map;
 using fluXis.Modes;
+using fluXis.Modes.Gameplay.Input;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Gameplay.Input;
@@ -18,11 +18,11 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
     public override bool AsyncScoreCalculations => true;
 
     public Replay Replay { get; }
-    public bool RequireSyncFrames { get; set; } = false;
+    public bool RequireSyncFrames { get; set; }
 
     private List<ReplayFrame> frames { get; }
     private Stack<ReplayFrame> handledFrames { get; }
-    private List<FluXisGameplayKeybind> currentPressed = new();
+    private List<int> currentPressed = new();
 
     public double CurrentTime { get; private set; }
     public double ElapsedFrameTime { get; private set; }
@@ -37,6 +37,8 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
         set => ParentClock.Rate = value;
     }
 
+    private IGameModeActions actions => PlayableMode.Keybinds as IGameModeActions;
+
     public ReplayRulesetContainer(GameMode mode, Replay replay, MapInfo map, MapEvents events, List<IMod> mods)
         : base(mode, map, events, mods)
     {
@@ -48,6 +50,12 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
 
         Clock = this;
         CurrentTime = -4000;
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        actions.HandlePlayerInput = false;
     }
 
     protected override GameplayInput CreateInput() => new ReplayInput(IsPaused.GetBoundCopy(), MapInfo.RealmEntry!.KeyCount, MapInfo.IsDual);
@@ -159,7 +167,7 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
             case ReplayFrameType.Input:
             {
                 foreach (var keybind in currentPressed)
-                    Input.ReleaseKey(keybind);
+                    actions.TriggerRelease(keybind);
 
                 currentPressed.Clear();
                 break;
@@ -171,14 +179,14 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
 
     private void handlePresses(List<int> frameActionsInt)
     {
-        var frameActions = frameActionsInt.Select(i => (FluXisGameplayKeybind)i).ToList();
+        var frameActions = frameActionsInt.Select(i => i).ToList();
 
         foreach (var keybind in frameActions)
         {
             if (currentPressed.Contains(keybind))
                 continue;
 
-            Input.PressKey(keybind);
+            actions.TriggerPress(keybind);
         }
 
         foreach (var keybind in currentPressed)
@@ -186,7 +194,7 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
             if (frameActions.Contains(keybind))
                 continue;
 
-            Input.ReleaseKey(keybind);
+            actions.TriggerRelease(keybind);
         }
 
         currentPressed = frameActions;

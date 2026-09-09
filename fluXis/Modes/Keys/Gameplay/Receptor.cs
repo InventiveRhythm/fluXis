@@ -1,11 +1,12 @@
-﻿using fluXis.Screens.Gameplay.Ruleset;
+﻿using fluXis.Modes.Gameplay;
+using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Modes.Keys;
+namespace fluXis.Modes.Keys.Gameplay;
 
 public partial class Receptor : CompositeDrawable
 {

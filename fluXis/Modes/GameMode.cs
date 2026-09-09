@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Map;
+using fluXis.Modes.Gameplay;
 using fluXis.Mods;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Gameplay.Ruleset;

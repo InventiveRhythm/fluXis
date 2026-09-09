@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Modes;
+using fluXis.Modes.Gameplay;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.HUD.Leaderboard;
 using fluXis.Screens.Gameplay.Ruleset;

@@ -47,6 +47,21 @@ public partial class DrawableTickNote : DrawableHitObject
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        // TODO: this is stupid
+        for (var i = 0; i < input.Pressed.Length; i++)
+        {
+            if (!input.Pressed[i])
+                continue;
+
+            var bind = input.Keys[i];
+            OnPressed(bind);
+        }
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -119,10 +134,10 @@ public partial class DrawableTickNote : DrawableHitObject
         }
     }
 
-    public override void OnPressed(FluXisGameplayKeybind key)
+    protected override bool OnPressed(FluXisGameplayKeybind action)
     {
-        if (key != Keybind)
-            return;
+        if (action != Keybind)
+            return true;
 
         var flWindow = HitWindows.TimingFor(Judgement.Flawless);
 
@@ -130,18 +145,19 @@ public partial class DrawableTickNote : DrawableHitObject
         {
             directHit = true;
             UpdateJudgement(true);
-            return;
+            return true;
         }
 
         isBeingHeld = true;
 
-        var idx = input.Keys.IndexOf(key);
+        var idx = input.Keys.IndexOf(action);
         holdStartTime = input.PressTimes[idx];
+        return true;
     }
 
-    public override void OnReleased(FluXisGameplayKeybind key)
+    protected override void OnReleased(FluXisGameplayKeybind action)
     {
-        if (key != Keybind)
+        if (action != Keybind)
             return;
 
         // believe it or not

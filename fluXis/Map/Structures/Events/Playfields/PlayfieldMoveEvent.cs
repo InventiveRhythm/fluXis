@@ -5,7 +5,7 @@ using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
-using fluXis.Modes;
+using fluXis.Modes.Gameplay;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Utils.Attributes;
 using Newtonsoft.Json;

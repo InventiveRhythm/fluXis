@@ -1,4 +1,4 @@
-﻿using fluXis.Modes;
+﻿using fluXis.Modes.Gameplay;
 
 namespace fluXis.Map.Structures.Bases;
 

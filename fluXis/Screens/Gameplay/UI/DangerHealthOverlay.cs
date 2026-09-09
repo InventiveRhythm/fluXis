@@ -1,7 +1,7 @@
 using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Graphics;
-using fluXis.Modes;
+using fluXis.Modes.Gameplay;
 using fluXis.Scoring.Processing.Health;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;

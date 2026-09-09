@@ -15,6 +15,8 @@ using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Modes;
+using fluXis.Modes.Gameplay;
+using fluXis.Modes.Gameplay.Input;
 using fluXis.Mods;
 using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Users;
@@ -27,7 +29,6 @@ using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Gameplay.Capabilities.Bases;
 using fluXis.Screens.Gameplay.HUD;
-using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Overlay;
 using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Ruleset;
@@ -148,7 +149,6 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
     public MapEvents MapEvents { get; private set; }
     public List<IMod> Mods { get; }
 
-    private GameplayKeybindContainer keybindContainer;
     private GlobalBackground background;
     private BackgroundVideo backgroundVideo;
     private GameplayClockContainer clockContainer;
@@ -339,57 +339,48 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
         Container pulseContainer;
 
         AddRangeInternal([
-            keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount, Map.IsDual)
+            new LetterBoxedContainer(Map.Force16By9)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Children = new[]
-                {
-                    new LetterBoxedContainer(Map.Force16By9)
+                Children =
+                [
+                    camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
+                    Samples,
+                    Hitsounding,
+                    new Container
                     {
+                        RelativeSizeAxes = Axes.Both,
+                        Masking = true,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Children = new Drawable[]
+                        Child = pulseContainer = new Container
                         {
-                            camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
-                            Samples,
-                            Hitsounding,
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Masking = true,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Child = pulseContainer = new Container
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Children =
+                            [
+                                ShaderStack.AddContent(new AspectRatioContainer(Map.Force16By9)
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    Children =
-                                    [
-                                        ShaderStack.AddContent(new AspectRatioContainer(Map.Force16By9)
-                                        {
-                                            Masking = true,
-                                            Children = new Drawable[]
-                                            {
-                                                pulseContent,
-                                                new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
-                                                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
-                                            }
-                                        }),
-                                        new DangerHealthOverlay(),
-                                        new SkipOverlay(),
-                                        failMenu = new FailMenu(),
-                                        fcOverlay = new FullComboOverlay(),
-                                        quickActionOverlay = new QuickActionOverlay(),
-                                        new GameplayTouchInput(RulesetContainer.Input),
-                                        new PauseMenu()
-                                    ]
-                                }
-                            },
-                        },
-                    },
-                },
+                                    Masking = true,
+                                    Children = new Drawable[]
+                                    {
+                                        pulseContent,
+                                        new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
+                                        new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
+                                    }
+                                }),
+                                new DangerHealthOverlay(),
+                                new SkipOverlay(),
+                                failMenu = new FailMenu(),
+                                fcOverlay = new FullComboOverlay(),
+                                quickActionOverlay = new QuickActionOverlay(),
+                                new PauseMenu()
+                            ]
+                        }
+                    }
+                ]
             },
             Debug = new DebugText()
         ]);
@@ -398,8 +389,9 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         backgroundVideo.LoadVideo(Map);
 
-        RulesetContainer.Input.OnPress += ReplayRecorder.PressKey;
-        RulesetContainer.Input.OnRelease += ReplayRecorder.ReleaseKey;
+        var actions = (RulesetContainer.PlayableMode.Keybinds as IGameModeActions)!;
+        actions.OnActionPress += ReplayRecorder.PressKey;
+        actions.OnActionRelease += ReplayRecorder.ReleaseKey;
 
         capabilities.ForEach(x => x.PostLoad());
     }

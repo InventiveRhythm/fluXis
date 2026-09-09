@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio.Transforms;
 using fluXis.Graphics;
-using fluXis.Modes;
+using fluXis.Modes.Gameplay;
 using fluXis.Online.Activity;
 using fluXis.Online.Multiplayer;
 using fluXis.Scoring;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Modes.Gameplay;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Structs;

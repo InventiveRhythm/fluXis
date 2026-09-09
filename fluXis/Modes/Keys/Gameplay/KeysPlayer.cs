@@ -1,8 +1,9 @@
 using System.Linq;
+using fluXis.Modes.Gameplay;
 using fluXis.Mods;
 using fluXis.Utils.Extensions;
 
-namespace fluXis.Modes.Keys;
+namespace fluXis.Modes.Keys.Gameplay;
 
 public partial class KeysPlayer : GameModePlayer
 {

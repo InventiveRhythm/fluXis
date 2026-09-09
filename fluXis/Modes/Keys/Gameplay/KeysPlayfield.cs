@@ -1,16 +1,17 @@
 using System;
 using System.Linq;
 using fluXis.Configuration;
+using fluXis.Modes.Gameplay;
+using fluXis.Modes.Keys.Gameplay.TimingLines;
+using fluXis.Modes.Keys.Gameplay.UI;
 using fluXis.Modes.Keys.HitObjects;
-using fluXis.Modes.Keys.TimingLines;
-using fluXis.Modes.Keys.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
 
-namespace fluXis.Modes.Keys;
+namespace fluXis.Modes.Keys.Gameplay;
 
 public partial class KeysPlayfield : Playfield
 {
@@ -23,6 +24,7 @@ public partial class KeysPlayfield : Playfield
     public Stage Stage { get; private set; }
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager HitManager { get; private set; }
+    public KeysHitObjectManager Objects { get; private set; }
 
     private Drawable hitline;
     private Drawable topCover;
@@ -76,6 +78,7 @@ public partial class KeysPlayfield : Playfield
             receptorsFirst ? Receptors : HitManager,
             receptorsFirst ? HitManager : Receptors,
 
+            Objects = new KeysHitObjectManager(Ruleset, MapInfo, MapEvents, MapInfo.HitObjects),
             hitline = Skin.GetHitLine().With(d =>
             {
                 d.Width = 1;

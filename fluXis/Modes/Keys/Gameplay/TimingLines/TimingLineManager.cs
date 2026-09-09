@@ -8,7 +8,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Modes.Keys.TimingLines;
+namespace fluXis.Modes.Keys.Gameplay.TimingLines;
 
 public partial class TimingLineManager : CompositeDrawable
 {

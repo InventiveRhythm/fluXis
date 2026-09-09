@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Database;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Modes.Gameplay;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;
 using osu.Framework.Allocation;
@@ -8,7 +9,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 
-namespace fluXis.Modes.Keys.UI;
+namespace fluXis.Modes.Keys.Gameplay.UI;
 
 public partial class KeyOverlay : Container
 {

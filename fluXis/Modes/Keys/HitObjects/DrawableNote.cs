@@ -41,11 +41,11 @@ public partial class DrawableNote : DrawableHitObject
         ApplyResult(offset);
     }
 
-    public override void OnPressed(FluXisGameplayKeybind key)
+    protected override bool OnPressed(FluXisGameplayKeybind action)
     {
-        if (key != Keybind || !Column.IsFirst(this))
-            return;
+        if (action != Keybind || !Column.IsFirst(this))
+            return false;
 
-        UpdateJudgement(true);
+        return UpdateJudgement(true);
     }
 }
