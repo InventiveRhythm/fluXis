@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using fluXis.Utils.Attributes;
 using Newtonsoft.Json;
@@ -16,8 +17,8 @@ public static class ObjectInspect
     {
         var objType = obj.GetType();
 
-        if (cache.TryGetValue(objType, out var c))
-            return c;
+        /*if (cache.TryGetValue(objType, out var c))
+            return c;*/
 
         var props = objType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
@@ -34,7 +35,15 @@ public static class ObjectInspect
             if (prop.GetMethod == null || prop.SetMethod == null)
                 continue;
 
-            output.Add(new ObjectProperty(prop, prop.GetValue(obj)));
+            var intfc = objType.GetInterfaces()
+                               .Select(objType.GetInterfaceMap)
+                               .SelectMany(m => m.TargetMethods.Select((t, i) => new { t, m = m.InterfaceMethods[i] }))
+                               .Where(x => x.t == prop.GetMethod || x.t == prop.SetMethod)
+                               .Select(x => x.m.DeclaringType!.GetProperty(x.m.Name[4..], BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
+                               .OfType<PropertyInfo>()
+                               .ToArray();
+
+            output.Add(new ObjectProperty(prop, prop.GetValue(obj), [.. intfc.SelectMany(i => i.GetCustomAttributes()), .. prop.GetCustomAttributes()]));
         }
 
         var ro = output.AsReadOnly();

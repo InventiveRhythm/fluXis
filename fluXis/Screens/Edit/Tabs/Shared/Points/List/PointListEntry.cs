@@ -42,7 +42,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
         new MenuActionItem("Go to time", Phosphor.Bold.ArrowRight, goTo),
         new MenuActionItem("Bulk-Apply Group", Phosphor.Bold.SelectionAll, applyGroup) { IsEnabled = () => State == SelectedState.Selected },
         new MenuActionItem("Edit", Phosphor.Bold.PencilRuler, OpenSettings),
-        new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => delete(false))
+        new MenuActionItem("Delete", Phosphor.Bold.Trash, MenuItemType.Dangerous, () => Delete(false))
     };
 
     public event Action<PointListEntry> Selected;
@@ -243,8 +243,14 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     public void OpenSettings()
     {
-        // var props = ObjectInspect.GetProperties(Object);
-        // ShowSettings?.Invoke(props.Select(x => x.CreateVariableControl(Object, Map)).Where(x => x != null));
+        /*var props = ObjectInspect.GetProperties(Object);
+        ShowSettings?.Invoke(
+            new Drawable[] { new EditorVariableTitle(Text, () => delete()) }
+                .Concat(
+                    props.Select(x => x.CreateVariableControl(Object, Map))
+                         .Where(x => x != null)
+                )
+        );*/
         ShowSettings?.Invoke(CreateSettings());
     }
 
@@ -262,7 +268,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
         var list = new List<Drawable>
         {
-            new EditorVariableTitle(Text, () => delete()),
+            new EditorVariableTitle(Text, () => Delete()),
             new EditorVariableTime(Map, Object)
         };
 
@@ -303,7 +309,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     private void goTo() => clock.SeekSmoothly(Object.Time);
 
-    private void delete(bool close = true)
+    protected void Delete(bool close = true)
     {
         // let the parent handle the deletion
         if (State == SelectedState.Selected)

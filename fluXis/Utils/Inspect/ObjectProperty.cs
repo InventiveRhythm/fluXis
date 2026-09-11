@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 using fluXis.Utils.Attributes;
 
@@ -31,27 +32,27 @@ public class ObjectProperty
 
     public TypeOverrideAttribute.Type? Override { get; }
 
-    public ObjectProperty(PropertyInfo prop, object? value)
+    public ObjectProperty(PropertyInfo prop, object? value, Attribute[] attrs)
     {
         Property = prop;
         Type = prop.PropertyType;
         Value = value;
 
-        CustomCreateMethod = prop.GetCustomAttribute<CustomCreateMethodAttribute>();
+        CustomCreateMethod = attrs.OfType<CustomCreateMethodAttribute>().LastOrDefault();
 
-        Group = prop.GetCustomAttribute<GroupAttribute>()?.Group ?? string.Empty;
-        Label = prop.GetCustomAttribute<DescriptionAttribute>()?.Description ?? prop.Name;
-        Tooltip = prop.GetCustomAttribute<TooltipAttribute>()?.Tooltip ?? string.Empty;
-        Placeholder = prop.GetCustomAttribute<PlaceholderAttribute>()?.Placeholder ?? string.Empty;
-        ReadOnly = prop.GetCustomAttribute<ReadOnlyAttribute>()?.IsReadOnly ?? false;
+        Group = attrs.OfType<GroupAttribute>().LastOrDefault()?.Group ?? string.Empty;
+        Label = attrs.OfType<DescriptionAttribute>().LastOrDefault()?.Description ?? prop.Name;
+        Tooltip = attrs.OfType<TooltipAttribute>().LastOrDefault()?.Tooltip ?? string.Empty;
+        Placeholder = attrs.OfType<PlaceholderAttribute>().LastOrDefault()?.Placeholder ?? string.Empty;
+        ReadOnly = attrs.OfType<ReadOnlyAttribute>().LastOrDefault()?.IsReadOnly ?? false;
 
-        MaxLength = prop.GetCustomAttribute<MaxLengthAttribute>()?.Length ?? 256;
-        IsPassword = prop.GetCustomAttribute<PasswordPropertyTextAttribute>()?.Password ?? false;
+        MaxLength = attrs.OfType<MaxLengthAttribute>().LastOrDefault()?.Length ?? 256;
+        IsPassword = attrs.OfType<PasswordPropertyTextAttribute>().LastOrDefault()?.Password ?? false;
 
-        var range = prop.GetCustomAttribute<RangeAttribute>();
+        var range = attrs.OfType<RangeAttribute>().LastOrDefault();
         MinValue = range?.Minimum as double?;
         MaxValue = range?.Maximum as double?;
 
-        Override = prop.GetCustomAttribute<TypeOverrideAttribute>()?.CustomType;
+        Override = attrs.OfType<TypeOverrideAttribute>().LastOrDefault()?.CustomType;
     }
 }

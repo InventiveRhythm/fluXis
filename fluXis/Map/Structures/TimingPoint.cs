@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Linq;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
-using fluXis.Utils.Attributes;
 using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -15,7 +14,6 @@ namespace fluXis.Map.Structures;
 public class TimingPoint : ITimedObject
 {
     [JsonProperty("time")]
-    [CustomCreateMethod(typeof(ITimedObject), nameof(ITimedObject.CreateVariableTime))]
     public double Time { get; set; }
 
     [JsonProperty("lane")]

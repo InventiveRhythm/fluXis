@@ -17,6 +17,7 @@ public partial class EditorVariableTime : EditorVariableNumber<double>
     private Func<double> getOffset { get; }
 
     public Action<double, double>? TimeChanged { get; init; }
+    public bool UpdateMap { get; init; } = true;
 
     public EditorVariableTime(EditorMap map, ITimedObject obj, Func<double>? getOffset = null)
     {
@@ -33,7 +34,7 @@ public partial class EditorVariableTime : EditorVariableNumber<double>
             var old = obj.Time;
             obj.Time = v;
             TimeChanged?.Invoke(old, v);
-            map.Update(obj);
+            if (UpdateMap) map.Update(obj);
         };
     }
 
@@ -45,7 +46,7 @@ public partial class EditorVariableTime : EditorVariableNumber<double>
             var old = obj.Time;
             CurrentValue = obj.Time = t;
             TimeChanged?.Invoke(old, t);
-            map.Update(obj);
+            if (UpdateMap) map.Update(obj);
         }
     };
 }

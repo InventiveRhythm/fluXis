@@ -81,7 +81,7 @@ public static class Theme
     public static Colour4 NoteTag => Colour4.FromHex("#235284");
     public static Colour4 Shader => Colour4.FromHex("#D65C5C");
 
-    public static Colour4 GetEventColor(ITimedObject obj) => obj switch
+    public static Colour4 GetEventColor(ITimedObject obj, bool sidebar = false) => obj switch
     {
         Map.Structures.TimingPoint => TimingPoint,
         Map.Structures.ScrollVelocity => ScrollVelocity,
@@ -102,7 +102,8 @@ public static class Theme
         CameraScaleEvent => CameraScale,
         CameraRotateEvent => CameraRotate,
         LoopEvent => Loop,
-        NoteEvent => NoteTag,
+        NoteEvent when !sidebar => NoteTag,
+        NoteEvent => Note,
         ShaderEvent => Shader,
         _ => Colour4.White
     };
