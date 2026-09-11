@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using fluXis.Audio;
+using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
@@ -28,6 +30,9 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
         get
         {
             var list = new List<MenuItem>();
+
+            if (Object is IMapEvent ev)
+                list.Add(new MenuActionItem("Copy into tool", Phosphor.Bold.Copy, () => ChartingContainer.BlueprintContainer.CopyObjectAsTool(ev)));
 
             if (Object is IWithContext ctx)
                 list.AddRange(ctx.CreateContextItems(Map, Snaps));

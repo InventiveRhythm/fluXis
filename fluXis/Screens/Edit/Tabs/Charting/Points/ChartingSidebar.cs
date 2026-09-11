@@ -2,9 +2,11 @@ using System.Linq;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Blueprints.Selection;
+using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Utils;
+using fluXis.Utils.Inspect;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
@@ -25,6 +27,7 @@ public partial class ChartingSidebar : PointsSidebar
         base.LoadComplete();
 
         selectionHandler.SelectedObjects.CollectionChanged += (_, _) => updateSelection();
+        chartingContainer.BlueprintContainer.CurrentToolChanged += updateSelection;
         updateSelection();
     }
 
@@ -39,7 +42,7 @@ public partial class ChartingSidebar : PointsSidebar
         switch (selectionHandler.SelectedObjects.Count)
         {
             case 0:
-                inspector.AddSection("Nothing selected", "");
+                handleNoSelection();
                 break;
 
             case 1 when selectionHandler.SelectedObjects.Single() is HitObject selected:
@@ -102,6 +105,34 @@ public partial class ChartingSidebar : PointsSidebar
                 }
 
                 break;
+        }
+    }
+
+    private void handleNoSelection()
+    {
+        if (chartingContainer.BlueprintContainer.CurrentTool is not IHoldsObject h)
+        {
+            inspector.AddSection("Nothing selected", "");
+            return;
+        }
+
+        var obj = h.Object;
+        var props = ObjectInspect.GetProperties(obj);
+
+        inspector.AddSection("Placing", chartingContainer.BlueprintContainer.CurrentTool.Name);
+
+        foreach (var prop in props)
+        {
+            if (prop.Property.Name is "Time" or "Lane" or "Duration")
+                continue;
+
+            var sec = inspector.AddSection(prop.Label, string.Empty);
+            sec.OnUpdate += _ =>
+            {
+                var val = $"{prop.Value}";
+                if (string.IsNullOrWhiteSpace(val)) val = "<empty>";
+                sec.Value = val;
+            };
         }
     }
 }

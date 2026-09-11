@@ -2,6 +2,7 @@ using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions.Generic;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using Midori.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -64,7 +65,11 @@ public partial class ObjectPlacementBlueprint<T> : PlacementBlueprint
             d.Time = time < originalStartTime ? time : originalStartTime;
             d.Duration = Math.Abs(time - originalStartTime);
         }
-        else originalStartTime = d.Time = time;
+        else
+        {
+            originalStartTime = d.Time = time;
+            d.Duration = 0;
+        }
 
         end.Position = ToLocalSpace(PositionProvider.ScreenSpacePositionAtTime(d.GetEndTime(), Object.Lane));
         body.Height = Math.Abs(piece.Y - end.Y);
@@ -85,7 +90,7 @@ public partial class ObjectPlacementBlueprint<T> : PlacementBlueprint
         if (!commit)
             return;
 
-        Actions.Add(new ObjectPlaceAction<T>(Object));
+        Actions.Add(new ObjectPlaceAction<T>(Object.JsonCopy()!));
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

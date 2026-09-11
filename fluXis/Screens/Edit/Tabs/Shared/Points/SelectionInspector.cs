@@ -2,6 +2,7 @@ using fluXis.Graphics.Sprites.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Shared.Points;
@@ -36,16 +37,22 @@ public partial class SelectionInspector : FillFlowContainer
         };
     }
 
-    public void AddSection(string header, string value)
+    public Section AddSection(LocalisableString header, LocalisableString value)
     {
-        sectionFlow.Add(new Section(header, value));
+        var s = new Section(header, value);
+        sectionFlow.Add(s);
+        return s;
     }
 
     public new void Clear() => sectionFlow.Clear();
 
-    private partial class Section : FillFlowContainer
+    public partial class Section : FillFlowContainer
     {
-        public Section(string header, string value)
+        public string Value { set => text.Text = value; }
+
+        private readonly FluXisSpriteText text;
+
+        public Section(LocalisableString header, LocalisableString value)
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
@@ -59,7 +66,7 @@ public partial class SelectionInspector : FillFlowContainer
                     WebFontSize = 14,
                     Alpha = .8f
                 },
-                new FluXisSpriteText
+                text = new FluXisSpriteText
                 {
                     Text = value,
                     WebFontSize = 18,
@@ -69,4 +76,3 @@ public partial class SelectionInspector : FillFlowContainer
         }
     }
 }
-

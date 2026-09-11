@@ -56,6 +56,8 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
 
             if (value is not SelectTool)
                 SelectionHandler.DeselectAll();
+            if (value is IHoldsObject o)
+                o.Reset();
         }
     }
 
@@ -157,6 +159,21 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         currentPlacement?.FinishPlacement(false);
         currentPlacement?.Expire();
         currentPlacement = null;
+    }
+
+    public void CopyObjectAsTool(ITimedObject obj)
+    {
+        var tooltype = typeof(DesignTool<>).MakeGenericType(obj.GetType());
+        var match = ChartingContainer.EffectTools.FirstOrDefault(x => x.GetType() == tooltype) as IHoldsObject;
+
+        if (match is null)
+        {
+            notifications.SendSmallText("Could not find a compatible tool.");
+            return;
+        }
+
+        match.ApplyObject(obj);
+        CurrentTool = (ChartingTool)match;
     }
 
     protected override bool OnMouseMove(MouseMoveEvent e)
