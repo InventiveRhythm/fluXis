@@ -88,7 +88,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     public bool SelectedAny => BlueprintContainer.SelectionHandler.SelectedObjects.Count != 0;
 
-    public Dictionary<ITimedObject, EditorDrawableObject> ObjectDrawables { get; set; } = new();
+    public Dictionary<ITimedObject, EditorDrawableObject> ObjectDrawables { get; } = new();
 
     public ChartingContainer()
     {

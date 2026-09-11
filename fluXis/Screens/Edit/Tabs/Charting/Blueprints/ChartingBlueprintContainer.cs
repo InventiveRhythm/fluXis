@@ -53,6 +53,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
             removePlacement();
 
             CurrentToolChanged?.Invoke();
+
+            if (value is not SelectTool)
+                SelectionHandler.DeselectAll();
         }
     }
 
