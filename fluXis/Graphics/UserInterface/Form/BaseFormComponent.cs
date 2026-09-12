@@ -27,6 +27,7 @@ public abstract partial class BaseFormComponent<T, C> : BaseFormComponent
     public Action<C, T>? OnValueChanged { get; set; }
 
     protected bool FinishedLoading { get; private set; }
+    protected bool CompletedFirstUpdate { get; private set; }
 
     protected BaseFormComponent(LocalisableString label, Bindable<T> bind)
         : base(label, bind.GetBoundCopy(), bind.Value!)
@@ -46,6 +47,7 @@ public abstract partial class BaseFormComponent<T, C> : BaseFormComponent
 
         FinishTransforms(true);
         FinishedLoading = true;
+        ScheduleAfterChildren(() => CompletedFirstUpdate = true);
     }
 }
 

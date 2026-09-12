@@ -1,7 +1,9 @@
+using fluXis.Audio;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -13,14 +15,20 @@ public partial class FormDropdown<T>
 {
     private partial class InnerMenu : Dropdown<T>.DropdownMenu
     {
+        private readonly InnerDropdown parent;
+
+        [Resolved]
+        private UISamples samples { get; set; }
+
         private float marginTop
         {
             get => Margin.Top;
             set => Margin = new MarginPadding { Top = value };
         }
 
-        public InnerMenu()
+        public InnerMenu(InnerDropdown parent)
         {
+            this.parent = parent;
             MaskingContainer.CornerRadius = 8;
             BackgroundColour = Theme.Background3;
             ScrollbarVisible = false;
@@ -40,8 +48,17 @@ public partial class FormDropdown<T>
             this.TransformTo(nameof(marginTop), newSize.Y > 0 ? 8f : 0f, 300, Easing.OutQuint);
         }
 
-        protected override void AnimateOpen() => this.FadeInFromZero(Styling.TRANSITION_FADE);
-        protected override void AnimateClose() => this.FadeOut(Styling.TRANSITION_FADE);
+        protected override void AnimateOpen()
+        {
+            if (parent.ParentDropdown.CompletedFirstUpdate) samples.Dropdown(false);
+            this.FadeInFromZero(Styling.TRANSITION_FADE);
+        }
+
+        protected override void AnimateClose()
+        {
+            if (parent.ParentDropdown.CompletedFirstUpdate) samples.Dropdown(true);
+            this.FadeOut(Styling.TRANSITION_FADE);
+        }
 
         private partial class InnerMenuItem : DrawableDropdownMenuItem
         {
