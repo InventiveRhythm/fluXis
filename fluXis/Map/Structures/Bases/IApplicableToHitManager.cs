@@ -1,8 +1,8 @@
-﻿using fluXis.Modes.Keys.HitObjects;
+﻿using fluXis.Modes.Gameplay.Objects;
 
 namespace fluXis.Map.Structures.Bases;
 
 public interface IApplicableToHitManager
 {
-    void Apply(HitObjectManager manager);
+    void Apply(GameModeHitObjectManager manager);
 }

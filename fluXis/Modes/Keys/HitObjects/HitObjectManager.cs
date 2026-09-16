@@ -53,8 +53,6 @@ public partial class HitObjectManager : Container<HitObjectColumn>
     public float HitPosition => DrawHeight - laneSwitchManager.HitPosition;
     public float ReceptorOffset => DrawHeight - laneSwitchManager.ReceptorOffset;
 
-    public bool Finished { get; private set; }
-
     public bool Break => timeUntilNextHitObject >= 2000;
     private double timeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - Clock.CurrentTime;
 
@@ -109,11 +107,6 @@ public partial class HitObjectManager : Container<HitObjectColumn>
                 PlayHitSound(hit);
             };
         }
-    }
-
-    protected override void Update()
-    {
-        Finished = Children.All(l => l.Finished);
     }
 
     public float PositionAtLane(float lane)

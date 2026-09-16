@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using fluXis.Map.Structures.Bases;
-using fluXis.Modes.Keys.HitObjects;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -45,7 +45,7 @@ public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartVal
     [JsonProperty("ease")]
     public Easing Easing { get; set; }
 
-    public void Apply(HitObjectManager manager)
+    public void Apply(GameModeHitObjectManager manager)
     {
         using (manager.BeginAbsoluteSequence(Time))
         {

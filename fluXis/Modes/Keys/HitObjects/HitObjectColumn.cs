@@ -34,8 +34,6 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     public List<HitObject> FutureHitObjects { get; } = new();
     public List<DrawableHitObject> HitObjects { get; } = new();
 
-    public bool Finished => HitObjects.Count == 0 && FutureHitObjects.Count == 0;
-
     [CanBeNull]
     public HitObject NextUp
     {
@@ -77,16 +75,10 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         objects.Sort((a, b) => a.Time.CompareTo(b.Time));
         objects.ForEach(FutureHitObjects.Add);
 
-        HitObject last = null;
-
         foreach (var hit in FutureHitObjects)
         {
-            if (last != null)
-                last.NextObject = hit;
-
             hit.StartEasing = HitManager.EasingAtTime(hit.Time);
             hit.EndEasing = HitManager.EasingAtTime(hit.EndTime);
-            last = hit;
 
             if (!string.IsNullOrWhiteSpace(hit.Group) && ruleset.ScrollGroups.TryGetValue(hit.Group, out var gr))
                 hit.ScrollGroup = gr;

@@ -9,6 +9,8 @@ namespace fluXis.Map.Structures;
 
 public class HitObject : ITimedObject, IHasDuration
 {
+    #region Stored
+
     [JsonProperty("time")]
     public double Time { get; set; }
 
@@ -36,6 +38,26 @@ public class HitObject : ITimedObject, IHasDuration
     [JsonProperty("type")]
     public HitObjectType Type { get; set; }
 
+    #endregion
+
+    #region Runtime
+
+    /// <summary>
+    /// The next HitObject in the same lane.
+    /// </summary>
+    [CanBeNull]
+    [JsonIgnore]
+    public HitObject NextObject { get; set; }
+
+    /// <summary>
+    /// The scroll group for this object.
+    /// </summary>
+    [CanBeNull]
+    [JsonIgnore]
+    public ScrollGroup ScrollGroup { get; set; }
+
+    #endregion
+
     [JsonIgnore]
     public bool LongNote => HoldTime > 0 && Type == HitObjectType.Normal;
 
@@ -60,20 +82,6 @@ public class HitObject : ITimedObject, IHasDuration
 
     [JsonIgnore]
     public HitResult? HoldEndResult { get; set; }
-
-    /// <summary>
-    /// The next HitObject in the same lane.
-    /// </summary>
-    [CanBeNull]
-    [JsonIgnore]
-    public HitObject NextObject { get; set; }
-
-    /// <summary>
-    /// The scroll group for this object.
-    /// </summary>
-    [CanBeNull]
-    [JsonIgnore]
-    public ScrollGroup ScrollGroup { get; set; }
 
     /// <summary>
     /// The ease type the start of this note has.

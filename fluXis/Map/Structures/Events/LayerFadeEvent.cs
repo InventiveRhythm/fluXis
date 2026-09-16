@@ -50,7 +50,7 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
 
         Drawable drawable = Layer switch
         {
-            FadeLayer.HitObjects => (playfield as KeysPlayfield)?.HitManager,
+            FadeLayer.HitObjects => (playfield as KeysPlayfield)?.Objects,
             FadeLayer.Stage => (playfield as KeysPlayfield)?.Stage,
             FadeLayer.Receptors => (playfield as KeysPlayfield)?.Receptors,
             FadeLayer.Playfield => playfield,

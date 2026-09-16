@@ -4,7 +4,6 @@ using fluXis.Configuration;
 using fluXis.Modes.Gameplay;
 using fluXis.Modes.Keys.Gameplay.Objects;
 using fluXis.Modes.Keys.Gameplay.UI;
-using fluXis.Modes.Keys.HitObjects;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -19,11 +18,10 @@ public partial class KeysPlayfield : Playfield
     private LaneSwitchManager laneSwitchManager { get; set; }
 
     public override bool IsFlipped => scrollDirection.Value == ScrollDirection.Up;
-    public override bool IsFinished => HitManager.Finished;
+    public override bool IsFinished => Objects.Finished;
 
     public Stage Stage { get; private set; }
     public FillFlowContainer<Receptor> Receptors { get; private set; }
-    public HitObjectManager HitManager { get; private set; }
     public KeysHitObjectManager Objects { get; private set; }
 
     private Drawable hitline;
@@ -62,22 +60,15 @@ public partial class KeysPlayfield : Playfield
             Padding = new MarginPadding { Bottom = Skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorOffset }
         };
 
-        Dependencies.CacheAs(HitManager = new HitObjectManager
-        {
-            AlwaysPresent = true,
-            Masking = true
-        });
+        Objects = new KeysHitObjectManager(Ruleset, MapInfo, MapEvents, MapInfo.HitObjects);
 
         var receptorsFirst = Skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorsFirst;
 
         AddRangeInternal([
             new LaneSwitchAlert(),
             Stage = new Stage(),
-
-            receptorsFirst ? Receptors : HitManager,
-            receptorsFirst ? HitManager : Receptors,
-
-            Objects = new KeysHitObjectManager(Ruleset, MapInfo, MapEvents, MapInfo.HitObjects),
+            receptorsFirst ? Receptors : Objects,
+            receptorsFirst ? Objects : Receptors,
             hitline = Skin.GetHitLine().With(d =>
             {
                 d.Width = 1;
@@ -94,7 +85,7 @@ public partial class KeysPlayfield : Playfield
             new KeyOverlay()
         ]);
 
-        MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
+        MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(Objects));
     }
 
     protected override void Update()

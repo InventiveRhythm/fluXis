@@ -4,6 +4,7 @@ using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Graphics;
@@ -17,6 +18,7 @@ namespace fluXis.Modes.Gameplay.Objects;
 public abstract partial class GameModeHitObjectManager : CompositeDrawable
 {
     protected virtual int MinimumLoadedHitObject => 3;
+    public virtual bool Finished => NestedManagers.All(x => x.Finished) && ActiveObjects.Count == 0 && FutureObjects.Count == 0;
 
     [Resolved]
     protected GameModePlayer Player { get; private set; } = null!;
@@ -27,6 +29,9 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
     protected RulesetContainer Ruleset { get; }
     protected MapInfo Map { get; }
     protected MapEvents Events { get; }
+
+    [UsedImplicitly]
+    public double VisualTimeOffset { get; set; }
 
     protected GameModeHitObjectManager(RulesetContainer ruleset, MapInfo map, MapEvents events)
     {
@@ -41,6 +46,17 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
+        HitObject? last = null;
+
+        foreach (var hit in FutureObjects)
+        {
+            if (last != null) last.NextObject = hit;
+            last = hit;
+
+            if (!string.IsNullOrWhiteSpace(hit.Group) && Ruleset.ScrollGroups.TryGetValue(hit.Group, out var gr))
+                hit.ScrollGroup = gr;
+        }
+
         AddInternal(ActiveObjects);
     }
 

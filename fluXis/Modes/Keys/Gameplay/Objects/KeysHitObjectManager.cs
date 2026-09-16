@@ -28,7 +28,6 @@ public partial class KeysHitObjectManager : GameModeHitObjectManager
     }
 
     public virtual float HitPosition => (NestedManagers.FirstOrDefault() as KeysHitObjectColumn)?.HitPosition ?? DrawHeight;
-    public double VisualTimeOffset { get; set; } = 0;
 
     public int KeyCount => Map.RealmEntry!.KeyCount;
 
