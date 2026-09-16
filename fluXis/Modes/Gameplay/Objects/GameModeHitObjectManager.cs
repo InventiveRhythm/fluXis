@@ -66,14 +66,15 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
 
         while (FutureObjects is { Count: > 0 } && (ShouldBeRendered(FutureObjects[0]) || ActiveObjects.Count < MinimumLoadedHitObject))
         {
-            var hit = createObject(FutureObjects[0]);
+            var hit = FutureObjects[0];
+            var draw = createObject(hit);
 
             FutureObjects.RemoveAt(0);
 
-            if (hit is null) // this will break stuff 100%, but it won't freeze the game
-                PastObjects.Push(FutureObjects[0]);
+            if (draw is null) // this will break stuff 100%, but it won't freeze the game
+                PastObjects.Push(hit);
             else
-                ActiveObjects.Add(hit);
+                ActiveObjects.Add(draw);
         }
 
         while (ActiveObjects.Count > 0 && !ShouldBeRendered(ActiveObjects[0].Object) && ActiveObjects.Count > MinimumLoadedHitObject)
@@ -82,7 +83,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
             removeObject(hit, true);
         }
 
-        foreach (var hitObject in ActiveObjects.Where(h => h.CanBeRemoved).Reverse().ToList())
+        foreach (var hitObject in ActiveObjects.Where(h => h.CanBeRemoved).ToList())
             removeObject(hitObject);
 
         while (Ruleset.AllowReverting && PastObjects.Count > 0)

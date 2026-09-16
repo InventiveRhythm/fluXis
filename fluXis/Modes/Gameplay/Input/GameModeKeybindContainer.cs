@@ -22,7 +22,8 @@ public abstract partial class GameModeKeybindContainer<T> : KeyBindingContainer<
     private readonly Dictionary<int, T> intToActionMap;
     private readonly Dictionary<T, int> actionToIntMap;
 
-    protected GameModeKeybindContainer()
+    protected GameModeKeybindContainer(SimultaneousBindingMode simultaneousMode = SimultaneousBindingMode.Unique, KeyCombinationMatchingMode matchingMode = KeyCombinationMatchingMode.Any)
+        : base(simultaneousMode, matchingMode)
     {
         intToActionMap = Enum.GetValues<T>().ToDictionary(x => Convert.ToInt32(x), x => x);
         actionToIntMap = Enum.GetValues<T>().ToDictionary(x => x, x => Convert.ToInt32(x));

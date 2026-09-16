@@ -1,4 +1,3 @@
-using System;
 using fluXis.Input;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
@@ -30,7 +29,7 @@ public partial class DrawableLandmine : DrawableHitObject
     [Resolved]
     private GameplayInput input { get; set; }
 
-    private bool isBeingHeld => Keybinds.Pressed[Array.IndexOf(Keybinds.Keys, Keybind)];
+    private bool isBeingHeld => Keybinds.PressedActions.Contains(Keybind);
 
     // next non-landmine HitObject on the column. Only set if the landmine is in the hit window of the next note, null otherwise.
     private HitObject nextNote;

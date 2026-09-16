@@ -16,7 +16,7 @@ namespace fluXis.Modes.Keys.Gameplay.Objects;
 
 public partial class KeysHitObjectManager : GameModeHitObjectManager
 {
-    protected ScrollGroup DefaultScrollGroup { get; init; }
+    public ScrollGroup DefaultScrollGroup { get; init; }
 
     public float ScrollSpeed
     {
@@ -67,6 +67,7 @@ public partial class KeysHitObjectManager : GameModeHitObjectManager
     {
         TimingLine line => new KeysDrawableTimingLine(line),
         { Type: HitObjectType.Normal, LongNote: false } => new DrawableNote(obj),
+        { Type: HitObjectType.Tick } => new DrawableTick(obj),
         _ => null
     };
 

@@ -13,20 +13,14 @@ public partial class KeysKeybindContainer : GameModeKeybindContainer<FluXisGamep
 {
     public override IEnumerable<IKeyBinding> DefaultKeyBindings { get; }
 
-    public bool[] Pressed { get; }
     public double[] PressTimes { get; }
     public FluXisGameplayKeybind[] Keys { get; }
 
     public KeysKeybindContainer(int mode, bool dual)
     {
-        DefaultKeyBindings = GetKeys(mode, dual);
-        Keys = [.. DefaultKeyBindings.Select(x => (FluXisGameplayKeybind)x.Action)];
-
-        if (dual)
-            mode *= 2;
-
-        Pressed = new bool[mode];
-        PressTimes = new double[mode];
+        var binds = DefaultKeyBindings = GetKeys(mode, dual);
+        Keys = [.. binds.Select(x => (FluXisGameplayKeybind)x.Action)];
+        PressTimes = new double[Keys.Length];
     }
 
     protected override Drawable PropagatePressed(IEnumerable<Drawable> drawables, InputState state, FluXisGameplayKeybind pressed, float scrollAmount = 0, bool isPrecise = false, bool repeat = false)
@@ -34,9 +28,7 @@ public partial class KeysKeybindContainer : GameModeKeybindContainer<FluXisGamep
         var idx = Array.IndexOf(Keys, pressed);
         if (idx == -1) return null;
 
-        Pressed[idx] = true;
         PressTimes[idx] = Time.Current;
-
         return base.PropagatePressed(drawables, state, pressed, scrollAmount, isPrecise, repeat);
     }
 
@@ -45,9 +37,7 @@ public partial class KeysKeybindContainer : GameModeKeybindContainer<FluXisGamep
         var idx = Array.IndexOf(Keys, released);
         if (idx == -1) return;
 
-        Pressed[idx] = false;
         PressTimes[idx] = 0;
-
         base.PropagateReleased(drawables, state, released);
     }
 
@@ -73,7 +63,7 @@ public partial class KeysKeybindContainer : GameModeKeybindContainer<FluXisGamep
             }
         }
         else
-            binds = Enum.GetValues<FluXisGameplayKeybind>().ToList();
+            binds = [.. Enum.GetValues<FluXisGameplayKeybind>()];
 
         return binds.Select(b => new KeyBinding(GetDefaultFor(b), b));
     }

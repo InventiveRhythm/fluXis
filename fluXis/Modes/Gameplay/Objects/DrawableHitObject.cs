@@ -24,7 +24,7 @@ public abstract partial class DrawableHitObject : CompositeDrawable
     protected double TimeDelta => Object.Time - Time.Current;
     public abstract bool CanBeRemoved { get; }
 
-    public bool Judged { get; private set; }
+    public bool Judged { get; protected set; }
     public HitWindows HitWindows => hitWindowLazy.Value;
     public Action<DrawableHitObject, double>? OnHit { get; set; }
 
@@ -34,6 +34,25 @@ public abstract partial class DrawableHitObject : CompositeDrawable
     {
         Object = o;
         hitWindowLazy = new Lazy<HitWindows>(() => Ruleset.PlayableMode.CreateHitWindowFor(Object));
+    }
+
+    protected bool UpdateJudgement(bool byUser)
+    {
+        if (Judged)
+            return false;
+
+        CheckJudgement(byUser, TimeDelta);
+        return Judged;
+    }
+
+    protected virtual void CheckJudgement(bool byUser, double offset) { }
+
+    protected void ApplyResult(double diff)
+    {
+        if (Judged) throw new InvalidOperationException("Can not apply judgement to already judged HitObject.");
+
+        Judged = true;
+        OnHit?.Invoke(this, diff);
     }
 }
 
