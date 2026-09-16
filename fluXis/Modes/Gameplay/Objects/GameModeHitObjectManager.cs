@@ -76,13 +76,13 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
                 ActiveObjects.Add(hit);
         }
 
-        while (ActiveObjects.Count > 0 && !ShouldBeRendered(ActiveObjects[^1].Object) && ActiveObjects.Count > MinimumLoadedHitObject)
+        while (ActiveObjects.Count > 0 && !ShouldBeRendered(ActiveObjects[0].Object) && ActiveObjects.Count > MinimumLoadedHitObject)
         {
-            var hit = ActiveObjects[^1];
+            var hit = ActiveObjects[0];
             removeObject(hit, true);
         }
 
-        foreach (var hitObject in ActiveObjects.Where(h => h.CanBeRemoved).ToList())
+        foreach (var hitObject in ActiveObjects.Where(h => h.CanBeRemoved).Reverse().ToList())
             removeObject(hitObject);
 
         while (Ruleset.AllowReverting && PastObjects.Count > 0)
