@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Modes.Gameplay.Lines;
 using fluXis.Modes.Gameplay.Objects;
 using fluXis.Modes.Keys.Map.Objects.Drawable;
 using fluXis.Screens.Gameplay.Ruleset;
@@ -9,7 +10,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Utils;
 
-namespace fluXis.Modes.Keys.Gameplay;
+namespace fluXis.Modes.Keys.Gameplay.Objects;
 
 #nullable enable
 
@@ -26,7 +27,7 @@ public partial class KeysHitObjectManager : GameModeHitObjectManager
         }
     }
 
-    public virtual float HitPosition => DrawHeight;
+    public virtual float HitPosition => (NestedManagers.FirstOrDefault() as KeysHitObjectColumn)?.HitPosition ?? DrawHeight;
     public double VisualTimeOffset { get; set; } = 0;
 
     public int KeyCount => Map.RealmEntry!.KeyCount;
@@ -50,6 +51,8 @@ public partial class KeysHitObjectManager : GameModeHitObjectManager
                 AddNestedManager(manager);
                 AddInternal(manager);
             });
+
+            FutureObjects.AddRange(TimingLineGenerator.Generate(map.TimingPoints, map.EndTime));
         }
     }
 
@@ -61,13 +64,12 @@ public partial class KeysHitObjectManager : GameModeHitObjectManager
         return y >= 0;
     }
 
-    protected override DrawableHitObject? CreateDrawableFor(HitObject obj)
+    protected override DrawableHitObject? CreateDrawableFor(HitObject obj) => obj switch
     {
-        if (obj is { Type: HitObjectType.Normal, LongNote: false })
-            return new DrawableNote(obj);
-
-        return null;
-    }
+        TimingLine line => new KeysDrawableTimingLine(line),
+        { Type: HitObjectType.Normal, LongNote: false } => new DrawableNote(obj),
+        _ => null
+    };
 
     #region Positioning
 

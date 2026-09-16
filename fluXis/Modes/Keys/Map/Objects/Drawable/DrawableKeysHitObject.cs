@@ -1,6 +1,6 @@
 using fluXis.Map.Structures;
 using fluXis.Modes.Gameplay.Objects;
-using fluXis.Modes.Keys.Gameplay;
+using fluXis.Modes.Keys.Gameplay.Objects;
 using osu.Framework.Graphics;
 
 namespace fluXis.Modes.Keys.Map.Objects.Drawable;

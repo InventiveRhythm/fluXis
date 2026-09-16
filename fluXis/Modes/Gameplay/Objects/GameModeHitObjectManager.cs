@@ -5,8 +5,10 @@ using fluXis.Map.Structures;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Lists;
 
 namespace fluXis.Modes.Gameplay.Objects;
 
@@ -133,6 +135,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
     #region Nesting
 
     public bool IsNested { get; private set; }
+    public SlimReadOnlyListWrapper<GameModeHitObjectManager> NestedManagers => nestedManagers.AsSlimReadOnly();
     private readonly List<GameModeHitObjectManager> nestedManagers = [];
 
     protected void AddNestedManager(GameModeHitObjectManager manager)

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Modes.Gameplay;
-using fluXis.Modes.Keys.Gameplay.TimingLines;
+using fluXis.Modes.Keys.Gameplay.Objects;
 using fluXis.Modes.Keys.Gameplay.UI;
 using fluXis.Modes.Keys.HitObjects;
 using osu.Framework.Allocation;
@@ -73,7 +73,6 @@ public partial class KeysPlayfield : Playfield
         AddRangeInternal([
             new LaneSwitchAlert(),
             Stage = new Stage(),
-            new TimingLineManager(),
 
             receptorsFirst ? Receptors : HitManager,
             receptorsFirst ? HitManager : Receptors,

@@ -4,7 +4,7 @@ using fluXis.Map.Structures;
 using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Allocation;
 
-namespace fluXis.Modes.Keys.Gameplay;
+namespace fluXis.Modes.Keys.Gameplay.Objects;
 
 #nullable enable
 
