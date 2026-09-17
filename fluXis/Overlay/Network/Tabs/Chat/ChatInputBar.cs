@@ -121,6 +121,7 @@ public partial class ChatInputBar : CompositeDrawable
             var name = x.Text.Value.ToString();
             var rest = name[completion.Query.Length..];
             textBox.AddAfterCursor($"{rest}: ");
+            GetContainingFocusManager()?.ChangeFocus(textBox);
         });
         completions.Items = [.. results];
     }
