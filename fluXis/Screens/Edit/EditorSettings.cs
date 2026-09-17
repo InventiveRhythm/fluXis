@@ -25,6 +25,7 @@ public class EditorSettings
 
     public Bindable<float> WaveformOpacity { get; } = new(.2f);
     public Bindable<bool> ApplyZoomToPreview { get; }
+    public Bindable<bool> ShowPlayfieldIndices { get; } = new();
 
     public BindableDouble ZoomBindable { get; } = new(2f)
     {
