@@ -13,7 +13,7 @@ using fluXis.Online;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Requests.Chat;
 using fluXis.Online.Chat;
-using fluXis.Online.Chat.Deco;
+using fluXis.Online.Chat.Segments;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Navigator;

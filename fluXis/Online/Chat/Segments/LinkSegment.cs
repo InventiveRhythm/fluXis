@@ -1,4 +1,4 @@
-namespace fluXis.Online.Chat.Deco;
+namespace fluXis.Online.Chat.Segments;
 
 public class LinkSegment(string url) : IMessageSegment
 {

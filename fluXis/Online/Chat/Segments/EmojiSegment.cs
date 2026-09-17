@@ -1,4 +1,4 @@
-namespace fluXis.Online.Chat.Deco;
+namespace fluXis.Online.Chat.Segments;
 
 public class EmojiSegment(string name) : IMessageSegment
 {

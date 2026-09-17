@@ -197,7 +197,9 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(APIClient = new FluxelClient(), true, true);
             cacheComponent(APIClient as FluxelClient);
             cacheComponent(new ChatClient(), true, true);
-            cacheComponent(new ChatDecoManager(), true);
+
+            var deco = cacheComponent(new ChatDecoManager(), true);
+            Fonts.AddStore(new EmojiIconsStore(deco, Textures));
 
             var users = new UserCache();
             cacheComponent(users, true, true);
@@ -300,7 +302,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         }
     }
 
-    private void cacheComponent<T>(T component, bool load = false, bool add = false)
+    private T cacheComponent<T>(T component, bool load = false, bool add = false)
         where T : class
     {
         var drawable = component as Drawable;
@@ -311,7 +313,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         GameDependencies.CacheAs(component);
 
         if (!load || drawable.IsLoaded)
-            return;
+            return component;
 
         if (LoadComponentsLazy)
         {
@@ -321,7 +323,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                     base.Content.Add(drawable);
             });
 
-            return;
+            return component;
         }
 
         Schedule(() =>
@@ -334,6 +336,8 @@ public partial class FluXisGameBase : osu.Framework.Game
             if (add)
                 base.Content.Add(drawable);
         });
+
+        return component;
     }
 
     protected void CreateComponentLoadTask<T>(T component, Action<T> action)
