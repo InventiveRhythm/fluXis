@@ -6,6 +6,7 @@ using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Gameplay.Ruleset;
+using fluXis.Utils.Attributes;
 using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -26,6 +27,7 @@ public class ScrollVelocity : ITimedObject, IHasGroups
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
+    [Tooltip("The speed to multiply the scroll velocity by.")]
     [JsonProperty("multiplier")]
     public double Multiplier { get; set; } = 1;
 

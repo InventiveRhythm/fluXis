@@ -19,6 +19,7 @@ public abstract partial class EditorVariableBeats<T> : EditorVariableNumber<doub
     private float beatLength { get; }
 
     protected abstract double Value { get; set; }
+    public bool UpdateMap { get; init; } = true;
 
     protected EditorVariableBeats(EditorMap map, T obj, float beatLength)
     {
@@ -34,7 +35,7 @@ public abstract partial class EditorVariableBeats<T> : EditorVariableNumber<doub
         OnValueChanged = v =>
         {
             Value = v * beatLength;
-            map.Update(obj);
+            if (UpdateMap) map.Update(obj);
         };
 
         FetchStepValue = () =>
@@ -55,7 +56,7 @@ public abstract partial class EditorVariableBeats<T> : EditorVariableNumber<doub
 
             TextBox.Text = (diff / beatLength).ToStringInvariant("0.##");
             Value = diff;
-            map.Update(Object);
+            if (UpdateMap) map.Update(Object);
         }
     };
 }

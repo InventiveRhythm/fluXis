@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using fluXis.Graphics.UserInterface.Color;
@@ -60,8 +61,7 @@ public partial class ChartingPointsList : PointsList
         CameraScaleEvent cams => new CameraScaleEntry(cams),
         CameraRotateEvent camr => new CameraRotateEntry(camr),
         LoopEvent loop => new LoopEventEntry(loop),
-        NoteEvent note => new NoteEntry(note),
-        _ => null
+        _ => Activator.CreateInstance(typeof(GenericPointListEntry<>).MakeGenericType(obj.GetType()), obj) as PointListEntry
     };
 
     protected override IEnumerable<DropdownEntry> CreateDropdownEntries() => new[]

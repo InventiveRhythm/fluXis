@@ -2,6 +2,8 @@ using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Utils.Extensions;
+using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,6 +20,9 @@ public partial class FormCheckbox : BaseFormComponent<bool, FormCheckbox>, IHasC
 {
     CursorType IHasCursorType.Cursor => CursorType.Hand;
 
+    private Sample toggleOn;
+    private Sample toggleOff;
+
     private Container box;
     private FluXisSpriteIcon icon;
 
@@ -31,6 +36,13 @@ public partial class FormCheckbox : BaseFormComponent<bool, FormCheckbox>, IHasC
     public FormCheckbox(LocalisableString label, Bindable<bool> bind)
         : base(label, bind)
     {
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        toggleOn = samples.Get("UI/toggle-on");
+        toggleOff = samples.Get("UI/toggle-off");
     }
 
     protected override Drawable CreateContent() => new GridContainer
@@ -106,6 +118,7 @@ public partial class FormCheckbox : BaseFormComponent<bool, FormCheckbox>, IHasC
     protected override void LoadComplete()
     {
         Bindable.BindValueChanged(_ => updateState(), true);
+        Bindable.ValueChanged += v => (v.NewValue ? toggleOn : toggleOff)?.Play();
         base.LoadComplete();
     }
 

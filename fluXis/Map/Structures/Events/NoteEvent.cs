@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
+using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using fluXis.Utils.Attributes;
 using Newtonsoft.Json;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -21,9 +24,11 @@ public class NoteEvent : IMapEvent, IWithContext
     [JsonProperty("lane")]
     public int Lane { get; set; }
 
+    [Hidden]
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
+    [Tooltip("The content of the note.")]
     [JsonProperty("content")]
     public string Content { get; set; }
 
@@ -33,6 +38,9 @@ public class NoteEvent : IMapEvent, IWithContext
         flow.Add(ITimedObject.CreateSmallText(obj, () => Content));
         yield return flow;
     }
+
+    public IEnumerable<Drawable> CreateSidebarInfo()
+        => new FluXisSpriteText { Text = Content }.Yield();
 
     IEnumerable<MenuItem> IWithContext.CreateContextItems(EditorMap map, EditorSnapProvider snaps)
     {

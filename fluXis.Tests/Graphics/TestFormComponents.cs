@@ -44,6 +44,7 @@ public partial class TestFormComponents : FluXisTestScene
                 new FormInput("Test Input", new Bindable<string>("waow")),
                 new FormSlider<double>("Test Slider", 1, 0, 10),
                 new FormCheckbox("Test Check", new Bindable<bool>()),
+                new FormToggle("Test Toggle", new Bindable<bool>()),
                 new FormColor("Test Color", new Bindable<Colour4>(Color4.White)),
                 new FormDropdown<MapStatus>("Test Dropdown", new Bindable<MapStatus>(), Enum.GetValues<MapStatus>()),
                 new FormBasicFilePicker("Test File", "")

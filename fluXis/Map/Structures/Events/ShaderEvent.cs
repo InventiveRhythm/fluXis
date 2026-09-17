@@ -28,6 +28,7 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<S
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
+    [Hidden]
     [JsonProperty("shader")]
     public string ShaderName
     {
@@ -56,6 +57,7 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<S
     [JsonProperty("start-params")]
     public ShaderParameters StartParameters { get; set; } = new();
 
+    [Hidden]
     [JsonIgnore]
     public ShaderParameters StartValue
     {
@@ -109,6 +111,9 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing, IHasStartValue<S
             3 => Strength3,
             _ => throw new ArgumentOutOfRangeException(nameof(index), index, null)
         };
+
+        public override string ToString()
+            => $"{Strength}, {Strength2}, {Strength3}";
     }
 
     public void Apply(ShaderTransformHandler shader)

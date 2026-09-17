@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Edit.UI.Variable;
 
@@ -10,12 +11,13 @@ namespace fluXis.Utils.Inspect;
 
 public static class ObjectInspectExt
 {
-    public static EditorVariableBase? CreateVariableControl<T>(this ObjectProperty prop, T obj, EditorMap map)
+    public static EditorVariableBase? CreateVariableControl<T>(this ObjectProperty prop, T obj, EditorMap map, bool update = true)
+        where T : ITimedObject
     {
         EditorVariableBase? v = null;
 
         if (prop.CustomCreateMethod != null)
-            return prop.CustomCreateMethod.Call(prop, obj, map) as EditorVariableBase;
+            return prop.CustomCreateMethod.Call(prop, obj, new EditorInspectContext(map, update)) as EditorVariableBase;
 
         if (prop.Type.IsEnum)
         {
@@ -33,11 +35,25 @@ public static class ObjectInspectExt
             items.SetValue(v, values);
         }
         else if (prop.Type == typeof(string))
-            v = new EditorVariableTextBox();
+        {
+            v = new EditorVariableTextBox
+            {
+                CurrentValue = prop.Value as string ?? string.Empty,
+                OnValueChanged = t =>
+                {
+                    prop.Property.SetValue(obj, t.Text);
+                    if (update) map.Update(obj);
+                }
+            };
+        }
         else if (prop.Type == typeof(bool))
             v = new EditorVariableToggle();
 
-        v?.AssignProperty(prop, obj);
+        if (v is null)
+            return null;
+
+        v.TooltipText = prop.Tooltip;
+        v.AssignProperty(prop, obj);
         return v;
     }
 }

@@ -41,6 +41,6 @@ public partial class FormDropdown<T> : BaseFormComponent<T, FormDropdown<T>>, IH
         }
 
         protected override DropdownHeader CreateHeader() => new InnerHeader(this);
-        protected override DropdownMenu CreateMenu() => new InnerMenu();
+        protected override DropdownMenu CreateMenu() => new InnerMenu(this);
     }
 }

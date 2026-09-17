@@ -440,6 +440,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 new MenuSpacerItem(),
                 new MenuToggleItem("Apply Zoom to Preview", Phosphor.Bold.MagnifyingGlass, settings.ApplyZoomToPreview),
                 new MenuToggleItem("Compact Sidebar", Phosphor.Bold.ArrowsInLineVertical, config.GetBindable<bool>(FluXisSetting.EditorCompactMode)),
+                new MenuToggleItem("Show Playfield Indices", Phosphor.Bold.ListNumbers, settings.ShowPlayfieldIndices),
             };
 
             if (experiments.Get<bool>(ExperimentConfig.ModView))
