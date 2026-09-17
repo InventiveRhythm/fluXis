@@ -53,16 +53,18 @@ public partial class PreviewOverlay : Container
             Clear();
         }
 
-        var players = currentRuleset.PlayfieldManager?.Players;
+        var players = currentRuleset.PlayableMode?.Players;
 
         if (players == null) return;
 
-        List<Gameplay.Ruleset.Playfields.Playfield> allPlayfields = [];
+        List<Modes.Gameplay.Playfield> allPlayfields = [];
 
         foreach (var player in players)
         {
+            // ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (player.MainPlayfield != null) allPlayfields.Add(player.MainPlayfield);
             if (player.SubPlayfields != null) allPlayfields.AddRange(player.SubPlayfields);
+            // ReSharper enable ConditionIsAlwaysTrueOrFalse
         }
 
         if (Children.Count != allPlayfields.Count)
@@ -84,17 +86,17 @@ public partial class PreviewOverlay : Container
 
     private partial class PlayfieldIndex : CompositeDrawable
     {
-        public readonly Gameplay.Ruleset.Playfields.Playfield Playfield;
+        public readonly Modes.Gameplay.Playfield Playfield;
         private readonly int index;
         private readonly int subIndex;
 
-        public PlayfieldIndex(Gameplay.Ruleset.Playfields.Playfield playfield)
+        public PlayfieldIndex(Modes.Gameplay.Playfield playfield)
         {
             Playfield = playfield;
 
             // canonical idx
-            index = playfield.Index + 1;
-            subIndex = playfield.SubIndex + 1;
+            index = playfield.PlayerIndex + 1;
+            subIndex = playfield.PlayfieldIndex + 1;
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
