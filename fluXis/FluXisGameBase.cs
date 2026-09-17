@@ -197,6 +197,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(APIClient = new FluxelClient(), true, true);
             cacheComponent(APIClient as FluxelClient);
             cacheComponent(new ChatClient(), true, true);
+            cacheComponent(new ChatDecoManager(), true);
 
             var users = new UserCache();
             cacheComponent(users, true, true);

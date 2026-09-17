@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Graphics.UserInterface.Text;
+using fluXis.Online;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Requests.Chat;
+using fluXis.Online.Chat;
+using fluXis.Online.Chat.Deco;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Navigator;
@@ -196,13 +199,58 @@ public partial class DrawableChatMessage : Container
         private const string link_regex = @"(http|https)://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?";
 
         [BackgroundDependencyLoader(true)]
-        private void load([CanBeNull] FluXisGame game)
+        private void load([CanBeNull] FluXisGame game, [CanBeNull] OnlineNavigator navigator, ChatDecoManager deco, UserCache users)
         {
             WebFontSize = 14;
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
 
-            var words = Message.Content.Split(' ');
+            var segments = deco.ParseSegments(Message.Content);
+            var allEmojis = segments.All(x => x is EmojiSegment || (x is TextSegment t && string.IsNullOrWhiteSpace(t.Text)));
+
+            foreach (var segment in segments)
+            {
+                switch (segment)
+                {
+                    case TextSegment text:
+                        AddText(text.Text);
+                        break;
+
+                    case EmojiSegment emoji:
+                        AddCustom(new CustomSprite($"Emoji/{emoji.Name}")
+                        {
+                            Size = new Vector2(allEmojis ? 48 : 20),
+                            FillMode = FillMode.Fit
+                        });
+                        break;
+
+                    case MentionSegment mention:
+                        var u = users.Get(mention.UserID);
+
+                        if (u is null || u.ID == -1)
+                            AddText("@unknown-user", t => t.Colour = Theme.Highlight);
+                        else
+                        {
+                            AddText<ClickableFluXisSpriteText>($"@{u.Username}", t =>
+                            {
+                                t.Colour = Theme.Highlight;
+                                t.Action = () => navigator?.PushUser(mention.UserID);
+                            });
+                        }
+
+                        break;
+
+                    case LinkSegment link:
+                        AddText<ClickableFluXisSpriteText>(link.Url, t =>
+                        {
+                            t.Colour = Theme.Highlight;
+                            t.Action = () => game?.OpenLink(link.Url);
+                        });
+                        break;
+                }
+            }
+
+            /*var words = Message.Content.Split(' ');
 
             foreach (var word in words)
             {
@@ -222,7 +270,7 @@ public partial class DrawableChatMessage : Container
                     AddText(word);
 
                 AddText(" ");
-            }
+            }*/
         }
 
         public MenuItem[] ContextMenuItems
