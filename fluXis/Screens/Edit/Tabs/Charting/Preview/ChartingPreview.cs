@@ -60,7 +60,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
     private Box backgroundDim = null!;
 
     private Container rulesetWrapper = null!;
-    private RulesetContainer? ruleset;
+    public RulesetContainer? Ruleset { get; private set; }
 
     private PreviewFlashLayer backFlash = null!;
     private PreviewFlashLayer frontFlash = null!;
@@ -93,7 +93,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
         var compiled = getCompiledEvents();
 
-        camera = new CameraContainer([.. Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>()]) { Clock = EditorClock };
+        Camera = new CameraContainer([.. Map.MapEvents.Where(x => x is ICameraEvent).Cast<ICameraEvent>()]) { Clock = EditorClock };
 
         Container pulseContainer;
 
@@ -103,14 +103,14 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
             idleTracker = new IdleTracker(400, rebuildRuleset, () =>
             {
                 loading.Show();
-                ruleset?.FadeOut(Styling.TRANSITION_FADE);
+                Ruleset?.FadeOut(Styling.TRANSITION_FADE);
             }),
             handler = new PreviewShaderHandler
             {
                 ShaderEvents = compiled.ShaderEvents
             },
 
-            camera.CreateProxyDrawable().With(x => x.Clock = EditorClock),
+            Camera.CreateProxyDrawable().With(x => x.Clock = EditorClock),
 
             pulseContainer = new Container
             {
@@ -118,7 +118,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Child = createShaderStack().WithChildren<ShaderStackContainer, Drawable>([
-                    camera.WithChildren(new Drawable[]
+                    Camera.WithChildren(new Drawable[]
                     {
                         background = new SpriteStack<BlurableBackground> { AutoFill = false },
                         backgroundVideo = new BackgroundVideo
@@ -135,7 +135,8 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
                             Alpha = Editor.BackgroundDim,
                         },
                         backFlash = new PreviewFlashLayer { Clock = EditorClock },
-                        rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both }
+                        rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both },
+                        new PreviewOverlay { Preview = this } // Moved overlay here
                     }),
                     pulseEffect = new PulseEffect(compiled.PulseEvents) { Clock = EditorClock },
                     frontFlash = new PreviewFlashLayer { Clock = EditorClock }
@@ -178,10 +179,10 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
                 var type = t.GetType();
 
-                if (ruleset?.HasReloadListener(type) ?? false)
+                if (Ruleset?.HasReloadListener(type) ?? false)
                 {
                     var objs = Map.GetObjectsOfType(type);
-                    if (ruleset.TriggerReload(type, objs)) return;
+                    if (Ruleset.TriggerReload(type, objs)) return;
                 }
             }
 
@@ -295,11 +296,11 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
     private void rebuildRuleset()
     {
         rulesetWrapper.Clear();
-        ruleset = null;
+        Ruleset = null;
 
-        ruleset = createRuleset();
-        rulesetWrapper.Child = ruleset;
-        ruleset.FadeInFromZero(100);
+        Ruleset = createRuleset();
+        rulesetWrapper.Child = Ruleset;
+        Ruleset.FadeInFromZero(100);
 
         loading.Hide();
     }
@@ -324,12 +325,12 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
     #region Camera
 
-    private CameraContainer camera = null!;
+    public CameraContainer Camera { get; private set; } = null!;
 
     private void rebuildCamera()
     {
         var events = getCompiledEvents().Where(x => x is ICameraEvent).Cast<ICameraEvent>().ToList();
-        camera.Refresh(events);
+        Camera.Refresh(events);
     }
 
     #endregion
