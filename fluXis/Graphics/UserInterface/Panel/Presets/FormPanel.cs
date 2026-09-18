@@ -5,23 +5,19 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using fluXis.Audio;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Form;
-using fluXis.Graphics.UserInterface.Interaction;
+using fluXis.Graphics.UserInterface.Panel.Parts;
 using fluXis.Utils.Attributes;
 using fluXis.Utils.Inspect;
-using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
 using Container = osu.Framework.Graphics.Containers.Container;
@@ -31,8 +27,6 @@ namespace fluXis.Graphics.UserInterface.Panel.Presets;
 public partial class FormPanel<T> : Panel, ICloseable
     where T : class
 {
-    private const float header_height = 28;
-
     protected Container BottomContainer { get; }
 
     public FormPanel(IconUsage icon, LocalisableString title, T data, Func<FormPanel<T>, T, bool> callback, LocalisableString? performText = null)
@@ -53,43 +47,7 @@ public partial class FormPanel<T> : Panel, ICloseable
             Direction = FillDirection.Vertical,
             Children = new Drawable[]
             {
-                new GridContainer
-                {
-                    RelativeSizeAxes = Axes.X,
-                    Height = header_height,
-                    ColumnDimensions = new Dimension[]
-                    {
-                        new(GridSizeMode.Absolute, header_height),
-                        new(GridSizeMode.Absolute, 12),
-                        new(),
-                        new(GridSizeMode.Absolute, 12),
-                        new(GridSizeMode.Absolute, header_height)
-                    },
-                    Content = new[]
-                    {
-                        new[]
-                        {
-                            new FluXisSpriteIcon
-                            {
-                                Icon = icon,
-                                Size = new Vector2(20),
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre
-                            },
-                            Empty(),
-                            new TruncatingText
-                            {
-                                Text = title,
-                                WebFontSize = 20,
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                RelativeSizeAxes = Axes.X
-                            },
-                            Empty(),
-                            new CloseButton { Action = Close }
-                        }
-                    }
-                },
+                new PanelHeader(icon, title, Close),
             }.Concat(createInputs(data)).Concat([
                 BottomContainer = new Container
                 {
@@ -302,65 +260,6 @@ public partial class FormPanel<T> : Panel, ICloseable
         {
             Drawable = drawable;
             Attribute = attribute;
-        }
-    }
-
-    private partial class CloseButton : ClickableContainer
-    {
-        [Resolved]
-        private UISamples samples { get; set; }
-
-        private readonly HoverLayer hover;
-        private readonly FlashLayer flash;
-
-        public CloseButton()
-        {
-            RelativeSizeAxes = Axes.Both;
-            Anchor = Origin = Anchor.Centre;
-            CornerRadius = 6;
-            Masking = true;
-            Children = new Drawable[]
-            {
-                hover = new HoverLayer(),
-                flash = new FlashLayer(),
-                new FluXisSpriteIcon
-                {
-                    Icon = Phosphor.Bold.X,
-                    Size = new Vector2(14),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
-                }
-            };
-        }
-
-        protected override bool OnHover(HoverEvent e)
-        {
-            samples.Hover();
-            hover.Show();
-            return true;
-        }
-
-        protected override void OnHoverLost(HoverLostEvent e)
-        {
-            hover.Hide();
-        }
-
-        protected override bool OnMouseDown(MouseDownEvent e)
-        {
-            this.ScaleTo(.9f, 1000, Easing.OutQuint);
-            return true;
-        }
-
-        protected override void OnMouseUp(MouseUpEvent e)
-        {
-            this.ScaleTo(1, 1000, Easing.OutElastic);
-        }
-
-        protected override bool OnClick(ClickEvent e)
-        {
-            samples.Click();
-            flash.Show();
-            return base.OnClick(e);
         }
     }
 }

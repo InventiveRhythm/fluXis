@@ -132,6 +132,8 @@ public partial class FluXisTextBox : BasicTextBox, IHasCursorType
     public void NotifyError() => NotifyInputError();
     public void RemoveFocus() => KillFocus();
 
+    public void AddAfterCursor(string text) => InsertString(text);
+
     protected override void NotifyInputError()
     {
         samples.Error();

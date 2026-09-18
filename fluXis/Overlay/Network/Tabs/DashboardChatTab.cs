@@ -3,11 +3,9 @@ using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.Sprites.Icons;
-using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
-using fluXis.Graphics.UserInterface.Text;
 using fluXis.Localization;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.Chat;
@@ -48,7 +46,6 @@ public partial class DashboardChatTab : DashboardTab
 
     private FluXisScrollContainer scroll;
     private FillFlowContainer<DrawableChatMessage> flow;
-    private FluXisTextBox textBox;
 
     private LoadingIcon loading;
 
@@ -126,18 +123,15 @@ public partial class DashboardChatTab : DashboardTab
                                     Spacing = new Vector2(12)
                                 }
                             },
-                            textBox = new FluXisTextBox
+                            new ChatInputBar
                             {
-                                BackgroundActive = Theme.Background3,
-                                BackgroundInactive = Theme.Background3,
-                                PlaceholderText = "Type your message here...",
-                                RelativeSizeAxes = Axes.X,
-                                Height = 48,
-                                SidePadding = 14,
-                                CornerRadius = 8,
-                                FontSize = FluXisSpriteText.GetWebFontSize(16),
                                 Anchor = Anchor.BottomLeft,
-                                Origin = Anchor.BottomLeft
+                                Origin = Anchor.BottomLeft,
+                                OnConfirm = text =>
+                                {
+                                    client.GetChannel(Channel.Value)?.SendMessage(text);
+                                    return true;
+                                }
                             },
                             loading = new LoadingIcon
                             {
@@ -156,12 +150,6 @@ public partial class DashboardChatTab : DashboardTab
     protected override void LoadComplete()
     {
         base.LoadComplete();
-
-        textBox.OnCommit += (sender, _) =>
-        {
-            client.GetChannel(Channel.Value)?.SendMessage(sender.Text);
-            sender.Text = "";
-        };
 
         api.Status.BindValueChanged(updateStatus, true);
 

@@ -5,7 +5,9 @@ using fluXis.Graphics.UserInterface.Menus;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
+using osuTK;
 
 namespace fluXis.Screens.Edit.UI.Variable;
 
@@ -38,16 +40,35 @@ public partial class EditorVariableDropdown<T> : EditorVariableBase
                 Origin = Anchor.CentreLeft,
                 WebFontSize = 16
             },
-            new CustomDropdown
+            new FillFlowContainer
             {
-                Width = 210,
+                AutoSizeAxes = Axes.X,
+                RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Items = Items,
-                Current = Bindable
+                Direction = FillDirection.Horizontal,
+                Spacing = new Vector2(5),
+                Children = new[]
+                {
+                    new CustomDropdown
+                    {
+                        Width = 210,
+                        Anchor = Anchor.TopLeft,
+                        Origin = Anchor.TopLeft,
+                        Items = Items,
+                        Current = Bindable
+                    },
+                    CreateExtraButton().With(d =>
+                    {
+                        d.Anchor = Anchor.TopLeft;
+                        d.Origin = Anchor.TopLeft;
+                    })
+                }
             }
         };
     }
+
+    protected virtual Drawable CreateExtraButton() => Empty().With(d => d.Alpha = 0);
 
     protected override void LoadComplete()
     {
