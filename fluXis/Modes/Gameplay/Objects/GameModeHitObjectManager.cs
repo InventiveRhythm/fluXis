@@ -119,8 +119,8 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
 
     private void removeObject(DrawableHitObject draw, bool addToFuture = false)
     {
-        /*if (!addToFuture)
-            obj.OnKill();*/
+        if (!addToFuture)
+            draw.OnDestroy();
 
         // obj.OnHit -= hit;
 

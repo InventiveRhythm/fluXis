@@ -36,6 +36,8 @@ public abstract partial class DrawableHitObject : CompositeDrawable
         hitWindowLazy = new Lazy<HitWindows>(() => Ruleset.PlayableMode.CreateHitWindowFor(Object));
     }
 
+    public virtual void OnDestroy() => UpdateJudgement(false);
+
     protected bool UpdateJudgement(bool byUser)
     {
         if (Judged)
