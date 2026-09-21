@@ -29,7 +29,7 @@ public class ScrollMultiplierEvent : IMapEvent, IHasDuration, IHasEasing, IHasGr
     [JsonProperty("duration")]
     public double Duration { get; set; }
 
-    [JsonProperty("multiplier")]
+    [JsonProperty("multiplier"), DefaultValue(1f)]
     public float Multiplier { get; set; } = 1;
 
     [JsonProperty("ease")]

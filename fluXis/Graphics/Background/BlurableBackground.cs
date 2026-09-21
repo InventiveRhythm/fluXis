@@ -5,6 +5,7 @@ using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Shaders;
 using fluXis.Map.Drawables;
+using fluXis.Modes;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -16,6 +17,9 @@ namespace fluXis.Graphics.Background;
 
 public partial class BlurableBackground : Container
 {
+    [Resolved]
+    protected GameModeManager Modes { get; private set; }
+
     [Resolved]
     protected GlobalClock GlobalClock { get; private set; }
 

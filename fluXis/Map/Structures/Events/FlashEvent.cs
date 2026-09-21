@@ -41,7 +41,7 @@ public class FlashEvent : IMapEvent, IHasDuration, IHasEasing
     [JsonProperty("start-color")]
     public Color4 StartColor { get; set; } = Color4.White;
 
-    [JsonProperty("start-alpha")]
+    [JsonProperty("start-alpha"), DefaultValue(1f)]
     public float StartOpacity { get; set; } = 1;
 
     [JsonProperty("end-color")]

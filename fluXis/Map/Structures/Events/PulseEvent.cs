@@ -30,7 +30,7 @@ public class PulseEvent : IMapEvent, IHasDuration, IHasEasing
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
-    [JsonProperty("width")]
+    [JsonProperty("width"), DefaultValue(32f)]
     public float Width { get; set; } = 32;
 
     [JsonProperty("duration")]

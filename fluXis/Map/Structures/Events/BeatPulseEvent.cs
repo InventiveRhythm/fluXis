@@ -24,16 +24,16 @@ public class BeatPulseEvent : IMapEvent
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
-    [JsonProperty("strength")]
+    [JsonProperty("strength"), DefaultValue(1.05f)]
     public float Strength { get; set; } = 1.05f;
 
     /// <summary>
     /// How much of the length should be used to zoom in. (in %)
     /// </summary>
-    [JsonProperty("zoom")]
+    [JsonProperty("zoom"), DefaultValue(.25f)]
     public float ZoomIn { get; set; } = .25f;
 
-    [JsonProperty("interval")]
+    [JsonProperty("interval"), DefaultValue(1f)]
     public float Interval { get; set; } = 1;
 
     IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)

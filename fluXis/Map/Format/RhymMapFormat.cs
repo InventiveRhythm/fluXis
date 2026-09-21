@@ -15,6 +15,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Platform;
 using osuTK.Graphics;
 using rhym;
+using rhym.Format;
 using ResourceLocation = rhym.ResourceLocation;
 
 namespace fluXis.Map.Format;
@@ -38,7 +39,7 @@ public class RhymMapFormat : IMapFormat
 
     public PlayableMap? Parse(string path)
     {
-        if (storage.Exists(path))
+        if (!storage.Exists(path))
             return null;
 
         var raw = storage.ReadAllText(path);
@@ -48,7 +49,7 @@ public class RhymMapFormat : IMapFormat
         if (parsed.FormatID != ChartFormat)
             throw new InvalidOperationException($"Tried to load {parsed.FormatID} as a chart.");
 
-        var playable = new PlayableMap(storage, parsed.GameMode)
+        var playable = new PlayableMap(storage, path, parsed.GameMode)
         {
             AudioFile = parsed.Assets.AudioPath ?? string.Empty,
             BackgroundFile = parsed.Assets.BackgroundPath ?? string.Empty,
@@ -88,8 +89,28 @@ public class RhymMapFormat : IMapFormat
             ForceAspect = parsed.Properties.ForceAspect,
             LegacyLaneSwitchLayout = false,
         };
-
         playable.AddObjects(parsed.Objects);
+
+        foreach (var import in parsed.Imports)
+        {
+            if (!storage.Exists(path))
+                continue;
+
+            var importRaw = storage.ReadAllText(import);
+
+            switch (Path.GetExtension(import))
+            {
+                case ".rhym":
+                    var ev = io.ParseAs<RawEventFile, RhymAssets, RhymMetadata, ITimedObject>(importRaw);
+                    if (ev.FormatID != EffectFormat) throw new InvalidOperationException($"Tried to import a non-effect ({ev.FormatID}) file as effects.");
+
+                    playable.ImportPaths["events"] = import;
+                    playable.AddObjects(ev.Objects);
+                    break;
+            }
+        }
+
+        playable.Sort();
         return playable;
     }
 

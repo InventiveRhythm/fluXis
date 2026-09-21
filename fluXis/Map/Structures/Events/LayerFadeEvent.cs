@@ -30,7 +30,7 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
     [JsonProperty("duration")]
     public double Duration { get; set; }
 
-    [JsonProperty("alpha")]
+    [JsonProperty("alpha"), DefaultValue(1f)]
     public float Alpha { get; set; } = 1;
 
     [JsonProperty("ease")]

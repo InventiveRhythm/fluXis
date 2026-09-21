@@ -25,7 +25,7 @@ public class CameraScaleEvent : ICameraEvent, IHasDuration, IHasEasing
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
-    [JsonProperty("scale")]
+    [JsonProperty("scale"), DefaultValue(1f)]
     public float Scale { get; set; } = 1f;
 
     [JsonProperty("duration")]

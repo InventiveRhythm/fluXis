@@ -6,11 +6,9 @@ using fluXis.Database.Maps;
 using fluXis.Graphics.Shaders;
 using fluXis.Map.Drawables;
 using fluXis.Map.Structures.Events;
-using fluXis.Modes;
 using fluXis.Storyboards;
 using fluXis.Storyboards.Drawables;
 using JetBrains.Annotations;
-using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -21,9 +19,6 @@ namespace fluXis.Graphics.Background;
 
 public partial class BlurableBackgroundWithStoryboard : BlurableBackground
 {
-    [Resolved]
-    private GameModeManager modes { get; set; }
-
     [CanBeNull]
     private Video video;
 
@@ -34,7 +29,7 @@ public partial class BlurableBackgroundWithStoryboard : BlurableBackground
 
     protected override IEnumerable<Drawable> CreateContent()
     {
-        var map = Map?.GetPlayable(modes);
+        var map = Map?.GetPlayable(Modes);
         MapBackground background = null;
 
         foreach (var drawable in base.CreateContent())

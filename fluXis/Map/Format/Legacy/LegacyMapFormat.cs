@@ -41,7 +41,7 @@ public class LegacyMapFormat : IMapFormat
             var keys = map.HitObjects.Select(hitObject => hitObject.Lane).Prepend(0).Max();
             var mode = $"keys/{(int)Math.Ceiling(keys / (map.IsSplit ? 2f : 1))}";
 
-            var playable = new PlayableMap(storage, new ResourceLocation("flux", mode))
+            var playable = new PlayableMap(storage, path, new ResourceLocation("flux", mode))
             {
                 AudioFile = map.AudioFile,
                 BackgroundFile = map.BackgroundFile,

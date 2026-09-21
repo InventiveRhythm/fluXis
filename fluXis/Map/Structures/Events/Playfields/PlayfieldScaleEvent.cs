@@ -32,10 +32,10 @@ public class PlayfieldScaleEvent : IMapEvent, IHasDuration, IHasEasing, IApplica
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
-    [JsonProperty("x")]
+    [JsonProperty("x"), DefaultValue(1f)]
     public float ScaleX { get; set; } = 1;
 
-    [JsonProperty("y")]
+    [JsonProperty("y"), DefaultValue(1f)]
     public float ScaleY { get; set; } = 1;
 
     [JsonProperty("duration")]

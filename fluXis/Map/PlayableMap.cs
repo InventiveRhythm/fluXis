@@ -20,9 +20,10 @@ namespace fluXis.Map;
 
 #nullable enable
 
-public class PlayableMap(Storage storage, ResourceLocation mode)
+public class PlayableMap(Storage storage, string filename, ResourceLocation mode)
 {
     public Storage Storage => storage;
+    public string FileName => filename;
     public ResourceLocation Mode => mode;
 
     public long OnlineID { get; set; }

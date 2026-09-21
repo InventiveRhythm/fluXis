@@ -26,7 +26,7 @@ public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
     [JsonProperty("group", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public string Group { get; set; }
 
-    [JsonProperty("count")]
+    [JsonProperty("count"), DefaultValue(1)]
     public int Count { get; set; } = 1;
 
     [JsonProperty("speed")]

@@ -29,7 +29,7 @@ public class ScrollVelocity : ITimedObject, IHasGroups, IScrollEvent
     public string Group { get; set; }
 
     [Tooltip("The speed to multiply the scroll velocity by.")]
-    [JsonProperty("multiplier")]
+    [JsonProperty("multiplier"), DefaultValue(1d)]
     public double Multiplier { get; set; } = 1;
 
     [JsonProperty("groups", DefaultValueHandling = DefaultValueHandling.Ignore)]

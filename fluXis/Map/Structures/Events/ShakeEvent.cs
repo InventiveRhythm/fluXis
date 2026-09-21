@@ -30,7 +30,7 @@ public class ShakeEvent : IMapEvent, IHasDuration
     [JsonProperty("duration")]
     public double Duration { get; set; }
 
-    [JsonProperty("magnitude")]
+    [JsonProperty("magnitude"), DefaultValue(10f)]
     public float Magnitude { get; set; } = 10;
 
     IEnumerable<Drawable> ITimedObject.CreateObjectOverlay(EditorDrawableObject obj)
