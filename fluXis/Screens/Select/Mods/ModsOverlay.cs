@@ -232,7 +232,7 @@ public partial class ModsOverlay : VisibilityContainer
                                                             miscellaneous = new(this, LocalizationStrings.ModSelect.MiscSection, Theme.GetModTypeColor(ModType.Misc), new IMod[]
                                                             {
                                                                 new NoSvMod(),
-                                                                new NoLnMod(),
+                                                                // new NoLnMod(),
                                                                 new NoMineMod(),
                                                                 new NoEventMod(),
                                                                 new MirrorMod()

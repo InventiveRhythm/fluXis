@@ -37,6 +37,17 @@ public class RhymMapFormat : IMapFormat
         this.modes = modes;
     }
 
+    public bool IsChart(string path)
+    {
+        if (!storage.Exists(path))
+            return false;
+
+        var raw = storage.ReadAllText(path);
+        var io = createIo();
+        var parsed = io.ParseAs<RawMapFile, RawMapAssets, RawMapMetadata, ITimedObject>(raw);
+        return parsed.FormatID == ChartFormat;
+    }
+
     public PlayableMap? Parse(string path)
     {
         if (!storage.Exists(path))

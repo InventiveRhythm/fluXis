@@ -13,7 +13,6 @@ using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Camera;
 using fluXis.Map.Structures.Events.Groups;
 using fluXis.Mods;
-using fluXis.Replays;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Replays;
@@ -325,7 +324,7 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
         backFlash.Rebuild(flashes.Where(x => x.InBackground));
         frontFlash.Rebuild(flashes.Where(x => !x.InBackground));
 
-        var auto = new AutoGenerator(Map.Playable, Map.RealmMap.KeyCount);
+        var auto = Editor.GameMode.CreateAutoGenerator(Map.Playable);
         var container = new ReplayRulesetContainer(Editor.GameMode, auto.Generate(), Map.Playable, [new NoFailMod()]);
         container.ScrollSpeed = Settings.ApplyZoomToPreview.Value ? zoomedScrollSpeed : userScrollSpeed;
         container.ParentClock = EditorClock;

@@ -207,34 +207,7 @@ public class ScoreProcessor : JudgementDependant, IDisposable
         val *= 1 + .1f * Math.Min(1, ratedNotes / 2500); // length
         val *= Math.Pow(.99, miss); // misses
 
-        if (mods.Any(x => x is RateMod))
-        {
-            var rate = mods.OfType<RateMod>().First().Rate;
-
-            // https://www.geogebra.org/calculator/fjxrbmdq
-            if (rate < 1)
-                rate = (float)Math.Pow(rate, 3);
-            else
-                rate = 1.5f * rate - .5f;
-
-            val *= rate;
-        }
-
-        if (mods.Any(x => x is EasyMod))
-            val *= 0.8;
-        if (mods.Any(x => x is HardMod))
-            val *= 1.05;
-        if (mods.Any(x => x is NoFailMod))
-            val *= 0.4;
-        if (mods.Any(x => x is NoSvMod))
-            val *= 0.6;
-        if (mods.Any(x => x is NoLnMod))
-            val *= 0.6;
-        if (mods.Any(x => x is NoEventMod))
-            val *= 0.4;
-        if (mods.Any(x => x is NoMineMod))
-            val *= 0.6;
-
+        mods.ForEach(x => val *= x.RatingMultiplier);
         return val;
     }
 

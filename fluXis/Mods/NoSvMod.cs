@@ -14,6 +14,7 @@ public class NoSvMod : IMod, IApplicableToMap
     public IconUsage Icon => Phosphor.Bold.List;
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => .8f;
+    public float RatingMultiplier => .6f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => Array.Empty<Type>();
 

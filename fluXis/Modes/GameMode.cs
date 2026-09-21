@@ -1,13 +1,19 @@
 using System;
 using System.Linq;
 using fluXis.Map;
+using fluXis.Map.Format;
+using fluXis.Map.Structures.Bases;
 using fluXis.Modes.Gameplay;
 using fluXis.Mods;
+using fluXis.Replays;
 using fluXis.Scoring.Processing.Health;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;
+using osu.Framework.Platform;
 using osu.Framework.Timing;
 using rhym;
 
@@ -21,6 +27,16 @@ public abstract class GameMode : IFromAssembly
     public abstract ResourceLocation Location { get; }
 
     public abstract void RegisterObjects(RhymIO io);
+    public virtual IMapFormat? GetFormat(Storage storage, string ext) => null;
+
+    #region Editor
+
+    public abstract EditorDrawableObject? CreateEditorObject(ITimedObject obj);
+    public abstract ChartingTool[] GetEditorTools();
+
+    #endregion
+
+    public abstract AutoGenerator CreateAutoGenerator(PlayableMap map);
 
     public abstract PlayableGameMode CreatePlayable(RulesetContainer ruleset, PlayableMap map, IMod[] mods);
 

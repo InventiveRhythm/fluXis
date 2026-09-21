@@ -12,6 +12,7 @@ public class EasyMod : IMod
     public IconUsage Icon => Phosphor.Bold.Bandaids;
     public ModType Type => ModType.DifficultyDecrease;
     public float ScoreMultiplier => 0.7f;
+    public float RatingMultiplier => .8f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => new[] { typeof(HardMod), typeof(NoFailMod) };
 

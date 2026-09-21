@@ -1,4 +1,4 @@
-using fluXis.Modes.Keys.Gameplay.UI;
+using fluXis.Screens.Gameplay.UI;
 using fluXis.Skinning;
 using fluXis.Skinning.Json;
 using osu.Framework.Allocation;

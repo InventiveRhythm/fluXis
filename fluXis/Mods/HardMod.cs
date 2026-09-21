@@ -12,6 +12,7 @@ public class HardMod : IMod
     public IconUsage Icon => Phosphor.Bold.Skull;
     public ModType Type => ModType.DifficultyIncrease;
     public float ScoreMultiplier => 1.04f;
+    public float RatingMultiplier => 1.05f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => new[] { typeof(EasyMod), typeof(NoFailMod) };
 }

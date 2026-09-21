@@ -4,7 +4,6 @@ using System.Text;
 using System.Xml;
 using fluXis;
 using fluXis.Audio.FFT.Structures.Data;
-using fluXis.Map.Structures;
 using fluXis.Map.Structures.Events;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models.Storyboarding;
@@ -50,7 +49,6 @@ internal class Program
         }
 
         typeList.Add(new EnumType<Easing>(true, ctorName: "Easing", enumName: "Easing"));
-        typeList.Add(new EnumType<HitObjectType>(true, ctorName: "HitObjectType", enumName: "HitObjectType"));
         typeList.Add(new EnumType<Anchor>(true)
         {
             Values = new[]

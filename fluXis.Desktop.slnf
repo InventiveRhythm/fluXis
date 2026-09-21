@@ -8,6 +8,7 @@
       "fluXis.Import.osu\\fluXis.Import.osu.csproj",
       "fluXis.Import.Quaver\\fluXis.Import.Quaver.csproj",
       "fluXis.Import.Stepmania\\fluXis.Import.Stepmania.csproj",
+      "fluXis.Mode.Keys\\fluXis.Mode.Keys.csproj",
       "fluXis.Resources\\fluXis.Resources.csproj",
       "fluXis.Tests\\fluXis.Tests.csproj",
       "fluXis\\fluXis.csproj",

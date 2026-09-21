@@ -6,9 +6,7 @@ using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
-using fluXis.Modes.Keys.Map.Objects;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Events;
-using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Hits;
 using fluXis.Screens.Edit.Tabs.Verify;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -31,6 +29,9 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
 
     [Resolved]
     private EditorSettings settings { get; set; }
+
+    [Resolved]
+    private Editor editor { get; set; }
 
     [Resolved]
     private EditorMap map { get; set; }
@@ -78,31 +79,7 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
             obj.Lane = atTime.Count() + 1 + ((IVerifyContext)map).MaxKeyCount;
         }
 
-        EditorDrawableObject draw;
-
-        switch (obj)
-        {
-            case Note o:
-                draw = new EditorSingleNote(o);
-                break;
-
-            case LongNote o:
-                draw = new EditorLongNote(o);
-                break;
-
-            case Tick o:
-                draw = new EditorTickNote(o);
-                break;
-
-            case Landmine o:
-                draw = new EditorLandmine(o);
-                break;
-
-            default:
-                draw = new EditorDrawableEvent(obj);
-                break;
-        }
-
+        var draw = editor.GameMode.CreateEditorObject(obj) ?? new EditorDrawableEvent(obj);
         LoadComponent(draw);
         charting.ObjectDrawables[obj] = draw;
         back.Add(draw);

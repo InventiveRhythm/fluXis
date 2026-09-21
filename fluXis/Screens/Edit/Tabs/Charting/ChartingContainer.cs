@@ -8,7 +8,6 @@ using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
-using fluXis.Modes.Keys.Map.Objects;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.Actions.Events;
 using fluXis.Screens.Edit.Actions.Generic;
@@ -44,15 +43,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 {
     public const float WAVEFORM_OFFSET = 20;
 
-    public IReadOnlyList<ChartingTool> Tools { get; } = new ChartingTool[]
-    {
-        new SelectTool(),
-        new SingleNoteTool(),
-        new LongNoteTool(),
-        new TickNoteTool(),
-        new LandmineTool()
-    };
-
+    public IReadOnlyList<ChartingTool> Tools { get; }
     public IReadOnlyList<ChartingTool> EffectTools { get; }
 
     public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };
@@ -91,8 +82,10 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     public Dictionary<ITimedObject, EditorDrawableObject> ObjectDrawables { get; } = new();
 
-    public ChartingContainer()
+    public ChartingContainer(Editor editor)
     {
+        Tools = [new SelectTool(), .. editor.GameMode.GetEditorTools()];
+
         var effectTypes = GetType().Assembly.GetTypes()
                                    .Where(x => x.IsAssignableTo(typeof(IMapEvent)))
                                    .Where(x => !x.IsAbstract && !x.IsInterface);
@@ -307,14 +300,15 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         // take the closest snap
         time = Math.Abs(time - snapped) < Math.Abs(time - next) ? snapped : next;
 
-        var note = new Note
+        // TODO
+        /*var note = new Note
         {
             Time = time,
             Sample = CurrentHitSound.Value,
             Lane = lane
         };
 
-        ActionStack.Add(new ObjectPlaceAction<HitObject>(note));
+        ActionStack.Add(new ObjectPlaceAction<HitObject>(note));*/
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)

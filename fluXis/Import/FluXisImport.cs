@@ -5,14 +5,14 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Database;
 using fluXis.Database.Maps;
-using fluXis.Map.Format.Legacy;
+using fluXis.Modes;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
-using Midori.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
+using osu.Framework.Platform;
 
 namespace fluXis.Import;
 
@@ -29,6 +29,7 @@ public class FluXisImport : MapImporter
     public Action<bool> OnComplete { get; set; }
 
     public TaskNotificationData Notification { get; set; }
+    public GameModeManager GameModes { get; set; }
 
     public override void Import(string path)
     {
@@ -160,21 +161,17 @@ public class FluXisImport : MapImporter
         using var archive = ZipFile.OpenRead(path);
         var maps = new List<RealmMap>();
 
-        var mapSet = new RealmMapSet(maps)
-        {
-            ID = id ?? Guid.NewGuid()
-        };
+        var set = new RealmMapSet(maps) { ID = id ?? Guid.NewGuid() };
+        MapStore.AssignResources(set);
 
-        MapStore.AssignResources(mapSet);
+        var dir = MapFiles.GetFullPath(set.ID.ToString()) + "/";
 
-        var fullPath = MapFiles.GetFullPath(mapSet.ID.ToString()) + "/";
-
-        if (!Directory.Exists(fullPath))
-            Directory.CreateDirectory(fullPath);
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
 
         foreach (var entry in archive.Entries)
         {
-            var filePath = fullPath + entry.FullName.Replace('\\', Path.DirectorySeparatorChar);
+            var filePath = dir + entry.FullName.Replace('\\', Path.DirectorySeparatorChar);
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
             entry.ExtractToFile(filePath, true);
         }
@@ -183,119 +180,63 @@ public class FluXisImport : MapImporter
         var idx = 0;
 
         Dictionary<string, string> audioHashes = new();
+        var storage = new NativeStorage(dir);
 
-        foreach (var entry in archive.Entries)
+        foreach (var file in storage.GetFiles(string.Empty))
         {
-            var hash = GetHash(entry);
-            var filename = entry.FullName;
+            var format = GameModes.GetFormat(storage, Path.GetExtension(file) ?? string.Empty);
 
-            if (filename.EndsWith(".fsc"))
+            if (format?.IsChart(file) ?? false)
             {
-                var json = new StreamReader(entry.Open()).ReadToEnd();
-                var mapInfo = json.Deserialize<LegacyMapJson>();
+                var playable = format.Parse(file);
+                if (playable is null) throw new InvalidOperationException($"Failed to parse chart as playable. [fmt: {format}, file: {file}]");
 
-                if (!audioHashes.TryGetValue(mapInfo.AudioFile, out var audioHash))
+                if (!audioHashes.TryGetValue(playable.AudioFile, out var audioHash))
                 {
-                    var audioEntry = archive.GetEntry(mapInfo.AudioFile);
+                    var audioEntry = archive.GetEntry(playable.AudioFile);
                     audioHash = audioEntry != null ? MapUtils.GetXXHash(audioEntry.ReadAllBytes()) : "";
-                    audioHashes[mapInfo.AudioFile] = audioHash;
+                    audioHashes[playable.AudioFile] = audioHash;
                 }
 
-                var length = 0f;
-                var keys = 0;
-                var bpmMin = float.MaxValue;
-                var bpmMax = float.MinValue;
+                var realm = new RealmMap { FileName = file, AudioHash = audioHash, StatusInt = MapStatus, MapSet = set };
+                playable.SaveIntoRealmMap(realm);
+                maps.Add(realm);
 
-                foreach (var point in mapInfo.TimingPoints)
+                if (string.IsNullOrEmpty(realm.Metadata.ColorHex))
                 {
-                    bpmMin = Math.Min(bpmMin, point.BPM);
-                    bpmMax = Math.Max(bpmMax, point.BPM);
-                }
-
-                foreach (var hitObject in mapInfo.HitObjects)
-                {
-                    var time = hitObject.Time;
-
-                    if (hitObject.LongNote)
-                        time += hitObject.HoldTime;
-
-                    length = (float)Math.Max(length, time);
-                    keys = Math.Max(keys, hitObject.Lane);
-                }
-
-                var map = new RealmMap
-                {
-                    Metadata = new RealmMapMetadata
-                    {
-                        Title = mapInfo.Metadata.Title ?? "",
-                        TitleRomanized = mapInfo.Metadata.TitleRomanized ?? mapInfo.Metadata.Title ?? "",
-                        Artist = mapInfo.Metadata.Artist ?? "",
-                        ArtistRomanized = mapInfo.Metadata.ArtistRomanized ?? mapInfo.Metadata.Artist ?? "",
-                        Mapper = mapInfo.Metadata.Mapper ?? "",
-                        Source = mapInfo.Metadata.AudioSource ?? "",
-                        Tags = mapInfo.Metadata.Tags ?? "",
-                        Audio = mapInfo.AudioFile,
-                        Background = mapInfo.BackgroundFile,
-                        PreviewTime = mapInfo.Metadata.PreviewTime,
-                        ColorHex = string.IsNullOrEmpty(mapInfo.Colors.AccentHex) ? "" : mapInfo.Colors.AccentHex,
-                    },
-                    Difficulty = mapInfo.Metadata.Difficulty ?? "",
-                    AccuracyDifficulty = mapInfo.AccuracyDifficulty,
-                    HealthDifficulty = mapInfo.HealthDifficulty,
-                    MapSet = mapSet,
-                    Hash = hash,
-                    AudioHash = audioHash,
-                    KeyCount = (int)Math.Ceiling(keys / (mapInfo.IsSplit ? 2f : 1)),
-                    StatusInt = MapStatus,
-                    FileName = filename
-                };
-
-                mapInfo.RealmEntry = map;
-
-                if (string.IsNullOrEmpty(map.Metadata.ColorHex))
-                {
-                    var background = map.GetBackgroundStream();
+                    var background = realm.GetBackgroundStream();
 
                     if (background != null)
                     {
                         var color = ImageUtils.GetAverageColour(background);
 
                         if (color != Colour4.Transparent)
-                            map.Metadata.Color = color;
+                            realm.Metadata.Color = color;
                     }
                     else
                         Logger.Log("Failed to load background for color extraction");
                 }
 
-                var events = mapInfo.GetMapEvents();
+                if (!string.IsNullOrEmpty(playable.CoverFile))
+                    set.Cover = playable.CoverFile;
 
-                foreach (var switchEvent in events.LaneSwitchEvents)
-                    map.KeyCount = Math.Max(map.KeyCount, switchEvent.Count);
-
-                // map.Filters = MapUtils.GetMapFilters(mapInfo);
-                maps.Add(map);
-
-                if (!string.IsNullOrEmpty(mapInfo.CoverFile))
-                    mapSet.Cover = mapInfo.CoverFile;
-
-                // skip metadata lookup if the map is from a different game
-                if (map.StatusInt >= 100)
+                if (realm.StatusInt >= 100)
                     continue;
 
                 try
                 {
-                    var lookup = MapStore.LookUpHash(hash);
+                    var lookup = MapStore.LookUpHash(realm.Hash);
                     if (lookup == null) continue;
 
-                    map.OnlineID = lookup.ID;
-                    map.StatusInt = lookup.Status;
-                    map.Rating = (float)lookup.Rating;
-                    mapSet.OnlineID = lookup.SetID;
-                    mapSet.DateSubmitted = TimeUtils.GetFromSeconds(lookup.DateSubmitted);
-                    map.LastOnlineUpdate = TimeUtils.GetFromSeconds(lookup.LastUpdated);
+                    realm.OnlineID = lookup.ID;
+                    realm.StatusInt = lookup.Status;
+                    realm.Rating = (float)lookup.Rating;
+                    set.OnlineID = lookup.SetID;
+                    set.DateSubmitted = TimeUtils.GetFromSeconds(lookup.DateSubmitted);
+                    realm.LastOnlineUpdate = TimeUtils.GetFromSeconds(lookup.LastUpdated);
 
                     if (lookup.DateRanked != null)
-                        mapSet.DateRanked = TimeUtils.GetFromSeconds(lookup.DateRanked.Value);
+                        set.DateRanked = TimeUtils.GetFromSeconds(lookup.DateRanked.Value);
                 }
                 catch (Exception e)
                 {
@@ -303,13 +244,11 @@ public class FluXisImport : MapImporter
                 }
             }
 
-            idx++;
-
-            var prog = (float)idx / fileCount;
+            var prog = (float)++idx / fileCount;
             Notification.Progress = prog;
             OnProgress?.Invoke(prog);
         }
 
-        return mapSet;
+        return set;
     }
 }

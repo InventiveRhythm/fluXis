@@ -14,6 +14,7 @@ public class NoEventMod : IMod, IApplicableToMap
     public IconUsage Icon => Phosphor.Bold.Diamond;
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => 0.6f;
+    public float RatingMultiplier => .4f;
     public bool Rankable => false;
     public Type[] IncompatibleMods => Array.Empty<Type>();
 

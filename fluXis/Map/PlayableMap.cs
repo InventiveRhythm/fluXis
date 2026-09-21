@@ -244,6 +244,9 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
         target.HealthDifficulty = HealthDifficulty;
         target.EnableVisualization = AudioVisualizations;
 
+        // TODO: this isn't being recalculated anywhere
+        target.Hash = ChartHash;
+
         target.Filters ??= new RealmMapFilters();
         target.Filters.UpdateFilters(this);
 

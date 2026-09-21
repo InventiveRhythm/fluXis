@@ -4,8 +4,8 @@ using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Panel.Types;
+using fluXis.Modes;
 using fluXis.Mods;
-using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Gameplay;
@@ -78,7 +78,10 @@ public partial class SoloSelectScreen : SelectScreen
             ContinueToReplay(map, mods, () =>
             {
                 var info = map.GetPlayable(Game.GameModes, mods);
-                var autogen = new AutoGenerator(info, map.KeyCount);
+                if (info is null) throw new Exception("Failed to load map.");
+
+                var mode = Game.GameModes.Find(info.Mode) ?? throw GameModeManager.FailedToLoadException();
+                var autogen = mode.CreateAutoGenerator(info);
                 return autogen.Generate();
             });
         }

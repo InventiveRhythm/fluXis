@@ -14,6 +14,7 @@ public class FragileMod : IMod, IApplicableToHealthProcessor
     public IconUsage Icon => Phosphor.Bold.Wine;
     public ModType Type => ModType.DifficultyIncrease;
     public float ScoreMultiplier => 1f;
+    public float RatingMultiplier => 1f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => new[] { typeof(FlawlessMod), typeof(AutoPlayMod), typeof(NoFailMod) };
 

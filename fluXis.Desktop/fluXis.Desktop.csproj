@@ -17,6 +17,7 @@
     <RuntimeIdentifier Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'">linux-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup Label="Project References">
+    <ProjectReference Include="..\fluXis.Mode.Keys\fluXis.Mode.Keys.csproj" />
     <ProjectReference Include="..\fluXis\fluXis.csproj"/>
     <!--<ProjectReference Include="..\fluXis.Import.Quaver\fluXis.Import.Quaver.csproj"/>
     <ProjectReference Include="..\fluXis.Import.osu\fluXis.Import.osu.csproj"/>

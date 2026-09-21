@@ -12,6 +12,7 @@ public class AutoPlayMod : IMod
     public IconUsage Icon => Phosphor.Bold.AirplaneTilt;
     public ModType Type => ModType.Automation;
     public float ScoreMultiplier => 1.0f;
+    public float RatingMultiplier => 1f;
     public bool Rankable => false;
     public Type[] IncompatibleMods => new[] { typeof(NoFailMod), typeof(FragileMod), typeof(FlawlessMod) };
 }

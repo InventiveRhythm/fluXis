@@ -18,7 +18,6 @@ using fluXis.Map.Drawables;
 using fluXis.Modes;
 using fluXis.Mods;
 using fluXis.Overlay.Notifications;
-using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
@@ -220,7 +219,8 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                 if (map is null || !map.Validate(out reason))
                     throw new Exception($"Failed to load map. ({reason})");
 
-                var auto = new AutoGenerator(map, rm.KeyCount);
+                var mode = Game.GameModes.Find(map.Mode) ?? throw GameModeManager.FailedToLoadException();
+                var auto = mode.CreateAutoGenerator(map);
                 var replay = auto.Generate();
 
                 Schedule(() => LoadComponentAsync(ruleset = new ReplayRulesetContainer(

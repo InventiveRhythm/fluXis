@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Map;
-using fluXis.Map.Format;
-using fluXis.Map.Format.Legacy;
 using fluXis.Map.Structures;
 using fluXis.Modes;
 using fluXis.Mods;
@@ -125,13 +123,7 @@ public class RealmMap : RealmObject
         var storage = new NativeStorage(MapFiles.GetFullPath(MapSet.ID.ToString()));
         var ext = Path.GetExtension(FileName);
 
-        IMapFormat format = ext switch
-        {
-            ".fsc" => new LegacyMapFormat(storage),
-            ".rhym" => new RhymMapFormat(storage, modes),
-            _ => throw new InvalidOperationException("Unknown file format.")
-        };
-
+        var format = modes.GetFormat(storage, ext) ?? throw new InvalidOperationException($"Unknown file format '{ext}'.");
         var playable = format.Parse(FileName);
         if (playable is null) return null;
 

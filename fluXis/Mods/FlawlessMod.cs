@@ -14,6 +14,7 @@ public class FlawlessMod : IMod, IApplicableToHealthProcessor
     public IconUsage Icon => Phosphor.Bold.ThumbsUp;
     public ModType Type => ModType.DifficultyIncrease;
     public float ScoreMultiplier => 1.0f;
+    public float RatingMultiplier => 1f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => new[] { typeof(NoFailMod), typeof(AutoPlayMod), typeof(FragileMod) };
 

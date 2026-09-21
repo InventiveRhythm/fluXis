@@ -1,0 +1,39 @@
+using Newtonsoft.Json;
+
+namespace fluXis.Mode.Keys.Format;
+
+public class LegacyMapMetadata
+{
+    [JsonProperty("title")]
+    public string Title { get; set; } = string.Empty;
+
+    [JsonProperty("title-rm")]
+    public string TitleRomanized { get; set; } = string.Empty;
+
+    [JsonProperty("artist")]
+    public string Artist { get; set; } = string.Empty;
+
+    [JsonProperty("artist-rm")]
+    public string ArtistRomanized { get; set; } = string.Empty;
+
+    [JsonProperty("mapper")]
+    public string Mapper { get; set; } = string.Empty;
+
+    [JsonProperty("difficulty")]
+    public string Difficulty { get; set; } = string.Empty;
+
+    [JsonProperty("source")]
+    public string AudioSource { get; set; } = string.Empty;
+
+    [JsonProperty("bg-source")]
+    public string BackgroundSource { get; set; } = string.Empty;
+
+    [JsonProperty("cover-source")]
+    public string CoverSource { get; set; } = string.Empty;
+
+    [JsonProperty("tags")]
+    public string Tags { get; set; } = string.Empty;
+
+    [JsonProperty("previewtime")]
+    public int PreviewTime { get; set; }
+}

@@ -1,25 +1,38 @@
 using System;
 using System.Linq;
-using fluXis.Modes.Keys;
+using fluXis.Map.Format;
 using fluXis.Utils;
-using JetBrains.Annotations;
+using osu.Framework.Platform;
 using rhym;
 
 namespace fluXis.Modes;
+
+#nullable enable
 
 public partial class GameModeManager : AssemblyLoader<GameMode>
 {
     protected override string StorageFolder => "modes";
     protected override string AssemblyPrefix => "fluXis.Mode";
 
-    protected override void Lookup()
+    public IMapFormat? GetFormat(Storage storage, string ext)
     {
-        Items.Add(new KeysGameMode());
-        base.Lookup();
+        switch (ext)
+        {
+            case ".rhym":
+                return new RhymMapFormat(storage, this);
+
+            default:
+                foreach (var mode in Loaded)
+                {
+                    var fmt = mode.GetFormat(storage, ext);
+                    if (fmt is not null) return fmt;
+                }
+
+                return null;
+        }
     }
 
-    [CanBeNull]
-    public GameMode Find(ResourceLocation location)
+    public GameMode? Find(ResourceLocation location)
     {
         var normalized = new ResourceLocation(location.Namespace, location.Path.Split('/').First());
         return Loaded.FirstOrDefault(x => x.Location == normalized);

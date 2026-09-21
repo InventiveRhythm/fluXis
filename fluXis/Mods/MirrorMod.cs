@@ -13,6 +13,7 @@ public class MirrorMod : IMod, IApplicableToMap
     public IconUsage Icon => Phosphor.Bold.ArrowsHorizontal;
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => 1f;
+    public float RatingMultiplier => 1f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => Array.Empty<Type>();
 

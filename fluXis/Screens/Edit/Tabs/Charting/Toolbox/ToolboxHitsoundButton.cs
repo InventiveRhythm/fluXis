@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map.Structures;
-using fluXis.Modes.Keys.Map.Objects;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes.Hitsound;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
@@ -106,7 +105,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
         return base.OnClick(e);
     }
 
-    protected void PlaySound() => ChartingContainer.Playfield.PlayHitSound(new Note { Sample = sampleFormatted }, true);
+    protected void PlaySound() => ChartingContainer.Playfield.PlayHitSound(new DummyHitObject { Sample = sampleFormatted }, true);
 
     protected override Drawable CreateIcon()
     {
@@ -124,4 +123,6 @@ public partial class ToolboxHitsoundButton : ToolboxButton
             Icon = icon
         };
     }
+
+    private class DummyHitObject : HitObject;
 }

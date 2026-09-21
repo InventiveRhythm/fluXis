@@ -13,6 +13,7 @@ public class NoFailMod : IMod, IApplicableToHealthProcessor
     public IconUsage Icon => Phosphor.Bold.Shield;
     public ModType Type => ModType.DifficultyDecrease;
     public float ScoreMultiplier => 0.5f;
+    public float RatingMultiplier => .4f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => new[] { typeof(EasyMod), typeof(AutoPlayMod), typeof(HardMod), typeof(FragileMod), typeof(FlawlessMod) };
 

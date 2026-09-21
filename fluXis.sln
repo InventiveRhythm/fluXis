@@ -42,6 +42,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Executable", "Executable", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{C8A4AF7F-3E51-43B0-9A42-46666565001A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modes", "Modes", "{03FA297D-E48F-45D6-B83A-4400AB039954}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Mode.Keys", "fluXis.Mode.Keys\fluXis.Mode.Keys.csproj", "{ABFDA1A6-7413-4A8B-B396-778F298BCF51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -219,6 +223,18 @@ Global
 		{B44F6715-DA4D-45F4-A80E-468569ACBB41}.Release|iPhone.Build.0 = Release|Any CPU
 		{B44F6715-DA4D-45F4-A80E-468569ACBB41}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{B44F6715-DA4D-45F4-A80E-468569ACBB41}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Release|iPhone.Build.0 = Release|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -234,5 +250,6 @@ Global
 		{AEB3FC89-DC3E-4BC9-9EC7-03B72FC5D849} = {83ACBD4B-AF1B-46F7-9FA4-49E174D21D57}
 		{B44F6715-DA4D-45F4-A80E-468569ACBB41} = {C8A4AF7F-3E51-43B0-9A42-46666565001A}
 		{AE7A49FF-10A5-4E87-9C10-85EFDDC49B4F} = {C8A4AF7F-3E51-43B0-9A42-46666565001A}
+		{ABFDA1A6-7413-4A8B-B396-778F298BCF51} = {03FA297D-E48F-45D6-B83A-4400AB039954}
 	EndGlobalSection
 EndGlobal

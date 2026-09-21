@@ -13,6 +13,7 @@ public class NoMineMod : IMod, IApplicableToMap
     public IconUsage Icon => Phosphor.Bold.Flag;
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => .8f;
+    public float RatingMultiplier => .6f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => Array.Empty<Type>();
 

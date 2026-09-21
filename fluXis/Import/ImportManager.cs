@@ -8,6 +8,7 @@ using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Background.Cropped;
 using fluXis.Map;
+using fluXis.Modes;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Toolbar;
 using fluXis.Plugins;
@@ -25,8 +26,6 @@ namespace fluXis.Import;
 
 public partial class ImportManager : Component
 {
-    private const string lib_prefix = "fluXis.Import";
-
     [Resolved]
     private FluXisRealm realm { get; set; }
 
@@ -41,6 +40,9 @@ public partial class ImportManager : Component
 
     [Resolved]
     private AudioManager audio { get; set; }
+
+    [Resolved]
+    private GameModeManager modes { get; set; }
 
     [Resolved]
     private GameHost host { get; set; }
@@ -213,7 +215,8 @@ public partial class ImportManager : Component
                 Realm = realm,
                 MapStore = mapStore,
                 Storage = storage,
-                Notifications = notifications
+                Notifications = notifications,
+                GameModes = modes
             }.Import(path);
             return;
         }

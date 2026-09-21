@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using fluXis.Map.Structures.Bases;
 using fluXis.Modes.Gameplay;
-using fluXis.Modes.Keys.Gameplay;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using Midori.Utils.Extensions;
 using Newtonsoft.Json;
@@ -50,18 +49,8 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
         if (!this.AppliesTo(playfield))
             return;
 
-        Drawable drawable = Layer switch
-        {
-            FadeLayer.HitObjects => (playfield as KeysPlayfield)?.Objects,
-            FadeLayer.Stage => (playfield as KeysPlayfield)?.Stage,
-            FadeLayer.Receptors => (playfield as KeysPlayfield)?.Receptors,
-            FadeLayer.Playfield => playfield,
-            FadeLayer.HUD => playfield,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-
-        if (drawable is null)
-            return;
+        var drawable = playfield.GetFadeLayer(Layer);
+        if (drawable is null) return;
 
         // make sure this is set, just in case it's missing
         if (Alpha <= 0.0001f)

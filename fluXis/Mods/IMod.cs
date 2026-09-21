@@ -12,6 +12,8 @@ public interface IMod
     ModType Type { get; }
 
     float ScoreMultiplier { get; }
+    float RatingMultiplier { get; }
+
     bool Rankable { get; }
     bool SaveScore => Rankable;
     Type[] IncompatibleMods { get; }

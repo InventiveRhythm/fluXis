@@ -10,6 +10,7 @@ using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using fluXis.Skinning.Default;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -88,6 +89,14 @@ public abstract partial class Playfield : CompositeDrawable
         if (PlayerIndex == 0 && !IsSubPlayfield)
             registerReloadableShake(Map.ObjectsOfType<ShakeEvent>());
     }
+
+    [CanBeNull]
+    public virtual Drawable GetFadeLayer(LayerFadeEvent.FadeLayer layer) => layer switch
+    {
+        LayerFadeEvent.FadeLayer.Playfield => this,
+        LayerFadeEvent.FadeLayer.HUD => this,
+        _ => null
+    };
 
     #region Event Registration
 

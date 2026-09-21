@@ -21,9 +21,9 @@ public partial class ChartingTab : EditorTab
     public ChartingContainer Container { get; private set; }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(Editor editor)
     {
-        Container = new ChartingContainer();
+        Container = new ChartingContainer(editor);
         Child = loadingIcon = new LoadingIcon
         {
             Anchor = Anchor.Centre,

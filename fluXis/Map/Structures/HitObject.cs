@@ -30,4 +30,6 @@ public abstract class HitObject : ITimedObject
     /// </summary>
     [YamlIgnore]
     public ScrollGroup? ScrollGroup { get; set; }
+
+    public virtual bool OnEditorMiddleClick() => false;
 }

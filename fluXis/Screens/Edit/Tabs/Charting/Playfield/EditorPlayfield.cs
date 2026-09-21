@@ -1,12 +1,11 @@
 using System;
 using fluXis.Configuration;
 using fluXis.Map.Structures;
-using fluXis.Modes.Keys.Gameplay.UI;
-using fluXis.Modes.Keys.Map.Objects;
 using fluXis.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Audio.Track;
@@ -161,11 +160,12 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
         var sound = info.Sample;
 
-        if (sound == ":normal" && info is Tick t)
+        // TODO: allow object to override
+        /*if (sound == ":normal" && info is Tick t)
         {
             sound = ":tick-big";
             if (t.Small) sound = ":tick-small";
-        }
+        }*/
 
         var channel = hitsounding.GetSample(sound);
 
