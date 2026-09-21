@@ -4,7 +4,6 @@ using fluXis.Online.API.Models.Users;
 
 namespace fluXis.Replays;
 
-// TODO: make per-mode auto generators
 public abstract class AutoGenerator
 {
     /// <summary>

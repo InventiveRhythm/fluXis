@@ -7,8 +7,10 @@ using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Modes;
+using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using Midori.Utils;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -108,16 +110,30 @@ public class RhymMapFormat : IMapFormat
                 continue;
 
             var importRaw = storage.ReadAllText(import);
+            var hash = MapUtils.GetHash(importRaw);
 
             switch (Path.GetExtension(import))
             {
                 case ".rhym":
+                {
                     var ev = io.ParseAs<RawEventFile, RhymAssets, RhymMetadata, ITimedObject>(importRaw);
                     if (ev.FormatID != EffectFormat) throw new InvalidOperationException($"Tried to import a non-effect ({ev.FormatID}) file as effects.");
 
+                    playable.EffectHash = hash;
                     playable.ImportPaths["events"] = import;
                     playable.AddObjects(ev.Objects);
                     break;
+                }
+
+                case ".fsb":
+                {
+                    playable.Storyboard = importRaw.Deserialize<Storyboard>();
+                    playable.Storyboard?.Update();
+
+                    playable.StoryboardHash = hash;
+                    playable.ImportPaths["storyboard"] = import;
+                    break;
+                }
             }
         }
 
