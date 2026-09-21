@@ -4,6 +4,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using fluXis.Map.Structures;
+using fluXis.Map.Structures.Bases;
 using fluXis.Scripting.Models;
 using Humanizer;
 using Midori.Utils.Extensions;
@@ -103,6 +105,16 @@ public static class LuaExtensions
 
             var itemTable = lua.DoString("return {}")[0] as LuaTable;
             Debug.Assert(itemTable != null);
+
+            // to not break things
+            if (obj is HitObject o)
+            {
+                var d = o as IHasDuration;
+                itemTable["holdTime"] = d?.Duration ?? 0;
+                itemTable["hitSound"] = o.Sample;
+                itemTable["visualLane"] = 1; // this has been fully removed, so just return a static value
+                // TODO: fix type prop
+            }
 
             foreach (var cachedProp in typeCache.Properties)
             {

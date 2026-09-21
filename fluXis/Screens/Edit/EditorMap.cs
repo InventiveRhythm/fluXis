@@ -91,6 +91,7 @@ public class EditorMap : IVerifyContext
 
     public void SetupNotifiers()
     {
+        // TODO: none of these change notifiers save objects into the map
         notifiers = new List<IChangeNotifier>
         {
             new ChangeNotifier<HitObject>(Playable.ObjectsOfType<HitObject>()),
