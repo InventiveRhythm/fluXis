@@ -1,9 +1,11 @@
 using System;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map;
+using fluXis.Mode.Keys.Objects;
+using fluXis.Mods;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Mods;
+namespace fluXis.Mode.Keys.Mods;
 
 public class NoMineMod : IMod, IApplicableToMap
 {
@@ -18,9 +20,5 @@ public class NoMineMod : IMod, IApplicableToMap
     public Type[] IncompatibleMods => Array.Empty<Type>();
 
     public void Apply(PlayableMap map)
-    {
-        // TODO: move to keys mode
-        // map.RemoveObjects(map.ObjectsOfType<>());
-        // map.HitObjects.RemoveAll(hitObject => hitObject.Landmine);
-    }
+        => map.RemoveObjects(map.ObjectsOfType<Landmine>());
 }
