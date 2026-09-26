@@ -29,6 +29,7 @@ using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Input;
 using fluXis.Screens.Gameplay.Overlay;
 using fluXis.Screens.Gameplay.Overlay.Effect;
+using fluXis.Screens.Gameplay.Overlay.Result;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Gameplay.UI;
@@ -157,6 +158,8 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
+    private FullComboResultOverlay fullComboOverlay;
+    private PureFlawlessResultOverlay pureFlawlessOverlay;
     private QuickActionOverlay quickActionOverlay;
 
     private Bindable<HudVisibility> hudVisibility;
@@ -373,6 +376,8 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
                                         new SkipOverlay(),
                                         failMenu = new FailMenu(),
                                         fcOverlay = new FullComboOverlay(),
+                                        fullComboOverlay = new FullComboResultOverlay(),
+                                        pureFlawlessOverlay = new PureFlawlessResultOverlay(),
                                         quickActionOverlay = new QuickActionOverlay(),
                                         new GameplayTouchInput(RulesetContainer.Input),
                                         new PauseMenu()
@@ -573,8 +578,9 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         if (showingOverlay)
         {
-            fcOverlay.Show(field.ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
-            Scheduler.AddDelayed(() => fcOverlay.Hide(), 1400);
+            Drawable ov = field.ScoreProcessor.FullFlawless ? pureFlawlessOverlay : fullComboOverlay;
+            ov.Show();
+            using (BeginDelayedSequence(1400)) ov.Hide();
         }
 
         var stopwatch = Stopwatch.StartNew();
