@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Integration;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Scoring.Enums;
-using fluXis.Scoring.Structs;
 using fluXis.Skinning;
 using fluXis.Skinning.Bases.Judgements;
 using fluXis.Utils.Extensions;
@@ -77,7 +77,7 @@ public partial class JudgementDisplay : GameplayHUDComponent, IDoNotHide
         JudgementProcessor.ResultAdded -= popUp;
     }
 
-    private void popUp(HitResult result)
+    private void popUp(TrackedHitObject result)
     {
         var judgement = result.Judgement;
 

@@ -3,10 +3,10 @@ using System.Linq;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing;
-using fluXis.Scoring.Structs;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -113,7 +113,7 @@ public partial class JudgementCounter : GameplayHUDComponent
             base.Dispose(isDisposing);
         }
 
-        private void addResult(HitResult result)
+        private void addResult(TrackedHitObject result)
         {
             if (result.Judgement != timing.Judgement)
                 return;
@@ -123,7 +123,7 @@ public partial class JudgementCounter : GameplayHUDComponent
             lightUp();
         }
 
-        private void revertResult(HitResult result)
+        private void revertResult(TrackedHitObject result)
         {
             if (result.Judgement != timing.Judgement)
                 return;

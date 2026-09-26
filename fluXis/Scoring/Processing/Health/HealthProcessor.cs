@@ -1,7 +1,7 @@
 using System;
 using fluXis.Map;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Scoring.Enums;
-using fluXis.Scoring.Structs;
 using osu.Framework.Bindables;
 using osu.Framework.Timing;
 using osu.Framework.Utils;
@@ -18,7 +18,7 @@ public class HealthProcessor : JudgementDependant
     public Bindable<bool> InBreak { get; set; }
 
     public bool CanFail { get; set; } = true;
-    public Func<HitResult, bool> ExtraFailCondition { get; set; }
+    public Func<TrackedHitObject, bool> ExtraFailCondition { get; set; }
 
     /// <summary>
     /// This is only really used for the health bar cross.
@@ -64,7 +64,7 @@ public class HealthProcessor : JudgementDependant
 
     public override void ApplyMap(PlayableMap map) => Map = map;
 
-    public override void AddResult(HitResult result)
+    public override void AddResult(TrackedHitObject result)
     {
         if (FailedAlready) return;
 
@@ -74,7 +74,7 @@ public class HealthProcessor : JudgementDependant
             TriggerFailure();
     }
 
-    protected bool MeetsFailCondition(HitResult result)
+    protected bool MeetsFailCondition(TrackedHitObject result)
     {
         if (DefaultFailCondition)
             return true;
@@ -96,7 +96,7 @@ public class HealthProcessor : JudgementDependant
         SmoothHealth = (float)Interpolation.Lerp(Health.Value, SmoothHealth, Math.Exp(-0.012 * delta));
     }
 
-    protected virtual float GetHealthIncreaseFor(HitResult result, float difficulty) => result.Judgement switch
+    protected virtual float GetHealthIncreaseFor(TrackedHitObject result, float difficulty) => result.Judgement switch
     {
         Judgement.Miss => 0.625f * -difficulty,
         Judgement.Okay => 0.375f * -difficulty,

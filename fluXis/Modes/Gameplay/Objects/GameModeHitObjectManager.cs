@@ -48,7 +48,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
 
         foreach (var hit in FutureObjects)
         {
-            if (last != null) last.NextObject = hit;
+            last?.NextObject = hit;
             last = hit;
 
             if (!string.IsNullOrWhiteSpace(hit.Group) && Ruleset.ScrollGroups.TryGetValue(hit.Group, out var gr))
@@ -70,7 +70,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
             FutureObjects.RemoveAt(0);
 
             if (draw is null) // this will break stuff 100%, but it won't freeze the game
-                PastObjects.Push(hit);
+                PastObjects.Push(new TrackedHitObject(hit));
             else
                 ActiveObjects.Add(draw);
         }
@@ -84,21 +84,20 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
         foreach (var hitObject in ActiveObjects.Where(h => h.CanBeRemoved).ToList())
             removeObject(hitObject);
 
-        // TODO: store results better
-        /*while (Ruleset.AllowReverting && PastObjects.Count > 0)
+        while (Ruleset.AllowReverting && PastObjects.Count > 0)
         {
-            var result = PastObjects.Peek().Result;
+            var result = PastObjects.Peek();
 
-            if (result is null || Clock.CurrentTime >= result.Value.Time)
+            if (Clock.CurrentTime >= result.ClockTime)
                 break;
 
             revertObject(PastObjects.Pop());
-        }*/
+        }
     }
 
     #region Objects
 
-    protected Stack<HitObject> PastObjects { get; } = [];
+    protected Stack<TrackedHitObject> PastObjects { get; } = [];
     protected Container<DrawableHitObject> ActiveObjects { get; }
     protected List<HitObject> FutureObjects { get; } = [];
 
@@ -112,8 +111,19 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
 
         draw.Depth = (float)obj.Time;
         draw.Manager = this;
-        // draw.OnHit += hit;
+        draw.OnResult += onResult;
         return draw;
+    }
+
+    private void onResult(TrackedHitObject tracked)
+    {
+        if (Playfield.IsSubPlayfield)
+            return;
+
+        if (Player.HealthProcessor.Failed)
+            return;
+
+        Player.JudgementProcessor.AddResult(tracked);
     }
 
     private void removeObject(DrawableHitObject draw, bool addToFuture = false)
@@ -121,18 +131,20 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
         if (!addToFuture)
             draw.OnDestroy();
 
-        // obj.OnHit -= hit;
+        draw.OnResult -= onResult;
 
         if (addToFuture) FutureObjects.Insert(0, draw.Object);
-        else PastObjects.Push(draw.Object);
+        else PastObjects.Push(draw.Tracked);
 
         ActiveObjects.Remove(draw, true);
     }
 
-    private void revertObject(HitObject obj)
+    private void revertObject(TrackedHitObject track)
     {
         if (!Playfield.IsSubPlayfield)
         {
+            Player.JudgementProcessor.RevertResult(track);
+
             /*if (obj.HoldEndResult is not null)
                 Player.JudgementProcessor.RevertResult(obj.HoldEndResult.Value);
 
@@ -140,7 +152,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
                 Player.JudgementProcessor.RevertResult(obj.Result.Value);*/
         }
 
-        var draw = createObject(obj);
+        var draw = createObject(track.Object);
         if (draw is null) return;
 
         ActiveObjects.Add(draw);

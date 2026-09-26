@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Reflection;
 using fluXis.Map.Structures;
@@ -193,7 +194,8 @@ public static class LuaExtensions
 
             // if we can't get it through json then it's a good idea not to be able to get it through lua also
             // this also saves us from stack overflows as some auto generated fields may have references to the same type
-            if (prop.GetCustomAttribute<JsonIgnoreAttribute>(true) != null)
+            if (prop.GetCustomAttribute<JsonIgnoreAttribute>(true) != null
+                || prop.GetCustomAttribute<NotMappedAttribute>(true) != null)
                 continue;
 
             var attr = prop.GetCustomAttribute<LuaMemberAttribute>(true);
@@ -214,7 +216,8 @@ public static class LuaExtensions
 
         foreach (var field in fields)
         {
-            if (field.GetCustomAttribute<JsonIgnoreAttribute>(true) != null)
+            if (field.GetCustomAttribute<JsonIgnoreAttribute>(true) != null
+                || field.GetCustomAttribute<NotMappedAttribute>(true) != null)
                 continue;
 
             string luaName = char.ToLowerInvariant(field.Name[0]) + field.Name[1..];

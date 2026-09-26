@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Map;
-using fluXis.Scoring.Structs;
+using fluXis.Modes.Gameplay.Objects;
 
 namespace fluXis.Scoring.Processing;
 
 public class JudgementProcessor
 {
     private readonly List<JudgementDependant> dependants = new();
-    public List<HitResult> Results { get; } = new();
+    public List<TrackedHitObject> Results { get; } = new();
 
-    public event Action<HitResult> ResultAdded;
-    public event Action<HitResult> ResultReverted;
+    public event Action<TrackedHitObject> ResultAdded;
+    public event Action<TrackedHitObject> ResultReverted;
 
     public void AddDependants(IEnumerable<JudgementDependant> dependants)
     {
@@ -27,7 +27,7 @@ public class JudgementProcessor
         dependants.ForEach(d => d.ApplyMap(map));
     }
 
-    public void AddResult(HitResult result)
+    public void AddResult(TrackedHitObject result)
     {
         lock (Results) Results.Add(result);
 
@@ -35,7 +35,7 @@ public class JudgementProcessor
         ResultAdded?.Invoke(result);
     }
 
-    public void RevertResult(HitResult result)
+    public void RevertResult(TrackedHitObject result)
     {
         lock (Results) Results.Remove(result);
 

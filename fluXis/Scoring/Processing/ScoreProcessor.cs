@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Map;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring.Enums;
-using fluXis.Scoring.Structs;
 using osu.Framework.Bindables;
 
 namespace fluXis.Scoring.Processing;
@@ -44,8 +44,8 @@ public class ScoreProcessor : JudgementDependant, IDisposable
     private int totalNotes => Flawless + Perfect + Great + Alright + Okay + Miss;
     private float ratedNotes => Flawless + Perfect * 0.98f + Great * 0.65f + Alright * 0.25f + Okay * 0.1f;
 
-    public override void AddResult(HitResult result) => recalc();
-    public override void RevertResult(HitResult result) => recalc();
+    public override void AddResult(TrackedHitObject result) => recalc();
+    public override void RevertResult(TrackedHitObject result) => recalc();
 
     private readonly Action<Action> schedule;
     private readonly bool asyncCalculations;
@@ -190,7 +190,8 @@ public class ScoreProcessor : JudgementDependant, IDisposable
             Alright = Alright,
             Okay = Okay,
             Miss = Miss,
-            HitResults = JudgementProcessor.Results,
+            // TODO: convert
+            // HitResults = JudgementProcessor.Results,
             MapID = Map.OnlineID,
             PlayerID = Player.ID,
             Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),

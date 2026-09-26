@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset;
 using YamlDotNet.Serialization;
@@ -8,10 +9,10 @@ namespace fluXis.Map.Structures;
 
 public abstract class HitObject : ITimedObject
 {
-    [YamlIgnore]
+    [YamlIgnore, NotMapped]
     public virtual int ComboContribution => 1;
 
-    [YamlIgnore]
+    [YamlIgnore, NotMapped]
     public virtual float DensityContribution => 1;
 
     public double Time { get; set; }
@@ -22,13 +23,13 @@ public abstract class HitObject : ITimedObject
     /// <summary>
     /// The next HitObject in the same lane.
     /// </summary>
-    [YamlIgnore]
+    [YamlIgnore, NotMapped]
     public HitObject? NextObject { get; set; }
 
     /// <summary>
     /// The scroll group for this object.
     /// </summary>
-    [YamlIgnore]
+    [YamlIgnore, NotMapped]
     public ScrollGroup? ScrollGroup { get; set; }
 
     public virtual bool OnEditorMiddleClick() => false;

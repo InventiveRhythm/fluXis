@@ -44,9 +44,11 @@ public partial class DrawableTick : DrawableKeysHitObject<Tick>, IKeyBindingHand
 
     protected override void CheckJudgement(bool byUser, double offset)
     {
+        // TODO: i don't think any of this works properly with the new system
+
         if (!byUser)
         {
-            ApplyResult(lagCompensation() ?? HitWindows.TimingFor(HitWindows.Lowest));
+            ApplyResult(HitWindows.JudgementFor(lagCompensation() ?? HitWindows.TimingFor(HitWindows.Lowest)));
             return;
         }
 
@@ -59,13 +61,13 @@ public partial class DrawableTick : DrawableKeysHitObject<Tick>, IKeyBindingHand
 
             if (off != null)
             {
-                ApplyResult(off.Value);
+                ApplyResult(HitWindows.JudgementFor(off.Value));
                 return;
             }
         }
 
         // ObjectManager.PlayHitSound(Data, false);
-        ApplyResult(lagCompensation() ?? offset);
+        ApplyResult(HitWindows.JudgementFor(lagCompensation() ?? offset));
         return;
 
         double? lagCompensation()

@@ -1,6 +1,7 @@
 using System;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
+using fluXis.Scoring.Enums;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
@@ -18,21 +19,23 @@ public abstract partial class DrawableHitObject : CompositeDrawable
     [Resolved]
     protected ISkin Skin { get; private set; } = null!;
 
+    public TrackedHitObject Tracked { get; }
     public HitObject Object { get; }
     public GameModeHitObjectManager Manager { get; internal set; } = null!;
 
     protected double TimeDelta => Object.Time - Time.Current;
     public abstract bool CanBeRemoved { get; }
 
-    public bool Judged { get; protected set; }
+    public bool Judged => Tracked.Judged;
     public HitWindows HitWindows => hitWindowLazy.Value;
-    public Action<DrawableHitObject, double>? OnHit { get; set; }
+    public Action<TrackedHitObject>? OnResult { get; set; }
 
     private readonly Lazy<HitWindows> hitWindowLazy;
 
     protected DrawableHitObject(HitObject o)
     {
         Object = o;
+        Tracked = new TrackedHitObject(o);
         hitWindowLazy = new Lazy<HitWindows>(() => Ruleset.PlayableMode.CreateHitWindowFor(Object));
     }
 
@@ -49,12 +52,14 @@ public abstract partial class DrawableHitObject : CompositeDrawable
 
     protected virtual void CheckJudgement(bool byUser, double offset) { }
 
-    protected void ApplyResult(double diff)
+    protected void ApplyResult(Judgement judgement)
     {
         if (Judged) throw new InvalidOperationException("Can not apply judgement to already judged HitObject.");
 
-        Judged = true;
-        OnHit?.Invoke(this, diff);
+        Tracked.Judgement = judgement;
+        Tracked.ClockTime = Time.Current;
+
+        OnResult?.Invoke(Tracked);
     }
 }
 

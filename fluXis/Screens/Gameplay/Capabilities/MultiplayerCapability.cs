@@ -4,10 +4,10 @@ using System.Linq;
 using fluXis.Audio.Transforms;
 using fluXis.Graphics;
 using fluXis.Modes.Gameplay;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Online.Activity;
 using fluXis.Online.Multiplayer;
 using fluXis.Scoring;
-using fluXis.Scoring.Structs;
 using fluXis.Screens.Gameplay.Capabilities.Bases;
 using fluXis.Screens.Multiplayer.Gameplay;
 using fluXis.Utils.Extensions;
@@ -70,7 +70,7 @@ public partial class MultiplayerCapability : Component, IEndingCapability, IUser
         client.OnDisconnect -= onDisconnect;
     }
 
-    private void sendScore(HitResult _) => client.UpdateScore(player.ScoreProcessor.Score);
+    private void sendScore(TrackedHitObject _) => client.UpdateScore(player.ScoreProcessor.Score);
 
     private void onScoreUpdate(long user, int score)
     {

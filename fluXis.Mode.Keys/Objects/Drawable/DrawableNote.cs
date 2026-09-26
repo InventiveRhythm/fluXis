@@ -25,14 +25,15 @@ public partial class DrawableNote : DrawableKeysHitObject<Note>, IKeyBindingHand
     {
         if (!byUser)
         {
-            ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+            ApplyResult(HitWindows.Lowest);
             return;
         }
 
         if (!HitWindows.CanBeHit(offset))
             return;
 
-        ApplyResult(offset);
+        var result = HitWindows.JudgementFor(offset);
+        ApplyResult(result);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGameplayKeybind> e)

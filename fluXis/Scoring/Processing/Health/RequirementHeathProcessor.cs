@@ -1,5 +1,5 @@
 using fluXis.Map;
-using fluXis.Scoring.Structs;
+using fluXis.Modes.Gameplay.Objects;
 
 namespace fluXis.Scoring.Processing.Health;
 
@@ -25,12 +25,12 @@ public class RequirementHeathProcessor : HealthProcessor
         multiplier *= 100f;
     }
 
-    public override void AddResult(HitResult result)
+    public override void AddResult(TrackedHitObject result)
     {
         Health.Value += GetHealthIncreaseFor(result, Difficulty);
     }
 
-    protected override float GetHealthIncreaseFor(HitResult result, float difficulty)
+    protected override float GetHealthIncreaseFor(TrackedHitObject result, float difficulty)
     {
         var increase = base.GetHealthIncreaseFor(result, difficulty);
 

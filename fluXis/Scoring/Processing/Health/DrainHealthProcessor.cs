@@ -1,7 +1,7 @@
 using System;
 using fluXis.Map;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Scoring.Enums;
-using fluXis.Scoring.Structs;
 
 namespace fluXis.Scoring.Processing.Health;
 
@@ -29,7 +29,7 @@ public class DrainHealthProcessor : HealthProcessor
         factor = 0.008f + 80f / maxCombo;
     }
 
-    public override void AddResult(HitResult result)
+    public override void AddResult(TrackedHitObject result)
     {
         rate += GetHealthIncreaseFor(result, Difficulty);
 
@@ -73,7 +73,7 @@ public class DrainHealthProcessor : HealthProcessor
             TriggerFailure();
     }
 
-    protected override float GetHealthIncreaseFor(HitResult result, float difficulty)
+    protected override float GetHealthIncreaseFor(TrackedHitObject result, float difficulty)
     {
         return (float)(result.Judgement switch
         {

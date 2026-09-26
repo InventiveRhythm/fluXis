@@ -1,8 +1,7 @@
 using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Scoring.Enums;
-using fluXis.Scoring.Structs;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -114,12 +113,13 @@ public partial class HitErrorBar : GameplayHUDComponent
         JudgementProcessor.ResultAdded -= addHit;
     }
 
-    private void addHit(HitResult result)
+    private void addHit(TrackedHitObject result)
     {
         // don't display landmines that haven't been triggered
-        if (result.Type == ResultType.Landmine && result.Judgement == Judgement.Flawless) return;
+        // TODO: allow objects to define if they should show a judgement
+        // if (result.Type == ResultType.Landmine && result.Judgement == Judgement.Flawless) return;
 
-        var time = -result.Difference;
+        var time = -(result.Difference ?? 0);
         var judgement = result.Judgement;
         time /= Deps.PlaybackRate;
 
@@ -146,12 +146,13 @@ public partial class HitErrorBar : GameplayHUDComponent
            .FadeOut(300)
            .Expire();
 
-        if (result.Type != ResultType.Landmine) updateAverage();
+        /*if (result.Type != ResultType.Landmine)*/
+        updateAverage();
     }
 
     private void updateAverage()
     {
-        var avg = JudgementProcessor.Results.Where(h => h.Type != ResultType.Landmine).Average(h => h.Difference);
+        var avg = JudgementProcessor.Results /*.Where(h => h.Type != ResultType.Landmine)*/.Average(h => h.Difference ?? 0);
         var judgement = HitWindows.JudgementFor(avg);
         avg /= Deps.PlaybackRate;
 

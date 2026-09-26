@@ -29,6 +29,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Map\Format\Legacy\" />
-    <Folder Include="Modes\Keys\" />
   </ItemGroup>
 </Project>
