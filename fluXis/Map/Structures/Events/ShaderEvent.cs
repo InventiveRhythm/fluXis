@@ -153,6 +153,7 @@ public enum ShaderType
     Bloom,
     Greyscale,
     Invert,
+    Contrast,
 
     [ShaderStrength(1, Max = 20f, Step = 1f)]
     Chromatic,
@@ -182,6 +183,20 @@ public enum ShaderType
     [ShaderStrength(ParamName = "Amount")]
     [ShaderStrength(2, ParamName = "Speed")]
     Glitch2,
+
+    [ShaderStrength(1, Max = 10f, ParamName = "Scroll Speed")]
+    [ShaderStrength(2, Max = 10f, ParamName = "Scale")]
+    [ShaderStrength(3, Max = 4f, ParamName = "Iterations")]
+    Warp,
+
+    [ShaderStrength(1, Max = 2f)]
+    [ShaderStrength(2, Min = -180f, Max = 180f, Step = 1f, ParamName = "Angle")]
+    Slice,
+
+    [ShaderStrength(1, ParamName = "Cell Size")]
+    [ShaderStrength(2, ParamName = "Distortion Strength")]
+    [ShaderStrength(3, Max = 10f, ParamName = "Scroll Speed")]
+    Shatter,
 
     GaussianBlur,
 
