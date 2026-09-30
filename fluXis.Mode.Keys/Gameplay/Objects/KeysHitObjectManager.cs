@@ -3,7 +3,7 @@ using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Mode.Keys.Objects;
-using fluXis.Mode.Keys.Objects.Drawable;
+using fluXis.Mode.Keys.Objects.Drawables;
 using fluXis.Modes.Gameplay.Lines;
 using fluXis.Modes.Gameplay.Objects;
 using fluXis.Screens.Gameplay.Ruleset;
@@ -65,6 +65,7 @@ public partial class KeysHitObjectManager : GameModeHitObjectManager
     protected override DrawableHitObject? CreateDrawableFor(HitObject obj) => obj switch
     {
         Note note => new DrawableNote(note),
+        LongNote hold => new DrawableLongNote(hold),
         Tick tick => new DrawableTick(tick),
         TimingLine line => new KeysDrawableTimingLine(line),
         _ => null

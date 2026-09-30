@@ -7,7 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 
-namespace fluXis.Mode.Keys.Objects.Drawable;
+namespace fluXis.Mode.Keys.Objects.Drawables;
 
 public partial class DrawableTick : DrawableKeysHitObject<Tick>, IKeyBindingHandler<FluXisGameplayKeybind>
 {
@@ -17,7 +17,7 @@ public partial class DrawableTick : DrawableKeysHitObject<Tick>, IKeyBindingHand
     private int actionIndex;
 
     private bool heldDown;
-    private bool directHit = false;
+    private bool directHit;
     private double? holdStartTime;
 
     public DrawableTick(Tick o)

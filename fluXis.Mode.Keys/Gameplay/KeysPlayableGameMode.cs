@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Mode.Keys.Objects;
 using fluXis.Modes.Gameplay;
 using fluXis.Mods;
 using fluXis.Scoring;
@@ -51,6 +52,11 @@ public partial class KeysPlayableGameMode : PlayableGameMode
         releaseWindows ??= new ReleaseWindows(difficulty, Ruleset.Rate);
         landmineWindows ??= new LandmineWindows(difficulty, Ruleset.Rate);
 
-        return hitWindows;
+        return obj switch
+        {
+            Landmine => landmineWindows,
+            LongNoteTail => releaseWindows,
+            _ => hitWindows
+        };
     }
 }

@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Lists;
 
 namespace fluXis.Modes.Gameplay.Objects;
 
@@ -35,11 +39,44 @@ public abstract partial class DrawableHitObject : CompositeDrawable
     protected DrawableHitObject(HitObject o)
     {
         Object = o;
+        Object.CreateNested();
+
         Tracked = new TrackedHitObject(o);
         hitWindowLazy = new Lazy<HitWindows>(() => Ruleset.PlayableMode.CreateHitWindowFor(Object));
     }
 
-    public virtual void OnDestroy() => UpdateJudgement(false);
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        Object.NestedObjects.ForEach(x =>
+        {
+            var d = CreateNested(x)
+                    ?? throw new InvalidOperationException($"Can't create drawable representation of nested '{x}'.");
+
+            d.Manager = Manager;
+            d.OnResult += OnResult;
+            Tracked.Nested.Add(d.Tracked);
+
+            nestedObjects.Add(d);
+            AddInternal(d);
+        });
+    }
+
+    #region Nested
+
+    public SlimReadOnlyListWrapper<DrawableHitObject> NestedObjects => nestedObjects.AsSlimReadOnly();
+    private readonly List<DrawableHitObject> nestedObjects = [];
+
+    protected virtual DrawableHitObject? CreateNested(HitObject obj) => null;
+
+    #endregion
+
+    public virtual void OnDestroy()
+    {
+        UpdateJudgement(false);
+        NestedObjects.ForEach(x => x.OnDestroy());
+        Object.ClearNested();
+    }
 
     protected bool UpdateJudgement(bool byUser)
     {

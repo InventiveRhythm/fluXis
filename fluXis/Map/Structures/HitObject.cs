@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset;
+using osu.Framework.Extensions.ListExtensions;
+using osu.Framework.Lists;
 using YamlDotNet.Serialization;
 
 namespace fluXis.Map.Structures;
@@ -33,4 +36,18 @@ public abstract class HitObject : ITimedObject
     public ScrollGroup? ScrollGroup { get; set; }
 
     public virtual bool OnEditorMiddleClick() => false;
+
+    #region Nesting
+
+    [YamlIgnore]
+    public SlimReadOnlyListWrapper<HitObject> NestedObjects => nestedObjects.AsSlimReadOnly();
+
+    [YamlIgnore]
+    private readonly List<HitObject> nestedObjects = [];
+
+    protected void AddNested(HitObject obj) => nestedObjects.Add(obj);
+    public virtual void CreateNested() { }
+    public void ClearNested() => nestedObjects.Clear();
+
+    #endregion
 }

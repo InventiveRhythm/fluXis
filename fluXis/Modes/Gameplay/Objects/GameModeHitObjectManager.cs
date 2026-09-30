@@ -88,7 +88,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
         {
             var result = PastObjects.Peek();
 
-            if (Clock.CurrentTime >= result.ClockTime)
+            if (result.ClockTime == null || Clock.CurrentTime >= result.ClockTime)
                 break;
 
             revertObject(PastObjects.Pop());
@@ -144,6 +144,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
         if (!Playfield.IsSubPlayfield)
         {
             Player.JudgementProcessor.RevertResult(track);
+            track.Nested.ForEach(Player.JudgementProcessor.RevertResult);
 
             /*if (obj.HoldEndResult is not null)
                 Player.JudgementProcessor.RevertResult(obj.HoldEndResult.Value);

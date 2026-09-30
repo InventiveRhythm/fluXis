@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using fluXis.Map.Structures;
 using fluXis.Scoring.Enums;
 
@@ -12,6 +13,8 @@ public class TrackedHitObject
 
     public bool Judged => Judgement > Judgement.None;
     public double? Difference => Object.Time - ClockTime;
+
+    public List<TrackedHitObject> Nested { get; } = [];
 
     public TrackedHitObject(HitObject o)
     {

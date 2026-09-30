@@ -4,11 +4,11 @@ using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 
-namespace fluXis.Mode.Keys.Objects.Drawable;
+namespace fluXis.Mode.Keys.Objects.Drawables;
 
 public partial class DrawableNote : DrawableKeysHitObject<Note>, IKeyBindingHandler<FluXisGameplayKeybind>
 {
-    public override bool CanBeRemoved => Judged || Time.Current - Object.Time > HitWindows.TimingFor(HitWindows.LowestHitable);
+    public override bool CanBeRemoved => Judged || TimeDelta < -HitWindows.TimingFor(HitWindows.LowestHitable);
 
     public DrawableNote(Note o)
         : base(o)
