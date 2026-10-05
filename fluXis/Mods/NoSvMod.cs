@@ -18,7 +18,6 @@ public class NoSvMod : IMod, IApplicableToMap
     public bool Rankable => true;
     public Type[] IncompatibleMods => Array.Empty<Type>();
 
-    // TODO: move to keys mode
     public void Apply(PlayableMap map)
     {
         var objs = map.ObjectsOfType<IScrollEvent>();
