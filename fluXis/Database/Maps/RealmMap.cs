@@ -132,6 +132,7 @@ public class RealmMap : RealmObject
         playable.Settings = Settings;
         return playable;
 
+        // TODO: audio hash
         /*
         var path = MapFiles.GetFullPath(MapSet.GetPathForFile(FileName));
         if (!File.Exists(path)) return null;

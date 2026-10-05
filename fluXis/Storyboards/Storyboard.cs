@@ -21,13 +21,13 @@ public class Storyboard : EditorMap.IChangeNotifier
     public Vector2 Resolution { get; set; } = new(1920, 1080);
 
     [JsonProperty("elements")]
-    public List<StoryboardElement> Elements { get; set; } = new();
+    public List<StoryboardElement> Elements { get; set; } = [];
 
     [JsonProperty("compounds")]
-    public Dictionary<string, List<StoryboardElement>> Compounds { get; set; } = new();
+    public Dictionary<string, List<StoryboardElement>> Compounds { get; set; } = [];
 
     [JsonIgnore]
-    public bool Empty => Elements.Count == 0;
+    public bool Empty => Elements.Count == 0 && Compounds.Count == 0;
 
     #region Server-Side Stuff
 

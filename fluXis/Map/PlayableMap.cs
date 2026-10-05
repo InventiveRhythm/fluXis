@@ -49,7 +49,7 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
     #region Hashes
 
     public string ChartHash { get; set; } = string.Empty;
-    public string EffectHash { get; set; } = string.Empty;
+    public string EventsHash { get; set; } = string.Empty;
     public string StoryboardHash { get; set; } = string.Empty;
 
     #endregion

@@ -864,7 +864,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         EditorMap.Playable.TimeInEditor += now - lastSaveTime;
 
-        mapStore.Save(EditorMap.RealmMap, EditorMap.Playable, EditorMap.Storyboard, setStatus);
+        mapStore.Save(EditorMap.RealmMap, EditorMap.Playable, setStatus);
         Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(EditorMap.MapSet.ID), EditorMap.MapSet));
 
         isNewMap = false;

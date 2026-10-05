@@ -27,7 +27,6 @@ using fluXis.Online.API.Requests.MapSets;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
-using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Downloading;
 using fluXis.Utils.Extensions;
@@ -572,29 +571,37 @@ public partial class MapStore : Component
         });
     }
 
-    public void Save(RealmMap map, PlayableMap playable, Storyboard storyboard, bool setStatus)
+    public void Save(RealmMap map, PlayableMap playable, bool setStatus)
     {
         if (map == null || playable == null)
             throw new ArgumentNullException();
 
-        var format = new RhymMapFormat(new NativeStorage(map.MapSet.GetPathForFile("")), game.GameModes);
-        format.Save(playable);
-
-        throw new NotImplementedException("TODO: reimplement saving");
-        /*var set = map.MapSet;
+        var set = map.MapSet;
 
         if (setStatus)
         {
             map.LastLocalUpdate = DateTimeOffset.Now;
-            map.Status = MapStatus.Local;
             map.ResetOnlineInfo();
         }
 
-        var directory = MapFiles.GetFullPath(set.GetPathForFile(""));
+        var format = game.GameModes.GetFormat(playable.Storage, Path.GetExtension(playable.FileName))
+                     ?? throw new Exception($"Unable to find compatible format for {playable.FileName}.");
 
-        if (!Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
+        var hashes = format.Save(playable);
 
+        realm.RunWrite(r =>
+        {
+            map.FileName = playable.FileName;
+            map.Hash = hashes[IMapFormat.IMPORT_CHART];
+            // map.AudioHash = playable.AudioHash;
+
+            playable.SaveIntoRealmMap(map);
+
+            var existing = r.Find<RealmMap>(map.ID)!;
+            set.CopyChanges(existing.MapSet);
+        });
+
+        /*
         if (events is { Empty: false })
         {
             var effectFilename = string.IsNullOrWhiteSpace(playable.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : playable.EffectFile;
@@ -621,17 +628,6 @@ public partial class MapStore : Component
 
             var filename = string.IsNullOrWhiteSpace(map.FileName) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc" : map.FileName;
             File.WriteAllBytes(MapFiles.GetFullPath(set.GetPathForFile(filename)), stream.ToArray());
-
-            var hash = MapUtils.GetHash(stream);
-
-            map.Hash = hash;
-            map.AudioHash = playable.AudioHash; // set by RealmMap.GetMapInfo in EditorLoader.pushEditor
-            map.FileName = filename;
-
-            playable.SaveIntoRealmMap(map);
-
-            var existing = r.Find<RealmMap>(map.ID)!;
-            set.CopyChanges(existing.MapSet);
         });*/
     }
 

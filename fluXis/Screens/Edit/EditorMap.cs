@@ -41,6 +41,7 @@ public class EditorMap : IVerifyContext
     private readonly Scheduler scheduler;
     private readonly Editor editor;
 
+    // TODO: change this up to just be based off changes done, not hashes
     public string MapInfoHash => MapUtils.GetHash(Playable.Serialize());
     public string StoryboardHash => MapUtils.GetHash(Storyboard.Serialize());
 
@@ -280,13 +281,19 @@ public class EditorMap : IVerifyContext
     private bool tryFindNotifier<T>(out ChangeNotifier<T> notifier)
         where T : class, ITimedObject
     {
-        notifier = notifiers.FirstOrDefault(n => n.Matches(typeof(T))) as ChangeNotifier<T>;
+        var type = typeof(T);
+        if (type.IsAssignableTo(typeof(HitObject))) type = typeof(HitObject);
+
+        notifier = notifiers.FirstOrDefault(n => n.Matches(type)) as ChangeNotifier<T>;
         return notifier != null;
     }
 
     private bool tryRunNotifier(ITimedObject obj, Action<IChangeNotifier> action)
     {
-        var n = notifiers.FirstOrDefault(n => n.Matches(obj.GetType()));
+        var type = obj.GetType();
+        if (obj is HitObject) type = typeof(HitObject);
+
+        var n = notifiers.FirstOrDefault(n => n.Matches(type));
 
         if (n is not null)
             action?.Invoke(n);

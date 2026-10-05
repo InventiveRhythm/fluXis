@@ -22,12 +22,6 @@ public class RawMapProperties
     public bool ForceAspect { get; set; }
 
     [YamlMember(Alias = "flux:extra_playfields")]
-    public int ExtraPlayfields
-    {
-        get => extraPlayfields;
-        set => extraPlayfields = Math.Clamp(value, 0, 9);
-    }
-
-    [YamlIgnore]
-    private int extraPlayfields;
+    [field: YamlIgnore]
+    public int ExtraPlayfields { get; set => field = Math.Clamp(value, 0, 9); }
 }

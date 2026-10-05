@@ -52,7 +52,7 @@ public partial class ScoreSubmissionCapability : Component, IEndingCapability
         if (!isOnlineMap)
             return;
 
-        var req = new ScoreTicketRequest(Screen.Map.ChartHash, Screen.Map.EffectHash, Screen.Map.StoryboardHash, Screen.Mods);
+        var req = new ScoreTicketRequest(Screen.Map.ChartHash, Screen.Map.EventsHash, Screen.Map.StoryboardHash, Screen.Mods);
         api.PerformRequest(req);
 
         if (!req.IsSuccessful)
@@ -87,7 +87,7 @@ public partial class ScoreSubmissionCapability : Component, IEndingCapability
 
                 if (canBeUploaded)
                 {
-                    var request = new ScoreSubmitRequest(score, Screen.Mods, replay, Screen.Map.ChartHash, Screen.Map.EffectHash, Screen.Map.StoryboardHash, ticket);
+                    var request = new ScoreSubmitRequest(score, Screen.Mods, replay, Screen.Map.ChartHash, Screen.Map.EventsHash, Screen.Map.StoryboardHash, ticket);
                     screen.SubmitRequest = request;
                     api.PerformRequest(request);
 

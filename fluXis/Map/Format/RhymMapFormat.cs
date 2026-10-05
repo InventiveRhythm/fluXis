@@ -27,7 +27,7 @@ namespace fluXis.Map.Format;
 public class RhymMapFormat : IMapFormat
 {
     public static ResourceLocation ChartFormat { get; } = new("flux", "chart");
-    public static ResourceLocation EffectFormat { get; } = new("flux", "effect");
+    public static ResourceLocation EventFormat { get; } = new("flux", "event");
     public static ResourceLocation StoryboardFormat { get; } = new("flux", "storyboard");
 
     private readonly Storage storage;
@@ -117,10 +117,10 @@ public class RhymMapFormat : IMapFormat
                 case ".rhym":
                 {
                     var ev = io.ParseAs<RawEventFile, RhymAssets, RhymMetadata, ITimedObject>(importRaw);
-                    if (ev.FormatID != EffectFormat) throw new InvalidOperationException($"Tried to import a non-effect ({ev.FormatID}) file as effects.");
+                    if (ev.FormatID != EventFormat) throw new InvalidOperationException($"Tried to import a non-events ({ev.FormatID}) file as events.");
 
-                    playable.EffectHash = hash;
-                    playable.ImportPaths["events"] = import;
+                    playable.EventsHash = hash;
+                    playable.ImportPaths[IMapFormat.IMPORT_EVENT] = import;
                     playable.AddObjects(ev.Objects);
                     break;
                 }
@@ -131,7 +131,7 @@ public class RhymMapFormat : IMapFormat
                     playable.Storyboard?.Update();
 
                     playable.StoryboardHash = hash;
-                    playable.ImportPaths["storyboard"] = import;
+                    playable.ImportPaths[IMapFormat.IMPORT_STORYBOARD] = import;
                     break;
                 }
             }
@@ -141,8 +141,10 @@ public class RhymMapFormat : IMapFormat
         return playable;
     }
 
-    public void Save(PlayableMap map)
+    public Dictionary<string, string> Save(PlayableMap map)
     {
+        var hashes = new Dictionary<string, string>();
+
         var chart = new List<ITimedObject>();
         var events = new List<ITimedObject>();
 
@@ -199,14 +201,47 @@ public class RhymMapFormat : IMapFormat
         };
 
         var io = createIo();
-        var raw = io.Serialize(rhym);
-        File.WriteAllText("/home/flux/map.yaml", raw);
 
-        File.WriteAllText("/home/flux/map-events.yaml", io.Serialize(new RawEventFile
+        if (events.Count > 0)
         {
-            FormatID = EffectFormat,
-            Objects = [.. events]
-        }));
+            var name = map.ImportPaths.GetValueOrDefault(IMapFormat.IMPORT_EVENT, $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.rhym");
+            var raw = io.Serialize(new RawEventFile
+            {
+                FormatID = EventFormat,
+                Objects = [.. events]
+            });
+
+            hashes[IMapFormat.IMPORT_EVENT] = MapUtils.GetHash(raw);
+            rhym.Imports = [.. rhym.Imports, name];
+            storage.WriteAllText(name, raw);
+        }
+        else if (map.ImportPaths.TryGetValue(IMapFormat.IMPORT_EVENT, out var path))
+        {
+            // the import path exists, but we don't
+            // have any events -> delete old file
+            storage.Delete(path);
+        }
+
+        if (map.Storyboard is { Empty: false })
+        {
+            var name = map.ImportPaths.GetValueOrDefault(IMapFormat.IMPORT_STORYBOARD, $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsb");
+            var raw = map.Storyboard.Save();
+
+            hashes[IMapFormat.IMPORT_STORYBOARD] = MapUtils.GetHash(raw);
+            rhym.Imports = [.. rhym.Imports, name];
+            storage.WriteAllText(name, raw);
+        }
+        else if (map.ImportPaths.TryGetValue(IMapFormat.IMPORT_STORYBOARD, out var path))
+        {
+            // same as events
+            storage.Delete(path);
+        }
+
+        var rawChart = io.Serialize(rhym);
+        hashes[IMapFormat.IMPORT_CHART] = MapUtils.GetHash(rawChart);
+        storage.WriteAllText(map.FileName, rawChart);
+
+        return hashes;
     }
 
     private RhymIO createIo()
@@ -214,7 +249,7 @@ public class RhymMapFormat : IMapFormat
         var io = new RhymIO();
         io.RegisterConverter(new YamlColorConverter());
         io.RegisterObject<TimingPoint>("flux:timing");
-        io.RegisterObject<ScrollVelocity>("flux:event/scroll/velocity");
+        io.RegisterObject<ScrollVelocity>("flux:events/scroll/velocity");
 
         foreach (var type in IMapEvent.GetAllTypes())
         {

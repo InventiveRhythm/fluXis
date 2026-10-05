@@ -50,11 +50,7 @@ public class LegacyMapFormat : IMapFormat
                 BackgroundFile = map.BackgroundFile,
                 CoverFile = map.CoverFile,
                 VideoFile = map.VideoFile,
-                ImportPaths = new Dictionary<string, string>
-                {
-                    { "effects", map.EffectFile },
-                    { "storyboard", map.StoryboardFile },
-                },
+                ImportPaths = [],
 
                 TimeInEditor = map.TimeInEditor,
 
@@ -117,7 +113,7 @@ public class LegacyMapFormat : IMapFormat
                 var effects = LegacyMapEvents.Load<LegacyMapEvents>(eff);
                 effects.ForAllEvents(playable.AddObject);
 
-                playable.EffectHash = MapUtils.GetHash(eff);
+                playable.EventsHash = MapUtils.GetHash(eff);
                 playable.ImportPaths["events"] = map.EffectFile;
             }
 
@@ -140,5 +136,5 @@ public class LegacyMapFormat : IMapFormat
         }
     }
 
-    public void Save(PlayableMap map) => throw new NotImplementedException();
+    public Dictionary<string, string> Save(PlayableMap map) => throw new NotImplementedException();
 }

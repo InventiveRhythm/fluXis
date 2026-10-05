@@ -119,7 +119,7 @@ public partial class SetupTab : EditorTab
                                                     new FormInput("Tags", string.Join(", ", map.Playable.Tags))
                                                     {
                                                         Placeholder = "No Tags",
-                                                        OnValueChanged = (_, v) => map.Playable.Tags = v.Split(","),
+                                                        OnValueChanged = (_, v) => map.Playable.Tags = [.. v.Split(",").Select(x => x.Trim())],
                                                         MaxLength = 2048
                                                     }
                                                 ]),
