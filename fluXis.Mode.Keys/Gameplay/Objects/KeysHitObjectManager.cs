@@ -67,6 +67,7 @@ public partial class KeysHitObjectManager : GameModeHitObjectManager
         Note note => new DrawableNote(note),
         LongNote hold => new DrawableLongNote(hold),
         Tick tick => new DrawableTick(tick),
+        Landmine mine => new DrawableLandmine(mine),
         TimingLine line => new KeysDrawableTimingLine(line),
         _ => null
     };
