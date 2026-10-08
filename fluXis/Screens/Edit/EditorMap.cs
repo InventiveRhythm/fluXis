@@ -92,32 +92,31 @@ public class EditorMap : IVerifyContext
 
     public void SetupNotifiers()
     {
-        // TODO: none of these change notifiers save objects into the map
         notifiers = new List<IChangeNotifier>
         {
-            new ChangeNotifier<HitObject>(Playable.ObjectsOfType<HitObject>()),
-            new ChangeNotifier<TimingPoint>(Playable.ObjectsOfType<TimingPoint>()),
-            new ChangeNotifier<HitSoundFade>(Playable.ObjectsOfType<HitSoundFade>()),
-            new ChangeNotifier<ScrollVelocity>(Playable.ObjectsOfType<ScrollVelocity>()),
-            new ChangeNotifier<LaneSwitchEvent>(Playable.ObjectsOfType<LaneSwitchEvent>()),
-            new ChangeNotifier<FlashEvent>(Playable.ObjectsOfType<FlashEvent>()),
-            new ChangeNotifier<ColorFadeEvent>(Playable.ObjectsOfType<ColorFadeEvent>()),
-            new ChangeNotifier<PulseEvent>(Playable.ObjectsOfType<PulseEvent>()),
-            new ChangeNotifier<PlayfieldMoveEvent>(Playable.ObjectsOfType<PlayfieldMoveEvent>()),
-            new ChangeNotifier<PlayfieldScaleEvent>(Playable.ObjectsOfType<PlayfieldScaleEvent>()),
-            new ChangeNotifier<PlayfieldRotateEvent>(Playable.ObjectsOfType<PlayfieldRotateEvent>()),
-            new ChangeNotifier<LayerFadeEvent>(Playable.ObjectsOfType<LayerFadeEvent>()),
-            new ChangeNotifier<HitObjectEaseEvent>(Playable.ObjectsOfType<HitObjectEaseEvent>()),
-            new ChangeNotifier<ShakeEvent>(Playable.ObjectsOfType<ShakeEvent>()),
-            new ChangeNotifier<ShaderEvent>(Playable.ObjectsOfType<ShaderEvent>()),
-            new ChangeNotifier<BeatPulseEvent>(Playable.ObjectsOfType<BeatPulseEvent>()),
-            new ChangeNotifier<ScrollMultiplierEvent>(Playable.ObjectsOfType<ScrollMultiplierEvent>()),
-            new ChangeNotifier<TimeOffsetEvent>(Playable.ObjectsOfType<TimeOffsetEvent>()),
-            new ChangeNotifier<CameraMoveEvent>(Playable.ObjectsOfType<CameraMoveEvent>()),
-            new ChangeNotifier<CameraScaleEvent>(Playable.ObjectsOfType<CameraScaleEvent>()),
-            new ChangeNotifier<CameraRotateEvent>(Playable.ObjectsOfType<CameraRotateEvent>()),
-            new ChangeNotifier<LoopEvent>(Playable.ObjectsOfType<LoopEvent>()),
-            new ChangeNotifier<NoteEvent>(Playable.ObjectsOfType<NoteEvent>()),
+            new PlayableMapChangeNotifier<HitObject>(Playable),
+            new PlayableMapChangeNotifier<TimingPoint>(Playable),
+            new PlayableMapChangeNotifier<HitSoundFade>(Playable),
+            new PlayableMapChangeNotifier<ScrollVelocity>(Playable),
+            new PlayableMapChangeNotifier<LaneSwitchEvent>(Playable),
+            new PlayableMapChangeNotifier<FlashEvent>(Playable),
+            new PlayableMapChangeNotifier<ColorFadeEvent>(Playable),
+            new PlayableMapChangeNotifier<PulseEvent>(Playable),
+            new PlayableMapChangeNotifier<PlayfieldMoveEvent>(Playable),
+            new PlayableMapChangeNotifier<PlayfieldScaleEvent>(Playable),
+            new PlayableMapChangeNotifier<PlayfieldRotateEvent>(Playable),
+            new PlayableMapChangeNotifier<LayerFadeEvent>(Playable),
+            new PlayableMapChangeNotifier<HitObjectEaseEvent>(Playable),
+            new PlayableMapChangeNotifier<ShakeEvent>(Playable),
+            new PlayableMapChangeNotifier<ShaderEvent>(Playable),
+            new PlayableMapChangeNotifier<BeatPulseEvent>(Playable),
+            new PlayableMapChangeNotifier<ScrollMultiplierEvent>(Playable),
+            new PlayableMapChangeNotifier<TimeOffsetEvent>(Playable),
+            new PlayableMapChangeNotifier<CameraMoveEvent>(Playable),
+            new PlayableMapChangeNotifier<CameraScaleEvent>(Playable),
+            new PlayableMapChangeNotifier<CameraRotateEvent>(Playable),
+            new PlayableMapChangeNotifier<LoopEvent>(Playable),
+            new PlayableMapChangeNotifier<NoteEvent>(Playable),
             new ChangeNotifier<StoryboardAnimation>(new List<StoryboardAnimation>()),
             Playable.Storyboard
         };
@@ -388,7 +387,7 @@ public class EditorMap : IVerifyContext
     private class ChangeNotifier<T> : IChangeNotifier, IHoldsList<T>
         where T : class, ITimedObject
     {
-        public List<T> Objects { get; }
+        public virtual List<T> Objects { get; }
 
         [CanBeNull]
         private Action<T> add { get; }
@@ -407,9 +406,16 @@ public class EditorMap : IVerifyContext
         public event Action<T> OnTypedRemove;
         public event Action<T> OnTypedUpdate;
 
-        public ChangeNotifier(IEnumerable<T> list, Action<T> add = null, Action<T> remove = null, Action<T> update = null)
+        public ChangeNotifier(List<T> list, Action<T> add = null, Action<T> remove = null, Action<T> update = null)
         {
-            Objects = [.. list];
+            Objects = list;
+            this.add = add;
+            this.remove = remove;
+            this.update = update;
+        }
+
+        protected ChangeNotifier(Action<T> add = null, Action<T> remove = null, Action<T> update = null)
+        {
             this.add = add;
             this.remove = remove;
             this.update = update;
@@ -417,7 +423,7 @@ public class EditorMap : IVerifyContext
 
         public void Add(ITimedObject obj)
         {
-            Objects.Add((T)obj);
+            AddObject(obj);
             add?.Invoke((T)obj);
             OnAdd?.Invoke(obj);
             OnTypedAdd?.Invoke((T)obj);
@@ -425,7 +431,7 @@ public class EditorMap : IVerifyContext
 
         public void Remove(ITimedObject obj)
         {
-            Objects.Remove((T)obj);
+            RemoveObject(obj);
             remove?.Invoke((T)obj);
             OnRemove?.Invoke(obj);
             OnTypedRemove?.Invoke((T)obj);
@@ -448,5 +454,27 @@ public class EditorMap : IVerifyContext
         }
 
         public bool Matches(Type type) => typeof(T) == type;
+
+        protected virtual void AddObject(ITimedObject obj) => Objects.Add((T)obj);
+
+        protected virtual void RemoveObject(ITimedObject obj) => Objects.Remove((T)obj);
+    }
+
+    private class PlayableMapChangeNotifier<T> : ChangeNotifier<T>
+        where T : class, ITimedObject
+    {
+        public override List<T> Objects => map.ObjectsOfType<T>().ToList();
+
+        private readonly PlayableMap map;
+
+        public PlayableMapChangeNotifier(PlayableMap map, Action<T> add = null, Action<T> remove = null, Action<T> update = null)
+            : base(add, remove, update)
+        {
+            this.map = map;
+        }
+
+        protected override void AddObject(ITimedObject obj) => map.AddObject(obj);
+
+        protected override void RemoveObject(ITimedObject obj) => map.RemoveObject(obj);
     }
 }
