@@ -52,9 +52,6 @@ public class EditorPlaytestCapability : IMapCapability, IEndingCapability
     {
         Cloned = new PlayableMap(map.Storage, map.FileName, map.Mode);
         FastCloner.FastCloner.DeepCloneTo(map, Cloned);
-
-        // TODO
-        // Cloned.Compile();
         Cloned.Sort();
 
         var skipped = Cloned.ObjectsOfType<HitObject>().Where(x => x.Time < startTime);

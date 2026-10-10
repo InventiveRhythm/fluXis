@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
+using fluXis.Map.Structures.Events.Groups;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Storyboards;
 using fluXis.Utils;
@@ -181,6 +182,56 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
     public Storyboard? Storyboard { get; set; }
 
     #endregion
+
+    public Dictionary<string, List<ITimedObject>> GetGroups()
+    {
+        var dict = new Dictionary<string, List<ITimedObject>>();
+
+        Objects.ForEach(x =>
+        {
+            var group = x.Group?.ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(group)) return;
+
+            if (!dict.ContainsKey(group))
+                dict[group] = [];
+
+            dict[group].Add(x);
+        });
+
+        return dict;
+    }
+
+    public void Compile()
+    {
+        var groups = GetGroups();
+        var loops = ObjectsOfType<LoopEvent>();
+
+        foreach (var loop in loops)
+        {
+            if (!groups.TryGetValue(loop.TargetGroup?.ToLowerInvariant() ?? string.Empty, out var items) || items.Count == 0)
+                return;
+
+            var lowestTime = items.MinBy(x => x.Time)?.Time ?? 0;
+
+            for (int i = 0; i < loop.Count; i++)
+            {
+                var start = loop.Time + loop.Distance * i;
+
+                foreach (var obj in items)
+                {
+                    if (obj is LoopEvent or HitObject)
+                        continue;
+
+                    var delta = obj.Time - lowestTime;
+                    var target = start + delta;
+
+                    var copy = FastCloner.FastCloner.DeepClone(obj)!;
+                    copy.Time = target;
+                    AddObject(copy);
+                }
+            }
+        }
+    }
 
     public bool Validate(out string issue)
     {

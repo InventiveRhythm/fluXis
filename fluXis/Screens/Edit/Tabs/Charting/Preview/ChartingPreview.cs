@@ -226,28 +226,18 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
     #region Compilation
 
-    // TODO: this doesn't to anything
     private PlayableMap getCompiledMap()
     {
         if (cachedMap != null)
             return cachedMap;
 
-        return cachedMap = Map.Playable;
+        var clone = new PlayableMap(Map.Playable.Storage, Map.Playable.FileName, Map.Playable.Mode);
+        FastCloner.FastCloner.DeepCloneTo(Map.Playable, clone);
+
+        clone.Compile();
+        clone.Sort();
+        return cachedMap = clone;
     }
-
-    /*private LegacyMapEvents getCompiledEvents()
-    {
-        if (cachedEvents != null)
-            return cachedEvents;
-
-        var effects = Map.MapEvents.JsonCopy()!;
-        if (effects is null)
-            throw new ArgumentNullException(nameof(effects));
-
-        effects.Compile();
-        effects.Sort();
-        return cachedEvents = effects;
-    }*/
 
     private void invalidateCompiled() => cachedMap = null;
 

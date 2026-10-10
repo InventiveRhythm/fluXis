@@ -236,6 +236,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
             return;
         }
 
+        Map.Compile();
         Map.Sort();
 
         dependencies.CacheAs(Samples);
