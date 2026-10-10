@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using Image = SixLabors.ImageSharp.Image;
 
 namespace fluXis.Graphics.Background.Cropped;
 
@@ -48,7 +46,7 @@ public class CroppedBackgroundLoader : IResourceStore<TextureUpload>
 
     private static TextureUpload cropTexture(TextureUpload tex)
     {
-        var image = Image.LoadPixelData<Rgba32>(tex.Data.ToArray(), tex.Width, tex.Height);
+        var image = Image.LoadPixelData(TextureUpload.DECODER_OPTIONS.Configuration, [.. tex.Data], tex.Width, tex.Height);
 
         var visibleSize = new Size(1000, 100);
 

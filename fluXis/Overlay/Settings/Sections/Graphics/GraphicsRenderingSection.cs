@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Buttons;
@@ -44,7 +45,7 @@ public partial class GraphicsRenderingSection : SettingsSubSection
             {
                 Label = strings.Renderer,
                 Description = strings.RendererDescription,
-                Items = host.GetPreferredRenderersForCurrentPlatform(),
+                Items = host.GetPreferredRenderersForCurrentPlatform().Where(x => (int)x < 32),
                 Bindable = rendererBindable = frameworkConfig.GetBindable<RendererType>(FrameworkSetting.Renderer)
             },
             new SettingsDropdown<FrameSync>

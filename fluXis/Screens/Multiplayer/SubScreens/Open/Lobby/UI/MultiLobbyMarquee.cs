@@ -72,6 +72,8 @@ public partial class MultiLobbyMarquee : CompositeDrawable
             return;
 
         var first = flow.First();
+        if (first.DrawWidth <= 0) return;
+
         var count = (int)Math.Ceiling(DrawWidth / first.DrawWidth);
 
         if (flow.Count >= count)

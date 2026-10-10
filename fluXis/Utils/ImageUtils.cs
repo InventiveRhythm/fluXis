@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Logging;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
@@ -20,7 +20,7 @@ public static class ImageUtils
 
         try
         {
-            var image = Image.Load<Rgba32>(stream);
+            var image = TextureUpload.LoadFromStream<Rgba32>(stream);
             image.Mutate(x => x.Quantize(new WuQuantizer(new QuantizerOptions { MaxColors = 10 })));
 
             var dict = new Dictionary<Rgba32, int>();

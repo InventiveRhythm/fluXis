@@ -13,7 +13,7 @@
 
 ## Building and Developing
 ### Requirements
-* A desktop computer running Windows, macOS, or Linux with the [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) installed.
+* A desktop computer running Windows, macOS, or Linux with the [.NET 10.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed.
 * An IDE of your choice, for example [JetBrains Rider](https://www.jetbrains.com/rider/), [Visual Studio](https://visualstudio.microsoft.com/vs/) or [Visual Studio Code](https://code.visualstudio.com/).
 
 ### Downloading the source code

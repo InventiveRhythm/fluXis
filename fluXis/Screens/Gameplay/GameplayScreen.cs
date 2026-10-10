@@ -32,6 +32,7 @@ using fluXis.Screens.Gameplay.Capabilities.Bases;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Overlay;
 using fluXis.Screens.Gameplay.Overlay.Effect;
+using fluXis.Screens.Gameplay.Overlay.Result;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Screens.Gameplay.UI;
 using fluXis.Screens.Gameplay.UI.Menus;
@@ -158,7 +159,8 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
     public PlayableGameMode PlayableGameMode { get; private set; }
 
     private FailMenu failMenu;
-    private FullComboOverlay fcOverlay;
+    private FullComboResultOverlay fullComboOverlay;
+    private PureFlawlessResultOverlay pureFlawlessOverlay;
     private QuickActionOverlay quickActionOverlay;
 
     private Bindable<HudVisibility> hudVisibility;
@@ -563,8 +565,9 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         if (showingOverlay)
         {
-            fcOverlay.Show(field.ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
-            Scheduler.AddDelayed(() => fcOverlay.Hide(), 1400);
+            Drawable ov = field.ScoreProcessor.FullFlawless ? pureFlawlessOverlay : fullComboOverlay;
+            ov.Show();
+            using (BeginDelayedSequence(1400)) ov.Hide();
         }
 
         var stopwatch = Stopwatch.StartNew();
