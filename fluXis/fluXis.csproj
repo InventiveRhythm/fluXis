@@ -8,7 +8,6 @@
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-
     <ProjectReference Include="..\..\..\flustix\rhym\rhym\rhym.csproj" />
     <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj"/>
     <ProjectReference Include="..\Framework\osu.Framework\osu.Framework.csproj"/>

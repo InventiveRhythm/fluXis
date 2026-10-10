@@ -366,7 +366,8 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
                                 new DangerHealthOverlay(),
                                 new SkipOverlay(),
                                 failMenu = new FailMenu(),
-                                fcOverlay = new FullComboOverlay(),
+                                fullComboOverlay = new FullComboResultOverlay(),
+                                pureFlawlessOverlay = new PureFlawlessResultOverlay(),
                                 quickActionOverlay = new QuickActionOverlay(),
                                 new PauseMenu()
                             ]
