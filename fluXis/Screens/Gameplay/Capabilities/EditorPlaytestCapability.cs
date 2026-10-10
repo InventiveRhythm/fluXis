@@ -5,7 +5,6 @@ using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Gameplay.Capabilities.Bases;
-using Force.DeepCloner;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
@@ -52,7 +51,7 @@ public class EditorPlaytestCapability : IMapCapability, IEndingCapability
     PlayableMap IMapCapability.Load()
     {
         Cloned = new PlayableMap(map.Storage, map.FileName, map.Mode);
-        map.DeepCloneTo(Cloned);
+        FastCloner.FastCloner.DeepCloneTo(map, Cloned);
 
         // TODO
         // Cloned.Compile();
