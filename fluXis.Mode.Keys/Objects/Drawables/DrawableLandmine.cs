@@ -55,7 +55,7 @@ public partial class DrawableLandmine : DrawableKeysHitObject<Landmine>, IKeyBin
     {
         if (!byUser)
         {
-            ApplyResult(Judgement.Flawless);
+            ApplyResult(Judgement.Flawless, Object.Time);
             return;
         }
 

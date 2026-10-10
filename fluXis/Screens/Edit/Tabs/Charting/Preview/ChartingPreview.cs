@@ -310,12 +310,13 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
         effects.Compile();
         effects.Sort();*/
 
-        var flashes = Map.Playable.ObjectsOfType<FlashEvent>();
+        var map = getCompiledMap();
+        var flashes = map.ObjectsOfType<FlashEvent>();
         backFlash.Rebuild(flashes.Where(x => x.InBackground));
         frontFlash.Rebuild(flashes.Where(x => !x.InBackground));
 
-        var auto = Editor.GameMode.CreateAutoGenerator(Map.Playable);
-        var container = new ReplayRulesetContainer(Editor.GameMode, auto.Generate(), Map.Playable, [new NoFailMod()]);
+        var auto = Editor.GameMode.CreateAutoGenerator(map);
+        var container = new ReplayRulesetContainer(Editor.GameMode, auto.Generate(), map, [new NoFailMod()]);
         container.ScrollSpeed = Settings.ApplyZoomToPreview.Value ? zoomedScrollSpeed : userScrollSpeed;
         container.ParentClock = EditorClock;
         return container;

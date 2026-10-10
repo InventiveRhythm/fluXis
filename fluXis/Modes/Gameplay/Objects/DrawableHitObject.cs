@@ -89,12 +89,12 @@ public abstract partial class DrawableHitObject : CompositeDrawable
 
     protected virtual void CheckJudgement(bool byUser, double offset) { }
 
-    protected void ApplyResult(Judgement judgement)
+    protected void ApplyResult(Judgement judgement, double? time = null)
     {
         if (Judged) throw new InvalidOperationException("Can not apply judgement to already judged HitObject.");
 
         Tracked.Judgement = judgement;
-        Tracked.ClockTime = Time.Current;
+        Tracked.ClockTime = time ?? Time.Current;
 
         OnResult?.Invoke(Tracked);
     }

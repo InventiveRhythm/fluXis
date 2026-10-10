@@ -44,8 +44,6 @@ public partial class DrawableTick : DrawableKeysHitObject<Tick>, IKeyBindingHand
 
     protected override void CheckJudgement(bool byUser, double offset)
     {
-        // TODO: i don't think any of this works properly with the new system
-
         if (!byUser)
         {
             ApplyResult(HitWindows.JudgementFor(lagCompensation() ?? HitWindows.TimingFor(HitWindows.Lowest)));

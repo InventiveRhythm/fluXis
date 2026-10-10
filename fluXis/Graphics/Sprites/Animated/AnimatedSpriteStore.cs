@@ -115,7 +115,6 @@ public class AnimatedSpriteStore : IResourceStore<AnimatedSpriteStore.AnimatedTe
 
     public void Dispose()
     {
-        // TODO release managed resources here
     }
 
     public class AnimatedTexture

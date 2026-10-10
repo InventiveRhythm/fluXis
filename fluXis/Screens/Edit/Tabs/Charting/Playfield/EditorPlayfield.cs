@@ -31,7 +31,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private HitSamples hitSamples { get; set; }
+    private HitSamples samples { get; set; }
 
     [Resolved]
     private FluXisConfig config { get; set; }
@@ -158,16 +158,8 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         if (!clock.IsRunning && !force)
             return;
 
-        var sound = info.Sample;
-
-        // TODO: allow object to override
-        /*if (sound == ":normal" && info is Tick t)
-        {
-            sound = ":tick-big";
-            if (t.Small) sound = ":tick-small";
-        }*/
-
-        var channel = hitSamples.GetChannel(sound);
+        var sound = info.GetSample(true);
+        var channel = samples.GetChannel(sound);
 
         if (channel is null)
             return;
