@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Map.Structures.Bases;
 
 namespace fluXis.Map.Format;
 
@@ -11,6 +12,7 @@ public interface IMapFormat
     const string IMPORT_STORYBOARD = "storyboard";
 
     bool IsChart(string path);
+    bool Supports(ITimedObject obj);
 
     PlayableMap? Parse(string path);
     Dictionary<string, string> Save(PlayableMap map);

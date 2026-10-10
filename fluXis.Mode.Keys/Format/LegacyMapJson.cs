@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 
 namespace fluXis.Mode.Keys.Format;
 
-#pragma warning disable CS0612 // Type or member is obsolete
 public class LegacyMapJson
 {
     public string AudioFile { get; set; } = string.Empty;

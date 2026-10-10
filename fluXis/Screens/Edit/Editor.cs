@@ -27,6 +27,7 @@ using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Map;
+using fluXis.Map.Format;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Events;
 using fluXis.Modes;
@@ -132,6 +133,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public Bindable<Waveform> Waveform { get; private set; }
     public EditorMap EditorMap { get; private set; }
 
+    public IMapFormat Format { get; private set; }
     public GameMode GameMode { get; private set; }
     public GameModeManager GameModes => Game.GameModes;
 
@@ -223,6 +225,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         EditorMap.Playable.Storyboard ??= new Storyboard { Version = Storyboard.LATEST_VERSION };
 
         GameMode = modes.Find(EditorMap.Playable.Mode) ?? throw GameModeManager.FailedToLoadException();
+        Format = modes.GetFormat(EditorMap.Playable.Storage, Path.GetExtension(EditorMap.Playable.FileName));
 
         EditorMap.SetupWatcher();
         EditorMap.SetupNotifiers();

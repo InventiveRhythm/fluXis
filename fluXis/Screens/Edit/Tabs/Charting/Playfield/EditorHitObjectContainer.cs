@@ -55,6 +55,9 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
             if (type.GetCustomAttribute<DoNotShowInEditorPlayfieldAttribute>() != null)
                 continue;
 
+            if (!editor.Format.Supports((ITimedObject)Activator.CreateInstance(type)))
+                continue;
+
             var listMethod = map.Playable.GetType().GetRuntimeMethod(nameof(PlayableMap.ObjectsOfType), [])!.MakeGenericMethod(type);
             var list = listMethod.Invoke(map.Playable, []);
 

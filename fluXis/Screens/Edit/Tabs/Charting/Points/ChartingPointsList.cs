@@ -17,11 +17,15 @@ using fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Groups;
 using fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Playfields;
 using fluXis.Screens.Edit.Tabs.Charting.Points.Entries.Event.Scrolling;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
+using osu.Framework.Allocation;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Points;
 
 public partial class ChartingPointsList : PointsList
 {
+    [Resolved]
+    private Editor editor { get; set; }
+
     protected override void RegisterEvents()
     {
         RegisterTypeEvents(Map.Playable.ObjectsOfType<TimingPoint>());
@@ -29,6 +33,9 @@ public partial class ChartingPointsList : PointsList
 
         foreach (var type in IMapEvent.GetAllTypes())
         {
+            if (!editor.Format.Supports((ITimedObject)Activator.CreateInstance(type)))
+                continue;
+
             var listMethod = Map.Playable.GetType().GetRuntimeMethod(nameof(PlayableMap.ObjectsOfType), [])!.MakeGenericMethod(type);
             var list = listMethod.Invoke(Map.Playable, []);
 

@@ -1,4 +1,3 @@
-using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Scoring.Structs;
 using Newtonsoft.Json;
@@ -6,7 +5,6 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Mode.Keys.Format;
 
-[Obsolete]
 public class LegacyHitObject : IHasDuration
 {
     #region Stored

@@ -42,6 +42,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
     [Resolved]
     private EditorSettings settings { get; set; }
 
+    [Resolved]
+    private Editor editor { get; set; }
+
     public ChartingContainer ChartingContainer { get; init; }
 
     public ChartingTool CurrentTool
@@ -85,6 +88,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         foreach (var type in IMapEvent.GetAllTypes())
         {
             if (type.GetCustomAttribute<DoNotShowInEditorPlayfieldAttribute>() != null)
+                continue;
+
+            if (!editor.Format.Supports((ITimedObject)Activator.CreateInstance(type)))
                 continue;
 
             var method = GetType().GetMethod(nameof(registerEffect), BindingFlags.Instance | BindingFlags.NonPublic)!;

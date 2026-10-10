@@ -50,6 +50,8 @@ public class RhymMapFormat : IMapFormat
         return parsed.FormatID == ChartFormat;
     }
 
+    public bool Supports(ITimedObject obj) => true;
+
     public PlayableMap? Parse(string path)
     {
         if (!storage.Exists(path))
@@ -211,6 +213,7 @@ public class RhymMapFormat : IMapFormat
                 Objects = [.. events]
             });
 
+            map.ImportPaths[IMapFormat.IMPORT_EVENT] = name;
             hashes[IMapFormat.IMPORT_EVENT] = MapUtils.GetHash(raw);
             rhym.Imports = [.. rhym.Imports, name];
             storage.WriteAllText(name, raw);
@@ -227,6 +230,7 @@ public class RhymMapFormat : IMapFormat
             var name = map.ImportPaths.GetValueOrDefault(IMapFormat.IMPORT_STORYBOARD, $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsb");
             var raw = map.Storyboard.Save();
 
+            map.ImportPaths[IMapFormat.IMPORT_STORYBOARD] = name;
             hashes[IMapFormat.IMPORT_STORYBOARD] = MapUtils.GetHash(raw);
             rhym.Imports = [.. rhym.Imports, name];
             storage.WriteAllText(name, raw);

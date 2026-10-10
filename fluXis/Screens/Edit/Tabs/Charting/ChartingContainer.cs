@@ -86,15 +86,18 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     {
         Tools = [new SelectTool(), .. editor.GameMode.GetEditorTools()];
 
-        var effectTypes = GetType().Assembly.GetTypes()
-                                   .Where(x => x.IsAssignableTo(typeof(IMapEvent)))
-                                   .Where(x => !x.IsAbstract && !x.IsInterface);
+        var eft = new List<ChartingTool>();
 
-        EffectTools = effectTypes.Select(x =>
+        foreach (var type in IMapEvent.GetAllTypes())
         {
-            var tool = typeof(DesignTool<>).MakeGenericType(x);
-            return (ChartingTool)Activator.CreateInstance(tool)!;
-        }).OrderBy(x => x.Name.ToString()).ToArray();
+            if (!editor.Format.Supports((ITimedObject)Activator.CreateInstance(type)))
+                continue;
+
+            var tool = typeof(DesignTool<>).MakeGenericType(type);
+            eft.Add((ChartingTool)Activator.CreateInstance(tool)!);
+        }
+
+        EffectTools = [.. eft.OrderBy(x => x.Name.ToString())];
     }
 
     protected override void BeforeLoad()

@@ -107,5 +107,5 @@ public class Storyboard : EditorMap.IChangeNotifier
 
     public bool Matches(Type type) => typeof(StoryboardElement) == type;
 
-    public string Save() => Sort().Serialize();
+    public string Save() => Sort().Serialize(true);
 }

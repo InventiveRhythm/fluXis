@@ -313,52 +313,6 @@ public class LegacyMapEvents
         return dict;
     }
 
-    /// <summary>
-    /// "Compiles" all the loop and other group-related events by populating them into the lists.
-    /// </summary>
-    public void Compile()
-    {
-        var lists = GetListsForTypes();
-        var addMethods = lists.ToDictionary(x => x.Key, x => x.Value.GetType().GetMethod("Add", BindingFlags.Public | BindingFlags.Instance));
-        var copyMethod = typeof(JsonUtils).GetMethod(nameof(JsonUtils.JsonCopy), BindingFlags.Public | BindingFlags.Static);
-
-        var groups = GetGroups();
-
-        foreach (var loop in LoopEvents)
-        {
-            if (!groups.TryGetValue(loop.TargetGroup?.ToLowerInvariant() ?? string.Empty, out var items) || items.Count == 0)
-                return;
-
-            var lowestTime = items.MinBy(x => x.Time)?.Time ?? 0;
-
-            for (int i = 0; i < loop.Count; i++)
-            {
-                var start = loop.Time + loop.Distance * i;
-                addItems(items, start, lowestTime);
-            }
-        }
-
-        void addItems(List<ITimedObject> items, double time, double lowest)
-        {
-            foreach (var obj in items)
-            {
-                if (obj is LoopEvent)
-                    continue;
-
-                var delta = obj.Time - lowest;
-                var target = time + delta;
-
-                var typedCopy = copyMethod!.MakeGenericMethod([obj.GetType()]);
-                var copy = (typedCopy.Invoke(null, [obj]) as ITimedObject)!;
-                copy.Time = target;
-
-                var list = lists[copy.GetType()];
-                var add = addMethods[copy.GetType()]!;
-                add.Invoke(list, [copy]);
-            }
-        }
-    }
-
     public void ForAllEvents(Action<ITimedObject> action)
     {
         foreach (var prop in AllListProperties)
@@ -372,5 +326,30 @@ public class LegacyMapEvents
                 action?.Invoke(obj);
             }
         }
+    }
+
+    public LegacyMapEvents Sort()
+    {
+        foreach (var prop in AllListProperties)
+        {
+            var itemType = prop.PropertyType.GetGenericArguments()[0];
+
+            var list = prop.GetValue(this);
+            if (list is null) continue;
+
+            var compare = typeof(LegacyMapEvents).GetMethod(nameof(LegacyMapEvents.compare), BindingFlags.Static | BindingFlags.NonPublic);
+            var comparison = Delegate.CreateDelegate(typeof(Comparison<>).MakeGenericType(itemType), compare!);
+
+            var sort = typeof(List<>).MakeGenericType(itemType).GetMethod("Sort", [comparison.GetType()]);
+            sort?.Invoke(list, [comparison]);
+        }
+
+        return this;
+    }
+
+    private static int compare(ITimedObject a, ITimedObject b)
+    {
+        var val = a.Time.CompareTo(b.Time);
+        return val == 0 ? a.GetHashCode().CompareTo(b.GetHashCode()) : val;
     }
 }
