@@ -2,6 +2,7 @@ using System;
 using fluXis.Map;
 using fluXis.Map.Format;
 using fluXis.Map.Structures.Bases;
+using fluXis.Mode.Keys.Editor.Checks;
 using fluXis.Mode.Keys.Editor.Objects;
 using fluXis.Mode.Keys.Editor.Tools;
 using fluXis.Mode.Keys.Format;
@@ -13,6 +14,7 @@ using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
+using fluXis.Screens.Edit.Tabs.Verify;
 using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Platform;
 using rhym;
@@ -50,6 +52,9 @@ public class KeysGameMode : GameMode
 
     public override ChartingTool[] GetEditorTools()
         => [new SingleNoteTool(), new LongNoteTool(), new TickNoteTool(), new LandmineTool()];
+
+    public override IVerifyCheck[] CreateEditorChecks()
+        => [new EmptyColumnsCheck(), new OverlappingCheck(), new UnevenInEvenCountCheck(), new ValidKeyCountCheck()];
 
     public override AutoGenerator CreateAutoGenerator(PlayableMap map) => new KeysAutoGenerator(map);
 

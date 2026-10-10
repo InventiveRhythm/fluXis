@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Structures;
+using fluXis.Screens.Edit.Tabs.Verify;
 
-namespace fluXis.Screens.Edit.Tabs.Verify.Checks.HitObjects;
+namespace fluXis.Mode.Keys.Editor.Checks;
 
 public class EmptyColumnsCheck : IVerifyCheck
 {

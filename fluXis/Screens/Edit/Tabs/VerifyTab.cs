@@ -33,6 +33,9 @@ public partial class VerifyTab : EditorTab
     [Resolved]
     private EditorMap map { get; set; }
 
+    [Resolved]
+    private Editor editor { get; set; }
+
     private ForcedHeightText totalIssuesText;
     private ForcedHeightText problematicIssuesText;
     private FillFlowContainer<VerifyIssueEntry> issuesContainer;
@@ -197,6 +200,8 @@ public partial class VerifyTab : EditorTab
                 Logger.Log($"Failed to create instance of {type.Name}: {ex.Message}", LoggingTarget.Runtime, LogLevel.Error);
             }
         }
+
+        checks.AddRange(editor.GameMode.CreateEditorChecks());
     }
 
     public void RefreshIssues()

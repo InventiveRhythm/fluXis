@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using fluXis.Map.Structures.Events;
+using fluXis.Screens.Edit.Tabs.Verify;
 
-namespace fluXis.Screens.Edit.Tabs.Verify.Checks.Effects;
+namespace fluXis.Mode.Keys.Editor.Checks;
 
 public class UnevenInEvenCountCheck : IVerifyCheck
 {

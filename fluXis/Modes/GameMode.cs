@@ -9,6 +9,7 @@ using fluXis.Replays;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
+using fluXis.Screens.Edit.Tabs.Verify;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;
 using JetBrains.Annotations;
@@ -33,6 +34,7 @@ public abstract class GameMode : IFromAssembly
 
     public abstract EditorDrawableObject? CreateEditorObject(ITimedObject obj);
     public abstract ChartingTool[] GetEditorTools();
+    public virtual IVerifyCheck[] CreateEditorChecks() => [];
 
     #endregion
 

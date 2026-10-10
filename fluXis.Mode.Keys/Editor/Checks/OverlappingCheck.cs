@@ -1,8 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Bases;
+using fluXis.Mode.Keys.Objects;
+using fluXis.Screens.Edit.Tabs.Verify;
+using osu.Framework.Utils;
 
-namespace fluXis.Screens.Edit.Tabs.Verify.Checks.HitObjects;
+namespace fluXis.Mode.Keys.Editor.Checks;
 
 public class OverlappingCheck : IVerifyCheck
 {
@@ -16,18 +20,17 @@ public class OverlappingCheck : IVerifyCheck
             var hitObjects = lane.ToList();
             if (hitObjects.Count == 0) continue;
 
-            // TODO: reimplement
-            /*HitObject currentLn = null;
+            HitObject? currentLn = null;
 
             foreach (var (prev, current) in hitObjects.Zip(hitObjects.Skip(1)))
             {
-                if (prev.HoldTime > 0 && (currentLn == null || prev.GetEndTime() > currentLn.GetEndTime()))
+                if (((prev as IHasDuration)?.Duration ?? 0) > 0 && (currentLn == null || prev.GetEndTime() > currentLn.GetEndTime()))
                     currentLn = prev;
 
                 bool overlappingTime = Precision.AlmostEquals(current.Time, prev.Time);
-                bool overlappingEndTime = currentLn != null && Precision.AlmostEquals(current.Time, currentLn.EndTime);
-                bool insideLn = currentLn != null && current.Type != HitObjectType.Tick // except for tick notes inside LNs
-                                                  && current.Time > currentLn.Time && current.Time < currentLn.EndTime;
+                bool overlappingEndTime = currentLn != null && Precision.AlmostEquals(current.Time, currentLn.GetEndTime());
+                bool insideLn = currentLn != null && current is Tick // except for tick notes inside LNs
+                                                  && current.Time > currentLn.Time && current.Time < currentLn.GetEndTime();
 
                 if (overlappingTime || insideLn || overlappingEndTime)
                 {
@@ -39,9 +42,9 @@ public class OverlappingCheck : IVerifyCheck
                     );
                 }
 
-                if (currentLn != null && current.Time >= currentLn.EndTime)
+                if (currentLn != null && current.Time >= currentLn.GetEndTime())
                     currentLn = null;
-            }*/
+            }
         }
     }
 }

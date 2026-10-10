@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using fluXis.Screens.Edit.Tabs.Verify;
 
-namespace fluXis.Screens.Edit.Tabs.Verify.Checks.HitObjects;
+namespace fluXis.Mode.Keys.Editor.Checks;
 
 public class ValidKeyCountCheck : IVerifyCheck
 {
