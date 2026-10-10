@@ -12,9 +12,9 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Screens.Gameplay.Audio.Hitsounds;
+namespace fluXis.Screens.Gameplay.Audio.Samples;
 
-public partial class Hitsounding : CompositeDrawable
+public partial class HitSamples : CompositeDrawable
 {
     public const string DEFAULT_PREFIX = ":";
 
@@ -25,12 +25,12 @@ public partial class Hitsounding : CompositeDrawable
     private const string tick_big = "tick-big";
     private const string tick_small = "tick-small";
 
-    public static IEnumerable<string> Defaults { get; } = new[] { hit_normal, hit_kick, hit_clap, hit_snare };
+    public static IEnumerable<string> Defaults { get; } = [hit_normal, hit_kick, hit_clap, hit_snare];
 
     public Bindable<double> PlayfieldPanning { get; } = new();
     public int PlayfieldCount { get; set; } = 1;
 
-    private List<HitSoundChannel> channels { get; } = new();
+    private List<HitSampleChannel> channels { get; } = [];
 
     private RealmMapSet set { get; }
     private HitSoundFade[] fades { get; }
@@ -38,14 +38,14 @@ public partial class Hitsounding : CompositeDrawable
 
     /// <summary>
     /// Does calculations to get the volume of
-    /// the hitsound instead of transforms.
+    /// the sample instead of transforms.
     /// </summary>
     public bool DirectVolume { get; init; }
 
     private Bindable<double> userVolume;
     private Bindable<double> volume;
 
-    public Hitsounding(RealmMapSet set, HitSoundFade[] fades, Bindable<double> rate)
+    public HitSamples(RealmMapSet set, HitSoundFade[] fades, Bindable<double> rate)
     {
         this.set = set;
         this.fades = fades;
@@ -71,10 +71,10 @@ public partial class Hitsounding : CompositeDrawable
             s.Frequency.BindTo(rate);
             s.AddAdjustment(AdjustableProperty.Balance, PlayfieldPanning);
             var fade = fades.Where(x => x.HitSound == $"{DEFAULT_PREFIX}{sample}").ToList();
-            channels.Add(new HitSoundChannel($"{DEFAULT_PREFIX}{sample}", s, volume, fade));
+            channels.Add(new HitSampleChannel($"{DEFAULT_PREFIX}{sample}", s, volume, fade));
         }
 
-        foreach (var file in GetMapFiles())
+        foreach (var file in GetFiles())
         {
             var name = Path.GetFileNameWithoutExtension(file);
             var s = set.Resources?.SampleStore?.Get(file);
@@ -85,7 +85,7 @@ public partial class Hitsounding : CompositeDrawable
             s.Frequency.BindTo(rate);
             s.AddAdjustment(AdjustableProperty.Balance, PlayfieldPanning);
             var fade = fades.Where(x => x.HitSound == name).ToList();
-            channels.Add(new HitSoundChannel(name, s, volume, fade));
+            channels.Add(new HitSampleChannel(name, s, volume, fade));
         }
 
         channels.ForEach(x => x.DirectVolume = DirectVolume);
@@ -99,7 +99,7 @@ public partial class Hitsounding : CompositeDrawable
         userVolume.BindValueChanged(v => volume.Value = v.NewValue * (1 / (float)PlayfieldCount), true);
     }
 
-    public HitSoundChannel GetSample(string sample, bool allowCustom = true)
+    public HitSampleChannel GetChannel(string sample, bool allowCustom = true)
     {
         // should always be the first channel so this is safe
         var defaultChannel = channels.FirstOrDefault();
@@ -114,7 +114,7 @@ public partial class Hitsounding : CompositeDrawable
         return channels.Find(c => c.SampleName == name) ?? defaultChannel;
     }
 
-    public string[] GetMapFiles(bool relative = false)
+    public string[] GetFiles(bool relative = false)
     {
         var dir = set.GetPathForFile(".");
         if (!Path.IsPathRooted(dir)) dir = MapFiles.GetFullPath(dir);
@@ -127,7 +127,7 @@ public partial class Hitsounding : CompositeDrawable
         var result = wav.Concat(ogg).Order().Where(x => set.Maps.All(m => !x.EndsWith(m.FullAudioPath))).ToArray();
 
         if (relative)
-            result = result.Select(x => Path.GetRelativePath(dir, x)).ToArray();
+            result = [.. result.Select(x => Path.GetRelativePath(dir, x))];
 
         return result;
     }

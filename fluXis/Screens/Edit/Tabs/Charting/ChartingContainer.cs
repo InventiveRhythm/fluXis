@@ -24,7 +24,7 @@ using fluXis.Screens.Edit.Tabs.Shared;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
 using fluXis.Screens.Edit.UI.Panels;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using JetBrains.Annotations;
 using Midori.Utils;
 using Newtonsoft.Json;
@@ -62,7 +62,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     [Resolved(CanBeNull = true)]
     private PanelContainer panels { get; set; }
 
-    public Bindable<string> CurrentHitSound { get; } = new($"{Hitsounding.DEFAULT_PREFIX}normal");
+    public Bindable<string> CurrentHitSound { get; } = new($"{HitSamples.DEFAULT_PREFIX}normal");
 
     private DependencyContainer dependencies;
     private bool recordingInput;

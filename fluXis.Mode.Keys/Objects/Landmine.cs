@@ -8,6 +8,8 @@ public class Landmine : HitObject
 
     public bool Hidden { get; set; }
 
+    public override string? GetSample(bool hit) => null;
+
     public override bool OnEditorMiddleClick()
     {
         Hidden = !Hidden;

@@ -52,7 +52,7 @@ using fluXis.Screens.Edit.UI.MenuBar;
 using fluXis.Screens.Edit.UI.Panels;
 using fluXis.Screens.Edit.UI.TabSwitcher;
 using fluXis.Screens.Edit.UI.Variable.Timing;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using fluXis.Scripting;
 using fluXis.Skinning.Default;
 using fluXis.Storyboards;
@@ -282,7 +282,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             highPass = new AudioFilter(audioManager.TrackMixer, BQFType.HighPass),
             EditorClock,
             modding,
-            dependencies.CacheAsAndReturn(new Hitsounding(EditorMap.RealmMap.MapSet, EditorMap.Playable.ObjectsOfType<HitSoundFade>(), EditorClock.RateBindable)
+            dependencies.CacheAsAndReturn(new HitSamples(EditorMap.RealmMap.MapSet, EditorMap.Playable.ObjectsOfType<HitSoundFade>(), EditorClock.RateBindable)
             {
                 DirectVolume = true,
                 Clock = EditorClock

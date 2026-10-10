@@ -5,7 +5,7 @@ using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes.Hitsound;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
@@ -63,7 +63,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     protected override bool PlayClickSound => false;
 
     protected string Sample { get; set; }
-    private string sampleFormatted => $"{(included ? Hitsounding.DEFAULT_PREFIX : "")}{Sample}";
+    private string sampleFormatted => $"{(included ? HitSamples.DEFAULT_PREFIX : "")}{Sample}";
     private readonly bool included;
 
     public ToolboxHitsoundButton(string display, string sample, bool included = false)

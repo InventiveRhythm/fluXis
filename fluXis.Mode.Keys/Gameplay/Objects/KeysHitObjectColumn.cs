@@ -1,12 +1,17 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Allocation;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Mode.Keys.Gameplay.Objects;
 
-public partial class KeysHitObjectColumn : KeysHitObjectManager
+public partial class KeysHitObjectColumn : KeysHitObjectManager, IKeyBindingHandler<FluXisGameplayKeybind>
 {
     [Resolved]
     private LaneSwitchManager laneSwitchManager { get; set; } = null!;
@@ -15,6 +20,8 @@ public partial class KeysHitObjectColumn : KeysHitObjectManager
     /// one-based index defining the lane of the column
     /// </summary>
     public int Index { get; set; }
+
+    private FluXisGameplayKeybind action;
 
     public override float HitPosition => hitPosition;
     private float hitPosition;
@@ -26,6 +33,12 @@ public partial class KeysHitObjectColumn : KeysHitObjectManager
         DefaultScrollGroup = ruleset.ScrollGroups[$"${Index}"];
     }
 
+    [BackgroundDependencyLoader]
+    private void load(KeysKeybindContainer keybinds)
+    {
+        action = keybinds.Keys[Math.Clamp(Index - 1, 0, keybinds.Keys.Length - 1)];
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -33,5 +46,22 @@ public partial class KeysHitObjectColumn : KeysHitObjectManager
         Width = laneSwitchManager.WidthFor(Index);
         X = laneSwitchManager.PositionOf(Index);
         hitPosition = DrawHeight - laneSwitchManager.HitPosition;
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGameplayKeybind> e)
+    {
+        if (e.Repeat || e.Action != action)
+            return false;
+
+        HitObject? obj = ActiveObjects.Count > 0 ? ActiveObjects.MinBy(x => x.Object.Time)?.Object : null;
+        obj ??= FutureObjects.FirstOrDefault();
+        if (obj is null) return false;
+
+        PlayObjectSample(obj, false);
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGameplayKeybind> e)
+    {
     }
 }

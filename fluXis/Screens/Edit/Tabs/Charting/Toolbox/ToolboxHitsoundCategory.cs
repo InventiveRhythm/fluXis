@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using Humanizer;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Toolbox;
@@ -17,7 +17,7 @@ public partial class ToolboxHitsoundCategory : ToolboxCategory
         ExtraTitle = "(Q-R)";
         Icon = Phosphor.Bold.MusicNotes;
 
-        Items = Hitsounding.Defaults.Select(s => new ToolboxHitsoundButton(s.Humanize(LetterCasing.Title), s, true)).Cast<ToolboxButton>().ToList();
+        Items = HitSamples.Defaults.Select(s => new ToolboxHitsoundButton(s.Humanize(LetterCasing.Title), s, true)).Cast<ToolboxButton>().ToList();
         Items.Add(new ToolboxCustomHitsoundButton("Custom", "custom"));
     }
 

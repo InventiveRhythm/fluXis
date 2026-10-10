@@ -5,7 +5,7 @@ using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Playfields;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Skinning;
 using fluXis.Skinning.Default;
@@ -25,7 +25,7 @@ public abstract partial class Playfield : CompositeDrawable
     protected RulesetContainer Ruleset { get; private set; }
 
     [Resolved]
-    protected Hitsounding HitSounds { get; private set; }
+    protected HitSamples HitSounds { get; private set; }
 
     [Resolved]
     protected ISkin Skin { get; private set; }

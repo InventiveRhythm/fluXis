@@ -8,7 +8,7 @@ using fluXis.Graphics.UserInterface.Interaction;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
@@ -27,7 +27,7 @@ public partial class ToolboxCustomHitsoundButton : ToolboxHitsoundButton, IHasPo
     public override LocalisableString TooltipText => "Makes this note play a custom hitsound.";
 
     [Resolved]
-    private Hitsounding hitsounding { get; set; }
+    private HitSamples hitSamples { get; set; }
 
     private Drawable spacing;
     private EditButton edit;
@@ -80,7 +80,7 @@ public partial class ToolboxCustomHitsoundButton : ToolboxHitsoundButton, IHasPo
         var menu = new FluXisMenu(Direction.Vertical, true);
         menu.MaskingRadius = 8;
         menu.MaxHeight = 480;
-        menu.Items = hitsounding.GetMapFiles(true).Select(x => new MenuActionItem(x, Phosphor.Bold.Waveform, () => apply(x))).ToArray();
+        menu.Items = hitSamples.GetFiles(true).Select(x => new MenuActionItem(x, Phosphor.Bold.Waveform, () => apply(x))).ToArray();
         menu.Open();
 
         var popover = new FluXisPopover

@@ -304,3 +304,5 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 }
 */
+
+

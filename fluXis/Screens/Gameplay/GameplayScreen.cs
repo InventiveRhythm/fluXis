@@ -26,7 +26,7 @@ using fluXis.Overlay.Notifications;
 using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.Audio;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.Screens.Gameplay.Capabilities.Bases;
 using fluXis.Screens.Gameplay.HUD;
@@ -133,7 +133,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     public BindableBool IsPaused { get; } = new();
     public GameplaySamples Samples { get; } = new();
-    public Hitsounding Hitsounding { get; private set; }
+    public HitSamples HitSamples { get; private set; }
 
     public GameplayClock GameplayClock { get; private set; }
     public Action<double, double> OnSeek { get; set; }
@@ -270,7 +270,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
         var storyboard = Map.Storyboard?.CreateDrawable(Map, Map.Storage) ?? new DrawableStoryboard(Map, new Storyboard(), ".");
 
         LoadComponent(GameplayClock);
-        LoadComponent(dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.ObjectsOfType<HitSoundFade>(), GameplayClock.RateBindable) { Clock = GameplayClock }));
+        LoadComponent(dependencies.CacheAsAndReturn(HitSamples = new HitSamples(RealmMap.MapSet, Map.ObjectsOfType<HitSoundFade>(), GameplayClock.RateBindable) { Clock = GameplayClock }));
         LoadComponent(RulesetContainer);
         LoadComponent(storyboard);
 
@@ -340,7 +340,7 @@ public sealed partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<Fl
                 [
                     camera.CreateProxyDrawable().With(x => x.Clock = GameplayClock),
                     Samples,
-                    Hitsounding,
+                    HitSamples,
                     new Container
                     {
                         RelativeSizeAxes = Axes.Both,

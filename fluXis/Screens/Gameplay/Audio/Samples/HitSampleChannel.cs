@@ -7,14 +7,14 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Utils;
 
-namespace fluXis.Screens.Gameplay.Audio.Hitsounds;
+namespace fluXis.Screens.Gameplay.Audio.Samples;
 
-public partial class HitSoundChannel : Component
+public partial class HitSampleChannel : Component
 {
     public override bool RemoveCompletedTransforms => false;
 
     /// <summary>
-    /// See <see cref="Hitsounding.DirectVolume"/>.
+    /// See <see cref="HitSamples.DirectVolume"/>.
     /// </summary>
     public bool DirectVolume { get; set; }
 
@@ -26,7 +26,7 @@ public partial class HitSoundChannel : Component
 
     private List<HitSoundFade> fades { get; }
 
-    public HitSoundChannel(string name, Sample sample, Bindable<double> globalVolume, List<HitSoundFade> fades)
+    public HitSampleChannel(string name, Sample sample, Bindable<double> globalVolume, List<HitSoundFade> fades)
     {
         Name = SampleName = name;
         this.sample = sample;

@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Configuration;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Scoring.Enums;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -26,11 +30,16 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
     [Resolved]
     protected Playfield Playfield { get; private set; } = null!;
 
+    [Resolved]
+    protected HitSamples Samples { get; private set; } = null!;
+
     protected RulesetContainer Ruleset { get; }
     protected PlayableMap Map { get; }
 
     [UsedImplicitly]
     public double VisualTimeOffset { get; set; }
+
+    private Bindable<bool> hitsounds = null!;
 
     protected GameModeHitObjectManager(RulesetContainer ruleset, PlayableMap map)
     {
@@ -42,8 +51,10 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        hitsounds = config.GetBindable<bool>(FluXisSetting.Hitsounding);
+
         HitObject? last = null;
 
         foreach (var hit in FutureObjects)
@@ -124,6 +135,9 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
             return;
 
         Player.JudgementProcessor.AddResult(tracked);
+
+        if (tracked.Judgement > Judgement.Miss)
+            PlayObjectSample(tracked.Object, true);
     }
 
     private void removeObject(DrawableHitObject draw, bool addToFuture = false)
@@ -157,6 +171,15 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
         if (draw is null) return;
 
         ActiveObjects.Add(draw);
+    }
+
+    protected void PlayObjectSample(HitObject obj, bool hit)
+    {
+        if (Ruleset.CatchingUp || Playfield.IsSubPlayfield)
+            return;
+
+        var s = obj.GetSample(hit);
+        if (s != null) Samples.GetChannel(s, hitsounds.Value && !Playfield.Map.Settings.DisableHitSounds)?.Play();
     }
 
     #endregion

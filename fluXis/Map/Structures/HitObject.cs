@@ -35,6 +35,8 @@ public abstract class HitObject : ITimedObject
     [YamlIgnore, NotMapped]
     public ScrollGroup? ScrollGroup { get; set; }
 
+    public virtual string? GetSample(bool hit) => Sample;
+
     public virtual bool OnEditorMiddleClick() => false;
 
     #region Nesting

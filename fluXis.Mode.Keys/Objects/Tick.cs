@@ -8,6 +8,16 @@ public class Tick : HitObject
 
     public bool Small { get; set; }
 
+    public override string? GetSample(bool hit)
+    {
+        if (!hit) return null;
+
+        if (string.IsNullOrWhiteSpace(Sample) || Sample == ":normal")
+            return Small ? ":tick-small" : ":tick-big";
+
+        return Sample;
+    }
+
     public override bool OnEditorMiddleClick()
     {
         Small = !Small;

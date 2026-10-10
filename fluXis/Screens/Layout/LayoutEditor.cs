@@ -23,7 +23,7 @@ using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.UI.MenuBar;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
@@ -115,7 +115,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
             RelativeSizeAxes = Axes.Both,
             Children = new Drawable[]
             {
-                dependencies.CacheAsAndReturn(new Hitsounding(maps.CurrentMapSet, [], clock.RateBindable.GetBoundCopy())),
+                dependencies.CacheAsAndReturn(new HitSamples(maps.CurrentMapSet, [], clock.RateBindable.GetBoundCopy())),
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,

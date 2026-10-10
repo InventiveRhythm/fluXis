@@ -4,7 +4,7 @@ using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Screens.Edit.Tabs.Charting.Modding;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Tags;
-using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Screens.Gameplay.Audio.Samples;
 using fluXis.Screens.Gameplay.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -31,7 +31,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private Hitsounding hitsounding { get; set; }
+    private HitSamples hitSamples { get; set; }
 
     [Resolved]
     private FluXisConfig config { get; set; }
@@ -167,7 +167,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             if (t.Small) sound = ":tick-small";
         }*/
 
-        var channel = hitsounding.GetSample(sound);
+        var channel = hitSamples.GetChannel(sound);
 
         if (channel is null)
             return;
