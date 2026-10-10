@@ -1,8 +1,11 @@
 using System;
+using System.Linq;
 using fluXis.Map;
+using fluXis.Map.Structures;
 using fluXis.Scoring;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Gameplay.Capabilities.Bases;
+using Force.DeepCloner;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
@@ -15,6 +18,8 @@ public class EditorPlaytestCapability : IMapCapability, IEndingCapability
     private readonly EditorClock clock;
     private readonly PlayableMap map;
     private readonly double startTime;
+
+    public PlayableMap Cloned { get; private set; }
 
     public EditorPlaytestCapability(EditorClock clock, PlayableMap map, double startTime)
     {
@@ -44,5 +49,17 @@ public class EditorPlaytestCapability : IMapCapability, IEndingCapability
         return null;
     }
 
-    PlayableMap IMapCapability.Load() => map;
+    PlayableMap IMapCapability.Load()
+    {
+        Cloned = new PlayableMap(map.Storage, map.FileName, map.Mode);
+        map.DeepCloneTo(Cloned);
+
+        // TODO
+        // Cloned.Compile();
+        Cloned.Sort();
+
+        var skipped = Cloned.ObjectsOfType<HitObject>().Where(x => x.Time < startTime);
+        Cloned.RemoveObjects(skipped);
+        return Cloned;
+    }
 }

@@ -1,16 +1,19 @@
+using System.Collections.Generic;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Map.Format;
 using fluXis.Map.Structures;
-using fluXis.Modes;
+using fluXis.Mods;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.UI.BottomBar.Timeline;
+using fluXis.Screens.Gameplay;
+using fluXis.Screens.Gameplay.Capabilities;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Screens;
 
 namespace fluXis.Screens.Edit.UI.BottomBar;
 
@@ -18,9 +21,6 @@ public partial class EditorBottomBar : Container
 {
     [Resolved]
     private NotificationManager notifications { get; set; }
-
-    [Resolved]
-    private GameModeManager modes { get; set; }
 
     [Resolved]
     private EditorMap map { get; set; }
@@ -115,18 +115,9 @@ public partial class EditorBottomBar : Container
                                         }
 
                                         map.Sort();
-
                                         clock.Stop();
+
                                         var startTime = clock.CurrentTime;
-
-                                        // TODO: complete this
-                                        var format = new RhymMapFormat(map.Playable.Storage, modes);
-                                        // var raw = format.Copy(map.Playable);
-
-                                        /*var clone = map.Playable.DeepClone();
-                                        clone.RealmEntry = map.Playable.RealmEntry;
-                                        clone.HitObjects = clone.HitObjects.Where(o => o.Time > startTime).ToList();
-
                                         var mods = new List<IMod>();
                                         var input = GetContainingInputManager()?.CurrentState.Keyboard;
                                         var shouldAutoPlay = false;
@@ -150,14 +141,14 @@ public partial class EditorBottomBar : Container
 
                                         editor.Push(new GameplayLoader(map.RealmMap, mods, () =>
                                         {
-                                            var screen = new GameplayScreen(map.RealmMap, mods)
-                                                .RegisterCapability(new EditorPlaytestCapability(clock, clone, startTime));
+                                            var ptc = new EditorPlaytestCapability(clock, map.Playable, startTime);
+                                            var screen = new GameplayScreen(map.RealmMap, mods).RegisterCapability(ptc);
 
                                             if (shouldAutoPlay)
-                                                screen = screen.RegisterCapability(new ReplayCapability(new AutoGenerator(clone, map.RealmMap.KeyCount).Generate()));
+                                                screen = screen.RegisterCapability(new ReplayCapability(editor.GameMode, ptc));
 
                                             return screen;
-                                        }));*/
+                                        }));
                                     }
                                 }
                             }

@@ -31,12 +31,19 @@ public partial class ReplayCapability : Component, IRulesetCapability, IEndingCa
     [Resolved]
     private UserCache users { get; set; } = null!;
 
-    protected Replay Replay { get; }
+    protected Replay Replay => replayFunc.Value;
     protected ReplayOverlay Overlay { get; set; } = null!;
+
+    private readonly Lazy<Replay> replayFunc;
 
     public ReplayCapability(Replay replay)
     {
-        Replay = replay;
+        replayFunc = new Lazy<Replay>(() => replay);
+    }
+
+    public ReplayCapability(GameMode mode, EditorPlaytestCapability editor)
+    {
+        replayFunc = new Lazy<Replay>(() => mode.CreateAutoGenerator(editor.Cloned).Generate());
     }
 
     public virtual void PreLoad()
