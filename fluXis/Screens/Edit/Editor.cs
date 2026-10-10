@@ -154,8 +154,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private bool isNewMap;
     private bool isUploading;
 
-    private string lastMapHash;
-    private string lastStoryboardHash;
+    private int lastActionHash;
 
     private bool canSave => EditorMap.RealmMap.StatusInt < 100;
 
@@ -166,8 +165,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (!canSave)
                 return false;
 
-            return EditorMap.MapInfoHash != lastMapHash
-                   || EditorMap.StoryboardHash != lastStoryboardHash;
+            return (actionStack.LastAction?.GetHashCode() ?? 0) != lastActionHash;
         }
     }
 
@@ -467,8 +465,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void updateStateHash()
     {
-        lastMapHash = EditorMap.MapInfoHash;
-        lastStoryboardHash = EditorMap.StoryboardHash;
+        lastActionHash = actionStack.LastAction?.GetHashCode() ?? 0;
     }
 
     private void applyOffset() => panels.Add(new FormPanel<EditorApplyOffset>(Phosphor.Bold.Clock, "Apply offset to map", new EditorApplyOffset(), (panel, offset) =>
@@ -856,11 +853,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         EditorMap.Playable.Sort();
 
-        if (!HasUnsavedChanges)
+        // TODO:
+        // this is currently commented out because not every
+        // edit in the editor gets saved as an action (i.e. properties in sidebar)
+        /*if (!HasUnsavedChanges)
         {
             notifications.SendSmallText("Map is already up to date", Phosphor.Bold.Check);
             return true;
-        }
+        }*/
 
         EditorMap.ScriptWatcher.Disable();
 

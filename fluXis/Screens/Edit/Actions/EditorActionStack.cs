@@ -18,6 +18,9 @@ public class EditorActionStack
 
     private readonly EditorMap editorMap;
 
+    [CanBeNull]
+    public EditorAction LastAction => index >= 0 && index < stack.Count - 1 ? stack[index] : null;
+
     public EditorActionStack(EditorMap editorMap)
     {
         this.editorMap = editorMap;
@@ -78,4 +81,3 @@ public class EditorActionStack
         return $"Index: {index}, Items: {stack.Count}, CanUndo: {CanUndo}, CanRedo: {CanRedo}";
     }
 }
-

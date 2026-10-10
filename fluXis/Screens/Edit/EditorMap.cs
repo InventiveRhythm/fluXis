@@ -21,7 +21,6 @@ using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
-using Midori.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Threading;
 
@@ -40,10 +39,6 @@ public class EditorMap : IVerifyContext
     private readonly Action<Drawable> loadComponent;
     private readonly Scheduler scheduler;
     private readonly Editor editor;
-
-    // TODO: change this up to just be based off changes done, not hashes
-    public string MapInfoHash => MapUtils.GetHash(Playable.Serialize());
-    public string StoryboardHash => MapUtils.GetHash(Storyboard.Serialize());
 
     public bool IsNew => RealmMap == null || Playable == null;
 
