@@ -7,6 +7,7 @@ using fluXis.Modes.Gameplay;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Scoring.Processing.Health;
+using fluXis.Screens.Edit;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Screens.Edit.Tabs.Verify;
@@ -32,6 +33,7 @@ public abstract class GameMode : IFromAssembly
 
     #region Editor
 
+    public virtual EditorConfiguration? CreateEditorConfiguration(PlayableMap map) => null;
     public abstract EditorDrawableObject? CreateEditorObject(ITimedObject obj);
     public abstract ChartingTool[] GetEditorTools();
     public virtual IVerifyCheck[] CreateEditorChecks() => [];

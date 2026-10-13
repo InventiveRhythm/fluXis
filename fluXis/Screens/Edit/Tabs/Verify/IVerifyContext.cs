@@ -8,10 +8,11 @@ namespace fluXis.Screens.Edit.Tabs.Verify;
 public interface IVerifyContext
 {
     GameModeManager Modes { get; }
+    EditorConfiguration Configuration { get; }
+
     PlayableMap Map { get; }
     RealmMap RealmMap { get; }
 
-    int MaxKeyCount => RealmMap.KeyCount * (Map.IsDualSplit ? 2 : 1);
     RealmMapSet MapSet => RealmMap.MapSet;
 
     void LoadComponent(Drawable drawable);

@@ -2,6 +2,7 @@ using System;
 using fluXis.Map;
 using fluXis.Map.Format;
 using fluXis.Map.Structures.Bases;
+using fluXis.Mode.Keys.Editor;
 using fluXis.Mode.Keys.Editor.Checks;
 using fluXis.Mode.Keys.Editor.Objects;
 using fluXis.Mode.Keys.Editor.Tools;
@@ -12,6 +13,7 @@ using fluXis.Modes;
 using fluXis.Modes.Gameplay;
 using fluXis.Mods;
 using fluXis.Replays;
+using fluXis.Screens.Edit;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Screens.Edit.Tabs.Verify;
@@ -40,6 +42,9 @@ public class KeysGameMode : GameMode
 
         return base.GetFormat(storage, ext);
     }
+
+    public override EditorConfiguration? CreateEditorConfiguration(PlayableMap map)
+        => new KeysEditorConfiguration(map);
 
     public override EditorDrawableObject? CreateEditorObject(ITimedObject obj) => obj switch
     {
