@@ -42,7 +42,7 @@ public partial class TestEditor : FluXisTestScene
         AddStep("Push existing map", () =>
         {
             var map = GetTestMap(maps);
-            var loader = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
+            var loader = map is not null ? new EditorLoader(map, map.GetPlayable(GameModes)) : new EditorLoader();
             loader.StartTabIndex = 3;
             screenStack.Push(loader);
         });
