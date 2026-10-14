@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Modes;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Utils;
@@ -15,6 +16,7 @@ namespace fluXis.Import;
 
 public class MapImporter
 {
+    public GameModeManager GameModes { get; set; }
     public virtual string[] FileExtensions { get; } = Array.Empty<string>();
     public virtual string GameName => "Unknown";
     public virtual bool SupportsAutoImport => false;
@@ -66,7 +68,8 @@ public class MapImporter
             Realm = Realm,
             MapStore = MapStore,
             Storage = Storage,
-            Notifications = Notifications
+            Notifications = Notifications,
+            GameModes = GameModes
         }.Import(path);
     }
 

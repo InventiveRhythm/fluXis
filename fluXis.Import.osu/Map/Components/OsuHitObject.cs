@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Map.Structures;
+using fluXis.Mode.Keys.Objects;
 using osu.Framework.Graphics.Primitives;
 
 namespace fluXis.Import.osu.Map.Components;
@@ -37,13 +38,25 @@ public class OsuHitObject
                 CustomHitSound = getSound(map.MapFiles, SampleSet, OsuHitSound.Normal, ":normal");
         }
 
-        return new HitObject
+        if (holdTime == 0)
         {
-            Time = StartTime,
-            Lane = (int)Math.Floor(Position.X * map.CircleSize / 512) + 1,
-            HoldTime = holdTime,
-            HitSound = CustomHitSound
-        };
+            return new Note
+            {
+                Time = StartTime,
+                Lane = (int)Math.Floor(Position.X * map.CircleSize / 512) + 1,
+                Sample = CustomHitSound
+            };
+        }
+        else
+        {
+            return new LongNote()
+            {
+                Time = StartTime,
+                Lane = (int)Math.Floor(Position.X * map.CircleSize / 512) + 1,
+                Duration = holdTime,
+                Sample = CustomHitSound
+            };
+        }
     }
 
     private string getSound(List<string> files, OsuSampleSet set, OsuHitSound sound, string fallback)

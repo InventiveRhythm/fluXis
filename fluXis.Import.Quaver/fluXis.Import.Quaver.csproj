@@ -6,6 +6,7 @@
 
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\fluXis\fluXis.csproj" />
+    <ProjectReference Include="..\fluXis.Mode.Keys\fluXis.Mode.Keys.csproj" />
   </ItemGroup>
 
   <ItemGroup>

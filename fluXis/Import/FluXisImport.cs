@@ -5,7 +5,6 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Database;
 using fluXis.Database.Maps;
-using fluXis.Modes;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Utils;
@@ -29,7 +28,6 @@ public class FluXisImport : MapImporter
     public Action<bool> OnComplete { get; set; }
 
     public TaskNotificationData Notification { get; set; }
-    public GameModeManager GameModes { get; set; }
 
     public override void Import(string path)
     {

@@ -8,12 +8,14 @@ using fluXis.Import.osu.Map;
 using fluXis.Import.osu.Map.Enums;
 using fluXis.Import.osu.AutoImport;
 using fluXis.Import.osu.Storyboards;
+using fluXis.Map.Format;
 using fluXis.Overlay.Notifications;
+using fluXis.Storyboards;
 using JetBrains.Annotations;
-using Midori.Utils;
 using osu_database_reader.BinaryFiles;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
+using osu.Framework.Platform;
 using osu.Shared;
 
 namespace fluXis.Import.osu;
@@ -46,10 +48,13 @@ public class OsuImport : MapImporter
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
             var folder = CreateTempFolder(fileName);
+            var storage = new NativeStorage(folder);
+            var format = new RhymMapFormat(storage, GameModes);
 
             using var osz = ZipFile.OpenRead(path);
 
             var sb = osz.Entries.FirstOrDefault(e => e.FullName.EndsWith(".osb"))?.FullName;
+            Storyboard storyboard = null;
 
             if (sb != null)
             {
@@ -58,15 +63,11 @@ public class OsuImport : MapImporter
                 if (entry != null)
                 {
                     var data = new StreamReader(entry.Open()).ReadToEnd();
-                    var storyboard = new OsuStoryboardParser().Parse(data);
-                    var json = storyboard.Serialize();
-                    WriteFile(json, folder, $"{sb}.fsb");
-                    sb = $"{sb}.fsb";
+                    storyboard = new OsuStoryboardParser().Parse(data);
                 }
                 else
                 {
                     Logger.Log("Failed to find storyboard file in .osz archive!", LoggingTarget.Runtime, LogLevel.Error);
-                    sb = string.Empty;
                 }
             }
 
@@ -92,7 +93,7 @@ public class OsuImport : MapImporter
                 try
                 {
                     var map = parseOsuMap(entry, files.Select(x => x.FullName));
-                    var info = map.ToMapInfo();
+                    var info = map.ToPlayableMap();
 
                     if (info == null)
                     {
@@ -100,8 +101,8 @@ public class OsuImport : MapImporter
                         continue;
                     }
 
-                    info.StoryboardFile = sb ?? string.Empty;
-                    WriteFile(info.Serialize(), folder, $"{entry.FullName}.fsc");
+                    if (storyboard != null) info.Storyboard = storyboard;
+                    format.Save(info);
                     success++;
                 }
                 catch (Exception e)

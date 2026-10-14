@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Import.osu.Map.Components;
-using fluXis.Import.osu.AutoImport;
 using fluXis.Map;
-using fluXis.Map.Structures;
+using fluXis.Map.Structures.Events;
 using JetBrains.Annotations;
 
 namespace fluXis.Import.osu.Map;
@@ -65,31 +64,29 @@ public class OsuMap
     }
 
     [CanBeNull]
-    public OsuMapInfo ToMapInfo()
+    public PlayableMap ToPlayableMap()
     {
         if (Mode != 3)
             return null;
 
-        var mapInfo = new OsuMapInfo
+        var mapInfo = new PlayableMap(null, $"{Version}[{Creator}].rhym", new("flux", "keys"))
         {
-            Metadata = new MapMetadata
+            Title = Title?.Trim() ?? "",
+            TitleRomanized = TitleRoman?.Trim() ?? Title?.Trim() ?? "",
+            Artist = Artist?.Trim() ?? "",
+            ArtistRomanized = ArtistRoman?.Trim() ?? Artist?.Trim() ?? "",
+            Creator = Creator?.Trim() ?? "",
+            Difficulty = Version?.Trim() ?? "",
+            Sources = new Dictionary<string, string>()
             {
-                Title = Title?.Trim() ?? "",
-                TitleRomanized = TitleRoman?.Trim() ?? Title?.Trim() ?? "",
-                Artist = Artist?.Trim() ?? "",
-                ArtistRomanized = ArtistRoman?.Trim() ?? Artist?.Trim() ?? "",
-                Mapper = Creator?.Trim() ?? "",
-                Difficulty = Version?.Trim() ?? "",
-                AudioSource = Source?.Trim() ?? "",
-                Tags = Tags?.Trim() ?? "",
-                PreviewTime = PreviewTime
+                { "audio", Source?.Trim() ?? "" },
+                { "background", "" },
+                { "cover", "" }
             },
+            Tags = (Tags?.Trim() ?? "").Split(","),
+            PreviewTime = PreviewTime,
             AudioFile = AudioFilename?.Trim(),
             BackgroundFile = "",
-            HitObjects = new List<HitObject>(),
-            TimingPoints = new List<TimingPoint>(),
-            ScrollVelocities = new List<ScrollVelocity>(),
-            InitialKeyCount = (int)CircleSize,
             AccuracyDifficulty = OverallDifficulty,
             HealthDifficulty = Math.Max(HealthDrainRate, 1)
         };
@@ -115,9 +112,9 @@ public class OsuMap
                     ? (currentPoint, TimingPoints[i + 1])
                     : (TimingPoints[i + 1], currentPoint);
 
-                mapInfo.TimingPoints.Add(bpmPoint.ToTimingPointInfo());
+                mapInfo.AddObject(bpmPoint.ToTimingPointInfo());
                 currentBpm = bpmPoint.BPM;
-                mapInfo.ScrollVelocities.Add(svPoint.ToScrollVelocityInfo(dominantBpm, currentBpm));
+                mapInfo.AddObject(svPoint.ToScrollVelocityInfo(dominantBpm, currentBpm));
 
                 i++; // skip next point because we already handled it
             }
@@ -126,11 +123,11 @@ public class OsuMap
             {
                 if (currentPoint.IsScrollVelocity)
                 {
-                    mapInfo.ScrollVelocities.Add(currentPoint.ToScrollVelocityInfo(dominantBpm, currentBpm));
+                    mapInfo.AddObject(currentPoint.ToScrollVelocityInfo(dominantBpm, currentBpm));
                 }
                 else
                 {
-                    mapInfo.TimingPoints.Add(currentPoint.ToTimingPointInfo());
+                    mapInfo.AddObject(currentPoint.ToTimingPointInfo());
                     currentBpm = currentPoint.BPM;
 
                     // in osu mania, a bpm timing point alone (i.e. no simultaneous sv/effect point) will change the scroll speed
@@ -142,7 +139,7 @@ public class OsuMap
                     // (right now this is commented because this makes the barlines look different on some maps and i don't understand why)
                     // if (mapInfo.ScrollVelocities.Count >= 1 && mapInfo.ScrollVelocities.Last().Multiplier == multiplier) continue;
 
-                    mapInfo.ScrollVelocities.Add(new ScrollVelocity
+                    mapInfo.AddObject(new ScrollVelocity
                     {
                         Time = currentPoint.Time,
                         Multiplier = multiplier
@@ -153,7 +150,7 @@ public class OsuMap
 
         // some gimmick maps might contain LNs with a start time equal to Nan to create fake notes (these are known as p notes)
         // these are problematic when trying to play the map after converting, so ignore them for now
-        mapInfo.HitObjects.AddRange(HitObjects.FindAll(h => !float.IsNaN(h.StartTime)).Select(h => h.ToHitObjectInfo(this)));
+        mapInfo.AddObjects(HitObjects.FindAll(h => !float.IsNaN(h.StartTime)).Select(h => h.ToHitObjectInfo(this)));
 
         foreach (var osuEvent in Events)
         {

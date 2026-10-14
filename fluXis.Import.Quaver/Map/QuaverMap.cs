@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using fluXis.Import.Quaver.Map.Structs;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Scrolling;
+using fluXis.Mode.Keys.Objects;
 using JetBrains.Annotations;
-using osu.Framework.Logging;
 
 namespace fluXis.Import.Quaver.Map;
 
@@ -31,30 +33,24 @@ public class QuaverMap
     public List<QuaverScrollFactor> ScrollSpeedFactors { get; set; } = new();
     public List<QuaverBookmark> Bookmarks { get; set; } = new();
 
-    [CanBeNull]
-    private MapEvents events;
-
-    public MapInfo ToMapInfo()
+    public PlayableMap ToPlayableMap()
     {
-        var metadata = new MapMetadata
+        var mapInfo = new PlayableMap(null, $"{DifficultyName}[{Creator}].rhym", new("flux", "keys"))
         {
-            Title = Title,
-            Artist = Artist,
-            AudioSource = Source,
-            Tags = Tags,
-            Mapper = Creator,
-            Difficulty = DifficultyName,
-            PreviewTime = SongPreviewTime
-        };
-
-        var mapInfo = new QuaverMapInfo(metadata)
-        {
-            Map = this,
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,
-            HitObjects = new List<HitObject>(),
-            TimingPoints = new List<TimingPoint>(),
-            ScrollVelocities = new List<ScrollVelocity>()
+            Title = Title,
+            Artist = Artist,
+            Sources = new Dictionary<string, string>()
+            {
+                { "audio", Source },
+                { "background", "" },
+                { "cover", "" }
+            },
+            Tags = Tags.Split(','),
+            Creator = Creator,
+            Difficulty = DifficultyName,
+            PreviewTime = SongPreviewTime,
         };
 
         foreach (var o in HitObjects)
@@ -66,12 +62,10 @@ public class QuaverMap
 
                 for (float t = o.StartTime; t < o.EndTime; t += timingPoint.MsPerBeat / 4)
                 {
-                    mapInfo.HitObjects.Add(new HitObject
+                    mapInfo.AddObject(new Landmine
                     {
                         Time = t,
                         Lane = o.Lane,
-                        Type = HitObjectType.Landmine,
-                        HoldTime = 0,
                         Group = o.TimingGroup
                     });
 
@@ -79,34 +73,52 @@ public class QuaverMap
                 }
 
                 // if the endtime is too far from the last mine we placed then put a mine directly at the endtime
-                if (Math.Abs(mapInfo.HitObjects.Last().Time - o.EndTime) > timingPoint.MsPerBeat / 16)
+                if (Math.Abs(mapInfo.ObjectsOfType<Landmine>().Last().Time - o.EndTime) > timingPoint.MsPerBeat / 16)
                 {
-                    mapInfo.HitObjects.Add(new HitObject
+                    mapInfo.AddObject(new Landmine
                     {
                         Time = o.EndTime,
                         Lane = o.Lane,
-                        Type = HitObjectType.Landmine,
-                        HoldTime = 0,
                         Group = o.TimingGroup
                     });
                 }
             }
             else
             {
-                mapInfo.HitObjects.Add(new HitObject
+                if (o.Type == "Mine")
                 {
-                    Time = o.StartTime,
-                    Lane = o.Lane,
-                    Type = o.Type == "Mine" ? HitObjectType.Landmine : HitObjectType.Normal,
-                    HoldTime = o.IsLongNote ? o.EndTime - o.StartTime : 0,
-                    Group = o.TimingGroup
-                });
+                    mapInfo.AddObject(new Landmine
+                    {
+                        Time = o.StartTime,
+                        Lane = o.Lane,
+                        Group = o.TimingGroup
+                    });
+                }
+                else if (o.IsLongNote)
+                {
+                    mapInfo.AddObject(new LongNote
+                    {
+                        Time = o.StartTime,
+                        Lane = o.Lane,
+                        Duration = o.EndTime - o.StartTime,
+                        Group = o.TimingGroup
+                    });
+                }
+                else
+                {
+                    mapInfo.AddObject(new Note
+                    {
+                        Time = o.StartTime,
+                        Lane = o.Lane,
+                        Group = o.TimingGroup
+                    });
+                }
             }
         }
 
         foreach (var t in TimingPoints)
         {
-            mapInfo.TimingPoints.Add(new TimingPoint
+            mapInfo.AddObject(new TimingPoint
             {
                 Time = t.StartTime,
                 BPM = t.Bpm,
@@ -117,7 +129,7 @@ public class QuaverMap
 
         foreach (var s in SliderVelocities)
         {
-            mapInfo.ScrollVelocities.Add(new ScrollVelocity
+            mapInfo.AddObject(new ScrollVelocity
             {
                 Time = s.StartTime,
                 Multiplier = s.Multiplier
@@ -126,8 +138,6 @@ public class QuaverMap
 
         for (var i = 0; i < ScrollSpeedFactors.Count; i++)
         {
-            events ??= new MapEvents();
-
             var factor = ScrollSpeedFactors[i];
             var duration = 0d;
             var mult = factor.Multiplier;
@@ -139,7 +149,7 @@ public class QuaverMap
                 mult = next.Multiplier;
             }
 
-            events.ScrollMultiplyEvents.Add(new ScrollMultiplierEvent
+            mapInfo.AddObject(new ScrollMultiplierEvent
             {
                 Time = factor.StartTime,
                 Multiplier = mult,
@@ -151,7 +161,7 @@ public class QuaverMap
         {
             foreach (var velocity in group.ScrollVelocities)
             {
-                mapInfo.ScrollVelocities.Add(new ScrollVelocity
+                mapInfo.AddObject(new ScrollVelocity
                 {
                     Time = velocity.StartTime,
                     Multiplier = velocity.Multiplier,
@@ -161,8 +171,6 @@ public class QuaverMap
 
             for (var i = 0; i < group.ScrollSpeedFactors.Count; i++)
             {
-                events ??= new MapEvents();
-
                 var factor = group.ScrollSpeedFactors[i];
                 var duration = 0d;
                 var mult = factor.Multiplier;
@@ -174,7 +182,7 @@ public class QuaverMap
                     mult = next.Multiplier;
                 }
 
-                events.ScrollMultiplyEvents.Add(new ScrollMultiplierEvent
+                mapInfo.AddObject(new ScrollMultiplierEvent
                 {
                     Time = factor.StartTime,
                     Multiplier = mult,
@@ -185,46 +193,5 @@ public class QuaverMap
         }
 
         return mapInfo;
-    }
-
-    public MapEvents GetEffects()
-    {
-        if (events != null)
-            return events;
-
-        string effectFile = "";
-
-        if (Bookmarks != null)
-        {
-            foreach (var b in Bookmarks)
-            {
-                var split = b.Note.ToLower().Split(':');
-                var split2 = b.Note.Split(':');
-
-                if (split[0] == "laneswitch" && split.Length >= 2)
-                {
-                    if (int.TryParse(split[1], out var lane))
-                    {
-                        if (split.Length > 2 && int.TryParse(split[2], out var speed))
-                            effectFile += $"LaneSwitch({b.StartTime},{lane},{speed}){Environment.NewLine}";
-                        else
-                            effectFile += $"LaneSwitch({b.StartTime},{lane}){Environment.NewLine}";
-                    }
-                    else
-                        Logger.Log("Invalid lane switch event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
-                }
-
-                if (split[0] == "flash" && split.Length == 8)
-                    effectFile += $"Flash({b.StartTime},{split[1]},{split[2]},{split2[3]},{split[4]},{split[5]},{split[6]},{split[7]}){Environment.NewLine}";
-
-                if (split[0] == "pulse" && split.Length == 1)
-                    effectFile += $"Pulse({b.StartTime}){Environment.NewLine}";
-
-                if (split[0] == "playfieldmove" && split.Length >= 2)
-                    effectFile += $"PlayfieldMove({b.StartTime},{split[1]},{(split.Length >= 3 ? split[2] : 0)},{(split.Length >= 4 ? split2[3] : "None")}){Environment.NewLine}";
-            }
-        }
-
-        return MapEvents.Load<MapEvents>(effectFile);
     }
 }
