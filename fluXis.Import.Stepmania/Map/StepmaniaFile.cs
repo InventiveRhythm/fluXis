@@ -142,7 +142,8 @@ public class StepmaniaFile
         {
             var time = -Offset * 1000;
 
-            var map = new PlayableMap(null, chart.Difficulty + ".rhym", new("flux", "keys"))
+            int keyCount = chart.Measures.FirstOrDefault()?.Notes.Count ?? 4;
+            var map = new PlayableMap(null, chart.Difficulty + ".rhym", new("flux", $"keys/{keyCount}"))
             {
                 AudioFile = Music,
                 BackgroundFile = Background,

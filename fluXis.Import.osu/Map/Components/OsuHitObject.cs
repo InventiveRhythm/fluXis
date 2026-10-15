@@ -38,25 +38,11 @@ public class OsuHitObject
                 CustomHitSound = getSound(map.MapFiles, SampleSet, OsuHitSound.Normal, ":normal");
         }
 
-        if (holdTime == 0)
-        {
-            return new Note
-            {
-                Time = StartTime,
-                Lane = (int)Math.Floor(Position.X * map.CircleSize / 512) + 1,
-                Sample = CustomHitSound
-            };
-        }
-        else
-        {
-            return new LongNote()
-            {
-                Time = StartTime,
-                Lane = (int)Math.Floor(Position.X * map.CircleSize / 512) + 1,
-                Duration = holdTime,
-                Sample = CustomHitSound
-            };
-        }
+        HitObject obj = holdTime > 0 ? new LongNote { Duration = holdTime } : new Note();
+        obj.Time = StartTime;
+        obj.Lane = (int)Math.Floor(Position.X * map.CircleSize / 512) + 1;
+        obj.Sample = CustomHitSound;
+        return obj;
     }
 
     private string getSound(List<string> files, OsuSampleSet set, OsuHitSound sound, string fallback)

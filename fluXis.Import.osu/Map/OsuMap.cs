@@ -69,7 +69,8 @@ public class OsuMap
         if (Mode != 3)
             return null;
 
-        var mapInfo = new PlayableMap(null, $"{Version}[{Creator}].rhym", new("flux", "keys"))
+        int keyCount = (int)CircleSize;
+        var mapInfo = new PlayableMap(null, $"{Version}[{Creator}].rhym", new("flux", $"keys/{keyCount}"))
         {
             Title = Title?.Trim() ?? "",
             TitleRomanized = TitleRoman?.Trim() ?? Title?.Trim() ?? "",

@@ -35,7 +35,8 @@ public class QuaverMap
 
     public PlayableMap ToPlayableMap()
     {
-        var mapInfo = new PlayableMap(null, $"{DifficultyName}[{Creator}].rhym", new("flux", "keys"))
+        int keyCount = HitObjects.Max(x => x.Lane); // ideally this should read from the Mode field but uuuh this was quicker
+        var mapInfo = new PlayableMap(null, $"{DifficultyName}[{Creator}].rhym", new("flux", $"keys/{keyCount}"))
         {
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,
