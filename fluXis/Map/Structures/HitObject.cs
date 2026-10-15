@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using fluXis.Map.Structures.Bases;
+using fluXis.Scoring.Enums;
 using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Lists;
@@ -35,6 +36,7 @@ public abstract class HitObject : ITimedObject
     [YamlIgnore, NotMapped]
     public ScrollGroup? ScrollGroup { get; set; }
 
+    public virtual bool ShouldShowJudgement(Judgement judgement) => true;
     public virtual string? GetSample(bool hit) => Sample;
 
     public virtual bool OnEditorMiddleClick() => false;
