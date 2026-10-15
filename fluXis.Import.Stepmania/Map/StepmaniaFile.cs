@@ -6,6 +6,7 @@ using fluXis.Import.Stepmania.Map.Components;
 using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Mode.Keys.Objects;
+using osu.Framework.Platform;
 
 namespace fluXis.Import.Stepmania.Map;
 
@@ -134,7 +135,7 @@ public class StepmaniaFile
         }
     }
 
-    public List<PlayableMap> ToPlayableMaps()
+    public List<PlayableMap> ToPlayableMaps(Storage storage)
     {
         var maps = new List<PlayableMap>();
 
@@ -143,7 +144,7 @@ public class StepmaniaFile
             var time = -Offset * 1000;
 
             int keyCount = chart.Measures.FirstOrDefault()?.Notes.Count ?? 4;
-            var map = new PlayableMap(null, chart.Difficulty + ".rhym", new("flux", $"keys/{keyCount}"))
+            var map = new PlayableMap(storage, chart.Difficulty + ".rhym", new("flux", $"keys/{keyCount}"))
             {
                 AudioFile = Music,
                 BackgroundFile = Background,

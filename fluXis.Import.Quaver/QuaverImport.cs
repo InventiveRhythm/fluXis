@@ -53,7 +53,7 @@ public class QuaverImport : MapImporter
                 if (entry.FullName.EndsWith(".qua"))
                 {
                     var quaverMap = parseFromEntry(entry);
-                    var map = quaverMap.ToPlayableMap();
+                    var map = quaverMap.ToPlayableMap(storage);
                     format.Save(map);
                 }
                 else

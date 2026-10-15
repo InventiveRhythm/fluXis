@@ -9,6 +9,7 @@ using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Mode.Keys.Objects;
 using JetBrains.Annotations;
+using osu.Framework.Platform;
 
 namespace fluXis.Import.Quaver.Map;
 
@@ -33,10 +34,10 @@ public class QuaverMap
     public List<QuaverScrollFactor> ScrollSpeedFactors { get; set; } = new();
     public List<QuaverBookmark> Bookmarks { get; set; } = new();
 
-    public PlayableMap ToPlayableMap()
+    public PlayableMap ToPlayableMap(Storage storage)
     {
         int keyCount = HitObjects.Max(x => x.Lane); // ideally this should read from the Mode field but uuuh this was quicker
-        var mapInfo = new PlayableMap(null, $"{DifficultyName}[{Creator}].rhym", new("flux", $"keys/{keyCount}"))
+        var mapInfo = new PlayableMap(storage, $"{DifficultyName}[{Creator}].rhym", new("flux", $"keys/{keyCount}"))
         {
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,

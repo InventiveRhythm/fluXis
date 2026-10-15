@@ -5,11 +5,15 @@ using fluXis.Import.osu.Map.Components;
 using fluXis.Map;
 using fluXis.Map.Structures.Events;
 using JetBrains.Annotations;
+using osu.Framework.Platform;
 
 namespace fluXis.Import.osu.Map;
 
 public class OsuMap
 {
+    public string FileName { get; set; }
+    public Storage Storage { get; set; }
+
     // [General]
     public string AudioFilename { get; set; }
     public int PreviewTime { get; set; }
@@ -47,6 +51,12 @@ public class OsuMap
 
     public List<string> MapFiles { get; set; } = new();
 
+    public OsuMap(string fileName, Storage storage)
+    {
+        FileName = fileName;
+        Storage = storage;
+    }
+
     public string GetBackground()
     {
         foreach (var osuEvent in Events)
@@ -70,7 +80,7 @@ public class OsuMap
             return null;
 
         int keyCount = (int)CircleSize;
-        var mapInfo = new PlayableMap(null, $"{Version}[{Creator}].rhym", new("flux", $"keys/{keyCount}"))
+        var mapInfo = new PlayableMap(Storage, FileName.Replace(".osu", ".rhym"), new("flux", $"keys/{keyCount}"))
         {
             Title = Title?.Trim() ?? "",
             TitleRomanized = TitleRoman?.Trim() ?? Title?.Trim() ?? "",

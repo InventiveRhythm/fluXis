@@ -56,11 +56,10 @@ public class StepmaniaImport : MapImporter
                     var map = new StepmaniaFile();
                     map.Parse(data);
 
-                    var infos = map.ToPlayableMaps();
+                    var infos = map.ToPlayableMaps(storage);
 
                     foreach (var info in infos)
                         format.Save(info);
-                        // WriteFile(info.Serialize(), folder, $"{info.Difficulty}.rhym");
                 }
                 else
                     CopyFile(x, folder);
@@ -94,7 +93,8 @@ public class StepmaniaImport : MapImporter
             var sm = new StepmaniaFile();
             sm.Parse(data);
 
-            var infos = sm.ToPlayableMaps();
+            Storage storage = new NativeStorage(Path.GetDirectoryName(file));
+            var infos = sm.ToPlayableMaps(storage);
             var maps = new List<RealmMap>();
 
             foreach (var info in infos)
