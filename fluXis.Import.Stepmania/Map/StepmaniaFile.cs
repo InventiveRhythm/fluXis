@@ -229,7 +229,7 @@ public class StepmaniaFile
                                     }
                                 }
                                 else if (note is LongNote ln)
-                                    ln.Duration = (int)Math.Round(time, MidpointRounding.AwayFromZero);
+                                    ln.Duration = (int)Math.Round(time, MidpointRounding.AwayFromZero) - ln.Time;
 
                                 break;
 
