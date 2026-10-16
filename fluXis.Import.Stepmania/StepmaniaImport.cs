@@ -103,12 +103,13 @@ public class StepmaniaImport : MapImporter
                 var lns = info.Objects.Count(x => x is LongNote);
                 var mines = info.Objects.Count(x => x is Landmine);
                 var length = info.Objects.Max(x => x.Time);
+                var keyCount = info.ObjectsOfType<HitObject>().Max(x => x.Lane);
 
                 var map = new StepManiaRealmMap
                 {
                     Difficulty = info.Difficulty,
                     FileName = Path.GetFileName(file),
-                    KeyCount = 4,
+                    KeyCount = keyCount,
                     StatusInt = ID,
                     PlayableMap = info,
                     Metadata = new RealmMapMetadata
