@@ -11,9 +11,9 @@ public class StepMeasure
 
     public static List<StepNote> Parse(string data)
     {
-        var notes = new StepNote[4];
+        var notes = new StepNote[data.Length];
 
-        for (var i = 0; i < 4; i++)
+        for (var i = 0; i < data.Length; i++)
             notes[i] = Parse(data[i]);
 
         return notes.ToList();

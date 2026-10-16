@@ -1,12 +1,14 @@
 using System.IO;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Modes;
+using osu.Framework.Platform;
 
 namespace fluXis.Import.osu.AutoImport;
 
 public class OsuRealmMap : RealmMap
 {
-    public override MapInfo GetMapInfo()
+    public override PlayableMap GetPlayable(GameModeManager modes)
     {
         var path = MapSet.GetPathForFile(FileName);
 
@@ -14,16 +16,13 @@ public class OsuRealmMap : RealmMap
             return null;
 
         var dir = Path.GetDirectoryName(path);
-        var files = Directory.GetFiles(dir!, "*", SearchOption.AllDirectories);
+        var storage = new NativeStorage(dir);
+        var playable = OsuImport.ParseOsuMap(storage, FileName).ToPlayableMap();
 
-        string osu = File.ReadAllText(path);
-        var info = OsuImport.ParseOsuMap(osu, files).ToMapInfo();
-
-        if (info is null)
+        if (playable is null)
             return null;
 
-        Metadata.Background = info.BackgroundFile;
-        info.RealmEntry = this;
-        return info;
+        Metadata.Background = playable.BackgroundFile;
+        return playable;
     }
 }

@@ -5,12 +5,14 @@ using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Import.Stepmania.AutoImport;
 using fluXis.Import.Stepmania.Map;
+using fluXis.Map.Format;
 using fluXis.Map.Structures;
+using fluXis.Mode.Keys.Objects;
 using fluXis.Overlay.Notifications;
 using JetBrains.Annotations;
-using Midori.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
+using osu.Framework.Platform;
 
 namespace fluXis.Import.Stepmania;
 
@@ -42,6 +44,9 @@ public class StepmaniaImport : MapImporter
             var fileName = Path.GetFileNameWithoutExtension(path);
             var folder = CreateTempFolder(fileName);
 
+            var storage = new NativeStorage(folder);
+            var format = new RhymMapFormat(storage, GameModes);
+
             Directory.GetFiles(smFolder).ToList().ForEach(x =>
             {
                 if (x.EndsWith(".sm"))
@@ -51,10 +56,10 @@ public class StepmaniaImport : MapImporter
                     var map = new StepmaniaFile();
                     map.Parse(data);
 
-                    var infos = map.ToMapInfos();
+                    var infos = map.ToPlayableMaps(storage);
 
                     foreach (var info in infos)
-                        WriteFile(info.Serialize(), folder, $"{info.Metadata.Difficulty}.fsc");
+                        format.Save(info);
                 }
                 else
                     CopyFile(x, folder);
@@ -88,38 +93,40 @@ public class StepmaniaImport : MapImporter
             var sm = new StepmaniaFile();
             sm.Parse(data);
 
-            var infos = sm.ToMapInfos();
+            Storage storage = new NativeStorage(Path.GetDirectoryName(file));
+            var infos = sm.ToPlayableMaps(storage);
             var maps = new List<RealmMap>();
 
             foreach (var info in infos)
             {
-                var hits = info.HitObjects.Count(x => !x.LongNote && x.Type == HitObjectType.Tick);
-                var lns = info.HitObjects.Count(x => x.LongNote && x.Type == HitObjectType.Tick);
-                var mines = info.HitObjects.Count(x => x.Landmine);
-                var length = info.HitObjects.Max(x => x.Time);
+                var hits = info.Objects.Count(x => x is Note);
+                var lns = info.Objects.Count(x => x is LongNote);
+                var mines = info.Objects.Count(x => x is Landmine);
+                var length = info.Objects.Max(x => x.Time);
+                var keyCount = info.ObjectsOfType<HitObject>().Max(x => x.Lane);
 
                 var map = new StepManiaRealmMap
                 {
-                    Difficulty = info.Metadata.Difficulty,
+                    Difficulty = info.Difficulty,
                     FileName = Path.GetFileName(file),
-                    KeyCount = 4,
+                    KeyCount = keyCount,
                     StatusInt = ID,
-                    MapInfo = info,
+                    PlayableMap = info,
                     Metadata = new RealmMapMetadata
                     {
-                        Title = info.Metadata.Title,
-                        Artist = info.Metadata.Artist,
-                        Source = info.Metadata.AudioSource,
+                        Title = info.Title,
+                        Artist = info.Artist,
+                        Source = info.Sources.GetValueOrDefault("audio", ""),
                         Audio = info.AudioFile,
                         Background = info.BackgroundFile,
-                        PreviewTime = info.Metadata.PreviewTime,
-                        Tags = info.Metadata.Tags
+                        PreviewTime = info.PreviewTime,
+                        Tags = string.Join(",", info.Tags)
                     },
                     Filters = new RealmMapFilters
                     {
                         Length = (float)length,
-                        BPMMin = info.TimingPoints.Min(x => x.BPM),
-                        BPMMax = info.TimingPoints.Max(x => x.BPM),
+                        BPMMin = info.ObjectsOfType<TimingPoint>().Min(x => x.BPM),
+                        BPMMax = info.ObjectsOfType<TimingPoint>().Max(x => x.BPM),
                         NoteCount = hits,
                         LongNoteCount = lns,
                         LandmineCount = mines,
@@ -127,7 +134,7 @@ public class StepmaniaImport : MapImporter
                     }
                 };
 
-                info.RealmEntry = map;
+                // info.RealmEntry = map;
                 maps.Add(map);
             }
 
