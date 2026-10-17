@@ -21,6 +21,9 @@ namespace fluXis.Modes.Gameplay;
 
 public abstract partial class Playfield : CompositeDrawable
 {
+    public override bool PropagatePositionalInputSubTree => !IsSubPlayfield;
+    public override bool PropagateNonPositionalInputSubTree => !IsSubPlayfield;
+
     [Resolved]
     protected RulesetContainer Ruleset { get; private set; }
 
