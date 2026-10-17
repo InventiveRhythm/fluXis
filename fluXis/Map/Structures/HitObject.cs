@@ -49,9 +49,24 @@ public abstract class HitObject : ITimedObject
     [YamlIgnore]
     private readonly List<HitObject> nestedObjects = [];
 
+    private bool hasNested;
+
     protected void AddNested(HitObject obj) => nestedObjects.Add(obj);
-    public virtual void CreateNested() { }
-    public void ClearNested() => nestedObjects.Clear();
+    protected virtual void CreateNested() { }
+
+    public void CreateNestedObjects()
+    {
+        if (hasNested) return;
+
+        CreateNested();
+        hasNested = true;
+    }
+
+    public void ClearNestedObjects()
+    {
+        nestedObjects.Clear();
+        hasNested = false;
+    }
 
     #endregion
 }

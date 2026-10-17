@@ -9,7 +9,7 @@ public class LongNote : HitObject, IHasDuration
 
     public double Duration { get; set; }
 
-    public override void CreateNested()
+    protected override void CreateNested()
     {
         AddNested(new LongNoteTail { Time = this.GetEndTime(), Lane = Lane, Group = Group });
     }
