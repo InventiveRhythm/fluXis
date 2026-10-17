@@ -1,6 +1,7 @@
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
+using rhym;
 
 namespace fluXis.Online.API.Models.Scores;
 
@@ -18,7 +19,7 @@ public class APIScore
     public long Time { get; set; }
 
     [JsonProperty("mode")]
-    public int Mode { get; set; }
+    public ResourceLocation Mode { get; set; }
 
     /// <summary>
     /// List of mods seperated by commas.

@@ -414,17 +414,19 @@ public partial class MapStore : Component
 
                     File.WriteAllBytes(path, data.ToArray());
 
-                    // import
                     new FluXisImport
                     {
-                        MapStore = this,
-                        Storage = storage,
-                        Notifications = notifications,
-                        Realm = realm,
                         Notification = notification,
                         OnComplete = s => status.State = s ? DownloadState.Finished : DownloadState.Failed,
                         OnProgress = p => status.Progress = p
-                    }.Import(path);
+                    }.ApplyValues(
+                        _ => null,
+                        storage,
+                        realm,
+                        this,
+                        notifications,
+                        game.GameModes
+                    ).Import(path);
                 }
                 catch (Exception ex)
                 {
@@ -512,15 +514,10 @@ public partial class MapStore : Component
 
                     File.WriteAllBytes(path, data.ToArray());
 
-                    // import
-                    new FluXisImport
-                    {
-                        MapStore = this,
-                        Storage = storage,
-                        Notifications = notifications,
-                        Realm = realm,
-                        Notification = notification
-                    }.ImportAsUpdate(path, set);
+                    var import = new FluXisImport { Notification = notification };
+                    import.ApplyValues(_ => null, storage, realm, this, notifications, game.GameModes);
+                    import.ImportAsUpdate(path, set);
+
                     notification.State = LoadingState.Complete;
                 }
                 catch (Exception ex)
