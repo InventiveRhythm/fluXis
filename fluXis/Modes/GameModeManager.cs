@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Map.Format;
 using fluXis.Utils;
+using osu.Framework;
 using osu.Framework.Platform;
 using rhym;
 
@@ -13,6 +14,17 @@ public partial class GameModeManager : AssemblyLoader<GameMode>
 {
     protected override string StorageFolder => "modes";
     protected override string AssemblyPrefix => "fluXis.Mode";
+
+    private readonly Game game;
+    private readonly GameHost host;
+
+    public GameModeManager(Game game, GameHost host)
+    {
+        this.game = game;
+        this.host = host;
+    }
+
+    protected override void SetupType(GameMode type) => type.SetupResources(game, host);
 
     public IMapFormat? GetFormat(Storage storage, string ext)
     {

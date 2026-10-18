@@ -20,6 +20,7 @@ using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Screens.Edit.Tabs.Verify;
 using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using rhym;
 
@@ -44,6 +45,9 @@ public class KeysGameMode : GameMode
 
         return base.GetFormat(storage, ext);
     }
+
+    public override Texture? GetTexture(ResourceLocation mode)
+        => Textures.Get($"icons/{ParseMode(mode)}K.png");
 
     public override string GetShortString(ResourceLocation mode) => $"{ParseMode(mode)}K";
     public override Colour4 GetColor(ResourceLocation mode) => Theme.GetKeyCountColor(ParseMode(mode));

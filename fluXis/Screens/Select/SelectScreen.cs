@@ -478,7 +478,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         }
 
         menuScroll.Play();
-        lightController.FadeColour(Theme.GetKeyCountColor(map.KeyCount), 400);
+        lightController.FadeColour(Game.GameModes.Find(map.Mode)?.GetColor(map.Mode) ?? Theme.Highlight, 400);
         clock.AllowLimitedLoop = true;
 
         if (e.OldValue.FullAudioPath != e.NewValue.FullAudioPath)
@@ -757,7 +757,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         if (Maps.CurrentMap != null)
         {
-            lightController.FadeColour(Theme.GetKeyCountColor(Maps.CurrentMap.KeyCount), 400);
+            lightController.FadeColour(Game.GameModes.Find(Maps.CurrentMap.Mode)?.GetColor(Maps.CurrentMap.Mode) ?? Theme.Highlight, 400);
 
             clock.RestartPoint = Maps.CurrentMap.Metadata.PreviewTime;
 

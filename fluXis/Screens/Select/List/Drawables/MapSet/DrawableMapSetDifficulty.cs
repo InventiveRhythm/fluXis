@@ -12,6 +12,7 @@ using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Menus.Items;
 using fluXis.Localization;
 using fluXis.Map.Drawables;
+using fluXis.Modes;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
@@ -24,6 +25,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
@@ -94,7 +96,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
     }
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load(FluXisConfig config, GameModeManager modes)
     {
         groupByDiffsBindable = config.GetBindable<bool>(FluXisSetting.SongSelectDiffGroup);
         groupByDiffsBindable.BindValueChanged(_ => Scheduler.ScheduleIfNeeded(() =>
@@ -104,7 +106,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         RelativeSizeAxes = Axes.X;
         Height = 48;
 
-        var color = Theme.GetKeyCountColor(map.KeyCount);
+        var mode = modes.Find(map.Mode);
+        var color = mode?.GetColor(map.Mode) ?? Theme.Highlight;
 
         InternalChildren = new Drawable[]
         {
@@ -238,30 +241,12 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                         Origin = Anchor.CentreRight,
                         Colour = Theme.IsBright(color) ? Theme.TextDark : Theme.Text,
                         Alpha = .75f,
-                        Child = new FillFlowContainer
+                        Child = new Sprite
                         {
-                            AutoSizeAxes = Axes.Both,
+                            Size = new Vector2(20),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Direction = FillDirection.Horizontal,
-                            Children = new Drawable[]
-                            {
-                                new FluXisSpriteText
-                                {
-                                    Text = map.KeyCount.ToString(),
-                                    FontSize = 20,
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft,
-                                    Margin = new MarginPadding { Bottom = -1 }
-                                },
-                                new FluXisSpriteText
-                                {
-                                    Text = "K",
-                                    FontSize = 14,
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft
-                                }
-                            }
+                            Texture = mode?.GetTexture(map.Mode)
                         }
                     }
                 }
