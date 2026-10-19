@@ -24,6 +24,9 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
 
     private readonly Storyboard storyboard;
 
+    // This is used to keep compatibility between lua and the standard storyboard, like migrations for example.
+    private Storyboard temporaryStoryboard;
+
     public bool Loaded { get; private set; }
 
     [LuaGlobal(Name = "screen")]
@@ -71,6 +74,7 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
     {
         try
         {
+            temporaryStoryboard = new Storyboard { Version = Version };
             var func = GetFunction("process");
 
             if (func is null)
@@ -81,6 +85,11 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
 
             var l = LuaStoryboardElement.FromElement(element);
             func.Call(l);
+
+            // update local storyboard and add to the target storyboard - completing any migrations
+            temporaryStoryboard.Update();
+            addTo.AddRange(temporaryStoryboard.Elements);
+
             Loaded = true;
         }
         catch (Exception ex)
@@ -90,26 +99,14 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
             if (ex is LuaException lx)
                 Logger.Add(lx.Message, LogLevel.Error);
         }
+
+        temporaryStoryboard = null;
     }
 
     [LuaGlobal(Name = "Add")]
     private void add(LuaStoryboardElement element)
     {
-        var v = Version;
-
-        while (v < Storyboard.LATEST_VERSION)
-        {
-            v++;
-
-            switch (v)
-            {
-                case 2:
-                    element.Animations.ForEach(x => x.StartTime -= element.StartTime);
-                    break;
-            }
-        }
-
-        addTo.Add(element.Build());
+        temporaryStoryboard.Elements.Add(element.Build());
     }
 
     [LuaGlobal(Name = "StoryboardBox")]
