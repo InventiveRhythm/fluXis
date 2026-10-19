@@ -139,7 +139,7 @@ public class LegacyMapFormat : IMapFormat
             if (!string.IsNullOrWhiteSpace(map.StoryboardFile) && storage.Exists(map.StoryboardFile))
             {
                 var sbj = storage.ReadAllText(map.StoryboardFile);
-                playable.Storyboard = json.Deserialize<Storyboard>()!;
+                playable.Storyboard = sbj.Deserialize<Storyboard>()!;
                 playable.Storyboard?.Update();
 
                 playable.StoryboardHash = MapUtils.GetHash(sbj);
