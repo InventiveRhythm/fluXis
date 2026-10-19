@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using fluXis.Configuration;
-using fluXis.Storyboards;
 using JetBrains.Annotations;
 using Midori.Utils.Extensions;
 using osu.Framework.Logging;
@@ -135,7 +134,7 @@ public class ScriptStorage
             var sb = new StringBuilder();
             sb.AppendLine($"---@env {(env == Env.Effect ? "effect" : "storyboard")}");
             sb.AppendLine();
-            sb.AppendLine($"SetVersion({Storyboard.LATEST_VERSION})");
+            sb.AppendLine($"SetVersion(\"{StoryboardApiVersion.LATEST}\")");
             sb.AppendLine();
             sb.AppendLine("---@param parent StoryboardElement");
             sb.AppendLine("function process(parent)");

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using fluXis.Map;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using NLua;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -21,7 +23,7 @@ public class ScriptRunner
 
     public Action<string, string, string, object> DefineParameter;
     protected Lua Lua { get; }
-    protected int Version { get; private set; }
+    protected Version Version { get; private set; }
 
     protected ScriptRunner()
     {
@@ -69,8 +71,31 @@ public class ScriptRunner
         Lua.DoString(code);
     }
 
+    /// <summary>
+    /// Sets the version of the script.
+    /// It's recommened to use strings for the parameter
+    /// ex. `SetVersion("2.1")`
+    /// MUST be at the top of the file after env.
+    /// </summary>
+    /// <param name="v"></param>
+    /// <exception cref="ArgumentException"></exception>
     [LuaGlobal(Name = "SetVersion")]
-    private void setVersion(double v) => Version = (int)v;
+    private void setVersion(object v)
+    {
+        // TODO:
+        // This currently uses StoryboardApiVersion for version validation.
+        // Make sure to change the validation when we eventually have scripting for stuff other than storyboard.
+
+        string text = v switch
+        {
+            string s => s,
+            double d => d.ToStringInvariant(),
+            float f => ((decimal)f).ToString(CultureInfo.InvariantCulture),
+            _ => throw new ArgumentException($"Unsupported version type: {v?.GetType()}")
+        };
+
+        Version = StoryboardApiVersion.Parse(text);
+    }
 
     [LuaGlobal(Name = "RandomRange")]
     private int randomRange(int from, int to) => RNG.Next(from, to + 1);
