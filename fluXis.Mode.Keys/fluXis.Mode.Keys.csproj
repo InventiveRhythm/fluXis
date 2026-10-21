@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Samples\**\*"/>
+    <EmbeddedResource Include="Resources\Textures\**\*"/>
+    <EmbeddedResource Include="Resources\Tracks\**\*"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\fluXis\fluXis.csproj"/>
   </ItemGroup>
 
