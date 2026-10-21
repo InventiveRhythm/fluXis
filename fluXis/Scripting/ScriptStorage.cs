@@ -134,7 +134,7 @@ public class ScriptStorage
             var sb = new StringBuilder();
             sb.AppendLine($"---@env {(env == Env.Effect ? "effect" : "storyboard")}");
             sb.AppendLine();
-            sb.AppendLine($"SetVersion(\"{StoryboardApiVersion.LATEST}\")");
+            sb.AppendLine($"SetVersion({StoryboardApiVersion.LATEST})");
             sb.AppendLine();
             sb.AppendLine("---@param parent StoryboardElement");
             sb.AppendLine("function process(parent)");
