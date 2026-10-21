@@ -36,35 +36,77 @@ public class LuaMap : ILuaModel
 #nullable enable
 
     /// <summary>
-    /// Get all or specific types of Hitobjects in a range. Leave type parameter if you want all HitObjects.
+    /// Get all or specific types of Objects in a range. Leave 'types' parameter if you want all Objects.
+    /// Example:
+    /// NotesInRange(0, 1000, { "flux:keys/normal", "flux:keys/long" })
+    /// </summary>
+    [LuaMember(Name = "ObjectsInRange")]
+    public LuaTable GetObjectsInRange(double startTime, double endTime, LuaTable? types = null)
+    {
+        var objects = getInRange([.. map.Objects], startTime, endTime);
+
+        if (types is null)
+            return objects.ToLuaTable(lua);
+
+        var typesArr = types.Values.Cast<string>().ToArray();
+
+        return objects.Where(h =>
+        {
+            string location = (h.GetType().GetCustomAttribute<rhym.ResourceLocationAttribute>()
+                               ?? throw new InvalidOperationException("Object should have a type.")).Location;
+
+            return typesArr.Contains(location);
+        }).ToLuaTable(lua);
+    }
+
+    /// <summary>
+    /// Get all or specific types of Hitobjects in a range. Leave 'type' parameter if you want all HitObjects.
     /// 'Normal' HitObjectType will also give long notes not just normal notes.
     /// </summary>
     [LuaMember(Name = "NotesInRange")]
-    public LuaTable GetNotesInRange(double startTime, double endTime, /*[LuaCustomType(typeof(HitObjectType?))]*/ string? type = null)
+    [LuaVersion(Until = 2)]
+    [Obsolete("Use map:ObjectsInRange(...) instead")]
+    public LuaTable GetNotesInRangeLegacy(double startTime, double endTime, string? type = null)
     {
-        if (type == "Normal") type = "Note";
+        var objects = getInRange([.. map.ObjectsOfType<HitObject>()], startTime, endTime);
 
-        return type is null
-            ? getInRange([.. map.ObjectsOfType<HitObject>()], startTime, endTime).ToLuaTable(lua)
-            : getInRange([.. map.ObjectsOfType<HitObject>()], startTime, endTime)
-              .Where(h => h.GetType().Name.Equals(type, StringComparison.InvariantCultureIgnoreCase)).ToLuaTable(lua);
+        if (type is null)
+            return objects.ToLuaTable(lua);
+
+        return objects.Where(h =>
+        {
+            string location = (h.GetType().GetCustomAttribute<rhym.ResourceLocationAttribute>()
+                               ?? throw new InvalidOperationException("Object should have a type.")).Location;
+
+            string targetLocation = LuaHitObject.LegacyToKeysGameMode(type);
+
+            return location == targetLocation;
+        }).ToLuaTable(lua);
     }
 
 #nullable restore
 
     [LuaMember(Name = "TimingPointsInRange")]
+    [LuaVersion(Until = 2)]
+    [Obsolete("Use map:ObjectsInRange(...) instead")]
     public LuaTable GetTimingPointsInRange(double startTime, double endTime)
         => getInRange([.. map.ObjectsOfType<TimingPoint>()], startTime, endTime).ToLuaTable(lua);
 
     [LuaMember(Name = "ScrollVelocitiesInRange")]
+    [LuaVersion(Until = 2)]
+    [Obsolete("Use map:ObjectsInRange(...) instead")]
     public LuaTable GetScrollVelocitiesInRange(double startTime, double endTime)
         => getInRange([.. map.ObjectsOfType<ScrollVelocity>()], startTime, endTime).ToLuaTable(lua);
 
     [LuaMember(Name = "HitSoundFadesInRange")]
+    [LuaVersion(Until = 2)]
+    [Obsolete("Use map:ObjectsInRange(...) instead")]
     public LuaTable GetHitSoundFadesInRange(double startTime, double endTime)
         => getInRange([.. map.ObjectsOfType<HitSoundFade>()], startTime, endTime).ToLuaTable(lua);
 
     [LuaMember(Name = "EventsInRange")]
+    [LuaVersion(Until = 2)]
+    [Obsolete("Use map:ObjectsInRange(...) instead")]
     public LuaTable GetEventsInRange(double startTime, double endTime, [LuaCustomType(typeof(IMapEvent))] string eventType)
     {
         var type = lookup.GetValueOrDefault(eventType);
