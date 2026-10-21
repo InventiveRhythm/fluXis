@@ -46,7 +46,8 @@ public partial class TestStoryboard : FluXisTestScene
         var parser = new OsuStoryboardParser();
         var storyboard = parser.Parse(data);
 
-        var drawable = new DrawableStoryboard(map?.GetMapInfo() ?? new MapInfo(), storyboard, @"W:\osu-lazer\exports\mylove\");
+        var playable = map?.GetPlayable(Modes);
+        var drawable = new DrawableStoryboard(playable ?? PlayableMap.CreateDummy(), storyboard, @"W:\osu-lazer\exports\mylove\");
         LoadComponent(drawable);
 
         Add(new Container

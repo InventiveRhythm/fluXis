@@ -5,6 +5,7 @@ using fluXis.Audio;
 using fluXis.Audio.FFT;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Modes;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Online.Multiplayer;
@@ -28,6 +29,9 @@ public partial class FluXisTestScene : TestScene
     private TestMultiplayerClient multiClient = null;
 
     [Resolved]
+    private GameModeManager modes { get; set; }
+
+    [Resolved]
     private AudioAnalyzer audioAnalyzer { get; set; }
 
     [CanBeNull]
@@ -43,6 +47,19 @@ public partial class FluXisTestScene : TestScene
             multiClient = new TestMultiplayerClient();
             TestDependencies.CacheAs<MultiplayerClient>(multiClient);
             return multiClient;
+        }
+    }
+
+    protected GameModeManager Modes
+    {
+        get
+        {
+            if (modes != null)
+                return modes;
+
+            modes = new GameModeManager();
+            TestDependencies.CacheAs<AudioAnalyzer>(audioAnalyzer);
+            return modes;
         }
     }
 

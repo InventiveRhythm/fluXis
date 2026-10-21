@@ -303,4 +303,12 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
 
         target.MapSet.Cover = CoverFile;
     }
+
+    public static PlayableMap CreateDummy()
+    {
+        return new PlayableMap(null!, "dummy", default)
+        {
+            Title = "Dummy",
+        };
+    }
 }

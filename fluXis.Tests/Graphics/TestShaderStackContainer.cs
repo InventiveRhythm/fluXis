@@ -4,8 +4,8 @@ using fluXis.Graphics.Background;
 using fluXis.Graphics.Shaders;
 using fluXis.Map;
 using fluXis.Map.Structures.Events;
+using fluXis.Modes;
 using fluXis.Mods;
-using fluXis.Replays;
 using fluXis.Screens;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Gameplay.Capabilities;
@@ -108,9 +108,11 @@ public partial class TestShaderStackContainer : FluXisTestScene
             if (screenStack.CurrentScreen is not null) return;
 
             var mods = new List<IMod> { new AutoPlayMod() };
-            var replay = new AutoGenerator(map.GetMapInfo(), map.KeyCount);
+            var playable = map.GetPlayable(Modes);
+            var mode = Modes.Find(playable?.Mode ?? throw new NullReferenceException("could not get mode for playable")) ?? throw GameModeManager.FailedToLoadException();
+            var auto = mode.CreateAutoGenerator(playable);
 
-            screenStack.Push(new GameplayLoader(map, mods, () => new GameplayScreen(map, mods).RegisterCapability(new ReplayCapability(replay.Generate()))));
+            screenStack.Push(new GameplayLoader(map, mods, () => new GameplayScreen(map, mods).RegisterCapability(new ReplayCapability(auto.Generate()))));
         });
     }
 }

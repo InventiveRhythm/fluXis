@@ -222,7 +222,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         EditorMap.Playable.Storyboard ??= new Storyboard { Version = Storyboard.LATEST_VERSION };
 
-        GameMode = modes.Find(EditorMap.Playable.Mode) ?? throw GameModeManager.FailedToLoadException();
+        GameMode = modes.Find(EditorMap.Playable.Mode);
+
+        if (GameMode == null)
+        {
+            Logger.Error(GameModeManager.FailedToLoadException(), "Unknown mode - Falling back to keys GameMode");
+            GameMode = modes.Find(new ResourceLocation("flux", "keys"));
+        }
+
         Format = modes.GetFormat(EditorMap.Playable.Storage, Path.GetExtension(EditorMap.Playable.FileName));
 
         EditorMap.SetupWatcher();
