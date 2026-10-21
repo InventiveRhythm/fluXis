@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Reflection;
 using fluXis.Map.Structures;
-using fluXis.Map.Structures.Bases;
+using fluXis.Scripting;
 using fluXis.Scripting.Models;
 using Humanizer;
 using Midori.Utils.Extensions;
@@ -31,7 +31,7 @@ public static class LuaExtensions
     private static int currentDepth;
 
     // All conversion delegates to this
-    private static object convertToLua(object value, Lua lua)
+    private static object convertToLua(object value, Lua lua, int version = 1)
     {
         if (value == null) return null;
 
@@ -50,15 +50,18 @@ public static class LuaExtensions
 
             case Color4 c:
                 return new LuaColor4(c);
+
+            case HitObject o:
+                return new LuaHitObject(o);
         }
 
         if (value is IEnumerable enumerable)
-            return enumerable.ToLuaTable(lua);
+            return enumerable.ToLuaTable(lua, version);
 
-        return value.ToLuaTable(lua);
+        return value.ToLuaTable(lua, version);
     }
 
-    public static LuaTable ToLuaTable(this IEnumerable collection, Lua lua)
+    public static LuaTable ToLuaTable(this IEnumerable collection, Lua lua, int version = 1)
     {
         ArgumentNullException.ThrowIfNull(lua);
 
@@ -69,20 +72,20 @@ public static class LuaExtensions
 
         foreach (var item in collection)
         {
-            luaTable[index++] = convertToLua(item, lua);
+            luaTable[index++] = convertToLua(item, lua, version);
         }
 
         return luaTable;
     }
 
-    public static LuaTable ToLuaTable(this object obj, Lua lua)
+    public static LuaTable ToLuaTable(this object obj, Lua lua, int version = 1)
     {
         ArgumentNullException.ThrowIfNull(lua);
 
         if (obj == null) return null;
 
         if (obj is IEnumerable enumerable and not string)
-            return enumerable.ToLuaTable(lua);
+            return enumerable.ToLuaTable(lua, version);
 
         currentDepth++;
         Debug.Assert(currentDepth <= max_depth,
@@ -107,22 +110,15 @@ public static class LuaExtensions
             var itemTable = lua.DoString("return {}")[0] as LuaTable;
             Debug.Assert(itemTable != null);
 
-            // to not break things
-            if (obj is HitObject o)
+            foreach (var propGroup in typeCache.Properties)
             {
-                var d = o as IHasDuration;
-                itemTable["holdTime"] = d?.Duration ?? 0;
-                itemTable["hitSound"] = o.Sample;
-                itemTable["visualLane"] = 1; // this has been fully removed, so just return a static value
-                // TODO: fix type prop
-            }
+                var cachedProp = LuaVersionResolver.SelectBestMatch(propGroup.Value, version, $"{type.Name}.{propGroup.Key}");
+                if (cachedProp == null) continue;
 
-            foreach (var cachedProp in typeCache.Properties)
-            {
                 try
                 {
                     var value = cachedProp.Property.GetValue(obj);
-                    itemTable[cachedProp.LuaName] = convertToLua(value, lua);
+                    itemTable[cachedProp.LuaName] = convertToLua(value, lua, version);
                 }
                 catch (Exception ex)
                 {
@@ -130,12 +126,15 @@ public static class LuaExtensions
                 }
             }
 
-            foreach (var cachedField in typeCache.Fields)
+            foreach (var fieldGroup in typeCache.Fields)
             {
+                var cachedField = LuaVersionResolver.SelectBestMatch(fieldGroup.Value, version, $"{type.Name}.{fieldGroup.Key}");
+                if (cachedField == null) continue;
+
                 try
                 {
                     var value = cachedField.Field.GetValue(obj);
-                    var luaValue = convertToLua(value, lua);
+                    var luaValue = convertToLua(value, lua, version);
 
                     itemTable[cachedField.LuaName] = luaValue;
                     itemTable[cachedField.OriginalName] = luaValue;
@@ -146,8 +145,11 @@ public static class LuaExtensions
                 }
             }
 
-            foreach (var cachedMethod in typeCache.Methods)
+            foreach (var methodGroup in typeCache.Methods)
             {
+                var cachedMethod = LuaVersionResolver.SelectBestMatch(methodGroup.Value, version, $"{type.Name}.{methodGroup.Key}");
+                if (cachedMethod == null) continue;
+
                 try
                 {
                     string tempKey = $"__temp_func_{Guid.NewGuid():N}";
@@ -201,12 +203,16 @@ public static class LuaExtensions
             var attr = prop.GetCustomAttribute<LuaMemberAttribute>(true);
             string luaName;
 
-            if (attr != null)
+            if (attr != null && !string.IsNullOrEmpty(attr.Name))
                 luaName = attr.Name;
             else
                 luaName = prop.Name.IsUpperCase() ? prop.Name.ToLower() : prop.Name.Camelize();
 
-            typeCache.Properties.Add(new LuaPropertiesCache(prop, luaName));
+            if (!typeCache.Properties.TryGetValue(luaName, out var list))
+                typeCache.Properties[luaName] = list = new();
+
+            var ver = prop.GetCustomAttribute<LuaVersionAttribute>(true);
+            list.Add(new LuaPropertiesCache(prop, luaName, ver));
         }
 
         var fields = type.GetFields(
@@ -221,7 +227,12 @@ public static class LuaExtensions
                 continue;
 
             string luaName = char.ToLowerInvariant(field.Name[0]) + field.Name[1..];
-            typeCache.Fields.Add(new LuaFieldsCache(field, luaName, field.Name));
+
+            if (!typeCache.Fields.TryGetValue(luaName, out var list))
+                typeCache.Fields[luaName] = list = new();
+
+            var ver = field.GetCustomAttribute<LuaVersionAttribute>(true);
+            list.Add(new LuaFieldsCache(field, luaName, field.Name, ver));
         }
 
         var methods = type.GetMethods(
@@ -242,7 +253,11 @@ public static class LuaExtensions
                 ? attr.Name
                 : (method.Name.IsUpperCase() ? method.Name.ToLower() : method.Name.Camelize());
 
-            typeCache.Methods.Add(new LuaMethodsCache(method, luaName));
+            if (!typeCache.Methods.TryGetValue(luaName, out var list))
+                typeCache.Methods[luaName] = list = new();
+
+            var ver = method.GetCustomAttribute<LuaVersionAttribute>(true);
+            list.Add(new LuaMethodsCache(method, luaName, ver));
         }
 
         return typeCache;
@@ -250,14 +265,14 @@ public static class LuaExtensions
 
     private class LuaTypeCache
     {
-        public List<LuaPropertiesCache> Properties { get; } = new();
-        public List<LuaFieldsCache> Fields { get; } = new();
-        public List<LuaMethodsCache> Methods { get; } = new();
+        public Dictionary<string, List<LuaPropertiesCache>> Properties { get; } = new();
+        public Dictionary<string, List<LuaFieldsCache>> Fields { get; } = new();
+        public Dictionary<string, List<LuaMethodsCache>> Methods { get; } = new();
     }
 
-    private record struct LuaPropertiesCache(PropertyInfo Property, string LuaName);
+    private record LuaPropertiesCache(PropertyInfo Property, string LuaName, LuaVersionAttribute Version) : IVersionedCandidate;
 
-    private record struct LuaFieldsCache(FieldInfo Field, string LuaName, string OriginalName);
+    private record LuaFieldsCache(FieldInfo Field, string LuaName, string OriginalName, LuaVersionAttribute Version) : IVersionedCandidate;
 
-    private record struct LuaMethodsCache(MethodInfo Method, string LuaName);
+    private record LuaMethodsCache(MethodInfo Method, string LuaName, LuaVersionAttribute Version) : IVersionedCandidate;
 }
