@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Text;
+using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Modes;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Requests.MapSets.Favorite;
 using fluXis.Online.Fluxel;
@@ -15,6 +18,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
+using rhym;
 
 namespace fluXis.Map.Drawables.Card;
 
@@ -47,6 +51,8 @@ public partial class MapCard
         private readonly Button favorite;
         private readonly Button download;
 
+        private readonly Dictionary<RoundedChip, ResourceLocation> modeChips = [];
+
         public Expand(APIMapSet set, Func<bool> view)
         {
             this.set = set;
@@ -78,45 +84,52 @@ public partial class MapCard
                             Direction = FillDirection.Vertical,
                             Padding = new MarginPadding(padding),
                             Spacing = new Vector2(diff_spacing),
-                            ChildrenEnumerable = set.Maps.OrderBy(x => x.Rating).Select(m => new GridContainer
+                            ChildrenEnumerable = set.Maps.OrderBy(x => x.Rating).Select(m =>
                             {
-                                RelativeSizeAxes = Axes.X,
-                                Height = diff_height,
-                                ColumnDimensions =
-                                [
-                                    new Dimension(GridSizeMode.Absolute, 32),
-                                    new Dimension(GridSizeMode.Absolute, 8),
-                                    new Dimension(),
-                                    new Dimension(GridSizeMode.Absolute, 8),
-                                    new Dimension(GridSizeMode.Absolute, 48)
-                                ],
-                                Content = new[]
+                                var chip = createChip(string.Empty, Theme.Highlight).With(x =>
                                 {
-                                    new[]
+                                    x.AutoSizeAxes = Axes.None;
+                                    x.RelativeSizeAxes = Axes.X;
+                                    x.Height = 14;
+                                });
+
+                                modeChips[chip] = m.Mode;
+
+                                return new GridContainer
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    Height = diff_height,
+                                    ColumnDimensions =
+                                    [
+                                        new Dimension(GridSizeMode.Absolute, 32),
+                                        new Dimension(GridSizeMode.Absolute, 8),
+                                        new Dimension(),
+                                        new Dimension(GridSizeMode.Absolute, 8),
+                                        new Dimension(GridSizeMode.Absolute, 48)
+                                    ],
+                                    Content = new[]
                                     {
-                                        createChip($"{m.Mode}K", Theme.GetKeyCountColor(m.Mode)).With(x =>
+                                        new[]
                                         {
-                                            x.AutoSizeAxes = Axes.None;
-                                            x.RelativeSizeAxes = Axes.X;
-                                            x.Height = 14;
-                                        }),
-                                        Empty(),
-                                        new FluXisSpriteText
-                                        {
-                                            Text = m.Difficulty,
-                                            Anchor = Anchor.CentreLeft,
-                                            Origin = Anchor.CentreLeft,
-                                            WebFontSize = 10
-                                        },
-                                        Empty(),
-                                        createChip(m.Rating.ToStringInvariant("0.00"), Theme.GetDifficultyColor(m.Rating)).With(x =>
-                                        {
-                                            x.AutoSizeAxes = Axes.None;
-                                            x.RelativeSizeAxes = Axes.X;
-                                            x.Height = 14;
-                                        }),
+                                            chip,
+                                            Empty(),
+                                            new FluXisSpriteText
+                                            {
+                                                Text = m.Difficulty,
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.CentreLeft,
+                                                WebFontSize = 10
+                                            },
+                                            Empty(),
+                                            createChip(m.Rating.ToStringInvariant("0.00"), Theme.GetDifficultyColor(m.Rating)).With(x =>
+                                            {
+                                                x.AutoSizeAxes = Axes.None;
+                                                x.RelativeSizeAxes = Axes.X;
+                                                x.Height = 14;
+                                            }),
+                                        }
                                     }
-                                }
+                                };
                             })
                         },
 
@@ -163,6 +176,17 @@ public partial class MapCard
                     ]
                 }
             ];
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(GameModeManager modes)
+        {
+            foreach (var (chip, mode) in modeChips)
+            {
+                var gm = modes.Find(mode);
+                chip.BackgroundColour = gm?.GetColor(mode) ?? Theme.Highlight;
+                chip.Text = gm?.GetShortString(mode) ?? mode.Path;
+            }
         }
 
         protected override void LoadComplete()

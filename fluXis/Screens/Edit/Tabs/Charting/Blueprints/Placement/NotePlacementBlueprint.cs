@@ -1,7 +1,6 @@
 using System;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Actions.Generic;
-using fluXis.Screens.Edit.Tabs.Verify;
 using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Input;
@@ -32,7 +31,7 @@ public partial class NotePlacementBlueprint<T> : PlacementBlueprint
     public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
-        ((HitObject)Object).Lane = Math.Clamp(lane, 1, ((IVerifyContext)Map).MaxKeyCount);
+        ((HitObject)Object).Lane = Math.Clamp(lane, 1, Configuration.ColumnCount);
     }
 
     protected override void OnPlacementFinished(bool commit)

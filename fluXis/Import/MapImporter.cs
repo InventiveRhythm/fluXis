@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Modes;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Utils;
@@ -25,11 +26,24 @@ public class MapImporter
     /// </summary>
     public int ID { get; internal set; }
 
-    internal Func<string, MapSetResources> ResourceRequest { get; set; }
-    internal Storage Storage { get; set; }
-    internal FluXisRealm Realm { get; set; }
-    internal MapStore MapStore { get; set; }
-    internal NotificationManager Notifications { get; set; }
+    internal FluXisRealm Realm { get; private set; }
+    internal MapStore Store { get; private set; }
+    internal NotificationManager Notifications { get; private set; }
+    internal GameModeManager Modes { get; private set; }
+
+    private Func<string, MapSetResources> resourceRequest;
+    private Storage storage;
+
+    internal MapImporter ApplyValues(Func<string, MapSetResources> rq, Storage fs, FluXisRealm fr, MapStore ms, NotificationManager nm, GameModeManager gmm)
+    {
+        resourceRequest = rq;
+        storage = fs;
+        Realm = fr;
+        Store = ms;
+        Notifications = nm;
+        Modes = gmm;
+        return this;
+    }
 
     public virtual void Import(string path) => throw new NotImplementedException();
 
@@ -44,7 +58,7 @@ public class MapImporter
     /// <returns>
     /// The requested resource provider.
     /// </returns>
-    protected MapSetResources GetResourceProvider(string folder) => ResourceRequest(folder);
+    protected MapSetResources GetResourceProvider(string folder) => resourceRequest(folder);
 
     /// <summary>
     /// Used to pass the mapset to FluXisImport to add it to the database.
@@ -59,15 +73,14 @@ public class MapImporter
     {
         notification ??= CreateNotification();
 
-        new FluXisImport
-        {
-            MapStatus = ID,
-            Notification = notification,
-            Realm = Realm,
-            MapStore = MapStore,
-            Storage = Storage,
-            Notifications = Notifications
-        }.Import(path);
+        new FluXisImport { MapStatus = ID, Notification = notification }.ApplyValues(
+            _ => null,
+            storage,
+            Realm,
+            Store,
+            Notifications,
+            Modes
+        ).Import(path);
     }
 
     /// <summary>
@@ -82,7 +95,7 @@ public class MapImporter
     /// </returns>
     protected string CreateTempFolder(string name)
     {
-        string path = Path.Combine(Storage.GetFullPath("temp"), name);
+        string path = Path.Combine(storage.GetFullPath("temp"), name);
 
         if (Directory.Exists(path))
             Directory.Delete(path, true);
@@ -117,7 +130,7 @@ public class MapImporter
     /// </returns>
     protected string CreatePackage(string name, string folder)
     {
-        string path = Path.Combine(Storage.GetFullPath("temp"), PathUtils.RemoveAllInvalidPathCharacters(name) + ".fms");
+        string path = Path.Combine(storage.GetFullPath("temp"), PathUtils.RemoveAllInvalidPathCharacters(name) + ".fms");
         ZipFile.CreateFromDirectory(folder, path, CompressionLevel.NoCompression, false);
         return path;
     }

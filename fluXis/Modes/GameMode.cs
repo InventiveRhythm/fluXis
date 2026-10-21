@@ -7,6 +7,7 @@ using fluXis.Modes.Gameplay;
 using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Scoring.Processing.Health;
+using fluXis.Screens.Edit;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Screens.Edit.Tabs.Verify;
@@ -14,6 +15,7 @@ using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Platform;
 using osu.Framework.Timing;
 using rhym;
@@ -30,8 +32,16 @@ public abstract class GameMode : IFromAssembly
     public abstract void RegisterObjects(RhymIO io);
     public virtual IMapFormat? GetFormat(Storage storage, string ext) => null;
 
+    #region Icons and Labels
+
+    public abstract string GetShortString(ResourceLocation mode);
+    public abstract Colour4 GetColor(ResourceLocation mode);
+
+    #endregion
+
     #region Editor
 
+    public virtual EditorConfiguration? CreateEditorConfiguration(PlayableMap map) => null;
     public abstract EditorDrawableObject? CreateEditorObject(ITimedObject obj);
     public abstract ChartingTool[] GetEditorTools();
     public virtual IVerifyCheck[] CreateEditorChecks() => [];

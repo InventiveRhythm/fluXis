@@ -4,6 +4,4 @@ using rhym;
 namespace fluXis.Mode.Keys.Objects;
 
 [ResourceLocation("flux:keys/note")]
-public class Note : HitObject
-{
-}
+public class Note : HitObject;

@@ -60,7 +60,7 @@ public partial class TestMapCard : FluXisTestScene
                     Artist = "super cool artist",
                     Source = "somewhere",
                     Tags = "some, cool, and fitting, tags",
-                    Mode = 4,
+                    Mode = "flux:keys/4",
                     Status = 0,
                     BPM = 120,
                     Length = 12000,

@@ -115,9 +115,8 @@ public partial class HitErrorBar : GameplayHUDComponent
 
     private void addHit(TrackedHitObject result)
     {
-        // don't display landmines that haven't been triggered
-        // TODO: allow objects to define if they should show a judgement
-        // if (result.Type == ResultType.Landmine && result.Judgement == Judgement.Flawless) return;
+        if (!result.Object.ShouldShowJudgement(result.Judgement))
+            return;
 
         var time = -(result.Difference ?? 0);
         var judgement = result.Judgement;

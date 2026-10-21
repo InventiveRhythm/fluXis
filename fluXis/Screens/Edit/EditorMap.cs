@@ -353,6 +353,7 @@ public class EditorMap : IVerifyContext
     #region IVerifyContext Implementation
 
     GameModeManager IVerifyContext.Modes => editor.GameModes;
+    EditorConfiguration IVerifyContext.Configuration => editor.Configuration;
     PlayableMap IVerifyContext.Map => Playable;
     RealmMap IVerifyContext.RealmMap => RealmMap;
 

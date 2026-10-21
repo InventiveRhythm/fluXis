@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using fluXis.Map.Structures.Bases;
+using fluXis.Scoring.Enums;
 using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Lists;
@@ -35,6 +36,7 @@ public abstract class HitObject : ITimedObject
     [YamlIgnore, NotMapped]
     public ScrollGroup? ScrollGroup { get; set; }
 
+    public virtual bool ShouldShowJudgement(Judgement judgement) => true;
     public virtual string? GetSample(bool hit) => Sample;
 
     public virtual bool OnEditorMiddleClick() => false;
@@ -47,9 +49,24 @@ public abstract class HitObject : ITimedObject
     [YamlIgnore]
     private readonly List<HitObject> nestedObjects = [];
 
+    private bool hasNested;
+
     protected void AddNested(HitObject obj) => nestedObjects.Add(obj);
-    public virtual void CreateNested() { }
-    public void ClearNested() => nestedObjects.Clear();
+    protected virtual void CreateNested() { }
+
+    public void CreateNestedObjects()
+    {
+        if (hasNested) return;
+
+        CreateNested();
+        hasNested = true;
+    }
+
+    public void ClearNestedObjects()
+    {
+        nestedObjects.Clear();
+        hasNested = false;
+    }
 
     #endregion
 }

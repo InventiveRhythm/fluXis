@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Configuration;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Modes.Gameplay.Input;
 using fluXis.Scoring.Enums;
 using fluXis.Screens.Gameplay.Audio.Samples;
 using fluXis.Screens.Gameplay.Ruleset;
@@ -10,9 +12,13 @@ using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Framework.Lists;
 
 namespace fluXis.Modes.Gameplay.Objects;
@@ -197,4 +203,57 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
     }
 
     #endregion
+}
+
+public abstract partial class GameModeHitObjectManager<T> : GameModeHitObjectManager
+    where T : struct, Enum
+{
+    private InputManager input = null!;
+
+    protected GameModeHitObjectManager(RulesetContainer ruleset, PlayableMap map)
+        : base(ruleset, map)
+    {
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        if (!Playfield.IsSubPlayfield || Ruleset.PlayableMode.Keybinds is not IGameModeActions acts)
+            return;
+
+        acts.OnActionPress += i =>
+        {
+            var act = (T)Enum.ToObject(typeof(T), i);
+            var ev = new KeyBindingPressEvent<T>(input.CurrentState, act);
+
+            _ = ActiveObjects.FirstOrDefault(x =>
+            {
+                if (x is not IKeyBindingHandler<T> h)
+                    return false;
+
+                return x.NestedObjects.Any(y => y is IKeyBindingHandler<T> j && j.OnPressed(ev)) || h.OnPressed(ev);
+            });
+        };
+        acts.OnActionRelease += i =>
+        {
+            var act = (T)Enum.ToObject(typeof(T), i);
+            var ev = new KeyBindingReleaseEvent<T>(input.CurrentState, act);
+
+            ActiveObjects.ForEach(x =>
+            {
+                if (x is not IKeyBindingHandler<T> h)
+                    return;
+
+                x.NestedObjects.OfType<IKeyBindingHandler<T>>().ForEach(y => y.OnReleased(ev));
+                h.OnReleased(ev);
+            });
+        };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        input = GetContainingInputManager();
+    }
 }

@@ -1,6 +1,5 @@
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -11,62 +10,20 @@ namespace fluXis.Graphics.UserInterface;
 
 public partial class RoundedChip : CircularContainer
 {
-    private LocalisableString text = "text";
-    private ColourInfo backgroundColour = Theme.Background2;
-    private ColourInfo textColour = Theme.Text.Opacity(.75f);
+    public LocalisableString Text { set => spriteText.Text = value; }
+    public ColourInfo BackgroundColour { set => background.Colour = value; }
+    public ColourInfo TextColour { set => spriteText.Colour = value; }
 
-    public LocalisableString Text
-    {
-        get => text;
-        set
-        {
-            text = value;
+    public float WebFontSize { set => spriteText.WebFontSize = value; }
+    public float SidePadding { set => spriteText.Margin = new MarginPadding { Horizontal = value }; }
 
-            if (spriteText != null)
-                spriteText.Text = value;
-        }
-    }
-
-    public ColourInfo BackgroundColour
-    {
-        get => backgroundColour;
-        set
-        {
-            backgroundColour = value;
-
-            if (background != null)
-                background.Colour = value;
-        }
-    }
-
-    public ColourInfo TextColour
-    {
-        get => textColour;
-        set
-        {
-            textColour = value;
-
-            if (spriteText != null)
-                spriteText.Colour = value;
-        }
-    }
-
-    public float FontSize { get; set; } = FluXisSpriteText.GetWebFontSize(12);
-    public float WebFontSize { set => FontSize = FluXisSpriteText.GetWebFontSize(value); }
-    public float SidePadding { get; init; } = 12;
-
-    private Box background;
-    private FluXisSpriteText spriteText;
+    private readonly Box background;
+    private readonly FluXisSpriteText spriteText;
 
     public RoundedChip()
     {
         AutoSizeAxes = Axes.X;
         Height = 20;
-    }
-
-    [BackgroundDependencyLoader]
-    private void load()
-    {
         Masking = true;
 
         InternalChildren = new Drawable[]
@@ -74,16 +31,16 @@ public partial class RoundedChip : CircularContainer
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = BackgroundColour
+                Colour = Theme.Background2
             },
             spriteText = new FluXisSpriteText
             {
-                Text = Text,
-                FontSize = FontSize,
-                Colour = TextColour,
+                Text = "LABEL",
+                WebFontSize = 12,
+                Colour = Theme.Text.Opacity(.75f),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Margin = new MarginPadding { Horizontal = SidePadding }
+                Margin = new MarginPadding { Horizontal = 12 }
             }
         };
     }

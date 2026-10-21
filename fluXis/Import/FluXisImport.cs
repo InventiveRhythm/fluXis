@@ -5,7 +5,6 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Database;
 using fluXis.Database.Maps;
-using fluXis.Modes;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
 using fluXis.Utils;
@@ -29,7 +28,6 @@ public class FluXisImport : MapImporter
     public Action<bool> OnComplete { get; set; }
 
     public TaskNotificationData Notification { get; set; }
-    public GameModeManager GameModes { get; set; }
 
     public override void Import(string path)
     {
@@ -88,7 +86,7 @@ public class FluXisImport : MapImporter
                         realm.Add(set);
 
                         set = set.Detach();
-                        MapStore.AddMapSet(set);
+                        Store.AddMapSet(set);
                     });
                 }
             }
@@ -96,7 +94,7 @@ public class FluXisImport : MapImporter
             try { File.Delete(path); }
             catch { Logger.Log($"Failed to delete {path}"); }
 
-            Notification.ClickAction = () => MapStore.Present(set);
+            Notification.ClickAction = () => Store.Present(set);
             Notification.State = LoadingState.Complete;
             OnComplete?.Invoke(true);
         }
@@ -153,7 +151,7 @@ public class FluXisImport : MapImporter
             original = original.Detach();
         });
 
-        MapStore.UpdateMapSet(original, original);
+        Store.UpdateMapSet(original, original);
     }
 
     private RealmMapSet getRealmMaps(string path, Guid? id = null)
@@ -162,7 +160,7 @@ public class FluXisImport : MapImporter
         var maps = new List<RealmMap>();
 
         var set = new RealmMapSet(maps) { ID = id ?? Guid.NewGuid() };
-        MapStore.AssignResources(set);
+        Store.AssignResources(set);
 
         var dir = MapFiles.GetFullPath(set.ID.ToString()) + "/";
 
@@ -184,7 +182,7 @@ public class FluXisImport : MapImporter
 
         foreach (var file in storage.GetFiles(string.Empty))
         {
-            var format = GameModes.GetFormat(storage, Path.GetExtension(file) ?? string.Empty);
+            var format = Modes.GetFormat(storage, Path.GetExtension(file) ?? string.Empty);
 
             if (format?.IsChart(file) ?? false)
             {
@@ -198,20 +196,20 @@ public class FluXisImport : MapImporter
                     audioHashes[playable.AudioFile] = audioHash;
                 }
 
-                var realm = new RealmMap { FileName = file, AudioHash = audioHash, StatusInt = MapStatus, MapSet = set };
-                playable.SaveIntoRealmMap(realm);
-                maps.Add(realm);
+                var rMap = new RealmMap { FileName = file, AudioHash = audioHash, StatusInt = MapStatus, MapSet = set };
+                playable.SaveIntoRealmMap(rMap);
+                maps.Add(rMap);
 
-                if (string.IsNullOrEmpty(realm.Metadata.ColorHex))
+                if (string.IsNullOrEmpty(rMap.Metadata.ColorHex))
                 {
-                    var background = realm.GetBackgroundStream();
+                    var background = rMap.GetBackgroundStream();
 
                     if (background != null)
                     {
                         var color = ImageUtils.GetAverageColour(background);
 
                         if (color != Colour4.Transparent)
-                            realm.Metadata.Color = color;
+                            rMap.Metadata.Color = color;
                     }
                     else
                         Logger.Log("Failed to load background for color extraction");
@@ -220,20 +218,20 @@ public class FluXisImport : MapImporter
                 if (!string.IsNullOrEmpty(playable.CoverFile))
                     set.Cover = playable.CoverFile;
 
-                if (realm.StatusInt >= 100)
+                if (rMap.StatusInt >= 100)
                     continue;
 
                 try
                 {
-                    var lookup = MapStore.LookUpHash(realm.Hash);
+                    var lookup = Store.LookUpHash(rMap.Hash);
                     if (lookup == null) continue;
 
-                    realm.OnlineID = lookup.ID;
-                    realm.StatusInt = lookup.Status;
-                    realm.Rating = (float)lookup.Rating;
+                    rMap.OnlineID = lookup.ID;
+                    rMap.StatusInt = lookup.Status;
+                    rMap.Rating = (float)lookup.Rating;
                     set.OnlineID = lookup.SetID;
                     set.DateSubmitted = TimeUtils.GetFromSeconds(lookup.DateSubmitted);
-                    realm.LastOnlineUpdate = TimeUtils.GetFromSeconds(lookup.LastUpdated);
+                    rMap.LastOnlineUpdate = TimeUtils.GetFromSeconds(lookup.LastUpdated);
 
                     if (lookup.DateRanked != null)
                         set.DateRanked = TimeUtils.GetFromSeconds(lookup.DateRanked.Value);

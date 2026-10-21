@@ -1,7 +1,6 @@
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Map.Drawables;
 using fluXis.Online.API.Models.Maps;
 using Humanizer;
 using osu.Framework.Allocation;
@@ -54,13 +53,14 @@ public partial class DifficultyChip : CircularContainer
                 Direction = FillDirection.Horizontal,
                 Children = new Drawable[]
                 {
-                    new KeyModeIcon(map.Mode)
+                    // TODO: icons
+                    /*new KeyModeIcon(map.Mode)
                     {
                         Size = new Vector2(48),
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         Colour = color
-                    },
+                    },*/
                     text = new FillFlowContainer
                     {
                         AutoSizeAxes = Axes.Both,

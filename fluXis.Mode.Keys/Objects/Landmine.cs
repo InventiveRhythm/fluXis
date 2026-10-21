@@ -1,5 +1,6 @@
 using fluXis.Map.Structures;
 using rhym;
+using fluXis.Scoring.Enums;
 
 namespace fluXis.Mode.Keys.Objects;
 
@@ -10,6 +11,7 @@ public class Landmine : HitObject
 
     public bool Hidden { get; set; }
 
+    public override bool ShouldShowJudgement(Judgement judgement) => judgement != Judgement.Flawless;
     public override string? GetSample(bool hit) => null;
 
     public override bool OnEditorMiddleClick()

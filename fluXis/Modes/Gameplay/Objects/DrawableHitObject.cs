@@ -39,7 +39,7 @@ public abstract partial class DrawableHitObject : CompositeDrawable
     protected DrawableHitObject(HitObject o)
     {
         Object = o;
-        Object.CreateNested();
+        Object.CreateNestedObjects();
 
         Tracked = new TrackedHitObject(o);
         hitWindowLazy = new Lazy<HitWindows>(() => Ruleset.PlayableMode.CreateHitWindowFor(Object));
@@ -75,7 +75,7 @@ public abstract partial class DrawableHitObject : CompositeDrawable
     {
         UpdateJudgement(false);
         NestedObjects.ForEach(x => x.OnDestroy());
-        Object.ClearNested();
+        Object.CreateNestedObjects();
     }
 
     protected bool UpdateJudgement(bool byUser)

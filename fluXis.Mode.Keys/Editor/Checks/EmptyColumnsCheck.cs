@@ -12,7 +12,7 @@ public class EmptyColumnsCheck : IVerifyCheck
         var hits = ctx.Map.ObjectsOfType<HitObject>();
         if (hits.Length == 0) yield break;
 
-        var count = ctx.MaxKeyCount;
+        var count = ctx.Configuration.ColumnCount;
 
         for (int i = 0; i < count; i++)
         {

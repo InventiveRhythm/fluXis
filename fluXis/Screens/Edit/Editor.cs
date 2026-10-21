@@ -140,6 +140,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public EditorClock EditorClock { get; private set; }
     private EditorSettings settings;
     private EditorActionStack actionStack;
+    public EditorConfiguration Configuration { get; private set; }
 
     private long openTime;
     private long lastSaveTime;
@@ -243,6 +244,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs(actionStack = new EditorActionStack(EditorMap) { NotificationManager = notifications });
         dependencies.CacheAs(modding = new EditorModding());
         dependencies.CacheAs(settings = new EditorSettings(config, keybinds));
+        dependencies.CacheAs(Configuration = GameMode.CreateEditorConfiguration(EditorMap.Playable) ?? new EditorConfiguration());
 
         updateStateHash();
 
@@ -1043,7 +1045,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             {
                 overlay.SubText = $"Checking for issues in '{map.Difficulty}'...";
 
-                var results = verifyTab.RunVerify(new BasicVerifyContext(map, Game.GameModes, LoadComponent));
+                var results = verifyTab.RunVerify(new BasicVerifyContext(map, Configuration, Game.GameModes, LoadComponent));
                 files[map.Difficulty] = results.ProblematicIssues;
             }
 

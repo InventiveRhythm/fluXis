@@ -19,6 +19,9 @@ public partial class PlacementBlueprint : Container
     protected EditorSettings Settings { get; private set; }
 
     [Resolved]
+    protected EditorConfiguration Configuration { get; private set; }
+
+    [Resolved]
     protected EditorMap Map { get; private set; }
 
     [Resolved]
