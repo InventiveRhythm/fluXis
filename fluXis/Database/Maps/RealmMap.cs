@@ -11,7 +11,6 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
-using osuTK.Input;
 using Realms;
 using rhym;
 
