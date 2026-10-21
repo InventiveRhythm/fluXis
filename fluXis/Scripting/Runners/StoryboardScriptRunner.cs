@@ -22,7 +22,12 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
 {
     private readonly List<StoryboardElement> addTo;
 
+    [CanBeNull]
+    private readonly AudioAnalyzer audioAnalyzer;
+
     private readonly Storyboard storyboard;
+    private readonly LuaSettings settings;
+    private readonly ISkin skin;
 
     // This is used to keep compatibility between lua and the standard storyboard, like migrations for example.
     private Storyboard temporaryStoryboard;
@@ -39,36 +44,57 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
         ISkin skin,
         List<StoryboardElement> addTo = null)
     {
+        this.audioAnalyzer = audioAnalyzer;
         this.storyboard = storyboard;
+        this.settings = settings;
+        this.skin = skin;
         Map = map;
 
         this.addTo = addTo ?? this.storyboard.Elements;
-
         ScreenResolution = new LuaVector2(storyboard.Resolution);
-        AddField("screen", ScreenResolution);
-        AddField("metadata", new LuaMetadata(map));
-        AddField("settings", settings);
-        AddField("skin", new LuaSkin(skin));
-        AddField("map", new LuaMap(map, Lua));
-        AddField("AudioAnalyzer", new LuaAudioAnalyzer(audioAnalyzer, Lua));
+    }
 
-        AddFunction("Add", add);
+    protected override void Initialize()
+    {
+        base.Initialize();
+
+        VersionedLua.AddField("screen", ScreenResolution);
+        VersionedLua.AddField("metadata", new LuaMetadata(Map));
+        VersionedLua.AddField("settings", settings);
+        VersionedLua.AddField("skin", new LuaSkin(skin));
+        VersionedLua.AddField("map", new LuaMap(Map, Lua));
+        VersionedLua.AddField("AudioAnalyzer", new LuaAudioAnalyzer(audioAnalyzer, Lua));
+
+        VersionedLua.AddFunction("Add", add);
 
         // enums
-        AddFunction("Layer", (string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
-        AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
-        AddFunction("BlendMode", (string str) => Enum.TryParse(str, out DefaultBlendingParameters blendMode) ? blendMode : DefaultBlendingParameters.Mix);
-        // AddFunction("HitObjectType", (string str) => Enum.TryParse(str, out HitObjectType hitType) ? hitType : HitObjectType.Normal);
+        VersionedLua.AddFunction("Layer", parseLayer);
+        VersionedLua.AddFunction("Anchor", parseAnchor);
+        VersionedLua.AddFunction("BlendMode", parseBlendMode);
+        VersionedLua.AddFunction("HitObjectType", parseHitObjectTypeLegacy);
 
         // elements
-        AddFunction("StoryboardBox", newBox);
-        AddFunction("StoryboardOutlineBox", newOutlineBox);
-        AddFunction("StoryboardSprite", newSprite);
-        AddFunction("StoryboardText", newText);
-        AddFunction("StoryboardCircle", newCircle);
-        AddFunction("StoryboardOutlineCircle", newOutlineCircle);
-        AddFunction("StoryboardSkinSprite", newSkinSprite);
+        VersionedLua.AddFunction("StoryboardBox", newBox);
+        VersionedLua.AddFunction("StoryboardOutlineBox", newOutlineBox);
+        VersionedLua.AddFunction("StoryboardSprite", newSprite);
+        VersionedLua.AddFunction("StoryboardText", newText);
+        VersionedLua.AddFunction("StoryboardCircle", newCircle);
+        VersionedLua.AddFunction("StoryboardOutlineCircle", newOutlineCircle);
+        VersionedLua.AddFunction("StoryboardSkinSprite", newSkinSprite);
     }
+
+    #region Enum Parsing
+
+    [LuaVersion(Until = 2)]
+    private LuaHitObjectTypeLegacy parseHitObjectTypeLegacy(string str) => Enum.TryParse(str, out LuaHitObjectTypeLegacy hitType) ? hitType : LuaHitObjectTypeLegacy.Normal;
+
+    private DefaultBlendingParameters parseBlendMode(string str) => Enum.TryParse(str, out DefaultBlendingParameters blendMode) ? blendMode : DefaultBlendingParameters.Mix;
+
+    private Anchor parseAnchor(string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft;
+
+    private StoryboardLayer parseLayer(string input) => Enum.TryParse(input, out StoryboardLayer layer) ? layer : StoryboardLayer.Background;
+
+    #endregion
 
     public void Process(StoryboardElement element)
     {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit;
@@ -16,10 +15,10 @@ public class Storyboard : EditorMap.IChangeNotifier
 {
     /// <summary>
     /// Version of the storyboard api.
-    /// Has to start at V1 because old storyboards didn't have this field so, this is for updating old maps.
+    /// Has to start at 1 because old storyboards didn't have this field so, this is for updating old maps.
     /// </summary>
     [JsonProperty("version")]
-    public Version Version { get; set; } = StoryboardApiVersion.V1;
+    public int Version { get; set; } = 1;
 
     [JsonProperty("resolution")]
     public Vector2 Resolution { get; set; } = new(1920, 1080);
@@ -34,9 +33,9 @@ public class Storyboard : EditorMap.IChangeNotifier
     public bool Empty => Elements.Count == 0 && Compounds.Count == 0;
 
     [JsonIgnore]
-    private static readonly Dictionary<Version, Action<Storyboard>> migrations = new()
+    private static readonly Dictionary<int, Action<Storyboard>> migrations = new()
     {
-        [StoryboardApiVersion.V2] = sb =>
+        [2] = sb =>
         {
             sb.Elements.ForEach(e => e.Animations.ForEach(a => a.StartTime -= e.StartTime));
         },
@@ -69,10 +68,7 @@ public class Storyboard : EditorMap.IChangeNotifier
         while (Version < StoryboardApiVersion.LATEST)
         {
             // Keep migrating to the next known version until the latest
-            Version = StoryboardApiVersion.VERSIONS
-                                          .Where(v => v > Version)
-                                          .OrderBy(v => v)
-                                          .First();
+            Version++;
 
             if (migrations.TryGetValue(Version, out var migrate))
                 migrate(this);
