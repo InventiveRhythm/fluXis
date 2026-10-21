@@ -1,6 +1,8 @@
 ---@meta
 
----@param v number
+---Sets the version of the script allowing to use an older api or a newer one.
+---MUST be at the top of the file after env.
+---@param v number The version to use
 function SetVersion(v) end
 
 ---@param from number

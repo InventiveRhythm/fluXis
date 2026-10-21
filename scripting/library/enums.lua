@@ -43,16 +43,6 @@
 ---@nodiscard
 function Easing(input) end
 
----@alias HitObjectType string
----| "Normal"
----| "Tick"
----| "Landmine"
-
----@param input HitObjectType
----@return number
----@nodiscard
-function HitObjectType(input) end
-
 ---@alias AnchorName string
 ---| "TopLeft"
 ---| "TopCentre"
@@ -90,26 +80,6 @@ function BlendMode(input) end
 ---| "Low"
 ---| "Mid"
 ---| "High"
-
----@alias EventType string
----| "BeatPulse"
----| "ColorFade"
----| "Flash"
----| "LaneSwitch"
----| "LayerFade"
----| "Pulse"
----| "Shader"
----| "Shake"
----| "HitObjectEase"
----| "ScrollMultiplier"
----| "TimeOffset"
----| "PlayfieldMove"
----| "PlayfieldRotate"
----| "PlayfieldScale"
----| "Loop"
----| "CameraMove"
----| "CameraRotate"
----| "CameraScale"
 
 ---@alias ParameterDefinitionType string
 ---| "string"

@@ -2,6 +2,7 @@
 
 ---@class BeatPulseEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field strength number
 ---@field zoomIn number How much of the length should be used to zoom in. (in %)
@@ -10,6 +11,7 @@ BeatPulseEvent = {}
 
 ---@class ColorFadeEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field fadePrimary boolean
 ---@field primary Color4
@@ -25,6 +27,7 @@ ColorFadeEvent = {}
 
 ---@class FlashEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field duration number
 ---@field inBackground boolean
@@ -35,8 +38,18 @@ ColorFadeEvent = {}
 ---@field endOpacity number
 FlashEvent = {}
 
+---@class HitSoundFade
+---@field time number The time at which the volume change should start.
+---@field lane number
+---@field hitSound string The sound to change the volume of.
+---@field volume number The volume to fade to.
+---@field duration number The duration of the fade.
+---@field easing number The easing function to use for the fade.
+HitSoundFade = {}
+
 ---@class LaneSwitchEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field count number
 ---@field duration number
@@ -45,6 +58,7 @@ LaneSwitchEvent = {}
 
 ---@class LayerFadeEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field duration number
 ---@field alpha number
@@ -56,12 +70,14 @@ LayerFadeEvent = {}
 
 ---@class NoteEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field content string
 NoteEvent = {}
 
 ---@class PulseEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field width number
 ---@field duration number
@@ -69,8 +85,19 @@ NoteEvent = {}
 ---@field easing number
 PulseEvent = {}
 
+---@class ScrollVelocity
+---@field time number
+---@field lane number
+---@field group string
+---@field multiplier number
+---@field groups string[]
+---@deprecated
+---@field laneMask boolean[] (deprecated: Use ScrollVelocity.Groups instead.)
+ScrollVelocity = {}
+
 ---@class ShaderEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field shaderName string
 ---@field duration number
@@ -78,17 +105,13 @@ PulseEvent = {}
 ---@field useStartValue boolean
 ---@field startParameters string
 ---@field endParameters string
----@field parameters string
+---@deprecated
+---@field parameters string (deprecated: Use EndParameters instead.)
 ShaderEvent = {}
-
----@class ShaderParameters
----@field strength number
----@field strength2 number
----@field strength3 number
-ShaderParameters = {}
 
 ---@class ShakeEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field duration number
 ---@field magnitude number
@@ -96,12 +119,14 @@ ShakeEvent = {}
 
 ---@class HitObjectEaseEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field easing number
 HitObjectEaseEvent = {}
 
 ---@class ScrollMultiplierEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field duration number
 ---@field multiplier number
@@ -111,6 +136,7 @@ ScrollMultiplierEvent = {}
 
 ---@class TimeOffsetEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field duration number
 ---@field useStartValue boolean
@@ -121,6 +147,7 @@ TimeOffsetEvent = {}
 
 ---@class PlayfieldMoveEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field offsetX number
 ---@field offsetY number
@@ -133,6 +160,7 @@ PlayfieldMoveEvent = {}
 
 ---@class PlayfieldRotateEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field roll number
 ---@field duration number
@@ -143,6 +171,7 @@ PlayfieldRotateEvent = {}
 
 ---@class PlayfieldScaleEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field scaleX number
 ---@field scaleY number
@@ -154,6 +183,7 @@ PlayfieldScaleEvent = {}
 
 ---@class CameraMoveEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field x number
 ---@field y number
@@ -163,6 +193,7 @@ CameraMoveEvent = {}
 
 ---@class CameraRotateEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field roll number
 ---@field duration number
@@ -171,6 +202,7 @@ CameraRotateEvent = {}
 
 ---@class CameraScaleEvent
 ---@field time number
+---@field lane number
 ---@field group string
 ---@field scale number
 ---@field duration number
