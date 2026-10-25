@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 using osu.Framework.Localisation;
@@ -17,7 +16,7 @@ public class APIMapSet
     public APIUser Creator { get; set; } = APIUser.CreateUnknown(0);
 
     [JsonProperty("maps")]
-    public List<APIMap> Maps { get; set; } = new();
+    public APIMap[] Maps { get; set; } = [];
 
     [JsonProperty("title")]
     public string Title { get; set; } = string.Empty;

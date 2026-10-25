@@ -42,8 +42,8 @@ public partial class MapCard
         protected override double HoverDelay => 400;
 
         public float ContentHeight => padding * 2
-                                      + diff_height * set.Maps.Count
-                                      + diff_spacing * (set.Maps.Count - 1)
+                                      + diff_height * set.Maps.Length
+                                      + diff_spacing * (set.Maps.Length - 1)
                                       + BUTTON_HEIGHT;
 
         private readonly APIMapSet set;
@@ -185,7 +185,7 @@ public partial class MapCard
             {
                 var gm = modes.Find(mode);
                 chip.BackgroundColour = gm?.GetColor(mode) ?? Theme.Highlight;
-                chip.Text = gm?.GetShortString(mode) ?? mode.Path;
+                chip.Text = gm?.GetShortString(mode) ?? mode;
             }
         }
 

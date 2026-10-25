@@ -1,5 +1,4 @@
-﻿using System;
-using fluXis.Audio;
+﻿using fluXis.Audio;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Drawables;
@@ -8,7 +7,6 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Scores;
 using fluXis.Online.Drawables.Images;
-using fluXis.Scoring.Enums;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using Midori.Utils.Extensions;
@@ -45,8 +43,6 @@ public partial class ProfileScore : Container
         CornerRadius = 8;
         Masking = true;
 
-        var rank = Enum.Parse<ScoreRank>(score.Rank);
-
         var topLine = new FluXisTextFlow { RelativeSizeAxes = Axes.X, AutoSizeAxes = Axes.Y, WebFontSize = 14 };
         topLine.AddText(score.Map?.LocalizedTitle);
         topLine.AddText(" ");
@@ -69,11 +65,11 @@ public partial class ProfileScore : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = DrawableScoreRank.GetColor(rank, true)
+                Colour = DrawableScoreRank.GetColor(score.Rank, true)
             },
             new DrawableScoreRank
             {
-                Rank = rank,
+                Rank = score.Rank,
                 FontSize = FluXisSpriteText.GetWebFontSize(20),
                 AlternateColor = true,
                 Shadow = false,

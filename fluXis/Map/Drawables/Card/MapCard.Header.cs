@@ -212,6 +212,8 @@ public partial class MapCard
             var grouped = sorted.GroupBy(x => modes.Find(x));
             return string.Join("", grouped.Select(x =>
             {
+                if (x.Key is null) return "???";
+
                 var lowest = x.Key.GetShortString(sorted.First());
                 var highest = x.Key.GetShortString(sorted.Last());
 

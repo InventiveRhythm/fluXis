@@ -132,7 +132,7 @@ public partial class DrawableChatMessage : Container
     {
         var groups = InitialMessage.Sender.Groups;
 
-        if (groups.Count == 0)
+        if (groups.Length == 0)
             return Empty().With(d => d.Alpha = 0);
 
         return new FluXisSpriteIcon

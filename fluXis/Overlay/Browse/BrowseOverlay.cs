@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Preview;
@@ -24,7 +25,6 @@ using fluXis.Overlay.Notifications;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -264,26 +264,14 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         if (reload)
             flow.Clear();
 
-        var query = currentQuery;
-        // ReSharper disable once AccessToModifiedClosure
-        filterKeymode.ForEach(x => query += $" k={x}");
-
-        if (filterStatus.Count == 4)
-            query += " s=a";
-        else
+        var query = new Dictionary<string, string>
         {
-            filterStatus.ForEach(x => query += $" s={x switch {
-                MapStatus.Unsubmitted => "u",
-                MapStatus.Pending => "pen",
-                MapStatus.Impure => "i",
-                MapStatus.Pure => "p",
-                _ => throw new ArgumentOutOfRangeException(nameof(x), x, null) }
-            }");
-        }
+            ["query"] = currentQuery,
+            ["status"] = string.Join(',', filterStatus.Select(x => x.ToString().ToLowerInvariant())),
+            ["modes"] = string.Join(',', filterKeymode.Select(x => $"flux:keys/{x}"))
+        };
 
-        Logger.Log(query);
-
-        var req = new MapSetsRequest(offset, 48, query);
+        var req = new MapSetsRequest(offset, query);
         req.Success += response =>
         {
             loadedAll = response.Data.Count == 0;

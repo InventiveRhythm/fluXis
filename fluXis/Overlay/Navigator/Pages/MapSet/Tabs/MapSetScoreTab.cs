@@ -13,7 +13,6 @@ using fluXis.Online.API.Requests.Maps;
 using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
-using fluXis.Scoring.Enums;
 using fluXis.Screens.Select.Info.Tabs.Scores;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
@@ -144,7 +143,7 @@ public partial class MapSetScoreTab : TabContainer
                     Child = new DrawableScoreRank
                     {
                         FontSize = FluXisSpriteText.GetWebFontSize(14),
-                        Rank = Enum.Parse<ScoreRank>(s.Rank),
+                        Rank = s.Rank,
                         LetterSpacing = 8,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre

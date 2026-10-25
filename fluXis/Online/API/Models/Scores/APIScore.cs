@@ -1,5 +1,6 @@
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Users;
+using fluXis.Scoring.Enums;
 using Newtonsoft.Json;
 using rhym;
 
@@ -37,7 +38,7 @@ public class APIScore
     public float Accuracy { get; set; }
 
     [JsonProperty("grade")]
-    public string Rank { get; set; } = "";
+    public ScoreRank Rank { get; set; }
 
     [JsonProperty("maxcombo")]
     public int MaxCombo { get; set; }

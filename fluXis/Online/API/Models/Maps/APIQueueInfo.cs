@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using fluXis.Online.API.Models.Maps.Modding;
 using Newtonsoft.Json;
 
@@ -9,7 +8,7 @@ namespace fluXis.Online.API.Models.Maps;
 public class APIQueueInfo
 {
     [JsonProperty("votes")]
-    public List<bool> Votes { get; set; } = new();
+    public bool[] Votes { get; set; } = [];
 
     [JsonProperty("last_action")]
     public APIModdingAction? LastAction { get; set; }

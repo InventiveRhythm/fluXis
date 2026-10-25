@@ -92,7 +92,7 @@ public partial class DifficultyChip : CircularContainer
                                 Height = 16,
                                 Text = $"mapped by {map.Mappers.Select(x => x.Username).Humanize()}",
                                 WebFontSize = 10,
-                                Alpha = map.Mappers.Count == 1 && map.Mappers.Any(x => x.ID == set.Creator.ID) ? 0 : .8f
+                                Alpha = map.Mappers.Length == 1 && map.Mappers.Any(x => x.ID == set.Creator.ID) ? 0 : .8f
                             }
                         }
                     }
