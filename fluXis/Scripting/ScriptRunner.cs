@@ -43,7 +43,7 @@ public class ScriptRunner
         AddFunction("DefineParameter", defineParameter);
         AddFunction("SetVersion", setVersion);
 
-        // Lua.DoString("import = function() end"); // disable importing
+        Lua.DoString("import = function() end"); // disable importing
     }
 
     public void AddFunction(string name, Delegate function)
@@ -52,21 +52,23 @@ public class ScriptRunner
     [CanBeNull]
     protected LuaFunction GetFunction(string name)
     {
-        try
+        return null;
+
+        /*try
         {
-            return Lua.GetFunction(name);
+            // return Lua.GetFunction(name);
         }
         catch
         {
             return null;
-        }
+        }*/
     }
 
     protected void AddField(string name, ILuaModel value) => Lua[name] = value;
 
     public void Run(string code)
     {
-        Lua.DoString(code);
+        // Lua.DoString(code);
     }
 
     [LuaGlobal(Name = "SetVersion")]

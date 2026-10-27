@@ -81,7 +81,7 @@ public class StoryboardScriptRunner : ScriptRunner, IHasLoadedValue
             }
 
             var l = LuaStoryboardElement.FromElement(element);
-            func.Call(l);
+            // func.Call(l);
             Loaded = true;
         }
         catch (Exception ex)
