@@ -7,7 +7,6 @@ using fluXis.Map.Structures;
 using fluXis.Map.Structures.Attributes;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects.Events;
-using fluXis.Screens.Edit.Tabs.Verify;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -29,6 +28,9 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
 
     [Resolved]
     private EditorSettings settings { get; set; }
+
+    [Resolved]
+    private EditorConfiguration configuration { get; set; }
 
     [Resolved]
     private Editor editor { get; set; }
@@ -79,7 +81,7 @@ public partial class EditorHitObjectContainer : Container<EditorDrawableObject>
         if (obj.Lane < 1)
         {
             var atTime = Objects.Where(x => x.Data is not HitObject && Math.Abs(x.Data.Time - obj.Time) < 0.1f);
-            obj.Lane = atTime.Count() + 1 + ((IVerifyContext)map).MaxKeyCount;
+            obj.Lane = atTime.Count() + 1 + configuration.ColumnCount;
         }
 
         var draw = editor.GameMode.CreateEditorObject(obj) ?? new EditorDrawableEvent(obj);

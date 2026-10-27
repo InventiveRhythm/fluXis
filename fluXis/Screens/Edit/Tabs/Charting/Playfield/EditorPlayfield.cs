@@ -25,6 +25,9 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     private EditorSettings settings { get; set; }
 
     [Resolved]
+    private EditorConfiguration configuration { get; set; }
+
+    [Resolved]
     private EditorMap map { get; set; }
 
     [Resolved]
@@ -111,7 +114,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
                 Width = 2,
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.TopCentre,
-                X = map.RealmMap.KeyCount * (i + 1f) / 24
+                X = configuration.ColumnCount * (i + 1f) / 24
             });
         }
 
@@ -139,7 +142,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         base.Update();
 
         Width = HitObjectContainer.ScaledNoteWidth * 24;
-        waveform.Height = HitObjectContainer.ScaledNoteWidth * map.RealmMap.KeyCount;
+        waveform.Height = HitObjectContainer.ScaledNoteWidth * configuration.ColumnCount;
 
         var songLengthInPixels = .5f * (clock.TrackLength * settings.Zoom);
         var songTimeInPixels = (float)(-EditorHitObjectContainer.HITPOSITION - .5f * (-(clock.CurrentTime + ChartingContainer.WAVEFORM_OFFSET) * settings.Zoom));

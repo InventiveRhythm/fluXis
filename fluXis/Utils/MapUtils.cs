@@ -190,6 +190,9 @@ public static class MapUtils
     {
         MapEffectType effects = 0;
 
+        if (map.ObjectsOfType<ScrollVelocity>().Length > 20)
+            effects |= MapEffectType.ScrollVelocity;
+
         if (map.ObjectsOfType<LaneSwitchEvent>().Length > 0)
             effects |= MapEffectType.LaneSwitch;
 

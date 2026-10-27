@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Mode.Keys.Objects;
@@ -13,7 +14,7 @@ using osu.Framework.Utils;
 
 namespace fluXis.Mode.Keys.Gameplay.Objects;
 
-public partial class KeysHitObjectManager : GameModeHitObjectManager
+public partial class KeysHitObjectManager : GameModeHitObjectManager<FluXisGameplayKeybind>
 {
     public ScrollGroup DefaultScrollGroup { get; init; }
 
@@ -35,6 +36,7 @@ public partial class KeysHitObjectManager : GameModeHitObjectManager
     {
         RelativeSizeAxes = Axes.Y;
         DefaultScrollGroup = ruleset.ScrollGroups["$1"];
+        Masking = true;
 
         if (nested)
             FutureObjects.AddRange(objs.OrderBy(x => x.Time));

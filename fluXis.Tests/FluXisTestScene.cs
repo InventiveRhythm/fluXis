@@ -5,6 +5,7 @@ using fluXis.Audio;
 using fluXis.Audio.FFT;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Modes;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Online.Multiplayer;
@@ -24,27 +25,28 @@ public partial class FluXisTestScene : TestScene
     protected DependencyContainer TestDependencies { get; private set; }
     protected GlobalClock GlobalClock => TestDependencies.Get<GlobalClock>();
 
-    [CanBeNull]
-    private TestMultiplayerClient multiClient = null;
+    [Resolved]
+    protected GameModeManager GameModes { get; private set; }
 
     [Resolved]
     private AudioAnalyzer audioAnalyzer { get; set; }
 
     [CanBeNull]
-    private GlobalFFTProcessor fftProcessor = null;
+    private GlobalFFTProcessor fftProcessor;
 
+    [field: CanBeNull]
     protected TestMultiplayerClient MultiplayerClient
     {
         get
         {
-            if (multiClient != null)
-                return multiClient;
+            if (field != null)
+                return field;
 
-            multiClient = new TestMultiplayerClient();
-            TestDependencies.CacheAs<MultiplayerClient>(multiClient);
-            return multiClient;
+            field = new TestMultiplayerClient();
+            TestDependencies.CacheAs<MultiplayerClient>(field);
+            return field;
         }
-    }
+    } = null;
 
     protected AudioAnalyzer AudioAnalyzer
     {
@@ -54,7 +56,7 @@ public partial class FluXisTestScene : TestScene
                 return audioAnalyzer;
 
             audioAnalyzer = new AudioAnalyzer();
-            TestDependencies.CacheAs<AudioAnalyzer>(audioAnalyzer);
+            TestDependencies.CacheAs(audioAnalyzer);
             return audioAnalyzer;
         }
     }
@@ -67,7 +69,7 @@ public partial class FluXisTestScene : TestScene
                 return fftProcessor;
 
             fftProcessor = new GlobalFFTProcessor();
-            TestDependencies.CacheAs<GlobalFFTProcessor>(fftProcessor);
+            TestDependencies.CacheAs(fftProcessor);
             return fftProcessor;
         }
     }
@@ -83,7 +85,7 @@ public partial class FluXisTestScene : TestScene
         TestDependencies.CacheAs<IAmplitudeProvider>(clock);
 
         fftProcessor = new GlobalFFTProcessor();
-        TestDependencies.CacheAs<GlobalFFTProcessor>(fftProcessor);
+        TestDependencies.CacheAs(fftProcessor);
     }
 
     protected void CreateDummyBeatSync() => TestDependencies.CacheAs<IBeatSyncProvider>(new DummyBeatSyncProvider());

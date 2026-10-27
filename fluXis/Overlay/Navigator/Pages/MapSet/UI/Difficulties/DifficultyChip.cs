@@ -1,7 +1,7 @@
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Map.Drawables;
+using fluXis.Modes;
 using fluXis.Online.API.Models.Maps;
 using Humanizer;
 using osu.Framework.Allocation;
@@ -9,6 +9,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -30,12 +31,13 @@ public partial class DifficultyChip : CircularContainer
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(GameModeManager modes)
     {
         Size = new Vector2(48);
         AutoSizeAxes = Axes.X;
         Masking = true;
 
+        var mode = modes.Find(map.Mode);
         var color = Theme.GetDifficultyColor((float)map.Rating);
 
         InternalChildren = new Drawable[]
@@ -54,12 +56,19 @@ public partial class DifficultyChip : CircularContainer
                 Direction = FillDirection.Horizontal,
                 Children = new Drawable[]
                 {
-                    new KeyModeIcon(map.Mode)
+                    new Container
                     {
                         Size = new Vector2(48),
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        Colour = color
+                        Child = new Sprite
+                        {
+                            Size = new Vector2(32),
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Texture = mode?.GetTexture(map.Mode),
+                            Colour = color
+                        }
                     },
                     text = new FillFlowContainer
                     {

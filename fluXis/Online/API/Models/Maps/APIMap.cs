@@ -3,6 +3,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 using osu.Framework.Localisation;
+using rhym;
 
 namespace fluXis.Online.API.Models.Maps;
 
@@ -44,7 +45,7 @@ public class APIMap
     public string Tags { get; init; } = null!;
 
     [JsonProperty("mode")]
-    public int Mode { get; init; }
+    public ResourceLocation Mode { get; init; }
 
     [JsonProperty("status")]
     public int Status { get; init; }

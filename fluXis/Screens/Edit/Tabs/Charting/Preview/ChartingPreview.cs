@@ -305,11 +305,6 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
     private RulesetContainer createRuleset()
     {
-        // TODO: loop compilation and copying
-        /*var effects = Map.MapEvents.JsonCopy()!;
-        effects.Compile();
-        effects.Sort();*/
-
         var map = getCompiledMap();
         var flashes = map.ObjectsOfType<FlashEvent>();
         backFlash.Rebuild(flashes.Where(x => x.InBackground));
@@ -340,15 +335,13 @@ public partial class ChartingPreview : DrawSizePreservingFillContainer
 
     private void rebuildPulseEffect()
     {
-        // TODO
-        // pulseEffect.Pulses = getCompiledEvents().PulseEvents;
-        // pulseEffect.Rebuild();
+        pulseEffect.Pulses = getCompiledMap().ObjectsOfType<PulseEvent>();
+        pulseEffect.Rebuild();
     }
 
     private void rebuildBeatPulse()
     {
-        // TODO
-        // beatPulseManager.Rebuild(getCompiledEvents().BeatPulseEvents);
+        beatPulseManager.Rebuild(getCompiledMap().ObjectsOfType<BeatPulseEvent>());
     }
 
     private void rebuildAllCompiled(bool force = false)

@@ -44,6 +44,7 @@ using fluXis.Utils;
 using fluXis.Utils.Exceptions;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
+using Midori.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Configuration;
@@ -140,6 +141,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisGameBase()
     {
+        JsonUtils.Converters.Add(new JsonResourceLocationConverter());
         Midori.Logging.Logger.SaveToFiles = false;
         Steam = CreateSteam(); // steam needs to load before the graphics
     }
@@ -217,7 +219,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(Collections = new CollectionManager(), true);
 
             cacheComponent(Plugins = new PluginManager(), true);
-            cacheComponent(GameModes = new GameModeManager(), true);
+            cacheComponent(GameModes = new GameModeManager(this, Host), true);
             cacheComponent(importManager = new ImportManager(), true, true);
             cacheComponent(SkinManager = new SkinManager(), true, true);
             cacheComponent<ISkin>(SkinManager);

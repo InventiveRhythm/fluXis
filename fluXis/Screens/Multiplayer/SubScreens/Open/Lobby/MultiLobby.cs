@@ -315,7 +315,7 @@ public partial class MultiLobby : MultiSubScreen
             dummy.Metadata.ArtistRomanized = map.ArtistRomanized;
             dummy.Difficulty = map.Difficulty;
             dummy.Filters.NotesPerSecond = (float)map.NotesPerSecond;
-            dummy.KeyCount = map.Mode;
+            dummy.KeyCount = 4 /*map.Mode*/; // TODO
             dummy.Rating = (float)map.Rating;
             dummy.Hash = "dummy";
             mapStore.CurrentMap = dummy;

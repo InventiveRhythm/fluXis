@@ -94,7 +94,7 @@ public partial class ImportManager : Component
 
             importersByPlugin.Add(plugin, importer);
 
-            importer.ResourceRequest = path =>
+            importer.ApplyValues(path =>
             {
                 var storageFor = new NativeStorage(path);
                 var resourceStore = new StorageBackedResourceStore(storageFor);
@@ -108,12 +108,8 @@ public partial class ImportManager : Component
                 };
 
                 return resource;
-            };
+            }, storage, realm, mapStore, notifications, modes);
 
-            importer.Realm = realm;
-            importer.MapStore = mapStore;
-            importer.Storage = storage;
-            importer.Notifications = notifications;
             importers.Add(importer);
         }
 
@@ -212,14 +208,14 @@ public partial class ImportManager : Component
 
         if (extension == ".fms")
         {
-            new FluXisImport
-            {
-                Realm = realm,
-                MapStore = mapStore,
-                Storage = storage,
-                Notifications = notifications,
-                GameModes = modes
-            }.Import(path);
+            new FluXisImport().ApplyValues(
+                _ => null,
+                storage,
+                realm,
+                mapStore,
+                notifications,
+                modes
+            ).Import(path);
             return;
         }
 

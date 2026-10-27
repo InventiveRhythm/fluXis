@@ -1,11 +1,15 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Modes;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.Drawables.Images;
+using osu.Framework.Allocation;
 using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -18,8 +22,12 @@ public partial class MapCard
 {
     private partial class Header : CompositeDrawable
     {
+        private readonly APIMapSet set;
+        private readonly RoundedChip modeChip;
+
         public Header(APIMapSet set)
         {
+            this.set = set;
             RelativeSizeAxes = Axes.X;
             Height = CARD_HEIGHT;
             CornerRadius = CARD_RADIUS;
@@ -165,7 +173,7 @@ public partial class MapCard
                                     Children =
                                     [
                                         createChip(getRatingString(set), getRatingColor(set)),
-                                        createChip(getModeString(set), getModeColor(set)),
+                                        modeChip = createChip(string.Empty, Theme.Highlight),
                                     ]
                                 }
                             ]
@@ -173,6 +181,13 @@ public partial class MapCard
                     ]
                 }
             ];
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(GameModeManager modes)
+        {
+            modeChip.BackgroundColour = getModeColor(modes);
+            modeChip.Text = getModeString(modes);
         }
 
         private static RoundedChip createDarkChip(string text) => new()
@@ -184,20 +199,36 @@ public partial class MapCard
             Height = 16
         };
 
-        private string getModeString(APIMapSet set)
+        private List<string> getModesSorted()
         {
-            var lowest = set.Maps.Min(x => x.Mode);
-            var highest = set.Maps.Max(x => x.Mode);
-
-            return lowest == highest ? $"{lowest}K" : $"{lowest}-{highest}K";
+            var modes = set.Maps.Select(x => x.Mode.ToString()).ToList();
+            modes.Sort((a, b) => string.Compare(a, b, StringComparison.Ordinal));
+            return modes;
         }
 
-        private ColourInfo getModeColor(APIMapSet set)
+        private string getModeString(GameModeManager modes)
         {
-            var lowest = set.Maps.Min(x => x.Mode);
-            var highest = set.Maps.Max(x => x.Mode);
+            var sorted = getModesSorted();
+            var grouped = sorted.GroupBy(x => modes.Find(x));
+            return string.Join("", grouped.Select(x =>
+            {
+                var lowest = x.Key.GetShortString(sorted.First());
+                var highest = x.Key.GetShortString(sorted.Last());
 
-            return ColourInfo.GradientHorizontal(Theme.GetKeyCountColor(lowest), Theme.GetKeyCountColor(highest));
+                return lowest == highest ? lowest : $"{lowest}-{highest}";
+            }));
+        }
+
+        private ColourInfo getModeColor(GameModeManager modes)
+        {
+            var sorted = getModesSorted();
+            var lowest = sorted.First();
+            var highest = sorted.Last();
+
+            return ColourInfo.GradientHorizontal(
+                modes.Find(lowest)?.GetColor(lowest) ?? Theme.Highlight,
+                modes.Find(highest)?.GetColor(highest) ?? Theme.Highlight
+            );
         }
 
         private string getRatingString(APIMapSet set)

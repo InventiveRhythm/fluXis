@@ -84,14 +84,7 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
             if (maxCombo.IsValid)
                 return maxCombo.Value;
 
-            int c = 0;
-
-            foreach (var hitObject in ObjectsOfType<HitObject>())
-            {
-                c += hitObject.ComboContribution;
-            }
-
-            return maxCombo.Value = c;
+            return maxCombo.Value = ObjectsOfType<HitObject>().Sum(x => x.ComboContribution);
         }
     }
 
