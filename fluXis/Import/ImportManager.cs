@@ -64,6 +64,8 @@ public partial class ImportManager : Component
             var importer = plugin.Importer;
             if (importer == null) continue;
 
+            importer.GameModes = modes;
+
             realm.RunWrite(r =>
             {
                 var existing = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == importer.GameName);

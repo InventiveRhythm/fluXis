@@ -16,6 +16,7 @@ namespace fluXis.Import;
 
 public class MapImporter
 {
+    public GameModeManager GameModes { get; set; }
     public virtual string[] FileExtensions { get; } = Array.Empty<string>();
     public virtual string GameName => "Unknown";
     public virtual bool SupportsAutoImport => false;
