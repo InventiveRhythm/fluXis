@@ -3,7 +3,6 @@
     "path": "fluXis.sln",
     "projects": [
       "..\\..\\flustix\\Midori\\Midori\\Midori.csproj",
-      "..\\..\\flustix\\rhym\\rhym\\rhym.csproj",
       "fluXis.Desktop\\fluXis.Desktop.csproj",
       "fluXis.Import.osu\\fluXis.Import.osu.csproj",
       "fluXis.Import.Quaver\\fluXis.Import.Quaver.csproj",

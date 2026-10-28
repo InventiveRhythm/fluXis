@@ -27,7 +27,7 @@ public partial class OnlineSpectatorClient : SpectatorClient
 
         try
         {
-            connection = api.GetWebSocket<ISpectatorServer, ISpectatorClient>(this, "/spectator");
+            connection = api.GetWebSocket<ISpectatorServer, ISpectatorClient>(this, "/sockets/spectator");
             connection.OnClose += TriggerDisconnect;
             Logger.Log("Connected to spectator server!", LoggingTarget.Network);
         }
