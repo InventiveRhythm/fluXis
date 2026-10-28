@@ -8,6 +8,7 @@ using fluXis.Screens.Edit.UI.Variable.Preset;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using JetBrains.Annotations;
+using Midori.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
@@ -218,7 +219,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             if (!input.TryEvaluateTo(evalType, out var result))
                 return false;
 
-            outStr = result.ToString();
+            outStr = (result as float? ?? 0).ToStringInvariant();
             return true;
         }
 
