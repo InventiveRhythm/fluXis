@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Models.Featured;
 
@@ -18,7 +17,7 @@ public class APIFeaturedAlbum
     public AlbumColors Colors { get; set; } = null!;
 
     [JsonProperty("tracks")]
-    public List<APIFeaturedTrack> Tracks { get; set; } = new();
+    public APIFeaturedTrack[] Tracks { get; set; } = [];
 
     public class AlbumRelease
     {

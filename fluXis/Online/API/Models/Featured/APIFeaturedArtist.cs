@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace fluXis.Online.API.Models.Featured;
 
@@ -14,7 +13,7 @@ public class APIFeaturedArtist
     public string Name { get; set; } = null!;
 
     [JsonProperty("description")]
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; }
 
     [JsonProperty("youtube")]
     public string? YouTube { get; set; }
@@ -29,8 +28,8 @@ public class APIFeaturedArtist
     public string? Twitter { get; set; }
 
     [JsonProperty("fluxis")]
-    public string? FluXis { get; set; }
+    public long? FluXis { get; set; }
 
     [JsonProperty("albums")]
-    public List<APIFeaturedAlbum> Albums { get; set; } = new();
+    public APIFeaturedAlbum[] Albums { get; set; } = [];
 }

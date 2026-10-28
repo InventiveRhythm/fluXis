@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using fluXis.Online.API.Models.Users;
 using Midori.Utils;
 using Newtonsoft.Json;
@@ -13,12 +11,12 @@ public class OnlineUsers
     public int Count { get; init; }
 
     [JsonProperty("users")]
-    public List<APIUser> Users { get; init; } = new();
+    public APIUser[] Users { get; init; } = [];
 
-    public OnlineUsers(int count, IEnumerable<APIUser> users)
+    public OnlineUsers(int count, APIUser[] users)
     {
         Count = count;
-        Users = users.ToList();
+        Users = users;
     }
 
     [JsonConstructor]
