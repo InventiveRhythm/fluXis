@@ -50,7 +50,7 @@ public partial class NavigatorMapSetPage : NavigatorPage<APIMapSet>
 
     protected override Drawable CreateContent(APIMapSet data)
     {
-        data.Maps.Sort((a, b) => a.Rating.CompareTo(b.Rating));
+        data.Maps = [.. data.Maps.OrderBy(x => x.Rating)];
         var bindableMap = new Bindable<APIMap>(data.Maps.First());
 
         return new FillFlowContainer

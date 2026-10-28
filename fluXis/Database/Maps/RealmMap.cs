@@ -12,6 +12,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using Realms;
+using rhym;
 
 namespace fluXis.Database.Maps;
 
@@ -46,6 +47,9 @@ public class RealmMap : RealmObject
     public long OnlineID { get; set; } = -1;
     public int KeyCount { get; set; } = 4;
     public float Rating { get; set; }
+
+    [Ignored]
+    public ResourceLocation Mode => $"flux:keys/{KeyCount}";
 
     public RealmMapUserSettings Settings { get; set; } = new();
 

@@ -28,7 +28,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     {
         try
         {
-            connection = api.GetWebSocket<IMultiplayerServer, IMultiplayerClient>(this, "/multiplayer");
+            connection = api.GetWebSocket<IMultiplayerServer, IMultiplayerClient>(this, "/sockets/multiplayer");
             connection.OnClose += TriggerDisconnect;
         }
         catch (Exception ex)

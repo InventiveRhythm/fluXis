@@ -42,8 +42,7 @@ public partial class EditorVariableDropdown<T> : EditorVariableBase
             },
             new FillFlowContainer
             {
-                AutoSizeAxes = Axes.X,
-                RelativeSizeAxes = Axes.Y,
+                AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Direction = FillDirection.Horizontal,

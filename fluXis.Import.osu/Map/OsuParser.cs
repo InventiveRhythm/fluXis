@@ -5,6 +5,7 @@ using fluXis.Import.osu.Map.Components;
 using fluXis.Import.osu.Map.Enums;
 using Midori.Utils.Extensions;
 using osu.Framework.Graphics.Primitives;
+using osu.Framework.Platform;
 
 namespace fluXis.Import.osu.Map;
 
@@ -16,6 +17,15 @@ public class OsuParser
     private List<string> events { get; } = new();
     private List<string> timingPoints { get; } = new();
     private List<string> hitObjects { get; } = new();
+
+    private readonly string filename;
+    private readonly Storage storage;
+
+    public OsuParser(string filename, Storage storage)
+    {
+        this.filename = filename;
+        this.storage = storage;
+    }
 
     public void AddLine(string line, OsuFileSection section)
     {
@@ -49,7 +59,7 @@ public class OsuParser
 
     public OsuMap Parse(bool eventsOnly = false)
     {
-        OsuMap map = new();
+        OsuMap map = new(filename, storage);
 
         if (eventsOnly)
         {

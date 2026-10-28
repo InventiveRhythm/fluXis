@@ -6,10 +6,12 @@ using System.IO.Compression;
 using fluXis.Database.Maps;
 using fluXis.Import.Quaver.Map;
 using fluXis.Import.Quaver.Map.Structs;
+using fluXis.Map.Format;
 using fluXis.Overlay.Notifications;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
+using osu.Framework.Platform;
 using YamlDotNet.Serialization;
 
 namespace fluXis.Import.Quaver;
@@ -41,6 +43,8 @@ public class QuaverImport : MapImporter
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
             var folder = CreateTempFolder(fileName);
+            var storage = new NativeStorage(folder);
+            var format = new RhymMapFormat(storage, GameModes);
 
             var qp = ZipFile.OpenRead(path);
 
@@ -49,19 +53,8 @@ public class QuaverImport : MapImporter
                 if (entry.FullName.EndsWith(".qua"))
                 {
                     var quaverMap = parseFromEntry(entry);
-                    var map = quaverMap.ToMapInfo();
-
-                    var effect = quaverMap.GetEffects().Save();
-
-                    if (effect != "")
-                    {
-                        var name = $"{entry.FullName.ToLower()}.ffx";
-                        map.EffectFile = name;
-                        WriteFile(effect, folder, name);
-                    }
-
-                    var json = map.Serialize();
-                    WriteFile(json, folder, $"{entry.FullName}.fsc");
+                    var map = quaverMap.ToPlayableMap(storage);
+                    format.Save(map);
                 }
                 else
                     CopyFile(entry, folder);

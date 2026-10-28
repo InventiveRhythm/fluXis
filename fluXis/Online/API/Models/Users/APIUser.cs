@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using fluXis.Online.API.Models.Clubs;
+﻿using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Models.Groups;
 using fluXis.Online.API.Models.Users.Equipment;
 using Newtonsoft.Json;
@@ -47,7 +46,7 @@ public class APIUser
     public string? CountryCode { get; set; }
 
     [JsonProperty("groups")]
-    public List<APIGroup> Groups { get; init; } = new();
+    public APIGroup[] Groups { get; init; } = [];
 
     [JsonProperty("club")]
     public APIClub? Club { get; set; }

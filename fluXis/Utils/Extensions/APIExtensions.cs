@@ -6,7 +6,6 @@ using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Scores;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
-using fluXis.Scoring.Enums;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Logging;
@@ -58,7 +57,7 @@ public static class APIExtensions
     public static ScoreInfo ToScoreInfo(this APIScore score) => new()
     {
         Accuracy = score.Accuracy,
-        Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), score.Rank),
+        Rank = score.Rank,
         Score = score.TotalScore,
         PerformanceRating = score.PerformanceRating,
         MaxCombo = score.MaxCombo,

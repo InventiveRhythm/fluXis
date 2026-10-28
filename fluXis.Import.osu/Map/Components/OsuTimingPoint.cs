@@ -1,5 +1,6 @@
 using System;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Events;
 
 namespace fluXis.Import.osu.Map.Components;
 

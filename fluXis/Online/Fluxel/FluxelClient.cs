@@ -253,7 +253,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
         try
         {
-            connection = GetWebSocket<INotificationServer, INotificationClient>(this, "/notifications");
+            connection = GetWebSocket<INotificationServer, INotificationClient>(this, "/sockets/notifications");
             connection.OnClose += () =>
             {
                 Status.Value = ConnectionStatus.Reconnecting;

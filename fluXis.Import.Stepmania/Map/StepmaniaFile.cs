@@ -5,6 +5,8 @@ using System.Linq;
 using fluXis.Import.Stepmania.Map.Components;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Mode.Keys.Objects;
+using osu.Framework.Platform;
 
 namespace fluXis.Import.Stepmania.Map;
 
@@ -133,31 +135,33 @@ public class StepmaniaFile
         }
     }
 
-    public List<MapInfo> ToMapInfos()
+    public List<PlayableMap> ToPlayableMaps(Storage storage)
     {
-        var maps = new List<MapInfo>();
+        var maps = new List<PlayableMap>();
 
         foreach (var chart in Charts)
         {
             var time = -Offset * 1000;
 
-            var map = new MapInfo(null)
+            int keyCount = chart.GetKeyCount();
+            var map = new PlayableMap(storage, chart.Difficulty + ".rhym", new("flux", $"keys/{keyCount}"))
             {
                 AudioFile = Music,
                 BackgroundFile = Background,
                 VideoFile = "",
-                EffectFile = "",
-                Metadata = new MapMetadata
+
+                Title = Title,
+                Artist = Artist,
+                Creator = Credit,
+                Difficulty = chart.Difficulty,
+                Sources = new Dictionary<string, string>
                 {
-                    Title = Title,
-                    Artist = Artist,
-                    Mapper = Credit,
-                    Difficulty = chart.Difficulty,
-                    AudioSource = "",
-                    Tags = "",
-                    PreviewTime = (int)(SampleStart * 1000)
+                    { "audio", "" },
+                    { "background", "" },
+                    { "cover", "" },
                 },
-                TimingPoints = new List<TimingPoint>()
+                Tags = new[] { "" },
+                PreviewTime = (int)(SampleStart * 1000),
             };
 
             var beats = 0f;
@@ -172,7 +176,7 @@ public class StepmaniaFile
                 {
                     if (bpms.Count != 0 && beats >= bpms.First().Beat)
                     {
-                        map.TimingPoints.Add(new TimingPoint
+                        map.AddObject(new TimingPoint
                         {
                             Time = time,
                             Signature = 4,
@@ -190,7 +194,7 @@ public class StepmaniaFile
                                 break;
 
                             case StepNote.Normal:
-                                map.HitObjects.Add(new HitObject
+                                map.AddObject(new Note
                                 {
                                     Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
                                     Lane = i + 1
@@ -198,16 +202,16 @@ public class StepmaniaFile
                                 break;
 
                             case StepNote.Head:
-                                map.HitObjects.Add(new HitObject
+                                map.AddObject(new LongNote
                                 {
                                     Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
-                                    HoldTime = int.MinValue,
+                                    Duration = int.MinValue,
                                     Lane = i + 1
                                 });
                                 break;
 
                             case StepNote.Tail:
-                                var note = map.HitObjects.FindLast(x => x.Lane == i + 1);
+                                var note = map.Objects.ToList().FindLast(x => x.Lane == i + 1);
 
                                 if (note is StepRollNote roll)
                                 {
@@ -217,20 +221,20 @@ public class StepmaniaFile
 
                                     for (int j = 0; j < notes; j++)
                                     {
-                                        map.HitObjects.Add(new HitObject
+                                        map.AddObject(new Note
                                         {
                                             Time = (int)Math.Round(roll.Time + distance * (j + 1), MidpointRounding.AwayFromZero),
                                             Lane = i + 1
                                         });
                                     }
                                 }
-                                else if (note != null)
-                                    note.EndTime = (int)Math.Round(time, MidpointRounding.AwayFromZero);
+                                else if (note is LongNote ln)
+                                    ln.Duration = (int)Math.Round(time, MidpointRounding.AwayFromZero) - ln.Time;
 
                                 break;
 
                             case StepNote.Roll:
-                                map.HitObjects.Add(new StepRollNote
+                                map.AddObject(new StepRollNote
                                 {
                                     Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
                                     Lane = i + 1
@@ -238,11 +242,10 @@ public class StepmaniaFile
                                 break;
 
                             case StepNote.Mine:
-                                map.HitObjects.Add(new HitObject
+                                map.AddObject(new Landmine
                                 {
                                     Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
                                     Lane = i + 1,
-                                    Type = HitObjectType.Landmine,
                                 });
                                 break;
 

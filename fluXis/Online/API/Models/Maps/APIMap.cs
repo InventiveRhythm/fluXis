@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using fluXis.Graphics.UserInterface.Color;
+﻿using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 using osu.Framework.Localisation;
@@ -18,7 +17,7 @@ public class APIMap
     public long MapSetID { get; init; }
 
     [JsonProperty("mappers")]
-    public List<APIUser> Mappers { get; init; } = null!;
+    public APIUser[] Mappers { get; init; } = null!;
 
     [JsonProperty("hash")]
     public string SHA256Hash { get; init; } = null!;
@@ -54,7 +53,7 @@ public class APIMap
     public double BPM { get; init; }
 
     [JsonProperty("length")]
-    public int Length { get; init; }
+    public long Length { get; init; }
 
     [JsonProperty("notes")]
     public int NoteCount { get; init; }

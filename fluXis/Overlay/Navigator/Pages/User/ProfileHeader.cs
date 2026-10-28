@@ -290,7 +290,7 @@ public partial class ProfileHeader : Container
             }) { AccentAsBackground = true };
         }
 
-        if (user.Groups.Count != 0)
+        if (user.Groups.Length != 0)
         {
             foreach (var group in user.Groups)
                 yield return new HeaderGroupChip(group);

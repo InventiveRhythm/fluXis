@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Drawables.Card;
 using fluXis.Online.API.Models.Maps;
@@ -46,10 +45,10 @@ public partial class TestMapCard : FluXisTestScene
             Title = "super cool song with a long name",
             Artist = "super cool artist",
             Source = "somewhere",
-            Tags = new[] { "some", "cool", "and fitting", "tags" },
-            Maps = new List<APIMap>
-            {
-                new()
+            Tags = ["some", "cool", "and fitting", "tags"],
+            Maps =
+            [
+                new APIMap
                 {
                     ID = 1,
                     MapSetID = 1,
@@ -71,7 +70,7 @@ public partial class TestMapCard : FluXisTestScene
                     Rating = 8,
                     FileName = "195769352.fsc"
                 }
-            }
+            ]
         };
 
         func?.Invoke(set);
