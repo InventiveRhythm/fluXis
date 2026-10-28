@@ -32,6 +32,7 @@ public class ScriptRunner
         state.RequireF("table", LuaNative.luaopen_table, true);
         state.RequireF("string", LuaNative.luaopen_string, true);
         state.RequireF("math", LuaNative.luaopen_math, true);
+        state.RequireF("utf8", LuaNative.luaopen_utf8, true);
 
         state.NewTable();
         state.SetGlobal("luanet");
