@@ -4,10 +4,11 @@ using fluXis.Map;
 using fluXis.Scripting.Attributes;
 using fluXis.Scripting.Models;
 using JetBrains.Annotations;
-using NLua;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Utils;
+using Lua = NLua.Lua;
+using LuaFunction = NLua.LuaFunction;
 
 namespace fluXis.Scripting;
 
@@ -25,8 +26,18 @@ public class ScriptRunner
 
     protected ScriptRunner()
     {
-        Lua = new Lua();
+        var state = new KeraLua.Lua(false);
+        state.RequireF("", LuaNative.luaopen_base, true);
+        state.RequireF("table", LuaNative.luaopen_table, true);
+        state.RequireF("string", LuaNative.luaopen_string, true);
+        state.RequireF("math", LuaNative.luaopen_math, true);
+
+        state.NewTable();
+        state.SetGlobal("luanet");
+
+        Lua = new Lua(state);
         Lua.State.Encoding = Encoding.UTF8;
+        Lua.DoString("luanet = nil"); // this just lets you load any type because of course it does. library written by a monkey with typewriter on drugs
 
         AddField("mathf", new LuaMath());
         AddField("FFTParameters", new LuaFFTParameters());
@@ -43,7 +54,7 @@ public class ScriptRunner
         AddFunction("DefineParameter", defineParameter);
         AddFunction("SetVersion", setVersion);
 
-        // Lua.DoString("import = function() end"); // disable importing
+        Lua.DoString("import = function() end"); // disable importing
     }
 
     public void AddFunction(string name, Delegate function)
