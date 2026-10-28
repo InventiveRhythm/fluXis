@@ -219,7 +219,10 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             if (!input.TryEvaluateTo(evalType, out var result))
                 return false;
 
-            outStr = (result as float? ?? 0).ToStringInvariant();
+            if (result is float f)
+                outStr = f.ToStringInvariant();
+            else
+                outStr = result.ToString();
             return true;
         }
 
