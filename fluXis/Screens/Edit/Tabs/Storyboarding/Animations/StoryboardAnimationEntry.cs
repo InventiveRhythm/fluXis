@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Graphics.Sprites.Outline;
@@ -155,55 +156,81 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                         map.Update(Animation);
                     }
                 },
-                new EditorVariableTextBox
-                {
-                    Text = "Start Value",
-                    CurrentValue = Animation.StartValue,
-                    Enabled = UseStartValueBindable,
-                    OnValueChanged = t =>
-                    {
-                        if (validate(t.Text, out var parsed)) Animation.StartValue = parsed;
-                        else t.NotifyError();
-                        map.Update(Animation);
-                    },
-                    OnCommit = t =>
-                    {
-                        if (t is not null && validate(t.Text, out var parsed)) t.Text = parsed;
-                        else { t.Text = Animation.StartValue; t.NotifyError(); }
-                    }
-                },
-                new EditorVariableTextBox
-                {
-                    Text = "End Value",
-                    CurrentValue = Animation.ValueEnd,
-                    OnValueChanged = t =>
-                    {
-                        if (validate(t.Text, out var parsed)) Animation.ValueEnd = parsed;
-                        else t.NotifyError();
-
-                        map.Update(Animation);
-                    },
-                    OnCommit = t =>
-                    {
-                        if (t is not null && validate(t.Text, out var parsed)) t.Text = parsed;
-                        else { t.Text = Animation.ValueEnd; t.NotifyError(); }
-                    }
-                },
+                createEditorVariable("Start Value", Animation.StartValue, s => Animation.StartValue = s, UseStartValueBindable),
+                createEditorVariable("End Value", Animation.ValueEnd, s => Animation.ValueEnd = s, new Bindable<bool>(true)),
                 new EditorVariableEasing<StoryboardAnimation>(map, Animation),
             }
         }
     };
 
+    private Drawable createEditorVariable(string label, string current, Action<string> bind, Bindable<bool> enabled)
+    {
+        if (getAnimPrimitiveType() is not null)
+        {
+            current.TryEvaluateTo<float>(out var initial);
+            var (min, max) = getMinMax();
+
+            return new EditorVariableNumber<float>
+            {
+                Text = label,
+                CurrentValue = initial,
+                Step = getSteps(),
+                Min = min,
+                Max = max,
+                Formatting = "0.###",
+                Enabled = enabled,
+                OnValueChanged = v =>
+                {
+                    bind.Invoke(Convert.ToString(MathF.Round(v, 4), CultureInfo.InvariantCulture));
+                    map.Update(Animation);
+                }
+            };
+        }
+
+        return new EditorVariableTextBox
+        {
+            Text = label,
+            CurrentValue = current,
+            Enabled = enabled,
+            OnValueChanged = t =>
+            {
+                if (validate(t.Text, out var parsed)) bind.Invoke(parsed);
+                else t.NotifyError();
+                map.Update(Animation);
+            },
+            OnCommit = t =>
+            {
+                if (t is not null && validate(t.Text, out var parsed)) t.Text = parsed;
+                else { t.Text = current; t.NotifyError(); }
+            }
+        };
+    }
+
+    private (float?, float?) getMinMax() => Animation.Type switch
+    {
+        StoryboardAnimationType.Fade => (0f, 1f),
+        StoryboardAnimationType.Border => (0f, null),
+        _ => (null, null)
+    };
+
+    private float getSteps() => Animation.Type switch
+    {
+        StoryboardAnimationType.Fade => 0.02f,
+        StoryboardAnimationType.Scale => 0.1f,
+        StoryboardAnimationType.Border => 0.5f,
+        _ => 1f
+    };
+
     private Type getAnimPrimitiveType() => Animation.Type switch
     {
         StoryboardAnimationType.MoveX or
-        StoryboardAnimationType.MoveY or
-        StoryboardAnimationType.Scale or
-        StoryboardAnimationType.Width or
-        StoryboardAnimationType.Height or
-        StoryboardAnimationType.Rotate or
-        StoryboardAnimationType.Fade or
-        StoryboardAnimationType.Border => typeof(float),
+            StoryboardAnimationType.MoveY or
+            StoryboardAnimationType.Scale or
+            StoryboardAnimationType.Width or
+            StoryboardAnimationType.Height or
+            StoryboardAnimationType.Rotate or
+            StoryboardAnimationType.Fade or
+            StoryboardAnimationType.Border => typeof(float),
         _ => null
     };
 
@@ -218,7 +245,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
             if (!input.TryEvaluateTo(evalType, out var result))
                 return false;
 
-            outStr = result.ToString();
+            outStr = Convert.ToString(result, CultureInfo.InvariantCulture);
             return true;
         }
 
@@ -232,7 +259,7 @@ public partial class StoryboardAnimationEntry : CompositeDrawable, IHasPopover
                     !split[1].TryEvaluateTo(typeof(float), out var y))
                     return false;
 
-                outStr = $"{x},{y}";
+                outStr = string.Create(CultureInfo.InvariantCulture, $"{x},{y}");
                 return true;
 
             case StoryboardAnimationType.Color:
