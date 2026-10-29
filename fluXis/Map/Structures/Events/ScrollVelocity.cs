@@ -11,12 +11,14 @@ using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using rhym;
 using YamlDotNet.Serialization;
 
 namespace fluXis.Map.Structures.Events;
 
 [DoNotShowInEditorPlayfield]
 [Description("Changes note and scroll velocity.")]
+[ResourceLocation("flux:events/scroll/velocity")]
 public class ScrollVelocity : ITimedObject, IHasGroups, IScrollEvent
 {
     [JsonProperty("time")]

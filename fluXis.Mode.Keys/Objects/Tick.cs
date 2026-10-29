@@ -1,7 +1,9 @@
 using fluXis.Map.Structures;
+using rhym;
 
 namespace fluXis.Mode.Keys.Objects;
 
+[ResourceLocation("flux:keys/tick")]
 public class Tick : HitObject
 {
     public override float DensityContribution => 0.1f;

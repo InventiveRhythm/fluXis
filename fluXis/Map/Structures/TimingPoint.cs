@@ -7,11 +7,13 @@ using Midori.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using rhym;
 using YamlDotNet.Serialization;
 
 namespace fluXis.Map.Structures;
 
 [Description("Changes the BPM and time signature.")]
+[ResourceLocation("flux:timing")]
 public class TimingPoint : ITimedObject
 {
     [JsonProperty("time")]

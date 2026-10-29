@@ -18,4 +18,7 @@ public class LuaNative
 
     [DllImport(dll_name, CallingConvention = CallingConvention.Cdecl)]
     internal static extern int luaopen_math(IntPtr state);
+
+    [DllImport(dll_name, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int luaopen_utf8(IntPtr state);
 }

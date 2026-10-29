@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using fluXis.Map;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit;
+using fluXis.Scripting;
 using fluXis.Storyboards.Drawables;
 using Midori.Utils;
 using Newtonsoft.Json;
@@ -12,10 +13,12 @@ namespace fluXis.Storyboards;
 
 public class Storyboard : EditorMap.IChangeNotifier
 {
-    public const int LATEST_VERSION = 2;
-
+    /// <summary>
+    /// Version of the storyboard api.
+    /// Has to start at 1 because old storyboards didn't have this field so, this is for updating old maps.
+    /// </summary>
     [JsonProperty("version")]
-    public int Version { get; set; } = 1; // has to be set to one in order to update old SBs
+    public int Version { get; set; } = 1;
 
     [JsonProperty("resolution")]
     public Vector2 Resolution { get; set; } = new(1920, 1080);
@@ -28,6 +31,15 @@ public class Storyboard : EditorMap.IChangeNotifier
 
     [JsonIgnore]
     public bool Empty => Elements.Count == 0 && Compounds.Count == 0;
+
+    [JsonIgnore]
+    private static readonly Dictionary<int, Action<Storyboard>> migrations = new()
+    {
+        [2] = sb =>
+        {
+            sb.Elements.ForEach(e => e.Animations.ForEach(a => a.StartTime -= e.StartTime));
+        },
+    };
 
     #region Server-Side Stuff
 
@@ -47,21 +59,20 @@ public class Storyboard : EditorMap.IChangeNotifier
     public DrawableStoryboard CreateDrawable(PlayableMap map, osu.Framework.Platform.Storage storage)
         => new(map, this, storage.GetFullPath(string.Empty));
 
+    /// <summary>
+    /// Updates and migrates the storyboard to the latest known version.
+    /// Check <see cref="Storyboard.migrations"/> for more info about the migrations.
+    /// </summary>
     public void Update()
     {
-        if (Version >= LATEST_VERSION)
-            return;
-
-        Version++;
-
-        switch (Version)
+        while (Version < StoryboardApiVersion.LATEST)
         {
-            case 2:
-                Elements.ForEach(e => e.Animations.ForEach(a => a.StartTime -= e.StartTime));
-                break;
-        }
+            // Keep migrating to the next known version until the latest
+            Version++;
 
-        Update();
+            if (migrations.TryGetValue(Version, out var migrate))
+                migrate(this);
+        }
     }
 
     public Storyboard Sort()

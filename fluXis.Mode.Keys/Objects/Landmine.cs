@@ -1,8 +1,10 @@
 using fluXis.Map.Structures;
+using rhym;
 using fluXis.Scoring.Enums;
 
 namespace fluXis.Mode.Keys.Objects;
 
+[ResourceLocation("flux:keys/mine")]
 public class Landmine : HitObject
 {
     public override float DensityContribution => 0;

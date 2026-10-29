@@ -4,9 +4,7 @@ using System.Text;
 using System.Xml;
 using fluXis;
 using fluXis.Audio.FFT.Structures.Data;
-using fluXis.Map.Structures.Events;
 using fluXis.Scripting.Attributes;
-using fluXis.Scripting.Models.Storyboarding;
 using fluXis.Storyboards;
 using osu.Framework.Graphics;
 
@@ -60,14 +58,6 @@ internal class Program
         });
         typeList.Add(new EnumType<DefaultBlendingParameters>(true, ctorName: "BlendMode", enumName: "BlendMode"));
         typeList.Add(new EnumType<FFTBandType>(false));
-
-        var eventTypes = LuaMap.GetMapEventTypes();
-        eventTypes.Remove(typeof(NoteEvent));
-
-        var eventSb = new StringBuilder();
-        eventSb.AppendLine("---@alias EventType string");
-        eventTypes.ForEach(x => eventSb.AppendLine($"---| \"{x.Name.Replace("Event", "")}\""));
-        typeList.Add(new CustomTextType("enums", eventSb.ToString()));
 
         // yes this is stupid but i don't want to figure out how to make it right
         typeList.Add(new CustomTextType("enums", "---@alias ParameterDefinitionType string\n---| \"string\"\n---| \"int\"\n---| \"float\"\n---| \"boolean\""));

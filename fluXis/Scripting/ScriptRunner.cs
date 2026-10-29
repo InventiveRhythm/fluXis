@@ -22,7 +22,8 @@ public class ScriptRunner
 
     public Action<string, string, string, object> DefineParameter;
     protected Lua Lua { get; }
-    protected int Version { get; private set; }
+    protected VersionedLua VersionedLua { get; }
+    protected int Version { get; private set; } = 1;
 
     protected ScriptRunner()
     {
@@ -31,34 +32,36 @@ public class ScriptRunner
         state.RequireF("table", LuaNative.luaopen_table, true);
         state.RequireF("string", LuaNative.luaopen_string, true);
         state.RequireF("math", LuaNative.luaopen_math, true);
+        state.RequireF("utf8", LuaNative.luaopen_utf8, true);
 
         state.NewTable();
         state.SetGlobal("luanet");
 
         Lua = new Lua(state);
         Lua.State.Encoding = Encoding.UTF8;
-        Lua.DoString("luanet = nil"); // this just lets you load any type because of course it does. library written by a monkey with typewriter on drugs
-
-        AddField("mathf", new LuaMath());
-        AddField("FFTParameters", new LuaFFTParameters());
-
-        AddFunction("print", print);
-        AddFunction("RandomRange", randomRange);
-        AddFunction("Easing", (string str) => Enum.TryParse(str, out Easing easing) ? easing : Easing.None);
-        AddFunction("Vector2", (float x, float y) => new LuaVector2(x, y));
-        AddFunction("Color4", (float r, float g, float b, float a) => new LuaColor4(r, g, b, a));
-        AddFunction("Vector2Zero", () => new LuaVector2(0, 0));
-        AddFunction("Vector2One", () => new LuaVector2(1, 1));
-        AddFunction("BPMAtTime", findBpm);
-
-        AddFunction("DefineParameter", defineParameter);
-        AddFunction("SetVersion", setVersion);
-
-        Lua.DoString("import = function() end"); // disable importing
+        VersionedLua = new VersionedLua(Lua) { Version = Version };
     }
 
-    public void AddFunction(string name, Delegate function)
-        => Lua.RegisterFunction(name, function.Target, function.Method);
+    protected virtual void Initialize()
+    {
+        VersionedLua.AddField("mathf", new LuaMath());
+        VersionedLua.AddField("FFTParameters", new LuaFFTParameters());
+
+        VersionedLua.AddFunction("print", print);
+        VersionedLua.AddFunction("RandomRange", randomRange);
+        VersionedLua.AddFunction("Easing", (string str) => Enum.TryParse(str, out Easing easing) ? easing : Easing.None);
+        VersionedLua.AddFunction("Vector2", (float x, float y) => new LuaVector2(x, y));
+        VersionedLua.AddFunction("Color4", (float r, float g, float b, float a) => new LuaColor4(r, g, b, a));
+        VersionedLua.AddFunction("Vector2Zero", () => new LuaVector2(0, 0));
+        VersionedLua.AddFunction("Vector2One", () => new LuaVector2(1, 1));
+        VersionedLua.AddFunction("BPMAtTime", findBpm);
+
+        VersionedLua.AddFunction("DefineParameter", defineParameter);
+        VersionedLua.AddFunction("SetVersion", setVersion);
+
+        Lua.DoString("luanet = nil"); // this just lets you load any type because of course it does. library written by a monkey with typewriter on drugs
+        Lua.DoString("import = function() end"); // disable importing
+    }
 
     [CanBeNull]
     protected LuaFunction GetFunction(string name)
@@ -73,15 +76,34 @@ public class ScriptRunner
         }
     }
 
-    protected void AddField(string name, ILuaModel value) => Lua[name] = value;
-
     public void Run(string code)
     {
+        Initialize();
+        VersionedLua.Resolve();
         Lua.DoString(code);
     }
 
+    /// <summary>
+    /// Sets the version of the script allowing to use an older api or a newer one.
+    /// MUST be at the top of the file after env.
+    /// </summary>
+    /// <param name="v">The version to use</param>
+    /// <exception cref="ArgumentException"></exception>
     [LuaGlobal(Name = "SetVersion")]
-    private void setVersion(double v) => Version = (int)v;
+    private void setVersion(double v)
+    {
+        // TODO:
+        // This currently uses StoryboardApiVersion for version validation.
+        // Make sure to change the validation when we eventually have scripting for stuff other than storyboard.
+
+        int version = (int)v;
+
+        if (!StoryboardApiVersion.IsValid(version, out var err))
+            throw new ArgumentException(err);
+
+        VersionedLua.Version = Version = version;
+        VersionedLua.Resolve();
+    }
 
     [LuaGlobal(Name = "RandomRange")]
     private int randomRange(int from, int to) => RNG.Next(from, to + 1);

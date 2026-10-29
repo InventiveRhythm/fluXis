@@ -221,7 +221,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             new ResourceLocation("flux", "keys/4")
         ) { Creator = EditorMap.RealmMap.Metadata.Mapper };
 
-        EditorMap.Playable.Storyboard ??= new Storyboard { Version = Storyboard.LATEST_VERSION };
+        // Set to latest api version to avoid starting at V1
+        EditorMap.Playable.Storyboard ??= new Storyboard { Version = StoryboardApiVersion.LATEST };
 
         GameMode = modes.Find(EditorMap.Playable.Mode) ?? throw GameModeManager.FailedToLoadException();
         Format = modes.GetFormat(EditorMap.Playable.Storage, Path.GetExtension(EditorMap.Playable.FileName));

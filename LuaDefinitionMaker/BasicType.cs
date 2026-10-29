@@ -20,12 +20,38 @@ public class BasicType : LuaType
         this.fallbackType = fallbackType;
     }
 
+    private static void writeDeprecated(StringBuilder sb, MemberInfo member, bool withMessage = true)
+    {
+        var obs = member.GetCustomAttribute<ObsoleteAttribute>(false);
+        if (obs is null) return;
+
+        if (withMessage && !string.IsNullOrWhiteSpace(obs.Message))
+            sb.AppendLine($"---{obs.Message.ReplaceLineEndings(" ")}");
+
+        sb.AppendLine("---@deprecated");
+    }
+
+    private static string? getObsoleteMessage(MemberInfo member)
+    {
+        var obs = member.GetCustomAttribute<ObsoleteAttribute>(false);
+        return string.IsNullOrWhiteSpace(obs?.Message) ? null : obs.Message.ReplaceLineEndings(" ");
+    }
+
+    private static IEnumerable<(T Member, string Name)> getNewestMember<T>(IEnumerable<(T Member, string Name)> items)
+        where T : MemberInfo
+        => items.GroupBy(x => x.Name)
+                .Select(g =>
+                    g.OrderByDescending(x => x.Member.GetCustomAttribute<LuaVersionAttribute>()?.Since ?? 0)
+                     .First()
+                );
+
     public override void Write(StringBuilder sb)
     {
         Program.Write($"{Attribute.FileName}: {BaseType.FullName}");
 
         if (!Attribute.Hide)
         {
+            writeDeprecated(sb, BaseType);
             sb.Append($"---@class {Name}");
 
             if (BaseType.BaseType != null)
@@ -37,6 +63,8 @@ public class BasicType : LuaType
             }
 
             sb.AppendLine();
+
+            var propFields = new List<(PropertyInfo Member, string Name)>();
 
             foreach (var prop in BaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
             {
@@ -53,20 +81,33 @@ public class BasicType : LuaType
                 if (fieldName is null)
                     continue;
 
-                sb.Append($"---@field {StringUtils.ToCamelCase(fieldName)} {Program.GetLuaType(prop.PropertyType, fallback: fallbackType)}");
+                propFields.Add((prop, StringUtils.ToCamelCase(fieldName)));
+            }
+
+            foreach (var (prop, fieldName) in getNewestMember(propFields))
+            {
+                writeDeprecated(sb, prop, withMessage: false);
+                sb.Append($"---@field {fieldName} {Program.GetLuaType(prop.PropertyType, fallback: fallbackType)}");
 
                 var sum = Documentation.GetPropertySummary(prop);
                 if (sum is not null) sb.Append($" {sum.ReplaceLineEndings(" ")}");
 
+                var obsMsg = getObsoleteMessage(prop);
+                if (obsMsg is not null) sb.Append($" (deprecated: {obsMsg})");
+
                 sb.AppendLine();
             }
 
-            foreach (var field in BaseType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
-            {
-                var memberAttr = field.GetCustomAttribute<LuaMemberAttribute>();
-                if (memberAttr is null) continue;
+            var fieldMembers = BaseType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                                       .Select(f => (Member: f, Attr: f.GetCustomAttribute<LuaMemberAttribute>()))
+                                       .Where(x => x.Attr is not null)
+                                       .Select(x => (x.Member, x.Attr!.Name))
+                                       .ToList();
 
-                sb.Append($"---@field {memberAttr.Name} {Program.GetLuaType(field.FieldType, fallback: fallbackType)}");
+            foreach (var (field, name) in getNewestMember(fieldMembers))
+            {
+                writeDeprecated(sb, field, withMessage: false);
+                sb.Append($"---@field {name} {Program.GetLuaType(field.FieldType, fallback: fallbackType)}");
                 sb.AppendLine();
             }
 
@@ -78,28 +119,34 @@ public class BasicType : LuaType
             sb.AppendLine();
         }
 
-        foreach (var property in BaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
-        {
-            var globalAttr = property.GetCustomAttribute<LuaGlobalAttribute>();
-            if (globalAttr is null) continue;
+        var instanceGlobals = BaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                                      .Select(p => (Member: p, Attr: p.GetCustomAttribute<LuaGlobalAttribute>()))
+                                      .Where(x => x.Attr is not null)
+                                      .Select(x => (x.Member, Name: x.Attr!.Name ?? x.Member.Name))
+                                      .ToList();
 
+        foreach (var (property, globalName) in getNewestMember(instanceGlobals))
+        {
+            writeDeprecated(sb, property);
             sb.AppendLine($"---@type {Program.GetLuaType(property.PropertyType, fallback: fallbackType)}");
             sb.AppendLine($"---@diagnostic disable-next-line: missing-fields");
-            sb.AppendLine($"{globalAttr.Name ?? property.Name} = {{}}");
+            sb.AppendLine($"{globalName} = {{}}");
             sb.AppendLine();
         }
 
         // handle static (global) properties separately
-        foreach (var prop in BaseType.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly))
+        var staticGlobals = BaseType.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                                    .Select(p => (Member: p, Attr: p.GetCustomAttribute<LuaGlobalAttribute>()))
+                                    .Where(x => x.Attr is not null)
+                                    .Select(x => (x.Member, Name: x.Attr!.Name ?? x.Member.Name))
+                                    .ToList();
+
+        foreach (var (prop, fieldName) in getNewestMember(staticGlobals))
         {
-            var globalAttr = prop.GetCustomAttribute<LuaGlobalAttribute>();
-            if (globalAttr is null) continue;
-
-            var fieldName = globalAttr.Name ?? prop.Name;
-
             var sum = Documentation.GetPropertySummary(prop);
             if (sum is not null) sb.AppendLine($"---{sum.ReplaceLineEndings(" ")}");
 
+            writeDeprecated(sb, prop);
             sb.AppendLine($"---@type {Program.GetLuaType(prop.PropertyType, fallback: fallbackType)}");
             sb.AppendLine($"---@diagnostic disable-next-line: missing-fields");
             sb.AppendLine($"{Name}.{fieldName} = {{}}");
@@ -110,6 +157,8 @@ public class BasicType : LuaType
         {
             var ctorAttr = ctor.GetCustomAttribute<LuaConstructorAttribute>();
             if (ctorAttr is null) continue;
+
+            writeDeprecated(sb, ctor);
 
             foreach (var parameter in ctor.GetParameters())
             {
@@ -122,12 +171,16 @@ public class BasicType : LuaType
             sb.AppendLine();
         }
 
-        foreach (var method in BaseType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
-        {
-            var memberAttr = method.GetCustomAttribute<LuaMemberAttribute>();
-            var globalAttr = method.GetCustomAttribute<LuaGlobalAttribute>();
-            if (memberAttr is null && globalAttr is null) continue;
+        var methods = BaseType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                              .Select(m => (Method: m, Member: m.GetCustomAttribute<LuaMemberAttribute>(), Global: m.GetCustomAttribute<LuaGlobalAttribute>()))
+                              .Where(x => x.Member is not null || x.Global is not null)
+                              .Select(x => (x.Method, Name: x.Global is not null
+                                  ? x.Global.Name ?? x.Method.Name
+                                  : $"{(Attribute.Public ? "" : "__")}{Name}:{x.Member!.Name}"))
+                              .ToList();
 
+        foreach (var (method, funcName) in getNewestMember(methods))
+        {
             var doc = Documentation.GetMethod(method);
 
             if (doc.Summary is not null)
@@ -137,11 +190,13 @@ public class BasicType : LuaType
                 foreach (var line in lines) sb.AppendLine($"---{line}");
             }
 
+            writeDeprecated(sb, method);
+
             foreach (var parameter in method.GetParameters())
             {
                 var pType = parameter.GetCustomAttribute<LuaCustomType>()?.Target ?? parameter.ParameterType;
                 bool isNullable = parameter.HasDefaultValue && parameter.DefaultValue == null ||
-                          Nullable.GetUnderlyingType(pType) != null;
+                                  Nullable.GetUnderlyingType(pType) != null;
 
                 var luaType = Program.GetLuaType(pType, false, typeof(string), isNullable);
 
@@ -166,14 +221,7 @@ public class BasicType : LuaType
                 sb.AppendLine($"---@nodiscard");
             }
 
-            sb.Append("function ");
-
-            if (globalAttr is not null)
-                sb.Append(globalAttr.Name ?? method.Name);
-            else if (memberAttr is not null)
-                sb.Append($"{(Attribute.Public ? "" : "__")}{Name}:{memberAttr.Name}");
-
-            sb.AppendLine($"({string.Join(", ", method.GetParameters().Select(x => x.Name))}) end");
+            sb.AppendLine($"function {funcName}({string.Join(", ", method.GetParameters().Select(x => x.Name))}) end");
             sb.AppendLine();
         }
     }
