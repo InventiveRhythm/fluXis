@@ -10,10 +10,12 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Mouse;
+using fluXis.Resources;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.IO.Stores;
 using osu.Framework.Testing;
 using osu.Framework.Testing.Input;
 using osu.Framework.Utils;
@@ -186,6 +188,11 @@ public partial class FluXisTestScene : TestScene
         }
 
         public void RunTestBlocking(TestScene test) => runner.RunTestBlocking(test);
+
+        protected override void RegisterResources()
+        {
+            Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
+        }
     }
 
     private class DummyBeatSyncProvider : IBeatSyncProvider

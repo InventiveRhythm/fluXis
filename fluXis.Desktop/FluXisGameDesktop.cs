@@ -4,9 +4,11 @@ using fluXis.Configuration;
 using fluXis.Desktop.Integration;
 using fluXis.Integration;
 using fluXis.IPC;
+using fluXis.Resources;
 using Midori.Utils.Extensions;
 using osu.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 
 namespace fluXis.Desktop;
@@ -45,6 +47,11 @@ public partial class FluXisGameDesktop : FluXisGame
 
         if (RuntimeInfo.IsUnix)
             CreateComponentLoadTask(new LinuxMediaAdapter(), Add);
+    }
+
+    protected override void RegisterResources()
+    {
+        Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
     }
 
     protected override void LoadComplete()

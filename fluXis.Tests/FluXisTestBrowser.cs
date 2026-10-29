@@ -1,4 +1,6 @@
+using fluXis.Resources;
 using osu.Framework.Graphics;
+using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osu.Framework.Testing;
 
@@ -11,6 +13,11 @@ public partial class FluXisTestBrowser : FluXisGameBase
     public FluXisTestBrowser(string assembly)
     {
         this.assembly = assembly;
+    }
+
+    protected override void RegisterResources()
+    {
+        Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
     }
 
     protected override void LoadComplete()

@@ -65,7 +65,7 @@ using osu.Framework.Screens;
 
 namespace fluXis;
 
-public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGlobalKeybind>
+public abstract partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public static readonly string[] AUDIO_EXTENSIONS = { ".mp3", ".wav", ".ogg" };
     public static readonly string[] IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png" };

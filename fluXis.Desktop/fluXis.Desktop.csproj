@@ -18,6 +18,7 @@
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\fluXis.Mode.Keys\fluXis.Mode.Keys.csproj" />
+    <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj" />
     <ProjectReference Include="..\fluXis\fluXis.csproj"/>
     <ProjectReference Include="..\fluXis.Import.Quaver\fluXis.Import.Quaver.csproj"/>
     <ProjectReference Include="..\fluXis.Import.osu\fluXis.Import.osu.csproj"/>

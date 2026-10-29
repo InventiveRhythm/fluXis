@@ -49,7 +49,7 @@ public partial class PreviewManager : CompositeComponent
                 track = null;
             }
 
-            var tr = await trackStore.GetAsync($"{api.Endpoint.AssetUrl}/preview/{id}");
+            var tr = await trackStore.GetAsync($"{api.Endpoint.AssetUrl}/previews/{id}.ogg");
 
             if (tr == null)
             {

@@ -34,7 +34,6 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.Mouse;
 using fluXis.Overlay.Notifications;
 using fluXis.Plugins;
-using fluXis.Resources;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Menu;
@@ -52,7 +51,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Input;
-using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -61,7 +59,7 @@ using osuTK;
 
 namespace fluXis;
 
-public partial class FluXisGameBase : osu.Framework.Game
+public abstract partial class FluXisGameBase : osu.Framework.Game
 {
     protected DependencyContainer GameDependencies { get; private set; }
 
@@ -173,7 +171,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             Resources.AddExtension("json");
             Resources.AddExtension("ogg");
-            Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
+            RegisterResources();
             initFonts();
 
             if (RequiresSteam && !(Steam?.Initialized ?? false))
@@ -402,6 +400,8 @@ public partial class FluXisGameBase : osu.Framework.Game
             _ => Season.Normal
         };
     }
+
+    protected abstract void RegisterResources();
 
     private void initFonts()
     {
