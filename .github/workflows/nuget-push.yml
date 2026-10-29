@@ -23,7 +23,9 @@ jobs:
         with: { dotnet-version: "10.0.x" }
 
       - name: Pack
-        run: dotnet pack -c Release fluXis /p:Version=${{ github.ref_name }} /p:GenerateDocumentationFile=true /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg -o ${{steps.artifactsPath.outputs.nuget_artifacts}}
+        run: |
+          dotnet pack -c Release fluXis /p:Version=${{ github.ref_name }} /p:GenerateDocumentationFile=true /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg -o ${{steps.artifactsPath.outputs.nuget_artifacts}}
+          dotnet pack -c Release fluXis.Modes.Keys /p:Version=${{ github.ref_name }} /p:GenerateDocumentationFile=true /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg -o ${{steps.artifactsPath.outputs.nuget_artifacts}}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7

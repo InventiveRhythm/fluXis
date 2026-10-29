@@ -6,6 +6,14 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Label="Nuget">
+    <Title>fluXis//keys</Title>
+    <PackageId>InventiveRhythm.fluXis.Modes.Keys</PackageId>
+    <PackageReleaseNotes>Automated release.</PackageReleaseNotes>
+    <Description>A community-driven rhythm game with a focus on creativity and expression.</Description>
+    <PackageIcon>nuget-icon.png</PackageIcon>
+  </PropertyGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\Samples\**\*"/>
     <EmbeddedResource Include="Resources\Textures\**\*"/>
