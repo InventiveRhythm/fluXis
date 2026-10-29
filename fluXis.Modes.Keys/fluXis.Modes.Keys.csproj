@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="../fluXis/nuget-icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Resources\Samples\**\*"/>
     <EmbeddedResource Include="Resources\Textures\**\*"/>
     <EmbeddedResource Include="Resources\Tracks\**\*"/>
