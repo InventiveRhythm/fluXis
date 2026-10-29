@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modes", "Modes", "{03FA297D-E48F-45D6-B83A-4400AB039954}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Mode.Keys", "fluXis.Mode.Keys\fluXis.Mode.Keys.csproj", "{ABFDA1A6-7413-4A8B-B396-778F298BCF51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Modes.Keys", "fluXis.Modes.Keys\fluXis.Modes.Keys.csproj", "{ABFDA1A6-7413-4A8B-B396-778F298BCF51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

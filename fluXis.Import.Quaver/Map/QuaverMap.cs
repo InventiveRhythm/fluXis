@@ -7,7 +7,7 @@ using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Events;
 using fluXis.Map.Structures.Events.Scrolling;
-using fluXis.Mode.Keys.Objects;
+using fluXis.Modes.Keys.Objects;
 using JetBrains.Annotations;
 using osu.Framework.Platform;
 

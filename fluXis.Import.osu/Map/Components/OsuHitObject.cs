@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Map.Structures;
-using fluXis.Mode.Keys.Objects;
+using fluXis.Modes.Keys.Objects;
 using osu.Framework.Graphics.Primitives;
 
 namespace fluXis.Import.osu.Map.Components;

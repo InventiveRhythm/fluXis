@@ -5,7 +5,7 @@ using System.Linq;
 using fluXis.Import.Stepmania.Map.Components;
 using fluXis.Map;
 using fluXis.Map.Structures;
-using fluXis.Mode.Keys.Objects;
+using fluXis.Modes.Keys.Objects;
 using osu.Framework.Platform;
 
 namespace fluXis.Import.Stepmania.Map;

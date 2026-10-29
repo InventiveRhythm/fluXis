@@ -7,7 +7,7 @@ using fluXis.Import.Stepmania.AutoImport;
 using fluXis.Import.Stepmania.Map;
 using fluXis.Map.Format;
 using fluXis.Map.Structures;
-using fluXis.Mode.Keys.Objects;
+using fluXis.Modes.Keys.Objects;
 using fluXis.Overlay.Notifications;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;

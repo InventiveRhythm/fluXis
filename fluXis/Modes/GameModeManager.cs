@@ -13,7 +13,7 @@ namespace fluXis.Modes;
 public partial class GameModeManager : AssemblyLoader<GameMode>
 {
     protected override string StorageFolder => "modes";
-    protected override string AssemblyPrefix => "fluXis.Mode";
+    protected override string AssemblyPrefix => "fluXis.Modes";
 
     private readonly Game game;
     private readonly GameHost host;
