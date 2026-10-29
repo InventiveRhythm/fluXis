@@ -19,13 +19,13 @@
 ### Downloading the source code
 You can download the source code by cloning the repository using git:
 ```shell
-git clone --recurse-submodules https://github.com/InventiveRhythm/fluXis
+git clone https://github.com/InventiveRhythm/fluXis
 cd fluXis
 ```
 
 To update the source code to the latest version, run the following command in the repository directory:
 ```shell
-git pull --recurse-submodules
+git pull
 ```
 
 ### Building
