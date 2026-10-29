@@ -1,0 +1,37 @@
+name: Push to NuGet
+
+on:
+  workflow_dispatch:
+  push: { tags: [ '*' ] }
+
+jobs:
+  pack:
+    name: Pack and Push
+    runs-on: windows-latest
+    environment: production
+    defaults: { run: { shell: powershell } }
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set artifacts directory
+        id: artifactsPath
+        run: echo "::set-output name=NUGET_ARTIFACTS::${{github.workspace}}\artifacts"
+
+      - name: Install .NET 10.0.x
+        uses: actions/setup-dotnet@v5
+        with: { dotnet-version: "10.0.x" }
+
+      - name: Pack
+        run: dotnet pack -c Release fluXis /p:Version=${{ github.ref_name }} /p:GenerateDocumentationFile=true /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg -o ${{steps.artifactsPath.outputs.nuget_artifacts}}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: fluXis
+          path: |
+            ${{steps.artifactsPath.outputs.nuget_artifacts}}\*.nupkg
+            ${{steps.artifactsPath.outputs.nuget_artifacts}}\*.snupkg
+
+      - name: Publish packages to nuget.org
+        run: dotnet nuget push ${{steps.artifactsPath.outputs.nuget_artifacts}}\*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
