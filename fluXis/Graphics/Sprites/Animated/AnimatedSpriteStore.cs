@@ -48,7 +48,7 @@ public class AnimatedSpriteStore : IResourceStore<AnimatedSpriteStore.AnimatedTe
 
             var path = storage.GetFullPath($"{name}.gif");
 
-            if (!storage.Exists(path) && !download(path, name, type))
+            if (!storage.Exists(path) && !download(path, name))
                 return null;
 
             using var stream = File.OpenRead(path);
@@ -86,16 +86,9 @@ public class AnimatedSpriteStore : IResourceStore<AnimatedSpriteStore.AnimatedTe
         return null;
     }
 
-    private bool download(string path, string hash, OnlineTextureStore.AssetType type)
+    private bool download(string path, string hash)
     {
-        var dir = type switch
-        {
-            OnlineTextureStore.AssetType.Avatar => "avatar",
-            OnlineTextureStore.AssetType.Banner => "banner",
-            _ => throw new ArgumentOutOfRangeException()
-        };
-
-        var req = new WebRequest($"{api.Endpoint.AssetUrl}/{dir}/{hash}_a.gif");
+        var req = new WebRequest($"{api.Endpoint.AssetUrl}/hashed/{hash}_a.gif");
         req.AllowInsecureRequests = true;
         req.Perform();
 

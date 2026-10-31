@@ -3,6 +3,7 @@ using fluXis.Online.API.Models.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Online.Drawables.Images;
 
@@ -30,13 +31,12 @@ public partial class DrawableOnlineBackground : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private void load(OnlineTextureStore textures)
+    private void load(OnlineTextureStore online, TextureStore textures)
     {
         RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         FillMode = FillMode.Fill;
-        Texture = textures.GetBackground(id, size);
+        Texture = online.GetBackground(id, size) ?? textures.Get("Backgrounds/default"); // we should really use lq versions for this
     }
 }
-

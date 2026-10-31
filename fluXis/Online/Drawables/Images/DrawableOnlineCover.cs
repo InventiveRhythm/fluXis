@@ -3,6 +3,7 @@ using fluXis.Online.API.Models.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Online.Drawables.Images;
 
@@ -19,13 +20,13 @@ public partial class DrawableOnlineCover : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private void load(OnlineTextureStore textures)
+    private void load(OnlineTextureStore online, TextureStore textures)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         RelativeSizeAxes = Axes.Both;
         FillMode = FillMode.Fill;
-        Texture = textures.GetCover(mapSet.ID, size);
+        Texture = online.GetCover(mapSet.ID, size) ?? textures.Get("Covers/default");
     }
 
     protected override void LoadComplete()

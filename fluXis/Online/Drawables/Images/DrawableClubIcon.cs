@@ -3,6 +3,7 @@ using fluXis.Online.API.Models.Clubs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Online.Drawables.Images;
 
@@ -21,8 +22,8 @@ public partial class DrawableClubIcon : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(TextureStore textures)
     {
-        Texture = store.GetClubIcon(string.IsNullOrWhiteSpace(club.IconHash) ? "default" : club.IconHash);
+        Texture = store.GetClubIcon(club.IconHash) ?? textures.Get("Online/default-club");
     }
 }
