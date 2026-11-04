@@ -31,5 +31,8 @@ public class EditorKeymap
 
         [JsonProperty("ctrl-shift")]
         public EditorScrollAction ControlShift { get; set; } = EditorScrollAction.Rate;
+
+        [JsonProperty("ctrl-shift-alt")]
+        public EditorScrollAction ControlShiftAlt { get; set; } = EditorScrollAction.Scroll;
     }
 }

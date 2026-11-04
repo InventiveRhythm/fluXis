@@ -14,5 +14,8 @@ public enum EditorScrollAction
     Zoom,
 
     [Description("Change Rate")]
-    Rate
+    Rate,
+
+    [Description("Scroll")]
+    Scroll
 }

@@ -122,6 +122,7 @@ public partial class EditorKeymapOverlay : IconEntranceOverlay, IKeyBindingHandl
         yield return createScrollActionDropdown(strings.ScrollShiftAction, map.Scroll.Shift, EditorScrollAction.Snap, v => map.Scroll.Shift = v);
         yield return createScrollActionDropdown(strings.ScrollCtrlAction, map.Scroll.Control, EditorScrollAction.Zoom, v => map.Scroll.Control = v);
         yield return createScrollActionDropdown(strings.ScrollCtrlShiftAction, map.Scroll.ControlShift, EditorScrollAction.Rate, v => map.Scroll.ControlShift = v);
+        yield return createScrollActionDropdown(strings.ScrollCtrlShiftAltAction, map.Scroll.ControlShiftAlt, EditorScrollAction.Scroll, v => map.Scroll.ControlShiftAlt = v);
 
         yield return createToggle("Invert mouse scrolling", map.InvertScroll, false, v => map.InvertScroll = v);
         yield return createToggle("Snap to next if closer", map.SnapNext, false, v => map.SnapNext = v);

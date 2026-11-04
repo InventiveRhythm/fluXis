@@ -1,3 +1,4 @@
+using System.Linq;
 using fluXis.Audio;
 using fluXis.Configuration;
 using fluXis.Graphics;
@@ -11,6 +12,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Overlay.Volume;
 
@@ -71,13 +73,17 @@ public partial class VolumeOverlay : VisibilityContainer, IKeyBindingHandler<Flu
 
     protected override bool OnScroll(ScrollEvent e)
     {
-        if (e.AltPressed)
+        bool onlyAltPressed = e.AltPressed
+                              && !e.ControlPressed && !e.ShiftPressed && !e.SuperPressed
+                              && e.CurrentState.Keyboard.Keys.All(k => k is Key.AltLeft or Key.AltRight);
+
+        if (onlyAltPressed)
         {
             changeVolume(e.ScrollDelta.Y * .02f);
             return true;
         }
 
-        return false;
+        return base.OnScroll(e);
     }
 
     public void ResetInactiveTimer()

@@ -78,6 +78,9 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     private ToolboxHitsoundCategory toolboxHitsounds;
     private PointsSidebar sidebar;
 
+    private float scrollAccumulation;
+    private float playfieldOrigin => Map.RealmMap.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH;
+
     private SpriteStack<BlurableBackground> backgrounds;
     private Box backgroundDim;
 
@@ -109,7 +112,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         Playfield = new EditorPlayfield
         {
-            X = Map.RealmMap.KeyCount / 2f * -EditorHitObjectContainer.NOTEWIDTH
+            X = playfieldOrigin
         };
 
         dependencies.Cache(this);
@@ -318,6 +321,27 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    public override void ScrollAction(int direction, float delta)
+    {
+        if (scrollAccumulation != 0 && Math.Sign(scrollAccumulation) != direction)
+            scrollAccumulation = direction * (1 - Math.Abs(scrollAccumulation));
+
+        scrollAccumulation += -delta;
+
+        // TODO:
+        // Playfield currently has constant lanes regardless of key count
+        // Change this if that's no longer the case
+        float playfieldSize = Playfield.HitObjectContainer.ScaledNoteWidth * 24;
+
+        while (Math.Abs(scrollAccumulation) >= 1)
+        {
+            float newX = Playfield.X - (scrollAccumulation * 200f * (float)settings.Zoom);
+            float clamped = Math.Clamp(newX, playfieldOrigin - playfieldSize, playfieldOrigin);
+            Playfield.MoveToX(clamped, 250, Easing.Out);
+            scrollAccumulation = scrollAccumulation < 0 ? Math.Min(0, scrollAccumulation + 1) : Math.Max(0, scrollAccumulation - 1);
+        }
+    }
 
     public override bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
     {
