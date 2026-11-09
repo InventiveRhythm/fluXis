@@ -322,7 +322,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
-    public override void ScrollAction(int direction, float delta)
+    public override void ScrollHorizontallyAction(int direction, float delta)
     {
         if (scrollAccumulation != 0 && Math.Sign(scrollAccumulation) != direction)
             scrollAccumulation = direction * (1 - Math.Abs(scrollAccumulation));

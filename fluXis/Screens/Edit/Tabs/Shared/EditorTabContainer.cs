@@ -196,9 +196,9 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
                 break;
             }
 
-            case EditorScrollAction.Scroll:
+            case EditorScrollAction.ScrollHorizontally:
             {
-                ScrollAction(direction, delta);
+                ScrollHorizontallyAction(direction, delta);
                 break;
             }
 
@@ -250,7 +250,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     }
 
     // This is currently only exclusive to charting tab so, ChartingContainer implements it.
-    public virtual void ScrollAction(int direction, float delta) { }
+    public virtual void ScrollHorizontallyAction(int direction, float delta) { }
 
     public virtual bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
     {

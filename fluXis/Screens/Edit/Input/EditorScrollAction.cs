@@ -16,6 +16,6 @@ public enum EditorScrollAction
     [Description("Change Rate")]
     Rate,
 
-    [Description("Scroll")]
-    Scroll
+    [Description("Scroll Horizontally")]
+    ScrollHorizontally
 }
