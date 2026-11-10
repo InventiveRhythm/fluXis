@@ -76,6 +76,7 @@ public class UnusedAssetsCheck : IVerifyCheck
 
             foreach (var info in infos)
             {
+                exists |= info.FileName == relative;
                 exists |= info.BackgroundFile == relative;
                 exists |= info.AudioFile == relative;
                 exists |= info.VideoFile == relative;
