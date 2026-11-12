@@ -52,7 +52,7 @@ public class AnimatedSpriteStore : IResourceStore<AnimatedSpriteStore.AnimatedTe
                 return null;
 
             using var stream = File.OpenRead(path);
-            using var image = TextureUpload.LoadFromStream<Rgba32>(stream);
+            using var image = TextureUpload.LoadFromStream<Rgba32>(stream, false);
 
             var frames = new List<AnimatedTexture>();
 
