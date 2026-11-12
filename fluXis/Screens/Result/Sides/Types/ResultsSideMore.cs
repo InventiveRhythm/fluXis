@@ -45,10 +45,10 @@ public partial class ResultsSideMore : ResultsSideContainer
             _ => $"{(score.Value.Flawless / (float)score.Value.Perfect).ToStringInvariant("0.0")}:1"
         }));
 
-        if (score.Value.HitResults is { Count: > 0 })
+        if (score.Value.HitResults is { Length: > 0 })
         {
-            var nonMiss = score.Value.HitResults.Where(r => r is { Judgement: > Judgement.Miss, Type: not ResultType.Landmine }).ToList();
-            var avg = nonMiss.Count > 1 ? nonMiss.Average(x => x.Difference) : 0;
+            var nonMiss = score.Value.HitResults.Where(r => r.Judgement >= Judgement.Miss && r.ObjectType != "flux:keys/mine").ToList();
+            var avg = nonMiss.Count > 1 ? nonMiss.Average(x => x.Delta) : 0;
             flow.Add(new ResultsSideDoubleText("Mean", $"{(int)-avg}ms"));
         }
 

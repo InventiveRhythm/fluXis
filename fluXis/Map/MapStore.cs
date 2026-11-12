@@ -541,11 +541,7 @@ public partial class MapStore : Component
     [CanBeNull]
     public APIMapLookup LookUpHash(string hash)
     {
-        var req = new MapLookupRequest
-        {
-            Hash = hash
-        };
-
+        var req = new MapHashRequest(hash);
         api.PerformRequest(req);
         return req.IsSuccessful ? req.Response!.Data : null;
     }

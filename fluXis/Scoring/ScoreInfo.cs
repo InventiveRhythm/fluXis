@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Reflection;
+using fluXis.Modes.Gameplay.Objects;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring.Enums;
-using fluXis.Scoring.Structs;
 using Newtonsoft.Json;
+using rhym;
+using ResourceLocation = rhym.ResourceLocation;
 
 namespace fluXis.Scoring;
 
@@ -48,7 +50,7 @@ public class ScoreInfo
     public int Miss { get; set; }
 
     [JsonProperty("results")]
-    public List<HitResult>? HitResults { get; set; } = new();
+    public Result[]? HitResults { get; set; }
 
     [JsonProperty("mapid")]
     public long MapID { get; set; }
@@ -57,7 +59,7 @@ public class ScoreInfo
     public long PlayerID { get; set; }
 
     [JsonProperty("mods")]
-    public List<string> Mods { get; set; } = new();
+    public string[] Mods { get; set; } = [];
 
     [JsonProperty("scrollspeed")]
     public float ScrollSpeed { get; set; }
@@ -99,4 +101,31 @@ public class ScoreInfo
 
     [JsonIgnore]
     public APIUser? Player { get; set; }
+
+    public class Result
+    {
+        [JsonProperty("type")]
+        public ResourceLocation ObjectType { get; init; }
+
+        [JsonProperty("judgement")]
+        public Judgement Judgement { get; init; }
+
+        [JsonProperty("time")]
+        public double Time { get; init; }
+
+        [JsonProperty("delta")]
+        public double Delta { get; init; }
+
+        public Result(TrackedHitObject obj)
+        {
+            ObjectType = obj.Object.GetType().GetCustomAttribute<ResourceLocationAttribute>()?.Location ?? "flux:unknown";
+            Judgement = obj.Judgement;
+            Time = obj.ClockTime ?? obj.Object.Time;
+            Delta = obj.Difference ?? 0;
+        }
+
+        public Result()
+        {
+        }
+    }
 }

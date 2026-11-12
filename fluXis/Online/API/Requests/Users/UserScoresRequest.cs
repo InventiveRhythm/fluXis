@@ -4,7 +4,7 @@ namespace fluXis.Online.API.Requests.Users;
 
 public class UserScoresRequest : APIRequest<APIUserScores>
 {
-    protected override string Path => $"/users/{id}/scores";
+    protected override string Path => $"/scores/users/{id}";
 
     private long id { get; }
 

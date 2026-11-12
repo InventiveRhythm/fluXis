@@ -2,6 +2,7 @@
 using fluXis.Replays;
 using fluXis.Scoring.Enums;
 using Newtonsoft.Json;
+using rhym;
 
 namespace fluXis.Online.API.Payloads.Scores;
 
@@ -42,10 +43,10 @@ public class ScoreSubmissionPayload
 
     public class Result
     {
-        [JsonProperty("diff")]
-        public double Difference { get; set; }
+        [JsonProperty("judgement")]
+        public Judgement Judgement { get; set; }
 
         [JsonProperty("type")]
-        public ResultType Type { get; set; }
+        public ResourceLocation Type { get; set; }
     }
 }

@@ -68,7 +68,7 @@ public partial class ResultsCenter : CompositeDrawable
                         Height = 40,
                         Anchor = Anchor.BottomCentre,
                         Origin = Anchor.BottomCentre,
-                        Alpha = scoreInfo.Value.Mods.Count != 0 ? 1 : 0,
+                        Alpha = scoreInfo.Value.Mods.Length != 0 ? 1 : 0,
                         Mods = scoreInfo.Value.Mods.Select(ModUtils.GetFromAcronym).ToList(),
                         Margin = new MarginPadding { Top = 36 }
                     }
@@ -93,7 +93,7 @@ public partial class ResultsCenter : CompositeDrawable
         base.LoadComplete();
         scoreInfo.BindValueChanged(v =>
         {
-            mods.Alpha = v.NewValue.Mods.Count != 0 ? 1 : 0;
+            mods.Alpha = v.NewValue.Mods.Length != 0 ? 1 : 0;
             mods.Mods = v.NewValue.Mods.Select(ModUtils.GetFromAcronym).ToList();
         });
     }

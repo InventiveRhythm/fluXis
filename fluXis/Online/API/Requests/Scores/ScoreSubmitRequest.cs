@@ -45,8 +45,8 @@ public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
 
         var results = score.HitResults.Select(x => new ScoreSubmissionPayload.Result
         {
-            Difference = x.Difference,
-            Type = x.Type
+            Judgement = x.Judgement,
+            Type = x.ObjectType
         });
 
         var payload = new ScoreSubmissionPayload

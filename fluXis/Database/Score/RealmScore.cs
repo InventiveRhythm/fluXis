@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
@@ -93,7 +92,7 @@ public class RealmScore : RealmObject
         PlayerID = PlayerID,
         MapID = -1,
         Timestamp = Date.ToUnixTimeSeconds(),
-        Mods = Mods.Split(' ').ToList(),
+        Mods = Mods.Split(' ', StringSplitOptions.RemoveEmptyEntries),
         ScrollSpeed = ScrollSpeed
     };
 }

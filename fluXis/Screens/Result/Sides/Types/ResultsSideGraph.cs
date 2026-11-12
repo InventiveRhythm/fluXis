@@ -181,6 +181,9 @@ public partial class ResultsSideGraph : ResultsSideContainer
             RelativeSizeAxes = Axes.X;
             FillMode = FillMode.Fit;
 
+            if (score.HitResults is null)
+                return;
+
             var rate = score.Rate;
             var judge = new HitWindows(map.AccuracyDifficulty, 1f);
             var miss = judge.TimingFor(Judgement.Miss);
@@ -229,11 +232,11 @@ public partial class ResultsSideGraph : ResultsSideContainer
                     var brush = judgeBrushes[result.Judgement];
 
                     var x = (float)((image.Width - 8) * ((result.Time - start) / end)) + 4;
-                    var y = (float)(image.Height / 2f - result.Difference / rate);
+                    var y = (float)(image.Height / 2f - result.Delta / rate);
 
                     if (!float.IsFinite(x))
                         x = image.Width / 2f;
-                    if (result.Judgement == Judgement.Miss || result.Type == ResultType.Landmine)
+                    if (result.Judgement == Judgement.Miss || result.ObjectType == "flux:keys/mine") // TODO: don't hardcode this
                         y = image.Height / 2f;
 
                     ctx.Fill(brush, new EllipsePolygon(new PointF(x, y), 4));

@@ -190,12 +190,11 @@ public class ScoreProcessor : JudgementDependant, IDisposable
             Alright = Alright,
             Okay = Okay,
             Miss = Miss,
-            // TODO: convert
-            // HitResults = JudgementProcessor.Results,
+            HitResults = [.. JudgementProcessor.Results.Select(x => new ScoreInfo.Result(x))],
             MapID = Map.OnlineID,
             PlayerID = Player.ID,
             Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            Mods = Mods.Select(m => m.Acronym).ToList()
+            Mods = [.. Mods.Select(m => m.Acronym)]
         };
     }
 

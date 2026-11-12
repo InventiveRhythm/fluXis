@@ -6,7 +6,7 @@ namespace fluXis.Online.API.Requests.Maps;
 
 public class MapLeaderboardRequest : APIRequest<MapLeaderboard>
 {
-    protected override string Path => $"/maps/{id}/scores";
+    protected override string Path => $"/scores/maps/{id}";
 
     private ScoreListType type { get; }
     private long id { get; }

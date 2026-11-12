@@ -965,6 +965,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 panels.Content = container;
             });
 
+            // TODO:
+            // this isn't implemented in the backend anymore.
+            // probably needs to be redone in a cleaner way
+
             // check for already uploaded maps
             // and ask if the user wants to replace that one instead
             var req = new MapLookupRequest

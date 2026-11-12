@@ -70,7 +70,7 @@ public static class APIExtensions
         MapID = score.Map?.ID ?? -1,
         ScrollSpeed = score.ScrollSpeed,
         Timestamp = score.Time,
-        Mods = score.Mods.Split(",").ToList(),
+        Mods = score.Mods.Split(",", StringSplitOptions.RemoveEmptyEntries),
         PlayerID = score.User.ID,
         Player = score.User
     };
