@@ -12,7 +12,7 @@
     <ProjectReference Include="..\Framework\osu.Framework\osu.Framework.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="16.2.0"/>
+    <PackageReference Include="AutoMapper" Version="17.0.0" />
     <PackageReference Include="flustix.Midori" Version="2026.927.0"/>
     <PackageReference Include="Humanizer.Core" Version="3.0.10"/>
     <PackageReference Include="NCalcSync" Version="7.1.0"/>
