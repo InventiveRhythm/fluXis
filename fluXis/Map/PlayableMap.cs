@@ -92,7 +92,35 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
 
     public SlimReadOnlyListWrapper<ITimedObject> Objects => objects.AsSlimReadOnly();
     private readonly List<ITimedObject> objects = [];
-    private readonly Dictionary<Type, List<object>> lut = [];
+
+    #region Lookup Table
+
+    private readonly Dictionary<Type, HashSet<ITimedObject>> lut = [];
+
+    private IEnumerable<HashSet<ITimedObject>> findTables(Type type)
+    {
+        if (type.IsAssignableTo(typeof(HitObject)))
+            type = typeof(HitObject);
+
+        foreach (var t in type.GetInterfaces())
+        {
+            // unnecessary + nothing actually queries for this
+            if (t == typeof(ITimedObject))
+                continue;
+
+            if (!lut.TryGetValue(t, out var tl))
+                tl = lut[t] = [];
+
+            yield return tl;
+        }
+
+        if (!lut.TryGetValue(type, out var list))
+            list = lut[type] = [];
+
+        yield return list;
+    }
+
+    #endregion
 
     public void AddObject(ITimedObject obj)
     {
@@ -100,6 +128,9 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
             maxCombo.Invalidate();
 
         objects.Add(obj);
+
+        var tables = findTables(obj.GetType());
+        tables.ForEach(x => x.Add(obj));
     }
 
     public void AddObjects(IEnumerable<ITimedObject> objs) => objs.ForEach(AddObject);
@@ -110,6 +141,9 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
             maxCombo.Invalidate();
 
         objects.Remove(obj);
+
+        var tables = findTables(obj.GetType());
+        tables.ForEach(x => x.Remove(obj));
     }
 
     public void RemoveObjects(IEnumerable<ITimedObject> objs) => objs.ForEach(RemoveObject);
@@ -123,12 +157,19 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
         return result != 0 ? result : a.GetHashCode().CompareTo(b.GetHashCode());
     });
 
-    // TODO: optimize this with a type->list lookup table
-    public T[] ObjectsOfType<T>() where T : ITimedObject => [.. objects.OfType<T>()];
+    public T[] ObjectsOfType<T>() where T : ITimedObject
+    {
+        if (lut.TryGetValue(typeof(T), out var list))
+            return [.. list.OfType<T>()];
+
+        return [.. objects.OfType<T>()];
+    }
 
     public ITimedObject[] ObjectsOfType(Type type)
     {
-        // todo: this is wrong (kind of)
+        if (lut.TryGetValue(type, out var list))
+            return [.. list];
+
         return [.. objects.Where(x => x.GetType().IsAssignableTo(type))];
     }
 
