@@ -148,7 +148,7 @@ public partial class MultiCountdown : CompositeDrawable
             return;
         }
 
-        endTime = time.Value;
+        endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + time.Value;
         text.Show();
     }
 }

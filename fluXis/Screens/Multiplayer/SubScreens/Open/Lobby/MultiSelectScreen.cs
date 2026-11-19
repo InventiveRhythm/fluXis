@@ -14,9 +14,9 @@ public partial class MultiSelectScreen : SelectScreen
     public override bool PlayBackSound => !hasSelected;
     private bool hasSelected;
 
-    private Action<RealmMap, List<string>> selected { get; }
+    private Action<RealmMap, string[]> selected { get; }
 
-    public MultiSelectScreen(Action<RealmMap, List<string>> selected)
+    public MultiSelectScreen(Action<RealmMap, string[]> selected)
     {
         this.selected = selected;
     }
@@ -33,7 +33,7 @@ public partial class MultiSelectScreen : SelectScreen
             return;
 
         mods.RemoveAll(x => x is AutoPlayMod);
-        selected?.Invoke(map, mods.Select(x => x.Acronym).ToList());
+        selected?.Invoke(map, [.. mods.Select(x => x.Acronym)]);
         hasSelected = true;
         this.Exit();
     }

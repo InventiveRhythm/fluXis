@@ -118,7 +118,7 @@ public partial class ClubHeader : CompositeDrawable
                                 },
                                 new ForcedHeightText
                                 {
-                                    Text = $"{club.Members!.Count} member{(club.MemberCount != 1 ? "s" : "")}",
+                                    Text = $"{club.Members!.Length} member{(club.MemberCount != 1 ? "s" : "")}",
                                     WebFontSize = 16,
                                     Height = 24,
                                     Shadow = true,

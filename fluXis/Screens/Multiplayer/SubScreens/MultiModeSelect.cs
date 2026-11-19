@@ -171,7 +171,7 @@ public partial class MultiModeSelect : MultiSubScreen
         }, true);
     }
 
-    public void OpenList(long id = -1, string password = "")
+    public void OpenList(string id = "", string password = "")
         => Schedule(() => this.Push(new MultiLobbyList(id, password)));
 
     protected override void FadeIn()

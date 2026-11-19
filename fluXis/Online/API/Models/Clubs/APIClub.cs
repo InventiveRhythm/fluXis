@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using fluXis.Online.API.Models.Other;
+﻿using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 
@@ -28,7 +27,7 @@ public class APIClub
     public long MemberCount { get; set; }
 
     [JsonProperty("colors")]
-    public List<APIGradientColor> Colors { get; set; } = new();
+    public APIGradientColor[] Colors { get; set; } = [];
 
     #region Optional
 
@@ -39,7 +38,7 @@ public class APIClub
     public ClubJoinType? JoinType { get; set; }
 
     [JsonProperty("members")]
-    public List<APIUser>? Members { get; set; }
+    public APIUser[]? Members { get; set; }
 
     [JsonProperty("stats")]
     public APIClubStatistics? Statistics { get; set; }
@@ -53,11 +52,11 @@ public class APIClub
             ID = id,
             Name = "Unknown Club",
             Tag = "UNK",
-            Colors = new List<APIGradientColor>
-            {
-                new() { Color = "#ffffff", Position = 0 },
-                new() { Color = "#ffffff", Position = 0 }
-            }
+            Colors =
+            [
+                new APIGradientColor { Color = "#ffffff", Position = 0 },
+                new APIGradientColor { Color = "#ffffff", Position = 0 }
+            ]
         };
     }
 }

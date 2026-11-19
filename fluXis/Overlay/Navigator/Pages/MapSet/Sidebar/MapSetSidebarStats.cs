@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Localization;
@@ -88,12 +89,12 @@ public partial class MapSetSidebarStats : FillFlowContainer
             var map = e.NewValue;
             length.SetValue(map.Length);
             bpm.SetValue((float)map.BPM);
-            hits.SetValue(map.NoteCount);
-            lns.SetValue(map.LongNoteCount);
+            hits.SetValue(map.ObjectCounts.GetValueOrDefault("flux:keys/note", 0)); // TODO: make this work per-mode
+            lns.SetValue(map.ObjectCounts.GetValueOrDefault("flux:keys/long", 0));
             rating.SetValue((float)map.Rating);
             accuracy.SetValue(map.AccuracyDifficulty);
             health.SetValue(map.HealthDifficulty);
-        }, true);
+        });
 
         FinishTransforms(true);
     }

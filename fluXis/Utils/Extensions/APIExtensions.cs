@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Models.Other;
@@ -20,7 +19,7 @@ public static class APIExtensions
     public static ColourInfo CreateColorInfo(this APIClub club)
         => CreateColorInfo(club.Colors);
 
-    public static ColourInfo CreateColorInfo(this List<APIGradientColor> colors)
+    public static ColourInfo CreateColorInfo(this APIGradientColor[] colors)
     {
         try
         {

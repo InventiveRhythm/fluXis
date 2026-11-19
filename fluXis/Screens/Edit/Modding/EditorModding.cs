@@ -39,21 +39,21 @@ public partial class EditorModding : CompositeComponent
     {
         addAction(new APIModdingAction("aa", api.User.Value ?? APIUser.Default, APIModdingActionType.Note, APIModdingActionState.Pending, "change this", 0)
         {
-            ChangeRequests = new List<APIModdingChangeRequest>
-            {
-                new()
+            ChangeRequests =
+            [
+                new APIModdingChangeRequest
                 {
                     StartTime = 576,
                     CommentContent = "wuh"
                 },
-                new()
+                new APIModdingChangeRequest
                 {
                     StartTime = 2307,
                     EndTime = 3076,
                     HexColor = "#55ff55",
                     CommentContent = "this fucking sucks"
                 }
-            }
+            ]
         });
 
         CurrentAction = new APIModdingAction(
@@ -63,7 +63,7 @@ public partial class EditorModding : CompositeComponent
             APIModdingActionState.Pending,
             "", 0)
         {
-            ChangeRequests = new List<APIModdingChangeRequest>()
+            ChangeRequests = []
         };
 
         ViewType = Type.Purifier;

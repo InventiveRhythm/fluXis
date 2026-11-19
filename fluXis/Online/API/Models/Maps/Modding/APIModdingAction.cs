@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using fluXis.Online.API.Models.Users;
 using JetBrains.Annotations;
 using Midori.Utils;
@@ -29,7 +28,7 @@ public class APIModdingAction
 
     [CanBeNull]
     [JsonProperty("changes")]
-    public List<APIModdingChangeRequest> ChangeRequests { get; init; }
+    public APIModdingChangeRequest[] ChangeRequests { get; init; }
 
     public APIModdingAction(string id, APIUser user, APIModdingActionType type, APIModdingActionState state, string content, long timestamp)
     {

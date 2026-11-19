@@ -1,4 +1,5 @@
-﻿using fluXis.Graphics.UserInterface.Color;
+﻿using System.Collections.Generic;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
 using osu.Framework.Localisation;
@@ -55,17 +56,11 @@ public class APIMap
     [JsonProperty("length")]
     public long Length { get; init; }
 
-    [JsonProperty("notes")]
-    public int NoteCount { get; init; }
-
-    [JsonProperty("long-notes")]
-    public int LongNoteCount { get; init; }
-
-    [JsonProperty("landmines")]
-    public int LandmineCount { get; init; }
+    [JsonProperty("objects")]
+    public Dictionary<ResourceLocation, long> ObjectCounts { get; init; } = [];
 
     [JsonProperty("maxcombo")]
-    public int MaxCombo { get; init; }
+    public long MaxCombo { get; init; }
 
     [JsonProperty("nps")]
     public double NotesPerSecond { get; init; }
@@ -79,8 +74,8 @@ public class APIMap
     [JsonProperty("health")]
     public float HealthDifficulty { get; init; }
 
-    [JsonProperty("effects")]
-    public MapEffectType Effects { get; init; }
+    [JsonProperty("events")]
+    public ResourceLocation[] Events { get; init; } = [];
 
     [JsonProperty("has_voted_rate")]
     public bool HasVotedRate { get; set; }

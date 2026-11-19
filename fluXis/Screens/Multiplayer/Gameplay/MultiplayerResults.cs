@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Multiplayer;
@@ -19,10 +18,10 @@ public partial class MultiplayerResults : Result.Results
 {
     protected override bool PlayEnterAnimation => true;
 
-    private List<ScoreInfo> scores { get; }
+    private ScoreInfo[] scores { get; }
     private MultiplayerClient client { get; }
 
-    public MultiplayerResults(RealmMap map, List<ScoreInfo> scores, MultiplayerClient client)
+    public MultiplayerResults(RealmMap map, ScoreInfo[] scores, MultiplayerClient client)
         : base(map, scores.FirstOrDefault(x => x.PlayerID == client.Player.ID), client.Player)
     {
         this.scores = scores;
@@ -44,12 +43,12 @@ public partial class MultiplayerResults : Result.Results
         [Resolved]
         private Bindable<ScoreInfo> score { get; set; }
 
-        private List<ScoreInfo> scores { get; }
+        private ScoreInfo[] scores { get; }
         private MultiplayerClient client { get; }
 
-        public Leaderboard(List<ScoreInfo> scores, MultiplayerClient client)
+        public Leaderboard(ScoreInfo[] scores, MultiplayerClient client)
         {
-            this.scores = scores.OrderByDescending(x => x.Score).ToList();
+            this.scores = [.. scores.OrderByDescending(x => x.Score)];
             this.client = client;
         }
 

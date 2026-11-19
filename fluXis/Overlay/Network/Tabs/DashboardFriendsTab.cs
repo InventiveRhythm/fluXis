@@ -82,7 +82,7 @@ public partial class DashboardFriendsTab : DashboardTab
     {
         var children = new List<Drawable>();
 
-        if (friends.Rooms.Count > 0)
+        if (friends.Rooms.Length > 0)
             children.Add(new DashboardItemList<MultiplayerRoom>("Active Lobbies", friends.Rooms, r => new DrawableMultiplayerCard(r) { Width = 348 }));
 
         var users = friends.Users.OrderByDescending(x => x.LastLogin).ToList();

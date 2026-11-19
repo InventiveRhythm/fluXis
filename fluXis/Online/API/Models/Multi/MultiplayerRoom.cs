@@ -10,7 +10,7 @@ namespace fluXis.Online.API.Models.Multi;
 public class MultiplayerRoom
 {
     [JsonProperty("id")]
-    public long RoomID { get; init; }
+    public string RoomID { get; init; }
 
     [JsonProperty("name")]
     public string Name { get; set; } = string.Empty;
@@ -22,13 +22,13 @@ public class MultiplayerRoom
     public APIUser Host { get; set; }
 
     [JsonProperty("participants")]
-    public List<MultiplayerParticipant> Participants { get; init; } = new();
+    public List<MultiplayerParticipant> Participants { get; init; } = [];
 
     [JsonProperty("map")]
     public APIMap Map { get; set; } = null!;
 
     [JsonProperty("mods")]
-    public List<string> Mods { get; set; } = new();
+    public string[] Mods { get; set; } = [];
 
     public List<ScoreInfo> Scores { get; set; } = new();
 }

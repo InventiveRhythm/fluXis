@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Users;
@@ -49,7 +48,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     protected override async Task<MultiplayerRoom> CreateRoom(string name, MultiplayerPrivacy privacy, string password, long mapid, string hash)
         => await connection.Server.CreateRoom(name, privacy, password, mapid, hash);
 
-    protected override async Task<MultiplayerRoom> JoinRoom(long id, string password)
+    protected override async Task<MultiplayerRoom> JoinRoom(string id, string password)
         => await connection.Server.JoinRoom(id, password);
 
     public override async Task LeaveRoom()
@@ -58,7 +57,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
         Room = null;
     }
 
-    public override async Task ChangeMap(long map, string hash, List<string> mods)
+    public override async Task ChangeMap(long map, string hash, string[] mods)
     {
         var result = await connection.Server.UpdateMap(map, hash, mods);
 

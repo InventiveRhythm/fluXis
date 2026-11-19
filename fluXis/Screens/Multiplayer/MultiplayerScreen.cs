@@ -43,7 +43,7 @@ public partial class MultiplayerScreen : FluXisScreen
     [Cached]
     private MultiplayerMenuMusic menuMusic = new();
 
-    public long TargetLobby { get; init; }
+    public string TargetLobby { get; init; }
     public string LobbyPassword { get; init; }
 
     private Bindable<bool> showStoryboard;
@@ -130,7 +130,7 @@ public partial class MultiplayerScreen : FluXisScreen
             var modes = new MultiModeSelect();
             screenStack.Push(modes);
 
-            if (TargetLobby > 0)
+            if (!string.IsNullOrWhiteSpace(TargetLobby))
                 modes.OpenList(TargetLobby, LobbyPassword);
         });
 

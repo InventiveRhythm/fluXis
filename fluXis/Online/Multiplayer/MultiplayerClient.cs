@@ -21,12 +21,12 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 
     // public event Action RoomUpdated;
 
-    public event Action<APIMap, List<string>> OnMapChange;
+    public event Action<APIMap, string[]> OnMapChange;
 
     public event Action<long?> CountdownUpdated;
     public event Action OnStart;
     public event Action<long, int> OnScore;
-    public event Action<List<ScoreInfo>> OnResultsReady;
+    public event Action<ScoreInfo[]> OnResultsReady;
 
     public abstract bool Connected { get; }
 
@@ -46,7 +46,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Room = await CreateRoom(name, privacy, password, mapid, hash);
     }
 
-    public async Task Join(long id, string password = "")
+    public async Task Join(string id, string password = "")
     {
         if (Room != null)
             throw new InvalidOperationException("Cannot join a room while already in one");
@@ -106,7 +106,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    public Task MapUpdated(APIMap map, List<string> mods)
+    public Task MapUpdated(APIMap map, string[] mods)
     {
         Schedule(() =>
         {
@@ -114,7 +114,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
                 return;
 
             Room.Map = map;
-            Room.Mods = mods.ToList();
+            Room.Mods = mods;
             OnMapChange?.Invoke(map, mods);
         });
 
@@ -150,7 +150,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    public Task EveryoneFinished(List<ScoreInfo> scores)
+    public Task EveryoneFinished(ScoreInfo[] scores)
     {
         // dangerous but when this gets called the
         // client is unable to execute schedules
@@ -184,10 +184,10 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 
     #region Abstract Methods
 
-    protected abstract Task<MultiplayerRoom> JoinRoom(long id, string password);
+    protected abstract Task<MultiplayerRoom> JoinRoom(string id, string password);
     protected abstract Task<MultiplayerRoom> CreateRoom(string name, MultiplayerPrivacy privacy, string password, long mapid, string hash);
     public abstract Task LeaveRoom();
-    public abstract Task ChangeMap(long map, string hash, List<string> mods);
+    public abstract Task ChangeMap(long map, string hash, string[] mods);
     public abstract Task TransferHost(long target);
     public abstract Task UpdateScore(int score);
     public abstract Task Finish(ScoreInfo score);

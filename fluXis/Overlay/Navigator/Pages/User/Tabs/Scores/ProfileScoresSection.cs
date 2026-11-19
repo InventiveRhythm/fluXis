@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites.Text;
 using fluXis.Online.API.Models.Scores;
@@ -10,11 +9,11 @@ namespace fluXis.Overlay.Navigator.Pages.User.Tabs.Scores;
 
 public partial class ProfileScoresSection : FillFlowContainer
 {
-    public List<APIScore> Maps
+    public APIScore[] Maps
     {
         set
         {
-            var empty = value.Count <= 0;
+            var empty = value.Length <= 0;
 
             noScores.Alpha = empty ? .8f : 0;
             flow.Alpha = empty ? 0 : 1;

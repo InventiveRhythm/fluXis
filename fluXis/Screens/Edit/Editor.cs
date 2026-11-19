@@ -216,10 +216,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         EditorMap.Playable ??= new PlayableMap(
-            new NativeStorage(EditorMap.RealmMap.MapSet.GetPathForFile("")),
+            new NativeStorage(MapFiles.GetFullPath(EditorMap.RealmMap.MapSet.GetPathForFile(""))),
             $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.rhym",
             new ResourceLocation("flux", "keys/4")
         ) { Creator = EditorMap.RealmMap.Metadata.Mapper };
+        EditorMap.RealmMap.FileName = EditorMap.Playable.FileName;
 
         EditorMap.Playable.Storyboard ??= new Storyboard { Version = Storyboard.LATEST_VERSION };
 

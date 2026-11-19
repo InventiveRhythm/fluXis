@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites.Text;
@@ -14,11 +13,11 @@ public partial class ProfileMapsSection : FillFlowContainer
 {
     public int CardWidth { get; set; } = 450;
 
-    public List<APIMapSet> Maps
+    public APIMapSet[] Maps
     {
         set
         {
-            var empty = value.Count <= 0;
+            var empty = value.Length <= 0;
 
             noMaps.Alpha = empty ? .8f : 0;
             flow.Alpha = empty ? 0 : 1;

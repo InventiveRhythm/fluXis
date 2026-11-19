@@ -439,7 +439,7 @@ public abstract partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<Fl
         }
     }
 
-    public void JoinMultiplayerRoom(long id, string password) => Scheduler.ScheduleIfNeeded(() => WaitForReady(() =>
+    public void JoinMultiplayerRoom(string id, string password) => Scheduler.ScheduleIfNeeded(() => WaitForReady(() =>
     {
         MenuScreen.MakeCurrent();
 

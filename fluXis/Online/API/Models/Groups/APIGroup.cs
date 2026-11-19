@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using fluXis.Online.API.Models.Users;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -22,7 +20,7 @@ public class APIGroup
 
     [CanBeNull]
     [JsonProperty("members")]
-    public IEnumerable<APIUser> Members { get; set; }
+    public APIUser[] Members { get; set; }
 
     public static APIGroup CreateDummy(string id) => new()
     {
@@ -30,6 +28,6 @@ public class APIGroup
         Color = "#ffffff",
         Name = id,
         Tag = id,
-        Members = Array.Empty<APIUser>()
+        Members = []
     };
 }

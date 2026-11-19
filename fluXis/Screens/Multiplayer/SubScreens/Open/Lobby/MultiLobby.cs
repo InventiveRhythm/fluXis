@@ -288,7 +288,7 @@ public partial class MultiLobby : MultiSubScreen
         }
     }));
 
-    private void onMapChange(APIMap map, List<string> modsString)
+    private void onMapChange(APIMap map, string[] modsString)
     {
         updateRightButton();
 

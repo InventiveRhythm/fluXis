@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using fluXis.Audio;
 using fluXis.Database.Maps;
@@ -61,10 +60,10 @@ public partial class MultiLobbyList : MultiSubScreen
     private MultiLobbyListFooter footer;
 
     // invite stuff
-    private long id { get; }
+    private string id { get; }
     private string password { get; }
 
-    public MultiLobbyList(long id = -1, string password = "")
+    public MultiLobbyList(string id = "", string password = "")
     {
         this.id = id;
         this.password = password;
@@ -118,7 +117,7 @@ public partial class MultiLobbyList : MultiSubScreen
 
         loadLobbies();
 
-        if (id > 0)
+        if (!string.IsNullOrWhiteSpace(id))
             JoinLobby(id, password);
     }
 
@@ -131,7 +130,7 @@ public partial class MultiLobbyList : MultiSubScreen
         {
             lobbyList.Clear();
 
-            var request = new MultiLobbiesRequest();
+            var request = new MultiplayerRoomsRequest();
 
             request.Success += res =>
             {
@@ -140,7 +139,7 @@ public partial class MultiLobbyList : MultiSubScreen
                 foreach (var lobby in lobbies)
                     lobbyList.Add(new LobbySlot(lobby, pw => JoinLobby(lobby.RoomID, pw)));
 
-                for (var i = 0; i < 12 - lobbies.Count; i++)
+                for (var i = 0; i < 12 - lobbies.Length; i++)
                     lobbyList.Add(new EmptyLobbySlot());
 
                 loadingIcon.Hide();
@@ -168,7 +167,7 @@ public partial class MultiLobbyList : MultiSubScreen
         this.Push(new MultiSelectScreen(create));
     }
 
-    private void create(RealmMap map, List<string> mods) => Schedule(() => panels.Content = new FormPanel<LobbyCreateData>(
+    private void create(RealmMap map, string[] mods) => Schedule(() => panels.Content = new FormPanel<LobbyCreateData>(
         Phosphor.Bold.Plus,
         "Create Lobby",
         new LobbyCreateData { Name = $"{client.Player.NameWithApostrophe} Room" },
@@ -197,7 +196,7 @@ public partial class MultiLobbyList : MultiSubScreen
             return false;
         }, "Create!"));
 
-    public async void JoinLobby(long room, string password = "")
+    public async void JoinLobby(string room, string password = "")
     {
         Schedule(() => panels.Content = new LoadingPanel { Text = "Joining lobby..." });
 

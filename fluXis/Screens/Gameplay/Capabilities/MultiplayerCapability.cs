@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio.Transforms;
 using fluXis.Graphics;
@@ -85,7 +84,7 @@ public partial class MultiplayerCapability : Component, IEndingCapability, IUser
         });
     }
 
-    private void onOnResultsReady(List<ScoreInfo> scores)
+    private void onOnResultsReady(ScoreInfo[] scores)
     {
         Scheduler.ScheduleOnceIfNeeded(() =>
         {

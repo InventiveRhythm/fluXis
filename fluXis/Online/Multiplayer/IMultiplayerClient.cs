@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Scoring;
@@ -16,10 +15,10 @@ public interface IMultiplayerClient
     Task UserStateChanged(long id, MultiplayerUserState state);
     Task HostChanged(long id);
 
-    Task MapUpdated(APIMap map, List<string> mods);
+    Task MapUpdated(APIMap map, string[] mods);
 
     Task CountdownStarted(long? time);
     Task LoadRequested();
     Task ScoreUpdated(long user, int score);
-    Task EveryoneFinished(List<ScoreInfo> scores);
+    Task EveryoneFinished(ScoreInfo[] scores);
 }
