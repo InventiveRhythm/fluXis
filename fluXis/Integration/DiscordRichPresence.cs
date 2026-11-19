@@ -14,7 +14,7 @@ public class DiscordRichPresence
     public string SmallImage { get; set; } = "";
     public string SmallImageText { get; set; } = "";
 
-    public long PartyID { get; set; }
+    public string PartyID { get; set; }
     public string PartySecret { get; set; }
     public int PartySize { get; set; }
     public int PartyMax { get; set; }

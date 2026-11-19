@@ -26,7 +26,7 @@ public partial class DiscordManager : Drawable, IDiscordManager
     private const long client_id = 975141679583604767;
 
     [CanBeNull]
-    public Action<long, string> OnInviteAccept;
+    public Action<string, string> OnInviteAccept;
 
     private Logger logger;
     private Client client;
@@ -155,7 +155,7 @@ public partial class DiscordManager : Drawable, IDiscordManager
         if (rpc.EndTime > 0) timestamps.SetEnd(rpc.EndTime);
         activity.SetTimestamps(timestamps);
 
-        if (rpc.PartyID > 0)
+        if (!string.IsNullOrWhiteSpace(rpc.PartyID))
         {
             activity.SetSupportedPlatforms(ActivityGamePlatforms.Desktop);
             activity.SetApplicationId(client_id);
@@ -235,7 +235,7 @@ public partial class DiscordManager : Drawable, IDiscordManager
     public class LobbySecret
     {
         [JsonProperty("id")]
-        public long ID { get; set; }
+        public string ID { get; set; }
 
         [JsonProperty("password")]
         public string Password { get; set; }

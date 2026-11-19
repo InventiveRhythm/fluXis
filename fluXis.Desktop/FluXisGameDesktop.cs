@@ -5,7 +5,6 @@ using fluXis.Desktop.Integration;
 using fluXis.Integration;
 using fluXis.IPC;
 using fluXis.Resources;
-using Midori.Utils.Extensions;
 using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.IO.Stores;
@@ -64,7 +63,7 @@ public partial class FluXisGameDesktop : FluXisGame
         {
             var idx = args.IndexOf("--debug-join-multi");
             var id = args[idx + 1];
-            JoinMultiplayerRoom(id.ToIntInvariant(), "");
+            JoinMultiplayerRoom(id, "");
         }
 
         args.RemoveAll(a => a.StartsWith('-'));
