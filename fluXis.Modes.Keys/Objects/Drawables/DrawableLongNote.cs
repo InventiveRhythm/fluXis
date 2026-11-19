@@ -74,7 +74,7 @@ public partial class DrawableLongNote : DrawableKeysHitObject<LongNote>, IKeyBin
         if (Judged && !tail.Judged)
             Y = Manager.HitPosition;
 
-        var tailY = Manager.PositionAtTime(tail.ScrollVelocityTime, tail.Object.ScrollGroup);
+        var tailY = Manager.PositionAtTime(tail.ScrollVelocityTime, tail.Object.ScrollGroup, tail.ScrollEasing);
         var height = Y - tailY;
 
         tail.Y = -height;

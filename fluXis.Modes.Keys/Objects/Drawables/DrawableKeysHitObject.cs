@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using fluXis.Input;
 using fluXis.Map.Structures;
+using fluXis.Map.Structures.Events.Scrolling;
 using fluXis.Modes.Gameplay.Objects;
 using fluXis.Modes.Keys.Gameplay;
 using fluXis.Modes.Keys.Gameplay.Objects;
@@ -33,6 +35,7 @@ public abstract partial class DrawableKeysHitObject<T> : DrawableHitObject<T>
     public FluXisGameplayKeybind Action { get; set; }
 
     public double ScrollVelocityTime { get; private set; }
+    public Easing ScrollEasing { get; private set; } = Easing.None;
 
     protected DrawableKeysHitObject(T o)
         : base(o)
@@ -50,6 +53,7 @@ public abstract partial class DrawableKeysHitObject<T> : DrawableHitObject<T>
 
         var group = Object.ScrollGroup ?? Manager.DefaultScrollGroup;
         ScrollVelocityTime = group.PositionFromTime(Object.Time);
+        ScrollEasing = Ruleset.Map.ObjectsOfType<HitObjectEaseEvent>().LastOrDefault(x => x.Time <= Object.Time)?.Easing ?? Easing.None;
     }
 
     protected override void Update()
@@ -60,6 +64,6 @@ public abstract partial class DrawableKeysHitObject<T> : DrawableHitObject<T>
 
     protected virtual void UpdatePosition()
     {
-        Y = Manager.PositionAtTime(ScrollVelocityTime, Object.ScrollGroup);
+        Y = Manager.PositionAtTime(ScrollVelocityTime, Object.ScrollGroup, ScrollEasing);
     }
 }
