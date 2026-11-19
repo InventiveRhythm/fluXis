@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using fluXis.Map.Structures.Bases;
 using fluXis.Scoring.Enums;
 using fluXis.Screens.Gameplay.Ruleset;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Lists;
 using YamlDotNet.Serialization;
@@ -59,6 +60,7 @@ public abstract class HitObject : ITimedObject
         if (hasNested) return;
 
         CreateNested();
+        NestedObjects.ForEach(x => x.ScrollGroup = ScrollGroup);
         hasNested = true;
     }
 
