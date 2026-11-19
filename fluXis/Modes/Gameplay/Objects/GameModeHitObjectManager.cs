@@ -208,7 +208,7 @@ public abstract partial class GameModeHitObjectManager : CompositeDrawable
 public abstract partial class GameModeHitObjectManager<T> : GameModeHitObjectManager
     where T : struct, Enum
 {
-    private InputManager input = null!;
+    private InputManager? input;
 
     protected GameModeHitObjectManager(RulesetContainer ruleset, PlayableMap map)
         : base(ruleset, map)
@@ -223,6 +223,9 @@ public abstract partial class GameModeHitObjectManager<T> : GameModeHitObjectMan
 
         acts.OnActionPress += i =>
         {
+            if (input is null)
+                return;
+
             var act = (T)Enum.ToObject(typeof(T), i);
             var ev = new KeyBindingPressEvent<T>(input.CurrentState, act);
 
@@ -236,6 +239,9 @@ public abstract partial class GameModeHitObjectManager<T> : GameModeHitObjectMan
         };
         acts.OnActionRelease += i =>
         {
+            if (input is null)
+                return;
+
             var act = (T)Enum.ToObject(typeof(T), i);
             var ev = new KeyBindingReleaseEvent<T>(input.CurrentState, act);
 

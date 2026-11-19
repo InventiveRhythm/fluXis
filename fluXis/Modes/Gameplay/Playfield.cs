@@ -82,6 +82,7 @@ public abstract partial class Playfield : CompositeDrawable
         Dependencies.CacheAs<ICustomColorProvider>(ColorManager);
 
         AddRangeInternal([shakeProxy = new ShakeProxy(), ColorManager]);
+        LoadBeforeEvents();
 
         RegisterReloadableEvent(Map.ObjectsOfType<ColorFadeEvent>());
         RegisterReloadableEvent(Map.ObjectsOfType<LayerFadeEvent>());
@@ -92,6 +93,8 @@ public abstract partial class Playfield : CompositeDrawable
         if (PlayerIndex == 0 && !IsSubPlayfield)
             registerReloadableShake(Map.ObjectsOfType<ShakeEvent>());
     }
+
+    protected virtual void LoadBeforeEvents() { }
 
     [CanBeNull]
     public virtual Drawable GetFadeLayer(LayerFadeEvent.FadeLayer layer) => layer switch

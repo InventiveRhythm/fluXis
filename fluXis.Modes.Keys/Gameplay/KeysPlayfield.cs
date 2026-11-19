@@ -54,6 +54,11 @@ public partial class KeysPlayfield : Playfield
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
         hitsoundPanStrength = config.GetBindable<double>(FluXisSetting.HitsoundPanning);
 
+        Map.ObjectsOfType<TimeOffsetEvent>().ForEach(x => x.Apply(Objects));
+    }
+
+    protected override void LoadBeforeEvents()
+    {
         Receptors = new FillFlowContainer<Receptor>
         {
             AutoSizeAxes = Axes.X,
@@ -89,8 +94,6 @@ public partial class KeysPlayfield : Playfield
             },
             new KeyOverlay()
         ]);
-
-        Map.ObjectsOfType<TimeOffsetEvent>().ForEach(x => x.Apply(Objects));
     }
 
     public override Drawable? GetFadeLayer(LayerFadeEvent.FadeLayer layer) => layer switch
