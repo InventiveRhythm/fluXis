@@ -19,6 +19,7 @@
   "scroll-ctrl-action": "Ctrl-Scroll Action",
   "scroll-shift-action": "Shift-Scroll Action",
   "scroll-ctrl-shift-action": "Ctrl-Shift-Scroll Action",
+  "scroll-ctrl-shift-alt-action": "Ctrl-Shift-Alt-Scroll Action",
   "keybindings-overlays": "Overlays",
   "keybindings-toggle-settings": "Toggle Settings",
   "keybindings-toggle-dashboard": "Toggle Dashboard",

@@ -164,6 +164,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
 
         EditorScrollAction action = e.ControlPressed switch
         {
+            true when e.ShiftPressed && e.AltPressed => map.ControlShiftAlt,
             true when e.ShiftPressed => map.ControlShift,
             true => map.Control,
             _ => e.ShiftPressed ? map.Shift : map.Normal
@@ -192,6 +193,12 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
                     scrollAccumulation = scrollAccumulation < 0 ? Math.Min(0, scrollAccumulation + 1) : Math.Max(0, scrollAccumulation - 1);
                 }
 
+                break;
+            }
+
+            case EditorScrollAction.ScrollHorizontally:
+            {
+                ScrollHorizontallyAction(direction, delta);
                 break;
             }
 
@@ -241,6 +248,9 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
         else
             EditorClock.SeekForward(amount);
     }
+
+    // This is currently only exclusive to charting tab so, ChartingContainer implements it.
+    public virtual void ScrollHorizontallyAction(int direction, float delta) { }
 
     public virtual bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
     {
