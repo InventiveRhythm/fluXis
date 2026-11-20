@@ -1,4 +1,3 @@
-using System.Linq;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Requests.Clubs;
@@ -18,7 +17,7 @@ public partial class TestDashboardClub : AbstractDashboardTabTest<DashboardClubT
             if (req is ClubRequest cr)
             {
                 var club = APIClub.CreateUnknown(1);
-                club.Members = CreateDummyUsers(12).ToList();
+                club.Members = [.. CreateDummyUsers(12)];
                 cr.TriggerSuccess(new APIResponse<APIClub>(200, "", club));
             }
         };

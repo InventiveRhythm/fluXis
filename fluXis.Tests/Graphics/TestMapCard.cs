@@ -63,8 +63,6 @@ public partial class TestMapCard : FluXisTestScene
                     Status = 0,
                     BPM = 120,
                     Length = 12000,
-                    NoteCount = 456,
-                    LongNoteCount = 32,
                     MaxCombo = 488,
                     NotesPerSecond = 14.24,
                     Rating = 8,

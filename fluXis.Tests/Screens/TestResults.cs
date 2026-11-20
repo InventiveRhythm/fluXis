@@ -61,7 +61,7 @@ public partial class TestResults : FluXisTestScene
         Alright = RNG.Next(100),
         Okay = RNG.Next(100),
         Miss = RNG.Next(100),
-        Mods = new List<string> { "1.5x" },
+        Mods = ["1.5x"],
         PlayerID = player
     };
 
@@ -90,7 +90,7 @@ public partial class TestResults : FluXisTestScene
     [Test]
     public void Multiplayer()
     {
-        MultiplayerClient.Join(0).Wait();
+        MultiplayerClient.Join("00000000").Wait();
         MultiplayerClient.AddPlayer(APIUser.CreateUnknown(1));
 
         AddStep("Push", () => stack.Push(new MultiplayerResults(getMap(), [getScore(), getScore(1)], MultiplayerClient)));

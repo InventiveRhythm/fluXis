@@ -19,7 +19,7 @@ public partial class TestMultiplayerClient : MultiplayerClient
         Player = user
     });
 
-    protected override Task<MultiplayerRoom> JoinRoom(long id, string password) => Task.FromResult(Room = new MultiplayerRoom
+    protected override Task<MultiplayerRoom> JoinRoom(string id, string password) => Task.FromResult(Room = new MultiplayerRoom
     {
         RoomID = id,
         Host = Player,
@@ -38,7 +38,7 @@ public partial class TestMultiplayerClient : MultiplayerClient
         throw new System.NotImplementedException();
     }
 
-    public override async Task ChangeMap(long map, string hash, List<string> mods)
+    public override async Task ChangeMap(long map, string hash, string[] mods)
     {
         throw new System.NotImplementedException();
     }

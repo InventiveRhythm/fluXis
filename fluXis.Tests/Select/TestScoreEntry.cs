@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using fluXis.Graphics.UserInterface.Context;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
@@ -35,7 +34,7 @@ public partial class TestScoreEntry : FluXisTestScene
                         Score = 1000000,
                         MaxCombo = 100,
                         Accuracy = 100,
-                        Mods = new List<string> { "1.4x", "HD", "NF" },
+                        Mods = [ "1.4x", "HD", "NF" ],
                         Rank = ScoreRank.X,
                         Flawless = 100,
                         Perfect = 100,
