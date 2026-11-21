@@ -24,7 +24,7 @@ namespace fluXis.Map;
 public class PlayableMap(Storage storage, string filename, ResourceLocation mode)
 {
     public Storage Storage => storage;
-    public string FileName => filename;
+    public string FileName { get; set; } = filename;
     public ResourceLocation Mode => mode;
 
     public long OnlineID { get; set; }
@@ -52,6 +52,7 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
     public string ChartHash { get; set; } = string.Empty;
     public string EventsHash { get; set; } = string.Empty;
     public string StoryboardHash { get; set; } = string.Empty;
+    public string AudioHash { get; set; } = string.Empty;
 
     #endregion
 
@@ -329,8 +330,9 @@ public class PlayableMap(Storage storage, string filename, ResourceLocation mode
         target.HealthDifficulty = HealthDifficulty;
         target.EnableVisualization = AudioVisualizations;
 
-        // TODO: this isn't being recalculated anywhere
         target.Hash = ChartHash;
+        target.AudioHash = AudioHash;
+        target.FileName = FileName;
 
         target.Filters ??= new RealmMapFilters();
         target.Filters.UpdateFilters(this);

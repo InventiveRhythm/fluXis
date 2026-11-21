@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -21,6 +22,7 @@ using fluXis.Map.Builtin.Floorboard;
 using fluXis.Map.Builtin.Roundhouse;
 using fluXis.Map.Builtin.Spoophouse;
 using fluXis.Map.Format;
+using fluXis.Map.Structures;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Requests.Maps;
 using fluXis.Online.API.Requests.MapSets;
@@ -580,105 +582,39 @@ public partial class MapStore : Component
         var format = game.GameModes.GetFormat(playable.Storage, Path.GetExtension(playable.FileName))
                      ?? throw new Exception($"Unable to find compatible format for {playable.FileName}.");
 
-        var hashes = format.Save(playable);
+        format.Save(playable);
 
         realm.RunWrite(r =>
         {
-            map.FileName = playable.FileName;
-            map.Hash = hashes[IMapFormat.IMPORT_CHART];
-            // map.AudioHash = playable.AudioHash;
-
             playable.SaveIntoRealmMap(map);
-
             var existing = r.Find<RealmMap>(map.ID)!;
             set.CopyChanges(existing.MapSet);
         });
-
-        /*
-        if (events is { Empty: false })
-        {
-            var effectFilename = string.IsNullOrWhiteSpace(playable.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : playable.EffectFile;
-            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(effectFilename)), events.Save());
-            playable.EffectFile = effectFilename;
-        }
-        else
-            playable.EffectFile = "";
-
-        if (storyboard is { Empty: false })
-        {
-            var filename = string.IsNullOrWhiteSpace(playable.StoryboardFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsb" : playable.StoryboardFile;
-            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(filename)), storyboard.Save());
-            playable.StoryboardFile = filename;
-        }
-        else
-            playable.StoryboardFile = "";
-
-        realm.RunWrite(r =>
-        {
-            var stream = new MemoryStream();
-            stream.Write(Encoding.UTF8.GetBytes(playable.Serialize()));
-            stream.Seek(0, SeekOrigin.Begin);
-
-            var filename = string.IsNullOrWhiteSpace(map.FileName) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc" : map.FileName;
-            File.WriteAllBytes(MapFiles.GetFullPath(set.GetPathForFile(filename)), stream.ToArray());
-        });*/
     }
 
-    public RealmMap CreateNewDifficulty(RealmMapSet set, RealmMap map, PlayableMap refInfo, CreateNewMapParameters param)
+    public RealmMap CreateNewDifficulty(RealmMapSet set, RealmMap map, PlayableMap reference, CreateNewMapParameters param)
     {
-        throw new NotImplementedException("TODO: reimplement");
-        /*var id = Guid.NewGuid();
-        var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc";
-        var effectName = "";
-        var refEffect = refInfo.GetMapEvents();
+        var copy = new PlayableMap(reference.Storage, reference.FileName, reference.Mode);
+        FastCloner.FastCloner.DeepCloneTo(reference, copy);
 
-        if (param.LinkEffects)
-            effectName = refInfo.EffectFile;
-        else if (!refEffect.Empty)
-        {
-            effectName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx";
-            string effectPath = MapFiles.GetFullPath(set.GetPathForFile(effectName));
-            File.WriteAllText(effectPath, refEffect.Save());
-        }
-
-        var info = refInfo.JsonCopy();
-        info.Metadata.Difficulty = param.DifficultyName;
-        info.EffectFile = effectName;
+        copy.FileName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.rhym";
+        copy.Difficulty = param.DifficultyName;
 
         if (!param.CopyNotes)
-            info.HitObjects = new List<HitObject>();
+            copy.RemoveObjects([.. copy.ObjectsOfType<HitObject>()]);
+        if (!param.LinkEffects)
+            copy.ImportPaths[IMapFormat.IMPORT_EVENT] = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 20}.rhym";
 
-        var realmMap = new RealmMap
-        {
-            ID = id,
-            Difficulty = param.DifficultyName,
-            Metadata = new RealmMapMetadata
-            {
-                Title = map.Metadata.Title,
-                TitleRomanized = map.Metadata.SortingTitle, // returns `TitleRomanized` if not null, else `Title`
-                Artist = map.Metadata.Artist,
-                ArtistRomanized = map.Metadata.SortingArtist,
-                Mapper = map.Metadata.Mapper,
-                Source = map.Metadata.Source,
-                Tags = map.Metadata.Tags,
-                Background = map.Metadata.Background,
-                Audio = map.Metadata.Audio,
-                PreviewTime = map.Metadata.PreviewTime,
-                ColorHex = map.Metadata.ColorHex
-            },
-            FileName = fileName,
-            Hash = MapUtils.GetHash(info.Serialize()),
-            AudioHash = map.AudioHash,
-            Filters = MapUtils.GetMapFilters(info, refEffect),
-            KeyCount = map.KeyCount,
-            MapSet = set,
-            AccuracyDifficulty = map.AccuracyDifficulty,
-            HealthDifficulty = map.HealthDifficulty
-        };
+        Debug.Assert(reference.FileName != copy.FileName);
 
-        string path = MapFiles.GetFullPath(map.MapSet.GetPathForFile(realmMap.FileName));
-        File.WriteAllText(path, info.Serialize());
-        return addDifficultyToSet(set, realmMap);*/
+        var format = game.GameModes.GetFormat(copy.Storage, Path.GetExtension(copy.FileName))
+                     ?? throw new Exception($"Unable to find compatible format for {copy.FileName}.");
+
+        format.Save(copy);
+
+        var rm = new RealmMap();
+        copy.SaveIntoRealmMap(rm);
+        return addDifficultyToSet(set, rm);
     }
 
     public void DeleteDifficulty(RealmMapSet set, RealmMap map)

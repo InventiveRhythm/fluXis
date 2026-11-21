@@ -84,6 +84,8 @@ public partial class ModsOverlay : VisibilityContainer
 
         RelativeSizeAxes = Axes.Both;
 
+        // TODO: allow modes to return a custom mod list
+
         InternalChildren = new Drawable[]
         {
             background = new FullInputBlockingContainer()
@@ -235,7 +237,7 @@ public partial class ModsOverlay : VisibilityContainer
                                                                 // new NoLnMod(),
                                                                 // new NoMineMod(),
                                                                 new NoEventMod(),
-                                                                new MirrorMod()
+                                                                // new MirrorMod()
                                                             })
                                                         }
                                                     },

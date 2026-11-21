@@ -252,7 +252,7 @@ public class LegacyMapFormat : IMapFormat
             var raw = events.Sort().Serialize(true);
 
             map.ImportPaths[IMapFormat.IMPORT_EVENT] = name;
-            hashes[IMapFormat.IMPORT_EVENT] = MapUtils.GetHash(raw);
+            hashes[IMapFormat.IMPORT_EVENT] = map.EventsHash = MapUtils.GetHash(raw);
             json.EffectFile = name;
             storage.WriteAllText(name, raw);
         }
@@ -268,7 +268,7 @@ public class LegacyMapFormat : IMapFormat
             var raw = map.Storyboard.Save();
 
             map.ImportPaths[IMapFormat.IMPORT_STORYBOARD] = name;
-            hashes[IMapFormat.IMPORT_STORYBOARD] = MapUtils.GetHash(raw);
+            hashes[IMapFormat.IMPORT_STORYBOARD] = map.StoryboardHash = MapUtils.GetHash(raw);
             json.StoryboardFile = name;
             storage.WriteAllText(name, raw);
         }
@@ -279,7 +279,7 @@ public class LegacyMapFormat : IMapFormat
         }
 
         var rawChart = json.Serialize(true);
-        hashes[IMapFormat.IMPORT_CHART] = MapUtils.GetHash(rawChart);
+        hashes[IMapFormat.IMPORT_CHART] = map.ChartHash = MapUtils.GetHash(rawChart);
         storage.WriteAllText(map.FileName, rawChart);
 
         return hashes;

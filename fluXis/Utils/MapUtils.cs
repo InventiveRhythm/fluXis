@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Hashing;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using fluXis.Database.Maps;
@@ -17,6 +18,7 @@ using fluXis.Online.API.Models.Maps;
 using fluXis.Utils.Attributes;
 using osu.Framework.Extensions;
 using osu.Framework.Localisation;
+using rhym;
 
 namespace fluXis.Utils;
 
@@ -156,13 +158,24 @@ public static class MapUtils
         {
             filters.Length = (float)Math.Max(filters.Length, hitObject.GetEndTime());
 
-            // TODO: fix :bellfast:
-            /*if (hitObject.LongNote)
-                filters.LongNoteCount++;
-            else if (hitObject.Landmine)
-                filters.LandmineCount++;
-            else
-                filters.NoteCount++;*/
+            // TODO:
+            // hardcoding this for now
+            // once the db is replaced throw this out
+            // and do it properly
+            switch (hitObject.GetType().GetCustomAttribute<ResourceLocationAttribute>()?.Location)
+            {
+                case "flux:keys/note":
+                    filters.NoteCount++;
+                    break;
+
+                case "flux:keys/long":
+                    filters.LongNoteCount++;
+                    break;
+
+                case "flux:keys/mine":
+                    filters.LandmineCount++;
+                    break;
+            }
         }
 
         filters.NotesPerSecond = GetNps(map.ObjectsOfType<HitObject>());

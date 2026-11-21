@@ -1,7 +1,7 @@
 using System.Linq;
 using fluXis.Map.Structures.Events;
 using fluXis.Modes.Gameplay;
-using fluXis.Mods;
+using fluXis.Modes.Keys.Mods;
 using fluXis.Utils.Extensions;
 
 namespace fluXis.Modes.Keys.Gameplay;

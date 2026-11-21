@@ -214,7 +214,7 @@ public class RhymMapFormat : IMapFormat
             });
 
             map.ImportPaths[IMapFormat.IMPORT_EVENT] = name;
-            hashes[IMapFormat.IMPORT_EVENT] = MapUtils.GetHash(raw);
+            hashes[IMapFormat.IMPORT_EVENT] = map.EventsHash = MapUtils.GetHash(raw);
             rhym.Imports = [.. rhym.Imports, name];
             storage.WriteAllText(name, raw);
         }
@@ -231,7 +231,7 @@ public class RhymMapFormat : IMapFormat
             var raw = map.Storyboard.Save();
 
             map.ImportPaths[IMapFormat.IMPORT_STORYBOARD] = name;
-            hashes[IMapFormat.IMPORT_STORYBOARD] = MapUtils.GetHash(raw);
+            hashes[IMapFormat.IMPORT_STORYBOARD] = map.StoryboardHash = MapUtils.GetHash(raw);
             rhym.Imports = [.. rhym.Imports, name];
             storage.WriteAllText(name, raw);
         }
@@ -242,7 +242,7 @@ public class RhymMapFormat : IMapFormat
         }
 
         var rawChart = io.Serialize(rhym);
-        hashes[IMapFormat.IMPORT_CHART] = MapUtils.GetHash(rawChart);
+        hashes[IMapFormat.IMPORT_CHART] = map.ChartHash = MapUtils.GetHash(rawChart);
         storage.WriteAllText(map.FileName, rawChart);
 
         return hashes;

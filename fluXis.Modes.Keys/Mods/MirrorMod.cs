@@ -1,9 +1,11 @@
 using System;
 using fluXis.Graphics.Sprites.Icons;
 using fluXis.Map;
+using fluXis.Map.Structures;
+using fluXis.Mods;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Mods;
+namespace fluXis.Modes.Keys.Mods;
 
 public class MirrorMod : IMod, IApplicableToMap
 {
@@ -19,10 +21,9 @@ public class MirrorMod : IMod, IApplicableToMap
 
     public void Apply(PlayableMap map)
     {
-        // TODO: move to keys mode
-        /*var keycount = map.RealmEntry?.KeyCount ?? map.HitObjects.MaxBy(x => x.Lane).Lane;
+        var count = KeysGameMode.ParseMode(map.Mode);
 
-        foreach (var hit in map.HitObjects)
-            hit.Lane = keycount - hit.Lane + 1;*/
+        foreach (var hit in map.ObjectsOfType<HitObject>())
+            hit.Lane = count - hit.Lane + 1;
     }
 }

@@ -6,6 +6,7 @@ using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Modes;
 using fluXis.Mods;
+using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Audio.Track;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -134,37 +135,17 @@ public class RealmMap : RealmObject
         playable.OnlineID = OnlineID;
         playable.Rating = Rating;
         playable.Settings = Settings;
-        return playable;
-
-        // TODO: audio hash
-        /*
-        var path = MapFiles.GetFullPath(MapSet.GetPathForFile(FileName));
-        if (!File.Exists(path)) return null;
-
-        var json = File.ReadAllText(path);
-        var hash = MapUtils.GetHash(json);
-        var map = json.Deserialize<LegacyMapJson>();
-        byte[] audioBytes = [];
-        string fullAudioPath = MapFiles.GetFullPath(MapSet.GetPathForFile(map.AudioFile));
 
         try
         {
-            if (File.Exists(fullAudioPath))
-            {
-                audioBytes = File.ReadAllBytes(fullAudioPath);
-            }
+            var stream = playable.Storage.GetStream(playable.AudioFile);
+            playable.AudioHash = MapUtils.GetXXHash(stream);
         }
-        catch (Exception e)
+        catch
         {
-            Logger.Error(e, $"Failed to get audioHash for map info");
-            audioBytes = [];
         }
 
-        var audioHash = MapUtils.GetXXHash(audioBytes);
-        map.RealmEntry = this;
-        map.Hash = hash;
-        map.AudioHash = audioHash;
-        return map;*/
+        return playable;
     }
 
 #nullable disable

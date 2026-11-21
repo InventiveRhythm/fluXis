@@ -14,12 +14,6 @@ public class JsonResourceLocationConverter : JsonConverter<ResourceLocation>
     {
         var token = JToken.Load(reader);
         var value = token.ToString();
-
-        // TODO: stupid fix to make it work with main API
-        // remove this on release
-        if (value.Length == 1)
-            value = $"flux:keys/{value}";
-
         return ResourceLocation.FromString(value);
     }
 }
