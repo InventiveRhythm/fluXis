@@ -612,7 +612,7 @@ public partial class MapStore : Component
 
         format.Save(copy);
 
-        var rm = new RealmMap();
+        var rm = new RealmMap { MapSet = set };
         copy.SaveIntoRealmMap(rm);
         return addDifficultyToSet(set, rm);
     }
